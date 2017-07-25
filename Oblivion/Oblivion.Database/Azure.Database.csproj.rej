@@ -1,0 +1,35 @@
+diff a/Azure/Azure.Database/Azure.Database.csproj b/Azure/Azure.Database/Azure.Database.csproj	(rejected hunks)
+@@ -66,11 +66,33 @@
+     <UseVSHostingProcess>false</UseVSHostingProcess>
+   </PropertyGroup>
+   <ItemGroup>
++<<<<<<< HEAD
++=======
++    <Reference Include="Azure.Console">
++      <HintPath>..\bin\Debug\x64\Lib\Core\Writer\Azure.Console.dll</HintPath>
++      <Private>False</Private>
++    </Reference>
++    <Reference Include="FirebirdSql.Data.FirebirdClient">
++      <HintPath>..\bin\Debug\x64\Lib\Database\FirebirdSql.Data.FirebirdClient.dll</HintPath>
++      <Private>False</Private>
++    </Reference>
++    <Reference Include="Ingres.Stereo">
++      <HintPath>..\bin\Debug\x64\Lib\Database\Ingres.Stereo.dll</HintPath>
++      <Private>False</Private>
++    </Reference>
++>>>>>>> 554c00de39b424432c5ba51ecbea84a14c0f3fab
+     <Reference Include="MySql.Data, Version=6.9.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+       <SpecificVersion>False</SpecificVersion>
+       <HintPath>..\bin\$(Configuration)\$(Platform)\Lib\Database\MySql.Data.dll</HintPath>
+       <Private>False</Private>
+     </Reference>
++<<<<<<< HEAD
++=======
++    <Reference Include="Npgsql">
++      <HintPath>..\bin\Debug\x64\Lib\Database\Npgsql.dll</HintPath>
++      <Private>False</Private>
++    </Reference>
++>>>>>>> 554c00de39b424432c5ba51ecbea84a14c0f3fab
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+     <Reference Include="System.Data" />
