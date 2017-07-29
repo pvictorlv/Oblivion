@@ -32,6 +32,15 @@ namespace Oblivion.Messages.Parsers
         }
 
         /// <summary>
+        /// InitConsole
+        /// </summary>
+        /// <param name="handler">Friends</param>
+        internal static void InitConsole(GameClientMessageHandler handler)
+        {
+            handler.InitConsole();
+        }
+
+        /// <summary>
         /// Machines the identifier.
         /// </summary>
         /// <param name="handler">The handler.</param>
@@ -992,6 +1001,22 @@ namespace Oblivion.Messages.Parsers
         internal static void GetInventory(GameClientMessageHandler handler)
         {
             handler.GetInventory();
+        }
+        /// <summary>
+        /// Gets the inventory.
+        /// </summary>
+        /// <param name="handler">The handler.</param>
+        internal static void OpenInventory(GameClientMessageHandler handler)
+        {
+            handler.GetInventory();
+        }
+        /// <summary>
+        /// Get maketplace config.
+        /// </summary>
+        /// <param name="handler">The handler.</param>
+        internal static void MarketPlaceConfiguration(GameClientMessageHandler handler)
+        {
+            handler.MarketPlaceConfiguration();
         }
 
         /// <summary>

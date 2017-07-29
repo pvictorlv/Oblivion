@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using Oblivion.Configuration;
 using Oblivion.Messages.Parsers;
+using Oblivion.Util;
 
 namespace Oblivion.Connection.Connection
 {
@@ -100,16 +101,15 @@ namespace Oblivion.Connection.Connection
             }
             catch (Exception e)
             {
-                HandleDisconnect(SocketError.ConnectionReset, e);
+                HandleDisconnect(e);
             }
         }
 
         /// <summary>
         /// Handles the disconnect.
         /// </summary>
-        /// <param name="socketError">The socket error.</param>
         /// <param name="exception">The exception.</param>
-        private void HandleDisconnect(SocketError socketError, Exception exception)
+        private void HandleDisconnect(Exception exception)
         {
             try
             {
@@ -168,7 +168,7 @@ namespace Oblivion.Connection.Connection
             }
             catch (Exception exception)
             {
-                HandleDisconnect(SocketError.ProtocolNotSupported, exception);
+                HandleDisconnect(exception);
             }
             finally
             {
@@ -181,7 +181,7 @@ namespace Oblivion.Connection.Connection
                 }
                 catch (Exception exception)
                 {
-                    HandleDisconnect(SocketError.ConnectionAborted, exception);
+                    HandleDisconnect(exception);
                 }
             }
 
@@ -204,7 +204,7 @@ namespace Oblivion.Connection.Connection
             }
             catch (Exception exception)
             {
-                HandleDisconnect(SocketError.ProtocolNotSupported, exception);
+                HandleDisconnect(exception);
             }
         }
 
@@ -254,7 +254,7 @@ namespace Oblivion.Connection.Connection
         internal void Disconnect()
         {
             if (_connected)
-                HandleDisconnect(SocketError.ConnectionReset, new SocketException((int)SocketError.ConnectionReset));
+                HandleDisconnect(new SocketException((int)SocketError.ConnectionReset));
         }
 
         /// <summary>
@@ -284,11 +284,14 @@ namespace Oblivion.Connection.Connection
                 }
                 catch (Exception e)
                 {
-                    HandleDisconnect(SocketError.ConnectionReset, e);
+                    Out.WriteLine(packet.ToString());
+                    HandleDisconnect(e);
                 }
             }
             else
-                Disconnect();
+            {
+                Out.WriteLine(packet.ToString());
+            }
         }
     }
 }

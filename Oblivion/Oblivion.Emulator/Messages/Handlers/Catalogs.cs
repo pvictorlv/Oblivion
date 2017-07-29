@@ -37,12 +37,31 @@ namespace Oblivion.Messages.Handlers
 
             Request.GetInteger();
 
+            var CataMode = Request.GetString();
+
             var cPage = Oblivion.GetGame().GetCatalog().GetPage(pageId);
 
             if (cPage == null || !cPage.Enabled || !cPage.Visible || cPage.MinRank > Session.GetHabbo().Rank)
                 return;
 
-            Session.SendMessage(cPage.CachedContentsMessage);
+            var message = CatalogPageComposer.ComposePage(cPage, CataMode);
+            Session.SendMessage(message);
+        }
+        /// <summary>
+        /// Configure marketplace
+        /// </summary>
+        public void MarketPlaceConfiguration()
+        {
+            var message = new ServerMessage(LibraryParser.OutgoingRequest("MarketplaceConfigurationMessageComposer"));
+            message.AppendBool(true);
+            message.AppendInteger(1);
+            message.AppendInteger(0);
+            message.AppendInteger(0);
+            message.AppendInteger(1);
+            message.AppendInteger(99999999);
+            message.AppendInteger(48);
+            message.AppendInteger(7);
+            Session.SendMessage(message);
         }
 
         /// <summary>

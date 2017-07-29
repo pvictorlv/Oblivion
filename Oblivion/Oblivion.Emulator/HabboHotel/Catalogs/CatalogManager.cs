@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using Oblivion.Configuration;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Catalogs.Composers;
 using Oblivion.HabboHotel.Catalogs.Interfaces;
@@ -219,6 +217,7 @@ namespace Oblivion.HabboHotel.Catalogs
             pageLoaded = (uint) Categories.Count;
         }
 
+        public List<DataRow> IndexText;
         /// <summary>
         ///     Initializes the specified database client.
         /// </summary>
@@ -233,6 +232,7 @@ namespace Oblivion.HabboHotel.Catalogs
                 EcotronRewards = new List<EcotronReward>();
                 EcotronLevels = new List<int>();
                 HabboClubItems = new List<CatalogItem>();
+                IndexText = new List<DataRow>();
 
                 dbClient.SetQuery("SELECT * FROM catalog_items ORDER BY id ASC");
                 var table = dbClient.GetTable();
@@ -242,6 +242,9 @@ namespace Oblivion.HabboHotel.Catalogs
                 var table3 = dbClient.GetTable();
                 dbClient.SetQuery("SELECT * FROM catalog_items WHERE item_names LIKE '%HABBO_CLUB_VIP%'");
                 var table4 = dbClient.GetTable();
+
+                dbClient.SetQuery("SELECT * FROM `catalog_homepage`;");
+                var table5 = dbClient.GetTable();
 
                 try
                 {
@@ -305,15 +308,11 @@ namespace Oblivion.HabboHotel.Catalogs
 
                         Categories.Add(Convert.ToInt32(dataRow2["id"]),
                             new CatalogPage(Convert.ToUInt32(dataRow2["id"]),
-                                short.Parse(dataRow2["parent_id"].ToString()),
-                                (string) dataRow2["code_name"], (string) dataRow2["caption"], visible, enabled, false,
+                                int.Parse(dataRow2["parent_id"].ToString()),
+                                (string) dataRow2["page_link"], (string) dataRow2["caption"], visible, enabled, false,
                                 Convert.ToUInt32(dataRow2["min_rank"]), (int) dataRow2["icon_image"],
-                                (string) dataRow2["page_layout"], (string) dataRow2["page_headline"],
-                                (string) dataRow2["page_teaser"], (string) dataRow2["page_special"],
-                                (string) dataRow2["page_text1"], (string) dataRow2["page_text2"],
-                                (string) dataRow2["page_text_details"], (string) dataRow2["page_text_teaser"],
-                                (string) dataRow2["page_link_description"], (string) dataRow2["page_link_pagename"],
-                                (int) dataRow2["order_num"], ref Offers));
+                                (string) dataRow2["page_layout"], (string) dataRow2["page_strings_1"],
+                                (string) dataRow2["page_strings_2"], (int) dataRow2["order_num"], ref Offers));
                     }
                 }
 
@@ -333,6 +332,11 @@ namespace Oblivion.HabboHotel.Catalogs
                 {
                     foreach (DataRow row in table4.Rows)
                         HabboClubItems.Add(new CatalogItem(row, "Habbo VIP"));
+                }
+                if (table5 != null)
+                {
+                    foreach (DataRow row in table5.Rows)
+                        IndexText.Add(row);
                 }
             }
             catch (Exception e)

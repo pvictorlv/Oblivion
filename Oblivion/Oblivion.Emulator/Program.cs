@@ -33,22 +33,23 @@ namespace Oblivion
 
         public static void StartConsoleWindow()
         {
-            Console.BackgroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Black;
             Console.Clear();
-            Console.SetWindowSize(Console.LargestWindowWidth > 149 ? 150 : Console.WindowWidth, Console.LargestWindowHeight > 49 ? 50 : Console.WindowHeight);
+            Console.SetWindowSize(150, 50);
             Console.SetCursorPosition(0, 0);
-            Console.ForegroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine();
-            Console.WriteLine(@"     " + @"                                            |         |              ");
-            Console.WriteLine(@"     " + @",---.,---,.   .,---.,---.    ,---.,-.-..   .|    ,---.|--- ,---.,---.");
-            Console.WriteLine(@"     " + @",---| .-' |   ||    |---'    |---'| | ||   ||    ,---||    |   ||    ");
-            Console.WriteLine(@"     " + @"`---^'---'`---'`    `---'    `---'` ' '`---'`---'`---^`---'`---'`    ");
+            Console.WriteLine(@"     " + @"   ____  _     _ _       _             ");
+            Console.WriteLine(@"     " + @"  / __ \| |   | (_)     (_)            ");
+            Console.WriteLine(@"     " + @" | |  | | |__ | |___   ___  ___  _ __  ");
+            Console.WriteLine(@"     " + @" | |  | | '_ \| | \ \ / / |/ _ \| '_ \ ");
+            Console.WriteLine(@"     " + @" | |__| | |_) | | |\ V /| | (_) | | | |");
+            Console.WriteLine(@"     " + @"  \____/|_.__/|_|_| \_/ |_|\___/|_| |_|");
             Console.WriteLine();
-            Console.WriteLine(@"     " + @"  BUILD " + Oblivion.Version + "." + Oblivion.Build + " RELEASE 63B CRYPTO BOTH SIDE");
-            Console.WriteLine(@"     " + @"  .NET Framework " + Environment.Version + "     C# 6 Roslyn");
+            Console.WriteLine(@"     " + @"  BUILD " + Oblivion.Version + "." + Oblivion.Build + " RELEASE 63B NO CRYPTO");
+            Console.WriteLine(@"     " + @"  .NET Framework " + Environment.Version + "     C# 7 Roslyn");
             Console.WriteLine();
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.WriteLine(Console.LargestWindowWidth > 149 ? "---------------------------------------------------------------------------------------------------------------------------------------------------" : "-------------------------------------------------------------------------");
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         /// <summary>

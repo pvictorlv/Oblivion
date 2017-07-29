@@ -105,16 +105,7 @@ namespace Oblivion.Configuration
         /// </summary>
         internal static bool NewPageCommands;
 
-        /// <summary>
-        /// The figuredata URL
-        /// </summary>
-        internal static string FiguredataUrl = "http://localhost/gamedata/figuredata/1.xml";
-
-        /// <summary>
-        /// The furni data URL
-        /// </summary>
-        internal static string FurniDataUrl;
-
+       
         /// <summary>
         /// The admin can use HTML
         /// </summary>
@@ -212,15 +203,7 @@ namespace Oblivion.Configuration
                     case "everyone.use.floor":
                         EveryoneUseFloor = theParams[1] == "true";
                         break;
-
-                    case "figuredata.url":
-                        FiguredataUrl = theParams[1];
-                        break;
-
-                    case "furnidata.url":
-                        FurniDataUrl = theParams[1];
-                        break;
-
+                        
                     case "admin.can.useHTML":
                         AdminCanUseHtml = theParams[1] == "true";
                         break;

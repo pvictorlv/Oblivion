@@ -297,17 +297,14 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 rightsMessage.AppendInteger(0);
                 queuedServerMessage.AppendResponse(rightsMessage);
                 Out.WriteLine("test");
-                var availabilityMessage = new ServerMessage(LibraryParser.OutgoingRequest("AvailabilityStatusMessageComposer"));
-                availabilityMessage.AppendBool(true);
-                availabilityMessage.AppendBool(false);
-                availabilityMessage.AppendBool(true);
-                queuedServerMessage.AppendResponse(availabilityMessage);
+                
 
-/*
+
                 serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("EnableNotificationsMessageComposer"));
-                serverMessage.AppendBool(true); //isOpen - nux
+                serverMessage.AppendBool(true);
                 serverMessage.AppendBool(false);
-                queuedServerMessage.AppendResponse(serverMessage);*/
+                serverMessage.AppendBool(true);
+                queuedServerMessage.AppendResponse(serverMessage);
 
                 serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("EnableTradingMessageComposer"));
                 serverMessage.AppendBool(true);

@@ -11,6 +11,7 @@ using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
+using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Navigators
 {
@@ -440,32 +441,35 @@ namespace Oblivion.HabboHotel.Navigators
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns>ServerMessage.</returns>
-        internal ServerMessage SerializeFlatCategories(GameClient session)
+        internal void SerializeFlatCategories(GameClient session)
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FlatCategoriesMessageComposer"));
-            serverMessage.StartArray();
 
+            serverMessage.AppendInteger(PrivateCategories.Values.Count);
+//            serverMessage.StartArray();
+
+            Out.WriteLine(PrivateCategories.Values.Count.ToString());
             foreach (FlatCat flatCat in PrivateCategories.Values)
             {
-                serverMessage.Clear();
+//                serverMessage.Clear();
 
-                if (flatCat == null)
-                    continue;
+//                if (flatCat == null)
+//                    continue;
 
                 serverMessage.AppendInteger(flatCat.Id);
                 serverMessage.AppendString(flatCat.Caption);
                 serverMessage.AppendBool(flatCat.MinRank <= session.GetHabbo().Rank);
                 serverMessage.AppendBool(false);
-                serverMessage.AppendString("NONE");
-                serverMessage.AppendString(string.Empty);
+                serverMessage.AppendString("");
+                serverMessage.AppendString("");
                 serverMessage.AppendBool(false);
 
-                serverMessage.SaveArray();
+//                serverMessage.SaveArray();
             }
 
-            serverMessage.EndArray();
+//            serverMessage.EndArray();
 
-            return serverMessage;
+            session.SendMessage(serverMessage);
         }
 
         /// <summary>

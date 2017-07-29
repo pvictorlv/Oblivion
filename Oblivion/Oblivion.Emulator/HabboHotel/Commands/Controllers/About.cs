@@ -36,7 +36,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             info.Append("<h5><b>Oblivion Emulator v2 - A new world!</b><h5></br></br>");
             info.Append("<br />");
              info.AppendFormat(
-                "<b>Créditos:</b> <br />Dark, Claudio Santoro, Kessiler, Boris, <b>Lucca (Droppy)</b>, Antoine, IhToN<br /> <br /> ");
+                "<b>Créditos:</b> <br />Dark, Claudio Santoro, Kessiler, XDR, <b> Lucca (Droppy)</b><br /> <br /> ");
             info.AppendFormat("<b>Estatisticas:</b> <br />");
             var userCount = Oblivion.GetGame().GetClientManager().Clients.Count;
             var roomsCount = Oblivion.GetGame().GetRoomManager().LoadedRooms.Count;

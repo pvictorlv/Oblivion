@@ -10,7 +10,7 @@ namespace Oblivion.Util
         /// <param name="format">The format.</param>
         /// <param name="header">The header.</param>
         /// <param name="color">The color.</param>
-        public static void WriteLine(string format, string header = "", ConsoleColor color = ConsoleColor.Black)
+        public static void WriteLine(string format, string header = "", ConsoleColor color = ConsoleColor.White)
         {
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.Write("[" + DateTime.Now + "] ");
@@ -36,7 +36,7 @@ namespace Oblivion.Util
         /// <param name="format">The format.</param>
         /// <param name="header">The header.</param>
         /// <param name="color">The color.</param>
-        public static void Write(string format, string header = "", ConsoleColor color = ConsoleColor.Black)
+        public static void Write(string format, string header = "", ConsoleColor color = ConsoleColor.White)
         {
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.Write("[" + DateTime.Now + "] ");

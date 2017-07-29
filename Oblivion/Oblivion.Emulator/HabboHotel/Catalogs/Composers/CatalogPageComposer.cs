@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Oblivion.HabboHotel.Catalogs.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -85,374 +86,50 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
         /// </summary>
         /// <param name="page">The page.</param>
         /// <returns>ServerMessage.</returns>
-        internal static ServerMessage ComposePage(CatalogPage page)
+        internal static ServerMessage ComposePage(CatalogPage page, string mode)
         {
             var message = new ServerMessage(LibraryParser.OutgoingRequest("CataloguePageMessageComposer"));
             message.AppendInteger(page.PageId);
-
-            switch (page.Layout)
+            message.AppendString(mode);
+            message.AppendString(page.Layout);
+            message.AppendInteger(page.PageString1.Count);
+            foreach (var str in page.PageString1)
             {
-                case "frontpage":
-                    message.AppendString("NORMAL");
-                    message.AppendString("frontpage4");
-                    message.AppendInteger(2);
-                    message.AppendString(page.LayoutHeadline);
-                    message.AppendString(page.LayoutTeaser);
-                    message.AppendInteger(2);
-                    message.AppendString(page.Text1);
-                    message.AppendString(page.Text2);
-                    message.AppendInteger(0);
-                    message.AppendInteger(-1);
-                    message.AppendBool(false);
-                    break;
-
-                case "roomads":
-                    message.AppendString("NORMAL");
-                    message.AppendString("roomads");
-                    message.AppendInteger(2);
-                    message.AppendString("events_header");
-                    message.AppendString("");
-                    message.AppendInteger(2);
-                    message.AppendString(page.Text1);
-                    message.AppendString("");
-                    break;
-
-                case "builders_club_frontpage_normal":
-                    message.AppendString("NORMAL");
-                    message.AppendString("builders_club_frontpage");
-                    message.AppendInteger(0);
-                    message.AppendInteger(1);
-                    message.AppendString(page.LayoutHeadline);
-                    message.AppendInteger(3);
-                    message.AppendInteger(8554);
-                    message.AppendString("builders_club_1_month");
-                    message.AppendString("");
-                    message.AppendInteger(2560000);
-                    message.AppendInteger(2560000);
-                    message.AppendInteger(1024);
-                    message.AppendInteger(0);
-                    message.AppendInteger(0);
-                    message.AppendBool(false);
-                    message.AppendInteger(8606);
-                    message.AppendString("builders_club_14_days");
-                    message.AppendString("");
-                    message.AppendInteger(2560000);
-                    message.AppendInteger(2560000);
-                    message.AppendInteger(1024);
-                    message.AppendInteger(0);
-                    message.AppendInteger(0);
-                    message.AppendBool(false);
-                    message.AppendInteger(8710);
-                    message.AppendString("builders_club_31_days");
-                    message.AppendString("");
-                    message.AppendInteger(2560000);
-                    message.AppendInteger(2560000);
-                    message.AppendInteger(1024);
-                    message.AppendInteger(0);
-                    message.AppendInteger(0);
-                    message.AppendBool(false);
-                    break;
-
-                case "bots":
-                    message.AppendString("NORMAL");
-                    message.AppendString("bots");
-                    message.AppendInteger(2);
-                    message.AppendString(page.LayoutHeadline);
-                    message.AppendString(page.LayoutTeaser);
-                    message.AppendInteger(3);
-                    message.AppendString(page.Text1);
-                    message.AppendString(page.Text2);
-                    message.AppendString(page.TextDetails);
-                    break;
-
-                case "badge_display":
-                    message.AppendString("NORMAL");
-                    message.AppendString("badge_display");
-                    message.AppendInteger(2);
-                    message.AppendString(page.LayoutHeadline);
-                    message.AppendString(page.LayoutTeaser);
-                    message.AppendInteger(3);
-                    message.AppendString(page.Text1);
-                    message.AppendString(page.Text2);
-                    message.AppendString(page.TextDetails);
-                    break;
-
-                case "info_loyalty":
-                case "info_duckets":
-                    message.AppendString("NORMAL");
-                    message.AppendString(page.Layout);
-                    message.AppendInteger(1);
-                    message.AppendString(page.LayoutHeadline);
-                    message.AppendInteger(1);
-                    message.AppendString(page.Text1);
-                    break;
-
-                case "sold_ltd_items":
-                    message.AppendString("NORMAL");
-                    message.AppendString("sold_ltd_items");
-                    message.AppendInteger(2);
-                    message.AppendString(page.LayoutHeadline);
-                    message.AppendString(page.LayoutTeaser);
-                    message.AppendInteger(3);
-                    message.AppendString(page.Text1);
-                    message.AppendString(page.Text2);
-                    message.AppendString(page.TextDetails);
-                    break;
-
-                case "recycler_info":
-                    message.AppendString("NORMAL");
-                    message.AppendString(page.Layout);
-                    message.AppendInteger(2);
-                    message.AppendString(page.LayoutHeadline);
-                    message.AppendString(page.LayoutTeaser);
-                    message.AppendInteger(3);
-                    message.AppendString(page.Text1);
-                    message.AppendString(page.Text2);
-                    message.AppendString(page.TextDetails);
-                    break;
-
-                case "recycler_prizes":
-                    message.AppendString("NORMAL");
-                    message.AppendString("recycler_prizes");
-                    message.AppendInteger(1);
-                    message.AppendString("catalog_recycler_headline3");
-                    message.AppendInteger(1);
-                    message.AppendString(page.Text1);
-                    break;
-
-                case "spaces_new":
-                case "spaces":
-                    message.AppendString("NORMAL");
-                    message.AppendString("spaces_new");
-                    message.AppendInteger(1);
-                    message.AppendString(page.LayoutHeadline);
-                    message.AppendInteger(1);
-                    message.AppendString(page.Text1);
-                    break;
-
-                case "recycler":
-                    message.AppendString("NORMAL");
-                    message.AppendString("recycler");
-                    message.AppendInteger(2);
-                    message.AppendString(page.LayoutHeadline);
-                    message.AppendString(page.LayoutTeaser);
-                    message.AppendInteger(1);
-                    message.AppendString(page.Text1);
-                    break;
-
-                case "trophies":
-                    message.AppendString("NORMAL");
-                    message.AppendString("trophies");
-                    message.AppendInteger(1);
-                    message.AppendString(page.LayoutHeadline);
-                    message.AppendInteger(2);
-                    message.AppendString(page.Text1);
-                    message.AppendString(page.TextDetails);
-                    break;
-
-                case "pets":
-                case "pets2":
-                case "pets3":
-                    message.AppendString("NORMAL");
-                    message.AppendString(page.Layout);
-                    message.AppendInteger(2);
-                    message.AppendString(page.LayoutHeadline);
-                    message.AppendString(page.LayoutTeaser);
-                    message.AppendInteger(4);
-                    message.AppendString(page.Text1);
-                    message.AppendString(page.Text2);
-                    message.AppendString(page.TextDetails);
-                    message.AppendString(page.TextTeaser);
-                    break;
-
-                case "soundmachine":
-                    message.AppendString("NORMAL");
-                    message.AppendString(page.Layout);
-                    message.AppendInteger(2);
-                    message.AppendString(page.LayoutHeadline);
-                    message.AppendString(page.LayoutTeaser);
-                    message.AppendInteger(2);
-                    message.AppendString(page.Text1);
-                    message.AppendString(page.TextDetails);
-                    break;
-
-                case "vip_buy":
-                    message.AppendString("NORMAL");
-                    message.AppendString(page.Layout);
-                    message.AppendInteger(2);
-                    message.AppendString(page.LayoutHeadline);
-                    message.AppendString(page.LayoutTeaser);
-                    message.AppendInteger(0);
-                    break;
-
-                case "guild_custom_furni":
-                    message.AppendString("NORMAL");
-                    message.AppendString("guild_custom_furni");
-                    message.AppendInteger(3);
-                    message.AppendString(page.LayoutHeadline);
-                    message.AppendString("");
-                    message.AppendString("");
-                    message.AppendInteger(3);
-                    message.AppendString(page.Text1);
-                    message.AppendString(page.TextDetails);
-                    message.AppendString(page.Text2);
-                    break;
-
-                case "guild_frontpage":
-                    message.AppendString("NORMAL");
-                    message.AppendString("guild_frontpage");
-                    message.AppendInteger(2);
-                    message.AppendString(page.LayoutHeadline);
-                    message.AppendString(page.LayoutTeaser);
-                    message.AppendInteger(3);
-                    message.AppendString(page.Text1);
-                    message.AppendString(page.TextDetails);
-                    message.AppendString(page.Text2);
-                    break;
-
-                case "guild_forum":
-                    message.AppendString("NORMAL");
-                    message.AppendString("guild_forum");
-                    message.AppendInteger(0);
-                    message.AppendInteger(2);
-                    message.AppendString(page.Text1);
-                    message.AppendString(page.Text2);
-                    break;
-
-                case "club_gifts":
-                    message.AppendString("NORMAL");
-                    message.AppendString("club_gifts");
-                    message.AppendInteger(1);
-                    message.AppendString(page.LayoutHeadline);
-                    message.AppendInteger(1);
-                    message.AppendString(page.Text1);
-                    break;
-
-                case "default_3x3":
-                    message.AppendString("NORMAL");
-                    message.AppendString(page.Layout);
-                    message.AppendInteger(3);
-                    message.AppendString(page.LayoutHeadline);
-                    message.AppendString(page.LayoutTeaser);
-                    message.AppendString(page.LayoutSpecial);
-                    message.AppendInteger(3);
-                    message.AppendString(page.Text1);
-                    message.AppendString(page.TextDetails);
-                    message.AppendString(page.TextTeaser);
-                    break;
-
-                default:
-                    message.AppendString("NORMAL");
-                    message.AppendString(page.Layout);
-                    message.AppendInteger(3);
-                    message.AppendString(page.LayoutHeadline);
-                    message.AppendString(page.LayoutTeaser);
-                    message.AppendString(page.LayoutSpecial);
-                    message.AppendInteger(4);
-                    message.AppendString(page.Text1);
-                    message.AppendString(page.Text2);
-                    message.AppendString(page.TextTeaser);
-                    message.AppendString(page.TextDetails);
-                    break;
-
-                case "builders_3x3":
-                    message.AppendString("BUILDERS_CLUB");
-                    message.AppendString("default_3x3");
-                    message.AppendInteger(3);
-                    message.AppendString(page.LayoutHeadline);
-                    message.AppendString(page.LayoutTeaser);
-                    message.AppendString(page.LayoutSpecial);
-                    message.AppendInteger(3);
-                    message.AppendString(page.Text1);
-                    message.AppendString(page.TextDetails.Replace("[10]", Convert.ToChar(10).ToString())
-                        .Replace("[13]", Convert.ToChar(13).ToString()));
-                    message.AppendString(page.TextTeaser.Replace("[10]", Convert.ToChar(10).ToString())
-                        .Replace("[13]", Convert.ToChar(13).ToString()));
-                    break;
-
-                case "builders_3x3_color":
-                    message.AppendString("BUILDERS_CLUB");
-                    message.AppendString("default_3x3_color_grouping");
-                    message.AppendInteger(3);
-                    message.AppendString(page.LayoutHeadline);
-                    message.AppendString(page.LayoutTeaser);
-                    message.AppendString(page.LayoutSpecial);
-                    message.AppendInteger(3);
-                    message.AppendString(page.Text1);
-                    message.AppendString(page.TextDetails.Replace("[10]", Convert.ToChar(10).ToString())
-                        .Replace("[13]", Convert.ToChar(13).ToString()));
-                    message.AppendString(page.TextTeaser.Replace("[10]", Convert.ToChar(10).ToString())
-                        .Replace("[13]", Convert.ToChar(13).ToString()));
-                    break;
-
-                case "builders_club_frontpage":
-                    message.AppendString("BUILDERS_CLUB");
-                    message.AppendString("builders_club_frontpage");
-                    message.AppendInteger(0);
-                    message.AppendInteger(1);
-                    message.AppendString(page.LayoutHeadline);
-                    message.AppendInteger(3);
-                    message.AppendInteger(8554);
-                    message.AppendString("builders_club_1_month");
-                    message.AppendString("");
-                    message.AppendInteger(2560000);
-                    message.AppendInteger(2560000);
-                    message.AppendInteger(1024);
-                    message.AppendInteger(0);
-                    message.AppendInteger(0);
-                    message.AppendBool(false);
-                    message.AppendInteger(8606);
-                    message.AppendString("builders_club_14_days");
-                    message.AppendString("");
-                    message.AppendInteger(2560000);
-                    message.AppendInteger(2560000);
-                    message.AppendInteger(1024);
-                    message.AppendInteger(0);
-                    message.AppendInteger(0);
-                    message.AppendBool(false);
-                    message.AppendInteger(8710);
-                    message.AppendString("builders_club_31_days");
-                    message.AppendString("");
-                    message.AppendInteger(2560000);
-                    message.AppendInteger(2560000);
-                    message.AppendInteger(1024);
-                    message.AppendInteger(0);
-                    message.AppendInteger(0);
-                    message.AppendBool(false);
-                    break;
-
-                case "builders_club_addons":
-                    message.AppendString("BUILDERS_CLUB");
-                    message.AppendString("builders_club_addons");
-                    message.AppendInteger(0);
-                    message.AppendInteger(1);
-                    message.AppendString(page.LayoutHeadline);
-                    break;
-
-                case "builders_club_addons_normal":
-                    message.AppendString("NORMAL");
-                    message.AppendString("builders_club_addons");
-                    message.AppendInteger(0);
-                    message.AppendInteger(1);
-                    message.AppendString(page.LayoutHeadline);
-                    break;
+                message.AppendString(str);
             }
-
-            if (page.Layout.StartsWith("frontpage") || page.Layout == "vip_buy" || page.Layout == "recycler")
+            message.AppendInteger(page.PageString2.Count);
+            foreach (var str in page.PageString2)
             {
-                message.AppendInteger(0);
+                message.AppendString(str);
+            }
+            if (!page.Layout.Equals("frontpage") && !page.Layout.Equals("frontpage") && !page.Layout.Equals("recycler"))
+            {
+                message.AppendInteger(page.Items.Count);
+                foreach (CatalogItem item in page.Items.Values)
+                    ComposeItem(item, message);
             }
             else
             {
-                message.AppendInteger(page.Items.Count);
-
-                foreach (CatalogItem item in page.Items.Values)
-                    ComposeItem(item, message);
+                message.AppendInteger(0);
             }
 
             message.AppendInteger(-1);
             message.AppendBool(false);
 
+            if (page.Layout.Equals("frontpage4"))
+            {
+                List<DataRow> list = Oblivion.GetGame().GetCatalog().IndexText;
+                message.AppendInteger(list.Count); // count
+                foreach (var Catalog in list)
+                {
+                    message.AppendInteger(1); // id
+                    message.AppendString(Convert.ToString(Catalog["title"])); // name
+                    message.AppendString(Convert.ToString(Catalog["image"])); // image
+                    message.AppendInteger(0);
+                    message.AppendString(Convert.ToString(Catalog["page_link"])); // page link?
+                    message.AppendInteger(Convert.ToInt32(Catalog["page_id"])); // page id?
+                }
+            }
             return message;
         }
 
@@ -604,6 +281,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                 message.AppendInteger(item.DucketsCost);
                 message.AppendInteger(0);
             }
+
             message.AppendBool(item.GetFirstBaseItem().AllowGift);
 
             switch (item.Name)
@@ -668,14 +346,15 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                     else if (item.SongId > 0u && baseItem.InteractionType == Interaction.MusicDisc)
                         message.AppendString(item.ExtraData);
                     else
-                        message.AppendString(string.Empty);
+                        message.AppendString(item.ExtraData ?? string.Empty);
 
                     message.AppendInteger(item.Items[baseItem]);
                     message.AppendBool(item.IsLimited);
-                    if (!item.IsLimited)
-                        continue;
-                    message.AppendInteger(item.LimitedStack);
-                    message.AppendInteger(item.LimitedStack - item.LimitedSelled);
+                    if (item.IsLimited)
+                    {
+                        message.AppendInteger(item.LimitedStack);
+                        message.AppendInteger(item.LimitedStack - item.LimitedSelled);
+                    }
                 }
             }
             message.AppendInteger(item.ClubOnly ? 1 : 0);
@@ -683,10 +362,14 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
             if (item.IsLimited || item.FirstAmount != 1)
             {
                 message.AppendBool(false);
-                return;
+            }
+            else
+            {
+                message.AppendBool(true);
             }
 
             message.AppendBool(item.HaveOffer && !item.IsLimited);
+            message.AppendString("");
         }
     }
 }

@@ -185,6 +185,11 @@ namespace Oblivion.Messages.Handlers
             SendResponse();
         }
 
+        internal void InitConsole()
+        {
+            Session.GetHabbo().InitMessenger();
+
+        }
         /// <summary>
         /// Machines the identifier.
         /// </summary>
@@ -290,7 +295,6 @@ namespace Oblivion.Messages.Handlers
             Response.AppendBool(true);
             SendResponse();
 
-            Session.GetHabbo().InitMessenger();
 
             GetResponse().Init(LibraryParser.OutgoingRequest("CitizenshipStatusMessageComposer"));
             GetResponse().AppendString("citizenship");
@@ -316,7 +320,6 @@ namespace Oblivion.Messages.Handlers
             /*Response.Init(LibraryParser.OutgoingRequest("NewbieStatusMessageComposer"));
             Response.AppendInteger(0);// 2 = new - 1 = nothing - 0 = not new
             SendResponse();*/
-            Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializePromotionCategories());
             if (Oblivion.GetGame().GetTargetedOfferManager().CurrentOffer != null)
             {
                 Oblivion.GetGame().GetTargetedOfferManager().GenerateMessage(GetResponse());

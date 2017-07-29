@@ -11,10 +11,6 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
     /// </summary>
     internal class CatalogPage
     {
-        /// <summary>
-        ///     The cached contents message
-        /// </summary>
-        internal ServerMessage CachedContentsMessage;
 
         /// <summary>
         ///     The caption
@@ -56,20 +52,6 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
         /// </summary>
         internal string Layout;
 
-        /// <summary>
-        ///     The layout headline
-        /// </summary>
-        internal string LayoutHeadline;
-
-        /// <summary>
-        ///     The layout special
-        /// </summary>
-        internal string LayoutSpecial;
-
-        /// <summary>
-        ///     The layout teaser
-        /// </summary>
-        internal string LayoutTeaser;
 
         /// <summary>
         ///     The minimum rank
@@ -81,46 +63,19 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
         /// </summary>
         internal int OrderNum;
 
-        /// <summary>
-        ///     The page link
-        /// </summary>
-        internal string PageLink;
-
-        /// <summary>
-        ///     The page link title
-        /// </summary>
-        internal string PageLinkTitle;
 
         /// <summary>
         ///     The parent identifier
         /// </summary>
-        internal short ParentId;
-
-        /// <summary>
-        ///     The text1
-        /// </summary>
-        internal string Text1;
-
-        /// <summary>
-        ///     The text2
-        /// </summary>
-        internal string Text2;
-
-        /// <summary>
-        ///     The text details
-        /// </summary>
-        internal string TextDetails;
-
-        /// <summary>
-        ///     The text teaser
-        /// </summary>
-        internal string TextTeaser;
+        internal int ParentId;
 
         /// <summary>
         ///     The visible
         /// </summary>
         internal bool Visible;
 
+        internal List<string> PageString1;
+        internal List<string> PageString2;
         /// <summary>
         ///     Initializes a new instance of the <see cref="CatalogPage" /> class.
         /// </summary>
@@ -145,10 +100,9 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
         /// <param name="pageLink">The page link.</param>
         /// <param name="orderNum">The order number.</param>
         /// <param name="cataItems">The cata items.</param>
-        internal CatalogPage(uint id, short parentId, string codeName, string caption, bool visible, bool enabled,
-            bool comingSoon, uint minRank, int iconImage, string layout, string layoutHeadline, string layoutTeaser,
-            string layoutSpecial, string text1, string text2, string textDetails, string textTeaser,
-            string pageLinkTitle, string pageLink, int orderNum, ref HybridDictionary cataItems)
+        internal CatalogPage(uint id, int parentId, string codeName, string caption, bool visible, bool enabled,
+            bool comingSoon, uint minRank, int iconImage, string layout, string strings1, string strings2,
+            int orderNum, ref HybridDictionary cataItems)
         {
             PageId = id;
             ParentId = parentId;
@@ -160,15 +114,8 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
             MinRank = minRank;
             IconImage = iconImage;
             Layout = layout;
-            LayoutHeadline = layoutHeadline;
-            LayoutTeaser = layoutTeaser;
-            LayoutSpecial = layoutSpecial;
-            Text1 = text1;
-            PageLinkTitle = pageLinkTitle;
-            PageLink = pageLink;
-            Text2 = text2;
-            TextDetails = textDetails;
-            TextTeaser = textTeaser;
+            PageString1 = strings1.Split('|').ToList();
+            PageString2 = strings2.Split('|').ToList();
             OrderNum = orderNum;
             if (layout.StartsWith("frontpage"))
                 OrderNum = -2;
@@ -185,7 +132,7 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
                     FlatOffers.Add(catalogItem.GetFirstBaseItem().FlatId, catalogItem.Id);
             }
 
-            CachedContentsMessage = CatalogPageComposer.ComposePage(this);
+//            CachedContentsMessage = CatalogPageComposer.ComposePage(this);
         }
 
         /// <summary>

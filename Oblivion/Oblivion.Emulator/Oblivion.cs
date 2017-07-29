@@ -53,8 +53,6 @@ namespace Oblivion
         ///     The is live
         /// </summary>
         internal static bool IsLive,
-            SeparatedTasksInGameClientManager,
-            SeparatedTasksInMainLoops,
             DebugMode,
             ConsoleTimerOn;
 
@@ -297,6 +295,7 @@ namespace Oblivion
                 ConsoleTimerOn = bool.Parse(ConfigurationData.Data["console.clear.enabled"]);
                 FriendRequestLimit = (uint) int.Parse(ConfigurationData.Data["client.maxrequests"]);
 
+
                 LibraryParser.Incoming = new Dictionary<int, LibraryParser.StaticRequestHandler>();
                 LibraryParser.Library = new Dictionary<string, string>();
                 LibraryParser.Outgoing = new Dictionary<string, int>();
@@ -306,6 +305,7 @@ namespace Oblivion
                 LibraryParser.RegisterOutgoing();
                 LibraryParser.RegisterIncoming();
                 LibraryParser.RegisterConfig();
+
 
                 Plugins = new Dictionary<string, IPlugin>();
 
@@ -336,7 +336,8 @@ namespace Oblivion
                         itemTwo?.message_void();
 
                 if (ConsoleTimerOn)
-                    Out.WriteLine("Console Clear Timer is Enabled, with " + ConsoleTimer + " Seconds.", "Oblivion.Boot");
+                    Out.WriteLine("Console Clear Timer is Enabled, with " + ConsoleTimer + " Seconds.",
+                        "Oblivion.Boot");
 
                 ClientMessageFactory.Init();
 
@@ -377,13 +378,6 @@ namespace Oblivion
                 if (ConfigurationData.Data.ContainsKey("StaffAlert.MinRank"))
                     StaffAlertMinRank = uint.Parse(ConfigurationData.Data["StaffAlert.MinRank"]);
 
-                if (ConfigurationData.Data.ContainsKey("SeparatedTasksInMainLoops.enabled") &&
-                    ConfigurationData.Data["SeparatedTasksInMainLoops.enabled"] == "true")
-                    SeparatedTasksInMainLoops = true;
-
-                if (ConfigurationData.Data.ContainsKey("SeparatedTasksInGameClientManager.enabled") &&
-                    ConfigurationData.Data["SeparatedTasksInGameClientManager.enabled"] == "true")
-                    SeparatedTasksInGameClientManager = true;
 
                 if (ConfigurationData.Data.ContainsKey("Debug"))
                     if (ConfigurationData.Data["Debug"] == "true")
@@ -405,6 +399,7 @@ namespace Oblivion
                 if (key.Key == ConsoleKey.Y)
                 {
                     Console.WriteLine();
+                    Out.WriteLine(e.ToString());
                     Out.WriteLine(
                         Environment.NewLine + "[Message] Error Details: " + Environment.NewLine + e.StackTrace +
                         Environment.NewLine + e.InnerException + Environment.NewLine + e.TargetSite +

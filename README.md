@@ -1,9 +1,9 @@
-# Azure Emulator
-
-Coming soon here would have another name.
+# Oblivion Emulator - Based in Azure/Yupi
 
 ### Habbo Release
-PRODUCTION-201506161211-776084490
+PRODUCTION-201607262204-86871104
+
+I'll add a better description soon x)
 
 
-# Would you like to continue/maintain this emulator? Just tell me :)
+Thanks to Claudio Santoro, Kessiler, XDR, Droppy and Dark!

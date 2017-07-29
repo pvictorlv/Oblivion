@@ -4,6 +4,7 @@ using Oblivion.HabboHotel.Navigators.Interfaces;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.Messages.Parsers;
+using Oblivion.Util;
 
 namespace Oblivion.Messages.Handlers
 {
@@ -15,11 +16,15 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Gets the flat cats.
         /// </summary>
-        internal void GetFlatCats()
+        internal void GetFlatCats() //GetEventCategoriesMessageEvent
         {
-            if (Session.GetHabbo() == null)
+            if (Session?.GetHabbo() == null)
+            {
+                Out.WriteLine("Session nulled.");
                 return;
-            Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializeFlatCategories(Session));
+            }
+            Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializePromotionCategories());
+//            Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializeFlatCategories(Session));
         }
 
         /// <summary>
@@ -294,7 +299,7 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session.GetHabbo() == null)
                 return;
-            Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializeNewFlatCategories());
+            Oblivion.GetGame().GetNavigator().SerializeFlatCategories(Session);
         }
 
         /// <summary>
