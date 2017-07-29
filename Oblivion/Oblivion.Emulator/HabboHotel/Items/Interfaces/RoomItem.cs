@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Oblivion.Configuration;
+using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Datas;
 using Oblivion.HabboHotel.Items.Handlers;
 using Oblivion.HabboHotel.Items.Interactions;
@@ -99,7 +100,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <summary>
         ///     The interacting ball user
         /// </summary>
-        internal uint InteractingBallUser;
+        internal GameClient InteractingBallUser;
 
         /// <summary>
         ///     The interacting user
@@ -242,7 +243,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             InteractingUser = 0u;
             InteractingUser2 = 0u;
             IsTrans = false;
-            InteractingBallUser = 0u;
+            InteractingBallUser = null;
             InteractionCount = 0;
             Value = 0;
             UserId = userid;
@@ -404,7 +405,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             InteractingUser = 0u;
             InteractingUser2 = 0u;
             IsTrans = false;
-            InteractingBallUser = 0u;
+            InteractingBallUser = null;
             InteractionCount = 0;
             Value = 0;
             WallCoord = wallCoord;

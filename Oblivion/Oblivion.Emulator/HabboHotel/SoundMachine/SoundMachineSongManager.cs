@@ -17,11 +17,6 @@ namespace Oblivion.HabboHotel.SoundMachine
         internal static Dictionary<uint, SongData> Songs;
 
         /// <summary>
-        ///     The _cache timer
-        /// </summary>
-        private static Dictionary<uint, double> _cacheTimer;
-
-        /// <summary>
         ///     Gets the song identifier.
         /// </summary>
         /// <param name="codeName">Name of the code.</param>
@@ -55,7 +50,6 @@ namespace Oblivion.HabboHotel.SoundMachine
         internal static void Initialize()
         {
             Songs = new Dictionary<uint, SongData>();
-            _cacheTimer = new Dictionary<uint, double>();
 
             Songs.Clear();
 
@@ -69,21 +63,6 @@ namespace Oblivion.HabboHotel.SoundMachine
             }
         }
 
-        /// <summary>
-        ///     Processes the thread.
-        /// </summary>
-        internal static void ProcessThread()
-        {
-            double num = Oblivion.GetUnixTimeStamp();
-
-            var list = (from current in _cacheTimer where num - current.Value >= 180.0 select current.Key).ToList();
-
-            foreach (var current2 in list)
-            {
-                Songs.Remove(current2);
-                _cacheTimer.Remove(current2);
-            }
-        }
 
         /// <summary>
         ///     Gets the song from data row.

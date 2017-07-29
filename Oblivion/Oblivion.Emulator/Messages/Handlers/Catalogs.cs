@@ -6,6 +6,7 @@ using Oblivion.HabboHotel.Catalogs.Wrappers;
 using Oblivion.HabboHotel.Groups.Interfaces;
 using Oblivion.Messages.Enums;
 using Oblivion.Messages.Parsers;
+using Oblivion.Util;
 
 namespace Oblivion.Messages.Handlers
 {
@@ -17,15 +18,26 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Catalogues the index.
         /// </summary>
+        public void CatalogueMode()
+        {
+            var rank = Session.GetHabbo().Rank;
+
+            if (rank < 1)
+                rank = 1;
+            Session.SendMessage(CatalogPageComposer.ComposeIndex(rank, Request.GetString().ToUpper(), Session));
+            Session.SendMessage(StaticMessage.CatalogOffersConfiguration);
+        }
+        /// <summary>
+        /// Catalogues the index.
+        /// </summary>
         public void CatalogueIndex()
         {
             var rank = Session.GetHabbo().Rank;
 
             if (rank < 1)
                 rank = 1;
-
+            Session.SendMessage(CatalogPageComposer.ComposeIndex(rank, "NORMAL", Session));
             Session.SendMessage(StaticMessage.CatalogOffersConfiguration);
-            Session.SendMessage(CatalogPageComposer.ComposeIndex(rank, Request.GetString().ToUpper()));
         }
 
         /// <summary>
@@ -41,7 +53,7 @@ namespace Oblivion.Messages.Handlers
 
             var cPage = Oblivion.GetGame().GetCatalog().GetPage(pageId);
 
-            if (cPage == null || !cPage.Enabled || !cPage.Visible || cPage.MinRank > Session.GetHabbo().Rank)
+            if (cPage == null || !cPage.Visible || cPage.MinRank > Session.GetHabbo().Rank)
                 return;
 
             var message = CatalogPageComposer.ComposePage(cPage, CataMode);

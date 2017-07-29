@@ -30,7 +30,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     {
                         request.GetInteger();
                         var wired = wiredHandler.GetWired(item);
-                        var delay = request.GetInteger() * 500;
+                        var delay = (request.GetInteger() / 2) * 500;
                         wired.Delay = delay;
                         wiredHandler.ReloadWired(wired);
                         break;
@@ -58,7 +58,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 case Interaction.TriggerRepeater:
                     {
                         request.GetInteger();
-                        var delay = request.GetInteger() * 500;
+                        var delay = request.GetInteger() /2 * 500;
                         var wired2 = wiredHandler.GetWired(item);
                         wired2.Delay = delay;
                         wiredHandler.ReloadWired(wired2);

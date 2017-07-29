@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
 using System.Linq;
+using Oblivion.Collections;
 using Oblivion.Configuration;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Events;
@@ -100,6 +101,8 @@ namespace Oblivion.HabboHotel.Rooms
             _activeRoomsUpdateQueue = new Queue();
             _activeRoomsAddQueue = new Queue();
             _eventManager = new EventManager();
+            LoadedBallRooms = new ConcurrentList<Room>();
+
         }
 
         /// <summary>
@@ -394,12 +397,40 @@ namespace Oblivion.HabboHotel.Rooms
                 _roomModels.Add(modelId, modelData);
             }
         }
+        public ConcurrentList<Room> LoadedBallRooms;
+        private DateTime _cycleBallLastExecution;
+
 
         /// <summary>
         ///     Called when [cycle].
         /// </summary>
         internal void OnCycle()
         {
+            if (LoadedBallRooms.Count > 0)
+            {
+                var sinceBallLastTime = DateTime.Now - _cycleBallLastExecution;
+                if (sinceBallLastTime.TotalMilliseconds >= 180)
+                {
+                    _cycleBallLastExecution = DateTime.Now;
+                    foreach (var Room in LoadedBallRooms.ToList())
+                    {
+                        if (Room == null)
+                            return;
+                        try
+                        {
+                            if (Room.GotSoccer())
+                                Room.GetSoccer().OnCycle();
+                        }
+                        catch (Exception e)
+                        {
+                            Logging.LogCriticalException("INVALID MARIO BUG IN BALLMOVEMENT: <" + Room.RoomData.Id +
+                                                         "> :" +
+                                                         e);
+                        }
+                    }
+                }
+            }
+
             try
             {
                 var flag = WorkActiveRoomsAddQueue();

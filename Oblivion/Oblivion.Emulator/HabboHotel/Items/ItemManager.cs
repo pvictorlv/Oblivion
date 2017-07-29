@@ -78,6 +78,7 @@ namespace Oblivion.HabboHotel.Items
                     var name = Convert.ToString(dataRow["item_name"]);
                     var flatId = Convert.ToInt32(dataRow["flat_id"]);
                     var stackHeightStr = dataRow["stack_height"].ToString();
+                    var heightAdjustable = dataRow["height_adjustable"].ToString();
                     double stackHeight;
                     uint modes;
                     uint.TryParse(dataRow["interaction_modes_count"].ToString(), out modes);
@@ -107,9 +108,9 @@ namespace Oblivion.HabboHotel.Items
                     else if (name.StartsWith("present_wrap*"))
                         GiftWrapper.Add(sprite);
 
-                    if (stackHeightStr.Contains(';'))
+                    if (heightAdjustable.Contains(','))
                     {
-                        var heightsStr = stackHeightStr.Split(';');
+                        var heightsStr = heightAdjustable.Split(',');
 
                         heights = heightsStr.Select(heightStr => double.Parse(heightStr, CultureInfo.InvariantCulture))
                             .ToList();

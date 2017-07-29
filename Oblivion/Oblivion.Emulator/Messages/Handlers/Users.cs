@@ -1118,7 +1118,8 @@ namespace Oblivion.Messages.Handlers
 
                 foreach (var current2 in talents2)
                 {
-                    var num = (failLevel != -1 && failLevel < current2.Level) ? 0 : (Session.GetHabbo().GetAchievementData(current2.AchievementGroup) == null) ? 1 : (Session.GetHabbo().GetAchievementData(current2.AchievementGroup).Value.Level >= current2.AchievementLevel) ? 2 : 1;
+                    var userAchievement = Session.GetHabbo().GetAchievementData(current2.AchievementGroup);
+                    var num = (failLevel != -1 && failLevel < current2.Level) ? 0 : (Session.GetHabbo().GetAchievementData(current2.AchievementGroup) == null) ? 1 : userAchievement != null && userAchievement.Value.Level >= current2.AchievementLevel ? 2 : 1;
                     Response.AppendInteger(current2.GetAchievement().Id);
                     Response.AppendInteger(0);
                     Response.AppendString($"{current2.AchievementGroup}{current2.AchievementLevel}");

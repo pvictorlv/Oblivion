@@ -41,7 +41,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             _cycles++;
 
-            if (_cycles <= (Delay / 500))
+            if (_cycles <= Delay / 500)
                 return true;
 
             _cycles = 0;
@@ -60,7 +60,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public string OtherString
         {
-            get { return $"{_dir};{_rot}"; }
+            get => $"{_dir};{_rot}";
             set
             {
                 var array = value.Split(';');

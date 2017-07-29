@@ -56,10 +56,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
             if (effects.Any())
             {
-                foreach (var current2 in effects)
+                foreach (var current2 in effects.Where(current2 => current2.Execute(null, Type)))
                 {
-                    if (current2.Execute(null, Type))
-                        WiredHandler.OnEvent(current2);
+                    WiredHandler.OnEvent(current2);
                 }
             }
 

@@ -2469,6 +2469,15 @@ namespace Oblivion.Messages.Parsers
         }
 
         /// <summary>
+        /// Catalogues the index.
+        /// </summary>
+        /// <param name="handler">The handler.</param>
+        internal static void GetCatalogMode(GameClientMessageHandler handler)
+        {
+            handler.CatalogueMode();
+        }
+
+        /// <summary>
         /// Catalogues the page.
         /// </summary>
         /// <param name="handler">The handler.</param>

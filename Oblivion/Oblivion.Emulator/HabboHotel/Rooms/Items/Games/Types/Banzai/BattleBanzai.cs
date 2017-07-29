@@ -82,9 +82,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                 var newX = (differenceX*-1) + roomItem.X;
                 var newY = (differenceY*-1) + roomItem.Y;
 
-                if (roomItem.InteractingBallUser == user.UserId && _room.GetGameMap().ValidTile(newX, newY))
+                if (roomItem.InteractingBallUser == user.GetClient() && _room.GetGameMap().ValidTile(newX, newY))
                 {
-                    roomItem.InteractingBallUser = 0;
+                    roomItem.InteractingBallUser = null;
                     MovePuck(roomItem, user.GetClient(), user.Coordinate, roomItem.Coordinate, 6, user.Team);
                 }
                 else if (_room.GetGameMap().ValidTile(newX, newY))

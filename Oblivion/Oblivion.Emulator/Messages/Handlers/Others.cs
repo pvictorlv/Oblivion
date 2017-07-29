@@ -453,12 +453,12 @@ namespace Oblivion.Messages.Handlers
                         .Where(room => room != null && room.UsersNow > 0).ToList();
                     if (!rooms.Any())
                         return;
-                    if (rooms.Count() == 1)
+                    if (rooms.Count == 1)
                     {
                         roomId = rooms.First().Id;
                         break;
                     }
-                    roomId = rooms[Oblivion.GetRandomNumber(0, rooms.Count())].Id;
+                    roomId = rooms[Oblivion.GetRandomNumber(0, rooms.Count)].Id;
                     break;
             }
 

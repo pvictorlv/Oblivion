@@ -777,7 +777,9 @@ namespace Oblivion.HabboHotel.Rooms.User
                         case Interaction.Bed:
                         {
                             if (!user.Statusses.ContainsKey("lay"))
+                            {
                                 user.Statusses.Add("lay", TextHandling.GetString(item.GetBaseItem().Height));
+                            }
                             else
                             {
                                 if (user.Statusses["lay"] != TextHandling.GetString(item.GetBaseItem().Height))

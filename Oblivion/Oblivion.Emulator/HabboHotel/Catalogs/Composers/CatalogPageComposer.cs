@@ -21,10 +21,11 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
         /// </summary>
         /// <param name="rank">The rank.</param>
         /// <param name="type">The type.</param>
+        /// <param name="session">The user.</param>
         /// <returns>ServerMessage.</returns>
-        internal static ServerMessage ComposeIndex(uint rank, string type)
+        internal static ServerMessage ComposeIndex(uint rank, string type, GameClient session)
         {
-            IEnumerable<CatalogPage> pages =
+            var pages =
                 Oblivion.GetGame().GetCatalog().Categories.Values.OfType<CatalogPage>().ToList();
 
             var sortedPages = pages.Where(x => x.ParentId == -2 && x.MinRank <= rank).OrderBy(x => x.OrderNum);
@@ -40,7 +41,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
             message.AppendString("root");
             message.AppendString(string.Empty);
             message.AppendInteger(0);
-            message.AppendInteger(sortedPages.Count());
+            message.AppendInteger(CalcTreeSize(session, pages, -1));
 
             foreach (var cat in sortedPages)
             {
@@ -53,26 +54,41 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
 
                 foreach (var i in cat.FlatOffers.Keys)
                     message.AppendInteger(i);
+                message.AppendInteger(CalcTreeSize(session, pages, (int) cat.PageId));
+
 
                 var sortedSubPages =
                     pages.Where(x => x.ParentId == cat.PageId && x.MinRank <= rank).OrderBy(x => x.OrderNum);
 
-                message.AppendInteger(sortedSubPages.Count());
-
-                foreach (var subCat in sortedSubPages)
+                foreach (var child in sortedSubPages)
                 {
-                    message.AppendBool(subCat.Visible);
-                    message.AppendInteger(subCat.IconImage);
-                    message.AppendInteger(subCat.PageId);
-                    message.AppendString(subCat.CodeName);
-                    message.AppendString(subCat.Caption);
-                    message.AppendInteger(subCat.FlatOffers.Count);
+                    message.AppendBool(child.Visible);
+                    message.AppendInteger(child.IconImage);
+                    message.AppendInteger(child.PageId);
+                    message.AppendString(child.CodeName);
+                    message.AppendString(child.Caption);
+                    message.AppendInteger(child.FlatOffers.Count);
 
-                    foreach (var i2 in subCat.FlatOffers.Keys)
+                    foreach (var i2 in child.FlatOffers.Keys)
                         message.AppendInteger(i2);
 
-                    message.AppendInteger(0);
+                    message.AppendInteger(CalcTreeSize(session, pages, (int) child.PageId));
+                    foreach (var subCat in pages.Where(baby => baby.ParentId == child.PageId && baby.MinRank <= rank))
+                    {
+                        message.AppendBool(subCat.Visible);
+                        message.AppendInteger(subCat.IconImage);
+                        message.AppendInteger(subCat.PageId);
+                        message.AppendString(subCat.CodeName);
+                        message.AppendString(subCat.Caption);
+                        message.AppendInteger(subCat.FlatOffers.Count);
+
+                        foreach (var i2 in subCat.FlatOffers.Keys)
+                            message.AppendInteger(i2);
+
+                        message.AppendInteger(0);
+                    }
                 }
+
             }
 
             message.AppendBool(false);
@@ -80,6 +96,11 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
 
             return message;
         }
+
+        private static int CalcTreeSize(GameClient Session, IEnumerable<CatalogPage> Pages, int ParentId)
+            =>
+                Pages.Where(Page => Page.MinRank <= Session.GetHabbo().Rank && Page.ParentId == ParentId)
+                    .Count(Page => Page.ParentId == ParentId);
 
         /// <summary>
         ///     Composes the page.
@@ -202,12 +223,9 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
         }
 
         internal static ServerMessage PurchaseOk(CatalogItem itemCatalog, Dictionary<Item, uint> items,
-            int clubLevel = 1)
-        {
-            return PurchaseOk(itemCatalog.Id, itemCatalog.Name, itemCatalog.CreditsCost, items, clubLevel,
-                itemCatalog.DiamondsCost,
-                itemCatalog.DucketsCost, itemCatalog.IsLimited, itemCatalog.LimitedStack, itemCatalog.LimitedSelled);
-        }
+            int clubLevel = 1) => PurchaseOk(itemCatalog.Id, itemCatalog.Name, itemCatalog.CreditsCost, items, clubLevel,
+            itemCatalog.DiamondsCost,
+            itemCatalog.DucketsCost, itemCatalog.IsLimited, itemCatalog.LimitedStack, itemCatalog.LimitedSelled);
 
         /// <summary>
         ///     Purchases the ok.

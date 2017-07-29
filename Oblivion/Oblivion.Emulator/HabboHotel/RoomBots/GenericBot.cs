@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using Oblivion.HabboHotel.GameClients.Interfaces;
-using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.User;
 using Oblivion.HabboHotel.Rooms.User.Path;
 
@@ -64,10 +63,7 @@ namespace Oblivion.HabboHotel.RoomBots
             _isBartender = isBartender;
             _speechInterval = speechInterval < 2 ? 2000 : speechInterval*1000;
 
-            // Get random speach
-            // @issue #80
-            //if (roomBot != null && roomBot.RandomSpeech != null && roomBot.RandomSpeech.Any()) _chatTimer = new Timer(ChatTimerTick, null, _speechInterval, _speechInterval);
-            if (roomBot != null && roomBot.AutomaticChat && roomBot.RandomSpeech != null && roomBot.RandomSpeech.Any())
+             if (roomBot != null && roomBot.AutomaticChat && roomBot.RandomSpeech != null && roomBot.RandomSpeech.Any())
                 _chatTimer = new Timer(ChatTimerTick, null, _speechInterval, _speechInterval);
             _actionCount = Random.Next(10, 30 + virtualId);
         }
@@ -368,10 +364,6 @@ namespace Oblivion.HabboHotel.RoomBots
                 case "mi amor":
                     GetRoomUser()
                         .Chat(null, "Eu sou um bot, err ... isto está a ficar desconfortável, você sabe?", false, 0);
-                    return;
-
-                case "tyrex":
-                    GetRoomUser().Chat(null, "Por favor, me chame de Deus Tyrex!", true, 0);
                     return;
             }
             GetRoomUser().Chat(null, "Precisa de Algo?", false, 0);

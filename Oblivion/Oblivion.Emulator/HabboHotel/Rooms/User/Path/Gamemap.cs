@@ -1574,7 +1574,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     break;
 
                 case Interaction.Football:
-                    _room.GetSoccer().RemoveBall(item.Id);
+                    _room.GetSoccer().RemoveBall(item);
                     break;
             }
         }

@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Data;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Catalogs.Composers;
 using Oblivion.HabboHotel.Catalogs.Interfaces;
@@ -66,10 +67,7 @@ namespace Oblivion.HabboHotel.Catalogs
         /// </summary>
         /// <param name="petName">Name of the pet.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal static bool CheckPetName(string petName)
-        {
-            return petName.Length >= 3 && petName.Length <= 15 && Oblivion.IsValidAlphaNumeric(petName);
-        }
+        internal static bool CheckPetName(string petName) => petName.Length >= 3 && petName.Length <= 15 && Oblivion.IsValidAlphaNumeric(petName);
 
         /// <summary>
         ///     Creates the bot.
@@ -218,6 +216,7 @@ namespace Oblivion.HabboHotel.Catalogs
         }
 
         public List<DataRow> IndexText;
+
         /// <summary>
         ///     Initializes the specified database client.
         /// </summary>
@@ -350,20 +349,14 @@ namespace Oblivion.HabboHotel.Catalogs
         /// </summary>
         /// <param name="itemId">The item identifier.</param>
         /// <returns>CatalogItem.</returns>
-        internal CatalogItem GetItem(uint itemId)
-        {
-            return Offers.Contains(itemId) ? (CatalogItem) Offers[itemId] : null;
-        }
+        internal CatalogItem GetItem(uint itemId) => Offers.Contains(itemId) ? (CatalogItem) Offers[itemId] : null;
 
         /// <summary>
         ///     Gets the page.
         /// </summary>
         /// <param name="page">The page.</param>
         /// <returns>CatalogPage.</returns>
-        internal CatalogPage GetPage(int page)
-        {
-            return !Categories.Contains(page) ? null : (CatalogPage) Categories[page];
-        }
+        internal CatalogPage GetPage(int page) => !Categories.Contains(page) ? null : (CatalogPage) Categories[page];
 
         /// <summary>
         ///     Handles the purchase.
@@ -771,7 +764,7 @@ namespace Oblivion.HabboHotel.Catalogs
                             extraData = "UMAD";
 
                         extraData =
-                            $"{extraData}|{session.GetHabbo().UserName}|{DateTime.Now.Day.ToString("00")}-{DateTime.Now.Month.ToString("00")}-{DateTime.Now.Year}";
+                            $"{extraData}|{session.GetHabbo().UserName}|{DateTime.Now.Day:00}-{DateTime.Now.Month:00}-{DateTime.Now.Year}";
                         break;
 
                     case Interaction.FootballGate:
@@ -942,192 +935,196 @@ namespace Oblivion.HabboHotel.Catalogs
             if (a == 'i' || a == 's')
             {
                 var i = 0;
-
-                while (i < amount)
+                Task.Factory.StartNew(() =>
                 {
-                    var interactionType = item.InteractionType;
-
-                    switch (interactionType)
+                    while (i < amount)
                     {
-                        case Interaction.Dimmer:
-                            var userItem33 = session.GetHabbo().GetInventoryComponent()
-                                .AddNewItem(0u, item.ItemId, extraData, 0u, true, false, 0, 0);
-                            var id33 = userItem33.Id;
+                        var interactionType = item.InteractionType;
 
-                            list.Add(userItem33);
+                        switch (interactionType)
+                        {
+                            case Interaction.Dimmer:
+                                var userItem33 = session.GetHabbo().GetInventoryComponent()
+                                    .AddNewItem(0u, item.ItemId, extraData, 0u, true, false, 0, 0);
+                                var id33 = userItem33.Id;
 
-                            using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                                queryreactor2.RunFastQuery(
-                                    $"INSERT INTO items_moodlight (item_id,enabled,current_preset,preset_one,preset_two,preset_three) VALUES ({id33},'0',1,'#000000,255,0','#000000,255,0','#000000,255,0')");
+                                list.Add(userItem33);
 
-                            break;
+                                using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+                                    queryreactor2.RunFastQuery(
+                                        $"INSERT INTO items_moodlight (item_id,enabled,current_preset,preset_one,preset_two,preset_three) VALUES ({id33},'0',1,'#000000,255,0','#000000,255,0','#000000,255,0')");
 
-                        case Interaction.Trophy:
-                        case Interaction.Bed:
-                        case Interaction.PressurePadBed:
-                        case Interaction.Guillotine:
-                        case Interaction.ScoreBoard:
-                        case Interaction.VendingMachine:
-                        case Interaction.Alert:
-                        case Interaction.OneWayGate:
-                        case Interaction.LoveShuffler:
-                        case Interaction.HabboWheel:
-                        case Interaction.Dice:
-                        case Interaction.Bottle:
-                        case Interaction.Hopper:
-                        case Interaction.Rentals:
-                        case Interaction.Pet:
-                        case Interaction.Pool:
-                        case Interaction.Roller:
-                        case Interaction.FootballGate:
-                            list.Add(session.GetHabbo().GetInventoryComponent()
-                                .AddNewItem(0u, item.ItemId, extraData, 0u, true, false, limno, limtot));
-                            break;
+                                break;
 
-                        case Interaction.Teleport:
-                        case Interaction.QuickTeleport:
-                            var userItem = session.GetHabbo().GetInventoryComponent()
-                                .AddNewItem(0u, item.ItemId, "0", 0u, true, false, 0, 0);
-                            var id = userItem.Id;
-                            var userItem2 = session.GetHabbo().GetInventoryComponent()
-                                .AddNewItem(0u, item.ItemId, "0", 0u, true, false, 0, 0);
-                            var id2 = userItem2.Id;
+                            case Interaction.Trophy:
+                            case Interaction.Bed:
+                            case Interaction.PressurePadBed:
+                            case Interaction.Guillotine:
+                            case Interaction.ScoreBoard:
+                            case Interaction.VendingMachine:
+                            case Interaction.Alert:
+                            case Interaction.OneWayGate:
+                            case Interaction.LoveShuffler:
+                            case Interaction.HabboWheel:
+                            case Interaction.Dice:
+                            case Interaction.Bottle:
+                            case Interaction.Hopper:
+                            case Interaction.Rentals:
+                            case Interaction.Pet:
+                            case Interaction.Pool:
+                            case Interaction.Roller:
+                            case Interaction.FootballGate:
+                                list.Add(session.GetHabbo().GetInventoryComponent()
+                                    .AddNewItem(0u, item.ItemId, extraData, 0u, true, false, limno, limtot));
+                                break;
 
-                            list.Add(userItem);
-                            list.Add(userItem2);
+                            case Interaction.Teleport:
+                            case Interaction.QuickTeleport:
+                                var userItem = session.GetHabbo().GetInventoryComponent()
+                                    .AddNewItem(0u, item.ItemId, "0", 0u, true, false, 0, 0);
+                                var id = userItem.Id;
+                                var userItem2 = session.GetHabbo().GetInventoryComponent()
+                                    .AddNewItem(0u, item.ItemId, "0", 0u, true, false, 0, 0);
+                                var id2 = userItem2.Id;
 
-                            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                                queryReactor.RunFastQuery(
-                                    $"INSERT INTO items_teleports (tele_one_id,tele_two_id) VALUES ('{id}','{id2}');" +
-                                    $"INSERT INTO items_teleports (tele_one_id,tele_two_id) VALUES ('{id2}','{id}')");
+                                list.Add(userItem);
+                                list.Add(userItem2);
 
-                            break;
+                                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                                    queryReactor.RunFastQuery(
+                                        $"INSERT INTO items_teleports (tele_one_id,tele_two_id) VALUES ('{id}','{id2}');" +
+                                        $"INSERT INTO items_teleports (tele_one_id,tele_two_id) VALUES ('{id2}','{id}')");
 
-                        case Interaction.PetDog:
-                        case Interaction.PetCat:
-                        case Interaction.PetCrocodile:
-                        case Interaction.PetTerrier:
-                        case Interaction.PetBear:
-                        case Interaction.PetPig:
-                        case Interaction.PetLion:
-                        case Interaction.PetRhino:
-                        case Interaction.PetSpider:
-                        case Interaction.PetTurtle:
-                        case Interaction.PetChick:
-                        case Interaction.PetFrog:
-                        case Interaction.PetDragon:
-                        case Interaction.PetHorse:
-                        case Interaction.PetMonkey:
-                        case Interaction.PetGnomo:
-                        case Interaction.PetMonsterPlant:
-                        case Interaction.PetWhiteRabbit:
-                        case Interaction.PetEvilRabbit:
-                        case Interaction.PetLoveRabbit:
-                        case Interaction.PetPigeon:
-                        case Interaction.PetEvilPigeon:
-                        case Interaction.PetDemonMonkey:
-                        case Interaction.Pet24:
-                        case Interaction.Pet25:
-                        case Interaction.Pet26:
-                        case Interaction.Pet27:
-                        case Interaction.Pet28:
-                        case Interaction.Pet29:
-                        case Interaction.Pet30:
-                        case Interaction.Pet31:
-                        case Interaction.Pet32:
-                        case Interaction.Pet33:
-                        case Interaction.Pet34:
-                            var petData = extraData.Split('\n');
-                            var petId = int.Parse(item.Name.Replace("a0 pet", string.Empty));
-                            var generatedPet = CreatePet(session.GetHabbo().Id, petData[0], petId, petData[1],
-                                petData[2]);
+                                break;
 
-                            session.GetHabbo().GetInventoryComponent().AddPet(generatedPet);
+                            case Interaction.PetDog:
+                            case Interaction.PetCat:
+                            case Interaction.PetCrocodile:
+                            case Interaction.PetTerrier:
+                            case Interaction.PetBear:
+                            case Interaction.PetPig:
+                            case Interaction.PetLion:
+                            case Interaction.PetRhino:
+                            case Interaction.PetSpider:
+                            case Interaction.PetTurtle:
+                            case Interaction.PetChick:
+                            case Interaction.PetFrog:
+                            case Interaction.PetDragon:
+                            case Interaction.PetHorse:
+                            case Interaction.PetMonkey:
+                            case Interaction.PetGnomo:
+                            case Interaction.PetMonsterPlant:
+                            case Interaction.PetWhiteRabbit:
+                            case Interaction.PetEvilRabbit:
+                            case Interaction.PetLoveRabbit:
+                            case Interaction.PetPigeon:
+                            case Interaction.PetEvilPigeon:
+                            case Interaction.PetDemonMonkey:
+                            case Interaction.Pet24:
+                            case Interaction.Pet25:
+                            case Interaction.Pet26:
+                            case Interaction.Pet27:
+                            case Interaction.Pet28:
+                            case Interaction.Pet29:
+                            case Interaction.Pet30:
+                            case Interaction.Pet31:
+                            case Interaction.Pet32:
+                            case Interaction.Pet33:
+                            case Interaction.Pet34:
+                                var petData = extraData.Split('\n');
+                                var petId = int.Parse(item.Name.Replace("a0 pet", string.Empty));
+                                var generatedPet = CreatePet(session.GetHabbo().Id, petData[0], petId, petData[1],
+                                    petData[2]);
 
-                            list.Add(session.GetHabbo().GetInventoryComponent()
-                                .AddNewItem(0, 1534, "0", 0u, true, false, 0, 0, string.Empty));
-                            break;
+                                session.GetHabbo().GetInventoryComponent().AddPet(generatedPet);
 
-                        case Interaction.MusicDisc:
-                            list.Add(session.GetHabbo().GetInventoryComponent()
-                                .AddNewItem(0u, item.ItemId, extraData, 0u, true, false, 0, 0, songCode));
-                            break;
+                                list.Add(session.GetHabbo().GetInventoryComponent()
+                                    .AddNewItem(0, 1534, "0", 0u, true, false, 0, 0, string.Empty));
+                                break;
 
-                        case Interaction.PuzzleBox:
-                            list.Add(session.GetHabbo().GetInventoryComponent()
-                                .AddNewItem(0u, item.ItemId, extraData, 0u, true, false, limno, limtot));
-                            break;
+                            case Interaction.MusicDisc:
+                                list.Add(session.GetHabbo().GetInventoryComponent()
+                                    .AddNewItem(0u, item.ItemId, extraData, 0u, true, false, 0, 0, songCode));
+                                break;
 
-                        case Interaction.RoomBg:
-                            var userItem44 = session.GetHabbo().GetInventoryComponent()
-                                .AddNewItem(0u, item.ItemId, extraData, 0u, true, false, 0, 0, string.Empty);
-                            var id44 = userItem44.Id;
+                            case Interaction.PuzzleBox:
+                                list.Add(session.GetHabbo().GetInventoryComponent()
+                                    .AddNewItem(0u, item.ItemId, extraData, 0u, true, false, limno, limtot));
+                                break;
 
-                            list.Add(userItem44);
+                            case Interaction.RoomBg:
+                                var userItem44 = session.GetHabbo().GetInventoryComponent()
+                                    .AddNewItem(0u, item.ItemId, extraData, 0u, true, false, 0, 0, string.Empty);
+                                var id44 = userItem44.Id;
 
-                            using (var queryreactor3 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                                queryreactor3.RunFastQuery($"INSERT INTO items_toners VALUES ({id44},'0',0,0,0)");
+                                list.Add(userItem44);
 
-                            break;
+                                using (var queryreactor3 = Oblivion.GetDatabaseManager().GetQueryReactor())
+                                    queryreactor3.RunFastQuery($"INSERT INTO items_toners VALUES ({id44},'0',0,0,0)");
 
-                        case Interaction.GuildItem:
-                        case Interaction.GuildGate:
-                        case Interaction.GroupForumTerminal:
-                            list.Add(session.GetHabbo().GetInventoryComponent().AddNewItem(0u, item.ItemId, "0",
-                                Convert.ToUInt32(extraData), true, false, 0, 0, string.Empty));
-                            break;
+                                break;
 
-                        case Interaction.GuildForum:
-                            uint groupId;
+                            case Interaction.GuildItem:
+                            case Interaction.GuildGate:
+                            case Interaction.GroupForumTerminal:
+                                list.Add(session.GetHabbo().GetInventoryComponent().AddNewItem(0u, item.ItemId, "0",
+                                    Convert.ToUInt32(extraData), true, false, 0, 0, string.Empty));
+                                break;
 
-                            uint.TryParse(extraData, out groupId);
+                            case Interaction.GuildForum:
+                                uint groupId;
 
-                            var group = Oblivion.GetGame().GetGroupManager().GetGroup(groupId);
+                                uint.TryParse(extraData, out groupId);
 
-                            if (group != null)
-                            {
-                                if (group.CreatorId == session.GetHabbo().Id)
+                                var group = Oblivion.GetGame().GetGroupManager().GetGroup(groupId);
+
+                                if (group != null)
                                 {
-                                    session.GetMessageHandler().GetResponse()
-                                        .Init(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
-                                    session.GetMessageHandler().GetResponse().AppendString("forums.delivered");
-                                    session.GetMessageHandler().GetResponse().AppendInteger(2);
-                                    session.GetMessageHandler().GetResponse().AppendString("groupId");
-                                    session.GetMessageHandler().GetResponse().AppendString(extraData);
-                                    session.GetMessageHandler().GetResponse().AppendString("groupName");
-                                    session.GetMessageHandler().GetResponse().AppendString(group.Name);
-                                    session.GetMessageHandler().SendResponse();
-
-                                    if (!group.HasForum)
+                                    if (group.CreatorId == session.GetHabbo().Id)
                                     {
-                                        group.HasForum = true;
-                                        group.UpdateForum();
+                                        session.GetMessageHandler().GetResponse()
+                                            .Init(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
+                                        session.GetMessageHandler().GetResponse().AppendString("forums.delivered");
+                                        session.GetMessageHandler().GetResponse().AppendInteger(2);
+                                        session.GetMessageHandler().GetResponse().AppendString("groupId");
+                                        session.GetMessageHandler().GetResponse().AppendString(extraData);
+                                        session.GetMessageHandler().GetResponse().AppendString("groupName");
+                                        session.GetMessageHandler().GetResponse().AppendString(group.Name);
+                                        session.GetMessageHandler().SendResponse();
+
+                                        if (!group.HasForum)
+                                        {
+                                            group.HasForum = true;
+                                            group.UpdateForum();
+                                        }
                                     }
+                                    else
+                                        session.SendNotif(Oblivion.GetLanguage().GetVar("user_group_owner_error"));
                                 }
-                                else
-                                    session.SendNotif(Oblivion.GetLanguage().GetVar("user_group_owner_error"));
-                            }
 
-                            list.Add(session.GetHabbo().GetInventoryComponent().AddNewItem(0u, item.ItemId, "0",
-                                Convert.ToUInt32(extraData), true, false, 0, 0, string.Empty));
-                            break;
+                                list.Add(session.GetHabbo().GetInventoryComponent().AddNewItem(0u, item.ItemId, "0",
+                                    Convert.ToUInt32(extraData), true, false, 0, 0, string.Empty));
+                                break;
 
-                        default:
-                            list.Add(session.GetHabbo().GetInventoryComponent()
-                                .AddNewItem(0u, item.ItemId, extraData, 0u, true, false, limno, limtot));
-                            break;
+                            default:
+                                list.Add(session.GetHabbo().GetInventoryComponent()
+                                    .AddNewItem(0u, item.ItemId, extraData, 0u, true, false, limno, limtot));
+                                break;
+                        }
+
+                        i++;
                     }
-
-                    i++;
-                }
-
+                });
                 return list;
             }
 
             if (a == 'e')
             {
-                for (var j = 0; j < amount; j++)
-                    session.GetHabbo().GetAvatarEffectsInventoryComponent().AddNewEffect(item.SpriteId, 7200, 0);
+                Task.Factory.StartNew(() =>
+                {
+                    for (var j = 0; j < amount; j++)
+                        session.GetHabbo().GetAvatarEffectsInventoryComponent().AddNewEffect(item.SpriteId, 7200, 0);
+                });
             }
             else if (a == 'r')
             {
@@ -1178,19 +1175,13 @@ namespace Oblivion.HabboHotel.Catalogs
         ///     Gets the ecotron rewards.
         /// </summary>
         /// <returns>List&lt;EcotronReward&gt;.</returns>
-        internal List<EcotronReward> GetEcotronRewards()
-        {
-            return EcotronRewards;
-        }
+        internal List<EcotronReward> GetEcotronRewards() => EcotronRewards;
 
         /// <summary>
         ///     Gets the ecotron rewards levels.
         /// </summary>
         /// <returns>List&lt;System.Int32&gt;.</returns>
-        internal List<int> GetEcotronRewardsLevels()
-        {
-            return EcotronLevels;
-        }
+        internal List<int> GetEcotronRewardsLevels() => EcotronLevels;
 
         /// <summary>
         ///     Gets the ecotron rewards for level.
