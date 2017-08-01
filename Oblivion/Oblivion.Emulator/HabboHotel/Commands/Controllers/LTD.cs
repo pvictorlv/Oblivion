@@ -30,10 +30,11 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 Oblivion.GetGame().GetCatalog().Initialize(adapter);
                 Oblivion.GetGame().ReloadItems();
             }
+            var msg = new ServerMessage(LibraryParser.OutgoingRequest("PublishShopMessageComposer"));
+            msg.AppendBool(false);
             Oblivion.GetGame()
                 .GetClientManager()
-                .QueueBroadcaseMessage(
-                    new ServerMessage(LibraryParser.OutgoingRequest("PublishShopMessageComposer")));
+                .QueueBroadcaseMessage(msg);
             var message = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
             message.AppendString("ninja_promo_LTD");
             message.AppendInteger(4);

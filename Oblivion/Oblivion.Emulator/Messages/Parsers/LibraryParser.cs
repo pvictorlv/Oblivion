@@ -28,7 +28,6 @@ namespace Oblivion.Messages.Parsers
         {
             int packetId;
 
-            Out.WriteLine("Requested " + packetName);
             if (Outgoing.TryGetValue(packetName, out packetId))
                 return packetId;
 

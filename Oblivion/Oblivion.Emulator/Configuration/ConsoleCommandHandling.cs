@@ -64,6 +64,10 @@ namespace Oblivion.Configuration
                         Console.WriteLine();
                         break;
 
+                    case "debug":
+                        Oblivion.DebugMode = !Oblivion.DebugMode;
+                        break;
+
                     case "alert":
                         {
                             var str = inputData.Substring(6);
@@ -125,6 +129,7 @@ namespace Oblivion.Configuration
                         Console.WriteLine("shutdown/close - for safe shutting down OblivionEmulator");
                         Console.WriteLine("clear - Clear all text");
                         Console.WriteLine("memory - Call gargabe collector");
+                        Console.WriteLine("memstat - Show memstats");
                         Console.WriteLine("alert (msg) - send alert to Every1!");
                         Console.WriteLine("flush/reload");
                         Console.WriteLine("   - catalog");
@@ -157,12 +162,18 @@ namespace Oblivion.Configuration
                     case "catalog":
                     case "shop":
                     case "catalogus":
-                        using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor()) GetGame().GetCatalog().Initialize(adapter);
-
+                        using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        {
+                            GetGame().GetItemManager().LoadItems(adapter);
+                            GetGame().GetCatalog().Initialize(adapter);
+                            GetGame().ReloadItems();
+                        }
+                        var msg = new ServerMessage(LibraryParser.OutgoingRequest("PublishShopMessageComposer"));
+                        msg.AppendBool(false);
                         GetGame()
                             .GetClientManager()
-                            .QueueBroadcaseMessage(
-                                new ServerMessage(LibraryParser.OutgoingRequest("PublishShopMessageComposer")));
+                            .QueueBroadcaseMessage(msg);
+                       
                         Console.WriteLine("Catalogue was re-loaded.");
                         Console.WriteLine();
                         break;

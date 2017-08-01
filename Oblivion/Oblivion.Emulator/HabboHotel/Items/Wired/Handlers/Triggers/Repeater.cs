@@ -53,8 +53,20 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                     WiredHandler.OnEvent(current);
                 }
             }
+            if (effects.Any(x => x.Type == Interaction.SpecialRandom))
+            {
+                var randomBox = effects.FirstOrDefault(x => x.Type == Interaction.SpecialRandom);
+                if (randomBox != null && !randomBox.Execute())
+                    return false;
 
-            if (effects.Any())
+                var selectedBox = Room.GetWiredHandler().GetRandomEffect(effects);
+                if (!selectedBox.Execute())
+                    return false;
+
+                WiredHandler.OnEvent(randomBox);
+                WiredHandler.OnEvent(selectedBox);
+            }
+            else if (effects.Any())
             {
                 foreach (var current2 in effects.Where(current2 => current2.Execute(null, Type)))
                 {
@@ -63,7 +75,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             }
 
             _mNext = (Oblivion.Now() + (Delay));
-            return false;
+            return true;
         }
 
         public Interaction Type => Interaction.TriggerRepeater;
@@ -106,7 +118,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public bool Execute(params object[] stuff)
         {
-            if (_mNext == 0L || _mNext < Oblivion.Now())
+            if (_mNext == 0L || _mNext <= Oblivion.Now())
                 _mNext = (Oblivion.Now() + (Delay));
 
             if (!Room.GetWiredHandler().IsCycleQueued(this))

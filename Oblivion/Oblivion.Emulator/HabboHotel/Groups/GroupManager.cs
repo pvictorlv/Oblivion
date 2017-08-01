@@ -450,7 +450,7 @@ namespace Oblivion.HabboHotel.Groups
             response.AppendInteger((group.CreatorId == session.GetHabbo().Id) ? 3 : (group.Requests.ContainsKey(session.GetHabbo().Id) ? 2 : (group.Members.ContainsKey(session.GetHabbo().Id) ? 1 : 0)));
             response.AppendInteger(group.Members.Count);
             response.AppendBool(session.GetHabbo().FavouriteGroup == group.Id);
-            response.AppendString($"{dateTime2.Day.ToString("00")}-{dateTime2.Month.ToString("00")}-{dateTime2.Year}");
+            response.AppendString($"{dateTime2.Day:00}-{dateTime2.Month:00}-{dateTime2.Year}");
             response.AppendBool(group.CreatorId == session.GetHabbo().Id);
             response.AppendBool(group.Admins.ContainsKey(session.GetHabbo().Id));
             response.AppendString((Oblivion.GetHabboById(group.CreatorId) == null) ? string.Empty : Oblivion.GetHabboById(group.CreatorId).UserName);
@@ -490,7 +490,7 @@ namespace Oblivion.HabboHotel.Groups
             response.AppendInteger((group.CreatorId == session.GetHabbo().Id) ? 3 : (group.Requests.ContainsKey(session.GetHabbo().Id) ? 2 : (group.Members.ContainsKey(session.GetHabbo().Id) ? 1 : 0)));
             response.AppendInteger(group.Members.Count);
             response.AppendBool(session.GetHabbo().FavouriteGroup == group.Id);
-            response.AppendString($"{dateTime2.Day.ToString("00")}-{dateTime2.Month.ToString("00")}-{dateTime2.Year}");
+            response.AppendString($"{dateTime2.Day:00}-{dateTime2.Month:00}-{dateTime2.Year}");
             response.AppendBool(group.CreatorId == session.GetHabbo().Id);
             response.AppendBool(group.Admins.ContainsKey(session.GetHabbo().Id));
             response.AppendString((Oblivion.GetHabboById(group.CreatorId) == null) ? string.Empty : Oblivion.GetHabboById(group.CreatorId).UserName);
@@ -531,16 +531,10 @@ namespace Oblivion.HabboHotel.Groups
                 if (SymbolColours.Contains(index))
                     return ((GroupSymbolColours)SymbolColours[index]).Colour;
 
-                if (BackGroundColours.Contains(index))
-                    return ((GroupBackGroundColours)BackGroundColours[index]).Colour;
-
-                return "4f8a00";
+                return BackGroundColours.Contains(index) ? ((GroupBackGroundColours)BackGroundColours[index]).Colour : "4f8a00";
             }
 
-            if (BackGroundColours.Contains(index))
-                return ((GroupBackGroundColours)BackGroundColours[index]).Colour;
-
-            return "4f8a00";
+            return BackGroundColours.Contains(index) ? ((GroupBackGroundColours)BackGroundColours[index]).Colour : "4f8a00";
         }
 
         /// <summary>

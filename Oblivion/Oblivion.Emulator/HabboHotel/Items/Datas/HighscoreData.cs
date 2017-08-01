@@ -31,7 +31,8 @@ namespace Oblivion.HabboHotel.Items.Datas
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery("SELECT * FROM items_highscores WHERE item_id=" + itemId + " ORDER BY score DESC");
+                queryReactor.SetQuery("SELECT * FROM items_highscores WHERE item_id=" + itemId +
+                                      " ORDER BY score DESC");
 
                 var table = queryReactor.GetTable();
 
@@ -40,8 +41,8 @@ namespace Oblivion.HabboHotel.Items.Datas
 
                 foreach (DataRow row in table.Rows)
                 {
-                    Lines.Add((int)row["id"], new HighScoreLine((string)row["username"], (int)row["score"]));
-                    LastId = (int)row["id"];
+                    Lines.Add((int) row["id"], new HighScoreLine((string) row["username"], (int) row["score"]));
+                    LastId = (int) row["id"];
                 }
             }
         }
@@ -87,14 +88,35 @@ namespace Oblivion.HabboHotel.Items.Datas
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                if (item.GetBaseItem().Name.StartsWith("highscore_classic"))
+                if (item.GetBaseItem().Name.Contains("highscore_classic"))
                 {
                     queryReactor.SetQuery(
-                        "INSERT INTO items_highscores (item_id,username,score) VALUES (@itemid,@username,@score)");
+                        "SELECT id,score FROM items_highscores WHERE username = @username AND item_id = @itemid");
                     queryReactor.AddParameter("itemid", item.Id);
                     queryReactor.AddParameter("username", username);
-                    queryReactor.AddParameter("score", score);
-                    queryReactor.RunQuery();
+
+                    var row = queryReactor.GetRow();
+
+                    if (row != null)
+                    {
+                        score += (int) row["score"];
+                        queryReactor.SetQuery(
+                            "UPDATE items_highscores SET score = @score WHERE username = @username AND item_id = @itemid");
+                        queryReactor.AddParameter("itemid", item.Id);
+                        queryReactor.AddParameter("username", username);
+                        queryReactor.AddParameter("score", score);
+                        queryReactor.RunQuery();
+                        Lines.Remove((int) row["id"]);
+                    }
+                    else
+                    {
+                        queryReactor.SetQuery(
+                            "INSERT INTO items_highscores (item_id,username,score) VALUES (@itemid,@username,@score)");
+                        queryReactor.AddParameter("itemid", item.Id);
+                        queryReactor.AddParameter("username", username);
+                        queryReactor.AddParameter("score", score);
+                        queryReactor.RunQuery();
+                    }
                 }
                 else if (item.GetBaseItem().Name.StartsWith("highscore_mostwin"))
                 {
@@ -113,8 +135,8 @@ namespace Oblivion.HabboHotel.Items.Datas
                         queryReactor.AddParameter("itemid", item.Id);
                         queryReactor.AddParameter("username", username);
                         queryReactor.RunQuery();
-                        Lines.Remove((int)row["id"]);
-                        score = (int)row["score"] + 1;
+                        Lines.Remove((int) row["id"]);
+                        score = (int) row["score"] + 1;
                     }
                     else
                     {

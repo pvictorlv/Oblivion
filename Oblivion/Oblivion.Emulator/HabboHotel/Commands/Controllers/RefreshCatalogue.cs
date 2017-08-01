@@ -29,10 +29,11 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 Oblivion.GetGame().GetItemManager().LoadItems(adapter);
                 Oblivion.GetGame().GetCatalog().Initialize(adapter);
             }
+            var msg = new ServerMessage(LibraryParser.OutgoingRequest("PublishShopMessageComposer"));
+            msg.AppendBool(false);
             Oblivion.GetGame()
                 .GetClientManager()
-                .QueueBroadcaseMessage(
-                    new ServerMessage(LibraryParser.OutgoingRequest("PublishShopMessageComposer")));
+                .QueueBroadcaseMessage(msg);
             return true;
         }
     }

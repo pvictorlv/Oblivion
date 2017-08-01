@@ -54,6 +54,22 @@ namespace Oblivion.HabboHotel.Rooms.Data
         internal int CompetitionStatus, CompetitionVotes;
 
         /// <summary>
+        /// Is room for sale?
+        /// </summary>
+        public bool RoomForSale = false;
+
+        /// <summary>
+        /// The room cost
+        /// </summary>
+        public int RoomSaleCost = 0;
+
+        /// <summary>
+        /// the currency cost type (d = diamond, c = credit)
+        /// </summary>
+        public string RoomSaleType = "";
+
+
+        /// <summary>
         ///     The description
         /// </summary>
         internal string Description;
@@ -296,11 +312,13 @@ namespace Oblivion.HabboHotel.Rooms.Data
 
                     OwnerId = integer != uint.MinValue ? Convert.ToInt32(integer) : 0;
 
-                    queryReactor.SetQuery($"SELECT user_id, message, timestamp FROM users_chatlogs WHERE room_id = {Id} ORDER BY timestamp ASC LIMIT 150");
+                    queryReactor.SetQuery(
+                        $"SELECT user_id, message, timestamp FROM users_chatlogs WHERE room_id = {Id} ORDER BY timestamp ASC LIMIT 150");
                     var table = queryReactor.GetTable();
 
                     foreach (DataRow dataRow in table.Rows)
-                        RoomChat.Push(new Chatlog((uint) dataRow[0], (string) dataRow[1], Oblivion.UnixToDateTime(int.Parse(dataRow[2].ToString())), false));
+                        RoomChat.Push(new Chatlog((uint) dataRow[0], (string) dataRow[1],
+                            Oblivion.UnixToDateTime(int.Parse(dataRow[2].ToString())), false));
 
                     queryReactor.SetQuery($"SELECT word FROM rooms_wordfilter WHERE room_id = {Id}");
                     var tableFilter = queryReactor.GetTable();
@@ -467,7 +485,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
             {
                 message.AppendString(Event.Name);
                 message.AppendString(Event.Description);
-                message.AppendInteger((int) Math.Floor((Event.Time - Oblivion.GetUnixTimeStamp())/60.0));
+                message.AppendInteger((int) Math.Floor((Event.Time - Oblivion.GetUnixTimeStamp()) / 60.0));
             }
         }
 

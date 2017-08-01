@@ -253,11 +253,11 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             _mBaseItem = Oblivion.GetGame().GetItemManager().GetItem(baseItem);
             _mRoom = pRoom;
 
-            if (GetBaseItem() == null) Logging.LogException(string.Format("Unknown baseID: {0}", baseItem));
+            if (GetBaseItem() == null) Logging.LogException($"Unknown baseID: {baseItem}");
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery(string.Format("SELECT * FROM items_limited WHERE item_id='{0}' LIMIT 1", id));
+                queryReactor.SetQuery($"SELECT * FROM items_limited WHERE item_id='{id}' LIMIT 1");
                 var row = queryReactor.GetRow();
                 if (row != null)
                 {
@@ -391,7 +391,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             _mBaseItem = Oblivion.GetGame().GetItemManager().GetItem(baseItem);
             _mRoom = pRoom;
 
-            if (GetBaseItem() == null) Logging.LogException(string.Format("Unknown baseID: {0}", baseItem));
+            if (GetBaseItem() == null) Logging.LogException($"Unknown baseID: {baseItem}");
 
             Id = id;
             RoomId = roomId;
@@ -465,7 +465,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         ///     Gets a value indicating whether this instance is roller.
         /// </summary>
         /// <value><c>true</c> if this instance is roller; otherwise, <c>false</c>.</value>
-        internal bool IsRoller { get; private set; }
+        internal bool IsRoller { get; }
 
         /// <summary>
         ///     Gets the coordinate.
@@ -780,7 +780,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="user">The user.</param>
         internal void OnTrigger(RoomUser user)
         {
-            if (ItemTriggerEventHandler != null) ItemTriggerEventHandler(null, new ItemTriggeredArgs(user, this));
+            ItemTriggerEventHandler?.Invoke(null, new ItemTriggeredArgs(user, this));
         }
 
         /// <summary>
@@ -1274,7 +1274,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(InteractingUser);
                             {
                                 if (!clientByUserId.GetHabbo().Look.Contains("ha"))
-                                    text = string.Format("{0}.ha-1006-1326", clientByUserId.GetHabbo().Look);
+                                    text = $"{clientByUserId.GetHabbo().Look}.ha-1006-1326";
                                 else
                                 {
                                     var array = clientByUserId.GetHabbo().Look.Split('.');
@@ -1283,7 +1283,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                     {
                                         var str = text2;
                                         if (text2.Contains("ha")) str = "ha-1006-1326";
-                                        text = string.Format("{0}{1}.", text, str);
+                                        text = $"{text}{str}.";
                                     }
                                 }
                                 if (text.EndsWith(".")) text = text.TrimEnd('.');
@@ -1335,6 +1335,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                     case Interaction.ActionResetTimer:
                     case Interaction.ActionShowMessage:
                     case Interaction.ActionEffectUser:
+                    case Interaction.ActionRollerSpeed:
                     case Interaction.ActionTeleportTo:
                     case Interaction.ActionToggleState:
                     case Interaction.ActionChase:
@@ -1411,7 +1412,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             {
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    queryReactor.SetQuery(string.Format("SELECT extra_data FROM items_rooms WHERE id={0} LIMIT 1", Id));
+                    queryReactor.SetQuery($"SELECT extra_data FROM items_rooms WHERE id={Id} LIMIT 1");
                     ExtraData = queryReactor.GetString();
                 }
                 if (ExtraData.Contains(Convert.ToChar(5).ToString()))
@@ -1802,19 +1803,13 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         ///     Gets the base item.
         /// </summary>
         /// <returns>Item.</returns>
-        internal Item GetBaseItem()
-        {
-            return _mBaseItem ?? (_mBaseItem = Oblivion.GetGame().GetItemManager().GetItem(BaseItem));
-        }
+        internal Item GetBaseItem() => _mBaseItem ?? (_mBaseItem = Oblivion.GetGame().GetItemManager().GetItem(BaseItem));
 
         /// <summary>
         ///     Gets the room.
         /// </summary>
         /// <returns>Room.</returns>
-        internal Room GetRoom()
-        {
-            return _mRoom ?? (_mRoom = Oblivion.GetGame().GetRoomManager().GetRoom(RoomId));
-        }
+        internal Room GetRoom() => _mRoom ?? (_mRoom = Oblivion.GetGame().GetRoomManager().GetRoom(RoomId));
 
         /// <summary>
         ///     Users the walks on furni.

@@ -72,6 +72,19 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (_mBanned.Contains(item))
                 return false;
 
+            if (OtherString.ToUpper().Contains("%USERNAME%"))
+                OtherString = OtherString.Replace("%USERNAME%", roomUser.GetUserName());
+
+            if (OtherString.ToUpper().Contains("%ROOMNAME%"))
+                OtherString = OtherString.Replace("%ROOMNAME%", roomUser.GetRoom().RoomData.Name);
+
+            if (OtherString.ToUpper().Contains("%USERCOUNT%"))
+                OtherString = OtherString.Replace("%USERCOUNT%", roomUser.GetRoom().UserCount.ToString());
+
+            if (OtherString.ToUpper().Contains("%USERSONLINE%"))
+                OtherString = OtherString.Replace("%USERSONLINE%", Oblivion.GetGame().GetClientManager().ClientCount().ToString());
+
+
             if (roomUser?.GetClient() != null && !string.IsNullOrEmpty(OtherString))
                 roomUser.GetClient().SendWhisper(OtherString, true);
 

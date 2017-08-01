@@ -793,6 +793,7 @@
         ///     The action reset timer
         /// </summary>
         ActionResetTimer,
+        ActionRollerSpeed,
 
         /// <summary>
         ///     The action show message

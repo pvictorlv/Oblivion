@@ -127,7 +127,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
 
         internal void ResetTiles()
         {
-            foreach (var roomItem in _room.GetRoomItemHandler().FloorItems.Values)
+            foreach (var roomItem in _room.GetRoomItemHandler().FloorItems)
             {
                 switch (roomItem.GetBaseItem().InteractionType)
                 {
@@ -234,7 +234,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             _room.GetRoomItemHandler()
                 .SetFloorItem(client, item, newX, newY, item.Rot, false, false, false, false, false);
 
-            if (client == null || client.GetHabbo() == null)
+            if (client?.GetHabbo() == null)
                 return;
 
             var user = client.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(client.GetHabbo().Id);
@@ -275,7 +275,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                     affectedTiles.Add(new Point(newX, newY));
             }
 
-            if (client == null || client.GetHabbo() == null)
+            if (client?.GetHabbo() == null)
                 return;
 
             var roomUserByHabbo =

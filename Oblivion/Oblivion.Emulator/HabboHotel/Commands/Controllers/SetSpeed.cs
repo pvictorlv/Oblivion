@@ -21,8 +21,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override bool Execute(GameClient session, string[] pms)
         {
-            uint speed;
-            if (uint.TryParse(pms[0], out speed)) session.GetHabbo().CurrentRoom.GetRoomItemHandler().SetSpeed(speed);
+            double speed;
+            if (double.TryParse(pms[0], out speed)) session.GetHabbo().CurrentRoom.GetRoomItemHandler().SetSpeed(speed);
             else session.SendWhisper(Oblivion.GetLanguage().GetVar("command_setspeed_error_numbers"));
 
             return true;

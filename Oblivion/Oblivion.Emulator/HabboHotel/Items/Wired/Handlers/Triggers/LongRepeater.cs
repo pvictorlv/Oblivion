@@ -53,13 +53,24 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                     WiredHandler.OnEvent(current);
                 }
             }
-
-            if (effects.Any())
+            if (effects.Any(x => x.Type == Interaction.SpecialRandom))
             {
-                foreach (var current2 in effects)
+                var randomBox = effects.FirstOrDefault(x => x.Type == Interaction.SpecialRandom);
+                if (randomBox != null && !randomBox.Execute())
+                    return false;
+
+                var selectedBox = Room.GetWiredHandler().GetRandomEffect(effects);
+                if (!selectedBox.Execute())
+                    return false;
+
+                WiredHandler.OnEvent(randomBox);
+                WiredHandler.OnEvent(selectedBox);
+            }
+            else if (effects.Any())
+            {
+                foreach (var current2 in effects.Where(current2 => current2.Execute(null, Type)))
                 {
-                    if (current2.Execute(null, Type))
-                        WiredHandler.OnEvent(current2);
+                    WiredHandler.OnEvent(current2);
                 }
             }
 

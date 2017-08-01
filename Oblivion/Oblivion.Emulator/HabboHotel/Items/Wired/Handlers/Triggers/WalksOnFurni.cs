@@ -110,7 +110,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             if (!Items.Contains(roomItem) || (roomUser.LastItem != 0 && roomUser.LastItem == roomItem.Id && userPosition == lastUserPosition))
                 return false;
 
-            if (roomItem.GetRoom() == null || roomItem.GetRoom().GetRoomItemHandler() == null || roomItem.GetRoom().GetRoomItemHandler().FloorItems.Values.Any(i => (i.X == roomItem.X && i.Y == roomItem.Y && i.Z > roomItem.Z)))
+            if (roomItem.GetRoom() == null || roomItem.GetRoom().GetRoomItemHandler() == null || roomItem.GetRoom().GetRoomItemHandler().FloorItems.Any(i => (i.X == roomItem.X && i.Y == roomItem.Y && i.Z > roomItem.Z)))
                 return false;
 
             ToWork.Enqueue(roomUser);

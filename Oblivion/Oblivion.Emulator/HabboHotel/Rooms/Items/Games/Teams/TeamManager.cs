@@ -14,17 +14,14 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
         public List<RoomUser> RedTeam;
         public List<RoomUser> YellowTeam;
 
-        public static TeamManager CreateTeamforGame(string game)
+        public static TeamManager CreateTeamforGame(string game) => new TeamManager
         {
-            return new TeamManager
-            {
-                Game = game,
-                BlueTeam = new List<RoomUser>(),
-                RedTeam = new List<RoomUser>(),
-                GreenTeam = new List<RoomUser>(),
-                YellowTeam = new List<RoomUser>()
-            };
-        }
+            Game = game,
+            BlueTeam = new List<RoomUser>(),
+            RedTeam = new List<RoomUser>(),
+            GreenTeam = new List<RoomUser>(),
+            YellowTeam = new List<RoomUser>()
+        };
 
         public bool CanEnterOnTeam(Team t)
         {
@@ -36,7 +33,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
 
         public void AddUser(RoomUser user)
         {
-            if (user == null || user.GetClient() == null) return;
+            if (user?.GetClient() == null) return;
             if (user.Team.Equals(Team.Blue)) BlueTeam.Add(user);
             else
             {
@@ -53,7 +50,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
             {
                 case "banzai":
                     var currentRoom = user.GetClient().GetHabbo().CurrentRoom;
-                    using (var enumerator = currentRoom.GetRoomItemHandler().FloorItems.Values.GetEnumerator())
+                    using (var enumerator = currentRoom.GetRoomItemHandler().FloorItems.GetEnumerator())
                     {
                         while (enumerator.MoveNext())
                         {
@@ -116,7 +113,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
 
                 case "freeze":
                     var currentRoom2 = user.GetClient().GetHabbo().CurrentRoom;
-                    foreach (var current6 in currentRoom2.GetRoomItemHandler().FloorItems.Values)
+                    foreach (var current6 in currentRoom2.GetRoomItemHandler().FloorItems)
                     {
                         switch (current6.GetBaseItem().InteractionType)
                         {
@@ -166,7 +163,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
             switch (Game.ToLower())
             {
                 case "banzai":
-                    using (var enumerator = currentRoom.GetRoomItemHandler().FloorItems.Values.GetEnumerator())
+                    using (var enumerator = currentRoom.GetRoomItemHandler().FloorItems.GetEnumerator())
                     {
                         while (enumerator.MoveNext())
                         {
@@ -228,7 +225,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                     break;
 
                 case "freeze":
-                    foreach (var current6 in currentRoom.GetRoomItemHandler().FloorItems.Values)
+                    foreach (var current6 in currentRoom.GetRoomItemHandler().FloorItems)
                     {
                         switch (current6.GetBaseItem().InteractionType)
                         {

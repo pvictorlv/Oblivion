@@ -353,7 +353,7 @@ namespace Oblivion.HabboHotel.RoomBots
                         var petNest =
                             GetRoom()
                                 .GetRoomItemHandler()
-                                .FloorItems.Values.Where(x => x.GetBaseItem().InteractionType == Interaction.PetNest);
+                                .FloorItems.Where(x => x.GetBaseItem().InteractionType == Interaction.PetNest);
                         if (!petNest.Any())
                         {
                             lazy = true;

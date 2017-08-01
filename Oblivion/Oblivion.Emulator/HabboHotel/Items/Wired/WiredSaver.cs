@@ -30,7 +30,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     {
                         request.GetInteger();
                         var wired = wiredHandler.GetWired(item);
-                        var delay = (request.GetInteger() / 2) * 500;
+                        var delay = (request.GetInteger() / 2);
                         wired.Delay = delay;
                         wiredHandler.ReloadWired(wired);
                         break;
@@ -131,6 +131,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                         break;
                     }
                 case Interaction.ActionShowMessage:
+                case Interaction.ActionRollerSpeed:
                 case Interaction.ActionKickUser:
                     {
                         request.GetInteger();

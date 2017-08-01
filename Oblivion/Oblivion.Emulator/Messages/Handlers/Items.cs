@@ -833,7 +833,7 @@ namespace Oblivion.Messages.Handlers
                 foreach (
                     var current in
                     room.GetRoomItemHandler()
-                        .WallItems.Values.Where(
+                        .WallItems.Where(
                             current => current.GetBaseItem().InteractionType == Interaction.Dimmer))
                     room.MoodlightData = new MoodlightData(current.Id);
 
@@ -1068,44 +1068,41 @@ namespace Oblivion.Messages.Handlers
             if (num != Convert.ToUInt32(Oblivion.GetDbConfig().DbData["recycler.number_of_slots"]))
                 return;
             var i = 0;
-
+            while (i < num)
             {
-                while (i < num)
+                var item = Session.GetHabbo().GetInventoryComponent().GetItem(Request.GetUInteger());
+                if (item == null || !item.BaseItem.AllowRecycle)
+                    return;
+                Session.GetHabbo().GetInventoryComponent().RemoveItem(item.Id, false);
+                using (
+                    var queryReactor =
+                        Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    var item = Session.GetHabbo().GetInventoryComponent().GetItem(Request.GetUInteger());
-                    if (item == null || !item.BaseItem.AllowRecycle)
-                        return;
-                    Session.GetHabbo().GetInventoryComponent().RemoveItem(item.Id, false);
-                    using (
-                        var queryReactor =
-                            Oblivion.GetDatabaseManager().GetQueryReactor())
-                    {
-                        queryReactor.RunFastQuery($"DELETE FROM items_rooms WHERE id={item.Id} LIMIT 1");
-                    }
-                    i++;
+                    queryReactor.RunFastQuery($"DELETE FROM items_rooms WHERE id={item.Id} LIMIT 1");
                 }
-                var randomEcotronReward =
-                    Oblivion.GetGame().GetCatalog().GetRandomEcotronReward();
-                uint insertId;
-                using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                {
-                    queryreactor2.SetQuery(
-                        "INSERT INTO items_rooms (user_id,base_item,extra_data) VALUES ( @userid , @baseItem, @timestamp)");
-                    queryreactor2.AddParameter("userid", (int) Session.GetHabbo().Id);
-                    queryreactor2.AddParameter("timestamp", DateTime.Now.ToLongDateString());
-                    queryreactor2.AddParameter("baseItem",
-                        Convert.ToUInt32(Oblivion.GetDbConfig().DbData["recycler.box_id"]));
-                    insertId = (uint) queryreactor2.InsertQuery();
-                    queryreactor2.RunFastQuery(
-                        "INSERT INTO users_gifts (gift_id,item_id,gift_sprite,extradata) VALUES (" + insertId + "," +
-                        randomEcotronReward.BaseId + ", " + randomEcotronReward.DisplayId + ",'')");
-                }
-                Session.GetHabbo().GetInventoryComponent().UpdateItems(true);
-                Response.Init(LibraryParser.OutgoingRequest("RecyclingStateMessageComposer"));
-                Response.AppendInteger(1);
-                Response.AppendInteger(insertId);
-                SendResponse();
+                i++;
             }
+            var randomEcotronReward =
+                Oblivion.GetGame().GetCatalog().GetRandomEcotronReward();
+            uint insertId;
+            using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                queryreactor2.SetQuery(
+                    "INSERT INTO items_rooms (user_id,base_item,extra_data) VALUES ( @userid , @baseItem, @timestamp)");
+                queryreactor2.AddParameter("userid", (int) Session.GetHabbo().Id);
+                queryreactor2.AddParameter("timestamp", DateTime.Now.ToLongDateString());
+                queryreactor2.AddParameter("baseItem",
+                    Convert.ToUInt32(Oblivion.GetDbConfig().DbData["recycler.box_id"]));
+                insertId = (uint) queryreactor2.InsertQuery();
+                queryreactor2.RunFastQuery(
+                    "INSERT INTO users_gifts (gift_id,item_id,gift_sprite,extradata) VALUES (" + insertId + "," +
+                    randomEcotronReward.BaseId + ", " + randomEcotronReward.DisplayId + ",'')");
+            }
+            Session.GetHabbo().GetInventoryComponent().UpdateItems(true);
+            Response.Init(LibraryParser.OutgoingRequest("RecyclingStateMessageComposer"));
+            Response.AppendInteger(1);
+            Response.AppendInteger(insertId);
+            SendResponse();
         }
 
         internal void RedeemExchangeFurni()
@@ -2067,7 +2064,7 @@ namespace Oblivion.Messages.Handlers
                     Session.GetHabbo().Id, 0, item.GetFirstBaseItem().FlatId, "", true);
                 Session.GetHabbo().BuildersItemsUsed++;
 
-                actualRoom.GetRoomItemHandler().FloorItems.TryAdd(newItem.Id, newItem);
+                actualRoom.GetRoomItemHandler().FloorItems.Add(newItem);
 
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("AddFloorItemMessageComposer"));
                 newItem.Serialize(message);
@@ -2104,7 +2101,7 @@ namespace Oblivion.Messages.Handlers
                     new WallCoordinate(wallcoords), actualRoom, Session.GetHabbo().Id, 0,
                     item.GetFirstBaseItem().FlatId,
                     true);
-                actualRoom.GetRoomItemHandler().WallItems.TryAdd(newItem.Id, newItem);
+                actualRoom.GetRoomItemHandler().WallItems.Add(newItem);
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("AddWallItemMessageComposer"));
                 newItem.Serialize(message);
                 message.AppendString(Session.GetHabbo().UserName);

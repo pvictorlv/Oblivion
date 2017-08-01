@@ -65,7 +65,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             if (roomUser == null)
                 return false;
 
-            foreach (var current in Items.Where(current => current != null && Room.GetRoomItemHandler().FloorItems.ContainsKey(current.Id)))
+            foreach (var current in Items.Where(current => current != null && Room.GetRoomItemHandler().FloorItems.Contains(current)))
             {
                 if (current.AffectedTiles.Values.Any(current2 => roomUser.X == current2.X && roomUser.Y == current2.Y))
                     return true;

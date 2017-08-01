@@ -1275,10 +1275,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     Gets the room.
         /// </summary>
         /// <returns>Room.</returns>
-        private Room GetRoom()
-        {
-            return _mRoom ?? (_mRoom = Oblivion.GetGame().GetRoomManager().GetRoom(RoomId));
-        }
+        internal Room GetRoom() => _mRoom ?? (_mRoom = Oblivion.GetGame().GetRoomManager().GetRoom(RoomId));
 
         internal int LastSelectedX, CopyX;
         internal int LastSelectedY, CopyY;

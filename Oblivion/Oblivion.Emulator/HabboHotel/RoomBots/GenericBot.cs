@@ -453,9 +453,9 @@ namespace Oblivion.HabboHotel.RoomBots
                     randomSpeech = randomSpeech.Replace("%item_count%",
                         GetRoom().GetRoomItemHandler().TotalItems.ToString());
                     randomSpeech = randomSpeech.Replace("%floor_item_count%",
-                        GetRoom().GetRoomItemHandler().FloorItems.Keys.Count.ToString());
+                        GetRoom().GetRoomItemHandler().FloorItems.Count.ToString());
                     randomSpeech = randomSpeech.Replace("%wall_item_count%",
-                        GetRoom().GetRoomItemHandler().WallItems.Keys.Count.ToString());
+                        GetRoom().GetRoomItemHandler().WallItems.Count.ToString());
 
                     if (GetRoom().RoomData != null)
                     {

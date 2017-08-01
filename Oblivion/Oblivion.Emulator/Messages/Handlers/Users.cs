@@ -6,7 +6,6 @@ using Oblivion.Configuration;
 using Oblivion.HabboHotel.Achievements.Interfaces;
 using Oblivion.HabboHotel.Quests;
 using Oblivion.HabboHotel.Quests.Composer;
-using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.HabboHotel.Users;
 using Oblivion.HabboHotel.Users.Badges;
@@ -62,6 +61,7 @@ namespace Oblivion.Messages.Handlers
             GetResponse().AppendString(Request.GetString());
             GetResponse().AppendInteger(4);
             GetResponse().AppendInteger(4);
+            SendResponse();
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void LoadClubGifts()
         {
-            if (Session == null || Session.GetHabbo() == null)
+            if (Session?.GetHabbo() == null)
                 return;
             //var i = 0;
             //var i2 = 0;
@@ -86,7 +86,7 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void ChooseClubGift()
         {
-            if (Session == null || Session.GetHabbo() == null)
+            if (Session?.GetHabbo() == null)
                 return;
             Request.GetString();
         }
@@ -97,9 +97,7 @@ namespace Oblivion.Messages.Handlers
         internal void GetUserTags()
         {
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
-            if (room == null)
-                return;
-            var roomUserByHabbo = room.GetRoomUserManager().GetRoomUserByHabbo(Request.GetUInteger());
+            var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Request.GetUInteger());
             if (roomUserByHabbo == null || roomUserByHabbo.IsBot)
                 return;
             Response.Init(LibraryParser.OutgoingRequest("UserTagsMessageComposer"));
@@ -1161,6 +1159,7 @@ namespace Oblivion.Messages.Handlers
         internal void CompleteSafetyQuiz()
         {
             Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_SafetyQuizGraduate", 1);
+            Session.SendMessage(new ServerMessage(2873));
         }
 
         /// <summary>

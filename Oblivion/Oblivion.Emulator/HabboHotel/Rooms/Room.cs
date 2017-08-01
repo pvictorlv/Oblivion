@@ -224,6 +224,8 @@ namespace Oblivion.HabboHotel.Rooms
         /// <value>The room data.</value>
         internal RoomData RoomData { get; private set; }
 
+ 
+
         internal void Start(RoomData data, bool forceLoad = false)
         {
             InitializeFromRoomData(data, forceLoad);
@@ -235,10 +237,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Gets the wired handler.
         /// </summary>
         /// <returns>WiredHandler.</returns>
-        public WiredHandler GetWiredHandler()
-        {
-            return _wiredHandler ?? (_wiredHandler = new WiredHandler(this));
-        }
+        public WiredHandler GetWiredHandler() => _wiredHandler ?? (_wiredHandler = new WiredHandler(this));
 
         /// <summary>
         ///     Gets the game map.
@@ -1207,25 +1206,20 @@ namespace Oblivion.HabboHotel.Rooms
         internal void UpdateFurniture()
         {
             var list = new List<ServerMessage>();
-            var array = GetRoomItemHandler().FloorItems.Values.ToArray();
-            var array2 = array;
-            foreach (var roomItem in array2)
+  
+            foreach (var roomItem in GetRoomItemHandler().FloorItems.ToList())
             {
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer"));
                 roomItem.Serialize(serverMessage);
                 list.Add(serverMessage);
             }
-            Array.Clear(array, 0, array.Length);
-            var array3 = GetRoomItemHandler().WallItems.Values.ToArray();
-            var array4 = array3;
-            foreach (var roomItem2 in array4)
+            foreach (var roomItem2 in GetRoomItemHandler().WallItems.ToArray())
             {
                 var serverMessage2 =
                     new ServerMessage(LibraryParser.OutgoingRequest("UpdateRoomWallItemMessageComposer"));
                 roomItem2.Serialize(serverMessage2);
                 list.Add(serverMessage2);
             }
-            Array.Clear(array3, 0, array3.Length);
             SendMessage(list);
         }
 
@@ -1400,9 +1394,9 @@ namespace Oblivion.HabboHotel.Rooms
             RoomData.RoomChat.Clear();
 
             GetWiredHandler().Destroy();
-            foreach (var current in GetRoomItemHandler().FloorItems.Values)
+            foreach (var current in GetRoomItemHandler().FloorItems)
                 current.Destroy();
-            foreach (var current2 in GetRoomItemHandler().WallItems.Values)
+            foreach (var current2 in GetRoomItemHandler().WallItems)
                 current2.Destroy();
             ActiveTrades.Clear();
 

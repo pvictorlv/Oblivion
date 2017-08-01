@@ -98,7 +98,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             if (num < 0) num = 0;
 
             TeamPoints[(int) team] = num;
-            if (OnScoreChanged != null) OnScoreChanged(null, new TeamScoreChangedArgs(num, team, user));
+            OnScoreChanged?.Invoke(null, new TeamScoreChangedArgs(num, team, user));
             foreach (
                 var current in
                     GetFurniItems(team).Values.Where(current => !IsSoccerGoal(current.GetBaseItem().InteractionType)))
@@ -248,8 +248,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
         internal void StopGame()
         {
             var team = GetWinningTeam();
-            var item = GetFirstHighscore();
-            if (item == null || _room == null) return;
+            if (_room == null) return;
             var winners = new List<RoomUser>();
             switch (team)
             {
@@ -269,15 +268,16 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
                     winners = GetRoom().GetTeamManagerForFreeze().GreenTeam;
                     break;
             }
+            var item = GetFirstHighscore();
             var score = GetScoreForTeam(team);
             foreach (var winner in winners) item.HighscoreData.AddUserScore(item, winner.GetUserName(), score);
             item.UpdateState(false, true);
-            if (OnGameEnd != null) OnGameEnd(null, null);
+            OnGameEnd?.Invoke(null, null);
         }
 
         internal void StartGame()
         {
-            if (OnGameStart != null) OnGameStart(null, null);
+            OnGameStart?.Invoke(null, null);
             GetRoom().GetWiredHandler().ResetExtraString(Interaction.ActionGiveScore);
         }
 
@@ -355,7 +355,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
 
         internal RoomItem GetFirstHighscore()
         {
-            using (var enumerator = _room.GetRoomItemHandler().FloorItems.Values.GetEnumerator())
+            using (var enumerator = _room.GetRoomItemHandler().FloorItems.GetEnumerator())
             {
                 while (enumerator.MoveNext())
                 {

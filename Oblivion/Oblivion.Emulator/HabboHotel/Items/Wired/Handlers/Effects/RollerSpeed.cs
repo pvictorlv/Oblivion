@@ -7,16 +7,16 @@ using Oblivion.HabboHotel.Rooms.User;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
-    public class EffectUser : IWiredItem
+    public class RollerSpeed : IWiredItem
     {
-        public EffectUser(RoomItem item, Room room)
+        public RollerSpeed(RoomItem item, Room room)
         {
             Item = item;
             Room = room;
             Items = new List<RoomItem>();
         }
 
-        public Interaction Type => Interaction.ActionEffectUser;
+        public Interaction Type => Interaction.ActionRollerSpeed;
 
         public RoomItem Item { get; set; }
 
@@ -36,19 +36,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool Execute(params object[] stuff)
         {
-            if (stuff[0] == null)
-                return false;
-
-            var roomUser = (RoomUser)stuff[0];
-
-                int effectId;
-
-                if (int.TryParse(OtherString, out effectId))
-                {
-                    if (roomUser != null && !string.IsNullOrEmpty(OtherString))
-                        roomUser.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(effectId);
-                }
-
+            double Speed;
+            if (double.TryParse(OtherString, out Speed))
+                Room.GetRoomItemHandler().SetSpeed(Speed);
             return true;
         }
     }

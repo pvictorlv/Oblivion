@@ -196,6 +196,9 @@ namespace Oblivion.HabboHotel.Items.Interactions
                             case Interaction.ActionMuteUser:
                             case Interaction.ActionKickUser:
                             case Interaction.ActionGiveReward:
+                            case Interaction.ActionRollerSpeed:
+                            case Interaction.SpecialUnseen:
+                            case Interaction.SpecialRandom:
                             case Interaction.ActionCallStacks:
                                 return true;
                         }
@@ -886,6 +889,9 @@ namespace Oblivion.HabboHotel.Items.Interactions
 
                 case "wf_act_bot_clothes":
                     return Interaction.ActionBotClothes;
+
+                case "wf_act_set_roller_spd":
+                    return Interaction.ActionRollerSpeed;
 
                 case "wf_act_bot_talk_to_avatar":
                     return Interaction.ActionBotTalkToAvatar;

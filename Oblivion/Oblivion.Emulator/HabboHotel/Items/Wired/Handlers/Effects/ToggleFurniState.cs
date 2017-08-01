@@ -40,7 +40,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             if (_mNext < num)
             {
-                foreach (var current in Items.Where(current => current != null && Room.GetRoomItemHandler().FloorItems.ContainsKey(current.Id)))
+                foreach (var current in Items.Where(current => current != null && Room.GetRoomItemHandler().FloorItems.Contains(current)))
                     current.Interactor.OnWiredTrigger(current);
             }
 

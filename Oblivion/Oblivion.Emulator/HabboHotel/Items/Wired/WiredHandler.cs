@@ -5,6 +5,7 @@ using System.Linq;
 using Oblivion.HabboHotel.Items.Interactions;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
+using Oblivion.HabboHotel.Items.Wired.Handlers.Addons;
 using Oblivion.HabboHotel.Items.Wired.Handlers.Conditions;
 using Oblivion.HabboHotel.Items.Wired.Handlers.Effects;
 using Oblivion.HabboHotel.Items.Wired.Handlers.Triggers;
@@ -35,6 +36,10 @@ namespace Oblivion.HabboHotel.Items.Wired
             item.Item.UpdateState(false, true);
             item.Item.ReqUpdate(1, true);
         }
+
+        public IWiredItem GetRandomEffect(ICollection<IWiredItem> Effects)
+            => Effects.OrderBy(x => Guid.NewGuid()).FirstOrDefault();
+
 
         public IWiredItem LoadWired(IWiredItem fItem)
         {
@@ -246,7 +251,6 @@ namespace Oblivion.HabboHotel.Items.Wired
         {
             switch (item.GetBaseItem().InteractionType)
             {
-                // Efeitos Antigos
                 case Interaction.TriggerTimer:
                     return new TimerTrigger(item, _room);
 
@@ -294,6 +298,9 @@ namespace Oblivion.HabboHotel.Items.Wired
 
                 case Interaction.ActionEffectUser:
                     return new EffectUser(item, _room);
+
+                case Interaction.ActionRollerSpeed:
+                    return new RollerSpeed(item, _room);
 
                 case Interaction.ActionTeleportTo:
                     return new TeleportToFurni(item, _room);
@@ -431,6 +438,8 @@ namespace Oblivion.HabboHotel.Items.Wired
 
                 case Interaction.ConditionUserHasHanditem:
                     return new UserHasHanditem(item, _room);
+                case Interaction.SpecialRandom:
+                    return new SpecialRandom(item, _room); 
             }
 
             return null;

@@ -75,7 +75,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 throw new ArgumentNullException($"No modeldata found for roomID {room.RoomId}");
 
             Model = new DynamicRoomModel(StaticModel, room);
-            CoordinatedItems = new HybridDictionary();
+            CoordinatedItems = new Dictionary<Point, List<RoomItem>>();
             GotPublicPool = room.RoomData.Model.GotPublicPool;
             GameMap = new byte[Model.MapSizeX, Model.MapSizeY];
             ItemHeightMap = new double[Model.MapSizeX, Model.MapSizeY];
@@ -106,7 +106,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         ///     Gets the coordinated items.
         /// </summary>
         /// <value>The coordinated items.</value>
-        internal HybridDictionary CoordinatedItems { get; private set; }
+        internal Dictionary<Point, List<RoomItem>> CoordinatedItems { get; private set; }
 
         /// <summary>
         ///     Gets the game map.
@@ -126,10 +126,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="pState">State of the p.</param>
         /// <param name="pOverride">if set to <c>true</c> [p override].</param>
         /// <returns><c>true</c> if this instance can walk the specified p state; otherwise, <c>false</c>.</returns>
-        internal static bool CanWalk(byte pState, bool pOverride)
-        {
-            return pOverride || pState == 3 || pState == 1;
-        }
+        internal static bool CanWalk(byte pState, bool pOverride) => pOverride || pState == 3 || pState == 1;
 
         /// <summary>
         ///     Gets the affected tiles.
@@ -206,10 +203,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="x2">The x2.</param>
         /// <param name="y2">The y2.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal static bool TilesTouching(int x1, int y1, int x2, int y2)
-        {
-            return (Math.Abs(x1 - x2) <= 1 && Math.Abs(y1 - y2) <= 1) || (x1 == x2 && y1 == y2);
-        }
+        internal static bool TilesTouching(int x1, int y1, int x2, int y2) => Math.Abs(x1 - x2) <= 1 &&
+                                                                              Math.Abs(y1 - y2) <= 1 ||
+                                                                              (x1 == x2 && y1 == y2);
 
         /// <summary>
         ///     Tiles the distance.
@@ -219,10 +215,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="x2">The x2.</param>
         /// <param name="y2">The y2.</param>
         /// <returns>System.Int32.</returns>
-        internal static int TileDistance(int x1, int y1, int x2, int y2)
-        {
-            return (Math.Abs(x1 - x2) + Math.Abs(y1 - y2));
-        }
+        internal static int TileDistance(int x1, int y1, int x2, int y2) => (Math.Abs(x1 - x2) + Math.Abs(y1 - y2));
 
         /// <summary>
         ///     Adds the user to map.
@@ -290,8 +283,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         {
             var coordKey = Formatter.PointToInt(coord);
             var users = (List<RoomUser>) _userMap[coordKey];
-            if (users != null)
-                users.Remove(user);
+            users?.Remove(user);
         }
 
         /// <summary>
@@ -424,16 +416,13 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
                 if (checkLines)
                 {
-                    var roomItema = _room.GetRoomItemHandler().FloorItems.Values.ToArray();
-                    foreach (var roomItems in roomItema)
+                    foreach (var roomItems in _room.GetRoomItemHandler().FloorItems.ToList())
                     {
                         if (roomItems.X > Model.MapSizeX && roomItems.X > xMap)
                             xMap = roomItems.X;
                         if (roomItems.Y > Model.MapSizeY && roomItems.Y > yMap)
                             yMap = roomItems.Y;
                     }
-
-                    Array.Clear(roomItema, 0, roomItema.Length);
                 }
 
                 if (yMap > Model.MapSizeY - 1 || xMap > Model.MapSizeX - 1)
@@ -455,32 +444,32 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     GameMap = new byte[Model.MapSizeX, Model.MapSizeY];
                     ItemHeightMap = new double[Model.MapSizeX, Model.MapSizeY];
                     for (var j = 0; j < Model.MapSizeY; j++)
-                        for (var k = 0; k < Model.MapSizeX; k++)
+                    for (var k = 0; k < Model.MapSizeX; k++)
+                    {
+                        GameMap[k, j] = 0;
+                        EffectMap[k, j] = 0;
+                        if (k == Model.DoorX && j == Model.DoorY)
                         {
-                            GameMap[k, j] = 0;
-                            EffectMap[k, j] = 0;
-                            if (k == Model.DoorX && j == Model.DoorY)
+                            GameMap[k, j] = 3;
+                        }
+                        else
+                        {
+                            switch (Model.SqState[k][j])
                             {
-                                GameMap[k, j] = 3;
-                            }
-                            else
-                            {
-                                switch (Model.SqState[k][j])
-                                {
-                                    case SquareState.Open:
-                                        GameMap[k, j] = 1;
-                                        break;
+                                case SquareState.Open:
+                                    GameMap[k, j] = 1;
+                                    break;
 
-                                    case SquareState.Seat:
-                                        GameMap[k, j] = 2;
-                                        break;
+                                case SquareState.Seat:
+                                    GameMap[k, j] = 2;
+                                    break;
 
-                                    case SquareState.Pool:
-                                        EffectMap[k, j] = 6;
-                                        break;
-                                }
+                                case SquareState.Pool:
+                                    EffectMap[k, j] = 6;
+                                    break;
                             }
                         }
+                    }
                     if (GotPublicPool)
                     {
                         for (var l = 0; l < StaticModel.MapSizeY; l++)
@@ -545,9 +534,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     }
                 }
 
-                var roomItem = _room.GetRoomItemHandler().FloorItems.Values.ToArray();
 
-                foreach (var item in roomItem)
+                foreach (var item in _room.GetRoomItemHandler().FloorItems.ToList())
                 {
                     if (!AddItemToMap(item))
                         break;
@@ -578,20 +566,21 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="coord">The coord.</param>
         internal void AddCoordinatedItem(RoomItem item, Point coord)
         {
-            var coordKey = Formatter.PointToInt(coord);
-            var items = (List<RoomItem>) CoordinatedItems[coordKey];
-
-            if (items == null)
+            var items = new List<RoomItem>();
+            if (!CoordinatedItems.TryGetValue(coord, out items))
             {
-                items = new List<RoomItem>();
-                items.Add(item);
+                items = new List<RoomItem> {item};
 
-                CoordinatedItems.Add(coordKey, items);
+                CoordinatedItems.Add(coord, items);
             }
             else
             {
                 if (!items.Contains(item))
+                {
                     items.Add(item);
+                    CoordinatedItems.Remove(coord);
+                    CoordinatedItems.Add(coord, items);
+                }
             }
         }
 
@@ -602,11 +591,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <returns>List&lt;RoomItem&gt;.</returns>
         internal List<RoomItem> GetCoordinatedItems(Point coord)
         {
-            var coordKey = Formatter.PointToInt(coord);
-            var items = (List<RoomItem>) CoordinatedItems[coordKey];
-            if (items != null)
-                return items;
-            return new List<RoomItem>();
+            var items = new List<RoomItem>();
+            return !CoordinatedItems.TryGetValue(coord, out items) ? new List<RoomItem>() : items;
         }
 
         /// <summary>
@@ -617,22 +603,26 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool RemoveCoordinatedItem(RoomItem item, Point coord)
         {
-            var coordKey = Formatter.PointToInt(coord);
-            var items = (List<RoomItem>) CoordinatedItems[coordKey];
-            if (items != null)
+            var items = new List<RoomItem>();
+            if (!CoordinatedItems.TryGetValue(coord, out items))
             {
-                items.Remove(item);
-                return true;
+                return false;
             }
-            return false;
+
+            items.Remove(item);
+            CoordinatedItems.Remove(coord);
+            CoordinatedItems.Add(coord, items);
+            return true;
         }
 
         internal List<RoomItem> GetCoordinatedHeighestItems(Point coord)
         {
-            var coordKey = Formatter.PointToInt(coord);
-            var items = (List<RoomItem>) CoordinatedItems[coordKey];
-            if (items == null)
+            var items = new List<RoomItem>();
+            if (!CoordinatedItems.TryGetValue(coord, out items))
+            {
                 return new List<RoomItem>();
+            }
+
 
             if (items.Count == 1)
                 return items;
@@ -671,10 +661,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             var hybridDictionary = new HybridDictionary();
             foreach (var current2 in item.GetCoords)
             {
-                var point = Formatter.PointToInt(current2);
-                if (CoordinatedItems.Contains(point))
+                if (CoordinatedItems.ContainsKey(current2))
                 {
-                    var value = (List<RoomItem>) CoordinatedItems[point];
+                    var value = CoordinatedItems[current2];
                     if (!hybridDictionary.Contains(current2))
                         hybridDictionary.Add(current2, value);
                 }
@@ -767,7 +756,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                         }
                     }
                 else
-                    _room.GetRoomItemHandler().Rollers.TryAdd(item.Id, item);
+                    _room.GetRoomItemHandler().Rollers.Add(item);
             }
             if (item.GetBaseItem().Type != 's')
                 return true;
@@ -788,11 +777,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 return false;
             }
 
-            foreach (var coord in item.GetCoords)
-                if (!ConstructMapForItem(item, coord))
-                    return false;
-
-            return true;
+            return item.GetCoords.All(coord => ConstructMapForItem(item, coord));
         }
 
         /// <summary>
@@ -1001,9 +986,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         {
             var walkableSquares = new List<Point>();
             for (var y = 0; y < GameMap.GetUpperBound(1) - 1; y++)
-                for (var x = 0; x < GameMap.GetUpperBound(0) - 1; x++)
-                    if (StaticModel.DoorX != x && StaticModel.DoorY != y && GameMap[x, y] == 1)
-                        walkableSquares.Add(new Point(x, y));
+            for (var x = 0; x < GameMap.GetUpperBound(0) - 1; x++)
+                if (StaticModel.DoorX != x && StaticModel.DoorY != y && GameMap[x, y] == 1)
+                    walkableSquares.Add(new Point(x, y));
             var randomNumber = Oblivion.GetRandomNumber(0, walkableSquares.Count);
             var i = 0;
             foreach (var coord in walkableSquares)
@@ -1024,7 +1009,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="endOfPath">if set to <c>true</c> [end of path].</param>
         /// <param name="Override">if set to <c>true</c> [override].</param>
         /// <returns><c>true</c> if [is valid step] [the specified user]; otherwise, <c>false</c>.</returns>
-        internal bool IsValidStep(RoomUser user, Vector2D @from, Vector2D to, bool endOfPath, bool Override)
+        internal bool IsValidStep(RoomUser user, Vector2D from, Vector2D to, bool endOfPath, bool Override)
         {
             if (user == null)
                 return false;
@@ -1074,7 +1059,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             }
             else if (userForSquare != null && !_room.RoomData.AllowWalkThrough && !userForSquare.IsWalking)
                 return false;
-            return SqAbsoluteHeight(to.X, to.Y) - SqAbsoluteHeight(@from.X, @from.Y) <= 1.5;
+            return SqAbsoluteHeight(to.X, to.Y) - SqAbsoluteHeight(from.X, from.Y) <= 1.5;
         }
 
         /// <summary>
@@ -1105,11 +1090,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool ItemCanBePlacedHere(int x, int y)
-        {
-            return (Model.MapSizeX - 1 >= x && Model.MapSizeY - 1 >= y) && (x != Model.DoorX || y != Model.DoorY) &&
-                   GameMap[x, y] == 1;
-        }
+        internal bool ItemCanBePlacedHere(int x, int y) => (Model.MapSizeX - 1 >= x && Model.MapSizeY - 1 >= y) &&
+                                                           (x != Model.DoorX || y != Model.DoorY) &&
+                                                           GameMap[x, y] == 1;
 
         /// <summary>
         ///     Sqs the height of the absolute.
@@ -1127,10 +1110,10 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 if (x >= Model.MapSizeX || y >= Model.MapSizeY)
                     return 0.0;
 
-                var point = Formatter.CombineXyCoord(x, y);
-                if (CoordinatedItems.Contains(point))
+                var point = new Point(x, y);
+                if (CoordinatedItems.ContainsKey(point))
                 {
-                    var itemsOnSquare = (List<RoomItem>) CoordinatedItems[point];
+                    var itemsOnSquare = CoordinatedItems[point];
                     return SqAbsoluteHeight(x, y, itemsOnSquare);
                 }
                 return Model.SqFloorHeight[x][y];
@@ -1159,8 +1142,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
                 foreach (
                     var item in
-                        itemsOnSquare.Where(
-                            item => (item?.GetBaseItem() != null && item.TotalHeight > highestStack[0])))
+                    itemsOnSquare.Where(
+                        item => (item?.GetBaseItem() != null && item.TotalHeight > highestStack[0])))
                 {
                     if (item.GetBaseItem().IsSeat || item.GetBaseItem().InteractionType == Interaction.Bed)
                         deductable = item.GetBaseItem().Height;
@@ -1183,10 +1166,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool ValidTile(int x, int y)
-        {
-            return x > 0 && y > 0 && x < Model.MapSizeX && y < Model.MapSizeY;
-        }
+        internal bool ValidTile(int x, int y) => x > 0 && y > 0 && x < Model.MapSizeX && y < Model.MapSizeY;
 
         /// <summary>
         ///     Gets the room item for square.
@@ -1196,12 +1176,12 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <returns>List&lt;RoomItem&gt;.</returns>
         internal List<RoomItem> GetRoomItemForSquare(int x, int y)
         {
-            var point = Formatter.CombineXyCoord(x, y);
+            var point = new Point(x, y);
             var list = new List<RoomItem>();
-            if (!CoordinatedItems.Contains(point))
+            if (!CoordinatedItems.ContainsKey(point))
                 return list;
 
-            var list2 = (List<RoomItem>) CoordinatedItems[point];
+            var list2 = CoordinatedItems[point];
             list.AddRange(list2.Where(current => current.Coordinate.X == x && current.Coordinate.Y == y));
             return list;
         }
@@ -1215,8 +1195,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool SquareHasFurni(int x, int y, Interaction type)
         {
-            var point = Formatter.CombineXyCoord(x, y);
-            if (!CoordinatedItems.Contains(point))
+            var point = new Point(x, y);
+            if (!CoordinatedItems.ContainsKey(point))
                 return false;
 
             var list = (List<RoomItem>) CoordinatedItems[point];
@@ -1235,8 +1215,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool SquareHasFurni(int x, int y)
         {
-            var point = Formatter.CombineXyCoord(x, y);
-            if (!CoordinatedItems.Contains(point))
+            var point = new Point(x, y);
+            if (!CoordinatedItems.ContainsKey(point))
                 return false;
 
             var list = (List<RoomItem>) CoordinatedItems[point];
@@ -1251,9 +1231,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <returns>List&lt;RoomItem&gt;.</returns>
         internal List<RoomItem> GetAllRoomItemForSquare(int pX, int pY)
         {
-            var point = Formatter.CombineXyCoord(pX, pY);
+            var point = new Point(pX, pY);
             var list = new List<RoomItem>();
-            if (!CoordinatedItems.Contains(point))
+            if (!CoordinatedItems.ContainsKey(point))
                 return list;
             var list2 = (List<RoomItem>) CoordinatedItems[point];
             foreach (var current in list2.Where(current => !list.Contains(current)))
@@ -1380,9 +1360,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
             {
                 for (var i = 0; i < GameMap.GetUpperBound(1) - 1; i++)
-                    for (var j = 0; j < GameMap.GetUpperBound(0) - 1; j++)
-                        if (StaticModel.DoorX != j && StaticModel.DoorY != i && GameMap[j, i] == 0)
-                            list.Add(new Point(j, i));
+                for (var j = 0; j < GameMap.GetUpperBound(0) - 1; j++)
+                    if (StaticModel.DoorX != j && StaticModel.DoorY != i && GameMap[j, i] == 0)
+                        list.Add(new Point(j, i));
                 return list;
             }
         }
@@ -1588,12 +1568,12 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             var serverMessage = new ServerMessage();
             serverMessage.Init(LibraryParser.OutgoingRequest("HeightMapMessageComposer"));
             serverMessage.AppendInteger(Model.MapSizeX);
-            serverMessage.AppendInteger(Model.MapSizeX*Model.MapSizeY);
+            serverMessage.AppendInteger(Model.MapSizeX * Model.MapSizeY);
             for (var i = 0; i < Model.MapSizeY; i++)
             {
                 for (var j = 0; j < Model.MapSizeX; j++)
                 {
-                    serverMessage.AppendShort((short) (SqAbsoluteHeight(j, i)*256));
+                    serverMessage.AppendShort((short) (SqAbsoluteHeight(j, i) * 256));
                 }
             }
             //  serverMessage.AppendShort(this.Model.SqFloorHeight[j, i] * 256);

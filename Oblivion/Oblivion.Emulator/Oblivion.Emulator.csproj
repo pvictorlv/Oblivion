@@ -180,6 +180,8 @@
     <Compile Include="HabboHotel\Catalogs\Composers\TargetedOfferComposer.cs" />
     <Compile Include="HabboHotel\Catalogs\TargetedOfferManager.cs" />
     <Compile Include="HabboHotel\Catalogs\Interfaces\TargetedOffer.cs" />
+    <Compile Include="HabboHotel\Commands\Controllers\BuyRoom.cs" />
+    <Compile Include="HabboHotel\Commands\Controllers\SellRoom.cs" />
     <Compile Include="HabboHotel\Commands\Interfaces\Command.cs" />
     <Compile Include="HabboHotel\Commands\CommandsManager.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\AddVideo.cs" />
@@ -273,6 +275,7 @@
     <Compile Include="HabboHotel\Items\Interfaces\UserItem.cs" />
     <Compile Include="HabboHotel\Items\WallCoordinate.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Conditions\TimerTrigger.cs" />
+    <Compile Include="HabboHotel\Items\Wired\Handlers\Effects\RollerSpeed.cs" />
     <Compile Include="HabboHotel\Misc\AntiMutant.cs" />
     <Compile Include="HabboHotel\Misc\CoinsManager.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\About.cs" />
