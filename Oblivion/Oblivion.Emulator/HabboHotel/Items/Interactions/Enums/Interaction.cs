@@ -1019,6 +1019,9 @@
         CrackableEgg,
         ActionCallStacks,
         ActionEffectUser,
+        ActionFreezeUser,
+        ActionHandItem,
+        ActionDance,
         WalkInternalLink
     }
 }

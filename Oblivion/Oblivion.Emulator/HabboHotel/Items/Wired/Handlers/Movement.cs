@@ -281,8 +281,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers
                         return rotation;
                     }
             }
-
             return rotation;
+
         }
 
         private static void HandleClockwiseRotation(ref int rotation)

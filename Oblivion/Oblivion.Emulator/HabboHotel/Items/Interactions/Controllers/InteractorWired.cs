@@ -971,13 +971,13 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 case Interaction.FloorSwitch2:
                     break;
 
+                case Interaction.ActionFreezeUser:
                 case Interaction.SpecialRandom:
                     {
                         var serverMessage24 = new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage24.AppendBool(false);
-                        serverMessage24.AppendInteger(15);
-                        serverMessage24.AppendInteger(list.Count);
-                        foreach (var current23 in list) serverMessage24.AppendInteger(current23.Id);
+                        serverMessage24.AppendInteger(0);
+                        serverMessage24.AppendInteger(0);
                         serverMessage24.AppendInteger(item.GetBaseItem().SpriteId);
                         serverMessage24.AppendInteger(item.Id);
                         serverMessage24.AppendString(extraInfo);

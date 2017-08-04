@@ -7,6 +7,7 @@ using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.User;
+using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 {
@@ -18,7 +19,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
         {
             Item = item;
             Room = room;
-            Delay = 5000;
+            Delay = 500;
             Room.GetWiredHandler().EnqueueCycle(this);
 
             if (_mNext == 0L || _mNext < Oblivion.Now())
@@ -37,7 +38,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
         {
             var num = Oblivion.Now();
 
-            if (_mNext >= num)
+            if (_mNext > num)
                 return false;
 
             var conditions = Room.GetWiredHandler().GetConditions(this);
@@ -66,7 +67,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 WiredHandler.OnEvent(randomBox);
                 WiredHandler.OnEvent(selectedBox);
             }
-            else if (effects.Any())
+            else
             {
                 foreach (var current2 in effects.Where(current2 => current2.Execute(null, Type)))
                 {
@@ -75,7 +76,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             }
 
             _mNext = (Oblivion.Now() + (Delay));
-            return true;
+            return false;
         }
 
         public Interaction Type => Interaction.TriggerRepeater;

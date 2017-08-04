@@ -1515,7 +1515,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 message.AppendInteger(Y);
                 message.AppendInteger(Rot);
                 message.AppendString(TextHandling.GetString(Z));
-                message.AppendString(TextHandling.GetString(GetBaseItem().Height));
+                message.AppendString(TextHandling.GetString(Z));
 
                 switch (GetBaseItem().InteractionType)
                 {

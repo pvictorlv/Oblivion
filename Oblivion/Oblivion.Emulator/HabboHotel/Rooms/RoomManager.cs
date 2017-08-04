@@ -527,7 +527,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="reason">The reason.</param>
         internal void UnloadRoom(Room room, string reason)
         {
-            if (room == null || room.RoomData == null || room.Disposed)
+            if (room?.RoomData == null || room.Disposed)
                 return;
 
             room.Disposed = true;

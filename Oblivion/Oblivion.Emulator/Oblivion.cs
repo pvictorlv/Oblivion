@@ -501,6 +501,12 @@ namespace Oblivion
 
             return Convert.ToInt32(time1 - time2);
         }
+        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        {
+            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+            return dtDateTime;
+        }
 
         /// <summary>
         ///     Filter's the Habbo Avatars Figure
@@ -637,71 +643,80 @@ namespace Oblivion
         /// Set a Different Message in Hotel
         internal static void PerformShutDown(bool restart)
         {
-            var now = DateTime.Now;
-
-            Cache.StopProcess();
-
-            ShutdownStarted = true;
-
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
-            serverMessage.AppendString("disconnection");
-            serverMessage.AppendInteger(2);
-            serverMessage.AppendString("title");
-            serverMessage.AppendString("HEY EVERYONE!");
-            serverMessage.AppendString("message");
-            serverMessage.AppendString(
-                restart
-                    ? "<b>The hotel is shutting down for a break.<)/b>\nYou may come back later.\r\n<b>So long!</b>"
-                    : "<b>The hotel is shutting down for a break.</b><br />You may come back soon. Don't worry, everything's going to be saved..<br /><b>So long!</b>\r\n~ This session was powered by OblivionEmulator");
-            GetGame().GetClientManager().QueueBroadcaseMessage(serverMessage);
-            Console.Title = "Oblivion Emulator | Shutting down...";
-
-            _game.StopGameLoop();
-            _game.GetRoomManager().RemoveAllRooms();
-            GetGame().GetClientManager().CloseAll();
-
-            GetConnectionManager().Destroy();
-
-            foreach (Guild group in _game.GetGroupManager().Groups.Values) group.UpdateForum();
-
-            using (var queryReactor = Manager.GetQueryReactor())
-            {
-                queryReactor.RunFastQuery("UPDATE users SET online = '0'");
-                queryReactor.RunFastQuery("UPDATE rooms_data SET users_now = 0");
-                queryReactor.RunFastQuery("TRUNCATE TABLE users_rooms_visits");
-            }
-
-            _connectionManager.Destroy();
-            _game.Destroy();
-
             try
             {
-                Manager.Destroy();
-                Out.WriteLine("Game Manager destroyed", "Oblivion.GameManager", ConsoleColor.DarkYellow);
+                var now = DateTime.Now;
+
+                Cache.StopProcess();
+
+                ShutdownStarted = true;
+
+                var serverMessage =
+                    new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
+                serverMessage.AppendString("disconnection");
+                serverMessage.AppendInteger(2);
+                serverMessage.AppendString("title");
+                serverMessage.AppendString("HEY EVERYONE!");
+                serverMessage.AppendString("message");
+                serverMessage.AppendString(
+                    restart
+                        ? "<b>The hotel is shutting down for a break.<)/b>\nYou may come back later.\r\n<b>So long!</b>"
+                        : "<b>The hotel is shutting down for a break.</b><br />You may come back soon. Don't worry, everything's going to be saved..<br /><b>So long!</b>\r\n~ This session was powered by OblivionEmulator");
+                GetGame().GetClientManager().QueueBroadcaseMessage(serverMessage);
+                Console.Title = "Oblivion Emulator | Shutting down...";
+
+                _game.StopGameLoop();
+                _game.GetRoomManager().RemoveAllRooms();
+                _game.GetClientManager().CloseAll();
+
+                GetConnectionManager().Destroy();
+
+                foreach (Guild group in _game.GetGroupManager().Groups.Values) group.UpdateForum();
+
+                using (var queryReactor = Manager.GetQueryReactor())
+                {
+                    queryReactor.RunFastQuery("UPDATE users SET online = '0'");
+                    queryReactor.RunFastQuery("UPDATE rooms_data SET users_now = 0");
+                    queryReactor.RunFastQuery("TRUNCATE TABLE users_rooms_visits");
+                }
+
+                _connectionManager.Destroy();
+                _game.Destroy();
+
+                try
+                {
+                    Manager.Destroy();
+                    Out.WriteLine("Game Manager destroyed", "Oblivion.GameManager", ConsoleColor.DarkYellow);
+                }
+                catch (Exception e)
+                {
+                    Writer.Writer.LogException("Oblivion.cs PerformShutDown GameManager" + e);
+                }
+
+                var span = DateTime.Now - now;
+
+                Out.WriteLine("Elapsed " + TimeSpanToString(span) + "ms on Shutdown Proccess", "Oblivion.Life",
+                    ConsoleColor.DarkYellow);
+
+                if (!restart)
+                    Out.WriteLine("Shutdown Completed. Press Any Key to Continue...", string.Empty,
+                        ConsoleColor.DarkRed);
+
+                if (!restart)
+                    Console.ReadKey();
+
+                IsLive = false;
+
+                if (restart)
+                    Process.Start(Assembly.GetEntryAssembly().Location);
+
+                Console.WriteLine("Closing...");
+                Environment.Exit(0);
             }
             catch (Exception e)
             {
-                Writer.Writer.LogException("Oblivion.cs PerformShutDown GameManager" + e);
+                Console.WriteLine(e);
             }
-
-            var span = DateTime.Now - now;
-
-            Out.WriteLine("Elapsed " + TimeSpanToString(span) + "ms on Shutdown Proccess", "Oblivion.Life",
-                ConsoleColor.DarkYellow);
-
-            if (!restart)
-                Out.WriteLine("Shutdown Completed. Press Any Key to Continue...", string.Empty, ConsoleColor.DarkRed);
-
-            if (!restart)
-                Console.ReadKey();
-
-            IsLive = false;
-
-            if (restart)
-                Process.Start(Assembly.GetEntryAssembly().Location);
-
-            Console.WriteLine("Closing...");
-            Environment.Exit(0);
         }
 
         /// <summary>

@@ -529,7 +529,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 foreach (var current in FloorItems)
                 {
                     if (current.IsWired)
+                    {
                         _room.GetWiredHandler().LoadWired(_room.GetWiredHandler().GenerateNewItem(current));
+                    }
                     if (current.IsRoller)
                         GotRollers = true;
                     else if (current.GetBaseItem().InteractionType == Interaction.Dimmer)
@@ -676,6 +678,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         {
             return SetFloorItem(session, item, newX, newY, newRot, newItem, onRoller, sendMessage, true, false);
         }
+
+      
 
         /// <summary>
         ///     Sets the floor item.

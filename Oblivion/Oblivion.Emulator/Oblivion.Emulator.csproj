@@ -18,7 +18,7 @@
   <PropertyGroup>
     <ApplicationIcon>Favicon.ico</ApplicationIcon>
     <ProjectGuid>{4F3B6B3F-7754-40C9-B3DD-8D83BFA59FE5}</ProjectGuid>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile />
     <NoStdLib>False</NoStdLib>
     <OutputType>Exe</OutputType>
@@ -274,6 +274,8 @@
     <Compile Include="HabboHotel\Items\Datas\TonerData.cs" />
     <Compile Include="HabboHotel\Items\Interfaces\UserItem.cs" />
     <Compile Include="HabboHotel\Items\WallCoordinate.cs" />
+    <Compile Include="HabboHotel\Items\Wired\Handlers\Addons\FreezeUser.cs" />
+    <Compile Include="HabboHotel\Items\Wired\Handlers\Addons\SpecialRandom.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Conditions\TimerTrigger.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Effects\RollerSpeed.cs" />
     <Compile Include="HabboHotel\Misc\AntiMutant.cs" />
@@ -425,7 +427,7 @@
     <Compile Include="HabboHotel\Items\Wired\Handlers\Conditions\UserIsWearingBadge.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Conditions\UserIsWearingEffect.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Effects\Chase.cs" />
-    <Compile Include="HabboHotel\Items\Wired\Handlers\Effects\EffectUser.cs" />
+    <Compile Include="HabboHotel\Items\Wired\Handlers\Addons\EffectUser.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Effects\GiveReward.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Effects\GiveScore.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Effects\KickUser.cs" />

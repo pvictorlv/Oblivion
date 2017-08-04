@@ -1,12 +1,16 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.User;
+using Oblivion.Messages;
+using Oblivion.Messages.Parsers;
+using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
@@ -140,7 +144,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         private void HandleMovement(RoomItem item)
         {
             var newPoint = Movement.HandleMovement(item.Coordinate, (MovementState)_dir, item.Rot);
-            var newRotation = Movement.HandleRotation(item.Rot, (RotationState)item.Rot);
+            var newRotation = Movement.HandleRotation(item.Rot, (RotationState)_rot);
 
             if (newPoint != item.Coordinate && newRotation == item.Rot)
             {
@@ -158,7 +162,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (!Room.GetGameMap().SquareIsOpen(newPoint.X, newPoint.Y, false))
                 return;
 
+            
+            item.Rot = newRotation;
+            item.UpdateState(false, true);
+            
             Room.GetRoomItemHandler().SetFloorItem(null, item, newPoint.X, newPoint.Y, newRotation, false, false, true, false, false);
+
         }
     }
 }

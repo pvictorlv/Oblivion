@@ -128,8 +128,11 @@ namespace Oblivion.Connection.Connection
                     {
                         socket.NoDelay = _disableNagleAlgorithm;
                         AcceptedConnections++;
-                        var connectionInfo = new ConnectionInformation(socket, _parser.Clone() as IDataParser, AcceptedConnections);
-                        connectionInfo.Disconnected = OnChannelDisconnect;
+                        var connectionInfo =
+                            new ConnectionInformation(socket, _parser.Clone() as IDataParser, AcceptedConnections)
+                            {
+                                Disconnected = OnChannelDisconnect
+                            };
                         OnClientConnected(connectionInfo);
                     }
                 }
@@ -144,7 +147,7 @@ namespace Oblivion.Connection.Connection
         /// </summary>
         public void Destroy()
         {
-            _listener.Stop();
+            _listener = null;
         }
     }
 }

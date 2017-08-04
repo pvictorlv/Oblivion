@@ -147,8 +147,34 @@ namespace Oblivion.HabboHotel.Rooms.Data
         /// </summary>
         internal void RefreshArrays()
         {
-            Generate();
+            var newSqState = new SquareState[MapSizeX + 1][];
+            for (var i = 0; i < MapSizeX; i++) newSqState[i] = new SquareState[MapSizeY + 1];
+            var newSqFloorHeight = new short[MapSizeX + 1][];
+            for (var i = 0; i < MapSizeX; i++) newSqFloorHeight[i] = new short[MapSizeY + 1];
+            var newSqSeatRot = new byte[MapSizeX + 1][];
+            for (var i = 0; i < MapSizeX; i++) newSqSeatRot[i] = new byte[MapSizeY + 1];
+            var newSqChar = new char[MapSizeX + 1][];
+            for (var i = 0; i < MapSizeX; i++) newSqChar[i] = new char[MapSizeY + 1];
+            for (var i = 0; i < MapSizeY; i++)
+            {
+                for (var j = 0; j < MapSizeX; j++)
+                {
+                    if (j > _staticModel.MapSizeX - 1 || i > _staticModel.MapSizeY - 1)
+                        newSqState[j][i] = SquareState.Blocked;
+                    else
+                    {
+                        newSqState[j][i] = _staticModel.SqState[j][i];
+                        newSqFloorHeight[j][i] = _staticModel.SqFloorHeight[j][i];
+                        newSqSeatRot[j][i] = _staticModel.SqSeatRot[j][i];
+                        newSqChar[j][i] = _staticModel.SqChar[j][i];
+                    }
+                }
+            }
+            SqState = newSqState;
+            SqFloorHeight = newSqFloorHeight;
+            SqSeatRot = newSqSeatRot;
         }
+     
 
         /// <summary>
         ///     Sets the state of the update.
@@ -241,26 +267,34 @@ namespace Oblivion.HabboHotel.Rooms.Data
         private ServerMessage SerializeHeightmap()
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FloorMapMessageComposer"));
-            serverMessage.AppendBool(true);
-            serverMessage.AppendInteger((int) _mRoom.RoomData.WallHeight);
-            var stringBuilder = new StringBuilder();
-            for (var i = 0; i < MapSizeY; i++)
+            serverMessage.AppendBool(false);
+            serverMessage.AppendInteger(_mRoom.RoomData.WallHeight);
+            var FloorMap = new StringBuilder();
+
+            for (var y = 0; y < MapSizeY; y++)
             {
-                for (var j = 0; j < MapSizeX; j++)
+                for (var x = 0; x < MapSizeX; x++)
                 {
-                    try
+                    if (x == DoorX && y == DoorY)
                     {
-                        stringBuilder.Append(SqChar[j][i].ToString());
+                        FloorMap.Append(DoorZ > 9 ? ((char)(87 + DoorZ)).ToString() : DoorZ.ToString());
+                        continue;
                     }
-                    catch (Exception)
+
+                    if (SqState[x][y] == SquareState.Blocked)
                     {
-                        stringBuilder.Append("0");
+                        FloorMap.Append('x');
+                        continue;
                     }
+
+                    double Height = SqFloorHeight[x][y];
+                    var Val = Height > 9 ? ((char)(87 + Height)).ToString() : Height.ToString();
+                    FloorMap.Append(Val);
                 }
-                stringBuilder.Append(Convert.ToChar(13));
+                FloorMap.Append(Convert.ToChar(13));
             }
-            var s = stringBuilder.ToString();
-            serverMessage.AppendString(s);
+
+            serverMessage.AppendString(FloorMap.ToString());
             return serverMessage;
         }
     }

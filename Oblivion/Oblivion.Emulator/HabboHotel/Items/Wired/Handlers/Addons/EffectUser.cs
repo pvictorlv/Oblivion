@@ -5,7 +5,7 @@ using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.User;
 
-namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
+namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
 {
     public class EffectUser : IWiredItem
     {

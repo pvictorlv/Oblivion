@@ -11,6 +11,7 @@ using Oblivion.HabboHotel.Items.Wired.Handlers.Effects;
 using Oblivion.HabboHotel.Items.Wired.Handlers.Triggers;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
+using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Items.Wired
 {
@@ -47,7 +48,6 @@ namespace Oblivion.HabboHotel.Items.Wired
             {
                 if (_wiredItems.Contains(fItem))
                     _wiredItems.Remove(fItem);
-
                 return null;
             }
 
@@ -298,6 +298,9 @@ namespace Oblivion.HabboHotel.Items.Wired
 
                 case Interaction.ActionEffectUser:
                     return new EffectUser(item, _room);
+
+                case Interaction.ActionFreezeUser:
+                    return new FreezeUser(item, _room);
 
                 case Interaction.ActionRollerSpeed:
                     return new RollerSpeed(item, _room);

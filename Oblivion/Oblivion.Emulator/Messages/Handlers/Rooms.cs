@@ -1520,7 +1520,7 @@ namespace Oblivion.Messages.Handlers
                     return;
                 }
 
-                var heightMap = Request.GetString();
+                var heightMap = Request.GetString().ToLower().TrimEnd();
                 var doorX = Request.GetInteger();
                 var doorY = Request.GetInteger();
                 var doorOrientation = Request.GetInteger();

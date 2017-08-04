@@ -802,24 +802,28 @@ namespace Oblivion.Messages.Handlers
             uint groupId = Request.GetUInteger();
             uint threadId = Request.GetUInteger();
             int startIndex = Request.GetInteger();
+
             Request.GetInteger();
 
-            Guild theGroup = Oblivion.GetGame().GetGroupManager().GetGroup(groupId);
+            var theGroup = Oblivion.GetGame().GetGroupManager().GetGroup(groupId);
 
             if (theGroup == null || !theGroup.HasForum)
                 return;
 
             using (IQueryAdapter dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                dbClient.SetQuery($"SELECT * FROM groups_forums_posts WHERE group_id = '{groupId}' AND parent_id = '{threadId}' OR id = '{threadId}' ORDER BY timestamp ASC;");
+                dbClient.SetQuery(
+                    $"SELECT * FROM groups_forums_posts WHERE group_id = '{groupId}' AND parent_id = '{threadId}' OR id = '{threadId}' ORDER BY timestamp ASC;");
 
                 DataTable table = dbClient.GetTable();
 
                 if (table == null)
                     return;
 
-                int b = (table.Rows.Count <= 20) ? table.Rows.Count : 20;
-                var posts = new List<GroupForumPost>();
+                int b = table.Rows.Count <= 20 ? table.Rows.Count : 20;
+
+                List<GroupForumPost> posts = new List<GroupForumPost>();
+
                 int i = 1;
 
                 while (i <= b)
@@ -832,41 +836,45 @@ namespace Oblivion.Messages.Handlers
                         continue;
                     }
 
-                    var thread = new GroupForumPost(row);
+                    GroupForumPost thread = new GroupForumPost(row);
 
                     if (thread.ParentId == 0 && thread.Hidden)
                         return;
 
                     posts.Add(thread);
+
                     i++;
                 }
 
-                var message = new ServerMessage(LibraryParser.OutgoingRequest("GroupForumReadThreadMessageComposer"));
+                var messageBuffer = new ServerMessage(LibraryParser.OutgoingRequest("GroupForumReadThreadMessageComposer"));
 
-                message.AppendInteger(groupId);
-                message.AppendInteger(threadId);
-                message.AppendInteger(startIndex);
-                message.AppendInteger(b);
+                messageBuffer.AppendInteger(groupId);
+                messageBuffer.AppendInteger(threadId);
+                messageBuffer.AppendInteger(startIndex);
+                messageBuffer.AppendInteger(b);
+
                 int indx = 0;
 
                 foreach (GroupForumPost post in posts)
                 {
-                    message.AppendInteger(indx++ - 1);
-                    message.AppendInteger(indx - 1);
-                    message.AppendInteger(post.PosterId);
-                    message.AppendString(post.PosterName);
-                    message.AppendString(post.PosterLook);
-                    message.AppendInteger((Oblivion.GetUnixTimeStamp() - post.Timestamp));
-                    message.AppendString(post.PostContent);
-                    message.AppendByte(0);
-                    message.AppendInteger(0);
-                    message.AppendString(post.Hider);
-                    message.AppendInteger(0);
+                    messageBuffer.AppendInteger(indx++ - 1);
+                    messageBuffer.AppendInteger(indx - 1);
+                    messageBuffer.AppendInteger(post.PosterId);
+                    messageBuffer.AppendString(post.PosterName);
+                    messageBuffer.AppendString(post.PosterLook);
+                    messageBuffer.AppendInteger(Oblivion.GetUnixTimeStamp() - post.Timestamp);
+                    messageBuffer.AppendString(post.PostContent);
+                    messageBuffer.AppendByte(0);
+                    messageBuffer.AppendInteger(0);
+                    messageBuffer.AppendString(post.Hider);
+                    messageBuffer.AppendInteger(0);
+                    messageBuffer.AppendInteger(0);
                 }
 
-                Session.SendMessage(message);
+                Session.SendMessage(messageBuffer);
             }
         }
+
 
         /// <summary>
         /// Gets the group forum thread root.

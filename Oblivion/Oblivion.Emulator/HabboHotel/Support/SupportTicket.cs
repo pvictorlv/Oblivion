@@ -263,15 +263,9 @@ namespace Oblivion.HabboHotel.Support
             message.AppendString(_modName);
             message.AppendString(Message);
             message.AppendInteger(0);
+            message.AppendInteger(0);
 
-            message.AppendInteger(ReportedChats.Count);
-
-            foreach (var str in ReportedChats)
-            {
-                message.AppendString(str);
-                message.AppendInteger(-1);
-                message.AppendInteger(-1);
-            }
+           
 
             return message;
         }

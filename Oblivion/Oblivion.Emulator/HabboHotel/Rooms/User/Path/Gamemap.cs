@@ -1166,7 +1166,10 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool ValidTile(int x, int y) => x > 0 && y > 0 && x < Model.MapSizeX && y < Model.MapSizeY;
+        internal bool ValidTile(int x, int y)
+        {
+            return x > 0 && y > 0 && x < Model.MapSizeX && y < Model.MapSizeY;
+        }
 
         /// <summary>
         ///     Gets the room item for square.

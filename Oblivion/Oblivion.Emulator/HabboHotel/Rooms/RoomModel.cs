@@ -1,7 +1,6 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using Oblivion.HabboHotel.Rooms.Chat;
 using Oblivion.HabboHotel.Rooms.Chat.Enums;
 
 namespace Oblivion.HabboHotel.Rooms
@@ -177,7 +176,7 @@ namespace Oblivion.HabboHotel.Rooms
                                 SqState[x][y] = SquareState.Blocked;
                                 SqChar[x][y] = c;
                             }
-                            else if (char.IsLetterOrDigit(c))
+                            else
                             {
                                 SqFloorHeight[x][y] = char.IsDigit(c)
                                     ? short.Parse(c.ToString())

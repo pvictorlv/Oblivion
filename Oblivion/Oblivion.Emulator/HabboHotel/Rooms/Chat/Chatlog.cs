@@ -68,11 +68,11 @@ namespace Oblivion.HabboHotel.Rooms.Chat
         internal void Serialize(ref ServerMessage message)
         {
             var habbo = Oblivion.GetHabboById(UserId);
-            message.AppendInteger(Oblivion.DifferenceInMilliSeconds(TimeStamp, DateTime.Now));
+            message.AppendString(TimeStamp.ToString("h:mm:ss"));
             message.AppendInteger(UserId);
             message.AppendString(habbo == null ? "*User not found*" : habbo.UserName);
             message.AppendString(Message);
-            message.AppendBool(GlobalMessage);
+            message.AppendBool(_globalMessage);
         }
     }
 }
