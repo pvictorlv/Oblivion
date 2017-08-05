@@ -38,7 +38,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
              info.AppendFormat(
                 "<b>Créditos:</b> <br />Dark, Claudio Santoro, Kessiler, XDR, <b> Lucca (Droppy)</b><br /> <br /> ");
             info.AppendFormat("<b>Estatisticas:</b> <br />");
-            var userCount = Oblivion.GetGame().GetClientManager().Clients.Count;
+            var userCount = Oblivion.GetGame().GetClientManager().Clients.Count * Oblivion.Multipy;
             var roomsCount = Oblivion.GetGame().GetRoomManager().LoadedRooms.Count;
             info.AppendFormat("<b>Usuários:</b> {0} em {1}{2}.<br /><br /><br />", userCount, roomsCount,
                 (roomsCount == 1) ? " Quarto" : " Quartos");

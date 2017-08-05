@@ -1,12 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Data;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using Oblivion.Configuration;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Catalogs.Wrappers;
 using Oblivion.HabboHotel.Items.Interactions;
@@ -34,10 +31,7 @@ namespace Oblivion.HabboHotel.Items
         /// <summary>
         ///     Initializes a new instance of the <see cref="ItemManager" /> class.
         /// </summary>
-        internal ItemManager()
-        {
-            _items = new Dictionary<uint, Item>();
-        }
+        internal ItemManager() => _items = new Dictionary<uint, Item>();
 
         /// <summary>
         ///     Loads the items.

@@ -100,10 +100,7 @@ namespace Oblivion.HabboHotel.GameClients
         /// </summary>
         /// <param name="clientId">The client identifier.</param>
         /// <returns>GameClient.</returns>
-        internal GameClient GetClient(uint clientId)
-        {
-            return Clients.ContainsKey(clientId) ? Clients[clientId] : null;
-        }
+        internal GameClient GetClient(uint clientId) => Clients.ContainsKey(clientId) ? Clients[clientId] : null;
 
         /// <summary>
         ///     Gets the name by identifier.
@@ -370,7 +367,7 @@ namespace Oblivion.HabboHotel.GameClients
 
                 foreach (var current3 in Clients.Values.Where(current3 => current3.GetConnection() != null))
                 {
-                    current3.GetConnection().Dispose();
+                    current3.GetConnection().Disconnect();
 
                     Console.ForegroundColor = ConsoleColor.DarkMagenta;
 

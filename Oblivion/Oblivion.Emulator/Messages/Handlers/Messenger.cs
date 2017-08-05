@@ -36,7 +36,7 @@ namespace Oblivion.Messages.Handlers
             for (var i = 0; i < num; i++)
             {
                 var num2 = Request.GetUInteger();
-                if (Session.GetHabbo().Relationships.ContainsKey(Convert.ToInt32(num2)))
+                if (Session.GetHabbo().Data.Relations.ContainsKey(Convert.ToInt32(num2)))
                 {
                     Session.SendNotif(Oblivion.GetLanguage().GetVar("buddy_error_1"));
                     return;

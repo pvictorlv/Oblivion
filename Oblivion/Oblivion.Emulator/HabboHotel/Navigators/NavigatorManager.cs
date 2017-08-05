@@ -714,7 +714,7 @@ namespace Oblivion.HabboHotel.Navigators
                 case -3:
                 {
                     reply.AppendInteger(5);
-                    SerializeNavigatorRooms(ref reply, session.GetHabbo().UsersRooms);
+                    SerializeNavigatorRooms(ref reply, session.GetHabbo().Data.Rooms);
 
                     return reply;
                 }

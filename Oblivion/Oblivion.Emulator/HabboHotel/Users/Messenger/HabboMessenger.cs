@@ -238,8 +238,8 @@ namespace Oblivion.HabboHotel.Users.Messenger
                     " AND target = ", friendId, ")"));
 
                 if (id > 0)
-                    if (habbo.Relationships.ContainsKey(id))
-                        habbo.Relationships.Remove(id);
+                    if (habbo.Data.Relations.ContainsKey(id))
+                        habbo.Data.Relations.Remove(id);
             }
 
             OnDestroyFriendship(friendId);
@@ -249,8 +249,8 @@ namespace Oblivion.HabboHotel.Users.Messenger
             {
                 clientRelationship.GetHabbo().GetMessenger().OnDestroyFriendship(_userId);
 
-                if (clientRelationship.GetHabbo().Relationships.ContainsKey((int) friendId))
-                    clientRelationship.GetHabbo().Relationships.Remove((int) friendId);
+                if (clientRelationship.GetHabbo().Data.Relations.ContainsKey((int) friendId))
+                    clientRelationship.GetHabbo().Data.Relations.Remove((int) friendId);
             }
         }
 

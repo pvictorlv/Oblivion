@@ -55,6 +55,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             DataTable botsTable;
             DataTable questsTable;
             DataTable petsTable;
+            DataTable dBlockedCommands;
 
             DataTable myRoomsTable;
 
@@ -163,6 +164,9 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
                 queryReactor.SetQuery($"SELECT * FROM users_relationships WHERE user_id = {userId}");
                 relationShipsTable = queryReactor.GetTable();
+
+                queryReactor.SetQuery("SELECT command_name FROM user_blockcmd WHERE user_id = '" + userId + "'");
+                dBlockedCommands = queryReactor.GetTable();
 
                 queryReactor.RunFastQuery($"UPDATE users SET online='1' WHERE id = {userId} LIMIT 1");
             }
@@ -333,10 +337,11 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                     new MessengerBuddy(0, "Staff Chat",
                         "hr-831-45.fa-1206-91.sh-290-1331.ha-3129-100.hd-180-2.cc-3039-73.ch-3215-92.lg-270-73",
                         string.Empty, 0, false, true));
-
+            var blockedCommands = (from DataRow r in dBlockedCommands.Rows select r["command_name"].ToString())
+                .ToList();
             return new UserData(userId, achievements, talents, favorites, ignoreUsers, tags, subscriptions, badges,
                 items, effects, friends, friendsRequests, myRooms, pets, quests, user, inventoryBots, relationShips,
-                pollSuggested, miniMailCount);
+                pollSuggested, miniMailCount, blockedCommands);
         }
 
         /// <summary>
@@ -356,11 +361,13 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 queryReactor.SetQuery($"SELECT * FROM users WHERE id = '{userId}'");
 
                 dataRow = queryReactor.GetRow();
-                num = Convert.ToUInt32(dataRow["id"]);
-                Oblivion.GetGame().GetClientManager().LogClonesOut(num);
 
                 if (dataRow == null)
                     return null;
+                
+                num = Convert.ToUInt32(dataRow["id"]);
+                Oblivion.GetGame().GetClientManager().LogClonesOut(num);
+
 
 
                 if (Oblivion.GetGame().GetClientManager().GetClientByUserId(num) != null)
@@ -400,7 +407,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             var user = HabboFactory.GenerateHabbo(dataRow, row, group);
 
             return new UserData(num, achievements, talents, favouritedRooms, ignores, tags, null, badges, inventory,
-                effects, friends, requests, rooms, pets, quests, user, bots, dictionary, pollData, 0);
+                effects, friends, requests, rooms, pets, quests, user, bots, dictionary, pollData, 0, new List<string>());
         }
     }
 }

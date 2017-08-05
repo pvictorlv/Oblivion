@@ -5,6 +5,7 @@ using System.Linq;
 using Oblivion.Configuration;
 using Oblivion.Connection;
 using Oblivion.HabboHotel.GameClients.Interfaces;
+using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Quests.Composer;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.Messages.Parsers;
@@ -212,7 +213,12 @@ namespace Oblivion.Messages.Handlers
             if (Session == null || Session.GetHabbo() != null)
                 return;
 
-            if (Session.TryLogin(Request.GetString()) == false)
+            var sso = Request.GetString();
+            if (string.IsNullOrEmpty(sso) || string.IsNullOrWhiteSpace(sso) || sso.Length < 5)
+            {
+                Session.Disconnect("Invalid sso");
+            }
+            if (Session.TryLogin(sso) == false)
                 Session.Disconnect("banned");
 
             if (Session != null)
@@ -337,46 +343,53 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void HabboCamera()
         {
-            //string one = this.Request.GetString();
-            /*var two = */
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            if (!Session.GetHabbo().InRoom ||
+                Session.GetHabbo().Credits < Oblivion.GetGame().GetCameraManager().PurchaseCoinsPrice ||
+                Session.GetHabbo().ActivityPoints < Oblivion.GetGame().GetCameraManager().PurchaseDucketsPrice)
+                return;
+
+            var Room = Session.GetHabbo().CurrentRoom;
+
+            var User = Room?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
+
+            if (User?.LastPhotoPreview == null)
+                return;
+
+            var preview = User.LastPhotoPreview;
+
+            if (Oblivion.GetGame().GetCameraManager().PurchaseCoinsPrice > 0)
             {
-                queryReactor.SetQuery(
-                    $"SELECT * FROM cms_stories_photos_preview WHERE user_id = {Session.GetHabbo().Id} AND type = 'PHOTO' ORDER BY id DESC LIMIT 1");
-                DataTable table = queryReactor.GetTable();
-                foreach (DataRow dataRow in table.Rows)
-                {
-                    var date = dataRow["date"];
-                    var room = dataRow["room_id"];
-                    var photo = dataRow["id"];
-                    var image = dataRow["image_url"];
-
-                    using (var queryReactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                    {
-                        queryReactor2.SetQuery(
-                            "INSERT INTO cms_stories_photos (user_id,user_name,room_id,image_preview_url,image_url,type,date,tags) VALUES (@user_id,@user_name,@room_id,@image_url,@image_url,@type,@date,@tags)");
-                        queryReactor2.AddParameter("user_id", Session.GetHabbo().Id);
-                        queryReactor2.AddParameter("user_name", Session.GetHabbo().UserName);
-                        queryReactor2.AddParameter("room_id", room);
-                        queryReactor2.AddParameter("image_url", image);
-                        queryReactor2.AddParameter("type", "PHOTO");
-                        queryReactor2.AddParameter("date", date);
-                        queryReactor2.AddParameter("tags", "");
-                        queryReactor2.RunQuery();
-
-                        var newPhotoData = "{\"t\":" + date + ",\"u\":\"" + photo + "\",\"m\":\"\",\"s\":" + room +
-                                           ",\"w\":\"" + image + "\"}";
-                        var item = Session.GetHabbo().GetInventoryComponent()
-                            .AddNewItem(0, Oblivion.GetGame().GetItemManager().PhotoId, newPhotoData, 0, true, false, 0,
-                                0);
-
-                        Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
-                        Session.GetHabbo().Credits -= 2;
-                        Session.GetHabbo().UpdateCreditsBalance();
-                        Session.GetHabbo().GetInventoryComponent().SendNewItems(item.Id);
-                    }
-                }
+                Session.GetHabbo().Credits -= Oblivion.GetGame().GetCameraManager().PurchaseCoinsPrice;
+                Session.GetHabbo().UpdateCreditsBalance();
             }
+
+            if (Oblivion.GetGame().GetCameraManager().PurchaseDucketsPrice > 0)
+            {
+                Session.GetHabbo().ActivityPoints -= Oblivion.GetGame().GetCameraManager().PurchaseDucketsPrice;
+                Session.GetHabbo().UpdateActivityPointsBalance();
+            }
+
+            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                dbClient.RunFastQuery("UPDATE `camera_photos` SET `file_state` = 'purchased' WHERE `id` = '" + preview.Id +
+                                  "' LIMIT 1");
+            }
+            
+            var data = "{\"w\":\"" +
+                       Oblivion.EscapeJSONString(
+                           Oblivion.GetGame()
+                               .GetCameraManager()
+                               .GetPath(CameraPhotoType.PURCHASED, preview.Id, preview.CreatorId)) + "\", \"n\":\"" +
+                       Oblivion.EscapeJSONString(Session.GetHabbo().UserName) + "\", \"s\":\"" +
+                       Session.GetHabbo().Id + "\", \"u\":\"" + preview.Id + "\", \"t\":\"" + preview.CreatedAt + "\"}";
+
+            var item = Session.GetHabbo()
+                .GetInventoryComponent()
+                .AddNewItem(0, Oblivion.GetGame().GetCameraManager().PhotoPoster.ItemId, data, 0, true, false, 0, 0);
+            Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
+            Session.GetHabbo().GetInventoryComponent().SendNewItems(item.Id);
+
+            Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_CameraPhotoCount", 1);
 
             var message = new ServerMessage(LibraryParser.OutgoingRequest("CameraPurchaseOk"));
             Session.SendMessage(message);

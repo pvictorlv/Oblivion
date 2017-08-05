@@ -24,7 +24,7 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void SerializeGroupPurchasePage()
         {
-            var list = new HashSet<RoomData>(Session.GetHabbo().UsersRooms.Where(x => x.Group == null));
+            var list = new HashSet<RoomData>(Session.GetHabbo().Data.Rooms.Where(x => x.Group == null));
 
             Response.Init(LibraryParser.OutgoingRequest("GroupPurchasePageMessageComposer"));
             Response.AppendInteger(10);
@@ -1453,10 +1453,10 @@ namespace Oblivion.Messages.Handlers
                     queryReactor.RunFastQuery($"UPDATE users SET home_room = '0' WHERE home_room = {roomId}");
                 }
 
-                var roomData2 = (from p in Session.GetHabbo().UsersRooms where p.Id == roomId select p).SingleOrDefault();
+                var roomData2 = (from p in Session.GetHabbo().Data.Rooms where p.Id == roomId select p).SingleOrDefault();
 
                 if (roomData2 != null)
-                    Session.GetHabbo().UsersRooms.Remove(roomData2);
+                    Session.GetHabbo().Data.Rooms.Remove(roomData2);
             }
         }
     }

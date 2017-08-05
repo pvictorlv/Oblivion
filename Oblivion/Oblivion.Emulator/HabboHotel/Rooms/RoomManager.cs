@@ -44,8 +44,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <summary>
         ///     The _room models
         /// </summary>
-        private readonly HybridDictionary _roomModels;
-
+//        private readonly HybridDictionary _roomModels;
         /// <summary>
         ///     The _voted rooms
         /// </summary>
@@ -91,7 +90,7 @@ namespace Oblivion.HabboHotel.Rooms
         internal RoomManager()
         {
             LoadedRooms = new ConcurrentDictionary<uint, Room>();
-            _roomModels = new HybridDictionary();
+//            _roomModels = new HybridDictionary();
             LoadedRoomData = new ConcurrentDictionary<uint, RoomData>();
             _votedRooms = new Dictionary<RoomData, int>();
             _activeRooms = new Dictionary<RoomData, uint>();
@@ -102,7 +101,6 @@ namespace Oblivion.HabboHotel.Rooms
             _activeRoomsAddQueue = new Queue();
             _eventManager = new EventManager();
             LoadedBallRooms = new ConcurrentList<Room>();
-
         }
 
         /// <summary>
@@ -111,10 +109,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <value>The loaded rooms count.</value>
         internal int LoadedRoomsCount => LoadedRooms.Count;
 
-        internal RoomCompetitionManager GetCompetitionManager()
-        {
-            return _competitionManager;
-        }
+        internal RoomCompetitionManager GetCompetitionManager() => _competitionManager;
 
         internal void LoadCompetitionManager()
         {
@@ -125,19 +120,13 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Gets the active rooms.
         /// </summary>
         /// <returns>KeyValuePair&lt;RoomData, System.UInt32&gt;[].</returns>
-        internal KeyValuePair<RoomData, uint>[] GetActiveRooms()
-        {
-            return _orderedActiveRooms == null ? null : _orderedActiveRooms.ToArray();
-        }
+        internal KeyValuePair<RoomData, uint>[] GetActiveRooms() => _orderedActiveRooms?.ToArray();
 
         /// <summary>
         ///     Gets the voted rooms.
         /// </summary>
         /// <returns>KeyValuePair&lt;RoomData, System.Int32&gt;[].</returns>
-        internal KeyValuePair<RoomData, int>[] GetVotedRooms()
-        {
-            return _orderedVotedRooms?.ToArray();
-        }
+        internal KeyValuePair<RoomData, int>[] GetVotedRooms() => _orderedVotedRooms?.ToArray();
 
         /// <summary>
         ///     Gets the model.
@@ -147,11 +136,12 @@ namespace Oblivion.HabboHotel.Rooms
         /// <returns>RoomModel.</returns>
         internal RoomModel GetModel(string model, uint roomId)
         {
-            if (model == "custom" && _roomModels.Contains($"custom_{roomId}"))
-                return (RoomModel) _roomModels[$"custom_{roomId}"];
-            if (_roomModels.Contains(model))
-                return (RoomModel) _roomModels[model];
-            return null;
+            if (LoadedRooms.TryGetValue(roomId, out Room room))
+            {
+                return room.RoomData.Model;
+            }
+
+            return LoadModel(model, roomId);
         }
 
         /// <summary>
@@ -168,10 +158,7 @@ namespace Oblivion.HabboHotel.Rooms
             return roomData;
         }
 
-        private bool IsRoomLoaded(uint roomId)
-        {
-            return LoadedRooms.ContainsKey(roomId);
-        }
+        private bool IsRoomLoaded(uint roomId) => LoadedRooms.ContainsKey(roomId);
 
         /// <summary>
         ///     Generates the room data.
@@ -209,10 +196,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Gets the event rooms.
         /// </summary>
         /// <returns>KeyValuePair&lt;RoomData, System.UInt32&gt;[].</returns>
-        internal KeyValuePair<RoomData, uint>[] GetEventRooms()
-        {
-            return _eventManager.GetRooms();
-        }
+        internal KeyValuePair<RoomData, uint>[] GetEventRooms() => _eventManager.GetRooms();
 
         /// <summary>
         ///     Loads the room.
@@ -292,13 +276,6 @@ namespace Oblivion.HabboHotel.Rooms
         internal RoomData CreateRoom(GameClient session, string name, string desc, string model, int category,
             int maxVisitors, int tradeState)
         {
-            if (!_roomModels.Contains(model))
-            {
-                session.SendNotif(Oblivion.GetLanguage().GetVar("user_room_model_error"));
-
-                return null;
-            }
-
             uint roomId;
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
@@ -316,7 +293,7 @@ namespace Oblivion.HabboHotel.Rooms
             var data = GenerateRoomData(roomId);
             if (data == null) return null;
 
-            session.GetHabbo().UsersRooms.Add(data);
+            session.GetHabbo().Data.Rooms.Add(data);
             return data;
         }
 
@@ -331,7 +308,7 @@ namespace Oblivion.HabboHotel.Rooms
             var table = dbClient.GetTable();
             foreach (
                 var data in
-                    from DataRow dataRow in table.Rows select FetchRoomData(Convert.ToUInt32(dataRow["id"]), dataRow))
+                from DataRow dataRow in table.Rows select FetchRoomData(Convert.ToUInt32(dataRow["id"]), dataRow))
                 QueueVoteAdd(data);
         }
 
@@ -340,64 +317,64 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         /// <param name="dbClient">The database client.</param>
         /// <param name="loadedModel">The loaded model.</param>
-        internal void LoadModels(IQueryAdapter dbClient, out uint loadedModel)
-        {
-            LoadModels(dbClient);
-            loadedModel = (uint) _roomModels.Count;
-        }
+//        internal void LoadModels(IQueryAdapter dbClient, out uint loadedModel)
+//        {
+//            LoadModels(dbClient);
+//            loadedModel = (uint) _roomModels.Count;
+//        }
 
         /// <summary>
         ///     Loads the models.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal void LoadModels(IQueryAdapter dbClient)
+        internal RoomModel LoadModel(string model, uint roomid)
         {
-            _roomModels.Clear();
-            dbClient.SetQuery("SELECT * FROM rooms_models");
-            var table = dbClient.GetTable();
-            if (table == null) return;
-            foreach (DataRow dataRow in table.Rows)
+            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                var key = (string) dataRow["id"];
-                if (key.StartsWith("model_floorplan_")) continue;
-                var staticFurniMap = (string) dataRow["public_items"];
-                _roomModels.Add(key,
-                    new RoomModel((int) dataRow["door_x"], (int) dataRow["door_y"], (double) dataRow["door_z"],
-                        (int) dataRow["door_dir"], (string) dataRow["heightmap"], staticFurniMap,
-                        Oblivion.EnumToBool(dataRow["club_only"].ToString()), (string) dataRow["poolmap"]));
-            }
-            dbClient.SetQuery("SELECT * FROM rooms_models_customs");
-            var dataCustom = dbClient.GetTable();
+                if (model == "custom")
+                {
+                    dbClient.SetQuery("SELECT * FROM rooms_models_customs WHERE roomid = @room LIMIT 1");
+                    dbClient.AddParameter("room", roomid);
+                    var row = dbClient.GetRow();
 
-            if (dataCustom == null) return;
+                    if (row == null) return null;
 
-            foreach (DataRow row in dataCustom.Rows)
-            {
-                var modelName = $"custom_{row["roomid"]}";
-                _roomModels.Add(modelName,
-                    new RoomModel((int) row["door_x"], (int) row["door_y"], (double) row["door_z"],
+
+                    return new RoomModel((int) row["door_x"], (int) row["door_y"], (double) row["door_z"],
                         (int) row["door_dir"],
-                        (string) row["heightmap"], "", false, ""));
+                        (string) row["heightmap"], "", false, "");
+                }
+                dbClient.SetQuery("SELECT * FROM rooms_models WHERE id = @name LIMIT 1");
+                dbClient.AddParameter("name", model);
+                var dataRow = dbClient.GetRow();
+                if (dataRow == null) return null;
+                var staticFurniMap = (string) dataRow["public_items"];
+                return new RoomModel((int) dataRow["door_x"], (int) dataRow["door_y"],
+                    (double) dataRow["door_z"],
+                    (int) dataRow["door_dir"], (string) dataRow["heightmap"], staticFurniMap,
+                    Oblivion.EnumToBool(dataRow["club_only"].ToString()), (string) dataRow["poolmap"]);
             }
         }
+
 
         /// <summary>
         ///     Update the existent model.
         /// </summary>
         /// <param name="model">The model.</param>
-        internal void UpdateCustomModel(uint roomId, RoomModel modelData)
-        {
-            var modelId = $"custom_{roomId}";
-            if (_roomModels.Contains(modelId))
-            {
-                _roomModels[modelId] = modelData;
-            }
-            else
-            {
-                _roomModels.Add(modelId, modelData);
-            }
-        }
+        /*     internal void UpdateCustomModel(uint roomId, RoomModel modelData)
+             {
+                 var modelId = $"custom_{roomId}";
+                 if (_roomModels.Contains(modelId))
+                 {
+                     _roomModels[modelId] = modelData;
+                 }
+                 else
+                 {
+                     _roomModels.Add(modelId, modelData);
+                 }
+             }*/
         public ConcurrentList<Room> LoadedBallRooms;
+
         private DateTime _cycleBallLastExecution;
 
 
@@ -562,7 +539,8 @@ namespace Oblivion.HabboHotel.Rooms
                         Oblivion.BoolToEnum(room.RoomData.AllowWalkThrough) +
                         "', hidewall = '" + Oblivion.BoolToEnum(room.RoomData.HideWall) + "', floorthick = " +
                         room.RoomData.FloorThickness +
-                        ", wallthick = " + room.RoomData.WallThickness + ", mute_settings='" + room.RoomData.WhoCanMute +
+                        ", wallthick = " + room.RoomData.WallThickness + ", mute_settings='" +
+                        room.RoomData.WhoCanMute +
                         "', kick_settings='" + room.RoomData.WhoCanKick + "',ban_settings='" + room.RoomData.WhoCanBan +
                         "', walls_height = '" + room.RoomData.WallHeight +
                         "', chat_type = @chat_t,chat_balloon = @chat_b,chat_speed = @chat_s,chat_max_distance = @chat_m,chat_flood_protection = @chat_f, trade_state = '" +

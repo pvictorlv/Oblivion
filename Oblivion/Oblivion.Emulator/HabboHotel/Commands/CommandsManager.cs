@@ -33,6 +33,7 @@ namespace Oblivion.HabboHotel.Commands
             AliasDictionary = new Dictionary<string, string>();
 
             CommandsDictionary.Add("about", new About());
+            CommandsDictionary.Add("multiply", new Multiply());
             CommandsDictionary.Add("friends", new Friends());
             CommandsDictionary.Add("status", new Offline());
             CommandsDictionary.Add("followable", new HideInRoom());
@@ -145,6 +146,7 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("enable", new Enable());
             CommandsDictionary.Add("kill", new Kill());
             CommandsDictionary.Add("disco", new Disco());
+            CommandsDictionary.Add("block", new BlockCommand());
 
             //CommandsDictionary.Add("test", new Test());
             UpdateInfo();
@@ -164,7 +166,7 @@ namespace Oblivion.HabboHotel.Commands
                 {
                     var key = commandRow["command"].ToString();
                     if (!CommandsDictionary.ContainsKey(key)) continue;
-
+                    
                     var command = CommandsDictionary[key];
 
                     if (!string.IsNullOrEmpty(commandRow["description"].ToString()))
@@ -214,6 +216,13 @@ namespace Oblivion.HabboHotel.Commands
             if (AliasDictionary.ContainsKey(commandName)) commandName = AliasDictionary[commandName];
 
             if (!CommandsDictionary.ContainsKey(commandName)) return false;
+
+            if (client.GetHabbo().CurrentRoom.RoomData.BlockedCommands.Contains(commandName) ||
+                client.GetHabbo().Data.BlockedCommands.Contains(commandName))
+            {
+                client.SendWhisper("Comando bloqueado!");
+                return false;
+            }
             var command = CommandsDictionary[commandName];
 
             if (!CanUse(command.MinRank, client)) return false;

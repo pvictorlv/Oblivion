@@ -39,7 +39,7 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void GetPub()
         {
-            uint roomId = Request.GetUInteger();
+           /* uint roomId = Request.GetUInteger();
             RoomData roomData = Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId);
             if (roomData == null)
                 return;
@@ -47,7 +47,7 @@ namespace Oblivion.Messages.Handlers
             GetResponse().AppendInteger(roomData.Id);
             GetResponse().AppendString(roomData.CcTs);
             GetResponse().AppendInteger(roomData.Id);
-            SendResponse();
+            SendResponse();*/
         }
 
         /// <summary>

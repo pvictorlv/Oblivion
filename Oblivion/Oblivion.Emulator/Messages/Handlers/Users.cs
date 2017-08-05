@@ -826,7 +826,7 @@ namespace Oblivion.Messages.Handlers
                         Response.AppendInteger(Session.GetHabbo().CurrentRoom.RoomId);
                         Response.AppendString(text);
                     }
-                    foreach (var current in Session.GetHabbo().UsersRooms)
+                    foreach (var current in Session.GetHabbo().Data.Rooms)
                     {
                         current.Owner = text;
                         current.SerializeRoomData(Response, Session, false, true);
@@ -859,18 +859,18 @@ namespace Oblivion.Messages.Handlers
             if (habboForId == null)
                 return;
             var rand = new Random();
-            habboForId.Relationships = (
-                from x in habboForId.Relationships
+            habboForId.Data.Relations = (
+                from x in habboForId.Data.Relations
                 orderby rand.Next()
                 select x).ToDictionary(item => item.Key,
                     item => item.Value);
-            var num = habboForId.Relationships.Count(x => x.Value.Type == 1);
-            var num2 = habboForId.Relationships.Count(x => x.Value.Type == 2);
-            var num3 = habboForId.Relationships.Count(x => x.Value.Type == 3);
+            var num = habboForId.Data.Relations.Count(x => x.Value.Type == 1);
+            var num2 = habboForId.Data.Relations.Count(x => x.Value.Type == 2);
+            var num3 = habboForId.Data.Relations.Count(x => x.Value.Type == 3);
             Response.Init(LibraryParser.OutgoingRequest("RelationshipMessageComposer"));
             Response.AppendInteger(habboForId.Id);
-            Response.AppendInteger(habboForId.Relationships.Count);
-            foreach (var current in habboForId.Relationships.Values)
+            Response.AppendInteger(habboForId.Data.Relations.Count);
+            foreach (var current in habboForId.Data.Relations.Values)
             {
                 var habboForId2 = Oblivion.GetHabboById(Convert.ToUInt32(current.UserId));
                 if (habboForId2 == null)
@@ -916,8 +916,8 @@ namespace Oblivion.Messages.Handlers
                         queryReactor.AddParameter("id", Session.GetHabbo().Id);
                         queryReactor.AddParameter("target", num);
                         queryReactor.RunQuery();
-                        if (Session.GetHabbo().Relationships.ContainsKey(integer))
-                            Session.GetHabbo().Relationships.Remove(integer);
+                        if (Session.GetHabbo().Data.Relations.ContainsKey(integer))
+                            Session.GetHabbo().Data.Relations.Remove(integer);
                     }
                     else
                     {
@@ -933,8 +933,8 @@ namespace Oblivion.Messages.Handlers
                             queryReactor.AddParameter("id", Session.GetHabbo().Id);
                             queryReactor.AddParameter("target", num);
                             queryReactor.RunQuery();
-                            if (Session.GetHabbo().Relationships.ContainsKey(integer2))
-                                Session.GetHabbo().Relationships.Remove(integer2);
+                            if (Session.GetHabbo().Data.Relations.ContainsKey(integer2))
+                                Session.GetHabbo().Data.Relations.Remove(integer2);
                         }
                         queryReactor.SetQuery(
                             "INSERT INTO users_relationships (user_id, target, type) VALUES (@id, @target, @type)");
@@ -942,7 +942,7 @@ namespace Oblivion.Messages.Handlers
                         queryReactor.AddParameter("target", num);
                         queryReactor.AddParameter("type", num2);
                         var num3 = (int)queryReactor.InsertQuery();
-                        Session.GetHabbo().Relationships.Add(num3, new Relationship(num3, (int)num, num2));
+                        Session.GetHabbo().Data.Relations.Add(num3, new Relationship(num3, (int)num, num2));
                     }
                     var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(num);
                     Session.GetHabbo().GetMessenger().UpdateFriend(num, clientByUserId, true);
@@ -1220,8 +1220,9 @@ namespace Oblivion.Messages.Handlers
         internal void GetCameraPrice()
         {
             GetResponse().Init(LibraryParser.OutgoingRequest("SetCameraPriceMessageComposer"));
-            GetResponse().AppendInteger(0);//credits
-            GetResponse().AppendInteger(10);//duckets
+            GetResponse().AppendInteger(Oblivion.GetGame().GetCameraManager().PurchaseCoinsPrice);//credits
+            GetResponse().AppendInteger(Oblivion.GetGame().GetCameraManager().PurchaseDucketsPrice);//duckets
+            GetResponse().AppendInteger(Oblivion.GetGame().GetCameraManager().PublishDucketsPrice);//duckets publish
             SendResponse();
         }
 

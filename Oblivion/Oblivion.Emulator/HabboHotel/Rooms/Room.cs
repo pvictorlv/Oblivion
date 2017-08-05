@@ -198,7 +198,10 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Gets the user count.
         /// </summary>
         /// <value>The user count.</value>
-        internal int UserCount => _roomUserManager?.GetRoomUserCount() ?? 0;
+        internal int UserCount
+        {
+            get { return _roomUserManager?.GetRoomUserCount() != null ? _roomUserManager.GetRoomUserCount() : 0; }
+        }
 
         /// <summary>
         ///     Gets the tag count.
@@ -243,136 +246,91 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Gets the game map.
         /// </summary>
         /// <returns>Gamemap.</returns>
-        internal Gamemap GetGameMap()
-        {
-            return _gameMap;
-        }
+        internal Gamemap GetGameMap() => _gameMap;
 
         /// <summary>
         ///     Gets the room item handler.
         /// </summary>
         /// <returns>RoomItemHandler.</returns>
-        internal RoomItemHandler GetRoomItemHandler()
-        {
-            return _roomItemHandler;
-        }
+        internal RoomItemHandler GetRoomItemHandler() => _roomItemHandler;
 
         /// <summary>
         ///     Gets the room user manager.
         /// </summary>
         /// <returns>RoomUserManager.</returns>
-        internal RoomUserManager GetRoomUserManager()
-        {
-            return _roomUserManager;
-        }
+        internal RoomUserManager GetRoomUserManager() => _roomUserManager;
 
         /// <summary>
         ///     Gets the soccer.
         /// </summary>
         /// <returns>Soccer.</returns>
-        internal Soccer GetSoccer()
-        {
-            return _soccer ?? (_soccer = new Soccer(this));
-        }
+        internal Soccer GetSoccer() => _soccer ?? (_soccer = new Soccer(this));
 
         /// <summary>
         ///     Gets the team manager for banzai.
         /// </summary>
         /// <returns>TeamManager.</returns>
-        internal TeamManager GetTeamManagerForBanzai()
-        {
-            return TeamBanzai ?? (TeamBanzai = TeamManager.CreateTeamforGame("banzai"));
-        }
+        internal TeamManager GetTeamManagerForBanzai() => TeamBanzai ?? (TeamBanzai = TeamManager.CreateTeamforGame("banzai"));
 
         /// <summary>
         ///     Gets the team manager for freeze.
         /// </summary>
         /// <returns>TeamManager.</returns>
-        internal TeamManager GetTeamManagerForFreeze()
-        {
-            return TeamFreeze ?? (TeamFreeze = TeamManager.CreateTeamforGame("freeze"));
-        }
+        internal TeamManager GetTeamManagerForFreeze() => TeamFreeze ?? (TeamFreeze = TeamManager.CreateTeamforGame("freeze"));
 
         /// <summary>
         ///     Gets the banzai.
         /// </summary>
         /// <returns>BattleBanzai.</returns>
-        internal BattleBanzai GetBanzai()
-        {
-            return _banzai ?? (_banzai = new BattleBanzai(this));
-        }
+        internal BattleBanzai GetBanzai() => _banzai ?? (_banzai = new BattleBanzai(this));
 
         /// <summary>
         ///     Gets the freeze.
         /// </summary>
         /// <returns>Freeze.</returns>
-        internal Freeze GetFreeze()
-        {
-            return _freeze ?? (_freeze = new Freeze(this));
-        }
+        internal Freeze GetFreeze() => _freeze ?? (_freeze = new Freeze(this));
 
         /// <summary>
         ///     Gets the game manager.
         /// </summary>
         /// <returns>GameManager.</returns>
-        internal GameManager GetGameManager()
-        {
-            return _game ?? (_game = new GameManager(this));
-        }
+        internal GameManager GetGameManager() => _game ?? (_game = new GameManager(this));
 
         /// <summary>
         ///     Gets the game item handler.
         /// </summary>
         /// <returns>GameItemHandler.</returns>
-        internal GameItemHandler GetGameItemHandler()
-        {
-            return _gameItemHandler ?? (_gameItemHandler = new GameItemHandler(this));
-        }
+        internal GameItemHandler GetGameItemHandler() => _gameItemHandler ?? (_gameItemHandler = new GameItemHandler(this));
 
         /// <summary>
         ///     Gets the room music controller.
         /// </summary>
         /// <returns>RoomMusicController.</returns>
-        internal SoundMachineManager GetRoomMusicController()
-        {
-            return _musicController ?? (_musicController = new SoundMachineManager());
-        }
+        internal SoundMachineManager GetRoomMusicController() => _musicController ?? (_musicController = new SoundMachineManager());
 
         /// <summary>
         ///     Gots the music controller.
         /// </summary>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool GotMusicController()
-        {
-            return _musicController != null;
-        }
+        internal bool GotMusicController() => _musicController != null;
 
         /// <summary>
         ///     Gots the soccer.
         /// </summary>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool GotSoccer()
-        {
-            return _soccer != null;
-        }
+        internal bool GotSoccer() => _soccer != null;
 
         /// <summary>
         ///     Gots the banzai.
         /// </summary>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool GotBanzai()
-        {
-            return _banzai != null;
-        }
+        internal bool GotBanzai() => _banzai != null;
 
         /// <summary>
         ///     Gots the freeze.
         /// </summary>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool GotFreeze()
-        {
-            return _freeze != null;
-        }
+        internal bool GotFreeze() => _freeze != null;
 
         /// <summary>
         /// Starts the room processing.
@@ -462,10 +420,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         /// <param name="bot">The bot.</param>
         /// <returns>RoomUser.</returns>
-        internal RoomUser DeployBot(RoomBot bot)
-        {
-            return _roomUserManager.DeployBot(bot, null);
-        }
+        internal RoomUser DeployBot(RoomBot bot) => _roomUserManager.DeployBot(bot, null);
 
         /// <summary>
         ///     Queues the room kick.
@@ -650,10 +605,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool CheckRights(GameClient session)
-        {
-            return CheckRights(session, false);
-        }
+        internal bool CheckRights(GameClient session) => CheckRights(session, false);
 
         /// <summary>
         ///     Checks the rights.
@@ -976,10 +928,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         /// <param name="pId">The p identifier.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool UserIsBanned(uint pId)
-        {
-            return Bans.ContainsKey(pId);
-        }
+        internal bool UserIsBanned(uint pId) => Bans.ContainsKey(pId);
 
         /// <summary>
         ///     Removes the ban.
@@ -1027,10 +976,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         /// <param name="pId">The p identifier.</param>
         /// <returns><c>true</c> if [has ban expired] [the specified p identifier]; otherwise, <c>false</c>.</returns>
-        internal bool HasBanExpired(uint pId)
-        {
-            return !UserIsBanned(pId) || Bans[pId] < Oblivion.GetUnixTimeStamp();
-        }
+        internal bool HasBanExpired(uint pId) => !UserIsBanned(pId) || Bans[pId] < Oblivion.GetUnixTimeStamp();
 
         /// <summary>
         ///     Unbans the specified user identifier.
@@ -1049,10 +995,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         /// <param name="user">The user.</param>
         /// <returns><c>true</c> if [has active trade] [the specified user]; otherwise, <c>false</c>.</returns>
-        internal bool HasActiveTrade(RoomUser user)
-        {
-            return !user.IsBot && HasActiveTrade(user.GetClient().GetHabbo().Id);
-        }
+        internal bool HasActiveTrade(RoomUser user) => !user.IsBot && HasActiveTrade(user.GetClient().GetHabbo().Id);
 
         /// <summary>
         ///     Determines whether [has active trade] [the specified user identifier].

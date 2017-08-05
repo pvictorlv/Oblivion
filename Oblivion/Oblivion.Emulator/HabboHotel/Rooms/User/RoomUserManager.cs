@@ -121,19 +121,13 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         /// <param name="pId">The p identifier.</param>
         /// <returns>RoomUser.</returns>
-        public RoomUser GetRoomUserByHabbo(uint pId)
-        {
-            return UsersByUserId.Contains(pId) ? (RoomUser) UsersByUserId[pId] : null;
-        }
+        public RoomUser GetRoomUserByHabbo(uint pId) => UsersByUserId.Contains(pId) ? (RoomUser) UsersByUserId[pId] : null;
 
         /// <summary>
         ///     Gets the room user count.
         /// </summary>
         /// <returns>System.Int32.</returns>
-        internal int GetRoomUserCount()
-        {
-            return (UserList.Count - _bots.Count - _pets.Count);
-        }
+        internal int GetRoomUserCount() => UserList.Count - _bots.Count - _pets.Count > 1 ? (UserList.Count - _bots.Count - _pets.Count) * Oblivion.Multipy : 1;
 
         /// <summary>
         ///     Deploys the bot.
@@ -286,10 +280,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
         /// <returns>RoomUser.</returns>
-        internal RoomUser GetUserForSquare(int x, int y)
-        {
-            return _userRoom.GetGameMap().GetRoomUsers(new Point(x, y)).FirstOrDefault();
-        }
+        internal RoomUser GetUserForSquare(int x, int y) => _userRoom.GetGameMap().GetRoomUsers(new Point(x, y)).FirstOrDefault();
 
         /// <summary>
         ///     Adds the user to room.
@@ -518,10 +509,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         /// <param name="virtualId">The virtual identifier.</param>
         /// <returns>RoomUser.</returns>
-        internal RoomUser GetRoomUserByVirtualId(int virtualId)
-        {
-            return UserList.ContainsKey(virtualId) ? UserList[virtualId] : null;
-        }
+        internal RoomUser GetRoomUserByVirtualId(int virtualId) => UserList.ContainsKey(virtualId) ? UserList[virtualId] : null;
 
         /// <summary>
         ///     Gets the users in camping tent.
@@ -1568,7 +1556,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 }
 
                 if (_roomUserCount != userInRoomCount)
-                    UpdateUserCount(userInRoomCount);
+                    UpdateUserCount((userInRoomCount > 1) ? userInRoomCount * (uint) Oblivion.Multipy : 1);
             }
         }
 
@@ -1862,11 +1850,8 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         /// <param name="user">The user.</param>
         /// <returns><c>true</c> if the specified user is valid; otherwise, <c>false</c>.</returns>
-        private bool IsValid(RoomUser user)
-        {
-            return user != null && (user.IsBot ||
-                                    (user.GetClient() != null && user.GetClient().GetHabbo() != null &&
-                                     user.GetClient().GetHabbo().CurrentRoomId == _userRoom.RoomId));
-        }
+        private bool IsValid(RoomUser user) => user != null && (user.IsBot ||
+                                                                (user.GetClient() != null && user.GetClient().GetHabbo() != null &&
+                                                                 user.GetClient().GetHabbo().CurrentRoomId == _userRoom.RoomId));
     }
 }

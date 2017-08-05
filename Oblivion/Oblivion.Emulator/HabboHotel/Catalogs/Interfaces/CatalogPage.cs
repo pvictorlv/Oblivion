@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using Oblivion.HabboHotel.Catalogs.Composers;
 using Oblivion.Messages;
+using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Catalogs.Interfaces
 {
@@ -45,7 +46,7 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
         /// <summary>
         ///     The items
         /// </summary>
-        internal HybridDictionary Items;
+        internal Dictionary<uint, CatalogItem> Items;
 
         /// <summary>
         ///     The layout
@@ -102,7 +103,7 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
         /// <param name="cataItems">The cata items.</param>
         internal CatalogPage(uint id, int parentId, string codeName, string caption, bool visible, bool enabled,
             bool comingSoon, uint minRank, int iconImage, string layout, string strings1, string strings2,
-            int orderNum, ref HybridDictionary cataItems)
+            int orderNum, ref Dictionary<uint, CatalogItem> cataItems)
         {
             PageId = id;
             ParentId = parentId;
@@ -120,11 +121,11 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
             if (layout.StartsWith("frontpage"))
                 OrderNum = -2;
 
-            Items = new HybridDictionary();
+            Items = new Dictionary<uint, CatalogItem>();
             FlatOffers = new Dictionary<int, uint>();
             foreach (
                 var catalogItem in
-                    cataItems.Values.OfType<CatalogItem>().Where(x => x.PageId == id && x.GetFirstBaseItem() != null))
+                    cataItems.Values.Where(x => x.PageId == id && x.GetFirstBaseItem() != null))
             {
                 Items.Add(catalogItem.Id, catalogItem);
                 var flatId = catalogItem.GetFirstBaseItem().FlatId;
@@ -151,10 +152,8 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
             var num = pId;
             var flatInt = (int)pId;
             if (FlatOffers.ContainsKey(flatInt))
-                return (CatalogItem)Items[FlatOffers[flatInt]];
-            if (Items.Contains(num))
-                return (CatalogItem)Items[num];
-            return null;
+                return Items[FlatOffers[flatInt]];
+            return Items.TryGetValue(num, out CatalogItem it) ? it : null;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Achievements;
+using Oblivion.HabboHotel.Camera;
 using Oblivion.HabboHotel.Catalogs;
 using Oblivion.HabboHotel.Commands;
 using Oblivion.HabboHotel.GameClients;
@@ -104,6 +105,11 @@ namespace Oblivion.HabboHotel
         private readonly ItemManager _itemManager;
 
         /// <summary>
+        ///  The camera Manager
+        /// </summary>
+        private readonly CameraPhotoManager _cameraManager;
+
+        /// <summary>
         ///     The _moderation tool
         /// </summary>
         private readonly ModerationTool _moderationTool;
@@ -163,8 +169,7 @@ namespace Oblivion.HabboHotel
         /// <summary>
         ///     Initializes a new instance of the <see cref="Game" /> class.
         /// </summary>
-        /// <param name="conns">The conns.</param>
-        internal Game(int conns)
+        internal Game()
         {
             Console.WriteLine();
             Out.WriteLine(@"Starting up Oblivion Emulator for " + Environment.MachineName + "...", @"Oblivion.Boot");
@@ -178,7 +183,7 @@ namespace Oblivion.HabboHotel
 
                 uint itemsLoaded;
                 uint navigatorLoaded;
-                uint roomModelLoaded;
+//                uint roomModelLoaded;
                 uint achievementLoaded;
                 uint pollLoaded;
 
@@ -197,6 +202,9 @@ namespace Oblivion.HabboHotel
                 _itemManager = new ItemManager();
                 _itemManager.LoadItems(queryReactor, out itemsLoaded);
 
+                _cameraManager = new CameraPhotoManager();
+                _cameraManager.Init(_itemManager);
+
                 Progress(bar, wait, end, "Loading Catalog...");
                 _catalog = new CatalogManager();
 
@@ -209,7 +217,7 @@ namespace Oblivion.HabboHotel
 
                 Progress(bar, wait, end, "Loading Rooms...");
                 _roomManager = new RoomManager();
-                _roomManager.LoadModels(queryReactor, out roomModelLoaded);
+//                _roomManager.LoadModels(queryReactor, out roomModelLoaded);
 
                 Progress(bar, wait, end, "Loading NavigatorManager...");
                 _navigatorManager = new NavigatorManager();
@@ -313,6 +321,13 @@ namespace Oblivion.HabboHotel
             for (var cont = 0; cont < end; cont++)
                 bar.Step();
         }
+
+        /// <summary>
+        /// get the camera manager
+        /// </summary>
+        /// <returns></returns>
+        public CameraPhotoManager GetCameraManager() => _cameraManager;
+
 
         /// <summary>
         ///     Databases the cleanup.

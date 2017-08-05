@@ -24,7 +24,6 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 Oblivion.GetGame().GetNavigator().Initialize(adapter);
-                Oblivion.GetGame().GetRoomManager().LoadModels(adapter);
             }
             session.SendNotif(Oblivion.GetLanguage().GetVar("command_refresh_navigator"));
             return true;

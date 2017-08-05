@@ -94,10 +94,10 @@ namespace Oblivion.HabboHotel.Users.Authenticator
 
             return new Habbo(id, userName, realName, ras, motto, look, gender, credits, activityPoints,
                 lastActivityPointsUpdate, muted, homeRoom, respect, dailyRespectPoints, dailyPetRespectPoints,
-                hasFriendRequestsDisabled, currentQuestId, currentQuestProgress, achievementPoints, regTimestamp,
-                lastOnline, appearOffline, hideInRoom, vip, createDate, online, citizenship, diamonds, group, favId,
+                hasFriendRequestsDisabled, currentQuestId, currentQuestProgress, achievementPoints,
+                lastOnline, appearOffline, hideInRoom, vip, createDate, citizenship, diamonds, group, favId,
                 lastChange, tradeLocked, tradeLockExpire, nuxPassed, buildersExpire, buildersItemsMax,
-                buildersItemsUsed, releaseVersion, onDuty, navilogs, dailyCompetitionVotes, DutyLevel);
+                buildersItemsUsed, onDuty, navilogs, dailyCompetitionVotes, DutyLevel);
         }
     }
 }

@@ -118,6 +118,11 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         /// </summary>
         internal uint UserId;
 
+        ///<summary>
+        /// User blockeds commands
+        /// </summary>
+        internal List<string> BlockedCommands;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="UserData" /> class.
         /// </summary>
@@ -147,7 +152,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             Dictionary<uint, MessengerBuddy> friends, Dictionary<uint, MessengerRequest> requests,
             HashSet<RoomData> rooms, Dictionary<uint, Pet> pets, Dictionary<uint, int> quests, Habbo user,
             Dictionary<uint, RoomBot> bots, Dictionary<int, Relationship> relations, HashSet<uint> suggestedPolls,
-            uint miniMailCount)
+            uint miniMailCount, List<string> blockedCommands)
         {
             UserId = userId;
             Achievements = achievements;
@@ -169,6 +174,48 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             Relations = relations;
             SuggestedPolls = suggestedPolls;
             MiniMailCount = miniMailCount;
+            BlockedCommands = blockedCommands;
+        }
+
+        public void Dispose()
+        {
+            BlockedCommands.Clear();
+            BlockedCommands = null;
+            Rooms.Clear();
+            Rooms = null;
+            Pets.Clear();
+            Pets = null;
+            Quests.Clear();
+            Quests = null;
+            User = null;
+            Bots.Clear();
+            Bots = null;
+            Relations.Clear();
+            Relations = null;
+            SuggestedPolls.Clear();
+            SuggestedPolls = null;
+            MiniMailCount = 0;
+            FavouritedRooms.Clear();
+            FavouritedRooms = null;
+            Ignores.Clear();
+            Ignores = null;
+            Tags.Clear();
+            Tags = null;
+            Subscriptions = null;
+            Badges.Clear();
+            Badges = null;
+            Inventory.Clear();
+            Inventory = null;
+            Effects.Clear();
+            Effects = null;
+            Friends.Clear();
+            Friends = null;
+            Requests.Clear();
+            Requests = null;
+            Talents.Clear();
+            Talents = null;
+            Achievements.Clear();
+            Achievements = null;
         }
     }
 }

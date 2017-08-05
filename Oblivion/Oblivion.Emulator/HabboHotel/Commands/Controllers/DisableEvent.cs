@@ -13,7 +13,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public DisableEvent()
         {
-            MinRank = 9;
+            MinRank = 1;
             Description = "Desativa as mensagens de Eventos do Hotel";
             Usage = ":disableevent";
             MinParams = 0;
@@ -22,6 +22,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         public override bool Execute(GameClient session, string[] pms)
         {
             session.GetHabbo().DisableEventAlert = !session.GetHabbo().DisableEventAlert;
+            session.SendWhisper("Sucesso!");
             return true;
         }
     }

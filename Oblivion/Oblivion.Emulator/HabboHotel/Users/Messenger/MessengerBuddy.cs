@@ -114,7 +114,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         internal void Serialize(ServerMessage message, GameClient session)
         {
             var value =
-                session.GetHabbo().Relationships.FirstOrDefault(x => x.Value.UserId == Convert.ToInt32(Id)).Value;
+                session.GetHabbo().Data.Relations.FirstOrDefault(x => x.Value.UserId == Convert.ToInt32(Id)).Value;
 
             var i = value?.Type ?? 0;
 

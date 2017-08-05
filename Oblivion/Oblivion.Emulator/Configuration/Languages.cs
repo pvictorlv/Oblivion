@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Data;
 
 namespace Oblivion.Configuration
@@ -12,7 +12,7 @@ namespace Oblivion.Configuration
         /// <summary>
         /// The texts
         /// </summary>
-        internal HybridDictionary Texts;
+        internal Dictionary<string,string> Texts;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Languages" /> class.
@@ -20,7 +20,7 @@ namespace Oblivion.Configuration
         /// <param name="language">The language.</param>
         internal Languages(string language)
         {
-            Texts = new HybridDictionary();
+            Texts = new Dictionary<string, string>();
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
@@ -47,8 +47,8 @@ namespace Oblivion.Configuration
         /// <returns>System.String.</returns>
         internal string GetVar(string var)
         {
-            if (Texts.Contains(var))
-                return Texts[var].ToString();
+            if (Texts.TryGetValue(var, out string value))
+                return value;
 
             Console.WriteLine("[Language] Not Found: " + var);
 

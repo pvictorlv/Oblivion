@@ -177,10 +177,14 @@
     <Compile Include="Connection\Connection\SocketConnectionCheck.cs" />
     <Compile Include="Connection\Connection\SocketManager.cs" />
     <Compile Include="Connection\Web.cs" />
+    <Compile Include="HabboHotel\Camera\CameraPhotoManager.cs" />
+    <Compile Include="HabboHotel\Camera\CameraPhotoPreview.cs" />
     <Compile Include="HabboHotel\Catalogs\Composers\TargetedOfferComposer.cs" />
     <Compile Include="HabboHotel\Catalogs\TargetedOfferManager.cs" />
     <Compile Include="HabboHotel\Catalogs\Interfaces\TargetedOffer.cs" />
+    <Compile Include="HabboHotel\Commands\Controllers\BlockCommand.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\BuyRoom.cs" />
+    <Compile Include="HabboHotel\Commands\Controllers\Multiply.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\SellRoom.cs" />
     <Compile Include="HabboHotel\Commands\Interfaces\Command.cs" />
     <Compile Include="HabboHotel\Commands\CommandsManager.cs" />

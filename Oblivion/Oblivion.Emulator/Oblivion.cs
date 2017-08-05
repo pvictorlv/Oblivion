@@ -57,6 +57,11 @@ namespace Oblivion
             ConsoleTimerOn;
 
         /// <summary>
+        /// Multiply current users in rooms
+        /// </summary>
+        internal static int Multipy = 1;
+
+        /// <summary>
         ///     The staff alert minimum rank
         /// </summary>
         internal static uint StaffAlertMinRank = 4, FriendRequestLimit = 1000;
@@ -226,6 +231,15 @@ namespace Oblivion
             return null;
         }
 
+
+        /// <summary>
+        /// Escape json
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string EscapeJSONString(string str) => str.Replace("\"", "\\\"");
+
+
         /// <summary>
         ///     Console Clear Thread
         /// </summary>
@@ -323,7 +337,7 @@ namespace Oblivion
                 ExtraSettings.RunExtraSettings();
                 CrossDomainPolicy.Set();
 
-                _game = new Game(int.Parse(ConfigurationData.Data["game.tcp.conlimit"]));
+                _game = new Game();
                 _game.GetNavigator().LoadNewPublicRooms();
                 _game.ContinueLoading();
 

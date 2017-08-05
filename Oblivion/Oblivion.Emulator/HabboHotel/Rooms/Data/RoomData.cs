@@ -37,9 +37,10 @@ namespace Oblivion.HabboHotel.Rooms.Data
         internal int Category;
 
         /// <summary>
-        ///     The cc ts
+        ///  Room blocked cmd
         /// </summary>
-        internal string CcTs;
+        internal List<string> BlockedCommands;
+        
 
         /// <summary>
         ///     The chat balloon
@@ -256,9 +257,9 @@ namespace Oblivion.HabboHotel.Rooms.Data
             UsersNow = 0;
             UsersMax = 0;
             ModelName = "NO_MODEL";
-            CcTs = string.Empty;
             Score = 0;
             Tags = new List<string>();
+            BlockedCommands = new List<string>();
             AllowPets = true;
             AllowPetsEating = false;
             AllowWalkThrough = true;
@@ -302,7 +303,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 OwnerId = 0;
                 RoomChat = new ConcurrentStack<Chatlog>();
                 WordFilter = new List<string>();
-
+                BlockedCommands = new List<string>();
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
                     queryReactor.SetQuery("SELECT id FROM users WHERE username = @name");
@@ -325,6 +326,12 @@ namespace Oblivion.HabboHotel.Rooms.Data
 
                     foreach (DataRow dataRow in tableFilter.Rows)
                         WordFilter.Add(dataRow["word"].ToString());
+
+                    queryReactor.SetQuery(
+                        $"SELECT command_name FROM room_blockcmd WHERE room_id = '{Id}'");
+                    var tableCmd = queryReactor.GetTable();
+                    foreach (DataRow data in tableCmd.Rows)
+                        BlockedCommands.Add(data["command_name"].ToString());
                 }
 
                 var roomState = row["state"].ToString().ToLower();
@@ -346,7 +353,6 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 WallPaper = (string) row["wallpaper"];
                 Floor = (string) row["floor"];
                 LandScape = (string) row["landscape"];
-                CcTs = (string) row["public_ccts"];
 
                 int.TryParse(row["trade_state"].ToString(), out TradeState);
                 int.TryParse(row["category"].ToString(), out Category);
@@ -459,7 +465,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
 
             var enumType = enterRoom ? 32 : 0;
             var publicItem = Oblivion.GetGame().GetNavigator().GetPublicItem(Id);
-            if (publicItem != null && !string.IsNullOrEmpty(publicItem.Image))
+            if (!string.IsNullOrEmpty(publicItem?.Image))
             {
                 imageData = publicItem.Image;
                 enumType += 1;

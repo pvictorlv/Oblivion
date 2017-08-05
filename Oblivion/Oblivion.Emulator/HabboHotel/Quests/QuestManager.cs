@@ -147,7 +147,7 @@ namespace Oblivion.HabboHotel.Quests
                         queryReactor.RunFastQuery(string.Format("UPDATE users_stats SET quest_id = 0 WHERE id = {0}",
                             session.GetHabbo().Id));
                 }
-                session.GetHabbo().Quests[session.GetHabbo().CurrentQuestId] = num;
+                session.GetHabbo().Data.Quests[session.GetHabbo().CurrentQuestId] = num;
                 session.SendMessage(QuestStartedComposer.Compose(session, quest));
                 if (!flag)
                     return;

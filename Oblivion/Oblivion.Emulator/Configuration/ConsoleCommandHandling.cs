@@ -179,7 +179,7 @@ namespace Oblivion.Configuration
                         break;
 
                     case "modeldata":
-                        using (var adapter2 = Oblivion.GetDatabaseManager().GetQueryReactor()) GetGame().GetRoomManager().LoadModels(adapter2);
+//                        using (var adapter2 = Oblivion.GetDatabaseManager().GetQueryReactor()) GetGame().GetRoomManager().LoadModels(adapter2);
                         Console.WriteLine("Room models were re-loaded.");
                         Console.WriteLine();
                         break;

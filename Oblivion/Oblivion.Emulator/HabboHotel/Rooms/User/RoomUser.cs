@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Oblivion.HabboHotel.Camera;
 using Oblivion.HabboHotel.Commands;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -44,6 +45,11 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     The _m client
         /// </summary>
         private GameClient _mClient;
+
+        /// <summary>
+        /// the last purchased photo
+        /// </summary>
+        public CameraPhotoPreview LastPhotoPreview;
 
         /// <summary>
         ///     The _m room
@@ -681,6 +687,8 @@ namespace Oblivion.HabboHotel.Rooms.User
             Statusses.Clear();
             _mRoom = null;
             _mClient = null;
+            LastPhotoPreview = null;
+
         }
 
         /// <summary>

@@ -141,7 +141,7 @@ namespace Oblivion.HabboHotel.Navigators
                 {
                     var i = 0;
                     message.StartArray();
-                    foreach (var data in session.GetHabbo().UsersRooms.Where(data => data != null))
+                    foreach (var data in session.GetHabbo().Data.Rooms.Where(data => data != null))
                     {
                         data.Serialize(message);
                         message.SaveArray();

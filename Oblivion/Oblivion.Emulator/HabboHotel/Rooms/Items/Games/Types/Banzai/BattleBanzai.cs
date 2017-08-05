@@ -8,7 +8,6 @@ using Oblivion.Enclosure;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
-using Oblivion.HabboHotel.Rooms.Items.Games.Teams;
 using Oblivion.HabboHotel.Rooms.Items.Games.Teams.Enums;
 using Oblivion.HabboHotel.Rooms.User;
 using Oblivion.Messages;

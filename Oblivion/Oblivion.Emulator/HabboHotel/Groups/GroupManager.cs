@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Groups.Interfaces;
 using Oblivion.HabboHotel.Rooms;
@@ -36,7 +37,7 @@ namespace Oblivion.HabboHotel.Groups
         /// <summary>
         ///     The groups
         /// </summary>
-        internal HybridDictionary Groups;
+        internal Dictionary<uint, Guild> Groups;
 
         /// <summary>
         ///     The symbol colours
@@ -58,7 +59,7 @@ namespace Oblivion.HabboHotel.Groups
             BaseColours = new HashSet<GroupBaseColours>();
             SymbolColours = new HybridDictionary();
             BackGroundColours = new HybridDictionary();
-            Groups = new HybridDictionary();
+            Groups = new Dictionary<uint, Guild>();
 
             ClearInfo();
 
@@ -169,8 +170,8 @@ namespace Oblivion.HabboHotel.Groups
             if (Groups == null)
                 return null;
 
-            if (Groups.Contains(groupId))
-                return (Guild)Groups[groupId];
+            if (Groups.TryGetValue(groupId, out Guild grp))
+                return grp;
 
             var members = new Dictionary<uint, GroupMember>();
             var admins = new Dictionary<uint, GroupMember>();

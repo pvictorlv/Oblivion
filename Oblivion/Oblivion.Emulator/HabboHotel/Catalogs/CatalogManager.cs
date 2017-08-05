@@ -35,7 +35,7 @@ namespace Oblivion.HabboHotel.Catalogs
         /// <summary>
         ///     The categories
         /// </summary>
-        internal HybridDictionary Categories;
+        internal Dictionary<int, CatalogPage> Categories;
 
         /// <summary>
         ///     The ecotron levels
@@ -60,14 +60,15 @@ namespace Oblivion.HabboHotel.Catalogs
         /// <summary>
         ///     The offers
         /// </summary>
-        internal HybridDictionary Offers;
+        internal Dictionary<uint, CatalogItem> Offers;
 
         /// <summary>
         ///     Checks the name of the pet.
         /// </summary>
         /// <param name="petName">Name of the pet.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal static bool CheckPetName(string petName) => petName.Length >= 3 && petName.Length <= 15 && Oblivion.IsValidAlphaNumeric(petName);
+        internal static bool CheckPetName(string petName) => petName.Length >= 3 && petName.Length <= 15 &&
+                                                             Oblivion.IsValidAlphaNumeric(petName);
 
         /// <summary>
         ///     Creates the bot.
@@ -199,7 +200,7 @@ namespace Oblivion.HabboHotel.Catalogs
             CatalogItem result = null;
 
             if (FlatOffers.ContainsKey(offerId))
-                result = (CatalogItem) Offers[FlatOffers[offerId]];
+                result = Offers[FlatOffers[offerId]];
 
             return result ?? (Oblivion.GetGame().GetCatalog().GetItem(Convert.ToUInt32(offerId)));
         }
@@ -225,8 +226,8 @@ namespace Oblivion.HabboHotel.Catalogs
         {
             try
             {
-                Categories = new HybridDictionary();
-                Offers = new HybridDictionary();
+                Categories = new Dictionary<int, CatalogPage>();
+                Offers = new Dictionary<uint, CatalogItem>();
                 FlatOffers = new Dictionary<int, uint>();
                 EcotronRewards = new List<EcotronReward>();
                 EcotronLevels = new List<int>();
@@ -349,14 +350,14 @@ namespace Oblivion.HabboHotel.Catalogs
         /// </summary>
         /// <param name="itemId">The item identifier.</param>
         /// <returns>CatalogItem.</returns>
-        internal CatalogItem GetItem(uint itemId) => Offers.Contains(itemId) ? (CatalogItem) Offers[itemId] : null;
+        internal CatalogItem GetItem(uint itemId) => Offers.TryGetValue(itemId, out CatalogItem item) ? item : null;
 
         /// <summary>
         ///     Gets the page.
         /// </summary>
         /// <param name="page">The page.</param>
         /// <returns>CatalogPage.</returns>
-        internal CatalogPage GetPage(int page) => !Categories.Contains(page) ? null : (CatalogPage) Categories[page];
+        internal CatalogPage GetPage(int page) => Categories.TryGetValue(page, out CatalogPage pg) ? pg : null;
 
         /// <summary>
         ///     Handles the purchase.
@@ -387,10 +388,11 @@ namespace Oblivion.HabboHotel.Catalogs
             if (priceAmount >= 6)
                 totalPrice -= Convert.ToInt32(Math.Ceiling(Convert.ToDouble(priceAmount) / 6)) * 2 - 1;
 
-            if (!Categories.Contains(pageId))
+            if (!Categories.ContainsKey(pageId))
                 return;
 
-            var catalogPage = (CatalogPage) Categories[pageId];
+            CatalogPage catalogPage;
+            Categories.TryGetValue(pageId, out catalogPage);
 
             if (catalogPage == null || !catalogPage.Enabled || !catalogPage.Visible || session?.GetHabbo() == null)
                 return;
