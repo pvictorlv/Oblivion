@@ -1,63 +1,62 @@
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using Oblivion.Util;
 
-namespace Azure.Connection.Net
+namespace Oblivion.Connection.Net
 {
     public class MusSocket
     {
-        internal Socket MsSocket;
-        internal string MusIp;
-        internal int MusPort;
-        internal HashSet<string> AllowedIps;
+        private static Socket Handler;
+        private static int _Port;
+        private static string _MusHost;
 
-        internal MusSocket(string musIp, int musPort, IEnumerable<string> allowedIps, int backlog)
+        internal MusSocket(int Port, string musHost)
         {
-            MusIp = musIp;
-            MusPort = musPort;
-            AllowedIps = new HashSet<string>();
-            foreach (var item in allowedIps) AllowedIps.Add(item);
+            _Port = Port;
+            _MusHost = musHost;
+            Handler = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+
+            Out.WriteLine(
+                "Starting up asynchronous sockets server for MUS connections for port " +
+                _Port, "Server.AsyncSocketMusListener");
             try
             {
-                Out.WriteLine(
-                    "Starting up asynchronous sockets server for MUS connections for port " +
-                    musPort, "Server.AsyncSocketMusListener");
-
-                MsSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                MsSocket.Bind(new IPEndPoint(IPAddress.Any, MusPort));
-                MsSocket.Listen(backlog);
-                MsSocket.BeginAccept(OnEvent_NewConnection, MsSocket);
-
-                Out.WriteLine(
-                    "Asynchronous sockets server for MUS connections running on port " +
-                    musPort + Environment.NewLine,
-                    "Server.AsyncSocketMusListener");
+                Handler.Bind(new IPEndPoint(IPAddress.Any, Port));
+                Handler.Listen(0);
+                Handler.BeginAccept(ConnRequest, Handler);
             }
-            catch (Exception ex)
+            catch
             {
-                throw new ArgumentException($"No se pudo iniciar el Socket MUS:\n{ex}");
+                Console.WriteLine("Asynchronous socket server for MUS connections running on port " + Port);
             }
+
+            Out.WriteLine(
+                "Asynchronous sockets server for MUS connections running on port " +
+                _Port + Environment.NewLine,
+                "Server.AsyncSocketMusListener");
         }
 
-        internal void OnEvent_NewConnection(IAsyncResult iAr)
+        private static void ConnRequest(IAsyncResult iAr)
         {
             try
             {
-                var socket = ((Socket)iAr.AsyncState).EndAccept(iAr);
-                var ip = socket.RemoteEndPoint.ToString().Split(':')[0];
-
-                if (AllowedIps.Contains(ip) || ip == "127.0.0.1")
-                    new MusConnection(socket);
-                else
-                    socket.Close();
+                var nSocket = ((Socket) iAr.AsyncState).EndAccept(iAr);
+                //if (nSocket.RemoteEndPoint.ToString().Split(':')[0] != _MusHost) // Don't allow remote IP!
+               /* var ip = nSocket.RemoteEndPoint.ToString().Split(':')[0];
+                if (ip != _MusHost)
+                {
+                    Out.WriteLine("The ip " + ip + " are trying to send mus request");
+                }*/
+                var nConnection = new MusConnection(nSocket);
             }
             catch (Exception e)
             {
-                Writer.Writer.LogException(e.ToString());
+                Writer.Writer.LogCriticalException(e.ToString());
             }
 
-            MsSocket.BeginAccept(OnEvent_NewConnection, MsSocket);
+            Handler.BeginAccept(ConnRequest, Handler);
         }
     }
 }

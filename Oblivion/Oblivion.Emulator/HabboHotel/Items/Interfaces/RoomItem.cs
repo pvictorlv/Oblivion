@@ -730,6 +730,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                     case Interaction.WalkInternalLink:
                         return new InteractorWalkInternalLink();
 
+                    case Interaction.FloorSwitch:
+                        return new InteractorWalkSwitch();
                     default:
                         return new InteractorGenericSwitch();
                 }

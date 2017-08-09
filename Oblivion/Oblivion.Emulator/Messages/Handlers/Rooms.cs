@@ -358,8 +358,8 @@ namespace Oblivion.Messages.Handlers
                 if (room.UserCount >= room.RoomData.UsersMax && !Session.GetHabbo().HasFuse("fuse_enter_full_rooms") &&
                     Session.GetHabbo().Id != (ulong) room.RoomData.OwnerId)
                 {
-                    var roomQueue = new ServerMessage(LibraryParser.OutgoingRequest("RoomsQueue"));
-
+                   /* var roomQueue = new ServerMessage(LibraryParser.OutgoingRequest("RoomsQueue"));
+                   //todo: room queue
                     roomQueue.AppendInteger(2);
                     roomQueue.AppendString("visitors");
                     roomQueue.AppendInteger(2);
@@ -374,11 +374,11 @@ namespace Oblivion.Messages.Handlers
                     roomQueue.AppendInteger(0);
 
                     Session.SendMessage(roomQueue);
+*/
+//                    ClearRoomLoading();
+//                    return;
 
-                    //ClearRoomLoading();
-                    return;
-
-                    /* var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("RoomEnterErrorMessageComposer"));
+                     var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("RoomEnterErrorMessageComposer"));
                      serverMessage.AppendInteger(1);
                      Session.SendMessage(serverMessage);
                      var message = new ServerMessage(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer"));
@@ -387,7 +387,6 @@ namespace Oblivion.Messages.Handlers
                      ClearRoomLoading();
                      return;
 
-                 */
                 }
 
                 CurrentLoadingRoom = room;
@@ -2578,7 +2577,8 @@ namespace Oblivion.Messages.Handlers
 
             int photoId;
 
-            if (!int.TryParse(Request.GetString(), out photoId) || photoId < 0)
+            var str = Request.GetString();
+            if (!int.TryParse(str, out photoId) || photoId < 0)
                 return;
 
             var preview = Oblivion.GetGame().GetCameraManager().GetPreview(photoId);
@@ -2594,7 +2594,7 @@ namespace Oblivion.Messages.Handlers
                 .GetPath(CameraPhotoType.PREVIEW, preview.Id, preview.CreatorId));
 
             Session.SendMessage(messageBuffer);
-           
+
         }
 
         public void SubmitRoomToCompetition()

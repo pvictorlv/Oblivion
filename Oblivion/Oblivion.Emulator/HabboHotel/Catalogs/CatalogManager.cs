@@ -19,6 +19,7 @@ using Oblivion.HabboHotel.RoomBots;
 using Oblivion.HabboHotel.SoundMachine;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
+using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Catalogs
 {
@@ -743,7 +744,6 @@ namespace Oblivion.HabboHotel.Catalogs
                             return;
                         if (color.Length != 6)
                             return;
-
                         Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(session, "ACH_PetLover", 1);
                         break;
 
@@ -1116,8 +1116,8 @@ namespace Oblivion.HabboHotel.Catalogs
 
                         i++;
                     }
+                    return list;
                 });
-                return list;
             }
 
             if (a == 'e')

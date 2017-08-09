@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Linq;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
-using Oblivion.HabboHotel.Rooms.Items.Games.Teams;
 using Oblivion.HabboHotel.Rooms.Items.Games.Teams.Enums;
 using Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze.Enum;
 using Oblivion.HabboHotel.Rooms.User;

@@ -516,6 +516,7 @@
         /// <summary>
         ///     The floor switch1
         /// </summary>
+        FloorSwitch,
         FloorSwitch1,
 
         /// <summary>

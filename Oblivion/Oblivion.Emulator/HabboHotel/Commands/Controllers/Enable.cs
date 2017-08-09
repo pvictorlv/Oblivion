@@ -13,7 +13,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public Enable()
         {
-            MinRank = -3;
+            MinRank = 1;
             Description = "Enable/disable effect";
             Usage = ":enable";
             MinParams = 1;

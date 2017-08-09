@@ -176,6 +176,8 @@
     <Compile Include="Connection\Connection\GameSocketManagerStatics.cs" />
     <Compile Include="Connection\Connection\SocketConnectionCheck.cs" />
     <Compile Include="Connection\Connection\SocketManager.cs" />
+    <Compile Include="Connection\Net\MusConnection.cs" />
+    <Compile Include="Connection\Net\MusSocket.cs" />
     <Compile Include="Connection\Web.cs" />
     <Compile Include="HabboHotel\Camera\CameraPhotoManager.cs" />
     <Compile Include="HabboHotel\Camera\CameraPhotoPreview.cs" />
@@ -221,6 +223,7 @@
     <Compile Include="HabboHotel\Commands\Controllers\WhisperHotel.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\WhisperRoom.cs" />
     <Compile Include="HabboHotel\Items\Datas\HighscoreData.cs" />
+    <Compile Include="HabboHotel\Items\Interactions\Controllers\InteractorWalkSwitch.cs" />
     <Compile Include="HabboHotel\Items\Interactions\Enums\GlobalInteractions.cs" />
     <Compile Include="HabboHotel\Items\Interactions\Enums\Interaction.cs" />
     <Compile Include="HabboHotel\Items\Interfaces\HighScoreLine.cs" />

@@ -247,8 +247,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
 
         internal void StopGame()
         {
-            var team = GetWinningTeam();
             if (_room == null) return;
+            var team = GetWinningTeam();
             var winners = new List<RoomUser>();
             switch (team)
             {
@@ -269,6 +269,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
                     break;
             }
             var item = GetFirstHighscore();
+            if (item == null) return;
             var score = GetScoreForTeam(team);
             foreach (var winner in winners) item.HighscoreData.AddUserScore(item, winner.GetUserName(), score);
             item.UpdateState(false, true);
@@ -355,12 +356,13 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
 
         internal RoomItem GetFirstHighscore()
         {
-            using (var enumerator = _room.GetRoomItemHandler().FloorItems.GetEnumerator())
+            using (var enumerator = _room.GetRoomItemHandler().FloorItems.ToList().GetEnumerator())
             {
                 while (enumerator.MoveNext())
                 {
                     var current2 = enumerator.Current;
-                    if (current2.GetBaseItem().InteractionType != Interaction.WiredHighscore) continue;
+
+                    if (current2?.GetBaseItem().InteractionType != Interaction.WiredHighscore) continue;
                     var result = current2;
                     return result;
                 }

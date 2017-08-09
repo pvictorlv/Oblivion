@@ -65,6 +65,13 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
+                queryReactor.SetQuery("SELECT count(id) FROM users WHERE auth_ticket = @ticket");
+                queryReactor.AddParameter("ticket", sessionTicket);
+                var num = queryReactor.GetInteger();
+                if (num <= 0)
+                {
+                    return null;
+                }
                 queryReactor.SetQuery("SELECT * FROM users WHERE auth_ticket = @ticket");
                 queryReactor.AddParameter("ticket", sessionTicket);
                 dataRow = queryReactor.GetRow();

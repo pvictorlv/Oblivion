@@ -856,8 +856,9 @@ namespace Oblivion.Messages.Handlers
         {
             var userId = Request.GetUInteger();
             var habboForId = Oblivion.GetHabboById(userId);
-            if (habboForId == null)
+            if (habboForId?.Data?.Relations == null)
                 return;
+
             var rand = new Random();
             habboForId.Data.Relations = (
                 from x in habboForId.Data.Relations

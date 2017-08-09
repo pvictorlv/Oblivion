@@ -636,10 +636,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         /// <param name="comparedUser">The compared user.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public bool Equals(RoomUser comparedUser)
-        {
-            return comparedUser.HabboId == HabboId;
-        }
+        public bool Equals(RoomUser comparedUser) => comparedUser?.HabboId == HabboId;
 
         /// <summary>
         ///     Gets the name of the user.
@@ -726,7 +723,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (!BobbaFilter.CanTalk(session, msg))
                 return;
 
-            if (session == null || session.GetHabbo() == null)
+            if (session?.GetHabbo() == null)
                 return;
 
             BlackWord word;
@@ -889,6 +886,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
             catch (Exception)
             {
+                // ignored
             }
 
             SetX = 0;
@@ -1130,11 +1128,11 @@ namespace Oblivion.HabboHotel.Rooms.User
                 message.AppendInteger(0);
                 message.AppendInteger(1);
                 message.AppendString(habbo.Gender.ToLower());
-                if (@group != null)
+                if (group != null)
                 {
-                    message.AppendInteger(@group.Id);
+                    message.AppendInteger(group.Id);
                     message.AppendInteger(0);
-                    message.AppendString(@group.Name);
+                    message.AppendString(group.Name);
                 }
                 else
                 {

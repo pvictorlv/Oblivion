@@ -1333,7 +1333,7 @@ namespace Oblivion.HabboHotel.Rooms
             UsersWithRights.Clear();
             Bans.Clear();
             LoadedGroups.Clear();
-
+            
             RoomData.RoomChat.Clear();
 
             GetWiredHandler().Destroy();

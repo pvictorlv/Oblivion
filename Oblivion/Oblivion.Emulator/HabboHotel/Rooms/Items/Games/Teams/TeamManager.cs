@@ -34,111 +34,116 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
         public void AddUser(RoomUser user)
         {
             if (user?.GetClient() == null) return;
-            if (user.Team.Equals(Team.Blue)) BlueTeam.Add(user);
-            else
+
+            switch (user.Team)
             {
-                if (user.Team.Equals(Team.Red)) RedTeam.Add(user);
-                else
-                {
-                    if (user.Team.Equals(Team.Yellow)) YellowTeam.Add(user);
-                    else if (user.Team.Equals(Team.Green)) GreenTeam.Add(user);
-                }
+                case Team.Blue:
+                    BlueTeam.Add(user);
+                    break;
+                case Team.Red:
+                    RedTeam.Add(user);
+                    break;
+                case Team.Yellow:
+                    YellowTeam.Add(user);
+                    break;
+                case Team.Green:
+                    GreenTeam.Add(user);
+                    break;
             }
 
+
             if (string.IsNullOrEmpty(Game)) return;
-            switch (Game.ToLower())
+            if (Game.ToLower() == "banzai")
             {
-                case "banzai":
-                    var currentRoom = user.GetClient().GetHabbo().CurrentRoom;
-                    using (var enumerator = currentRoom.GetRoomItemHandler().FloorItems.GetEnumerator())
+                var currentRoom = user.GetClient().GetHabbo().CurrentRoom;
+                using (var enumerator = currentRoom.GetRoomItemHandler().FloorItems.GetEnumerator())
+                {
+                    while (enumerator.MoveNext())
                     {
-                        while (enumerator.MoveNext())
+                        var current = enumerator.Current;
+                        if (current.GetBaseItem().InteractionType.Equals(Interaction.BanzaiGateBlue))
                         {
-                            var current = enumerator.Current;
-                            if (current.GetBaseItem().InteractionType.Equals(Interaction.BanzaiGateBlue))
+                            current.ExtraData = BlueTeam.Count.ToString();
+                            current.UpdateState();
+                            if (BlueTeam.Count != 5) continue;
+                            foreach (
+                                var current2 in
+                                currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
+                                current2.SqState = 0;
+                            currentRoom.GetGameMap().GameMap[current.X, current.Y] = 0;
+                        }
+                        else
+                        {
+                            if (current.GetBaseItem().InteractionType.Equals(Interaction.BanzaiGateRed))
                             {
-                                current.ExtraData = BlueTeam.Count.ToString();
+                                current.ExtraData = RedTeam.Count.ToString();
                                 current.UpdateState();
-                                if (BlueTeam.Count != 5) continue;
+                                if (RedTeam.Count != 5) continue;
                                 foreach (
-                                    var current2 in
-                                        currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
-                                    current2.SqState = 0;
+                                    var current3 in
+                                    currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
+                                    current3.SqState = 0;
                                 currentRoom.GetGameMap().GameMap[current.X, current.Y] = 0;
                             }
                             else
                             {
-                                if (current.GetBaseItem().InteractionType.Equals(Interaction.BanzaiGateRed))
+                                if (current.GetBaseItem().InteractionType.Equals(Interaction.BanzaiGateGreen))
                                 {
-                                    current.ExtraData = RedTeam.Count.ToString();
+                                    current.ExtraData = GreenTeam.Count.ToString();
                                     current.UpdateState();
-                                    if (RedTeam.Count != 5) continue;
+                                    if (GreenTeam.Count != 5) continue;
                                     foreach (
-                                        var current3 in
-                                            currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
-                                        current3.SqState = 0;
+                                        var current4 in
+                                        currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
+                                        current4.SqState = 0;
                                     currentRoom.GetGameMap().GameMap[current.X, current.Y] = 0;
                                 }
                                 else
                                 {
-                                    if (current.GetBaseItem().InteractionType.Equals(Interaction.BanzaiGateGreen))
-                                    {
-                                        current.ExtraData = GreenTeam.Count.ToString();
-                                        current.UpdateState();
-                                        if (GreenTeam.Count != 5) continue;
-                                        foreach (
-                                            var current4 in
-                                                currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
-                                            current4.SqState = 0;
-                                        currentRoom.GetGameMap().GameMap[current.X, current.Y] = 0;
-                                    }
-                                    else
-                                    {
-                                        if (!current.GetBaseItem().InteractionType.Equals(Interaction.BanzaiGateYellow))
-                                            continue;
-                                        current.ExtraData = YellowTeam.Count.ToString();
-                                        current.UpdateState();
-                                        if (YellowTeam.Count != 5) continue;
-                                        foreach (
-                                            var current5 in
-                                                currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
-                                            current5.SqState = 0;
-                                        currentRoom.GetGameMap().GameMap[current.X, current.Y] = 0;
-                                    }
+                                    if (!current.GetBaseItem().InteractionType.Equals(Interaction.BanzaiGateYellow))
+                                        continue;
+                                    current.ExtraData = YellowTeam.Count.ToString();
+                                    current.UpdateState();
+                                    if (YellowTeam.Count != 5) continue;
+                                    foreach (
+                                        var current5 in
+                                        currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
+                                        current5.SqState = 0;
+                                    currentRoom.GetGameMap().GameMap[current.X, current.Y] = 0;
                                 }
                             }
                         }
                     }
-                    break;
-
-                case "freeze":
-                    var currentRoom2 = user.GetClient().GetHabbo().CurrentRoom;
-                    foreach (var current6 in currentRoom2.GetRoomItemHandler().FloorItems)
+                }
+            }
+            else if (Game.ToLower() == "freeze")
+            {
+                var currentRoom2 = user.GetClient().GetHabbo().CurrentRoom;
+                foreach (var current6 in currentRoom2.GetRoomItemHandler().FloorItems)
+                {
+                    switch (current6.GetBaseItem().InteractionType)
                     {
-                        switch (current6.GetBaseItem().InteractionType)
-                        {
-                            case Interaction.FreezeBlueGate:
-                                current6.ExtraData = BlueTeam.Count.ToString();
-                                current6.UpdateState();
-                                break;
+                        case Interaction.FreezeBlueGate:
+                            current6.ExtraData = BlueTeam.Count.ToString();
+                            current6.UpdateState();
+                            break;
 
-                            case Interaction.FreezeRedGate:
-                                current6.ExtraData = RedTeam.Count.ToString();
-                                current6.UpdateState();
-                                break;
+                        case Interaction.FreezeRedGate:
+                            current6.ExtraData = RedTeam.Count.ToString();
+                            current6.UpdateState();
+                            break;
 
-                            case Interaction.FreezeGreenGate:
-                                current6.ExtraData = GreenTeam.Count.ToString();
-                                current6.UpdateState();
-                                break;
+                        case Interaction.FreezeGreenGate:
+                            current6.ExtraData = GreenTeam.Count.ToString();
+                            current6.UpdateState();
+                            break;
 
-                            case Interaction.FreezeYellowGate:
-                                current6.ExtraData = YellowTeam.Count.ToString();
-                                current6.UpdateState();
-                                break;
-                        }
+                        case Interaction.FreezeYellowGate:
+                            current6.ExtraData = YellowTeam.Count.ToString();
+                            current6.UpdateState();
+                            break;
                     }
-                    break;
+                }
             }
         }
 
@@ -175,7 +180,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                                 if (currentRoom.GetGameMap().GameMap[current.X, current.Y] != 0) continue;
                                 foreach (
                                     var current2 in
-                                        currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
+                                    currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
                                     current2.SqState = 1;
                                 currentRoom.GetGameMap().GameMap[current.X, current.Y] = 1;
                             }
@@ -188,7 +193,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                                     if (currentRoom.GetGameMap().GameMap[current.X, current.Y] != 0) continue;
                                     foreach (
                                         var current3 in
-                                            currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
+                                        currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
                                         current3.SqState = 1;
                                     currentRoom.GetGameMap().GameMap[current.X, current.Y] = 1;
                                 }
@@ -201,7 +206,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                                         if (currentRoom.GetGameMap().GameMap[current.X, current.Y] != 0) continue;
                                         foreach (
                                             var current4 in
-                                                currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
+                                            currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
                                             current4.SqState = 1;
                                         currentRoom.GetGameMap().GameMap[current.X, current.Y] = 1;
                                     }
@@ -214,7 +219,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                                         if (currentRoom.GetGameMap().GameMap[current.X, current.Y] != 0) continue;
                                         foreach (
                                             var current5 in
-                                                currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
+                                            currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
                                             current5.SqState = 1;
                                         currentRoom.GetGameMap().GameMap[current.X, current.Y] = 1;
                                     }

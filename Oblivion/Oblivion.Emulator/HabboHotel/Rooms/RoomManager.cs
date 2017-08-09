@@ -655,8 +655,23 @@ namespace Oblivion.HabboHotel.Rooms
                 {
                     var roomData = (RoomData) _activeRoomsUpdateQueue.Dequeue();
                     if (roomData == null) continue;
-                    if (!_activeRooms.ContainsKey(roomData)) _activeRooms.Add(roomData, roomData.UsersNow);
-                    else _activeRooms[roomData] = roomData.UsersNow;
+                    if (roomData.UsersNow > 0)
+                    {
+                        if (!_activeRooms.ContainsKey(roomData))
+                        {
+                            _activeRooms.Add(roomData, roomData.UsersNow);
+                        }
+                        else
+                        {
+                            _activeRooms[roomData] = roomData.UsersNow;
+                        }
+                    }
+                    else
+                    {
+                        if (_activeRooms.ContainsKey(roomData))
+                            _activeRooms.Remove(roomData);
+
+                    }
                 }
             }
             return true;

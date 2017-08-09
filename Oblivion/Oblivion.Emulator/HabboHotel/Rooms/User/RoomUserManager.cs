@@ -245,9 +245,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             rBot.RoomUser = roomUser;
             rBot.MixPhrases = mix;
 
-            if (rBot.RoomUser == null || rBot.RoomUser.BotAi == null) return;
-
-            rBot.RoomUser.BotAi.Modified();
+            rBot.RoomUser?.BotAi?.Modified();
         }
 
         /// <summary>
@@ -290,7 +288,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="snow">if set to <c>true</c> [snow].</param>
         internal void AddUserToRoom(GameClient session, bool spectator, bool snow = false)
         {
-            if (session == null || session.GetHabbo() == null)
+            if (session?.GetHabbo() == null)
                 return;
             var roomUser = new RoomUser(session.GetHabbo().Id, _userRoom.RoomId, _primaryPrivateUserId++, _userRoom,
                 spectator);
@@ -347,7 +345,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             try
             {
-                if (session == null || session.GetHabbo() == null || _userRoom == null)
+                if (session?.GetHabbo() == null || _userRoom == null)
                     return;
                 var userId = session.GetHabbo().Id;
 
@@ -708,6 +706,12 @@ namespace Oblivion.HabboHotel.Rooms.User
                 }
                 foreach (var item in allRoomItemForSquare)
                 {
+                    if (item.GetBaseItem().InteractionType == Interaction.QuickTeleport ||
+                        item.GetBaseItem().InteractionType == Interaction.GuildGate ||
+                        item.GetBaseItem().InteractionType == Interaction.WalkInternalLink ||
+                        item.GetBaseItem().InteractionType == Interaction.FloorSwitch)
+                        item.Interactor.OnUserWalk(user.GetClient(), item, user);
+
                     if (cycleGameItems)
                     {
                         item.UserWalksOnFurni(user);
@@ -751,13 +755,14 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                     switch (interactionType)
                     {
-                        case Interaction.QuickTeleport:
+                        /*case Interaction.QuickTeleport:
                         case Interaction.GuildGate:
                         case Interaction.WalkInternalLink:
+                        case Interaction.FloorSwitch:
                         {
                             item.Interactor.OnUserWalk(user.GetClient(), item, user);
                             break;
-                        }
+                        }*/
                         case Interaction.None:
                             break;
 
@@ -822,7 +827,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                             if (user.Team == Team.None)
                             {
                                 if (!teamManagerForBanzai.CanEnterOnTeam(item.Team)) break;
-                                if (user.Team != Team.None) teamManagerForBanzai.OnUserLeave(user);
                                 user.Team = item.Team;
                                 teamManagerForBanzai.AddUser(user);
                                 if (avatarEffectsInventoryComponent.CurrentEffect != effect)
@@ -1038,14 +1042,11 @@ namespace Oblivion.HabboHotel.Rooms.User
                             var petBreedOwner =
                                 Oblivion.GetGame().GetClientManager().GetClientByUserId(roomUsers.PetData.OwnerId);
 
-                            if (petBreedOwner != null)
-                            {
-                                petBreedOwner.SendMessage(PetBreeding.GetMessage(roomUsers.PetData.WaitingForBreading,
-                                    _userRoom.GetRoomItemHandler().BreedingTerrier[roomUsers.PetData.WaitingForBreading]
-                                        .PetsList[0],
-                                    _userRoom.GetRoomItemHandler().BreedingTerrier[roomUsers.PetData.WaitingForBreading]
-                                        .PetsList[1]));
-                            }
+                            petBreedOwner?.SendMessage(PetBreeding.GetMessage(roomUsers.PetData.WaitingForBreading,
+                                _userRoom.GetRoomItemHandler().BreedingTerrier[roomUsers.PetData.WaitingForBreading]
+                                    .PetsList[0],
+                                _userRoom.GetRoomItemHandler().BreedingTerrier[roomUsers.PetData.WaitingForBreading]
+                                    .PetsList[1]));
                         }
                         break;
 
@@ -1057,14 +1058,11 @@ namespace Oblivion.HabboHotel.Rooms.User
                             var petBreedOwner =
                                 Oblivion.GetGame().GetClientManager().GetClientByUserId(roomUsers.PetData.OwnerId);
 
-                            if (petBreedOwner != null)
-                            {
-                                petBreedOwner.SendMessage(PetBreeding.GetMessage(roomUsers.PetData.WaitingForBreading,
-                                    _userRoom.GetRoomItemHandler().BreedingBear[roomUsers.PetData.WaitingForBreading]
-                                        .PetsList[0],
-                                    _userRoom.GetRoomItemHandler().BreedingBear[roomUsers.PetData.WaitingForBreading]
-                                        .PetsList[1]));
-                            }
+                            petBreedOwner?.SendMessage(PetBreeding.GetMessage(roomUsers.PetData.WaitingForBreading,
+                                _userRoom.GetRoomItemHandler().BreedingBear[roomUsers.PetData.WaitingForBreading]
+                                    .PetsList[0],
+                                _userRoom.GetRoomItemHandler().BreedingBear[roomUsers.PetData.WaitingForBreading]
+                                    .PetsList[1]));
                         }
                         break;
                 }
@@ -1196,8 +1194,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 {
                     var horsePetAi = GetRoomUserByVirtualId(Convert.ToInt32(roomUsers.HorseId));
 
-                    if (horsePetAi != null)
-                        horsePetAi.BotAi.OnTimerTick();
+                    horsePetAi?.BotAi.OnTimerTick();
                 }
 
                 // Horse Ridding need be Updated First
@@ -1302,9 +1299,17 @@ namespace Oblivion.HabboHotel.Rooms.User
                 // Check Sub Items Interactionables
                 foreach (var roomItem in hasItemInPlace.ToArray())
                 {
+                    
+
                     roomItem.UserWalksOffFurni(roomUsers);
                     switch (roomItem.GetBaseItem().InteractionType)
                     {
+                        case Interaction.QuickTeleport:
+                        case Interaction.GuildGate:
+                        case Interaction.WalkInternalLink:
+                        case Interaction.FloorSwitch:
+                            roomItem.Interactor.OnUserWalk(roomUsers.GetClient(), roomItem, roomUsers);
+                            break;
                         case Interaction.RunWaySage:
                         case Interaction.ChairState:
                         case Interaction.Shower:

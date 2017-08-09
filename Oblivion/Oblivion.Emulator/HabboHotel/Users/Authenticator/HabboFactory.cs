@@ -59,11 +59,9 @@ namespace Oblivion.HabboHotel.Users.Authenticator
             // TERMINA
             var vip = Oblivion.EnumToBool(dRow["vip"].ToString());
             var createDate = Convert.ToDouble(dRow["account_created"]);
-            var online = Oblivion.EnumToBool(dRow["online"].ToString());
             var citizenship = dRow["talent_status"].ToString();
             var diamonds = int.Parse(dRow["diamonds"].ToString());
             var lastChange = (int)dRow["last_name_change"];
-            var regTimestamp = int.Parse(dRow["account_created"].ToString());
             var tradeLocked = Oblivion.EnumToBool(dRow["trade_lock"].ToString());
             var tradeLockExpire = int.Parse(dRow["trade_lock_expire"].ToString());
             var nuxPassed = Oblivion.EnumToBool(dRow["nux_passed"].ToString());
@@ -72,7 +70,6 @@ namespace Oblivion.HabboHotel.Users.Authenticator
             var buildersExpire = (int)dRow["builders_expire"];
             var buildersItemsMax = (int)dRow["builders_items_max"];
             var buildersItemsUsed = (int)dRow["builders_items_used"];
-            var releaseVersion = (int)dRow["release_version"];
 
             /* guides */
             var onDuty = Convert.ToBoolean(dRow["OnDuty"]);

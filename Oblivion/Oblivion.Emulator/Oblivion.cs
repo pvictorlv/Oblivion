@@ -24,6 +24,7 @@ using Oblivion.Messages.Factorys;
 using Oblivion.Messages.Parsers;
 using Oblivion.Util;
 using MySql.Data.MySqlClient;
+using Oblivion.Connection.Net;
 using Timer = System.Timers.Timer;
 
 namespace Oblivion
@@ -373,11 +374,7 @@ namespace Oblivion
                     "Server.AsyncSocketListener");
 
 
-                // Removed MusSocket from the Server
-                //string[] allowedIps = ConfigurationData.Data["mus.tcp.allowedaddr"].Split(';');
-                // ReSharper disable once ObjectCreationAsStatement
-                //new MusSocket(ConfigurationData.Data["mus.tcp.bindip"],
-                //    int.Parse(ConfigurationData.Data["mus.tcp.port"]), allowedIps, 0);
+                new MusSocket(int.Parse(ConfigurationData.Data["mus.tcp.port"]), ConfigurationData.Data["mus.tcp.bindip"]);
 
                 LibraryParser.Initialize();
                 Console.WriteLine();

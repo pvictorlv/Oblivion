@@ -217,7 +217,6 @@ namespace Oblivion.HabboHotel
 
                 Progress(bar, wait, end, "Loading Rooms...");
                 _roomManager = new RoomManager();
-//                _roomManager.LoadModels(queryReactor, out roomModelLoaded);
 
                 Progress(bar, wait, end, "Loading NavigatorManager...");
                 _navigatorManager = new NavigatorManager();

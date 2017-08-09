@@ -657,6 +657,8 @@ namespace Oblivion.HabboHotel.Items.Interactions
 
                 case "pressure_pad":
                     return Interaction.PressurePad;
+                case "walkswitch":
+                    return Interaction.FloorSwitch;
 
                 case "pressure_pad_bed":
                     return Interaction.PressurePadBed;

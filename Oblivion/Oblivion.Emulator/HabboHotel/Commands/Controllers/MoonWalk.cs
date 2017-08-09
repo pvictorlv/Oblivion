@@ -13,7 +13,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public MoonWalk()
         {
-            MinRank = -3;
+            MinRank = 1;
             Description = "Enable/disable Moonwalk";
             Usage = ":moonwalk";
             MinParams = 0;
@@ -23,9 +23,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         {
             var room = session.GetHabbo().CurrentRoom;
 
-            if (room == null) return true;
-
-            var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
+            var user = room?.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
             if (user == null) return true;
             user.IsMoonwalking = !user.IsMoonwalking;
 
