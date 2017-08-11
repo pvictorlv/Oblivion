@@ -183,7 +183,6 @@ namespace Oblivion.HabboHotel
 
                 uint itemsLoaded;
                 uint navigatorLoaded;
-//                uint roomModelLoaded;
                 uint achievementLoaded;
                 uint pollLoaded;
 
@@ -541,22 +540,29 @@ namespace Oblivion.HabboHotel
         /// </summary>
         private async void MainGameLoop()
         {
-            while (GameLoopActiveExt)
+            try
             {
-                LowPriorityWorker.Process();
-                try
+                while (GameLoopActiveExt)
                 {
-                    RoomManagerCycleEnded = false;
-                    ClientManagerCycleEnded = false;
-                    _roomManager.OnCycle();
-                    _clientManager.OnCycle();
-                }
-                catch (Exception ex)
-                {
-                    Logging.LogCriticalException($"Exception in Game Loop!: {ex}");
-                }
+                    LowPriorityWorker.Process();
+                    try
+                    {
+                        RoomManagerCycleEnded = false;
+                        ClientManagerCycleEnded = false;
+                        _roomManager.OnCycle();
+                        _clientManager.OnCycle();
+                    }
+                    catch (Exception ex)
+                    {
+                        Logging.LogCriticalException($"Exception in Game Loop!: {ex}");
+                    }
 
-                await Task.Delay(GameLoopSleepTimeExt);
+                    await Task.Delay(GameLoopSleepTimeExt);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logging.LogCriticalException($"Exception in Game Loop2!: {ex}");
             }
         }
     }

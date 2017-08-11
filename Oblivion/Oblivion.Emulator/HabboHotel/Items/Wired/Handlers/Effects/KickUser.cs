@@ -68,7 +68,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool Execute(params object[] stuff)
         {
-            if (stuff[0] == null)
+            if (stuff.Length < 2)
                 return false;
 
             var roomUser = (RoomUser)stuff[0];

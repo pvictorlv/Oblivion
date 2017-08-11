@@ -565,18 +565,25 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <param name="reason">The reason.</param>
         internal void Disconnect(string reason)
         {
-            if (GetHabbo() != null)
+            try
             {
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                    queryReactor.RunFastQuery(GetHabbo().GetQueryString);
-                GetHabbo().OnDisconnect(reason);
+                if (GetHabbo() != null)
+                {
+                    using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        queryReactor.RunFastQuery(GetHabbo().GetQueryString);
+                    GetHabbo().OnDisconnect(reason);
+                }
+
+                if (_disconnected)
+                    return;
+
+                _connection?.Dispose();
+                _disconnected = true;
             }
-
-            if (_disconnected)
-                return;
-
-            _connection?.Dispose();
-            _disconnected = true;
+            catch (Exception e)
+            {
+                Logging.HandleException(e, "user disconnect");
+            }
         }
 
         /// <summary>
@@ -625,17 +632,24 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// </summary>
         private void SwitchParserRequest(byte[] data, int amountOfBytes)
         {
-            if (_connection == null)
-                return;
+            try
+            {
+                if (_connection == null)
+                    return;
 
-            if (_messageHandler == null)
-                InitHandler();
+                if (_messageHandler == null)
+                    InitHandler();
 
-            PacketParser.SetConnection(_connection, this);
+                PacketParser.SetConnection(_connection, this);
 
-            _connection.Parser.Dispose();
-            _connection.Parser = PacketParser;
-            _connection.Parser.HandlePacketData(data, amountOfBytes);
+                _connection.Parser.Dispose();
+                _connection.Parser = PacketParser;
+                _connection.Parser.HandlePacketData(data, amountOfBytes);
+            }
+            catch (Exception e)
+            {
+                Logging.HandleException(e, "Handle packet");
+            }
         }
 
         /// <summary>

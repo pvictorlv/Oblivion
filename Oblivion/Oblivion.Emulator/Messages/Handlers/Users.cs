@@ -121,33 +121,30 @@ namespace Oblivion.Messages.Handlers
         internal void GetUserBadges()
         {
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
-            if (room != null)
+            var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Request.GetUInteger());
+            if (roomUserByHabbo != null && !roomUserByHabbo.IsBot && roomUserByHabbo.GetClient() != null && roomUserByHabbo.GetClient().GetHabbo() != null)
             {
-                var roomUserByHabbo = room.GetRoomUserManager().GetRoomUserByHabbo(Request.GetUInteger());
-                if (roomUserByHabbo != null && !roomUserByHabbo.IsBot && roomUserByHabbo.GetClient() != null && roomUserByHabbo.GetClient().GetHabbo() != null)
+                Session.GetHabbo().LastSelectedUser = roomUserByHabbo.UserId;
+                Response.Init(LibraryParser.OutgoingRequest("UserBadgesMessageComposer"));
+                Response.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Id);
+
+                Response.StartArray();
+                foreach (
+                    var badge in
+                    roomUserByHabbo.GetClient()
+                        .GetHabbo()
+                        .GetBadgeComponent()
+                        .BadgeList.Values.Cast<Badge>()
+                        .Where(badge => badge.Slot > 0).Take(5))
                 {
-                    Session.GetHabbo().LastSelectedUser = roomUserByHabbo.UserId;
-                    Response.Init(LibraryParser.OutgoingRequest("UserBadgesMessageComposer"));
-                    Response.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Id);
+                    Response.AppendInteger(badge.Slot);
+                    Response.AppendString(badge.Code);
 
-                    Response.StartArray();
-                    foreach (
-                        var badge in
-                            roomUserByHabbo.GetClient()
-                                .GetHabbo()
-                                .GetBadgeComponent()
-                                .BadgeList.Values.Cast<Badge>()
-                                .Where(badge => badge.Slot > 0).Take(5))
-                    {
-                        Response.AppendInteger(badge.Slot);
-                        Response.AppendString(badge.Code);
-
-                        Response.SaveArray();
-                    }
-
-                    Response.EndArray();
-                    SendResponse();
+                    Response.SaveArray();
                 }
+
+                Response.EndArray();
+                SendResponse();
             }
         }
 
@@ -210,9 +207,7 @@ namespace Oblivion.Messages.Handlers
         internal void EnableEffect()
         {
             var currentRoom = Session.GetHabbo().CurrentRoom;
-            if (currentRoom == null)
-                return;
-            var roomUserByHabbo = currentRoom.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
+            var roomUserByHabbo = currentRoom?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
             if (roomUserByHabbo == null)
                 return;
             var num = Request.GetInteger();
@@ -254,7 +249,7 @@ namespace Oblivion.Messages.Handlers
             }
             currentRoom.MutedUsers.Add(num,
                 uint.Parse(
-                    ((Oblivion.GetUnixTimeStamp()) + unchecked(checked(num2 * 60u))).ToString()));
+                    ((Oblivion.GetUnixTimeStamp()) + checked(num2 * 60u)).ToString()));
 
             roomUserByHabbo.GetClient()
                 .SendNotif(string.Format(Oblivion.GetLanguage().GetVar("room_owner_has_mute_user"), num2));
@@ -282,7 +277,7 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void GetBalance()
         {
-            if (Session == null || Session.GetHabbo() == null) return;
+            if (Session?.GetHabbo() == null) return;
 
             Session.GetHabbo().UpdateCreditsBalance();
             Session.GetHabbo().UpdateSeasonalCurrencyBalance();
@@ -365,8 +360,8 @@ namespace Oblivion.Messages.Handlers
         {
             Session.GetHabbo().GetBadgeComponent().ResetSlots();
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery(string.Format("UPDATE users_badges SET badge_slot = 0 WHERE user_id = {0}",
-                    Session.GetHabbo().Id));
+                queryReactor.RunFastQuery(
+                    $"UPDATE users_badges SET badge_slot = 0 WHERE user_id = {Session.GetHabbo().Id}");
             for (var i = 0; i < 5; i++)
             {
                 var slot = Request.GetInteger();
@@ -465,18 +460,18 @@ namespace Oblivion.Messages.Handlers
             Response.AppendBool(Oblivion.GetGame().GetClientManager().GetClientByUserId(habbo.Id) != null);
             var groups = Oblivion.GetGame().GetGroupManager().GetUserGroups(habbo.Id);
             Response.AppendInteger(groups.Count);
-            foreach (var @group in groups.Select(groupUs => Oblivion.GetGame().GetGroupManager().GetGroup(groupUs.GroupId))
+            foreach (var group in groups.Select(groupUs => Oblivion.GetGame().GetGroupManager().GetGroup(groupUs.GroupId))
                 )
-                if (@group != null)
+                if (group != null)
                 {
-                    Response.AppendInteger(@group.Id);
-                    Response.AppendString(@group.Name);
-                    Response.AppendString(@group.Badge);
-                    Response.AppendString(Oblivion.GetGame().GetGroupManager().GetGroupColour(@group.Colour1, true));
-                    Response.AppendString(Oblivion.GetGame().GetGroupManager().GetGroupColour(@group.Colour2, false));
-                    Response.AppendBool(@group.Id == habbo.FavouriteGroup);
+                    Response.AppendInteger(group.Id);
+                    Response.AppendString(group.Name);
+                    Response.AppendString(group.Badge);
+                    Response.AppendString(Oblivion.GetGame().GetGroupManager().GetGroupColour(group.Colour1, true));
+                    Response.AppendString(Oblivion.GetGame().GetGroupManager().GetGroupColour(group.Colour2, false));
+                    Response.AppendBool(group.Id == habbo.FavouriteGroup);
                     Response.AppendInteger(-1);
-                    Response.AppendBool(@group.HasForum);
+                    Response.AppendBool(group.HasForum);
                 }
                 else
                 {
@@ -529,8 +524,8 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().Gender = text.ToLower() == "f" ? "f" : "m";
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery(string.Format("UPDATE users SET look = @look, gender = @gender WHERE id = {0}",
-                    Session.GetHabbo().Id));
+                queryReactor.SetQuery(
+                    $"UPDATE users SET look = @look, gender = @gender WHERE id = {Session.GetHabbo().Id}");
                 queryReactor.AddParameter("look", text2);
                 queryReactor.AddParameter("gender", text);
                 queryReactor.RunQuery();
@@ -556,9 +551,7 @@ namespace Oblivion.Messages.Handlers
             if (!Session.GetHabbo().InRoom)
                 return;
             var currentRoom = Session.GetHabbo().CurrentRoom;
-            if (currentRoom == null)
-                return;
-            var roomUserByHabbo = currentRoom.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
+            var roomUserByHabbo = currentRoom?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
             if (roomUserByHabbo == null)
                 return;
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
@@ -584,8 +577,7 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().Motto = text;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery(string.Format("UPDATE users SET motto = @motto WHERE id = '{0}'",
-                    Session.GetHabbo().Id));
+                queryReactor.SetQuery($"UPDATE users SET motto = @motto WHERE id = '{Session.GetHabbo().Id}'");
                 queryReactor.AddParameter("motto", text);
                 queryReactor.RunQuery();
             }
@@ -593,9 +585,7 @@ namespace Oblivion.Messages.Handlers
             if (Session.GetHabbo().InRoom)
             {
                 var currentRoom = Session.GetHabbo().CurrentRoom;
-                if (currentRoom == null)
-                    return;
-                var roomUserByHabbo = currentRoom.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
+                var roomUserByHabbo = currentRoom?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
                 if (roomUserByHabbo == null)
                     return;
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
@@ -620,8 +610,7 @@ namespace Oblivion.Messages.Handlers
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery(
-                    string.Format("SELECT slot_id, look, gender FROM users_wardrobe WHERE user_id = {0}",
-                        Session.GetHabbo().Id));
+                    $"SELECT slot_id, look, gender FROM users_wardrobe WHERE user_id = {Session.GetHabbo().Id}");
                 var table = queryReactor.GetTable();
                 if (table == null)
                     GetResponse().AppendInteger(0);
@@ -768,7 +757,7 @@ namespace Oblivion.Messages.Handlers
                     Response.AppendString(text);
                     Response.AppendInteger(table.Rows.Count);
                     foreach (DataRow dataRow in table.Rows)
-                        Response.AppendString(string.Format("{0}{1}", text, dataRow[0]));
+                        Response.AppendString($"{text}{dataRow[0]}");
                     SendResponse();
                 }
             }
@@ -787,7 +776,7 @@ namespace Oblivion.Messages.Handlers
                 {
                     queryReactor.SetQuery("SELECT username FROM users WHERE Username=@name LIMIT 1");
                     queryReactor.AddParameter("name", text);
-                    var @String = queryReactor.GetString();
+                    var String = queryReactor.GetString();
 
                     if (!string.IsNullOrWhiteSpace(String) &&
                         !String.Equals(userName, text, StringComparison.CurrentCultureIgnoreCase))
@@ -1029,16 +1018,10 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().GetInventoryComponent().SendNewItems(item.Id);
 
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
-                if (Session.GetHabbo().Vip)
-                    dbClient.RunFastQuery(
-                        string.Format(
-                            "UPDATE users SET vip = '1', vip_expire = DATE_ADD(vip_expire, INTERVAL 1 DAY), nux_passed = '1' WHERE id = {0}",
-                            Session.GetHabbo().Id));
-                else
-                    dbClient.RunFastQuery(
-                        string.Format(
-                            "UPDATE users SET vip = '1', vip_expire = DATE_ADD(NOW(), INTERVAL 1 DAY), nux_passed = '1' WHERE id = {0}",
-                            Session.GetHabbo().Id));
+                dbClient.RunFastQuery(
+                    Session.GetHabbo().Vip
+                        ? $"UPDATE users SET vip = '1', vip_expire = DATE_ADD(vip_expire, INTERVAL 1 DAY), nux_passed = '1' WHERE id = {Session.GetHabbo().Id}"
+                        : $"UPDATE users SET vip = '1', vip_expire = DATE_ADD(NOW(), INTERVAL 1 DAY), nux_passed = '1' WHERE id = {Session.GetHabbo().Id}");
 
             Session.GetHabbo().NuxPassed = true;
             Session.GetHabbo().Vip = true;

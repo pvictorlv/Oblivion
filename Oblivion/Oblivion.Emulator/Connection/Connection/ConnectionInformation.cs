@@ -274,23 +274,15 @@ namespace Oblivion.Connection.Connection
         /// <param name="packet">The packet.</param>
         public void SendData(byte[] packet)
         {
-            if (_socket != null && _socket.Connected)
+            if (_socket == null || !_socket.Connected) return;
+            try
             {
-//                Arc4ClientSide?.Parse(ref packet);
-
-                try
-                {
-                    _socket.BeginSend(packet, 0, packet.Length, SocketFlags.None, OnSendCompleted, _socket);
-                }
-                catch (Exception e)
-                {
-                    Out.WriteLine(packet.ToString());
-                    HandleDisconnect(e);
-                }
+                _socket.BeginSend(packet, 0, packet.Length, 0, OnSendCompleted, _socket);
             }
-            else
+            catch (Exception e)
             {
-                Out.WriteLine(packet.ToString());
+                Logging.HandleException(e, "SendData - ConnectionInformation.cs");
+                HandleDisconnect(e);
             }
         }
     }

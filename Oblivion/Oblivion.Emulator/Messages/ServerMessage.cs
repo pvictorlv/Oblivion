@@ -14,7 +14,7 @@ namespace Oblivion.Messages
         /// <summary>
         /// The buffer for the ServerMessage.
         /// </summary>
-        private MemoryStream _buffer;
+        private readonly MemoryStream _buffer;
 
         /// <summary>
         /// The buffer for the Arrays.
@@ -327,9 +327,9 @@ namespace Oblivion.Messages
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
-        /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
+        /// <returns>A <see cref="string" /> that represents this instance.</returns>
         public override string ToString() => HabboEncoding.GetCharFilter(Oblivion.GetDefaultEncoding().GetString(GetReversedBytes()));
 
         /// <summary>

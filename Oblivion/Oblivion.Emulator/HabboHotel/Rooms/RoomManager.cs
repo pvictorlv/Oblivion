@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
 using System.Linq;
+using System.Linq.Expressions;
 using Oblivion.Collections;
 using Oblivion.Configuration;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
@@ -206,24 +207,33 @@ namespace Oblivion.HabboHotel.Rooms
         /// <returns>Room.</returns>
         internal Room LoadRoom(uint id, bool forceLoad = false)
         {
-            if (IsRoomLoaded(id))
-                return GetRoom(id);
+            try
+            {
+                if (IsRoomLoaded(id))
+                    return GetRoom(id);
 
-            var roomData = GenerateRoomData(id);
-            if (roomData == null)
+                var roomData = GenerateRoomData(id);
+                if (roomData == null)
+                    return null;
+
+                var room = new Room();
+
+                LoadedRooms.AddOrUpdate(id, room, (key, value) => room);
+
+                room.Start(roomData, forceLoad);
+
+                Out.WriteLine($"Room #{id} was loaded", "Oblivion.Room.Manager", ConsoleColor.DarkCyan);
+
+                room.InitBots();
+                room.InitPets();
+                return room;
+            }
+            catch (Exception e)
+            {
+                Logging.HandleException(e, "RoomLoad");
                 return null;
-
-            var room = new Room();
-
-            LoadedRooms.AddOrUpdate(id, room, (key, value) => room);
-
-            room.Start(roomData, forceLoad);
-
-            Out.WriteLine($"Room #{id} was loaded", "Oblivion.Room.Manager", ConsoleColor.DarkCyan);
-
-            room.InitBots();
-            room.InitPets();
-            return room;
+            }
+        
         }
 
         internal void RemoveRoomData(uint id)

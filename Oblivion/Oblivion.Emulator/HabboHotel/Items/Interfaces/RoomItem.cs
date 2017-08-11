@@ -496,8 +496,10 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                     if (GetBaseItem() == null) return 0;
                     if (!GetBaseItem().StackMultipler) return GetBaseItem().Height;
                     if (string.IsNullOrEmpty(ExtraData)) ExtraData = "0";
-
-                    return GetBaseItem().ToggleHeight[int.Parse(ExtraData)];
+                    if (!int.TryParse(ExtraData, out int data))
+                        return Z;
+                    
+                    return GetBaseItem().ToggleHeight[data];
                 }
                 catch (Exception e)
                 {
@@ -518,11 +520,20 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             {
                 try
                 {
+
+                    var curHeight = 0.0;
+
                     if (GetBaseItem() == null) return Z;
                     if (!GetBaseItem().StackMultipler) return Z + GetBaseItem().Height;
                     if (string.IsNullOrEmpty(ExtraData)) ExtraData = "0";
+                    if (GetBaseItem().ToggleHeight.Length > 1)
+                        if (int.TryParse(ExtraData, out int num2) && GetBaseItem().ToggleHeight.Length - 1 >= num2)
+                            curHeight = Z + GetBaseItem().ToggleHeight[num2];
 
-                    return Z + GetBaseItem().ToggleHeight[int.Parse(ExtraData)];
+                    if (curHeight <= 0.0)
+                        curHeight = Z + GetBaseItem().Height;
+                    
+                    return curHeight;
                 }
                 catch (Exception e)
                 {

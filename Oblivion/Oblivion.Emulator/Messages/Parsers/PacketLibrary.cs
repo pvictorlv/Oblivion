@@ -1495,6 +1495,14 @@ namespace Oblivion.Messages.Parsers
         {
             handler.OfferTradeItem();
         }
+        /// <summary>
+        /// Offers a specific amount of items.
+        /// </summary>
+        /// <param name="handler">The handler.</param>
+        internal static void OfferTradeItems(GameClientMessageHandler handler)
+        {
+            handler.OfferTradeItems();
+        }
 
         /// <summary>
         /// Takes the back trade item.

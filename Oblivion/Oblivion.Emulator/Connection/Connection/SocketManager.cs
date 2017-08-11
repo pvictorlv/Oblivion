@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using Oblivion.Configuration;
 using Oblivion.Messages.Parsers;
 
 namespace Oblivion.Connection.Connection
@@ -121,7 +122,8 @@ namespace Oblivion.Connection.Connection
         {
             try
             {
-                Socket socket = _listener.EndAcceptSocket(ar);
+                var socket = _listener.EndAcceptSocket(ar);
+                
                 if (socket.Connected)
                 {
                     if (SocketConnectionCheck.CheckConnection(socket, MaxIpConnectionCount, AntiDDosStatus))
@@ -137,7 +139,10 @@ namespace Oblivion.Connection.Connection
                     }
                 }
             }
-            catch (Exception) { }
+            catch (Exception e)
+            {
+                Logging.HandleException(e, "OnAccept");
+            }
 
             _listener.BeginAcceptSocket(OnAcceptSocket, _listener);
         }

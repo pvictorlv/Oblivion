@@ -170,9 +170,17 @@ namespace Oblivion.Connection.Net
         /// <param name="packetLength">Length of the packet.</param>
         private void HandleMessage(int messageId, byte[] packetContent, int position, int packetLength)
         {
-            using (ClientMessage clientMessage = ClientMessageFactory.GetClientMessage(messageId, packetContent, position, packetLength))
-                if (_currentClient?.GetMessageHandler() != null)
-                    _currentClient.GetMessageHandler().HandleRequest(clientMessage);
+            try
+            {
+                using (ClientMessage clientMessage =
+                    ClientMessageFactory.GetClientMessage(messageId, packetContent, position, packetLength))
+                    if (_currentClient?.GetMessageHandler() != null)
+                        _currentClient.GetMessageHandler().HandleRequest(clientMessage);
+            }
+            catch (Exception e)
+            {
+                Logging.HandleException(e, "HandleMessage");
+            }
         }
 
         // ReSharper disable once MethodOverloadWithOptionalParameter

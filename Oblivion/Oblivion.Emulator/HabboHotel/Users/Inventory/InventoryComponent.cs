@@ -112,6 +112,11 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 AddPets(pets.Value);
         }
 
+        /// <summary>
+        /// Gel all items
+        /// </summary>
+        public IEnumerable<UserItem> GetItems => _floorItems.Concat(_wallItems.Values.OfType<UserItem>().ToList());
+
         public int TotalItems => _floorItems.Count + _wallItems.Count + SongDisks.Count;
 
         /// <summary>
@@ -655,8 +660,9 @@ namespace Oblivion.HabboHotel.Users.Inventory
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("PetInventoryMessageComposer"));
             serverMessage.AppendInteger(1);
             serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(_inventoryPets.Count);
-            foreach (var current in _inventoryPets.Values.Cast<Pet>().ToList())
+            var list = _inventoryPets.Values.Cast<Pet>().ToList();
+            serverMessage.AppendInteger(list.Count);
+            foreach (var current in list)
                 current.SerializeInventory(serverMessage);
             return serverMessage;
         }
@@ -670,8 +676,9 @@ namespace Oblivion.HabboHotel.Users.Inventory
             var serverMessage = new ServerMessage();
             serverMessage.Init(LibraryParser.OutgoingRequest("BotInventoryMessageComposer"));
 
-            serverMessage.AppendInteger(_inventoryBots.Count);
-            foreach (var current in _inventoryBots.Values.OfType<RoomBot>().ToList())
+            var list = _inventoryBots.Values.OfType<RoomBot>().ToList();
+            serverMessage.AppendInteger(list.Count);
+            foreach (var current in list)
             {
                 serverMessage.AppendInteger(current.BotId);
                 serverMessage.AppendString(current.Name);

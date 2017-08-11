@@ -158,16 +158,13 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             serverMessage.AppendInteger(userId);
             serverMessage.AppendInteger(1);
             SendMessageToUsers(serverMessage);
-
+            if (!AllUsersAccepted)
             {
-                if (!AllUsersAccepted)
-                {
-                    return;
-                }
-                SendMessageToUsers(new ServerMessage(LibraryParser.OutgoingRequest("TradeConfirmationMessageComposer")));
-                _tradeStage++;
-                ClearAccepted();
+                return;
             }
+            SendMessageToUsers(new ServerMessage(LibraryParser.OutgoingRequest("TradeConfirmationMessageComposer")));
+            _tradeStage++;
+            ClearAccepted();
         }
 
         /// <summary>
@@ -230,33 +227,59 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         internal void UpdateTradeWindow()
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("TradeUpdateMessageComposer"));
+            var firstUser = _users.First();
+            var secondUser = _users.Last();
 
+            serverMessage.AppendInteger(firstUser.UserId);
+            serverMessage.AppendInteger(firstUser.OfferedItems.Count);
+            foreach (var current in firstUser.OfferedItems)
             {
-                foreach (var tradeUser in _users.Where(tradeUser => tradeUser != null))
+                serverMessage.AppendInteger(current.Id);
+                serverMessage.AppendString(current.BaseItem.Type.ToString().ToLower());
+                serverMessage.AppendInteger(current.Id);
+                serverMessage.AppendInteger(current.BaseItem.SpriteId);
+                serverMessage.AppendInteger(0);
+                serverMessage.AppendBool(true);
+                serverMessage.AppendInteger(0);
+                serverMessage.AppendString("");
+                serverMessage.AppendInteger(0);
+                serverMessage.AppendInteger(0);
+                serverMessage.AppendInteger(0);
+                if (current.BaseItem.Type == 's')
                 {
-                    serverMessage.AppendInteger(tradeUser.UserId);
-                    serverMessage.AppendInteger(tradeUser.OfferedItems.Count);
-                    foreach (var current in tradeUser.OfferedItems)
-                    {
-                        serverMessage.AppendInteger(current.Id);
-                        serverMessage.AppendString(current.BaseItem.Type.ToString().ToLower());
-                        serverMessage.AppendInteger(current.Id);
-                        serverMessage.AppendInteger(current.BaseItem.SpriteId);
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendBool(true);
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendString("");
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendInteger(0);
-                        if (current.BaseItem.Type == 's')
-                        {
-                            serverMessage.AppendInteger(0);
-                        }
-                    }
+                    serverMessage.AppendInteger(0);
                 }
-                SendMessageToUsers(serverMessage);
             }
+
+            serverMessage.AppendInteger(0);
+            serverMessage.AppendInteger(0);
+            serverMessage.AppendInteger(1);
+            serverMessage.AppendInteger(secondUser.OfferedItems.Count);
+            foreach (var current in secondUser.OfferedItems)
+            {
+                serverMessage.AppendInteger(current.Id);
+                serverMessage.AppendString(current.BaseItem.Type.ToString().ToLower());
+                serverMessage.AppendInteger(current.Id);
+                serverMessage.AppendInteger(current.BaseItem.SpriteId);
+                serverMessage.AppendInteger(0);
+                serverMessage.AppendBool(true);
+
+                serverMessage.AppendInteger(0);
+                serverMessage.AppendString("");
+
+                serverMessage.AppendInteger(0);
+                serverMessage.AppendInteger(0);
+                serverMessage.AppendInteger(0);
+                if (current.BaseItem.Type == 's')
+                {
+                    serverMessage.AppendInteger(0);
+                }
+            }
+
+            serverMessage.AppendInteger(0);
+            serverMessage.AppendInteger(0);
+
+            SendMessageToUsers(serverMessage);
         }
 
         /// <summary>

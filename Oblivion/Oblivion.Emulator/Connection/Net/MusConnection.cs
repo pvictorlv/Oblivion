@@ -90,7 +90,6 @@ namespace Oblivion.Connection.Net
 
                         if (clientByUserId?.GetHabbo() == null || clientByUserId.GetHabbo().CurrentRoomId < 1)
                         {
-                            Out.WriteLine(param.ToString());
                             return;
                         }
 

@@ -448,7 +448,6 @@ namespace Oblivion.HabboHotel.Navigators
             serverMessage.AppendInteger(PrivateCategories.Values.Count);
 //            serverMessage.StartArray();
 
-            Out.WriteLine(PrivateCategories.Values.Count.ToString());
             foreach (FlatCat flatCat in PrivateCategories.Values)
             {
 //                serverMessage.Clear();
@@ -731,9 +730,8 @@ namespace Oblivion.HabboHotel.Navigators
                         if (rooms != null)
                                 Array.Clear(rooms, 0, rooms.Length);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        Console.WriteLine(e);
                         reply.AppendString(string.Empty);
                         reply.AppendInteger(0);
                     }

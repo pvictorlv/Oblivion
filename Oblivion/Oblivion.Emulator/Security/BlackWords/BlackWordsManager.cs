@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Oblivion.Security.BlackWords.Enums;
 using Oblivion.Security.BlackWords.Structs;
 using Oblivion.Util;
@@ -180,6 +181,30 @@ namespace Oblivion.Security.BlackWords
                 return false;
 
             var data = Replaces[type];
+
+            if (str.Contains("s2.vc") || str.Contains("abre.ai"))
+                return true;
+            str = str.Replace("&nbsp;", "");
+
+            str = Regex.Replace(str, "[àâäàáâãäåÀÁÂÃÄÅ@4ª∂]", "a");
+            str = Regex.Replace(str, "[ß8]", "b");
+            str = Regex.Replace(str, "[©çÇ¢]", "c");
+            str = Regex.Replace(str, "[Ð]", "d");
+            str = Regex.Replace(str, "[éèëêðÉÈËÊ£3∑]", "e");
+            str = Regex.Replace(str, "[ìíîïÌÍÎÏ1]", "i");
+            str = Regex.Replace(str, "[ñÑπ]", "n");
+            str = Regex.Replace(str, "[òóôõöøÒÓÔÕÖØ0|ºΩ]", "o");
+            str = Regex.Replace(str, "[®]", "r");
+            str = Regex.Replace(str, "[šŠ$5∫§2]", "s");
+            str = Regex.Replace(str, "[ùúûüµÙÚÛÜ]", "u");
+            str = Regex.Replace(str, "[ÿŸ¥]", "y");
+            str = Regex.Replace(str, "[žŽ]", "z");
+            str = Regex.Replace(str, "[ ',-_¹²³.?´` ƒ()]", "");
+            str = str.Replace("™", "TM");
+            str = str.Replace("æ", "ae");
+            str = str.Replace("∞", "oo");
+            str = str.Replace("∞", "oo");
+
 
             str = Filter.Replace(data.Filter, str);
 

@@ -1214,7 +1214,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 stringBuilder.AppendFormat("/{0}{1}", PetData.MoplaBreed.GrowStatus, (Statusses.Count >= 1) ? "/" : "");
             lock (Statusses)
             {
-                foreach (var current in Statusses)
+                foreach (var current in Statusses.ToList())
                 {
                     stringBuilder.Append(current.Key);
                     if (!string.IsNullOrEmpty(current.Value))

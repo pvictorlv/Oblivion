@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.Catalogs;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -100,7 +101,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <summary>
         /// The _room thread
         /// </summary>
-        private Thread _roomThread;
+        private Task _roomThread;
 
         /// <summary>
         ///     The _room user manager
@@ -198,10 +199,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Gets the user count.
         /// </summary>
         /// <value>The user count.</value>
-        internal int UserCount
-        {
-            get { return _roomUserManager?.GetRoomUserCount() != null ? _roomUserManager.GetRoomUserCount() : 0; }
-        }
+        internal int UserCount => _roomUserManager?.GetRoomUserCount() != null ? _roomUserManager.GetRoomUserCount() : 0;
 
         /// <summary>
         ///     Gets the tag count.
@@ -1262,7 +1260,7 @@ namespace Oblivion.HabboHotel.Rooms
 
             if (!forceLoad)
             {
-                _roomThread = new Thread(StartRoomProcessing) {Name = "Room Loader"};
+                _roomThread = new Task(StartRoomProcessing);
                 _roomThread.Start();
             }
 

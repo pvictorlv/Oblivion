@@ -724,9 +724,8 @@ namespace Oblivion
                 Console.WriteLine("Closing...");
                 Environment.Exit(0);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine(e);
             }
         }
 

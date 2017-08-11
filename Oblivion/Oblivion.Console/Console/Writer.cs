@@ -11,17 +11,11 @@ namespace Oblivion.Writer
 {
     public class Writer
     {
-        private static bool _mDisabled;
-
-        public static bool DisabledState
-        {
-            get { return _mDisabled; }
-            set { _mDisabled = value; }
-        }
+        public static bool DisabledState { get; set; }
 
         public static void WriteLine(string line, ConsoleColor colour = ConsoleColor.Yellow)
         {
-            if (_mDisabled)
+            if (DisabledState)
                 return;
 
             Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -125,7 +119,7 @@ namespace Oblivion.Writer
 
         public static void DisablePrimaryWriting(bool clearConsole)
         {
-            _mDisabled = true;
+            DisabledState = true;
             /*
             if (clearConsole)
                 Console.Clear();

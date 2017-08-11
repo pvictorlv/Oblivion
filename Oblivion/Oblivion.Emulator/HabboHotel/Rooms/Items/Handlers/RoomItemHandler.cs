@@ -520,9 +520,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                             }
                         }
                     }
-                    catch (Exception e)
+                    catch
                     {
-                        Console.WriteLine(e);
                     }
                 }
                     
@@ -1190,7 +1189,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 _rollerItemsMoved.Clear();
                 _rollerUsersMoved.Clear();
                 _rollerMessages.Clear();
-                foreach (var current in Rollers)
+                var list = Rollers.ToList();
+                foreach (var current in list)
                 {
                     var squareInFront = current.SquareInFront;
                     var roomItemForSquare = _room.GetGameMap().GetRoomItemForSquare(current.X, current.Y);
@@ -1198,8 +1198,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     if (!roomItemForSquare.Any() && userForSquare == null)
                         continue;
                     var coordinatedItems = _room.GetGameMap().GetCoordinatedItems(squareInFront);
-                    var nextZ = 0.0;
-                    var num = 0;
+                    const int num = 0;
                     var flag = false;
                     var num2 = 0.0;
                     var flag2 = true;
@@ -1224,7 +1223,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         }
                     goto IL_17C;
                     IL_192:
-                    nextZ = num2;
+                    var nextZ = num2;
                     var flag3 = num > 0 ||
                                 _room.GetRoomUserManager().GetUserForSquare(squareInFront.X, squareInFront.Y) != null;
                     foreach (var current4 in roomItemForSquare)
@@ -1253,6 +1252,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     goto IL_192;
                 }
                 _roolerCycle = 0;
+                list.Clear();
                 return _rollerMessages;
             }
 

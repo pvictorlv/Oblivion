@@ -20,11 +20,9 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session?.GetHabbo() == null)
             {
-                Out.WriteLine("Session nulled.");
                 return;
             }
             Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializePromotionCategories());
-//            Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializeFlatCategories(Session));
         }
 
         /// <summary>

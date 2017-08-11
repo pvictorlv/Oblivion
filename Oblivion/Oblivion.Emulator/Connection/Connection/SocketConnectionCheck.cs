@@ -33,7 +33,7 @@ namespace Oblivion.Connection.Connection
 
             string iP = sock.RemoteEndPoint.ToString().Split(':')[0];
 
-            if (iP == _mLastIpBlocked)
+            if (iP == null || iP == _mLastIpBlocked)
                 return false;
 
             if ((GetConnectionAmount(iP) > maxIpConnectionCount))

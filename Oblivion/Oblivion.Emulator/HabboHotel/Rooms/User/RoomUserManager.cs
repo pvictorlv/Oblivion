@@ -1193,8 +1193,14 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if ((roomUsers.RidingHorse) && (!roomUsers.IsPet))
                 {
                     var horsePetAi = GetRoomUserByVirtualId(Convert.ToInt32(roomUsers.HorseId));
-
-                    horsePetAi?.BotAi.OnTimerTick();
+                    try
+                    {
+                        horsePetAi?.BotAi.OnTimerTick();
+                    }
+                    catch (Exception e)
+                    {
+                        Logging.HandleException(e, "RoomUserManager - horsePetAi.OnTimerTick");
+                    }
                 }
 
                 // Horse Ridding need be Updated First
@@ -1485,7 +1491,16 @@ namespace Oblivion.HabboHotel.Rooms.User
 
             // If is a Bot.. Let's Tick the Time Count of Bot..
             if (roomUsers.IsBot)
-                roomUsers.BotAi.OnTimerTick();
+            {
+                try
+                {
+                    roomUsers.BotAi?.OnTimerTick();
+                }
+                catch (Exception e)
+                {
+                    Logging.HandleException(e, "RoomUsers - BotAi - OnTimerTick");
+                }
+            }
             UpdateUserEffect(roomUsers, roomUsers.X, roomUsers.Y);
         }
 

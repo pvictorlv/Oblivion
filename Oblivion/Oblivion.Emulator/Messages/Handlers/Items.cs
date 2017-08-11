@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Catalogs;
 using Oblivion.HabboHotel.Items;
 using Oblivion.HabboHotel.Items.Datas;
@@ -1005,7 +1006,31 @@ namespace Oblivion.Messages.Handlers
             var item = Session.GetHabbo().GetInventoryComponent().GetItem(Request.GetUInteger());
             if (userTrade == null || item == null)
                 return;
-            userTrade.OfferItem(Session.GetHabbo().Id, item);
+            Task.Factory.StartNew(() => { userTrade.OfferItem(Session.GetHabbo().Id, item); });
+        }
+
+        internal void OfferTradeItems()
+        {
+            var room =
+                Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            if (room == null || !room.CanTradeInRoom)
+                return;
+            var userTrade = room.GetUserTrade(Session.GetHabbo().Id);
+            var amount = Request.GetInteger();
+
+            var item = Session.GetHabbo().GetInventoryComponent().GetItem(Request.GetUInteger());
+            if (userTrade == null || item == null)
+                return;
+
+            Task.Factory.StartNew(() =>
+            {
+                var allItems = Session.GetHabbo().GetInventoryComponent().GetItems
+                    .Where(x => x.BaseItemId == item.BaseItemId).Take(amount);
+                foreach (var it in allItems)
+                {
+                    userTrade.OfferItem(Session.GetHabbo().Id, it);
+                }
+            });
         }
 
         internal void TakeBackTradeItem()

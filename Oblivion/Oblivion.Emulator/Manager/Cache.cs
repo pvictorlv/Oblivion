@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using Oblivion.HabboHotel.Rooms;
+using System.Threading.Tasks;
+using Oblivion.Configuration;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.HabboHotel.Users;
 
@@ -10,33 +10,44 @@ namespace Oblivion.Manager
 {
     public static class Cache
     {
-        private static Thread _thread;
+        private static Task _thread;
         public static bool Working;
-
+        private static int lastUpdate;
         public static void StartProcess()
         {
-            _thread = new Thread(Process) { Name = "Cache Thread" };
+            _thread = new Task(Process);
             _thread.Start();
             Working = true;
+            lastUpdate = 0;
         }
 
         public static void StopProcess()
         {
-            _thread.Abort();
+            _thread.Dispose();//todo cancelation token.
             Working = false;
         }
 
         private static void Process()
         {
-            while (Working)
+            try
             {
-                ClearUserCache();
-                ClearRoomsCache();
+                while (Working)
+                {
+                    if (lastUpdate + 1000 >= Oblivion.GetUnixTimeStamp())
+                    {
+                        continue;
+                    }
+                    ClearUserCache();
+                    ClearRoomsCache();
 
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-
-                Thread.Sleep(1000000); // WTF? <<< #TODO WTF!!
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    lastUpdate = Oblivion.GetUnixTimeStamp();
+                }
+            }
+            catch (Exception e)
+            {
+                Logging.HandleException(e, "cache.cs");
             }
         }
 
