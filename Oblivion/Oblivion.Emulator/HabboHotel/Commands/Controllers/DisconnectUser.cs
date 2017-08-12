@@ -22,7 +22,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         public override bool Execute(GameClient session, string[] pms)
         {
             var user = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
-            if (user == null || user.GetHabbo() == null)
+            if (user?.GetHabbo() == null)
             {
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;

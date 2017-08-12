@@ -31,11 +31,10 @@ namespace Oblivion.HabboHotel.Users.Authenticator
             var lastOnline = int.Parse(dRow["last_online"].ToString());
             var credits = (int)dRow["credits"];
             var activityPoints = (int)dRow["activity_points"];
-            var lastActivityPointsUpdate = Convert.ToDouble(dRow["activity_points_lastupdate"]);
             var muted = Oblivion.EnumToBool(dRow["is_muted"].ToString());
             var homeRoom = Convert.ToUInt32(dRow["home_room"]);
 
-            int respect = 0, dailyRespectPoints = 3, dailyPetRespectPoints = 3, currentQuestProgress = 0, achievementPoints = 0, dailyCompetitionVotes = 3;
+            int respect = 0, dailyRespectPoints = 3, dailyPetRespectPoints = 3, achievementPoints = 0, dailyCompetitionVotes = 3;
             uint currentQuestId = 0, favId = 0;
             try
             {
@@ -43,7 +42,6 @@ namespace Oblivion.HabboHotel.Users.Authenticator
                 dailyRespectPoints = (int)mRow["daily_respect_points"];
                 dailyPetRespectPoints = (int)mRow["daily_pet_respect_points"];
                 currentQuestId = Convert.ToUInt32(mRow["quest_id"]);
-                currentQuestProgress = (int)mRow["quest_progress"];
                 achievementPoints = (int)mRow["achievement_score"];
                 favId = uint.Parse(mRow["favourite_group"].ToString());
                 dailyCompetitionVotes = (int)mRow["daily_competition_votes"];
@@ -89,9 +87,8 @@ namespace Oblivion.HabboHotel.Users.Authenticator
                             .Where(naviLogs => !navilogs.ContainsKey(naviLogs.Id)))
                     navilogs.Add(naviLogs.Id, naviLogs);
 
-            return new Habbo(id, userName, realName, ras, motto, look, gender, credits, activityPoints,
-                lastActivityPointsUpdate, muted, homeRoom, respect, dailyRespectPoints, dailyPetRespectPoints,
-                hasFriendRequestsDisabled, currentQuestId, currentQuestProgress, achievementPoints,
+            return new Habbo(id, userName, realName, ras, motto, look, gender, credits, activityPoints, muted, homeRoom, respect, dailyRespectPoints, dailyPetRespectPoints,
+                hasFriendRequestsDisabled, currentQuestId, achievementPoints,
                 lastOnline, appearOffline, hideInRoom, vip, createDate, citizenship, diamonds, group, favId,
                 lastChange, tradeLocked, tradeLockExpire, nuxPassed, buildersExpire, buildersItemsMax,
                 buildersItemsUsed, onDuty, navilogs, dailyCompetitionVotes, DutyLevel);

@@ -511,7 +511,8 @@ namespace Oblivion.Messages.Handlers
         {
             try
             {
-                // Disabled until recreate that function
+               //todo
+/*
 
                 int count = Request.GetInteger();
 
@@ -519,6 +520,43 @@ namespace Oblivion.Messages.Handlers
                 //var outData = Converter.Deflate(bytes);
 
                 var url = Web.HttpPostJson(ExtraSettings.StoriesApiThumbnailServerUrl, null);
+
+              
+
+*/
+
+                if (!Session.GetHabbo().InRoom)
+                    return;
+
+                var Room = Session.GetHabbo().CurrentRoom;
+
+                var User = Room?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
+
+                if (User?.LastPhotoPreview == null)
+                    return;
+
+                var preview = User.LastPhotoPreview;
+
+                using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                {
+                    dbClient.RunFastQuery("UPDATE `camera_photos` SET `file_state` = 'purchased' WHERE `id` = '" + preview.Id +
+                                          "' LIMIT 1");
+                }
+
+                var data = "{\"w\":\"" +
+                           Oblivion.EscapeJSONString(
+                               Oblivion.GetGame()
+                                   .GetCameraManager()
+                                   .GetPath(CameraPhotoType.PURCHASED, preview.Id, preview.CreatorId)) + "\", \"n\":\"" +
+                           Oblivion.EscapeJSONString(Session.GetHabbo().UserName) + "\", \"s\":\"" +
+                           Session.GetHabbo().Id + "\", \"u\":\"" + preview.Id + "\", \"t\":\"" + preview.CreatedAt + "\"}";
+
+                var item = Session.GetHabbo()
+                    .GetInventoryComponent()
+                    .AddNewItem(0, Oblivion.GetGame().GetCameraManager().PhotoPoster.ItemId, data, 0, true, false, 0, 0);
+                Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
+                Session.GetHabbo().GetInventoryComponent().SendNewItems(item.Id);
+
 
                 var thumb = new ServerMessage(LibraryParser.OutgoingRequest("ThumbnailSuccessMessageComposer"));
                 thumb.AppendBool(true);

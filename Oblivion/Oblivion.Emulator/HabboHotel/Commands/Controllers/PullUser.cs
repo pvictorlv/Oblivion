@@ -16,7 +16,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         {
             MinRank = 1;
             Description = "Pull User.";
-            Usage = ":pull [USERNAME]";
+            Usage = ":pulluser [USERNAME]";
             MinParams = 1;
         }
 

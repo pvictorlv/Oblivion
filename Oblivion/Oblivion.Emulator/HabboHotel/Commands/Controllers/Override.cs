@@ -13,7 +13,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public Override()
         {
-            MinRank = 7;
+            MinRank = -2;
             Description = "Makes you can transpase items.";
             Usage = ":override";
             MinParams = 0;

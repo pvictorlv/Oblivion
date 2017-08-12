@@ -7,24 +7,19 @@ namespace Oblivion.HabboHotel.Commands.Controllers
     {
         public RoomAlert()
         {
-            MinRank = 5;
+            MinRank = -2;
             Description = "Alerts the Room.";
             Usage = ":roomalert [MESSAGE]";
-            MinParams = -1;
+            MinParams = 1;
         }
 
         public override bool Execute(GameClient session, string[] pms)
         {
+            var room = session.GetHabbo().CurrentRoom;
+            if (room == null) return true;
             var alert = string.Join(" ", pms);
 
-            /*foreach (
-                var user in
-                    session.GetHabbo()
-                        .CurrentRoom.GetRoomUserManager()
-                        .GetRoomUsers()
-                        .Where(user => !user.IsBot && user.GetClient() != null))
-                user.GetClient().SendNotif(alert);*/
-
+            if (!room.CheckRights(session, true) && !session.GetHabbo().HasFuse("fuse_mod")) return false;
             session.GetHabbo().CurrentRoom.SendMessage(GameClient.GetBytesNotif(alert));
 
             return true;

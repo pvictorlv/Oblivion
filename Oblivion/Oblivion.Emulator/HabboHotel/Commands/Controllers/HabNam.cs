@@ -13,7 +13,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public HabNam()
         {
-            MinRank = -3;
+            MinRank = 1;
             Description = "Enable/disable habnam";
             Usage = ":habnam";
             MinParams = 0;

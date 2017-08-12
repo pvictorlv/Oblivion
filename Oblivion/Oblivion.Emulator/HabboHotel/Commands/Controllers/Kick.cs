@@ -14,7 +14,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public Kick()
         {
-            MinRank = 5;
+            MinRank = -2;
             Description = "Kick a selected user from room.";
             Usage = ":kick [USERNAME] [MESSAGE]";
             MinParams = -1;

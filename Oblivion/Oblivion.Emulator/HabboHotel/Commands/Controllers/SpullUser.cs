@@ -14,7 +14,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         public SpullUser()
         {
             MinRank = 4;
-            Description = "Trek een gebruiker naar je toe.";
+            Description = "Puxe um usuário com força!";
             Usage = ":spull [gebruiker]";
             MinParams = 1;
         }

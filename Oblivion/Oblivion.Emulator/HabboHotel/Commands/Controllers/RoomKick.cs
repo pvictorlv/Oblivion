@@ -14,8 +14,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public RoomKickUsers()
         {
-            MinRank = 5;
-            Description = "Mutes the whole room.";
+            MinRank = -2;
+            Description = "Kick all users.";
             Usage = ":roomkick [reason]";
             MinParams = -1;
         }
@@ -23,6 +23,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         public override bool Execute(GameClient session, string[] pms)
         {
             var room = session.GetHabbo().CurrentRoom;
+            if (!room.CheckRights(session, true) && !session.GetHabbo().HasFuse("fuse_mod")) return false;
 
             var alert = string.Join(" ", pms);
             var kick = new RoomKick(alert, (int)session.GetHabbo().Rank);

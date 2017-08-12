@@ -3,7 +3,6 @@ using System.Net;
 using System.Net.Sockets;
 using Oblivion.Configuration;
 using Oblivion.Messages.Parsers;
-using Oblivion.Util;
 
 namespace Oblivion.Connection.Connection
 {

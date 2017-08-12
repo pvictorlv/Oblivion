@@ -16,7 +16,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public FaceLess()
         {
-            MinRank = -3;
+            MinRank = 1;
             Description = "No Face.";
             Usage = ":faceless";
             MinParams = 0;

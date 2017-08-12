@@ -15,7 +15,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public Kill()
         {
-            MinRank = -3;
+            MinRank = 1;
             Description = "Kill someone.";
             Usage = ":kill";
             MinParams = 0;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime;
+using Oblivion.Connection.Connection;
 using Oblivion.HabboHotel;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
@@ -79,11 +80,12 @@ namespace Oblivion.Configuration
                             return;
                         }
                     case "clear":
+                        SocketConnectionCheck.ClearCache();
                         Console.Clear();
                         break;
 
                     case "status":
-                        TimeSpan uptime = DateTime.Now - Oblivion.ServerStarted;
+                        var uptime = DateTime.Now - Oblivion.ServerStarted;
 
                         Console.WriteLine("Server status:");
                         Console.WriteLine();

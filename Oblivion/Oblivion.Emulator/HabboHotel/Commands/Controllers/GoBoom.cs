@@ -13,7 +13,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public GoBoom()
         {
-            MinRank = 5;
+            MinRank = -2;
             Description = "BOOMMMMM";
             Usage = ":goboom";
             MinParams = 0;

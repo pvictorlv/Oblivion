@@ -41,7 +41,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             message.AppendString("linkTitle");
             message.AppendString("Ir para o Evento");
 
-            /*foreach (var client in Oblivion.GetGame().GetClientManager().Clients.Values)
+            foreach (var client in Oblivion.GetGame().GetClientManager().Clients.Values)
             {
                 if (client == null)
                     continue;
@@ -52,13 +52,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     continue;
                 }
  
-                if (client.GetHabbo().DisableEventAlert == false)
+                if (!client.GetHabbo().DisableEventAlert)
                     client.SendMessage(message);
  
-                //Thread.Sleep(10);
-            }*/
+            }
 
-            Oblivion.GetGame().GetClientManager().QueueBroadcaseMessage(message);
+//            Oblivion.GetGame().GetClientManager().QueueBroadcaseMessage(message);
             return true;
         }
     }

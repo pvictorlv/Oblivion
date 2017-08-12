@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using Oblivion.Collections;
 using Oblivion.Util;
-
 namespace Oblivion.Connection.Connection
 {
     /// <summary>
@@ -18,8 +18,12 @@ namespace Oblivion.Connection.Connection
         /// <summary>
         /// The banned ip list
         /// </summary>
-        private static readonly List<string> _bannedList = new List<string>();
+        private static readonly List<WeakReference> BannedList = new List<WeakReference>();
 
+        /// <summary>
+        /// the last banned ip
+        /// </summary>
+        private static string lastBanned;
         /// <summary>
         /// Checks the connection.
         /// </summary>
@@ -32,22 +36,35 @@ namespace Oblivion.Connection.Connection
             if (!antiDDosStatus)
                 return true;
 
-            string iP = sock.RemoteEndPoint.ToString().Split(':')[0];
+            var iP = sock.RemoteEndPoint.ToString().Split(':')[0];
+            var weak = new WeakReference(iP);
 
             if (iP == null)
                 return false;
 
-            if (_bannedList.Contains(iP))
-                return false;
+            if (iP == lastBanned)
+            {
+//                return false;
+            }
+
+            foreach (var str in BannedList)
+            {
+                if (str.Target.ToString() == iP)
+                {
+                    Out.WriteLine("you're banned!!!");
+                    return false;
+                }
+            }
 
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                dbClient.SetQuery("SELECT count(id) FROM users WHERE ip_last = @ip OR ip_reg = @ip");
+                dbClient.SetQuery("SELECT count(0) FROM users WHERE ip_last = @ip OR ip_reg = @ip");
                 dbClient.AddParameter("ip", iP);
                 var res = dbClient.GetInteger();
                 if (res <= 0)
                 {
-                    _bannedList.Add(iP);
+                    BannedList.Add(weak);
+                    lastBanned = iP;
                     Out.WriteLine(iP + " was banned by Anti-DDoS system.", "Oblivion.TcpAntiDDoS", ConsoleColor.Blue);
                     return false;
                 }
@@ -56,8 +73,9 @@ namespace Oblivion.Connection.Connection
             if ((GetConnectionAmount(iP) > maxIpConnectionCount))
             {
                 Out.WriteLine(iP + " was banned by Anti-DDoS system.", "Oblivion.TcpAntiDDoS", ConsoleColor.Blue);
+                lastBanned = iP;
 
-                _bannedList.Add(iP);
+                BannedList.Add(weak);
 
                 return false;
             }
@@ -93,6 +111,10 @@ namespace Oblivion.Connection.Connection
             return -1;
         }
 
+        internal static void ClearCache()
+        {
+            BannedList.Clear();
+        }
         internal static void SetupTcpAuthorization(int connectionCount)
         {
             _mConnectionStorage = new string[connectionCount];

@@ -15,7 +15,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public CopyLook()
         {
-            MinRank = -3;
+            MinRank = 1;
             Description = "Copys a look of another user.";
             Usage = ":copy [USERNAME]";
             MinParams = 1;

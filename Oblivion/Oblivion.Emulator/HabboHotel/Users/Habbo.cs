@@ -420,7 +420,6 @@ namespace Oblivion.HabboHotel.Users
         /// <param name="gender">The gender.</param>
         /// <param name="credits">The credits.</param>
         /// <param name="activityPoints">The activity points.</param>
-        /// <param name="lastActivityPointsUpdate">The last activity points update.</param>
         /// <param name="muted">if set to <c>true</c> [muted].</param>
         /// <param name="homeRoom">The home room.</param>
         /// <param name="respect">The respect.</param>
@@ -428,7 +427,6 @@ namespace Oblivion.HabboHotel.Users
         /// <param name="dailyPetRespectPoints">The daily pet respect points.</param>
         /// <param name="hasFriendRequestsDisabled">if set to <c>true</c> [has friend requests disabled].</param>
         /// <param name="currentQuestId">The current quest identifier.</param>
-        /// <param name="currentQuestProgress">The current quest progress.</param>
         /// <param name="achievementPoints">The achievement points.</param>
         /// <param name="lastOnline">The last online.</param>
         /// <param name="appearOffline">if set to <c>true</c> [appear offline].</param>
@@ -451,9 +449,8 @@ namespace Oblivion.HabboHotel.Users
         /// <param name="dailyCompetitionVotes"></param>
         /// <param name="dutyLevel"></param>
         internal Habbo(uint id, string userName, string realName, uint rank, string motto, string look, string gender,
-            int credits, int activityPoints, double lastActivityPointsUpdate, bool muted, uint homeRoom, int respect,
-            int dailyRespectPoints, int dailyPetRespectPoints, bool hasFriendRequestsDisabled, uint currentQuestId,
-            int currentQuestProgress, int achievementPoints, int lastOnline, bool appearOffline,
+            int credits, int activityPoints, bool muted, uint homeRoom, int respect,
+            int dailyRespectPoints, int dailyPetRespectPoints, bool hasFriendRequestsDisabled, uint currentQuestId, int achievementPoints, int lastOnline, bool appearOffline,
             bool hideInRoom, bool vip, double createDate, string citizenShip, int diamonds,
             HashSet<GroupMember> groups, uint favId, int lastChange, bool tradeLocked, int tradeLockExpire,
             bool nuxPassed,
