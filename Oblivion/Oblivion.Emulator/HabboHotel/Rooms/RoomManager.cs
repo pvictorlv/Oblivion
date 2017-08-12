@@ -2,10 +2,8 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Data;
 using System.Linq;
-using System.Linq.Expressions;
 using Oblivion.Collections;
 using Oblivion.Configuration;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
@@ -13,7 +11,7 @@ using Oblivion.HabboHotel.Events;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Navigators.Interfaces;
 using Oblivion.HabboHotel.Rooms.Data;
-using Oblivion.Util;
+//using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Rooms
 {
@@ -91,7 +89,6 @@ namespace Oblivion.HabboHotel.Rooms
         internal RoomManager()
         {
             LoadedRooms = new ConcurrentDictionary<uint, Room>();
-//            _roomModels = new HybridDictionary();
             LoadedRoomData = new ConcurrentDictionary<uint, RoomData>();
             _votedRooms = new Dictionary<RoomData, int>();
             _activeRooms = new Dictionary<RoomData, uint>();
@@ -222,7 +219,7 @@ namespace Oblivion.HabboHotel.Rooms
 
                 room.Start(roomData, forceLoad);
 
-                Out.WriteLine($"Room #{id} was loaded", "Oblivion.Room.Manager", ConsoleColor.DarkCyan);
+//                Out.WriteLine($"Room #{id} was loaded", "Oblivion.Room.Manager", ConsoleColor.DarkCyan);
 
                 room.InitBots();
                 room.InitPets();
@@ -321,18 +318,7 @@ namespace Oblivion.HabboHotel.Rooms
                 from DataRow dataRow in table.Rows select FetchRoomData(Convert.ToUInt32(dataRow["id"]), dataRow))
                 QueueVoteAdd(data);
         }
-
-        /// <summary>
-        ///     Loads the models.
-        /// </summary>
-        /// <param name="dbClient">The database client.</param>
-        /// <param name="loadedModel">The loaded model.</param>
-//        internal void LoadModels(IQueryAdapter dbClient, out uint loadedModel)
-//        {
-//            LoadModels(dbClient);
-//            loadedModel = (uint) _roomModels.Count;
-//        }
-
+        
         /// <summary>
         ///     Loads the models.
         /// </summary>
@@ -367,22 +353,7 @@ namespace Oblivion.HabboHotel.Rooms
         }
 
 
-        /// <summary>
-        ///     Update the existent model.
-        /// </summary>
-        /// <param name="model">The model.</param>
-        /*     internal void UpdateCustomModel(uint roomId, RoomModel modelData)
-             {
-                 var modelId = $"custom_{roomId}";
-                 if (_roomModels.Contains(modelId))
-                 {
-                     _roomModels[modelId] = modelData;
-                 }
-                 else
-                 {
-                     _roomModels.Add(modelId, modelData);
-                 }
-             }*/
+       
         public ConcurrentList<Room> LoadedBallRooms;
 
         private DateTime _cycleBallLastExecution;
@@ -504,7 +475,7 @@ namespace Oblivion.HabboHotel.Rooms
             foreach (var current in LoadedRooms.Values)
                 Oblivion.GetGame().GetRoomManager().UnloadRoom(current, "RemoveAllRooms void called");
 
-            Out.WriteLine("RoomManager Destroyed", "Oblivion.RoomManager", ConsoleColor.DarkYellow);
+//            Out.WriteLine("RoomManager Destroyed", "Oblivion.RoomManager", ConsoleColor.DarkYellow);
         }
 
         /// <summary>
@@ -629,8 +600,8 @@ namespace Oblivion.HabboHotel.Rooms
             LoadedRooms.TryRemove(room.RoomId, out junkRoom);
             junkRoom = null;
 
-            Out.WriteLine(string.Format("Room #{0} was unloaded, reason: " + reason, room.RoomId),
-                "Oblivion.Room.Manager", ConsoleColor.DarkGray);
+//            Out.WriteLine(string.Format("Room #{0} was unloaded, reason: " + reason, room.RoomId),
+//                "Oblivion.Room.Manager", ConsoleColor.DarkGray);
 
             room.Destroy();
             room = null;

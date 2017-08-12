@@ -22,7 +22,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         internal int NewnaviY;
 
         internal bool PreferOldChat;
-        internal string Volume = "0,0,0";
+        internal string Volume = "100,100,100";
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="UserPreferences" /> class.

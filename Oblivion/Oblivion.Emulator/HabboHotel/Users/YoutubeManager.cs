@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -40,9 +41,11 @@ namespace Oblivion.HabboHotel.Users
                 if (table == null)
                     return;
 
-                foreach (DataRow row in table.Rows)
+                foreach (var row in table.Rows.Cast<DataRow>().Where(row => !Videos.ContainsKey((string) row["video_id"])))
+                {
                     Videos.Add((string) row["video_id"],
                         new YoutubeVideo((string) row["video_id"], (string) row["name"], (string) row["description"]));
+                }
             }
         }
 
@@ -103,6 +106,11 @@ namespace Oblivion.HabboHotel.Users
 
                 UserId = client.GetHabbo().Id;
 
+                if (Videos.ContainsKey(id))
+                {
+                    client.SendWhisper("O vídeo já foi adicionado!");
+                    return;
+                }
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
                     queryReactor.SetQuery(

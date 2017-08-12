@@ -1159,7 +1159,6 @@ namespace Oblivion.Messages.Handlers
             Response.AppendString(time);
             Response.AppendInteger(Convert.ToInt32(diff.TotalSeconds));
             SendResponse();
-            Console.WriteLine(diff.TotalSeconds);
         }
 
         /// <summary>

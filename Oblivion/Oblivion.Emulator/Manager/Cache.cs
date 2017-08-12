@@ -12,37 +12,31 @@ namespace Oblivion.Manager
     {
         private static Task _thread;
         public static bool Working;
-        private static int lastUpdate;
         public static void StartProcess()
         {
             _thread = new Task(Process);
             _thread.Start();
             Working = true;
-            lastUpdate = 0;
         }
 
         public static void StopProcess()
         {
-            _thread.Dispose();//todo cancelation token.
+            _thread.Dispose();//todo: use timer
             Working = false;
         }
 
-        private static void Process()
+        private static async void Process()
         {
             try
             {
                 while (Working)
                 {
-                    if (lastUpdate + 1000 >= Oblivion.GetUnixTimeStamp())
-                    {
-                        continue;
-                    }
                     ClearUserCache();
                     ClearRoomsCache();
 
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    lastUpdate = Oblivion.GetUnixTimeStamp();
+                    await Task.Delay(900000);
                 }
             }
             catch (Exception e)

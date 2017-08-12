@@ -109,10 +109,10 @@ namespace Oblivion.Messages.Handlers
 
         internal void OnlineConfirmationEvent()
         {
-            Out.WriteLine(
-                "Is connected now with user: " + Request.GetString() + " and ip: " + Session.GetConnection().GetIp(),
-                "Oblivion.Users",
-                ConsoleColor.DarkGreen);
+//            Out.WriteLine(
+//                "Is connected now with user: " + Request.GetString() + " and ip: " + Session.GetConnection().GetIp(),
+//                "Oblivion.Users",
+//                ConsoleColor.DarkGreen);
 
             if (!ConfigurationData.Data.ContainsKey("welcome.message.enabled") ||
                 ConfigurationData.Data["welcome.message.enabled"] != "true")
@@ -898,12 +898,6 @@ namespace Oblivion.Messages.Handlers
             }
             if (roomUserByHabbo != null && !roomUserByHabbo.IsBot)
             {
-                Response.Init(LibraryParser.OutgoingRequest("GiveRoomRightsMessageComposer"));
-                Response.AppendInteger(room.RoomId);
-                Response.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Id);
-                Response.AppendString(roomUserByHabbo.GetClient().GetHabbo().UserName);
-                SendResponse();
-                roomUserByHabbo.UpdateNeeded = true;
                 if (!roomUserByHabbo.IsBot)
                 {
                     roomUserByHabbo.AddStatus("flatctrl 1", "");
@@ -911,6 +905,13 @@ namespace Oblivion.Messages.Handlers
                     Response.AppendInteger(1);
                     roomUserByHabbo.GetClient().SendMessage(GetResponse());
                 }
+                Response.Init(LibraryParser.OutgoingRequest("GiveRoomRightsMessageComposer"));
+                Response.AppendInteger(room.RoomId);
+                Response.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Id);
+                Response.AppendString(roomUserByHabbo.GetClient().GetHabbo().UserName);
+                SendResponse();
+                roomUserByHabbo.UpdateNeeded = true;
+
             }
             UsersWithRights();
         }

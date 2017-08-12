@@ -63,10 +63,7 @@ namespace Oblivion.HabboHotel.Events
         ///     Gets the rooms.
         /// </summary>
         /// <returns>KeyValuePair&lt;RoomData, System.UInt32&gt;[].</returns>
-        internal KeyValuePair<RoomData, uint>[] GetRooms()
-        {
-            return _orderedEventRooms.ToArray();
-        }
+        internal KeyValuePair<RoomData, uint>[] GetRooms() => _orderedEventRooms.ToArray();
 
         /// <summary>
         ///     Called when [cycle].

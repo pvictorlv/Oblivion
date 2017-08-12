@@ -11,6 +11,7 @@ using Oblivion.Messages.Enums;
 using Oblivion.Messages.Handlers;
 using Oblivion.Messages.Parsers;
 using Oblivion.Security.BlackWords.Structs;
+using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.GameClients.Interfaces
 {
@@ -178,6 +179,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             if (_connection == null)
                 return;
 
+            
             TimePingedReceived = DateTime.Now;
 
             var packetParser = _connection.Parser as InitialPacketParser;

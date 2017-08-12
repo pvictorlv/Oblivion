@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using Oblivion.Configuration;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Rooms.User;
 using Oblivion.HabboHotel.Rooms.User.Path;
@@ -73,22 +74,28 @@ namespace Oblivion.HabboHotel.RoomBots
         /// </summary>
         internal override void Modified()
         {
-            if (GetBotData() == null) return;
-            // @issue #80
-            //if (GetBotData().RandomSpeech == null || !GetBotData().RandomSpeech.Any())
-            if (!GetBotData().AutomaticChat || GetBotData().RandomSpeech == null || !GetBotData().RandomSpeech.Any())
+            try
             {
-                StopTimerTick();
-                return;
-            }
-            _speechInterval = GetBotData().SpeechInterval < 2 ? 2000 : GetBotData().SpeechInterval*1000;
+                if (GetBotData() == null) return;
+                if (!GetBotData().AutomaticChat || GetBotData().RandomSpeech == null ||
+                    !GetBotData().RandomSpeech.Any())
+                {
+                    StopTimerTick();
+                    return;
+                }
+                _speechInterval = GetBotData().SpeechInterval < 2 ? 2000 : GetBotData().SpeechInterval * 1000;
 
-            if (_chatTimer == null)
-            {
-                _chatTimer = new Timer(ChatTimerTick, null, _speechInterval, _speechInterval);
-                return;
+                if (_chatTimer == null)
+                {
+                    _chatTimer = new Timer(ChatTimerTick, null, _speechInterval, _speechInterval);
+                    return;
+                }
+                _chatTimer.Change(_speechInterval, _speechInterval);
             }
-            _chatTimer.Change(_speechInterval, _speechInterval);
+            catch (Exception e)
+            {
+                Logging.HandleException(e, "Modified()");
+            }
         }
 
         /// <summary>
@@ -388,10 +395,17 @@ namespace Oblivion.HabboHotel.RoomBots
         /// </summary>
         private void StopTimerTick()
         {
-            if (_chatTimer == null) return;
-            _chatTimer.Change(Timeout.Infinite, Timeout.Infinite);
-            _chatTimer.Dispose();
-            _chatTimer = null;
+            try
+            {
+                if (_chatTimer == null) return;
+                _chatTimer.Change(Timeout.Infinite, Timeout.Infinite);
+                _chatTimer.Dispose();
+                _chatTimer = null;
+            }
+            catch (Exception e)
+            {
+                Logging.HandleException(e, "StopTimerTick");
+            }
         }
 
         internal override void OnChatTick()

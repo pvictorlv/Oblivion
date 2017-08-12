@@ -17,7 +17,7 @@ using Oblivion.HabboHotel.Users.Subscriptions;
 using Oblivion.HabboHotel.Users.UserDataManagement;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
-using Oblivion.Util;
+//using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Users
 {
@@ -898,8 +898,8 @@ namespace Oblivion.HabboHotel.Users
 
             Oblivion.GetGame().GetClientManager().UnregisterClient(Id, UserName);
 
-            Out.WriteLine(UserName + " disconnected from game. Reason: " + reason, "Oblivion.Users",
-                ConsoleColor.DarkYellow);
+//            Out.WriteLine(UserName + " disconnected from game. Reason: " + reason, "Oblivion.Users",
+//                ConsoleColor.DarkYellow);
 
             var getOnlineSeconds = DateTime.Now - TimeLoggedOn;
             var secondsToGive = getOnlineSeconds.Seconds;

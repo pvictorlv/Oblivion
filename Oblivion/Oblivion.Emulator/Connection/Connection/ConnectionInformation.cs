@@ -15,7 +15,7 @@ namespace Oblivion.Connection.Connection
         /// <summary>
         /// The _socket
         /// </summary>
-        private Socket _socket;
+        public Socket _socket;
         /// <summary>
         /// The _remote end point
         /// </summary>
@@ -71,6 +71,7 @@ namespace Oblivion.Connection.Connection
             _remoteEndPoint = socket.RemoteEndPoint;
             _connected = true;
             ChannelId = channelId;
+           
         }
 
         /// <summary>
@@ -79,7 +80,7 @@ namespace Oblivion.Connection.Connection
         /// <value>The disconnected.</value>
         public OnClientDisconnectedEvent Disconnected
         {
-            get { return DisconnectAction; }
+            get => DisconnectAction;
 
             set
             {
@@ -148,16 +149,14 @@ namespace Oblivion.Connection.Connection
         {
             try
             {
-                Socket dataSocket = (Socket)async.AsyncState;
-
                 if (_socket != null && _socket.Connected && _connected)
                 {
-                    int bytesReceived = dataSocket.EndReceive(async);
+                    int bytesReceived = _socket.EndReceive(async);
 
                     if (bytesReceived != 0)
                     {
                         byte[] array = new byte[bytesReceived];
-
+                        
                         Array.Copy(_buffer, array, bytesReceived);
 
                         HandlePacketData(array, bytesReceived);
@@ -195,10 +194,8 @@ namespace Oblivion.Connection.Connection
         {
             try
             {
-                Socket dataSocket = (Socket)async.AsyncState;
-
                 if (_socket != null && _socket.Connected && _connected)
-                    dataSocket.EndSend(async);
+                    _socket.EndSend(async);
                 else
                     Disconnect();
             }

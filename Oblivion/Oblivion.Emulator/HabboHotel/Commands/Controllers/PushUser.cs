@@ -14,7 +14,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public PushUser()
         {
-            MinRank = -3;
+            MinRank = 1;
             Description = "Push User.";
             Usage = ":push [USERNAME]";
             MinParams = 1;
@@ -26,6 +26,11 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
             if (user == null) return true;
 
+            if (!room.CheckRights(session) && room.CheckRights(user.GetClient(), true))
+            {
+                session.SendWhisper("hey, não empurre o dono!");
+                return false;
+            }
             if (room.RoomData.DisablePush)
             {
                 session.SendWhisper("Realizar Push Foi Desativado pelo Dono do Quarto");

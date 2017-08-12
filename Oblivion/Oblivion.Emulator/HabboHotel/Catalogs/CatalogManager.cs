@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Data;
 using System.Globalization;
 using System.Linq;
@@ -19,7 +18,6 @@ using Oblivion.HabboHotel.RoomBots;
 using Oblivion.HabboHotel.SoundMachine;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
-using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Catalogs
 {

@@ -14,7 +14,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public PullUser()
         {
-            MinRank = -3;
+            MinRank = 1;
             Description = "Pull User.";
             Usage = ":pull [USERNAME]";
             MinParams = 1;
@@ -25,6 +25,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var room = session.GetHabbo().CurrentRoom;
             var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
             if (user == null) return true;
+
+            if (!room.CheckRights(session) && room.CheckRights(user.GetClient(), true))
+            {
+                session.SendWhisper("hey, não puxe o dono!");
+                return false;
+            }
 
             if (room.RoomData.DisablePull)
             {

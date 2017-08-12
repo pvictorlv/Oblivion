@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using Oblivion.Configuration;
 using Oblivion.Messages.Parsers;
+using Oblivion.Util;
 
 namespace Oblivion.Connection.Connection
 {
@@ -117,13 +118,13 @@ namespace Oblivion.Connection.Connection
             OnClientDisconnected(connection, exception);
             connection.Cleanup();
         }
-
+        
         private void OnAcceptSocket(IAsyncResult ar)
         {
             try
             {
                 var socket = _listener.EndAcceptSocket(ar);
-                
+ 
                 if (socket.Connected)
                 {
                     if (SocketConnectionCheck.CheckConnection(socket, MaxIpConnectionCount, AntiDDosStatus))

@@ -203,24 +203,35 @@ namespace Oblivion.HabboHotel.Achievements
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool ProgressUserAchievement(GameClient session, string achievementGroup, int progressAmount, bool fromZero = false)
         {
-            if (Achievements.ContainsKey(achievementGroup) && session?.GetHabbo() != null)
+            if (session?.GetHabbo() == null) return false; 
+
+            if (Achievements.ContainsKey(achievementGroup))
             {
+                
                 var achievement = Achievements[achievementGroup];
                 var user = session.GetHabbo();
-                var userAchievement = user.GetAchievementData(achievementGroup);
+                UserAchievement userAchievement;
 
-                if (userAchievement == null)
+                if (!user.Achievements.ContainsKey(achievementGroup))
                 {
                     userAchievement = new UserAchievement(achievementGroup, 0, 0);
-                    user.Achievements.Add(achievementGroup, userAchievement.Value);
+                    user.Achievements.Add(achievementGroup, userAchievement);
+                }
+                else
+                {
+                    if (!user.Achievements.TryGetValue(achievementGroup, out userAchievement))
+                    {
+                        return false;
+                    }
+                    if (achievement.Levels.Count >= userAchievement.Level + 1) return false;
                 }
 
                 var count = achievement.Levels.Count;
-
-                if (userAchievement.Value.Level == count)
+              
+                if (userAchievement.Level >= count)
                     return false;
 
-                var acount = (userAchievement.Value.Level + 1);
+                var acount = (userAchievement.Level + 1);
 
                 if (acount > count)
                     acount = count;
@@ -232,9 +243,9 @@ namespace Oblivion.HabboHotel.Achievements
                 if ((achievementColoc != null) && (fromZero))
                     fromZero = false;
 
-                var progress = (fromZero) ? progressAmount : ((userAchievement.Value.Progress + progressAmount));
+                var progress = (fromZero) ? progressAmount : ((userAchievement.Progress + progressAmount));
 
-                var achievementLevel = userAchievement.Value.Level;
+                var achievementLevel = userAchievement.Level;
                 var levelEndCheck = achievementLevel + 1;
 
                 if (levelEndCheck > count)
@@ -270,8 +281,8 @@ namespace Oblivion.HabboHotel.Achievements
                         queryReactor.RunQuery();
                     }
 
-                    userAchievement.Value.SetLevel(achievementLevel);
-                    userAchievement.Value.SetProgress(progress);
+                    userAchievement.SetLevel(achievementLevel);
+                    userAchievement.SetProgress(progress);
                     user.AchievementPoints += targetLevelData.RewardPoints;
                     user.NotifyNewPixels(targetLevelData.RewardPixels);
                     user.ActivityPoints += targetLevelData.RewardPixels;
@@ -292,8 +303,8 @@ namespace Oblivion.HabboHotel.Achievements
                     return true;
                 }
 
-                userAchievement.Value.SetLevel(achievementLevel);
-                userAchievement.Value.SetProgress(progress);
+                userAchievement.SetLevel(achievementLevel);
+                userAchievement.SetProgress(progress);
 
                 using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {

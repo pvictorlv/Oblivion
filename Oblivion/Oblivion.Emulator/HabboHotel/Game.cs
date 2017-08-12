@@ -509,8 +509,8 @@ namespace Oblivion.HabboHotel
         internal void StopGameLoop()
         {
             GameLoopActiveExt = false;
-            while (!RoomManagerCycleEnded || !ClientManagerCycleEnded)
-                Thread.Sleep(25);
+           /* while (!RoomManagerCycleEnded || !ClientManagerCycleEnded)
+                Thread.Sleep(25);*/
         }
 
         /// <summary>
@@ -540,29 +540,22 @@ namespace Oblivion.HabboHotel
         /// </summary>
         private async void MainGameLoop()
         {
-            try
+            while (GameLoopActiveExt)
             {
-                while (GameLoopActiveExt)
+                LowPriorityWorker.Process();
+                try
                 {
-                    LowPriorityWorker.Process();
-                    try
-                    {
-                        RoomManagerCycleEnded = false;
-                        ClientManagerCycleEnded = false;
-                        _roomManager.OnCycle();
-                        _clientManager.OnCycle();
-                    }
-                    catch (Exception ex)
-                    {
-                        Logging.LogCriticalException($"Exception in Game Loop!: {ex}");
-                    }
-
-                    await Task.Delay(GameLoopSleepTimeExt);
+                    RoomManagerCycleEnded = false;
+                    ClientManagerCycleEnded = false;
+                    _roomManager.OnCycle();
+                    _clientManager.OnCycle();
                 }
-            }
-            catch (Exception ex)
-            {
-                Logging.LogCriticalException($"Exception in Game Loop2!: {ex}");
+                catch (Exception ex)
+                {
+                    Logging.LogCriticalException($"Exception in Game Loop!: {ex}");
+                }
+
+                await Task.Delay(GameLoopSleepTimeExt);
             }
         }
     }
