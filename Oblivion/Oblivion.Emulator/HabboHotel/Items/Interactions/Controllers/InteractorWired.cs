@@ -462,6 +462,8 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 case Interaction.ActionRollerSpeed:
                 case Interaction.ActionKickUser:
                 case Interaction.ActionEffectUser:
+                case Interaction.ActionEnableDance:
+                case Interaction.ActionHandItem:
                     {
                         var serverMessage15 = new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage15.AppendBool(false);
@@ -960,18 +962,8 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         session.SendMessage(serverMessage);
                         return;
                     }
+                    
 
-                case Interaction.ArrowPlate:
-                case Interaction.PressurePad:
-                case Interaction.PressurePadBed:
-                case Interaction.RingPlate:
-                case Interaction.ColorTile:
-                case Interaction.ColorWheel:
-                case Interaction.FloorSwitch1:
-                case Interaction.FloorSwitch2:
-                    break;
-
-                case Interaction.ActionFreezeUser:
                 case Interaction.SpecialRandom:
                     {
                         var serverMessage24 = new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
@@ -990,6 +982,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         session.SendMessage(serverMessage24);
                         return;
                     }
+
                 case Interaction.SpecialUnseen:
                     {
                         var serverMessage25 = new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));

@@ -16,6 +16,11 @@ namespace Oblivion.HabboHotel.Groups.Interfaces
         internal uint GroupId;
 
         /// <summary>
+        ///  Can receive msgs on group chat?
+        /// </summary>
+        internal bool HasChat;
+
+        /// <summary>
         ///     The identifier
         /// </summary>
         internal uint Id;
@@ -44,7 +49,7 @@ namespace Oblivion.HabboHotel.Groups.Interfaces
         /// <param name="rank">The rank.</param>
         /// <param name="name"></param>
         /// <param name="dateJoin"></param>
-        internal GroupMember(uint id, string name, string look, uint groupId, int rank, int dateJoin)
+        internal GroupMember(uint id, string name, string look, uint groupId, int rank, int dateJoin, bool hasChat)
         {
             Id = id;
             Name = name;
@@ -52,6 +57,7 @@ namespace Oblivion.HabboHotel.Groups.Interfaces
             GroupId = groupId;
             Rank = rank;
             DateJoin = dateJoin;
+            HasChat = hasChat;
         }
     }
 }

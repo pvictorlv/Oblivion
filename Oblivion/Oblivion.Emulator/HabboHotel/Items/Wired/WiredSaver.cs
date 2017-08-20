@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -140,6 +141,37 @@ namespace Oblivion.HabboHotel.Items.Wired
                         wired8.OtherString = otherString3;
                         wiredHandler.ReloadWired(wired8);
                         break;
+                    }
+                case Interaction.ActionHandItem:
+                case Interaction.ActionEffectUser:
+                {
+                    request.GetInteger();
+                    var otherString3 = Regex.Match(request.GetString(), @"\d+").Value;
+                    var wired8 = wiredHandler.GetWired(item);
+                    wired8.OtherString = otherString3;
+                    wiredHandler.ReloadWired(wired8);
+                    break;
+                }
+
+                case Interaction.ActionEnableDance:
+                {
+                    request.GetInteger();
+                    var otherString3 = Regex.Match(request.GetString(), @"\d+").Value;
+                    var wired8 = wiredHandler.GetWired(item);
+                    if (!int.TryParse(otherString3, out int numb))
+                    {
+                        numb = 0;
+                    }
+                    if (numb > 4)
+                    {
+                        otherString3 = "4";
+                    } else if (numb < 0)
+                    {
+                        otherString3 = "0";
+                    }
+                    wired8.OtherString = otherString3;
+                    wiredHandler.ReloadWired(wired8);
+                    break;
                     }
                 case Interaction.ActionTeleportTo:
                     {

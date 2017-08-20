@@ -7,16 +7,16 @@ using Oblivion.HabboHotel.Rooms.User;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
 {
-    public class EffectUser : IWiredItem
+    public class GiveHandItem : IWiredItem
     {
-        public EffectUser(RoomItem item, Room room)
+        public GiveHandItem(RoomItem item, Room room)
         {
             Item = item;
             Room = room;
             Items = new List<RoomItem>();
         }
 
-        public Interaction Type => Interaction.ActionEffectUser;
+        public Interaction Type => Interaction.ActionHandItem;
 
         public RoomItem Item { get; set; }
 
@@ -39,16 +39,23 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
             if (stuff[0] == null)
                 return false;
 
-            var roomUser = (RoomUser)stuff[0];
+            var roomUser = (RoomUser) stuff[0];
 
-                int effectId;
+            ushort drink;
 
-                if (int.TryParse(OtherString, out effectId))
+            if (ushort.TryParse(OtherString, out drink))
+            {
+                if (roomUser.RidingHorse)
                 {
-                    if (roomUser != null && !string.IsNullOrEmpty(OtherString))
-                        roomUser.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(effectId);
+                    roomUser.GetClient().SendWhisper(Oblivion.GetLanguage().GetVar("horse_handitem_error"));
                     return true;
                 }
+                if (roomUser.IsLyingDown)
+                    return true;
+
+                roomUser.CarryItem(drink);
+                return true;
+            }
 
             return false;
         }

@@ -153,7 +153,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 botsTable = queryReactor.GetTable();
 
                 queryReactor.SetQuery(
-                    $"SELECT group_id, rank, date_join FROM groups_members WHERE user_id = {userId}");
+                    $"SELECT group_id, rank, date_join, has_chat FROM groups_members WHERE user_id = {userId}");
                 groupsTable = queryReactor.GetTable();
 
                 queryReactor.SetQuery(
@@ -323,7 +323,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             foreach (DataRow row in groupsTable.Rows)
                 groups.Add(new GroupMember(userId, userName, look, (uint) row["group_id"], Convert.ToInt16(row["rank"]),
-                    (int) row["date_join"]));
+                    (int) row["date_join"], Oblivion.EnumToBool(row["has_chat"].ToString())));
 
             var relationShips = relationShipsTable.Rows.Cast<DataRow>()
                 .ToDictionary(row => (int) row[0],
@@ -332,11 +332,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             var user = HabboFactory.GenerateHabbo(dataRow, statsTable, groups);
             errorCode = 0;
 
-            if (user.Rank >= Oblivion.StaffAlertMinRank)
-                friends.Add(0,
-                    new MessengerBuddy(0, "Staff Chat",
-                        "hr-831-45.fa-1206-91.sh-290-1331.ha-3129-100.hd-180-2.cc-3039-73.ch-3215-92.lg-270-73",
-                        string.Empty, 0, false, true));
+          
             var blockedCommands = (from DataRow r in dBlockedCommands.Rows select r["command_name"].ToString())
                 .ToList();
             return new UserData(userId, achievements, talents, favorites, ignoreUsers, tags, subscriptions, badges,

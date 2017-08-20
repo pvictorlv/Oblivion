@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Catalogs.Composers;
 using Oblivion.HabboHotel.Catalogs.Interfaces;
+using Oblivion.HabboHotel.Catalogs.Marketplace;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -60,6 +61,11 @@ namespace Oblivion.HabboHotel.Catalogs
         ///     The offers
         /// </summary>
         internal Dictionary<uint, CatalogItem> Offers;
+
+        /// <summary>
+        /// The manager for marketplace
+        /// </summary>
+        private MarketplaceManager _marketplace;
 
         /// <summary>
         ///     Checks the name of the pet.
@@ -129,16 +135,21 @@ namespace Oblivion.HabboHotel.Catalogs
 
                 pet.PetId = (uint) queryReactor.InsertQuery();
 
-                queryReactor.SetQuery(
-                    string.Concat(
-                        "INSERT INTO pets_data (id,type,race,color,experience,energy,createstamp,rarity,lasthealth_stamp,untilgrown_stamp) VALUES (",
-                        pet.PetId, ", ", pet.Type, ",@", pet.PetId, "race,@", pet.PetId,
-                        "color,0,100,UNIX_TIMESTAMP(), ", rarity,
-                        ", UNIX_TIMESTAMP(now() + INTERVAL 36 HOUR), UNIX_TIMESTAMP(now() + INTERVAL 48 HOUR))"));
+                queryReactor.SetQuery($"SELECT count(id) FROM pets_data WHERE id = {pet.PetId}");
+                var count = queryReactor.GetInteger();
+                if (count <= 0)
+                {
+                    queryReactor.SetQuery(
+                        string.Concat(
+                            "INSERT INTO pets_data (id,type,race,color,experience,energy,createstamp,rarity,lasthealth_stamp,untilgrown_stamp) VALUES (",
+                            pet.PetId, ", ", pet.Type, ",@", pet.PetId, "race,@", pet.PetId,
+                            "color,0,100,UNIX_TIMESTAMP(), ", rarity,
+                            ", UNIX_TIMESTAMP(now() + INTERVAL 36 HOUR), UNIX_TIMESTAMP(now() + INTERVAL 48 HOUR))"));
 
-                queryReactor.AddParameter($"{pet.PetId}race", pet.Race);
-                queryReactor.AddParameter($"{pet.PetId}color", pet.Color);
-                queryReactor.RunQuery();
+                    queryReactor.AddParameter($"{pet.PetId}race", pet.Race);
+                    queryReactor.AddParameter($"{pet.PetId}color", pet.Color);
+                    queryReactor.RunQuery();
+                }
             }
 
             if (pet.Type == 16u)
@@ -225,6 +236,7 @@ namespace Oblivion.HabboHotel.Catalogs
         {
             try
             {
+                _marketplace = new MarketplaceManager();
                 Categories = new Dictionary<int, CatalogPage>();
                 Offers = new Dictionary<uint, CatalogItem>();
                 FlatOffers = new Dictionary<int, uint>();
@@ -1192,5 +1204,11 @@ namespace Oblivion.HabboHotel.Catalogs
         {
             return EcotronRewards.Where(current => current.RewardLevel == level).ToList();
         }
+
+        /// <summary>
+        /// get the marketplace manager
+        /// </summary>
+        /// <returns></returns>
+        public MarketplaceManager GetMarketplace() => _marketplace;
     }
 }

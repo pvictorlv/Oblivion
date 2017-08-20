@@ -416,6 +416,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 serverMessage.AppendInteger(userData.User.Diamonds);
                 queuedServerMessage.AppendResponse(serverMessage);
 
+               
                 if (userData.User.HasFuse("fuse_mod"))
                     queuedServerMessage.AppendResponse(Oblivion.GetGame().GetModerationTool().SerializeTool(this));
 
@@ -426,6 +427,10 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
                 queuedServerMessage.AppendResponse(GetHabbo().GetAvatarEffectsInventoryComponent().GetPacket());
                 queuedServerMessage.SendResponse();
+
+                if (GetHabbo().GetMessenger() != null)
+                    GetHabbo().GetMessenger().OnStatusChanged(true);
+
 
                 Oblivion.GetGame().GetAchievementManager().TryProgressHabboClubAchievements(this);
                 Oblivion.GetGame().GetAchievementManager().TryProgressRegistrationAchievements(this);

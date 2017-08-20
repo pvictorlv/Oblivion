@@ -317,6 +317,10 @@ namespace Oblivion.HabboHotel.Navigators
                 searchQuery = searchQuery.Replace("group:", string.Empty);
                 containsGroup = true;
             }
+            else if (searchQuery.StartsWith("roomname:"))
+            {
+                searchQuery = searchQuery.Replace("roomname:", string.Empty);
+            }
             var rooms = new List<RoomData>();
             if (!containsOwner)
             {
@@ -357,15 +361,13 @@ namespace Oblivion.HabboHotel.Navigators
                     {
                         dbClient.SetQuery(
                             "SELECT * FROM rooms_data JOIN groups_data ON rooms_data.id = groups_data.room_id WHERE groups_data.name LIKE @query AND roomtype = 'private' LIMIT 50");
-                        dbClient.AddParameter("query", string.Format("%{0}%", searchQuery));
+                        dbClient.AddParameter("query", $"%{searchQuery}%");
                         dTable = dbClient.GetTable();
                     }
                     else
                     {
                         dbClient.SetQuery(
-                            string.Format(
-                                "SELECT * FROM rooms_data WHERE caption LIKE @query AND roomtype = 'private' LIMIT {0}",
-                                50 - rooms.Count));
+                            $"SELECT * FROM rooms_data WHERE caption LIKE @query AND roomtype = 'private' LIMIT {50 - rooms.Count}");
                         dbClient.AddParameter("query", searchQuery);
                         dTable = dbClient.GetTable();
                     }

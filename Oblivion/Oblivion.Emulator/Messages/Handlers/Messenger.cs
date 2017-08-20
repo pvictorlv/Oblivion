@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Oblivion.HabboHotel.Groups.Interfaces;
 using Oblivion.HabboHotel.Quests;
 using Oblivion.Messages.Parsers;
+using Oblivion.Util;
 
 namespace Oblivion.Messages.Handlers
 {
@@ -67,7 +69,8 @@ namespace Oblivion.Messages.Handlers
                 var request = Session.GetHabbo().GetMessenger().GetRequest(num2);
                 if (request == null) continue;
                 if (request.To != Session.GetHabbo().Id) return;
-                if (!Session.GetHabbo().GetMessenger().FriendshipExists(request.To)) Session.GetHabbo().GetMessenger().CreateFriendship(request.From);
+                if (!Session.GetHabbo().GetMessenger().FriendshipExists(request.To))
+                    Session.GetHabbo().GetMessenger().CreateFriendship(request.From);
                 Session.GetHabbo().GetMessenger().HandleRequest(num2);
             }
         }
@@ -95,7 +98,8 @@ namespace Oblivion.Messages.Handlers
         internal void RequestBuddy()
         {
             if (Session.GetHabbo().GetMessenger() == null) return;
-            if (Session.GetHabbo().GetMessenger().RequestBuddy(Request.GetString())) Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.SocialFriend);
+            if (Session.GetHabbo().GetMessenger().RequestBuddy(Request.GetString()))
+                Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.SocialFriend);
         }
 
         /// <summary>
@@ -103,10 +107,32 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void SendInstantMessenger()
         {
-            var toId = Request.GetUInteger();
+            var toId = Request.GetInteger();
             var text = Request.GetString();
             if (Session.GetHabbo().GetMessenger() == null) return;
-            if (!string.IsNullOrWhiteSpace(text)) Session.GetHabbo().GetMessenger().SendInstantMessage(toId, text);
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                if (toId > 0)
+                {
+                    Session.GetHabbo().GetMessenger().SendInstantMessage((uint)toId, text);
+                    return;
+                }
+                var gp = Oblivion.GetGame().GetGroupManager().GetGroup((uint) -toId);
+                if (gp == null)
+                {
+                    return;
+
+                }
+
+                if (!gp.HasChat)
+                {
+                    Session.SendNotif("Não foi possível enviar mensagem para esse grupo!");
+                    return;
+                }
+
+                Session.GetHabbo().GetMessenger().SendInstantMessage(gp, text);
+
+            }
         }
 
         /// <summary>
@@ -127,7 +153,8 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().GetMessenger().UpdateFriend(userId, clientByUserId, true);
                 return;
             }
-            if (Session.GetHabbo().Rank < 4 && Session.GetHabbo().GetMessenger() != null && !Session.GetHabbo().GetMessenger().FriendshipExists(userId))
+            if (Session.GetHabbo().Rank < 4 && Session.GetHabbo().GetMessenger() != null &&
+                !Session.GetHabbo().GetMessenger().FriendshipExists(userId))
             {
                 Response.Init(LibraryParser.OutgoingRequest("FollowFriendErrorMessageComposer"));
                 Response.AppendInteger(0);
@@ -153,8 +180,8 @@ namespace Oblivion.Messages.Handlers
             serverMessage.AppendInteger(Session.GetHabbo().Id);
             serverMessage.AppendString(s);
             foreach (var clientByUserId in (from current in list
-                                            where Session.GetHabbo().GetMessenger().FriendshipExists(current)
-                                            select Oblivion.GetGame().GetClientManager().GetClientByUserId(current))
+                    where Session.GetHabbo().GetMessenger().FriendshipExists(current)
+                    select Oblivion.GetGame().GetClientManager().GetClientByUserId(current))
                 .TakeWhile(
                     clientByUserId => clientByUserId != null))
                 clientByUserId.SendMessage(serverMessage);

@@ -120,10 +120,12 @@ namespace Oblivion.Connection.Connection
         
         private void OnAcceptSocket(IAsyncResult ar)
         {
+            if (ar == null || _listener == null) return;
             try
             {
                 var socket = _listener.EndAcceptSocket(ar);
- 
+                if (socket == null) return;
+
                 if (socket.Connected)
                 {
                     if (SocketConnectionCheck.CheckConnection(socket, MaxIpConnectionCount, AntiDDosStatus))

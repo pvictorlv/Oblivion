@@ -1,6 +1,7 @@
 ﻿using System;
 using Oblivion.Configuration;
 using Oblivion.Messages.Parsers;
+using Oblivion.Util;
 
 namespace Oblivion.Messages.Handlers
 {
@@ -14,8 +15,21 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void GameCenterLoadGame()
         {
+            var GameId = Request.GetInteger();
+
+            ServerMessage gamesLeft = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterGamesLeftMessageComposer"));
+            gamesLeft.AppendInteger(GameId);
+            gamesLeft.AppendInteger(-1);
+            gamesLeft.AppendInteger(0);
+            Session.SendMessage(gamesLeft);
+
+            ServerMessage enterInGame = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterEnterInGameMessageComposer"));
+            enterInGame.AppendInteger(GameId);
+            enterInGame.AppendInteger(0);
+            Session.SendMessage(enterInGame);
+
             ServerMessage achievements = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterGameAchievementsMessageComposer"));
-            achievements.AppendInteger(18);
+            achievements.AppendInteger(GameId);
             achievements.AppendInteger(1);//count
             achievements.AppendInteger(295);//id
             achievements.AppendInteger(1);
@@ -27,12 +41,12 @@ namespace Oblivion.Messages.Handlers
             achievements.AppendInteger(0);
             achievements.AppendBool(false);
             achievements.AppendString("games");
-            achievements.AppendString("elisa_habbo_stories");
+            achievements.AppendString("basejump");
             achievements.AppendInteger(1);
             achievements.AppendInteger(0);
             achievements.AppendString("");
             Session.SendMessage(achievements);
-
+/*
             ServerMessage weeklyLeaderboard = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterLeaderboardMessageComposer"));
             weeklyLeaderboard.AppendInteger(2014);
             weeklyLeaderboard.AppendInteger(49);
@@ -84,11 +98,7 @@ namespace Oblivion.Messages.Handlers
             weeklyLeaderboard3.AppendInteger(18);
             Session.SendMessage(weeklyLeaderboard3);
 
-            ServerMessage gamesLeft = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterGamesLeftMessageComposer"));
-            gamesLeft.AppendInteger(18);
-            gamesLeft.AppendInteger(-1);
-            gamesLeft.AppendInteger(0);
-            Session.SendMessage(gamesLeft);
+
 
             ServerMessage previousWinner = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterPreviousWinnerMessageComposer"));
             previousWinner.AppendInteger(18);
@@ -107,7 +117,7 @@ namespace Oblivion.Messages.Handlers
             Products.AppendInteger(0);//count
             Products.AppendInteger(6526);
             Products.AppendBool(false);
-            Session.SendMessage(Products);*/
+            Session.SendMessage(Products);#1#
 
             ServerMessage allAchievements = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterAllAchievementsMessageComposer"));
             allAchievements.AppendInteger(0);//count
@@ -117,7 +127,7 @@ namespace Oblivion.Messages.Handlers
             PacketName5.AppendInteger(1);
             PacketName5.AppendInteger(191);
             PacketName5.AppendString("StoryChallengeChampion");
-            PacketName5.AppendInteger(20);*/
+            PacketName5.AppendInteger(20);#1#
 
             allAchievements.AppendInteger(0);//gameId
             allAchievements.AppendInteger(0);//count
@@ -125,19 +135,35 @@ namespace Oblivion.Messages.Handlers
             allAchievements.AppendString("SnowWarTotalScore");//achName
             allAchievements.AppendInteger(0);//levels
 
-            Session.SendMessage(allAchievements);
+            Session.SendMessage(allAchievements);*/
 
-            ServerMessage enterInGame = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterEnterInGameMessageComposer"));
-            enterInGame.AppendInteger(18);
-            enterInGame.AppendInteger(0);
-            Session.SendMessage(enterInGame);
+
         }
 
+        internal void InitializeGameCenter()
+        {
+            
+        }
+        internal void GetGameListing()
+        {
+
+            var game = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterGamesListMessageComposer"));
+            game.AppendInteger(1);
+            game.AppendInteger(1);
+            game.AppendString("basejump");
+            game.AppendString("93d4f3");
+            game.AppendString("");
+            game.AppendString("http://lella.la/swf/games/gamecenter_basejump/");
+            game.AppendString("");
+            Session.SendMessage(game);
+        }
         /// <summary>
         /// Games the center join queue.
         /// </summary>
         internal void GameCenterJoinQueue()
         {
+            var id = Request.GetInteger();
+            Out.WriteLine("heyeyey");
             ServerMessage joinQueue = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterJoinGameQueueMessageComposer"));
             joinQueue.AppendInteger(18);
             Session.SendMessage(joinQueue);

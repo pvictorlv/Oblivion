@@ -1,16 +1,12 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.User;
-using Oblivion.Messages;
-using Oblivion.Messages.Parsers;
-using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
@@ -46,12 +42,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             _cycles++;
 
             if (_cycles <= Delay / 500)
-                return true;
+                return false;
 
             _cycles = 0;
 
             HandleItems();
-            return false;
+            return true;
         }
 
         public Interaction Type => Interaction.ActionMoveRotate;

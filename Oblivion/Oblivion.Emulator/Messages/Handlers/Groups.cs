@@ -388,9 +388,9 @@ namespace Oblivion.Messages.Handlers
                         queryReactor.RunFastQuery(string.Concat("UPDATE users_stats SET favourite_group=", groupId, " WHERE id= ", user.Id, " LIMIT 1"));
                     }
 
-                    group.Members.Add(user.Id, new GroupMember(user.Id, user.UserName, user.Look, group.Id, 0, Oblivion.GetUnixTimeStamp()));
-
+                    group.Members.Add(user.Id, new GroupMember(user.Id, user.UserName, user.Look, group.Id, 0, Oblivion.GetUnixTimeStamp(), true));
                     Session.GetHabbo().UserGroups.Add(group.Members[user.Id]);
+                    Session.GetHabbo().GetMessenger().SerializeUpdate(group);
                 }
                 else
                 {
@@ -399,7 +399,7 @@ namespace Oblivion.Messages.Handlers
                         using (IQueryAdapter queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
                             queryreactor2.RunFastQuery(string.Concat("INSERT INTO groups_requests (user_id, group_id) VALUES (", Session.GetHabbo().Id, ",", groupId, ")"));
 
-                        GroupMember groupRequest = new GroupMember(user.Id, user.UserName, user.Look, group.Id, 0, Oblivion.GetUnixTimeStamp());
+                        var groupRequest = new GroupMember(user.Id, user.UserName, user.Look, group.Id, 0, Oblivion.GetUnixTimeStamp(), true);
 
                         group.Requests.Add(user.Id, groupRequest);
                     }

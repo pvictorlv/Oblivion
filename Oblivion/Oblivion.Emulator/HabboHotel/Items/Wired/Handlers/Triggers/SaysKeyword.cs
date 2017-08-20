@@ -71,10 +71,11 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             {
                 foreach (var current in conditions)
                 {
+                    if (!current.Execute(roomUser))
+                        return false;
+
                     WiredHandler.OnEvent(current);
 
-                    if (!current.Execute(roomUser))
-                        return true;
                 }
             }
 

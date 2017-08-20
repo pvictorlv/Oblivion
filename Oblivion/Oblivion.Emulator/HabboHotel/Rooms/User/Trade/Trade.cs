@@ -4,6 +4,7 @@ using Oblivion.Configuration;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
+using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Rooms.User.Trade
 {

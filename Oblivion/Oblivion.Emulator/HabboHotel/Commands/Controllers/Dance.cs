@@ -31,11 +31,16 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("command_dance_false"));
                 result = 0;
             }
+            var room = session.GetHabbo().CurrentRoom;
+
+            var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
+
             var message = new ServerMessage();
             message.Init(LibraryParser.OutgoingRequest("DanceStatusMessageComposer"));
             message.AppendInteger(session.CurrentRoomUserId);
             message.AppendInteger(result);
             session.GetHabbo().CurrentRoom.SendMessage(message);
+            user.DanceId = result;
 
             return true;
         }

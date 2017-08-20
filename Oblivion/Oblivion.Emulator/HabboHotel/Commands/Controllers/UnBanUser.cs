@@ -41,7 +41,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 Oblivion.GetGame()
                     .GetModerationTool()
                     .LogStaffEntry(session.GetHabbo().UserName, user.UserName, "Unban",
-                        string.Format("User has been Unbanned [{0}]", pms[0]));
+                        $"User has been Unbanned [{pms[0]}]");
                 return true;
             }
         }

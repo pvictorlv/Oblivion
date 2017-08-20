@@ -1020,8 +1020,10 @@
         CrackableEgg,
         ActionCallStacks,
         ActionEffectUser,
+        ActionEnableDance,
         ActionFreezeUser,
         ActionHandItem,
+        ActionFxRoom,
         ActionDance,
         WalkInternalLink
     }

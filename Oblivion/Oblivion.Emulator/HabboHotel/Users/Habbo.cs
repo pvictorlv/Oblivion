@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Timers;
 using Oblivion.Configuration;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Achievements.Interfaces;
@@ -393,7 +392,7 @@ namespace Oblivion.HabboHotel.Users
         /// <summary>
         ///     The user name
         /// </summary>
-        internal string UserName, RealName, Motto, Look, Gender;
+        internal string UserName, Motto, Look, Gender;
 
 
         ///<summary>
@@ -413,7 +412,6 @@ namespace Oblivion.HabboHotel.Users
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="userName">Name of the user.</param>
-        /// <param name="realName">Name of the real.</param>
         /// <param name="rank">The rank.</param>
         /// <param name="motto">The motto.</param>
         /// <param name="look">The look.</param>
@@ -448,18 +446,18 @@ namespace Oblivion.HabboHotel.Users
         /// <param name="naviLogs">The navi logs.</param>
         /// <param name="dailyCompetitionVotes"></param>
         /// <param name="dutyLevel"></param>
-        internal Habbo(uint id, string userName, string realName, uint rank, string motto, string look, string gender,
+        /// <param name="disableAlert"></param>
+        internal Habbo(uint id, string userName, uint rank, string motto, string look, string gender,
             int credits, int activityPoints, bool muted, uint homeRoom, int respect,
             int dailyRespectPoints, int dailyPetRespectPoints, bool hasFriendRequestsDisabled, uint currentQuestId, int achievementPoints, int lastOnline, bool appearOffline,
             bool hideInRoom, bool vip, double createDate, string citizenShip, int diamonds,
             HashSet<GroupMember> groups, uint favId, int lastChange, bool tradeLocked, int tradeLockExpire,
             bool nuxPassed,
             int buildersExpire, int buildersItemsMax, int buildersItemsUsed, bool onDuty,
-            Dictionary<int, NaviLogs> naviLogs, int dailyCompetitionVotes, uint dutyLevel)
+            Dictionary<int, NaviLogs> naviLogs, int dailyCompetitionVotes, uint dutyLevel, bool disableAlert)
         {
             Id = id;
             UserName = userName;
-            RealName = realName;
 
             _myGroups = new List<uint>();
 
@@ -532,7 +530,7 @@ namespace Oblivion.HabboHotel.Users
             TalentStatus = citizenShip;
             CurrentTalentLevel = GetCurrentTalentLevel();
             DailyCompetitionVotes = dailyCompetitionVotes;
-            DisableEventAlert = false;
+            DisableEventAlert = disableAlert;
         }
 
         internal int Diamonds
@@ -646,15 +644,6 @@ namespace Oblivion.HabboHotel.Users
             }
         }
 
-        /// <summary>
-        ///     Handles the ElapsedEvent event of the timer control.
-        /// </summary>
-        /// <param name="source">The source of the event.</param>
-        /// <param name="e">The <see cref="ElapsedEventArgs" /> instance containing the event data.</param>
-        public void timer_ElapsedEvent(object source, ElapsedEventArgs e)
-        {
-            TimerElapsed = true;
-        }
 
         /// <summary>
         ///     Initializes the information.
@@ -746,24 +735,18 @@ namespace Oblivion.HabboHotel.Users
         /// </summary>
         /// <param name="cmd">The command.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool GotCommand(string cmd)
-        {
-            return Oblivion.GetGame().GetRoleManager().RankGotCommand(Rank, cmd);
-        }
+        internal bool GotCommand(string cmd) => Oblivion.GetGame().GetRoleManager().RankGotCommand(Rank, cmd);
 
         /// <summary>
         ///     Determines whether the specified fuse has fuse.
         /// </summary>
         /// <param name="fuse">The fuse.</param>
         /// <returns><c>true</c> if the specified fuse has fuse; otherwise, <c>false</c>.</returns>
-        internal bool HasFuse(string fuse)
-        {
-            return Oblivion.GetGame().GetRoleManager().RankHasRight(Rank, fuse) ||
-                   (GetSubscriptionManager().HasSubscription &&
-                    Oblivion.GetGame()
-                        .GetRoleManager()
-                        .HasVip(GetSubscriptionManager().GetSubscription().SubscriptionId, fuse));
-        }
+        internal bool HasFuse(string fuse) => Oblivion.GetGame().GetRoleManager().RankHasRight(Rank, fuse) ||
+                                              (GetSubscriptionManager().HasSubscription &&
+                                               Oblivion.GetGame()
+                                                   .GetRoleManager()
+                                                   .HasVip(GetSubscriptionManager().GetSubscription().SubscriptionId, fuse));
 
         /// <summary>
         ///     Loads the favorites.
@@ -906,12 +889,12 @@ namespace Oblivion.HabboHotel.Users
                 _habboinfoSaved = true;
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    queryReactor.SetQuery("UPDATE users SET activity_points = " + ActivityPoints + ", credits = " +
-                                          Credits + ", diamonds = " + Diamonds + ", online='0', last_online = '" +
-                                          Oblivion.GetUnixTimeStamp() + "', builders_items_used = " +
+                    queryReactor.SetQuery("UPDATE users SET activity_points = '" + ActivityPoints + "', disabled_alert = '" + Oblivion.BoolToEnum(DisableEventAlert) + "', credits = '" +
+                                          Credits + "', diamonds = '" + Diamonds + "', online='0', last_online = '" +
+                                          Oblivion.GetUnixTimeStamp() + "', builders_items_used = '" +
                                           BuildersItemsUsed +
-                                          ", navilogs = @navilogs  WHERE id = " + Id +
-                                          " LIMIT 1;UPDATE users_stats SET achievement_score=" + AchievementPoints +
+                                          "', navilogs = @navilogs  WHERE id = '" + Id +
+                                          "' LIMIT 1;UPDATE users_stats SET achievement_score=" + AchievementPoints +
                                           " WHERE id=" + Id + " LIMIT 1;");
                     queryReactor.AddParameter("navilogs", navilogs);
                     queryReactor.RunQuery();
@@ -971,8 +954,8 @@ namespace Oblivion.HabboHotel.Users
 
             if (_messenger.Requests.Count > Oblivion.FriendRequestLimit)
                 client.SendNotif(Oblivion.GetLanguage().GetVar("user_friend_request_max"));
-
             _messenger.OnStatusChanged(false);
+
         }
 
         /// <summary>
@@ -1121,51 +1104,33 @@ namespace Oblivion.HabboHotel.Users
         ///     Gets the subscription manager.
         /// </summary>
         /// <returns>SubscriptionManager.</returns>
-        internal SubscriptionManager GetSubscriptionManager()
-        {
-            return _subscriptionManager;
-        }
+        internal SubscriptionManager GetSubscriptionManager() => _subscriptionManager;
 
-        internal YoutubeManager GetYoutubeManager()
-        {
-            return YoutubeManager;
-        }
+        internal YoutubeManager GetYoutubeManager() => YoutubeManager;
 
         /// <summary>
         ///     Gets the messenger.
         /// </summary>
         /// <returns>HabboMessenger.</returns>
-        internal HabboMessenger GetMessenger()
-        {
-            return _messenger;
-        }
+        internal HabboMessenger GetMessenger() => _messenger;
 
         /// <summary>
         ///     Gets the badge component.
         /// </summary>
         /// <returns>BadgeComponent.</returns>
-        internal BadgeComponent GetBadgeComponent()
-        {
-            return _badgeComponent;
-        }
+        internal BadgeComponent GetBadgeComponent() => _badgeComponent;
 
         /// <summary>
         ///     Gets the inventory component.
         /// </summary>
         /// <returns>InventoryComponent.</returns>
-        internal InventoryComponent GetInventoryComponent()
-        {
-            return _inventoryComponent;
-        }
+        internal InventoryComponent GetInventoryComponent() => _inventoryComponent;
 
         /// <summary>
         ///     Gets the avatar effects inventory component.
         /// </summary>
         /// <returns>AvatarEffectsInventoryComponent.</returns>
-        internal AvatarEffectsInventoryComponent GetAvatarEffectsInventoryComponent()
-        {
-            return _avatarEffectsInventoryComponent;
-        }
+        internal AvatarEffectsInventoryComponent GetAvatarEffectsInventoryComponent() => _avatarEffectsInventoryComponent;
 
         /// <summary>
         ///     Runs the database update.
@@ -1253,10 +1218,7 @@ namespace Oblivion.HabboHotel.Users
         /// </summary>
         /// <param name="pollId">The poll identifier.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool GotPollData(uint pollId)
-        {
-            return (Data.SuggestedPolls.Contains(pollId));
-        }
+        internal bool GotPollData(uint pollId) => (Data.SuggestedPolls.Contains(pollId));
 
         /// <summary>
         ///     Checks the trading.
@@ -1281,9 +1243,6 @@ namespace Oblivion.HabboHotel.Users
         ///     Gets the client.
         /// </summary>
         /// <returns>GameClient.</returns>
-        private GameClient GetClient()
-        {
-            return Oblivion.GetGame().GetClientManager().GetClientByUserId(Id);
-        }
+        private GameClient GetClient() => Oblivion.GetGame().GetClientManager().GetClientByUserId(Id);
     }
 }

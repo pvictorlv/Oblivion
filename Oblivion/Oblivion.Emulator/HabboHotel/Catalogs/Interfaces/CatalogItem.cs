@@ -153,18 +153,12 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
         /// </summary>
         /// <param name="itemId">The item ids.</param>
         /// <returns>Item.</returns>
-        internal Item GetBaseItem(uint itemId)
-        {
-            return Oblivion.GetGame().GetItemManager().GetItem(itemId);
-        }
+        internal Item GetBaseItem(uint itemId) => Oblivion.GetGame().GetItemManager().GetItem(itemId);
 
         /// <summary>
         ///     Gets the first base item.
         /// </summary>
         /// <returns>Item.</returns>
-        internal Item GetFirstBaseItem()
-        {
-            return GetBaseItem(BaseId);
-        }
+        internal Item GetFirstBaseItem() => GetBaseItem(BaseId);
     }
 }

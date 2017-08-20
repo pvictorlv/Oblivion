@@ -16,6 +16,7 @@ using Oblivion.HabboHotel.Quests;
 using Oblivion.HabboHotel.RoomBots;
 using Oblivion.Messages.Enums;
 using Oblivion.Messages.Parsers;
+using Oblivion.Util;
 
 namespace Oblivion.Messages.Handlers
 {
@@ -1080,7 +1081,9 @@ namespace Oblivion.Messages.Handlers
             var room =
                 Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             if (room == null || !room.CanTradeInRoom)
+            {
                 return;
+            }
             var userTrade = room.GetUserTrade(Session.GetHabbo().Id);
             userTrade?.CompleteTrade(Session.GetHabbo().Id);
         }

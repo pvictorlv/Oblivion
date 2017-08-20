@@ -7,9 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Web.Script.Serialization;
+using System.Web;
 using Oblivion.Configuration;
-using Oblivion.Connection;
 using Oblivion.HabboHotel.Catalogs;
 using Oblivion.HabboHotel.Catalogs.Composers;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -1561,14 +1560,14 @@ namespace Oblivion.Messages.Handlers
                 if (heightMap.Last() == Convert.ToChar(13))
                     heightMap = heightMap.Remove(heightMap.Length - 1);
 
-                if (heightMap.Length > 1800)
+                if (heightMap.Length > 14400)
                 {
                     var message = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
                     message.AppendString("floorplan_editor.error");
                     message.AppendInteger(1);
                     message.AppendString("errors");
                     message.AppendString(
-                        "(general): too large height (max 64 tiles)\r(general): too large area (max 1800 tiles)");
+                        "(general): too large height (max 128 tiles)\r(general): too large area (max 1800 tiles)");
                     Session.SendMessage(message);
 
                     return;
@@ -1627,7 +1626,7 @@ namespace Oblivion.Messages.Handlers
 
                     queryReactor.RunFastQuery(
                         $"UPDATE rooms_data SET model_name = 'custom', wallthick = '{wallThickness}', floorthick = '{floorThickness}', walls_height = '{wallHeight}' WHERE id = {room.RoomId};");
-                    var roomModel = new RoomModel(doorX, doorY, doorZ, doorOrientation, heightMap, "", false, "");
+//                    var roomModel = new RoomModel(doorX, doorY, doorZ, doorOrientation, heightMap, "", false, "");
 //                    Oblivion.GetGame().GetRoomManager().UpdateCustomModel(room.RoomId, roomModel);
                     room.ResetGameMap("custom", wallHeight, wallThickness, floorThickness);
                     Oblivion.GetGame().GetRoomManager().UnloadRoom(room, "Reload floor");
@@ -2378,7 +2377,8 @@ namespace Oblivion.Messages.Handlers
 
             msg = currentRoom.WordFilter.Aggregate(msg,
                 (current1, current) => Regex.Replace(current1, current, "bobba", RegexOptions.IgnoreCase));
-
+            msg =
+                HttpUtility.HtmlEncode(msg);
             BlackWord word;
 
             if (BlackWordsManager.Check(msg, BlackWordType.Hotel, out word))
@@ -2413,7 +2413,7 @@ namespace Oblivion.Messages.Handlers
             if (Session.GetHabbo().Rank < 4 && currentRoom.CheckMute(Session))
                 return;
 
-            currentRoom.AddChatlog(Session.GetHabbo().Id, $"<fluister naar {text2}>: {msg}", false);
+            currentRoom.AddChatlog(Session.GetHabbo().Id, $"<Sussurro para {text2}>: {msg}", false);
 
             Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.SocialChat);
 

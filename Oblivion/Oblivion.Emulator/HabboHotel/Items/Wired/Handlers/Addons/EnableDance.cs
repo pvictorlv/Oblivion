@@ -4,19 +4,21 @@ using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.User;
+using Oblivion.Messages;
+using Oblivion.Messages.Parsers;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
 {
-    public class EffectUser : IWiredItem
+    public class EnableDance : IWiredItem
     {
-        public EffectUser(RoomItem item, Room room)
+        public EnableDance(RoomItem item, Room room)
         {
             Item = item;
             Room = room;
             Items = new List<RoomItem>();
         }
 
-        public Interaction Type => Interaction.ActionEffectUser;
+        public Interaction Type => Interaction.ActionEnableDance;
 
         public RoomItem Item { get; set; }
 
@@ -41,14 +43,22 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
 
             var roomUser = (RoomUser)stuff[0];
 
-                int effectId;
+            int danceId;
 
-                if (int.TryParse(OtherString, out effectId))
-                {
-                    if (roomUser != null && !string.IsNullOrEmpty(OtherString))
-                        roomUser.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(effectId);
-                    return true;
-                }
+            if (int.TryParse(OtherString, out danceId))
+            {
+                if (danceId > 4)
+                    danceId = 4;
+
+                var message = new ServerMessage();
+                message.Init(LibraryParser.OutgoingRequest("DanceStatusMessageComposer"));
+                message.AppendInteger(roomUser.GetClient().CurrentRoomUserId);
+                message.AppendInteger(danceId);
+                roomUser.GetClient().GetHabbo().CurrentRoom.SendMessage(message);
+                roomUser.DanceId = danceId;
+
+                return true;
+            }
 
             return false;
         }

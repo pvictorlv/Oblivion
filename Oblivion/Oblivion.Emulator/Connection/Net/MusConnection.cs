@@ -63,7 +63,7 @@ namespace Oblivion.Connection.Net
                     case "ha":
                         var HotelAlert =
                             new ServerMessage(LibraryParser.OutgoingRequest("BroadcastNotifMessageComposer"));
-                        HotelAlert.AppendString(string.Format("{0}\r\n- {1}", param, "Hotel Management"));
+                        HotelAlert.AppendString($"{param}\r\n- {"Hotel Management"}");
                         Oblivion.GetGame().GetClientManager().QueueBroadcaseMessage(HotelAlert);
                         break;
 
@@ -136,9 +136,8 @@ namespace Oblivion.Connection.Net
                         if (clientByUserId.GetHabbo().InRoom)
                         {
                             var room = clientByUserId.GetHabbo().CurrentRoom;
-                            if (room == null) return;
 
-                            var user = room.GetRoomUserManager().GetRoomUserByHabbo(clientByUserId.GetHabbo().Id);
+                            var user = room?.GetRoomUserManager().GetRoomUserByHabbo(clientByUserId.GetHabbo().Id);
                             if (user == null) return;
 
                             var message =
@@ -182,12 +181,44 @@ namespace Oblivion.Connection.Net
                         userId = Convert.ToUInt32(param[0]);
 
                         clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
-                        if (clientByUserId == null || clientByUserId.GetHabbo() == null) return;
+                        if (clientByUserId?.GetHabbo() == null) return;
                         clientByUserId.GetHabbo().GetSubscriptionManager().ReloadSubscription();
                         clientByUserId.GetHabbo().SerializeClub();
                         break;
+                    case "reload_bans":
+                        
+                        break;
                     default:
                         return;
+                    case "goto":
+                    {
+                        var muserId = Convert.ToUInt32(Params[0]);
+                        var roomStr = Params[1];
+
+                        clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(muserId);
+                        if (clientByUserId?.GetHabbo() == null)
+                            break;
+
+                        if (!uint.TryParse(Params[1], out uint roomId))
+                            break;
+
+                        if (roomId == clientByUserId.GetHabbo().CurrentRoomId)
+                            break;
+
+                        var room = Oblivion.GetGame().GetRoomManager().LoadRoom(roomId);
+                        if (room == null)
+                        {
+                            clientByUserId.SendNotif("Failed to find the requested room!");
+                        }
+                        else
+                        {
+                            var roomFwd =
+                                new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
+                            roomFwd.AppendInteger(clientByUserId.GetHabbo().CurrentRoom.RoomId);
+                            clientByUserId.SendMessage(roomFwd);
+                        }
+                    }
+                        break;
                 }
                 Out.WriteLine("Parsed " + header + " MUS command");
             }

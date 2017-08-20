@@ -181,10 +181,14 @@
     <Compile Include="HabboHotel\Camera\CameraPhotoManager.cs" />
     <Compile Include="HabboHotel\Camera\CameraPhotoPreview.cs" />
     <Compile Include="HabboHotel\Catalogs\Composers\TargetedOfferComposer.cs" />
+    <Compile Include="HabboHotel\Catalogs\Marketplace\MarketOffer.cs" />
+    <Compile Include="HabboHotel\Catalogs\Marketplace\MarketplaceManager.cs" />
     <Compile Include="HabboHotel\Catalogs\TargetedOfferManager.cs" />
     <Compile Include="HabboHotel\Catalogs\Interfaces\TargetedOffer.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\BlockCommand.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\BuyRoom.cs" />
+    <Compile Include="HabboHotel\Commands\Controllers\DisableGroupChat.cs" />
+    <Compile Include="HabboHotel\Commands\Controllers\DisableGroupMessage.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\Multiply.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\SellRoom.cs" />
     <Compile Include="HabboHotel\Commands\Interfaces\Command.cs" />
@@ -280,9 +284,11 @@
     <Compile Include="HabboHotel\Items\Datas\TonerData.cs" />
     <Compile Include="HabboHotel\Items\Interfaces\UserItem.cs" />
     <Compile Include="HabboHotel\Items\WallCoordinate.cs" />
+    <Compile Include="HabboHotel\Items\Wired\Handlers\Addons\EnableDance.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Addons\FreezeUser.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Addons\SpecialRandom.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Conditions\TimerTrigger.cs" />
+    <Compile Include="HabboHotel\Items\Wired\Handlers\Addons\GiveHandItem.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Effects\RollerSpeed.cs" />
     <Compile Include="HabboHotel\Misc\AntiMutant.cs" />
     <Compile Include="HabboHotel\Misc\CoinsManager.cs" />

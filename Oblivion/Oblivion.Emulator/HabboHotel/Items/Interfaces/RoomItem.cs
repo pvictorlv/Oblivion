@@ -14,7 +14,6 @@ using Oblivion.HabboHotel.Items.Wired.Handlers;
 using Oblivion.HabboHotel.Pathfinding;
 using Oblivion.HabboHotel.Pets;
 using Oblivion.HabboHotel.Rooms;
-using Oblivion.HabboHotel.Rooms.Items;
 using Oblivion.HabboHotel.Rooms.Items.Games.Teams.Enums;
 using Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze.Enum;
 using Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer.Enums;
@@ -754,16 +753,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// </summary>
         /// <param name="comparedItem">The compared item.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public bool Equals(RoomItem comparedItem)
-        {
-            return comparedItem.Id == Id;
-        }
-
-        internal event OnItemTrigger ItemTriggerEventHandler;
-
-        internal event UserWalksFurniDelegate OnUserWalksOffFurni;
-
-        internal event UserWalksFurniDelegate OnUserWalksOnFurni;
+        public bool Equals(RoomItem comparedItem) => comparedItem?.Id == Id;
+        
 
         internal void SetState(int x, int y, double z)
         {
@@ -793,7 +784,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="user">The user.</param>
         internal void OnTrigger(RoomUser user)
         {
-            ItemTriggerEventHandler?.Invoke(null, new ItemTriggeredArgs(user, this));
+//            ItemTriggerEventHandler?.Invoke(null, new ItemTriggeredArgs(user, this));
         }
 
         /// <summary>
@@ -803,9 +794,11 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         {
             _mRoom = null;
             AffectedTiles.Clear();
-            ItemTriggerEventHandler = null;
-            OnUserWalksOffFurni = null;
-            OnUserWalksOnFurni = null;
+            HighscoreData = null;
+            PetsList?.Clear();
+            PetsList = null;
+            WallCoord = null;
+
         }
 
         /// <summary>
@@ -1348,6 +1341,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                     case Interaction.ActionResetTimer:
                     case Interaction.ActionShowMessage:
                     case Interaction.ActionEffectUser:
+                    case Interaction.ActionHandItem:
                     case Interaction.ActionRollerSpeed:
                     case Interaction.ActionTeleportTo:
                     case Interaction.ActionToggleState:
@@ -1830,7 +1824,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="user">The user.</param>
         internal void UserWalksOnFurni(RoomUser user)
         {
-            OnUserWalksOnFurni?.Invoke(this, new UserWalksOnArgs(user));
+//            OnUserWalksOnFurni?.Invoke(this, new UserWalksOnArgs(user));
 
             GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerWalkOnFurni, user, this);
             user.LastItem = Id;
@@ -1842,7 +1836,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="user">The user.</param>
         internal void UserWalksOffFurni(RoomUser user)
         {
-            OnUserWalksOffFurni?.Invoke(this, new UserWalksOnArgs(user));
+//            OnUserWalksOffFurni?.Invoke(this, new UserWalksOnArgs(user));
 
             GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerWalkOffFurni, user, this);
         }

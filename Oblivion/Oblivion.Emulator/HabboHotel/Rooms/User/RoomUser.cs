@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using Oblivion.HabboHotel.Camera;
 using Oblivion.HabboHotel.Commands;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -718,8 +719,9 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
             }
 
-            if (msg.Length > 100) // si el mensaje es mayor que la máxima longitud (scripter)
+            if (msg.Length > 100) 
                 return;
+
             if (!BobbaFilter.CanTalk(session, msg))
                 return;
 
@@ -740,6 +742,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                     return;
                 }
             }
+
+           
 
             if (!IsBot && IsFlooded && FloodExpiryTime <= Oblivion.GetUnixTimeStamp())
                 IsFlooded = false;
@@ -771,6 +775,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                     .WordFilter
                     .Aggregate(msg,
                         (current1, current) => Regex.Replace(current1, current, "bobba", RegexOptions.IgnoreCase));
+                msg =
+                    HttpUtility.HtmlEncode(msg);
 
                 if (rank < 4)
                 {

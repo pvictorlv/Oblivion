@@ -744,7 +744,7 @@ namespace Oblivion.HabboHotel.Rooms
 //                    if (GotSoccer())
 //                        _soccer.OnCycle();
 
-                    if (GetRoomMusicController() != null)
+                    if (GotMusicController())
                         GetRoomMusicController().Update(this);
 
                     GetWiredHandler().OnCycle();

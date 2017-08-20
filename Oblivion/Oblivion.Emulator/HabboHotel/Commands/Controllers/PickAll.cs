@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
@@ -21,15 +22,17 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override bool Execute(GameClient session, string[] pms)
         {
-            var room = session.GetHabbo().CurrentRoom;
-            var roomItemList = room.GetRoomItemHandler().RemoveAllFurniture(session);
-            if (session.GetHabbo().GetInventoryComponent() == null)
+            Task.Factory.StartNew(() =>
             {
+                var room = session.GetHabbo().CurrentRoom;
+                var roomItemList = room.GetRoomItemHandler().RemoveAllFurniture(session);
+                if (session.GetHabbo().GetInventoryComponent() == null)
+                {
+                    return true;
+                }
+                room.GetRoomItemHandler().RemoveItemsByOwner(ref roomItemList, ref session);
                 return true;
-            }
-            // session.GetHabbo().GetInventoryComponent().AddItemArray(roomItemList);
-            //session.GetHabbo().GetInventoryComponent().UpdateItems(false);
-            room.GetRoomItemHandler().RemoveItemsByOwner(ref roomItemList, ref session);
+            });
             return true;
         }
     }

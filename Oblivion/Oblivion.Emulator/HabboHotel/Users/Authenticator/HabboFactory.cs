@@ -23,7 +23,6 @@ namespace Oblivion.HabboHotel.Users.Authenticator
         {
             var id = uint.Parse(dRow["id"].ToString());
             var userName = (string)dRow["username"];
-            var realName = (string)dRow["real_name"];
             var ras = uint.Parse(dRow["rank"].ToString());
             var motto = (string)dRow["motto"];
             var look = (string)dRow["look"];
@@ -71,8 +70,8 @@ namespace Oblivion.HabboHotel.Users.Authenticator
 
             /* guides */
             var onDuty = Convert.ToBoolean(dRow["OnDuty"]);
-            var DutyLevel = uint.Parse(dRow["DutyLevel"].ToString());
-
+            var dutyLevel = uint.Parse(dRow["DutyLevel"].ToString());
+            var disableAlert = Oblivion.EnumToBool(dRow["disabled_alert"].ToString());
             var navilogs = new Dictionary<int, NaviLogs>();
             var navilogstring = (string)dRow["navilogs"];
             if (navilogstring.Length > 0)
@@ -87,11 +86,11 @@ namespace Oblivion.HabboHotel.Users.Authenticator
                             .Where(naviLogs => !navilogs.ContainsKey(naviLogs.Id)))
                     navilogs.Add(naviLogs.Id, naviLogs);
 
-            return new Habbo(id, userName, realName, ras, motto, look, gender, credits, activityPoints, muted, homeRoom, respect, dailyRespectPoints, dailyPetRespectPoints,
+            return new Habbo(id, userName, ras, motto, look, gender, credits, activityPoints, muted, homeRoom, respect, dailyRespectPoints, dailyPetRespectPoints,
                 hasFriendRequestsDisabled, currentQuestId, achievementPoints,
                 lastOnline, appearOffline, hideInRoom, vip, createDate, citizenship, diamonds, group, favId,
                 lastChange, tradeLocked, tradeLockExpire, nuxPassed, buildersExpire, buildersItemsMax,
-                buildersItemsUsed, onDuty, navilogs, dailyCompetitionVotes, DutyLevel);
+                buildersItemsUsed, onDuty, navilogs, dailyCompetitionVotes, dutyLevel, disableAlert);
         }
     }
 }

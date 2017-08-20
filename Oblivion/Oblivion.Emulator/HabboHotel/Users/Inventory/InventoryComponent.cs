@@ -604,7 +604,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             foreach (var userItem in _floorItems.ToList())
             {
-                if (inc == 2800)
+                if (inc == 3500)
                     return serverMessage;
 
                 inc++;
@@ -614,7 +614,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             foreach (var userItem in _wallItems.Values.OfType<UserItem>().ToList())
             {
-                if (inc == 2800)
+                if (inc == 3500)
                     return serverMessage;
 
                 inc++;
@@ -624,7 +624,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             foreach (UserItem userItem in SongDisks.Values)
             {
-                if (inc == 2800)
+                if (inc == 3500)
                     return serverMessage;
 
                 inc++;

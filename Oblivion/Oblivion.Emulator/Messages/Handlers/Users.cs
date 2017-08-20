@@ -700,7 +700,7 @@ namespace Oblivion.Messages.Handlers
             }
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery("SELECT username FROM users WHERE Username=@name LIMIT 1");
+                queryReactor.SetQuery("SELECT username FROM users WHERE username=@name LIMIT 1");
                 queryReactor.AddParameter("name", text);
                 var @string = queryReactor.GetString();
                 var array = text.ToLower().ToCharArray();

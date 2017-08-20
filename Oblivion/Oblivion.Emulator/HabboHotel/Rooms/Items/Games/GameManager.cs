@@ -37,12 +37,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             get { return TeamPoints; }
             set { TeamPoints = value; }
         }
-
-        internal event TeamScoreChangedDelegate OnScoreChanged;
-
-        internal event RoomEventDelegate OnGameStart;
-
-        internal event RoomEventDelegate OnGameEnd;
+        
 
         internal void OnCycle()
         {
@@ -98,7 +93,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             if (num < 0) num = 0;
 
             TeamPoints[(int) team] = num;
-            OnScoreChanged?.Invoke(null, new TeamScoreChangedArgs(num, team, user));
+//            OnScoreChanged?.Invoke(null, new TeamScoreChangedArgs(num, team, user));
             foreach (
                 var current in
                     GetFurniItems(team).Values.Where(current => !IsSoccerGoal(current.GetBaseItem().InteractionType)))
@@ -273,12 +268,10 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             var score = GetScoreForTeam(team);
             foreach (var winner in winners) item.HighscoreData.AddUserScore(item, winner.GetUserName(), score);
             item.UpdateState(false, true);
-            OnGameEnd?.Invoke(null, null);
         }
 
         internal void StartGame()
         {
-            OnGameStart?.Invoke(null, null);
             GetRoom().GetWiredHandler().ResetExtraString(Interaction.ActionGiveScore);
         }
 
@@ -295,9 +288,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             _greenTeamItems.Destroy();
             _yellowTeamItems.Destroy();
             TeamPoints = null;
-            OnScoreChanged = null;
-            OnGameStart = null;
-            OnGameEnd = null;
             _redTeamItems = null;
             _blueTeamItems = null;
             _greenTeamItems = null;

@@ -181,6 +181,8 @@ namespace Oblivion.HabboHotel.Items.Interactions
                             case Interaction.ActionResetTimer:
                             case Interaction.ActionShowMessage:
                             case Interaction.ActionEffectUser:
+                            case Interaction.ActionEnableDance:
+                            case Interaction.ActionHandItem:
                             case Interaction.ActionFreezeUser:
                             case Interaction.ActionTeleportTo:
                             case Interaction.ActionToggleState:
@@ -607,6 +609,9 @@ namespace Oblivion.HabboHotel.Items.Interactions
                 case "actioneffectuser":
                 case "action_effect_user":
                     return Interaction.ActionEffectUser;
+
+                case "actionenabledance":
+                    return Interaction.ActionEnableDance;
 
                 case "actionfreezeuser":
                     return Interaction.ActionFreezeUser;

@@ -1002,6 +1002,7 @@ namespace Oblivion.Messages.Parsers
         {
             handler.GetInventory();
         }
+
         /// <summary>
         /// Gets the inventory.
         /// </summary>
@@ -1010,6 +1011,7 @@ namespace Oblivion.Messages.Parsers
         {
             handler.GetInventory();
         }
+
         /// <summary>
         /// Get maketplace config.
         /// </summary>
@@ -1017,6 +1019,15 @@ namespace Oblivion.Messages.Parsers
         internal static void MarketPlaceConfiguration(GameClientMessageHandler handler)
         {
             handler.MarketPlaceConfiguration();
+        }
+
+        /// <summary>
+        /// Check if user can make offer
+        /// </summary>
+        /// <param name="handler">The handler.</param>
+        internal static void CanMakeOffer(GameClientMessageHandler handler)
+        {
+            handler.CanMakeOffer();
         }
 
         /// <summary>
@@ -1495,6 +1506,7 @@ namespace Oblivion.Messages.Parsers
         {
             handler.OfferTradeItem();
         }
+
         /// <summary>
         /// Offers a specific amount of items.
         /// </summary>
@@ -2522,6 +2534,15 @@ namespace Oblivion.Messages.Parsers
         }
 
         /// <summary>
+        /// get marketplace offers
+        /// </summary>
+        /// <param name="handler"></param>
+        internal static void GetOffers(GameClientMessageHandler handler)
+        {
+            handler.GetOffers();
+        }
+
+        /// <summary>
         /// Checks the name of the pet.
         /// </summary>
         /// <param name="handler">The handler.</param>
@@ -2690,6 +2711,23 @@ namespace Oblivion.Messages.Parsers
         internal static void GameCenterLoadGame(GameClientMessageHandler handler)
         {
             handler.GameCenterLoadGame();
+        }
+
+        /// <summary>
+        /// Get game lists
+        /// </summary>
+        /// <param name="handler">The handler.</param>
+        internal static void GetGameListing(GameClientMessageHandler handler)
+        {
+            handler.GetGameListing();
+        }
+        /// <summary>
+        /// Init the game center
+        /// </summary>
+        /// <param name="handler">The handler.</param>
+        internal static void InitializeGameCenter(GameClientMessageHandler handler)
+        {
+            handler.InitializeGameCenter();
         }
 
         /// <summary>

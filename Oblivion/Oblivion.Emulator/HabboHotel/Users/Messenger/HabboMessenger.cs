@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Oblivion.HabboHotel.GameClients.Interfaces;
+using Oblivion.HabboHotel.Groups.Interfaces;
 using Oblivion.HabboHotel.Quests;
-using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
 using Oblivion.Security.BlackWords;
 using Oblivion.Security.BlackWords.Enums;
 using Oblivion.Security.BlackWords.Structs;
+using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Users.Messenger
 {
@@ -88,8 +89,8 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             foreach (
                 var current in
-                    clientsById.Where(current => current.GetHabbo() != null && current.GetHabbo().GetMessenger() != null)
-                )
+                clientsById.Where(current => current.GetHabbo() != null && current.GetHabbo().GetMessenger() != null)
+            )
                 current.GetHabbo().GetMessenger().UpdateFriend(_userId, null, true);
 
             Friends.Clear();
@@ -114,8 +115,8 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             foreach (
                 var current in
-                    clientsById.Where(
-                        current => current?.GetHabbo() != null && current.GetHabbo().GetMessenger() != null))
+                clientsById.Where(
+                    current => current?.GetHabbo() != null && current.GetHabbo().GetMessenger() != null))
             {
                 var user = current.GetHabbo();
                 var messenger = user?.GetMessenger();
@@ -324,7 +325,25 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 .GetMessageHandler()
                 .GetResponse()
                 .Init(LibraryParser.OutgoingRequest("FriendUpdateMessageComposer"));
-            GetClient().GetMessageHandler().GetResponse().AppendInteger(0);
+            GetClient().GetMessageHandler().GetResponse().AppendInteger(0); //count
+            GetClient().GetMessageHandler().GetResponse().AppendInteger(1);
+            GetClient().GetMessageHandler().GetResponse().AppendInteger(-1);
+            GetClient().GetMessageHandler().GetResponse().AppendInteger(friend);
+            GetClient().GetMessageHandler().SendResponse();
+        }
+        /// <summary>
+        ///     Called when [destroy friendship].
+        /// </summary>
+        /// <param name="friend">The friend.</param>
+        internal void OnDestroyFriendship(int friend)
+        {
+            GetClient()
+                .GetMessageHandler()
+                .GetResponse()
+                .Init(LibraryParser.OutgoingRequest("FriendUpdateMessageComposer"));
+            GetClient().GetMessageHandler().GetResponse().AppendInteger(1); //count
+            GetClient().GetMessageHandler().GetResponse().AppendInteger(2); //id
+            GetClient().GetMessageHandler().GetResponse().AppendString("Grupos"); //id
             GetClient().GetMessageHandler().GetResponse().AppendInteger(1);
             GetClient().GetMessageHandler().GetResponse().AppendInteger(-1);
             GetClient().GetMessageHandler().GetResponse().AppendInteger(friend);
@@ -425,6 +444,42 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="toId">To identifier.</param>
         /// <param name="message">The message.</param>
+        internal void SendInstantMessage(Guild gp, string message)
+        {
+            BlackWord word;
+
+            if (BlackWordsManager.Check(message, BlackWordType.Hotel, out word))
+            {
+                var settings = word.TypeSettings;
+                if (settings.ShowMessage)
+                {
+                    GetClient()
+                        .SendModeratorMessage("A mensagem contém a palavra: " + word.Word +
+                                              " que não é permitida, você poderá ser banido!");
+                    return;
+                }
+            }
+
+            if (!gp.Members.ContainsKey(GetClient().GetHabbo().Id))
+            {
+                DeliverInstantMessageError(6, gp.Id);
+                return;
+            }
+
+            var sender = GetClient().GetHabbo();
+
+            foreach (var client in from usr in gp.Members.Values let client = Oblivion.GetGame().GetClientManager().GetClientByUserId(usr.Id) where client?.GetHabbo()?.GetMessenger() != null && client.GetHabbo().Id != sender.Id && usr.HasChat select client)
+            {
+                client.GetHabbo().GetMessenger()
+                    .DeliverInstantMessage((int) gp.Id, message, (int) sender.Id, sender.UserName, sender.Look);
+            }
+        }
+
+        /// <summary>
+        ///     Sends the instant message.
+        /// </summary>
+        /// <param name="toId">To identifier.</param>
+        /// <param name="message">The message.</param>
         internal void SendInstantMessage(uint toId, string message)
         {
             BlackWord word;
@@ -448,51 +503,39 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 DeliverInstantMessageError(6, toId);
                 return;
             }
-
-            if (toId == 0) // Staff Chat
+            var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(toId);
+            if (clientByUserId?.GetHabbo().GetMessenger() == null)
             {
-                var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleChatMessageComposer"));
-                serverMessage.AppendInteger(0); //userid
-                serverMessage.AppendString(GetClient().GetHabbo().UserName + " : " + message);
-                serverMessage.AppendInteger(0);
-                Oblivion.GetGame().GetClientManager().StaffAlert(serverMessage, GetClient().GetHabbo().Id);
-            }
-            else
-            {
-                var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(toId);
-                if (clientByUserId == null || clientByUserId.GetHabbo().GetMessenger() == null)
+                if (Oblivion.OfflineMessages.ContainsKey(toId))
                 {
-                    if (Oblivion.OfflineMessages.ContainsKey(toId))
-                    {
-                        Oblivion.OfflineMessages[toId].Add(new OfflineMessage(GetClient().GetHabbo().Id, message,
-                            Oblivion.GetUnixTimeStamp()));
-                    }
-                    else
-                    {
-                        Oblivion.OfflineMessages.Add(toId, new List<OfflineMessage>());
-                        Oblivion.OfflineMessages[toId].Add(new OfflineMessage(GetClient().GetHabbo().Id, message,
-                            Oblivion.GetUnixTimeStamp()));
-                    }
-
-                    OfflineMessage.SaveMessage(Oblivion.GetDatabaseManager().GetQueryReactor(), toId,
-                        GetClient().GetHabbo().Id, message);
-
-                    return;
+                    Oblivion.OfflineMessages[toId].Add(new OfflineMessage(GetClient().GetHabbo().Id, message,
+                        Oblivion.GetUnixTimeStamp()));
+                }
+                else
+                {
+                    Oblivion.OfflineMessages.Add(toId, new List<OfflineMessage>());
+                    Oblivion.OfflineMessages[toId].Add(new OfflineMessage(GetClient().GetHabbo().Id, message,
+                        Oblivion.GetUnixTimeStamp()));
                 }
 
-                if (GetClient().GetHabbo().Muted)
-                {
-                    DeliverInstantMessageError(4, toId);
-                    return;
-                }
+                OfflineMessage.SaveMessage(Oblivion.GetDatabaseManager().GetQueryReactor(), toId,
+                    GetClient().GetHabbo().Id, message);
 
-                if (clientByUserId.GetHabbo().Muted) DeliverInstantMessageError(3, toId);
-
-                if (message == "")
-                    return;
-
-                clientByUserId.GetHabbo().GetMessenger().DeliverInstantMessage(message, _userId);
+                return;
             }
+
+            if (GetClient().GetHabbo().Muted)
+            {
+                DeliverInstantMessageError(4, toId);
+                return;
+            }
+
+            if (clientByUserId.GetHabbo().Muted) DeliverInstantMessageError(3, toId);
+
+            if (message == "")
+                return;
+
+            clientByUserId.GetHabbo().GetMessenger().DeliverInstantMessage(message, _userId);
         }
 
         /// <summary>
@@ -506,6 +549,22 @@ namespace Oblivion.HabboHotel.Users.Messenger
             serverMessage.AppendInteger(convoId);
             serverMessage.AppendString(message);
             serverMessage.AppendInteger(0);
+            GetClient().SendMessage(serverMessage);
+        }
+
+        /// <summary>
+        ///     Delivers the instant message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="GroupId">the group id.</param>
+        internal void DeliverInstantMessage(int GroupId, string message, int UserId, string Username,
+            string figure)
+        {
+            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleChatMessageComposer"));
+            serverMessage.AppendInteger(-GroupId);
+            serverMessage.AppendString(message);
+            serverMessage.AppendInteger(0);
+            serverMessage.AppendString(Username + "/" + figure + "/" + UserId);
             GetClient().SendMessage(serverMessage);
         }
 
@@ -533,7 +592,9 @@ namespace Oblivion.HabboHotel.Users.Messenger
             serverMessage.AppendInteger(1100);
             serverMessage.AppendInteger(300);
             serverMessage.AppendInteger(800);
-            serverMessage.AppendInteger(0);
+            serverMessage.AppendInteger(1);
+            serverMessage.AppendInteger(2);
+            serverMessage.AppendString("Grupos");
             return serverMessage;
         }
 
@@ -546,9 +607,12 @@ namespace Oblivion.HabboHotel.Users.Messenger
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("LoadFriendsMessageComposer"));
             serverMessage.AppendInteger(1);
             serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(Friends.Count);
 
             var client = GetClient();
+            var groups = Oblivion.GetGame().GetGroupManager().Groups.Values
+                .Where(x => x.Members.ContainsKey(client.GetHabbo().Id) && x.HasChat).ToList();
+
+            serverMessage.AppendInteger(Friends.Count + groups.Count);
 
             foreach (var current in Friends.Values)
             {
@@ -556,6 +620,23 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 current.Serialize(serverMessage, client);
             }
 
+            foreach (var group in groups)
+            {
+                serverMessage.AppendInteger(-Convert.ToInt32(group.Id));
+                serverMessage.AppendString(group.Name);
+                serverMessage.AppendInteger(0);
+                serverMessage.AppendBool(group.HasChat);
+                serverMessage.AppendBool(false);
+                serverMessage.AppendString(group.Badge);
+                serverMessage.AppendInteger(2);
+                serverMessage.AppendString(group.Description);
+                serverMessage.AppendString("");
+                serverMessage.AppendString("");
+                serverMessage.AppendBool(false);
+                serverMessage.AppendBool(false);
+                serverMessage.AppendBool(false);
+                serverMessage.AppendShort(0);
+            }
             return serverMessage;
         }
 
@@ -582,11 +663,42 @@ namespace Oblivion.HabboHotel.Users.Messenger
         internal ServerMessage SerializeUpdate(MessengerBuddy friend)
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FriendUpdateMessageComposer"));
-            serverMessage.AppendInteger(0);
+            serverMessage.AppendInteger(1);
+            serverMessage.AppendInteger(2);
+            serverMessage.AppendString("Grupos");
             serverMessage.AppendInteger(1);
             serverMessage.AppendInteger(0);
             friend.Serialize(serverMessage, GetClient());
+            return serverMessage;
+        }
+
+        /// <summary>
+        ///     Serializes the update.
+        /// </summary>
+        /// <param name="group">The group.</param>
+        /// <returns>ServerMessage.</returns>
+        internal ServerMessage SerializeUpdate(Guild group, bool flag = true)
+        {
+            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FriendUpdateMessageComposer"));
+            serverMessage.AppendInteger(1);
+            serverMessage.AppendInteger(2);
+            serverMessage.AppendString("Grupos");
+            serverMessage.AppendInteger(1);
+            serverMessage.AppendInteger(0);
+            serverMessage.AppendInteger(group.Id);
+            serverMessage.AppendString(group.Name);
+            serverMessage.AppendInteger(1);
+            serverMessage.AppendBool(flag);
             serverMessage.AppendBool(false);
+            serverMessage.AppendString(string.Empty);
+            serverMessage.AppendInteger(2); //category
+            serverMessage.AppendString(group.Name);
+            serverMessage.AppendString(string.Empty);
+            serverMessage.AppendString(string.Empty);
+            serverMessage.AppendBool(false);
+            serverMessage.AppendBool(false);
+            serverMessage.AppendBool(false);
+            serverMessage.AppendShort(0);
             return serverMessage;
         }
 
@@ -657,7 +769,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             foreach (
                 var current in
-                    from p in Friends.Values where p != null && p.InRoom && p.CurrentRoom?.RoomData != null select p)
+                from p in Friends.Values where p != null && p.InRoom && p.CurrentRoom?.RoomData != null select p)
                 toReturn.Add(current.CurrentRoom.RoomData);
 
             return toReturn;

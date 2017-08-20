@@ -121,6 +121,14 @@ namespace Oblivion.HabboHotel.Groups.Interfaces
         /// </summary>
         internal uint State;
 
+        /// <summary>
+        ///  Has chat or not
+        /// </summary>
+        internal bool HasChat;
+
+        /// <summary>
+        /// forum permissions
+        /// </summary>
         internal int WhoCanRead, WhoCanPost, WhoCanThread, WhoCanMod;
 
         /// <summary>
@@ -157,7 +165,7 @@ namespace Oblivion.HabboHotel.Groups.Interfaces
             Dictionary<uint, GroupMember> admins, uint state, uint adminOnlyDeco, bool hasForum, string forumName,
             string forumDescription, uint forumMessagesCount, double forumScore, uint forumLastPosterId,
             string forumLastPosterName, int forumLastPosterTimestamp,
-            int whoCanRead, int whoCanPost, int whoCanThread, int whoCanMod)
+            int whoCanRead, int whoCanPost, int whoCanThread, int whoCanMod, bool hasChat)
         {
             Id = id;
             Name = name;
@@ -185,6 +193,7 @@ namespace Oblivion.HabboHotel.Groups.Interfaces
             WhoCanPost = whoCanPost;
             WhoCanThread = whoCanThread;
             WhoCanMod = whoCanMod;
+            HasChat = hasChat;
         }
 
         /// <summary>

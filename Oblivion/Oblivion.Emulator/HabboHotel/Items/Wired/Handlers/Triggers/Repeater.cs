@@ -36,6 +36,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public bool OnCycle()
         {
+//            Out.WriteLine("cycled");
             var num = Oblivion.Now();
 
             if (_mNext > num)
@@ -43,13 +44,26 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
+            var avatars = Room.GetRoomUserManager().GetRoomUsers();
+            var success = false;
 
             if (conditions.Any())
             {
                 foreach (var current in conditions)
                 {
-                    if (!current.Execute(null))
+                    foreach (var avatar in avatars)
+                    {
+                        if (avatar?.GetClient() == null || avatar.GetClient().GetHabbo() == null ||
+                            !current.Execute(avatar.GetClient().GetHabbo()))
+                            continue;
+
+                        success = true;
+                    }
+
+                    if (!success)
                         return false;
+
+                    success = false;
 
                     WiredHandler.OnEvent(current);
                 }

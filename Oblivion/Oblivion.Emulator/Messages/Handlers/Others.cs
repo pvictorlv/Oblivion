@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Data;
 using System.Globalization;
 using System.Linq;
 using Oblivion.Configuration;
-using Oblivion.Connection;
 using Oblivion.HabboHotel.GameClients.Interfaces;
-using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Quests.Composer;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.Messages.Parsers;
@@ -13,32 +10,32 @@ using Oblivion.Messages.Parsers;
 namespace Oblivion.Messages.Handlers
 {
     /// <summary>
-    /// Class GameClientMessageHandler.
+    ///     Class GameClientMessageHandler.
     /// </summary>
-    partial class GameClientMessageHandler
+    internal partial class GameClientMessageHandler
     {
         /// <summary>
-        /// The current loading room
+        ///     The current loading room
         /// </summary>
         internal Room CurrentLoadingRoom;
 
         /// <summary>
-        /// The session
-        /// </summary>
-        protected GameClient Session;
-
-        /// <summary>
-        /// The request
+        ///     The request
         /// </summary>
         protected ClientMessage Request;
 
         /// <summary>
-        /// The response
+        ///     The response
         /// </summary>
         protected ServerMessage Response;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GameClientMessageHandler"/> class.
+        ///     The session
+        /// </summary>
+        protected GameClient Session;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="GameClientMessageHandler" /> class.
         /// </summary>
         /// <param name="session">The session.</param>
         internal GameClientMessageHandler(GameClient session)
@@ -48,25 +45,19 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Gets the session.
+        ///     Gets the session.
         /// </summary>
         /// <returns>GameClient.</returns>
-        internal GameClient GetSession()
-        {
-            return Session;
-        }
+        internal GameClient GetSession() => Session;
 
         /// <summary>
-        /// Gets the response.
+        ///     Gets the response.
         /// </summary>
         /// <returns>ServerMessage.</returns>
-        internal ServerMessage GetResponse()
-        {
-            return Response;
-        }
+        internal ServerMessage GetResponse() => Response;
 
         /// <summary>
-        /// Destroys this instance.
+        ///     Destroys this instance.
         /// </summary>
         internal void Destroy()
         {
@@ -74,7 +65,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Handles the request.
+        ///     Handles the request.
         /// </summary>
         /// <param name="request">The request.</param>
         internal void HandleRequest(ClientMessage request)
@@ -84,7 +75,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Sends the response.
+        ///     Sends the response.
         /// </summary>
         internal void SendResponse()
         {
@@ -93,7 +84,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Adds the staff pick.
+        ///     Adds the staff pick.
         /// </summary>
         internal void AddStaffPick()
         {
@@ -101,7 +92,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Gets the client version message event.
+        ///     Gets the client version message event.
         /// </summary>
         internal void GetClientVersionMessageEvent()
         {
@@ -117,11 +108,13 @@ namespace Oblivion.Messages.Handlers
                 Console.WriteLine("[Handled] Release Id: RELEASE63-201411201226-580134750");
             }
             else
+            {
                 LibraryParser.ReleaseName = "Undefined Release";
+            }
         }
 
         /// <summary>
-        /// Pongs this instance.
+        ///     Pongs this instance.
         /// </summary>
         internal void Pong()
         {
@@ -129,7 +122,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Disconnects the event.
+        ///     Disconnects the event.
         /// </summary>
         internal void DisconnectEvent()
         {
@@ -137,7 +130,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Latencies the test.
+        ///     Latencies the test.
         /// </summary>
         internal void LatencyTest()
         {
@@ -154,14 +147,14 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Fuckyous this instance.
+        ///     Fuckyous this instance.
         /// </summary>
         internal void Fuckyou()
         {
         }
 
         /// <summary>
-        /// Initializes the crypto.
+        ///     Initializes the crypto.
         /// </summary>
         internal void InitCrypto()
         {
@@ -173,7 +166,7 @@ namespace Oblivion.Messages.Handlers
 
 
         /// <summary>
-        /// Secrets the key.
+        ///     Secrets the key.
         /// </summary>
         internal void SecretKey()
         {
@@ -189,10 +182,10 @@ namespace Oblivion.Messages.Handlers
         internal void InitConsole()
         {
             Session.GetHabbo().InitMessenger();
-
         }
+
         /// <summary>
-        /// Machines the identifier.
+        ///     Machines the identifier.
         /// </summary>
         internal void MachineId()
         {
@@ -206,7 +199,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Logins the with ticket.
+        ///     Logins the with ticket.
         /// </summary>
         internal void LoginWithTicket()
         {
@@ -215,9 +208,7 @@ namespace Oblivion.Messages.Handlers
 
             var sso = Request.GetString();
             if (string.IsNullOrEmpty(sso) || string.IsNullOrWhiteSpace(sso) || sso.Length < 5)
-            {
                 Session.Disconnect("Invalid sso");
-            }
             if (Session.TryLogin(sso) == false)
                 Session.Disconnect("banned");
 
@@ -226,11 +217,11 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Informations the retrieve.
+        ///     Informations the retrieve.
         /// </summary>
         internal void InfoRetrieve()
         {
-            if (Session == null || Session.GetHabbo() == null)
+            if (Session?.GetHabbo() == null)
                 return;
             var habbo = Session.GetHabbo();
             Response.Init(LibraryParser.OutgoingRequest("UserObjectMessageComposer"));
@@ -255,8 +246,8 @@ namespace Oblivion.Messages.Handlers
             Response.AppendInteger(2);
             SendResponse();
             var tradeLocked = Session.GetHabbo().CheckTrading();
-            var canUseFloorEditor = (ExtraSettings.EveryoneUseFloor || Session.GetHabbo().Vip ||
-                                     Session.GetHabbo().Rank >= 4);
+            var canUseFloorEditor = ExtraSettings.EveryoneUseFloor || Session.GetHabbo().Vip ||
+                                    Session.GetHabbo().Rank >= 4;
             Response.Init(LibraryParser.OutgoingRequest("SendPerkAllowancesMessageComposer"));
             Response.AppendInteger(11);
             Response.AppendString("BUILDER_AT_WORK");
@@ -266,14 +257,14 @@ namespace Oblivion.Messages.Handlers
             Response.AppendString("requirement.unfulfilled.helper_level_2");
             Response.AppendBool(false);
             Response.AppendString("USE_GUIDE_TOOL");
-            Response.AppendString((Session.GetHabbo().TalentStatus == "helper" &&
-                                   Session.GetHabbo().CurrentTalentLevel >= 4) ||
-                                  (Session.GetHabbo().Rank >= 4)
+            Response.AppendString(Session.GetHabbo().TalentStatus == "helper" &&
+                                  Session.GetHabbo().CurrentTalentLevel >= 4 ||
+                                  Session.GetHabbo().Rank >= 4
                 ? ""
                 : "requirement.unfulfilled.helper_level_4");
-            Response.AppendBool((Session.GetHabbo().TalentStatus == "helper" &&
-                                 Session.GetHabbo().CurrentTalentLevel >= 4) ||
-                                (Session.GetHabbo().Rank >= 4));
+            Response.AppendBool(Session.GetHabbo().TalentStatus == "helper" &&
+                                Session.GetHabbo().CurrentTalentLevel >= 4 ||
+                                Session.GetHabbo().Rank >= 4);
             Response.AppendString("JUDGE_CHAT_REVIEWS");
             Response.AppendString("requirement.unfulfilled.helper_level_6");
             Response.AppendBool(false);
@@ -308,15 +299,6 @@ namespace Oblivion.Messages.Handlers
             GetResponse().AppendInteger(4);
             SendResponse();
 
-            GetResponse().Init(LibraryParser.OutgoingRequest("GameCenterGamesListMessageComposer"));
-            GetResponse().AppendInteger(1);
-            GetResponse().AppendInteger(18);
-            GetResponse().AppendString("elisa_habbo_stories");
-            GetResponse().AppendString("000000");
-            GetResponse().AppendString("ffffff");
-            GetResponse().AppendString("");
-            GetResponse().AppendString("");
-            SendResponse();
             GetResponse().Init(LibraryParser.OutgoingRequest("AchievementPointsMessageComposer"));
             GetResponse().AppendInteger(Session.GetHabbo().AchievementPoints);
             SendResponse();
@@ -339,7 +321,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Habboes the camera.
+        ///     Habboes the camera.
         /// </summary>
         internal void HabboCamera()
         {
@@ -371,10 +353,11 @@ namespace Oblivion.Messages.Handlers
 
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                dbClient.RunFastQuery("UPDATE `camera_photos` SET `file_state` = 'purchased' WHERE `id` = '" + preview.Id +
-                                  "' LIMIT 1");
+                dbClient.RunFastQuery("UPDATE `camera_photos` SET `file_state` = 'purchased' WHERE `id` = '" +
+                                      preview.Id +
+                                      "' LIMIT 1");
             }
-            
+
             var data = "{\"w\":\"" +
                        Oblivion.EscapeJSONString(
                            Oblivion.GetGame()
@@ -396,7 +379,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Called when [click].
+        ///     Called when [click].
         /// </summary>
         internal void OnClick()
         {
@@ -404,7 +387,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Gets the friends count.
+        ///     Gets the friends count.
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <returns>System.Int32.</returns>
@@ -414,7 +397,7 @@ namespace Oblivion.Messages.Handlers
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery(
-                    "SELECT COUNT(*) FROM messenger_friendships WHERE user_one_id = @id OR user_two_id = @id;");
+                    "SELECT COUNT(0) FROM messenger_friendships WHERE user_one_id = @id OR user_two_id = @id;");
                 queryReactor.AddParameter("id", userId);
                 result = queryReactor.GetInteger();
             }
@@ -422,23 +405,21 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Targeteds the offer buy.
+        ///     Targeteds the offer buy.
         /// </summary>
         internal void PurchaseTargetedOffer()
         {
-            int offerId = Request.GetInteger();
-            int quantity = Request.GetInteger();
+            var offerId = Request.GetInteger();
+            var quantity = Request.GetInteger();
             var offer = Oblivion.GetGame().GetTargetedOfferManager().CurrentOffer;
             if (offer == null) return;
             if (Session.GetHabbo().Credits < offer.CostCredits * quantity) return;
             if (Session.GetHabbo().ActivityPoints < offer.CostDuckets * quantity) return;
             if (Session.GetHabbo().Diamonds < offer.CostDiamonds * quantity) return;
-            foreach (string product in offer.Products)
-            {
-                var item = Oblivion.GetGame().GetItemManager().GetItemByName(product);
-                if (item == null) continue;
+            foreach (var item in offer.Products
+                .Select(product => Oblivion.GetGame().GetItemManager().GetItemByName(product))
+                .Where(item => item != null))
                 Oblivion.GetGame().GetCatalog().DeliverItems(Session, item, quantity, string.Empty, 0, 0, string.Empty);
-            }
             Session.GetHabbo().Credits -= offer.CostCredits * quantity;
             Session.GetHabbo().ActivityPoints -= offer.CostDuckets * quantity;
             Session.GetHabbo().Diamonds -= offer.CostDiamonds * quantity;
@@ -448,11 +429,11 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Goes the name of to room by.
+        ///     Goes the name of to room by.
         /// </summary>
         internal void GoToRoomByName()
         {
-            string name = Request.GetString();
+            var name = Request.GetString();
             uint roomId = 0;
 
             switch (name)
@@ -483,11 +464,11 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Gets the uc panel.
+        ///     Gets the uc panel.
         /// </summary>
         internal void GetUcPanel()
         {
-            string name = Request.GetString();
+            var name = Request.GetString();
             switch (name)
             {
                 case "new":
@@ -497,21 +478,21 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Gets the uc panel hotel.
+        ///     Gets the uc panel hotel.
         /// </summary>
         internal void GetUcPanelHotel()
         {
-            int id = Request.GetInteger();
+            var id = Request.GetInteger();
         }
 
         /// <summary>
-        /// Saves the room thumbnail.
+        ///     Saves the room thumbnail.
         /// </summary>
         internal void SaveRoomThumbnail()
         {
             try
             {
-               //todo
+                //todo
 /*
 
                 int count = Request.GetInteger();
@@ -539,7 +520,8 @@ namespace Oblivion.Messages.Handlers
 
                 using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    dbClient.RunFastQuery("UPDATE `camera_photos` SET `file_state` = 'purchased' WHERE `id` = '" + preview.Id +
+                    dbClient.RunFastQuery("UPDATE `camera_photos` SET `file_state` = 'purchased' WHERE `id` = '" +
+                                          preview.Id +
                                           "' LIMIT 1");
                 }
 
@@ -547,13 +529,16 @@ namespace Oblivion.Messages.Handlers
                            Oblivion.EscapeJSONString(
                                Oblivion.GetGame()
                                    .GetCameraManager()
-                                   .GetPath(CameraPhotoType.PURCHASED, preview.Id, preview.CreatorId)) + "\", \"n\":\"" +
+                                   .GetPath(CameraPhotoType.PURCHASED, preview.Id, preview.CreatorId)) +
+                           "\", \"n\":\"" +
                            Oblivion.EscapeJSONString(Session.GetHabbo().UserName) + "\", \"s\":\"" +
-                           Session.GetHabbo().Id + "\", \"u\":\"" + preview.Id + "\", \"t\":\"" + preview.CreatedAt + "\"}";
+                           Session.GetHabbo().Id + "\", \"u\":\"" + preview.Id + "\", \"t\":\"" + preview.CreatedAt +
+                           "\"}";
 
                 var item = Session.GetHabbo()
                     .GetInventoryComponent()
-                    .AddNewItem(0, Oblivion.GetGame().GetCameraManager().PhotoPoster.ItemId, data, 0, true, false, 0, 0);
+                    .AddNewItem(0, Oblivion.GetGame().GetCameraManager().PhotoPoster.ItemId, data, 0, true, false, 0,
+                        0);
                 Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
                 Session.GetHabbo().GetInventoryComponent().SendNewItems(item.Id);
 

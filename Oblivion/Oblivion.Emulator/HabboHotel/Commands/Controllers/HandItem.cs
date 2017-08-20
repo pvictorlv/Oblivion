@@ -13,7 +13,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public HandItem()
         {
-            MinRank = -3;
+            MinRank = 1;
             Description = "Lets you pick a hand item, e.g. A drink";
             Usage = ":handitem [itemId]";
             MinParams = 1;

@@ -7,11 +7,9 @@ using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Navigators.Enums;
 using Oblivion.HabboHotel.Navigators.Interfaces;
-using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
-using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Navigators
 {
@@ -672,7 +670,7 @@ namespace Oblivion.HabboHotel.Navigators
         internal ServerMessage SerializeNavigator(GameClient session, int mode)
         {
             if (mode >= 0)
-                return SerializeActiveRooms(mode);
+                return null;
 
             var reply = new ServerMessage(LibraryParser.OutgoingRequest("NavigatorListingsMessageComposer"));
 
@@ -787,13 +785,6 @@ namespace Oblivion.HabboHotel.Navigators
 
             return 1;
         }
-
-        /// <summary>
-        ///     Serializes the active rooms.
-        /// </summary>
-        /// <param name="category">The category.</param>
-        /// <returns>ServerMessage.</returns>
-        private static ServerMessage SerializeActiveRooms(int category) => null;
 
         /// <summary>
         ///     Serializes the navigator rooms.
@@ -918,6 +909,10 @@ namespace Oblivion.HabboHotel.Navigators
                 searchQuery = searchQuery.Replace("group:", string.Empty);
                 containsGroup = true;
             }
+            else if (searchQuery.StartsWith("roomname:"))
+            {
+                searchQuery = searchQuery.Replace("roomname:", string.Empty);
+            }
 
             var rooms = new List<RoomData>();
 
@@ -968,9 +963,9 @@ namespace Oblivion.HabboHotel.Navigators
                     }
                     else
                     {
-                        dbClient.SetQuery("SELECT * FROM rooms_data WHERE caption = @query AND roomtype = 'private' LIMIT " +
+                        dbClient.SetQuery("SELECT * FROM rooms_data WHERE caption LIKE @query AND roomtype = 'private' LIMIT " +
                             (50 - rooms.Count));
-                        dbClient.AddParameter("query", searchQuery);
+                        dbClient.AddParameter("query", $"'%{searchQuery}%'");
                         dTable = dbClient.GetTable();
                     }
                 }

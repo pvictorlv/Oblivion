@@ -278,7 +278,7 @@ namespace Oblivion.Connection.Connection
             }
             catch (Exception e)
             {
-                Logging.HandleException(e, "SendData - ConnectionInformation.cs");
+//                Logging.HandleException(e, "SendData - ConnectionInformation.cs");
                 HandleDisconnect(e);
             }
         }

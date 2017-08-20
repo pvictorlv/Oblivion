@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages;
@@ -40,24 +41,30 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             message.AppendString("event:navigator/goto/" + session.GetHabbo().CurrentRoomId);
             message.AppendString("linkTitle");
             message.AppendString("Ir para o Evento");
-
-            foreach (var client in Oblivion.GetGame().GetClientManager().Clients.Values)
+            Task.Factory.StartNew(() =>
             {
-                if (client == null)
-                    continue;
- 
-                if (session.GetHabbo().Id == client.GetHabbo().Id)
+                foreach (var client in Oblivion.GetGame().GetClientManager().Clients.Values)
                 {
-                    client.SendWhisper("O Alerta de Evento foi Enviado com Sucesso", true);
-                    continue;
-                }
- 
-                if (!client.GetHabbo().DisableEventAlert)
-                    client.SendMessage(message);
- 
-            }
+                    if (client == null)
+                        continue;
 
-//            Oblivion.GetGame().GetClientManager().QueueBroadcaseMessage(message);
+                    if (session.GetHabbo().Id == client.GetHabbo().Id)
+                    {
+                        client.SendWhisper("O Alerta de Evento foi Enviado com Sucesso", true);
+                        continue;
+                    }
+
+                    if (!client.GetHabbo().DisableEventAlert)
+                    {
+                        client.SendMessage(message);
+                        continue;
+                    }
+                    client.SendWhisper(
+                        $"Um novo evento está acontecendo! Procure por {session.GetHabbo().CurrentRoom.RoomData.Owner} e venha ao evento!");
+
+                }
+                return true;
+            });
             return true;
         }
     }

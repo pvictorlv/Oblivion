@@ -35,7 +35,7 @@ namespace Oblivion
         {
             Console.BackgroundColor = ConsoleColor.Black;
             Console.Clear();
-            Console.SetWindowSize(150, 50);
+//            Console.SetWindowSize(150, 50);
             Console.SetCursorPosition(0, 0);
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine();

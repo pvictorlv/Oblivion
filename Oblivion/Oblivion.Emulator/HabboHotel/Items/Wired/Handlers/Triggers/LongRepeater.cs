@@ -124,7 +124,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             if (!Room.GetWiredHandler().IsCycleQueued(this))
                 Room.GetWiredHandler().EnqueueCycle(this);
 
-            return true;
+            return false;
         }
     }
 }

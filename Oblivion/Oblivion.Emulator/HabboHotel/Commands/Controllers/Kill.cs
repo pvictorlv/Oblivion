@@ -53,12 +53,11 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 user2.Statusses.Add("lay", "0.55");
                 user2.IsLyingDown = true;
                 user2.UpdateNeeded = true;
-                user.Chat(user.GetClient(), Oblivion.GetLanguage().GetVar("command.kill.user"), true, 0, 3);
-                user2.Chat(user2.GetClient(), Oblivion.GetLanguage().GetVar("command.kill.userdeath"), true, 0,
+                user.Chat(user.GetClient(), $"Eu te matei {user2.GetUserName()}!", true, 0, 3);
+                user2.Chat(user2.GetClient(), "Estou morto :(", true, 0,
                     3);
                 return true;
             }
-            user.Chat(session, "I am sad", false, 0);
             return true;
         }
     }

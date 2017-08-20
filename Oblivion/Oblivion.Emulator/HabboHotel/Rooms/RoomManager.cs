@@ -288,8 +288,8 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 dbClient.SetQuery(
                     "INSERT INTO rooms_data (roomtype,caption,description,owner,model_name,category,users_max,trade_state) VALUES ('private',@caption,@desc,@Username,@model,@cat,@usmax,@tstate)");
-                dbClient.AddParameter("caption", name);
-                dbClient.AddParameter("desc", desc);
+                dbClient.AddParameter("caption", Oblivion.FilterInjectionChars(name));
+                dbClient.AddParameter("desc", Oblivion.FilterInjectionChars(desc));
                 dbClient.AddParameter("Username", session.GetHabbo().UserName);
                 dbClient.AddParameter("model", model);
                 dbClient.AddParameter("cat", category);

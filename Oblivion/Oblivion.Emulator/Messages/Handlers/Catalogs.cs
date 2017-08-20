@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Text;
 using Oblivion.HabboHotel.Catalogs;
 using Oblivion.HabboHotel.Catalogs.Composers;
+using Oblivion.HabboHotel.Catalogs.Marketplace;
 using Oblivion.HabboHotel.Catalogs.Wrappers;
 using Oblivion.HabboHotel.Groups.Interfaces;
 using Oblivion.Messages.Enums;
@@ -27,6 +31,7 @@ namespace Oblivion.Messages.Handlers
             Session.SendMessage(CatalogPageComposer.ComposeIndex(rank, Request.GetString().ToUpper(), Session));
             Session.SendMessage(StaticMessage.CatalogOffersConfiguration);
         }
+
         /// <summary>
         /// Catalogues the index.
         /// </summary>
@@ -59,6 +64,7 @@ namespace Oblivion.Messages.Handlers
             var message = CatalogPageComposer.ComposePage(cPage, CataMode);
             Session.SendMessage(message);
         }
+
         /// <summary>
         /// Configure marketplace
         /// </summary>
@@ -73,6 +79,21 @@ namespace Oblivion.Messages.Handlers
             message.AppendInteger(99999999);
             message.AppendInteger(48);
             message.AppendInteger(7);
+            Session.SendMessage(message);
+        }
+
+        /// <summary>
+        /// Check if user can make offer
+        /// </summary>
+        public void CanMakeOffer()
+        {
+            var errorCode = Session.GetHabbo().TradeLockExpire > 0 ? 6 : 1;
+
+            var message =
+                new ServerMessage(LibraryParser.OutgoingRequest("MarketplaceCanMakeOfferResultMessageComposer"));
+            message.AppendInteger(errorCode);
+            message.AppendInteger(0);
+            message.AppendInteger(0);
             Session.SendMessage(message);
         }
 
@@ -144,7 +165,8 @@ namespace Oblivion.Messages.Handlers
                 Response.AppendInteger(current);
                 Response.AppendInteger(current);
 
-                var ecotronRewardsForLevel = Oblivion.GetGame().GetCatalog().GetEcotronRewardsForLevel(uint.Parse(current.ToString()));
+                var ecotronRewardsForLevel = Oblivion.GetGame().GetCatalog()
+                    .GetEcotronRewardsForLevel(uint.Parse(current.ToString()));
 
                 Response.AppendInteger(ecotronRewardsForLevel.Count);
 
@@ -179,7 +201,8 @@ namespace Oblivion.Messages.Handlers
             uint itemId = Request.GetUInteger();
             string extraData = Request.GetString();
             int priceAmount = Request.GetInteger();
-            Oblivion.GetGame().GetCatalog().HandlePurchase(Session, pageId, itemId, extraData, priceAmount, false, string.Empty, string.Empty, 0, 0, 0, false, 0u);
+            Oblivion.GetGame().GetCatalog().HandlePurchase(Session, pageId, itemId, extraData, priceAmount, false,
+                string.Empty, string.Empty, 0, 0, 0, false, 0u);
         }
 
         /// <summary>
@@ -197,7 +220,8 @@ namespace Oblivion.Messages.Handlers
             int giftColor = Request.GetInteger();
             var undef = Request.GetBool();
 
-            Oblivion.GetGame().GetCatalog().HandlePurchase(Session, pageId, itemId, extraData, 1, true, giftUser, giftMessage, giftSpriteId, giftLazo, giftColor, undef, 0u);
+            Oblivion.GetGame().GetCatalog().HandlePurchase(Session, pageId, itemId, extraData, 1, true, giftUser,
+                giftMessage, giftSpriteId, giftLazo, giftColor, undef, 0u);
         }
 
         /// <summary>
@@ -241,6 +265,119 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
+        /// Get marketplace offers
+        /// </summary>
+        public void GetOffers()
+        {
+            var MinCost = Request.GetInteger();
+            var MaxCost = Request.GetInteger();
+            var SearchQuery = Request.GetString();
+            var FilterMode = Request.GetInteger();
+
+
+            DataTable table;
+            var builder = new StringBuilder();
+            string str;
+            builder.Append("WHERE `state` = '1' AND `timestamp` >= " +
+                           Oblivion.GetGame().GetCatalog().GetMarketplace().FormatTimestampString());
+            if (MinCost >= 0)
+                builder.Append(" AND `total_price` > " + MinCost);
+
+
+            if (MaxCost >= 0)
+                builder.Append(" AND `total_price` < " + MaxCost);
+
+            switch (FilterMode)
+            {
+                case 1:
+                    str = "ORDER BY `asking_price` DESC";
+                    break;
+
+                default:
+                    str = "ORDER BY `asking_price` ASC";
+                    break;
+            }
+
+            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                dbClient.SetQuery(
+                    "SELECT `offer_id`, item_type, sprite_id, total_price, `limited_number`,`limited_stack` FROM catalog_marketplace_offers " +
+                    builder + " " + str + " LIMIT 500");
+                dbClient.AddParameter("search_query", "%" + SearchQuery + "%");
+                if (SearchQuery.Length >= 1)
+                    builder.Append(" AND public_name LIKE @search_query");
+                table = dbClient.GetTable();
+            }
+
+            Oblivion.GetGame().GetCatalog().GetMarketplace().MarketItems.Clear();
+            Oblivion.GetGame().GetCatalog().GetMarketplace().MarketItemKeys.Clear();
+            if (table != null)
+                foreach (var row in table.Rows.Cast<DataRow>().Where(row => !Oblivion.GetGame().GetCatalog()
+                    .GetMarketplace().MarketItemKeys.Contains(Convert.ToInt32(row["offer_id"]))))
+                {
+                    Oblivion.GetGame().GetCatalog().GetMarketplace().MarketItemKeys
+                        .Add(Convert.ToInt32(row["offer_id"]));
+                    Oblivion.GetGame().GetCatalog().GetMarketplace().MarketItems.Add(new MarketOffer(
+                        Convert.ToInt32(row["offer_id"]),
+                        Convert.ToInt32(row["sprite_id"]), Convert.ToInt32(row["total_price"]),
+                        int.Parse(row["item_type"].ToString()), Convert.ToInt32(row["limited_number"]),
+                        Convert.ToInt32(row["limited_stack"])));
+                }
+
+            var dictionary = new Dictionary<int, MarketOffer>();
+            var dictionary2 = new Dictionary<int, int>();
+
+            foreach (var item in Oblivion.GetGame().GetCatalog().GetMarketplace().MarketItems)
+                if (dictionary.ContainsKey(item.SpriteId))
+                {
+                    if (item.LimitedNumber > 0)
+                    {
+                        if (!dictionary.ContainsKey(item.OfferId))
+                            dictionary.Add(item.OfferId, item);
+                        if (!dictionary2.ContainsKey(item.OfferId))
+                            dictionary2.Add(item.OfferId, 1);
+                    }
+                    else
+                    {
+                        if (dictionary[item.SpriteId].TotalPrice > item.TotalPrice)
+                        {
+                            dictionary.Remove(item.SpriteId);
+                            dictionary.Add(item.SpriteId, item);
+                        }
+
+                        var num = dictionary2[item.SpriteId];
+                        dictionary2.Remove(item.SpriteId);
+                        dictionary2.Add(item.SpriteId, num + 1);
+                    }
+                }
+                else
+                {
+                    if (!dictionary.ContainsKey(item.SpriteId))
+                        dictionary.Add(item.SpriteId, item);
+                    if (!dictionary2.ContainsKey(item.SpriteId))
+                        dictionary2.Add(item.SpriteId, 1);
+                }
+            var message = new ServerMessage(LibraryParser.OutgoingRequest("MarketPlaceOffersMessageComposer"));
+            message.AppendInteger(dictionary.Count);
+            foreach (var pair in dictionary.Values.Where(x => x.TotalPrice >= MinCost && x.TotalPrice <= MaxCost))
+            {
+                message.AppendInteger(pair.OfferId);
+                message.AppendInteger(1);
+                message.AppendInteger(1);
+                message.AppendInteger(pair.SpriteId);
+                message.AppendInteger(256);
+                message.AppendString("");
+                message.AppendInteger(pair.LimitedNumber);
+                message.AppendInteger(pair.LimitedStack);
+                message.AppendInteger(pair.TotalPrice);
+                message.AppendInteger(0);
+                message.AppendInteger(Oblivion.GetGame().GetCatalog().GetMarketplace().AvgPriceForSprite(pair.SpriteId));
+                message.AppendInteger(dictionary2[pair.SpriteId]);
+            }
+            message.AppendInteger(dictionary.Count);
+        }
+
+        /// <summary>
         /// Catalogues the offer configuration.
         /// </summary>
         public void CatalogueOfferConfig()
@@ -267,7 +404,8 @@ namespace Oblivion.Messages.Handlers
 
             var responseList = new List<ServerMessage>();
 
-            foreach (var habboGroup in userGroups.Where(current => current != null).Select(current => Oblivion.GetGame().GetGroupManager().GetGroup(current.GroupId)))
+            foreach (var habboGroup in userGroups.Where(current => current != null)
+                .Select(current => Oblivion.GetGame().GetGroupManager().GetGroup(current.GroupId)))
             {
                 if (habboGroup == null)
                     continue;
@@ -278,13 +416,13 @@ namespace Oblivion.Messages.Handlers
                 subResponse.AppendString(habboGroup.Badge);
                 subResponse.AppendString(Oblivion.GetGame().GetGroupManager().SymbolColours.Contains(habboGroup.Colour1)
                     ? ((GroupSymbolColours)
-                    Oblivion.GetGame().GetGroupManager().SymbolColours[habboGroup.Colour1]).Colour
+                        Oblivion.GetGame().GetGroupManager().SymbolColours[habboGroup.Colour1]).Colour
                     : "4f8a00");
                 subResponse.AppendString(
                     Oblivion.GetGame().GetGroupManager().BackGroundColours.Contains(habboGroup.Colour2)
-                    ? ((GroupBackGroundColours)
-                    Oblivion.GetGame().GetGroupManager().BackGroundColours[habboGroup.Colour2]).Colour
-                    : "4f8a00");
+                        ? ((GroupBackGroundColours)
+                            Oblivion.GetGame().GetGroupManager().BackGroundColours[habboGroup.Colour2]).Colour
+                        : "4f8a00");
                 subResponse.AppendBool(habboGroup.CreatorId == Session.GetHabbo().Id);
                 subResponse.AppendInteger(habboGroup.CreatorId);
                 subResponse.AppendBool(habboGroup.HasForum);

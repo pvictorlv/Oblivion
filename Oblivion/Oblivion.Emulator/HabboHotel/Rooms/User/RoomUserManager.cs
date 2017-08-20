@@ -16,7 +16,6 @@ using Oblivion.HabboHotel.Pets;
 using Oblivion.HabboHotel.Pets.Enums;
 using Oblivion.HabboHotel.Quests;
 using Oblivion.HabboHotel.RoomBots;
-using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.HabboHotel.Rooms.Items;
 using Oblivion.HabboHotel.Rooms.Items.Enums;
 using Oblivion.HabboHotel.Rooms.Items.Games.Teams.Enums;
@@ -113,8 +112,6 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         /// <value>The user list.</value>
         internal ConcurrentDictionary<int, RoomUser> UserList { get; private set; }
-
-        internal event RoomEventDelegate OnUserEnter;
 
         /// <summary>
         ///     Gets the room user by habbo.
@@ -495,6 +492,9 @@ namespace Oblivion.HabboHotel.Rooms.User
         internal void UpdateUserCount(uint count)
         {
             _roomUserCount = count;
+            if (_userRoom?.RoomData == null)
+                return;
+
             _userRoom.RoomData.UsersNow = count;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.RunFastQuery("UPDATE rooms_data SET users_now = " + count + " WHERE id = " +
@@ -1590,7 +1590,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             UsersByUserName = null;
             UsersByUserId.Clear();
             UsersByUserId = null;
-            OnUserEnter = null;
+//            OnUserEnter = null;
             _pets.Clear();
             _bots.Clear();
             _pets = null;
@@ -1778,9 +1778,9 @@ namespace Oblivion.HabboHotel.Rooms.User
                 //if (client.GetHabbo().HasFuse("fuse_mod")) client.GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(102);
                 //if (client.GetHabbo().Rank == Convert.ToUInt32(Oblivion.GetDbConfig().DbData["ambassador.minrank"])) client.GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(178);
 
-                if (OnUserEnter != null)
-                    OnUserEnter(user, null);
-                if (_userRoom.GotMusicController() && _userRoom.GotMusicController())
+//                if (OnUserEnter != null)
+//                    OnUserEnter(user, null);
+                if (_userRoom.GotMusicController())
                     _userRoom.GetRoomMusicController().OnNewUserEnter(user);
                 _userRoom.OnUserEnter(user);
             }

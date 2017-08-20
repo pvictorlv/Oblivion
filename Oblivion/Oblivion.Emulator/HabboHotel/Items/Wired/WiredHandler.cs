@@ -11,6 +11,7 @@ using Oblivion.HabboHotel.Items.Wired.Handlers.Effects;
 using Oblivion.HabboHotel.Items.Wired.Handlers.Triggers;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
+using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Items.Wired
 {
@@ -122,9 +123,8 @@ namespace Oblivion.HabboHotel.Items.Wired
                 queryReactor.AddParameter("delay", fItem.Delay);
                 queryReactor.AddParameter("string", fItem.OtherString);
                 queryReactor.AddParameter("bool", Oblivion.BoolToEnum(fItem.OtherBool));
-                queryReactor.AddParameter("extrastring", fItem.OtherExtraString);
-                queryReactor.AddParameter("extrastring2", fItem.OtherExtraString2);
-
+                queryReactor.AddParameter("extrastring", (fItem.OtherExtraString.Length > 255) ? fItem.OtherExtraString.Substring(0, 255) : fItem.OtherExtraString);
+                queryReactor.AddParameter("extrastring2", (fItem.OtherExtraString2.Length > 255) ? fItem.OtherExtraString2.Substring(0, 255) : fItem.OtherExtraString2);
                 queryReactor.RunQuery();
             }
         }
@@ -180,6 +180,8 @@ namespace Oblivion.HabboHotel.Items.Wired
 
                         if (item == null)
                             continue;
+
+//                        Out.WriteLine(wiredItem.Item.GetBaseItem().InteractionType.ToString());
 
                         var wiredCycler = item;
 
@@ -297,6 +299,12 @@ namespace Oblivion.HabboHotel.Items.Wired
 
                 case Interaction.ActionEffectUser:
                     return new EffectUser(item, _room);
+                    
+                case Interaction.ActionEnableDance:
+                    return new EnableDance(item, _room);
+
+                case Interaction.ActionHandItem:
+                    return new GiveHandItem(item, _room);
 
                 case Interaction.ActionFreezeUser:
                     return new FreezeUser(item, _room);
@@ -447,7 +455,7 @@ namespace Oblivion.HabboHotel.Items.Wired
             return null;
         }
 
-        public List<IWiredItem> GetConditions(IWiredItem item) => _wiredItems.Where(current => current != null && IsCondition(current.Type) && current.Item.X == item.Item.X && current.Item.Y == item.Item.Y).ToList();
+        public List<IWiredItem> GetConditions(IWiredItem item) => _wiredItems.Where(current => IsCondition(current.Type) && current.Item.X == item.Item.X && current.Item.Y == item.Item.Y).ToList();
 
         public List<IWiredItem> GetEffects(IWiredItem item) => _wiredItems.Where(current => current != null && IsEffect(current.Type) && current.Item.X == item.Item.X && current.Item.Y == item.Item.Y).ToList();
 

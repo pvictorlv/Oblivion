@@ -37,35 +37,24 @@ namespace Oblivion.Connection.Connection
                 return true;
 
             var iP = sock.RemoteEndPoint.ToString().Split(':')[0];
-            var weak = new WeakReference(iP);
 
             if (iP == null)
                 return false;
 
+            var weak = new WeakReference(iP);
+
+
             if (iP == lastBanned)
             {
-//                return false;
+               return false;
             }
 
             foreach (var str in BannedList)
             {
+                if (str?.Target == null) continue;
+
                 if (str.Target.ToString() == iP)
                 {
-                    Out.WriteLine("you're banned!!!");
-                    return false;
-                }
-            }
-
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
-            {
-                dbClient.SetQuery("SELECT count(0) FROM users WHERE ip_last = @ip OR ip_reg = @ip");
-                dbClient.AddParameter("ip", iP);
-                var res = dbClient.GetInteger();
-                if (res <= 0)
-                {
-                    BannedList.Add(weak);
-                    lastBanned = iP;
-                    Out.WriteLine(iP + " was banned by Anti-DDoS system.", "Oblivion.TcpAntiDDoS", ConsoleColor.Blue);
                     return false;
                 }
             }
@@ -79,6 +68,20 @@ namespace Oblivion.Connection.Connection
 
                 return false;
             }
+            /*using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                dbClient.SetQuery("SELECT count(0) FROM users WHERE ip_last = @ip OR ip_reg = @ip");
+                dbClient.AddParameter("ip", iP);
+                var res = dbClient.GetInteger();
+                if (res <= 0)
+                {
+                    BannedList.Add(weak);
+                    lastBanned = iP;
+                    Out.WriteLine(iP + " was banned by Anti-DDoS system.", "Oblivion.TcpAntiDDoS", ConsoleColor.Blue);
+                    return false;
+                }
+            }*/
+
             int freeConnectionId = GetFreeConnectionId();
 
             if (freeConnectionId < 0)

@@ -138,7 +138,10 @@ namespace Oblivion.HabboHotel.Items
             }
         }
 
-        internal Item GetItem(uint id) =>  _items[id];
+        internal Item GetItem(uint id)
+        {
+            return _items.TryGetValue(id, out Item it) ? it : null;
+        }
 
         internal bool GetItem(string itemName, out Item item)
         {
