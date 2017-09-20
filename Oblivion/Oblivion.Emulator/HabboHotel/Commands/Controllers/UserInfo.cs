@@ -25,7 +25,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var userName = pms[0];
             if (string.IsNullOrEmpty(userName)) return true;
             var clientByUserName = Oblivion.GetGame().GetClientManager().GetClientByUserName(userName);
-            if (clientByUserName == null || clientByUserName.GetHabbo() == null)
+            if (clientByUserName?.GetHabbo() == null)
             {
                 using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {

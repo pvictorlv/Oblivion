@@ -65,15 +65,15 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             var userPosition = roomUser.X;
             var lastUserPosition = roomUser.CopyX;
 
-            if (!Items.Contains(roomItem) || (roomUser.LastItem != 0 && roomUser.LastItem == roomItem.Id &&
-                                              userPosition == lastUserPosition))
+            if (!Items.Contains(roomItem) || roomUser.LastItem != 0 && roomUser.LastItem == roomItem.Id &&
+                userPosition == lastUserPosition)
                 return false;
 
             if (roomItem.GetRoom() == null || roomItem.GetRoom().GetRoomItemHandler() == null || roomItem.GetRoom()
                     .GetRoomItemHandler().FloorItems
-                    .Any(i => (i.X == roomItem.X && i.Y == roomItem.Y && i.Z > roomItem.Z)))
+                    .Any(i => i.X == roomItem.X && i.Y == roomItem.Y && i.Z > roomItem.Z))
                 return false;
-            
+
             if (Oblivion.Now() <= _mNext)
                 return false;
 
@@ -82,7 +82,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             var effects = Room.GetWiredHandler().GetEffects(this);
 
             if (conditions.Any())
-            {
                 foreach (var current in conditions)
                 {
                     if (!current.Execute(roomUser))
@@ -90,7 +89,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
                     WiredHandler.OnEvent(current);
                 }
-            }
 
             if (effects.Any(x => x.Type == Interaction.SpecialRandom))
             {
@@ -106,14 +104,14 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 WiredHandler.OnEvent(selectedBox);
             }
             else if (effects.Any())
+            {
                 foreach (var current2 in effects.Where(current2 => current2.Execute(roomUser, Type)))
                     WiredHandler.OnEvent(current2);
+            }
 
 
             WiredHandler.OnEvent(this);
-            _mNext = Oblivion.Now() + (Delay);
-
-            Room.GetWiredHandler().EnqueueCycle(this);
+            _mNext = Oblivion.Now() + Delay;
 
 
             return true;

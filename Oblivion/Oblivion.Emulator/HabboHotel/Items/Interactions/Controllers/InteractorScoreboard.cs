@@ -1,6 +1,7 @@
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Models;
 using Oblivion.HabboHotel.Items.Interfaces;
+using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
@@ -13,7 +14,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             int num;
             int.TryParse(item.ExtraData, out num);
-
+            Out.WriteLine(request.ToString());
             switch (request)
             {
                 case 1:
@@ -24,14 +25,17 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     }
                     else
                     {
-                        num += 60;
+                        num = num + 60;
                         item.UpdateNeeded = false;
                     }
                     break;
 
                 case 2:
-                    item.UpdateNeeded = !item.UpdateNeeded;
+                    item.ExtraData = (num + 1).ToString();
+                    item.UpdateNeeded = true;
                     item.PendingReset = true;
+                    break;
+                case 3:
                     break;
             }
 

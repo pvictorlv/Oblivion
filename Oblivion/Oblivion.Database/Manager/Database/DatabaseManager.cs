@@ -19,7 +19,6 @@ namespace Oblivion.Database.Manager.Database
         public static bool DbEnabled = true;
         private readonly uint _beginClientAmount;
         private readonly uint _maxPoolSize;
-        private readonly Queue _connections;
         private string _connectionString;
         private List<MySqlClient> _databaseClients;
         private bool _isConnected;
@@ -31,7 +30,6 @@ namespace Oblivion.Database.Manager.Database
                 throw new DatabaseException("The poolsize can not be larger than the client amount!");
             _beginClientAmount = clientAmount;
             _maxPoolSize = maxPoolSize;
-            _connections = new Queue();
         }
 
         public void Destroy()
@@ -67,17 +65,9 @@ namespace Oblivion.Database.Manager.Database
         {
             IDatabaseClient databaseClient = new MySqlClient(this);
             databaseClient.Connect();
-            databaseClient.Prepare();
             return databaseClient.GetQueryReactor();
         }
-
-        public void FreeConnection(IDatabaseClient dbClient)
-        {
-            lock (_connections.SyncRoot)
-            {
-                _connections.Enqueue(dbClient);
-            }
-        }
+        
 
         public void Init()
         {
@@ -129,8 +119,10 @@ namespace Oblivion.Database.Manager.Database
                 Pooling = true,
                 AllowZeroDateTime = true,
                 ConvertZeroDateTime = true,
-                DefaultCommandTimeout = 300,
-                ConnectionTimeout = 10
+                DefaultCommandTimeout = 30,
+                ConnectionTimeout = 10,
+                Logging = false,
+
             };
             var mySqlConnectionStringBuilder2 = mySqlConnectionStringBuilder;
             SetConnectionString(mySqlConnectionStringBuilder2.ToString());

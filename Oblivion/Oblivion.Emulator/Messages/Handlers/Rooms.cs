@@ -823,6 +823,18 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().CurrentRoom.SendMessage(RoomFloorAndWallComposer(room));
             Session.GetHabbo().CurrentRoom.SendMessage(SerializeRoomChatOption(room));
             room.RoomData.SerializeRoomData(Response, Session, false, true);
+            Oblivion.GetGame()
+                .GetAchievementManager()
+                .ProgressUserAchievement(Session, "ACH_SelfModWalkthroughSeen", 1);
+            Oblivion.GetGame()
+                .GetAchievementManager()
+                .ProgressUserAchievement(Session, "ACH_SelfModChatScrollSpeedSeen", 1);
+            Oblivion.GetGame()
+                .GetAchievementManager()
+                .ProgressUserAchievement(Session, "ACH_SelfModChatFloodFilterSeen", 1);
+            Oblivion.GetGame()
+                .GetAchievementManager()
+                .ProgressUserAchievement(Session, "ACH_SelfModChatHearRangeSeen", 1);
         }
 
         internal void GetBannedUsers()
@@ -1007,6 +1019,8 @@ namespace Oblivion.Messages.Handlers
                 return;
             room.GetRoomUserManager().RemoveUserFromRoom(roomUserByHabbo.GetClient(), true, true);
             roomUserByHabbo.GetClient().CurrentRoomUserId = -1;
+            Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_SelfModKickSeen", 1);
+
         }
 
         internal void BanUser()
@@ -1034,6 +1048,8 @@ namespace Oblivion.Messages.Handlers
             room.AddBan(num, time);
             room.GetRoomUserManager().RemoveUserFromRoom(roomUserByHabbo.GetClient(), true, true);
             Session.CurrentRoomUserId = -1;
+            Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_SelfModBanSeen", 1);
+
         }
 
         internal void SetHomeRoom()
@@ -1162,6 +1178,8 @@ namespace Oblivion.Messages.Handlers
             Response.AppendInteger(1);
             Response.AppendString(text);
             SendResponse();
+            Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_SelfModIgnoreSeen", 1);
+
         }
 
         internal void UnignoreUser()
@@ -1357,6 +1375,10 @@ namespace Oblivion.Messages.Handlers
                 serverMessage.AppendString(current);
             Response = serverMessage;
             SendResponse();
+
+            Oblivion.GetGame()
+                .GetAchievementManager()
+                .ProgressUserAchievement(Session, "ACH_SelfModRoomFilterSeen", 1);
         }
 
         internal void ApplyRoomEffect()
@@ -1560,7 +1582,7 @@ namespace Oblivion.Messages.Handlers
                 if (heightMap.Last() == Convert.ToChar(13))
                     heightMap = heightMap.Remove(heightMap.Length - 1);
 
-                if (heightMap.Length > 14400)
+                if (heightMap.Length > 74200)
                 {
                     var message = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
                     message.AppendString("floorplan_editor.error");
@@ -1929,6 +1951,8 @@ namespace Oblivion.Messages.Handlers
             Response.Init(LibraryParser.OutgoingRequest("RoomMuteStatusMessageComposer"));
             Response.AppendBool(currentRoom.RoomMuted);
             Session.SendMessage(Response);
+            Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_SelfModMuteSeen", 1);
+
         }
 
         internal void HomeRoom()

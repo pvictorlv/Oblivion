@@ -10,17 +10,16 @@ using Oblivion.HabboHotel.Catalogs.Wrappers;
 using Oblivion.HabboHotel.Groups.Interfaces;
 using Oblivion.Messages.Enums;
 using Oblivion.Messages.Parsers;
-using Oblivion.Util;
 
 namespace Oblivion.Messages.Handlers
 {
     /// <summary>
-    /// Class GameClientMessageHandler.
+    ///     Class GameClientMessageHandler.
     /// </summary>
     internal partial class GameClientMessageHandler
     {
         /// <summary>
-        /// Catalogues the index.
+        ///     Catalogues the index.
         /// </summary>
         public void CatalogueMode()
         {
@@ -33,7 +32,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Catalogues the index.
+        ///     Catalogues the index.
         /// </summary>
         public void CatalogueIndex()
         {
@@ -46,7 +45,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Catalogues the page.
+        ///     Catalogues the page.
         /// </summary>
         public void CataloguePage()
         {
@@ -66,7 +65,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Configure marketplace
+        ///     Configure marketplace
         /// </summary>
         public void MarketPlaceConfiguration()
         {
@@ -83,7 +82,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Check if user can make offer
+        ///     Check if user can make offer
         /// </summary>
         public void CanMakeOffer()
         {
@@ -98,7 +97,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Catalogues the club page.
+        ///     Catalogues the club page.
         /// </summary>
         public void CatalogueClubPage()
         {
@@ -108,7 +107,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Reloads the ecotron.
+        ///     Reloads the ecotron.
         /// </summary>
         public void ReloadEcotron()
         {
@@ -119,7 +118,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Gifts the wrapping configuration.
+        ///     Gifts the wrapping configuration.
         /// </summary>
         public void GiftWrappingConfig()
         {
@@ -150,7 +149,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Gets the recycler rewards.
+        ///     Gets the recycler rewards.
         /// </summary>
         public void GetRecyclerRewards()
         {
@@ -183,7 +182,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Purchases the item.
+        ///     Purchases the item.
         /// </summary>
         public void PurchaseItem()
         {
@@ -197,35 +196,34 @@ namespace Oblivion.Messages.Handlers
                 return;
             }
 
-            int pageId = Request.GetInteger();
-            uint itemId = Request.GetUInteger();
-            string extraData = Request.GetString();
-            int priceAmount = Request.GetInteger();
+            var pageId = Request.GetInteger();
+            var itemId = Request.GetUInteger();
+            var extraData = Request.GetString();
+            var priceAmount = Request.GetInteger();
             Oblivion.GetGame().GetCatalog().HandlePurchase(Session, pageId, itemId, extraData, priceAmount, false,
                 string.Empty, string.Empty, 0, 0, 0, false, 0u);
         }
 
         /// <summary>
-        /// Purchases the gift.
+        ///     Purchases the gift.
         /// </summary>
         public void PurchaseGift()
         {
-            int pageId = Request.GetInteger();
-            uint itemId = Request.GetUInteger();
-            string extraData = Request.GetString();
-            string giftUser = Request.GetString();
-            string giftMessage = Request.GetString();
-            int giftSpriteId = Request.GetInteger();
-            int giftLazo = Request.GetInteger();
-            int giftColor = Request.GetInteger();
+            var pageId = Request.GetInteger();
+            var itemId = Request.GetUInteger();
+            var extraData = Request.GetString();
+            var giftUser = Request.GetString();
+            var giftMessage = Request.GetString();
+            var giftSpriteId = Request.GetInteger();
+            var giftLazo = Request.GetInteger();
+            var giftColor = Request.GetInteger();
             var undef = Request.GetBool();
-
             Oblivion.GetGame().GetCatalog().HandlePurchase(Session, pageId, itemId, extraData, 1, true, giftUser,
                 giftMessage, giftSpriteId, giftLazo, giftColor, undef, 0u);
         }
 
         /// <summary>
-        /// Checks the name of the pet.
+        ///     Checks the name of the pet.
         /// </summary>
         public void CheckPetName()
         {
@@ -246,7 +244,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Catalogues the offer.
+        ///     Catalogues the offer.
         /// </summary>
         public void CatalogueOffer()
         {
@@ -265,7 +263,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Get marketplace offers
+        ///     Get marketplace offers
         /// </summary>
         public void GetOffers()
         {
@@ -371,14 +369,15 @@ namespace Oblivion.Messages.Handlers
                 message.AppendInteger(pair.LimitedStack);
                 message.AppendInteger(pair.TotalPrice);
                 message.AppendInteger(0);
-                message.AppendInteger(Oblivion.GetGame().GetCatalog().GetMarketplace().AvgPriceForSprite(pair.SpriteId));
+                message.AppendInteger(Oblivion.GetGame().GetCatalog().GetMarketplace()
+                    .AvgPriceForSprite(pair.SpriteId));
                 message.AppendInteger(dictionary2[pair.SpriteId]);
             }
             message.AppendInteger(dictionary.Count);
         }
 
         /// <summary>
-        /// Catalogues the offer configuration.
+        ///     Catalogues the offer configuration.
         /// </summary>
         public void CatalogueOfferConfig()
         {
@@ -394,7 +393,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
-        /// Serializes the group furni page.
+        ///     Serializes the group furni page.
         /// </summary>
         internal void SerializeGroupFurniPage()
         {
@@ -410,7 +409,7 @@ namespace Oblivion.Messages.Handlers
                 if (habboGroup == null)
                     continue;
 
-                ServerMessage subResponse = new ServerMessage();
+                var subResponse = new ServerMessage();
                 subResponse.AppendInteger(habboGroup.Id);
                 subResponse.AppendString(habboGroup.Name);
                 subResponse.AppendString(habboGroup.Badge);
@@ -430,7 +429,7 @@ namespace Oblivion.Messages.Handlers
                 responseList.Add(subResponse);
             }
 
-            Response.AppendInteger(responseList.Count());
+            Response.AppendInteger(responseList.Count);
             Response.AppendServerMessages(responseList);
 
             responseList.Clear();

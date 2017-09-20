@@ -138,12 +138,11 @@ namespace Oblivion.HabboHotel.Support
         /// <summary>
         ///     Checks the machine ban.
         /// </summary>
+        /// <param name="ip"></param>
         /// <param name="machineId">The machine identifier.</param>
+        /// <param name="userName"></param>
         /// <returns>System.String.</returns>
-        internal string CheckMachineBan(string machineId)
-        {
-            return _bannedMachines.ContainsKey(machineId) ? _bannedMachines[machineId].ReasonMessage : string.Empty;
-        }
+        internal bool CheckBan(string userName, string ip, string machineId) => _bannedMachines.ContainsKey(machineId) || _bannedIPs.Contains(ip) || _bannedUsernames.Contains(userName);
 
         /// <summary>
         ///     Bans the user.

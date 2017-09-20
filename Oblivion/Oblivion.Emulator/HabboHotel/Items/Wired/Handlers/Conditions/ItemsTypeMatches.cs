@@ -69,7 +69,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
                     continue;
                 }
 
-                if (current.GetBaseItem().InteractionType == Interaction.None || lastitem.GetBaseItem().InteractionType == Interaction.None)
+                if (current.GetBaseItem().InteractionType == Interaction.None ||
+                    lastitem.GetBaseItem().InteractionType == Interaction.None)
                 {
                     if (current.GetBaseItem().SpriteId != lastitem.GetBaseItem().SpriteId)
                         return false;

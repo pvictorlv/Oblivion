@@ -1,5 +1,6 @@
 #region
 
+using System;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 
 #endregion
@@ -19,10 +20,17 @@ namespace Oblivion.Database
 
         public IQueryAdapter GetQueryReactor()
         {
-            IDatabaseClient databaseClient = new DatabaseConnection(_connectionStr, _typer);
-            databaseClient.Connect();
-            databaseClient.Prepare();
-            return databaseClient.GetQueryReactor();
+            try
+            {
+                IDatabaseClient databaseClient = new DatabaseConnection(_connectionStr, _typer);
+                databaseClient.Connect();
+                return databaseClient.GetQueryReactor();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
         }
 
         public void Destroy()

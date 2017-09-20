@@ -331,6 +331,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             GetClient().GetMessageHandler().GetResponse().AppendInteger(friend);
             GetClient().GetMessageHandler().SendResponse();
         }
+
         /// <summary>
         ///     Called when [destroy friendship].
         /// </summary>
@@ -468,7 +469,10 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             var sender = GetClient().GetHabbo();
 
-            foreach (var client in from usr in gp.Members.Values let client = Oblivion.GetGame().GetClientManager().GetClientByUserId(usr.Id) where client?.GetHabbo()?.GetMessenger() != null && client.GetHabbo().Id != sender.Id && usr.HasChat select client)
+            foreach (var client in from usr in gp.Members.Values
+                let client = Oblivion.GetGame().GetClientManager().GetClientByUserId(usr.Id)
+                where client?.GetHabbo()?.GetMessenger() != null && client.GetHabbo().Id != sender.Id && usr.HasChat
+                select client)
             {
                 client.GetHabbo().GetMessenger()
                     .DeliverInstantMessage((int) gp.Id, message, (int) sender.Id, sender.UserName, sender.Look);
@@ -609,8 +613,10 @@ namespace Oblivion.HabboHotel.Users.Messenger
             serverMessage.AppendInteger(0);
 
             var client = GetClient();
+            GroupMember memb;
             var groups = Oblivion.GetGame().GetGroupManager().Groups.Values
-                .Where(x => x.Members.ContainsKey(client.GetHabbo().Id) && x.HasChat).ToList();
+                .Where(gp => gp.Members.TryGetValue(client.GetHabbo().Id, out memb) && gp.HasChat && memb.HasChat)
+                .ToList();
 
             serverMessage.AppendInteger(Friends.Count + groups.Count);
 

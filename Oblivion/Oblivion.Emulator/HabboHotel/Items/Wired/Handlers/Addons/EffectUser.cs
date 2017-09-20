@@ -39,16 +39,16 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
             if (stuff[0] == null)
                 return false;
 
-            var roomUser = (RoomUser)stuff[0];
+            var roomUser = (RoomUser) stuff[0];
 
-                int effectId;
+            int effectId;
 
-                if (int.TryParse(OtherString, out effectId))
-                {
-                    if (roomUser != null && !string.IsNullOrEmpty(OtherString))
-                        roomUser.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(effectId);
-                    return true;
-                }
+            if (int.TryParse(OtherString, out effectId))
+            {
+                if (roomUser != null && !string.IsNullOrEmpty(OtherString))
+                    roomUser.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(effectId);
+                return true;
+            }
 
             return false;
         }

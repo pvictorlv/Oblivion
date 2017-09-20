@@ -329,6 +329,10 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             var roomGamemap = _room.GetGameMap();
             foreach (var item in FloorItems.ToList())
             {
+                if (item.IsWired)
+                {
+                    _room.GetWiredHandler().RemoveWired(item);
+                }
                 item.Interactor.OnRemove(session, item);
                 roomGamemap.RemoveSpecialItem(item);
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("PickUpFloorItemMessageComposer"));
@@ -572,6 +576,10 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             if (item.GetBaseItem().InteractionType == Interaction.Bed ||
                 item.GetBaseItem().InteractionType == Interaction.PressurePadBed)
                 _room.ContainsBeds--;
+            if (item.IsWired)
+            {
+                _room.GetWiredHandler().RemoveWired(item);
+            }
             RemoveRoomItem(item, wasPicked);
         }
 
@@ -914,7 +922,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         _room.SendMessage(message);
                     }
                 }
-                if (item.IsWired) _room.GetWiredHandler().MoveWired(item);
+//                if (item.IsWired) _room.GetWiredHandler().MoveWired(item);
             }
             _room.GetGameMap().AddToMap(item);
             if (item.GetBaseItem().IsSeat) updateRoomUserStatuses = true;
@@ -1202,7 +1210,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             {
                 if (Rollers.Count <= 0)
                     return new List<ServerMessage>();
-                ;
 
                 _rollerItemsMoved.Clear();
                 _rollerUsersMoved.Clear();
@@ -1217,7 +1224,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     if ((roomItemForSquare == null || !roomItemForSquare.Any()) && userForSquare == null)
                         continue;
                     var coordinatedItems = _room.GetGameMap().GetCoordinatedItems(squareInFront);
-                    const int num = 0;
                     var flag = false;
                     var num2 = 0.0;
                     var flag2 = true;
@@ -1243,8 +1249,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     goto IL_17C;
                     IL_192:
                     var nextZ = num2;
-                    var flag3 = num > 0 ||
-                                _room.GetRoomUserManager().GetUserForSquare(squareInFront.X, squareInFront.Y) != null;
+                    var flag3 = _room.GetRoomUserManager().GetUserForSquare(squareInFront.X, squareInFront.Y) != null;
                     foreach (var current4 in roomItemForSquare)
                     {
                         var num3 = current4.Z - current.TotalHeight;
@@ -1274,10 +1279,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 list.Clear();
                 return _rollerMessages;
             }
-
-            {
-                _roolerCycle++;
-            }
+            _roolerCycle++;
             return new List<ServerMessage>();
         }
 

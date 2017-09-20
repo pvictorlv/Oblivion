@@ -881,6 +881,13 @@
         /// </summary>
         ConditionHowManyUsersInRoom,
 
+        ///<summary>
+        /// Condition user is not in team and user is in team
+        /// </summary>
+
+        ConditionUserIsNotInTeam,
+        ConditionUserIsInTeam,
+
         /// <summary>
         ///     The condition user wearing effect
         /// </summary>
@@ -1022,6 +1029,7 @@
         ActionEffectUser,
         ActionEnableDance,
         ActionFreezeUser,
+        ActionRegenMap,
         ActionHandItem,
         ActionFxRoom,
         ActionDance,

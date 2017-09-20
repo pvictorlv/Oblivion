@@ -21,7 +21,7 @@ namespace Oblivion.HabboHotel.Items
         /// <summary>
         ///     The items
         /// </summary>
-        private readonly Dictionary<uint,Item> _items;
+        private readonly Dictionary<uint, Item> _items;
 
         /// <summary>
         ///     The photo identifier
@@ -96,7 +96,7 @@ namespace Oblivion.HabboHotel.Items
                         stackMultiple = false;
 
                     if (name.StartsWith("external_image_wallitem_poster")) PhotoId = id;
-                    
+
                     if (name.StartsWith("present_gen"))
                         GiftWrapper.AddOld(sprite);
                     else if (name.StartsWith("present_wrap*"))
@@ -145,7 +145,6 @@ namespace Oblivion.HabboHotel.Items
 
         internal bool GetItem(string itemName, out Item item)
         {
-           
             foreach (var entry in _items)
             {
                 item = entry.Value;
@@ -167,12 +166,9 @@ namespace Oblivion.HabboHotel.Items
             return false;
         }
 
-        internal Item GetItemByName(string name) => (from DictionaryEntry entry in _items select (Item) entry.Value)
-            .FirstOrDefault(item => item.Name == name);
+        internal Item GetItemByName(string name) => _items.Values.FirstOrDefault(item => item.Name == name);
 
-        internal Item GetItemBySpriteId(int spriteId) =>
-            (from DictionaryEntry entry in _items select (Item) entry.Value).FirstOrDefault(
-                item => item.SpriteId == spriteId);
+        internal Item GetItemBySpriteId(int spriteId) => _items.Values.FirstOrDefault(item => item.SpriteId == spriteId);
 
         /// <summary>
         ///     Determines whether the specified identifier contains item.

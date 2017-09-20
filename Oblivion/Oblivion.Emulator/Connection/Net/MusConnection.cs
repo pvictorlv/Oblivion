@@ -192,14 +192,14 @@ namespace Oblivion.Connection.Net
                         return;
                     case "goto":
                     {
-                        var muserId = Convert.ToUInt32(Params[0]);
-                        var roomStr = Params[1];
+                        var muserId = Convert.ToUInt32(param[0]);
+                        var roomStr = param[1];
 
                         clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(muserId);
                         if (clientByUserId?.GetHabbo() == null)
                             break;
 
-                        if (!uint.TryParse(Params[1], out uint roomId))
+                        if (!uint.TryParse(param[1], out uint roomId))
                             break;
 
                         if (roomId == clientByUserId.GetHabbo().CurrentRoomId)

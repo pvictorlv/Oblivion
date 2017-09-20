@@ -3,19 +3,20 @@ using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
+using Oblivion.HabboHotel.Rooms.User;
 
-namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
+namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
 {
-    public class RollerSpeed : IWiredItem
+    public class RegenMap : IWiredItem
     {
-        public RollerSpeed(RoomItem item, Room room)
+        public RegenMap(RoomItem item, Room room)
         {
             Item = item;
             Room = room;
             Items = new List<RoomItem>();
         }
 
-        public Interaction Type => Interaction.ActionRollerSpeed;
+        public Interaction Type => Interaction.ActionRegenMap;
 
         public RoomItem Item { get; set; }
 
@@ -35,9 +36,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool Execute(params object[] stuff)
         {
-            double Speed;
-            if (double.TryParse(OtherString, out Speed))
-                Room.GetRoomItemHandler().SetSpeed(Speed);
+            var roomUser = (RoomUser) stuff[0];
+            if (roomUser == null)
+                return false;
+
+            roomUser.GetRoom().GetGameMap().GenerateMaps();
+            roomUser.GetClient().SendWhisper("O mapa foi restaurado!");
             return true;
         }
     }

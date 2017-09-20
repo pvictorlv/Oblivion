@@ -56,7 +56,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             if (!(stuff?[0] is RoomUser))
                 return false;
 
-            var roomUser = (RoomUser)stuff[0];
+            var roomUser = (RoomUser) stuff[0];
 
             int effect;
 

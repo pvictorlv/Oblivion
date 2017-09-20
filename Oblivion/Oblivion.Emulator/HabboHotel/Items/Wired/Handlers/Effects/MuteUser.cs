@@ -46,7 +46,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         {
             var roomUser = (RoomUser) stuff[0];
 
-            if (roomUser == null || roomUser.IsBot || roomUser.GetClient() == null || roomUser.GetClient().GetHabbo() == null)
+            if (roomUser == null || roomUser.IsBot || roomUser.GetClient() == null ||
+                roomUser.GetClient().GetHabbo() == null)
                 return false;
 
             if (roomUser.GetClient().GetHabbo().Rank > 3)
@@ -62,7 +63,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (Room.MutedUsers.ContainsKey(userId))
                 Room.MutedUsers.Remove(userId);
 
-            Room.MutedUsers.Add(userId, Convert.ToUInt32((Oblivion.GetUnixTimeStamp() + (minutes * 60))));
+            Room.MutedUsers.Add(userId, Convert.ToUInt32(Oblivion.GetUnixTimeStamp() + minutes * 60));
 
             if (!string.IsNullOrEmpty(OtherString))
                 roomUser.GetClient().SendWhisper(OtherString);

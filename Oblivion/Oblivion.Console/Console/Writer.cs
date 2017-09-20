@@ -40,7 +40,7 @@ namespace Oblivion.Writer
 
         public static void LogCriticalException(string logText)
         {
-            WriteToFile("Logs\\ExceptionsLog.txt", logText + "\r\n\r\n");
+            WriteToFile("Logs\\CriticalExceptionsLog.txt", logText + "\r\n\r\n");
             WriteLine("A critical exception was registered.", ConsoleColor.Red);
         }
 

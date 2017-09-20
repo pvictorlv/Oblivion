@@ -1,23 +1,24 @@
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
+using Oblivion.HabboHotel.Rooms.Items.Games.Teams.Enums;
 using Oblivion.HabboHotel.Rooms.User;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 {
-    internal class TriggererOnFurni : IWiredItem
+    internal class UserIsInTeam : IWiredItem
     {
-        public TriggererOnFurni(RoomItem item, Room room)
+        public UserIsInTeam(RoomItem item, Room room)
         {
             Item = item;
             Room = room;
             Items = new List<RoomItem>();
+            OtherString = "1";
         }
 
-        public Interaction Type => Interaction.ConditionTriggerOnFurni;
+        public Interaction Type => Interaction.ConditionUserIsInTeam;
 
         public RoomItem Item { get; set; }
 
@@ -25,11 +26,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
         public List<RoomItem> Items { get; set; }
 
-        public string OtherString
-        {
-            get { return ""; }
-            set { }
-        }
+        public string OtherString { get; set; }
 
         public string OtherExtraString
         {
@@ -57,25 +54,15 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
         public bool Execute(params object[] stuff)
         {
-            if (!Items.Any())
-                return true;
-
             var roomUser = stuff?[0] as RoomUser;
-
             if (roomUser == null)
                 return false;
 
-            foreach (var current in Items.Where(current => current != null &&
-                                                           Room.GetRoomItemHandler().FloorItems.Contains(current)))
+            if (!int.TryParse(OtherString, out int team))
             {
-                if (current.AffectedTiles.Values.Any(current2 => roomUser.X == current2.X && roomUser.Y == current2.Y))
-                    return true;
-
-                if (roomUser.X == current.X && roomUser.Y == current.Y)
-                    return true;
+                return false;
             }
-
-            return false;
+            return (Team) team == roomUser.Team;
         }
     }
 }

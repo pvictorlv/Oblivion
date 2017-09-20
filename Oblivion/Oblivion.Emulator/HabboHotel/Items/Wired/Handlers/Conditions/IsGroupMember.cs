@@ -61,7 +61,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             if (roomUser == null)
                 return false;
 
-            return Room.RoomData.Group != null && Room.RoomData.Group.Members.ContainsKey(roomUser.GetClient().GetHabbo().Id);
+            return Room.RoomData.Group != null &&
+                   Room.RoomData.Group.Members.ContainsKey(roomUser.GetClient().GetHabbo().Id);
         }
     }
 }

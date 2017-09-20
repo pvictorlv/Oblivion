@@ -1324,9 +1324,15 @@ namespace Oblivion.HabboHotel.Rooms
                 GetRoomItemHandler().SaveFurniture(queryReactor);
                 queryReactor.RunFastQuery($"UPDATE rooms_data SET users_now=0 WHERE id = {RoomId} LIMIT 1");
             }
+            if (GotSoccer())
+            {
+                _soccer.Destroy();
+                _soccer = null;
+            }
             _processTimer?.Dispose();
             _processTimer = null;
             RoomData.Tags.Clear();
+            RoomData.BlockedCommands.Clear();
             _roomUserManager.UserList.Clear();
             UsersWithRights.Clear();
             Bans.Clear();

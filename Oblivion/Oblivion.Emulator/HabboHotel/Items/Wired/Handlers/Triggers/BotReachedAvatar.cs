@@ -63,7 +63,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             var effects = Room.GetWiredHandler().GetEffects(this);
 
             if (conditions.Any())
-            {
                 foreach (var current in conditions)
                 {
                     if (!current.Execute(null))
@@ -71,7 +70,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
                     WiredHandler.OnEvent(current);
                 }
-            }
 
             if (effects.Any(x => x.Type == Interaction.SpecialRandom))
             {

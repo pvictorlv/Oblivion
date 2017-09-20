@@ -253,6 +253,8 @@ namespace Oblivion.Messages.Handlers
 
             roomUserByHabbo.GetClient()
                 .SendNotif(string.Format(Oblivion.GetLanguage().GetVar("room_owner_has_mute_user"), num2));
+            Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_SelfModMuteSeen", 1);
+
         }
 
         /// <summary>
@@ -769,72 +771,70 @@ namespace Oblivion.Messages.Handlers
         internal void ChangeName()
         {
             var text = Request.GetString();
+            if (text == null) return;
             var userName = Session.GetHabbo().UserName;
-
+            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                queryReactor.SetQuery("SELECT username FROM users WHERE username=@name LIMIT 1");
+                queryReactor.AddParameter("name", text);
+                var String = queryReactor.GetString();
+
+                if (!string.IsNullOrWhiteSpace(String) &&
+                    !string.Equals(userName, text, StringComparison.CurrentCultureIgnoreCase))
+                    return;
+                queryReactor.SetQuery("UPDATE rooms_data SET owner = @newowner WHERE owner = @oldowner");
+                queryReactor.AddParameter("newowner", text);
+                queryReactor.AddParameter("oldowner", Session.GetHabbo().UserName);
+                queryReactor.RunQuery();
+
+                queryReactor.SetQuery(
+                    "UPDATE users SET username = @newname, last_name_change = @timestamp WHERE id = @userid");
+                queryReactor.AddParameter("newname", text);
+                queryReactor.AddParameter("timestamp", Oblivion.GetUnixTimeStamp() + 43200);
+                queryReactor.AddParameter("userid", Session.GetHabbo().Id);
+                queryReactor.RunQuery();
+
+                Session.GetHabbo().LastChange = Oblivion.GetUnixTimeStamp() + 43200;
+                Session.GetHabbo().UserName = text;
+                Response.Init(LibraryParser.OutgoingRequest("UpdateUsernameMessageComposer"));
+                Response.AppendInteger(0);
+                Response.AppendString(text);
+                Response.AppendInteger(0);
+                SendResponse();
+                Response.Init(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
+                Response.AppendInteger(-1);
+                Response.AppendString(Session.GetHabbo().Look);
+                Response.AppendString(Session.GetHabbo().Gender.ToLower());
+                Response.AppendString(Session.GetHabbo().Motto);
+                Response.AppendInteger(Session.GetHabbo().AchievementPoints);
+                SendResponse();
+                Session.GetHabbo().CurrentRoom.GetRoomUserManager().UpdateUser(userName, text);
+                if (Session.GetHabbo().CurrentRoom != null)
                 {
-                    queryReactor.SetQuery("SELECT username FROM users WHERE Username=@name LIMIT 1");
-                    queryReactor.AddParameter("name", text);
-                    var String = queryReactor.GetString();
-
-                    if (!string.IsNullOrWhiteSpace(String) &&
-                        !String.Equals(userName, text, StringComparison.CurrentCultureIgnoreCase))
-                        return;
-                    queryReactor.SetQuery("UPDATE rooms_data SET owner = @newowner WHERE owner = @oldowner");
-                    queryReactor.AddParameter("newowner", text);
-                    queryReactor.AddParameter("oldowner", Session.GetHabbo().UserName);
-                    queryReactor.RunQuery();
-
-                    queryReactor.SetQuery(
-                        "UPDATE users SET Username = @newname, last_name_change = @timestamp WHERE id = @userid");
-                    queryReactor.AddParameter("newname", text);
-                    queryReactor.AddParameter("timestamp", Oblivion.GetUnixTimeStamp() + 43200);
-                    queryReactor.AddParameter("userid", Session.GetHabbo().UserName);
-                    queryReactor.RunQuery();
-
-                    Session.GetHabbo().LastChange = Oblivion.GetUnixTimeStamp() + 43200;
-                    Session.GetHabbo().UserName = text;
-                    Response.Init(LibraryParser.OutgoingRequest("UpdateUsernameMessageComposer"));
-                    Response.AppendInteger(0);
+                    Response.Init(LibraryParser.OutgoingRequest("UserUpdateNameInRoomMessageComposer"));
+                    Response.AppendInteger(Session.GetHabbo().Id);
+                    Response.AppendInteger(Session.GetHabbo().CurrentRoom.RoomId);
                     Response.AppendString(text);
-                    Response.AppendInteger(0);
-                    SendResponse();
-                    Response.Init(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
-                    Response.AppendInteger(-1);
-                    Response.AppendString(Session.GetHabbo().Look);
-                    Response.AppendString(Session.GetHabbo().Gender.ToLower());
-                    Response.AppendString(Session.GetHabbo().Motto);
-                    Response.AppendInteger(Session.GetHabbo().AchievementPoints);
-                    SendResponse();
-                    Session.GetHabbo().CurrentRoom.GetRoomUserManager().UpdateUser(userName, text);
-                    if (Session.GetHabbo().CurrentRoom != null)
-                    {
-                        Response.Init(LibraryParser.OutgoingRequest("UserUpdateNameInRoomMessageComposer"));
-                        Response.AppendInteger(Session.GetHabbo().Id);
-                        Response.AppendInteger(Session.GetHabbo().CurrentRoom.RoomId);
-                        Response.AppendString(text);
-                    }
-                    foreach (var current in Session.GetHabbo().Data.Rooms)
-                    {
-                        current.Owner = text;
-                        current.SerializeRoomData(Response, Session, false, true);
-                        var room = Oblivion.GetGame().GetRoomManager().GetRoom(current.Id);
-                        if (room != null)
-                            room.RoomData.Owner = text;
-                    }
-                    foreach (var current2 in Session.GetHabbo().GetMessenger().Friends.Values)
-                        if (current2.Client != null)
-                            foreach (
-                                var current3 in
-                                    current2.Client.GetHabbo()
-                                        .GetMessenger()
-                                        .Friends.Values.Where(current3 => current3.UserName == userName))
-                            {
-                                current3.UserName = text;
-                                current3.Serialize(Response, Session);
-                            }
                 }
+                foreach (var current in Session.GetHabbo().Data.Rooms)
+                {
+                    current.Owner = text;
+                    current.SerializeRoomData(Response, Session, false, true);
+                    var room = Oblivion.GetGame().GetRoomManager().GetRoom(current.Id);
+                    if (room != null)
+                        room.RoomData.Owner = text;
+                }
+                foreach (var current2 in Session.GetHabbo().GetMessenger().Friends.Values)
+                    if (current2.Client != null)
+                        foreach (
+                            var current3 in
+                            current2.Client.GetHabbo()
+                                .GetMessenger()
+                                .Friends.Values.Where(current3 => current3.UserName == userName))
+                        {
+                            current3.UserName = text;
+                            current3.Serialize(Response, Session);
+                        }
             }
         }
 

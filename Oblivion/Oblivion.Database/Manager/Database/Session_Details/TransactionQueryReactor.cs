@@ -1,4 +1,4 @@
-#region
+/*#region
 
 using Oblivion.Database.Manager.Database.Database_Exceptions;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
@@ -179,4 +179,4 @@ namespace Oblivion.Database.Manager.Database.Session_Details
             _finishedTransaction = false;
         }
     }
-}
+}*/

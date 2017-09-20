@@ -14,6 +14,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
     internal class TeleportToFurni : IWiredItem, IWiredCycler
     {
         private readonly List<Interaction> _mBanned;
+        private int _delay;
 
         private long _mNext;
 
@@ -23,7 +24,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             Room = room;
             ToWorkConcurrentQueue = new ConcurrentQueue<RoomUser>();
             Items = new List<RoomItem>();
-            Delay = 0;
+            _delay = 0;
             _mNext = 0L;
             _mBanned = new List<Interaction>
             {
@@ -35,6 +36,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         public Queue ToWork { get; set; }
 
         public ConcurrentQueue<RoomUser> ToWorkConcurrentQueue { get; set; }
+
+        public double TickCount { get; set; }
 
         public bool OnCycle()
         {
@@ -111,15 +114,23 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             set { }
         }
 
-        public int Delay { get; set; }
+        public int Delay
+        {
+            get => _delay;
+            set
+            {
+                _delay = value;
+                TickCount = value / 1000;
+            }
+        }
 
         public bool Execute(params object[] stuff)
         {
             if (stuff[0] == null)
                 return false;
 
-            var roomUser = (RoomUser)stuff[0];
-            var item = (Interaction)stuff[1];
+            var roomUser = (RoomUser) stuff[0];
+            var item = (Interaction) stuff[1];
 
             if (_mBanned.Contains(item))
                 return false;
@@ -133,13 +144,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (Delay < 500)
                 Delay = 500;
 
-            if (Room.GetWiredHandler().IsCycleQueued(this))
-                return false;
 
             if (_mNext == 0L || _mNext < Oblivion.Now())
-                _mNext = (Oblivion.Now() + (Delay));
+                _mNext = Oblivion.Now() + Delay;
 
-            Room.GetWiredHandler().EnqueueCycle(this);
 
             return true;
         }
@@ -158,7 +166,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             RoomItem roomItem = null;
 
-            foreach (var current in Items.Where(current => current != null && Room.GetRoomItemHandler().FloorItems.Contains(current)))
+            foreach (var current in Items.Where(current => current != null &&
+                                                           Room.GetRoomItemHandler().FloorItems.Contains(current)))
                 roomItem = current;
 
             if (roomItem == null)

@@ -36,8 +36,6 @@ namespace Oblivion.Database.Manager.Database.Session_Details.Interfaces
 
         bool IsAvailable();
 
-        void Prepare();
-
         void ReportDone();
     }
 }

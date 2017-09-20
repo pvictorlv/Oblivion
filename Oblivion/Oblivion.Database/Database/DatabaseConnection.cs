@@ -85,6 +85,7 @@ namespace Oblivion.Database
                     {
                         _mysqlConnection.Close();
                     }
+                    _mysqlConnection.Dispose();
                     break;
 
                 case 2:
@@ -123,63 +124,31 @@ namespace Oblivion.Database
             Close();
         }
 
-        public IQueryAdapter GetQueryReactor()
-        {
-            return _adapter;
-        }
+        public IQueryAdapter GetQueryReactor() => _adapter;
 
-        public bool IsAvailable()
-        {
-            return false;
-        }
+        public bool IsAvailable() => false;
 
-        public void Prepare()
-        {
-        }
+      
 
         public void ReportDone()
         {
             Dispose();
         }
 
-        public FbCommand CreateNewCommandFireBird()
-        {
-            return _firebirdConnection.CreateCommand();
-        }
+        public FbCommand CreateNewCommandFireBird() => _firebirdConnection.CreateCommand();
 
-        public IngresCommand CreateNewCommandIngress()
-        {
-            return _ingressConnection.CreateCommand();
-        }
+        public IngresCommand CreateNewCommandIngress() => _ingressConnection.CreateCommand();
 
-        public NpgsqlCommand CreateNewCommandPgSql()
-        {
-            return _pgsqlConnection.CreateCommand();
-        }
+        public NpgsqlCommand CreateNewCommandPgSql() => _pgsqlConnection.CreateCommand();
 
-        public MySqlCommand CreateNewCommandMySql()
-        {
-            return _mysqlConnection.CreateCommand();
-        }
+        public MySqlCommand CreateNewCommandMySql() => _mysqlConnection.CreateCommand();
 
-        public MySqlTransaction GetTransactionMySql()
-        {
-            return _mysqlConnection.BeginTransaction();
-        }
+        public MySqlTransaction GetTransactionMySql() => _mysqlConnection.BeginTransaction();
 
-        public FbTransaction GetTransactionFireBird()
-        {
-            return _firebirdConnection.BeginTransaction();
-        }
+        public FbTransaction GetTransactionFireBird() => _firebirdConnection.BeginTransaction();
 
-        public IngresTransaction GetTransactionIngress()
-        {
-            return _ingressConnection.BeginTransaction();
-        }
+        public IngresTransaction GetTransactionIngress() => _ingressConnection.BeginTransaction();
 
-        public NpgsqlTransaction GetTransactionPgSql()
-        {
-            return _pgsqlConnection.BeginTransaction();
-        }
+        public NpgsqlTransaction GetTransactionPgSql() => _pgsqlConnection.BeginTransaction();
     }
 }

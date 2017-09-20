@@ -66,8 +66,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (stuff[0] == null)
                 return false;
 
-            var roomUser = (RoomUser)stuff[0];
-            var item = (Interaction)stuff[1];
+            var roomUser = (RoomUser) stuff[0];
+            var item = (Interaction) stuff[1];
 
             if (_mBanned.Contains(item))
                 return false;
@@ -82,7 +82,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 OtherString = OtherString.Replace("%USERCOUNT%", roomUser.GetRoom().UserCount.ToString());
 
             if (OtherString.ToUpper().Contains("%USERSONLINE%"))
-                OtherString = OtherString.Replace("%USERSONLINE%", Oblivion.GetGame().GetClientManager().ClientCount().ToString());
+                OtherString = OtherString.Replace("%USERSONLINE%",
+                    Oblivion.GetGame().GetClientManager().ClientCount().ToString());
 
 
             if (roomUser?.GetClient() != null && !string.IsNullOrEmpty(OtherString))

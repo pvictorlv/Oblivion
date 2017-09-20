@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -41,30 +42,26 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             message.AppendString("event:navigator/goto/" + session.GetHabbo().CurrentRoomId);
             message.AppendString("linkTitle");
             message.AppendString("Ir para o Evento");
-            Task.Factory.StartNew(() =>
+
+            foreach (var client in Oblivion.GetGame().GetClientManager().Clients.Values.ToList())
             {
-                foreach (var client in Oblivion.GetGame().GetClientManager().Clients.Values)
+                if (client?.GetHabbo() == null)
+                    continue;
+
+                if (session.GetHabbo().Id == client.GetHabbo().Id)
                 {
-                    if (client == null)
-                        continue;
-
-                    if (session.GetHabbo().Id == client.GetHabbo().Id)
-                    {
-                        client.SendWhisper("O Alerta de Evento foi Enviado com Sucesso", true);
-                        continue;
-                    }
-
-                    if (!client.GetHabbo().DisableEventAlert)
-                    {
-                        client.SendMessage(message);
-                        continue;
-                    }
-                    client.SendWhisper(
-                        $"Um novo evento está acontecendo! Procure por {session.GetHabbo().CurrentRoom.RoomData.Owner} e venha ao evento!");
-
+                    client.SendWhisper("O Alerta de Evento foi Enviado com Sucesso", true);
+                    continue;
                 }
-                return true;
-            });
+
+                if (!client.GetHabbo().DisableEventAlert)
+                {
+                    client.SendMessage(message);
+                    continue;
+                }
+                client.SendWhisper(
+                    $"Um novo evento está acontecendo! Procure por {session.GetHabbo().CurrentRoom.RoomData.Owner} e venha ao evento!");
+            }
             return true;
         }
     }

@@ -45,7 +45,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public bool Execute(params object[] stuff)
         {
-            var roomUser = (RoomUser)stuff[0];
+            var roomUser = (RoomUser) stuff[0];
 
             if (roomUser == null)
                 return false;
@@ -54,7 +54,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             var effects = Room.GetWiredHandler().GetEffects(this);
 
             if (conditions.Any())
-            {
                 foreach (var current in conditions)
                 {
                     if (!current.Execute(roomUser))
@@ -62,7 +61,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
                     WiredHandler.OnEvent(current);
                 }
-            }
 
             if (effects.Any(x => x.Type == Interaction.SpecialRandom))
             {
@@ -77,7 +75,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 WiredHandler.OnEvent(randomBox);
                 WiredHandler.OnEvent(selectedBox);
             }
-            else if(effects.Any())
+            else if (effects.Any())
             {
                 foreach (var current2 in effects.Where(current2 => current2.Execute(roomUser, Type)))
                     WiredHandler.OnEvent(current2);

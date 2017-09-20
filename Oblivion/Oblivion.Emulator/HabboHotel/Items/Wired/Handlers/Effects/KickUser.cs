@@ -71,15 +71,17 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (stuff.Length < 2)
                 return false;
 
-            var roomUser = (RoomUser)stuff[0];
-            var item = (Interaction)stuff[1];
+            var roomUser = (RoomUser) stuff[0];
+            var item = (Interaction) stuff[1];
 
             if (_mBanned.Contains(item))
                 return false;
 
-            if (roomUser?.GetClient() != null && roomUser.GetClient().GetHabbo() != null && !string.IsNullOrWhiteSpace(OtherString))
+            if (roomUser?.GetClient() != null && roomUser.GetClient().GetHabbo() != null &&
+                !string.IsNullOrWhiteSpace(OtherString))
             {
-                if (roomUser.GetClient().GetHabbo().HasFuse("fuse_mod") || Room.RoomData.Owner == roomUser.GetUserName())
+                if (roomUser.GetClient().GetHabbo().HasFuse("fuse_mod") ||
+                    Room.RoomData.Owner == roomUser.GetUserName())
                     return false;
 
                 roomUser.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(4, false);

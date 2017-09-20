@@ -133,6 +133,8 @@ namespace Oblivion.HabboHotel.Items.Interactions
                             case Interaction.ConditionFurniHasNotFurni:
                             case Interaction.ConditionFurnisHaveNotUsers:
                             case Interaction.ConditionItemsDontMatch:
+                            case Interaction.ConditionUserIsNotInTeam:
+                            case Interaction.ConditionUserIsInTeam:
                             case Interaction.ConditionFurniTypeDontMatch:
                             case Interaction.ConditionNotGroupMember:
                             case Interaction.ConditionUserWearingEffect:
@@ -184,6 +186,7 @@ namespace Oblivion.HabboHotel.Items.Interactions
                             case Interaction.ActionEnableDance:
                             case Interaction.ActionHandItem:
                             case Interaction.ActionFreezeUser:
+                            case Interaction.ActionRegenMap:
                             case Interaction.ActionTeleportTo:
                             case Interaction.ActionToggleState:
                             case Interaction.ActionJoinTeam:
@@ -616,6 +619,9 @@ namespace Oblivion.HabboHotel.Items.Interactions
                 case "actionfreezeuser":
                     return Interaction.ActionFreezeUser;
 
+                case "actionregenmaps":
+                    return Interaction.ActionRegenMap;
+
                 case "actiondance":
                     return Interaction.ActionDance;
 
@@ -813,6 +819,12 @@ namespace Oblivion.HabboHotel.Items.Interactions
                 case "wf_cnd_user_count_in":
                 case "conditionusercountin":
                     return Interaction.ConditionHowManyUsersInRoom;
+
+                case "conditionnotinteam":
+                    return Interaction.ConditionUserIsNotInTeam;
+
+                case "conditionactorinteam":
+                    return Interaction.ConditionUserIsInTeam;
 
                 case "conditionitemsdontmatch":
                 case "wf_cnd_not_match_snap":

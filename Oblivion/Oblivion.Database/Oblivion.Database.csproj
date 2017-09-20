@@ -97,10 +97,8 @@
       <HintPath>..\bin\$(Configuration)\$(Platform)\Lib\Database\Ingres.Stereo.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="MySql.Data, Version=6.9.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\bin\$(Configuration)\$(Platform)\Lib\Database\MySql.Data.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="Npgsql">
       <HintPath>..\bin\$(Configuration)\$(Platform)\Lib\Database\Npgsql.dll</HintPath>
@@ -133,6 +131,10 @@
       <Project>{90b88926-d336-458a-be86-16e181a659fc}</Project>
       <Name>Oblivion.Console</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

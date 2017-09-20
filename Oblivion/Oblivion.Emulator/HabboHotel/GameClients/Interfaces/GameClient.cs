@@ -11,7 +11,6 @@ using Oblivion.Messages.Enums;
 using Oblivion.Messages.Handlers;
 using Oblivion.Messages.Parsers;
 using Oblivion.Security.BlackWords.Structs;
-using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.GameClients.Interfaces
 {
@@ -87,7 +86,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         ///     Gets the connection identifier.
         /// </summary>
         /// <value>The connection identifier.</value>
-        internal uint ConnectionId { get; private set; }
+        internal uint ConnectionId { get; }
 
         /// <summary>
         ///     Handles the publicist.
@@ -226,10 +225,10 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 _habbo = userData.User;
                 userData.User.LoadData(userData);
 
-                var banReason = Oblivion.GetGame().GetBanManager().GetBanReason(userData.User.UserName, ip, MachineId);
 
-                if (!string.IsNullOrEmpty(banReason) || userData.User.UserName == null)
+                if (userData.User.UserName == null || Oblivion.GetGame().GetBanManager().CheckBan(userData.User.UserName, ip, MachineId))
                 {
+                    var banReason = Oblivion.GetGame().GetBanManager().GetBanReason(userData.User.UserName, ip, MachineId);
                     SendNotifWithScroll(banReason);
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
@@ -237,7 +236,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
                         var supaString = queryReactor.GetString();
 
-                        queryReactor.SetQuery($"SELECT COUNT(0) FROM users_bans_access WHERE user_id={_habbo.Id} LIMIT 1");
+                        queryReactor.SetQuery($"SELECT COUNT(user_id) FROM users_bans_access WHERE user_id={_habbo.Id} LIMIT 1");
                         var integer = queryReactor.GetInteger();
 
                         if (integer > 0)

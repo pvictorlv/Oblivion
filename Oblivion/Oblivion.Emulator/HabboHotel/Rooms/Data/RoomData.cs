@@ -445,6 +445,8 @@ namespace Oblivion.HabboHotel.Rooms.Data
         /// <param name="enterRoom"></param>
         internal void Serialize(ServerMessage message, bool showEvents = false, bool enterRoom = false)
         {
+            if (message == null) return;
+            
             message.AppendInteger(Id);
             message.AppendString(Name);
             message.AppendInteger(OwnerId);

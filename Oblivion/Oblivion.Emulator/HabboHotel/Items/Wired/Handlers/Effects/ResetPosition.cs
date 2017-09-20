@@ -10,7 +10,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
     public class ResetPosition : IWiredItem
     {
-        private readonly List<Interaction> _mBanned;
 
         public ResetPosition(RoomItem item, Room room)
         {
@@ -21,7 +20,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             OtherExtraString2 = string.Empty;
             Delay = 0;
             Items = new List<RoomItem>();
-            _mBanned = new List<Interaction>();
         }
 
         public Interaction Type => Interaction.ActionPosReset;
@@ -65,6 +63,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     continue;
 
                 var innerData = itemData.Split('|');
+                if (innerData.Length < 4)
+                    continue;
+
                 var itemId = uint.Parse(innerData[0]);
 
                 var fItem = Room.GetRoomItemHandler().GetItem(itemId);
@@ -72,14 +73,16 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 if (fItem == null)
                     continue;
 
-                var extraDataToSet = (extraData) ? innerData[1] : fItem.ExtraData;
-                var rotationToSet = (rot) ? int.Parse(innerData[2]) : fItem.Rot;
+                var extraDataToSet = extraData ? innerData[1] : fItem.ExtraData;
+                var rotationToSet = rot ? int.Parse(innerData[2]) : fItem.Rot;
 
                 var positions = innerData[3].Split(',');
+                if (positions.Length < 3)
+                    continue;
 
-                var xToSet = (position) ? int.Parse(positions[0]) : fItem.X;
-                var yToSet = (position) ? int.Parse(positions[1]) : fItem.Y;
-                var zToSet = (position) ? double.Parse(positions[2]) : fItem.Z;
+                var xToSet = position ? int.Parse(positions[0]) : fItem.X;
+                var yToSet = position ? int.Parse(positions[1]) : fItem.Y;
+                var zToSet = position ? double.Parse(positions[2]) : fItem.Z;
 
 
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ItemAnimationMessageComposer"));
@@ -94,7 +97,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 serverMessage.AppendInteger(0);
                 Room.SendMessage(serverMessage);
 
-                Room.GetRoomItemHandler().SetFloorItem(null, fItem, xToSet, yToSet, rotationToSet, false, false, false, false, false);
+                Room.GetRoomItemHandler().SetFloorItem(null, fItem, xToSet, yToSet, rotationToSet, false, false, false,
+                    false, false);
                 fItem.ExtraData = extraDataToSet;
                 fItem.UpdateState();
 

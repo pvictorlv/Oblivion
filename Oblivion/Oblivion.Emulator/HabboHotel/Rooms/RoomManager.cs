@@ -372,8 +372,6 @@ namespace Oblivion.HabboHotel.Rooms
                     _cycleBallLastExecution = DateTime.Now;
                     foreach (var Room in LoadedBallRooms.ToList())
                     {
-                        if (Room == null)
-                            return;
                         try
                         {
                             if (Room.GotSoccer())

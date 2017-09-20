@@ -50,7 +50,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (stuff[0] == null)
                 return false;
 
-            var roomUser = (RoomUser)stuff[0];
+            var roomUser = (RoomUser) stuff[0];
             var t = roomUser.GetClient().GetHabbo().CurrentRoom.GetTeamManagerForFreeze();
 
             if (roomUser.Team != Team.None)

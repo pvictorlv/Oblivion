@@ -590,6 +590,7 @@ namespace Oblivion.HabboHotel.Catalogs
                         session.GetHabbo().Diamonds -= (int) item.DiamondsCost * totalPrice;
                         session.GetHabbo().UpdateSeasonalCurrencyBalance();
                     }
+
                 }
                 if (isGift && baseItem.Type == 'e')
                 {
@@ -843,14 +844,15 @@ namespace Oblivion.HabboHotel.Catalogs
                     if (itemBySprite == null)
                         return;
 
-                    uint insertId;
+                    long insertId;
 
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
                         queryReactor.SetQuery("INSERT INTO items_rooms (base_item,user_id) VALUES (" +
                                               itemBySprite.ItemId + ", " + toUserId + ")");
 
-                        insertId = (uint) queryReactor.InsertQuery();
+                        insertId = queryReactor.InsertQuery();
+
                         queryReactor.SetQuery(string.Concat(
                             "INSERT INTO users_gifts (gift_id,item_id,extradata,giver_name,Message,ribbon,color,gift_sprite,show_sender,rare_id) VALUES (",
                             insertId, ", ", baseItem.ItemId, ",@extradata, @name, @Message,", giftLazo, ",", giftColor,
@@ -877,7 +879,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
                     if (clientByUserId != null)
                     {
-                        clientByUserId.GetHabbo().GetInventoryComponent().AddNewItem(insertId, itemBySprite.ItemId,
+                        clientByUserId.GetHabbo().GetInventoryComponent().AddNewItem((uint)insertId, itemBySprite.ItemId,
                             string.Concat(session.GetHabbo().Id, (char) 9, giftMessage, (char) 9, giftLazo, (char) 9,
                                 giftColor, (char) 9, ((undef) ? "1" : "0"), (char) 9, session.GetHabbo().UserName,
                                 (char) 9, session.GetHabbo().Look, (char) 9, item.Name), 0u, false, false, 0, 0);

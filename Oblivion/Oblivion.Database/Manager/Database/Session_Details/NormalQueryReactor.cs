@@ -32,7 +32,7 @@ namespace Oblivion.Database.Manager.Database.Session_Details
             }
         }
 
-        public void Dispose()
+       /* public void Dispose()
         {
             switch (DatabaseManager.DatabaseConnectionType.ToLower())
             {
@@ -57,7 +57,7 @@ namespace Oblivion.Database.Manager.Database.Session_Details
                     Client.ReportDone();
                     break;
             }
-        }
+        }*/
 
         public void DoCommit()
         {

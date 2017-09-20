@@ -1,12 +1,13 @@
 #region
 
+using System;
 using System.Data;
 
 #endregion
 
 namespace Oblivion.Database.Manager.Session_Details.Interfaces
 {
-    public interface IRegularQueryAdapter
+    public interface IRegularQueryAdapter : IDisposable
     {
         void AddParameter(string name, object query);
 

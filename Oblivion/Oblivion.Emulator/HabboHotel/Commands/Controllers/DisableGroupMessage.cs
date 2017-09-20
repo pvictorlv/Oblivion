@@ -49,7 +49,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 dbClient.RunFastQuery(
-                    $"UPDATE groups_members SET has_chat = '{Oblivion.BoolToEnum(member.HasChat)}' WHERE id = '{member.Id}'");
+                    $"UPDATE groups_members SET has_chat = '{Oblivion.BoolToEnum(member.HasChat)}' WHERE user_id = '{member.Id}' AND group_id = '{member.GroupId}'");
             }
             client.GetHabbo().GetMessenger().SerializeUpdate(gp, member.HasChat);
             client.SendWhisper(member.HasChat ? "O chat foi ativado" : "o chat foi desativado");

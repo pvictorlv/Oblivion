@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
@@ -37,13 +36,20 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool Execute(params object[] stuff)
         {
-            var roomUser = (RoomUser)stuff[0];
+            var roomUser = (RoomUser) stuff[0];
+            
+            foreach (var item in Items)
+                if (item.IsWired && Room.GetRoomItemHandler().FloorItems.Contains(item))
+                {
+                    var wired = Room.GetWiredHandler().GetWired(item);
+                    if (wired != null && wired.Type != Interaction.ActionCallStacks &&
+                        wired.Type != Interaction.TriggerRepeater && wired.Type != Interaction.TriggerLongRepeater)
+                    {
+                        WiredHandler.OnEvent(wired);
+                        wired.Execute(roomUser, Type);
+                    }
+                }
 
-            foreach (var wired in Items.Where(item => item.IsWired).Select(item => Room.GetWiredHandler().GetWired(item)).Where(wired => wired != null))
-            {
-                WiredHandler.OnEvent(wired);
-                wired.Execute(roomUser, Type);
-            }
 
             return true;
         }

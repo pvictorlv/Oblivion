@@ -48,13 +48,15 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool Execute(params object[] stuff)
         {
-            var roomUser = (RoomUser)stuff[0];
+            var roomUser = (RoomUser) stuff[0];
+            if (roomUser == null)
+                return false;
             var bot = Room.GetRoomUserManager().GetBotByName(OtherString);
 
             if (bot == null)
                 return false;
 
-            if (OtherBool) 
+            if (OtherBool)
             {
                 var whisp = new ServerMessage(LibraryParser.OutgoingRequest("WhisperMessageComposer"));
                 whisp.AppendInteger(bot.VirtualId);
@@ -66,7 +68,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 roomUser.GetClient().SendMessage(whisp);
             }
             else
+            {
                 bot.Chat(null, roomUser.GetUserName() + " : " + OtherExtraString, false, 0);
+            }
 
             return true;
         }

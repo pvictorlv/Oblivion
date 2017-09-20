@@ -639,8 +639,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                     case Interaction.GuildGate:
                         return new InteractorGroupGate();
 
-                    case Interaction.ScoreBoard:
-                        return new InteractorScoreboard();
+//                    case Interaction.ScoreBoard:
+//                        return new InteractorScoreboard();
 
                     case Interaction.VendingMachine:
                         return new InteractorVendor();
@@ -676,6 +676,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                     case Interaction.FootballCounterYellow:
                     case Interaction.FootballCounterBlue:
                     case Interaction.FootballCounterRed:
+                    case Interaction.ScoreBoard:
                         return new InteractorScoreCounter();
 
                     case Interaction.BanzaiScoreBlue:
@@ -818,8 +819,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 {
                     case Interaction.ScoreBoard:
                         {
-                            if (string.IsNullOrEmpty(ExtraData)) return;
-                            var num = 0;
+                            if (string.IsNullOrEmpty(ExtraData)) break;
+                            int num;
                             int.TryParse(ExtraData, out num);
                             if (num > 0)
                             {
@@ -830,14 +831,16 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                     ExtraData = num.ToString();
                                     UpdateState();
                                 }
-                                else InteractionCountHelper += 1;
+                                else InteractionCountHelper++;
 
                                 UpdateCounter = 1;
-                                return;
                             }
+                            else
+                            {
 
-                            UpdateCounter = 0;
-                            return;
+                                UpdateCounter = 0;
+                            }
+                            break;
                         }
                     case Interaction.VendingMachine:
 
@@ -1360,6 +1363,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                     case Interaction.ConditionFurniHasNotFurni:
                     case Interaction.ConditionFurnisHaveNotUsers:
                     case Interaction.ConditionItemsDontMatch:
+                    case Interaction.ConditionUserIsNotInTeam:
+                    case Interaction.ConditionUserIsInTeam:
                     case Interaction.ConditionFurniTypeDontMatch:
                     case Interaction.ConditionNotGroupMember:
                     case Interaction.ConditionUserWearingEffect:

@@ -475,9 +475,8 @@ namespace Oblivion.HabboHotel.GameClients
                     return;
 
                 var now = DateTime.Now;
-                byte[] bytes;
 
-                _broadcastQueue.TryDequeue(out bytes);
+                _broadcastQueue.TryDequeue(out byte[] bytes);
 
                 foreach (var current in Clients.Values.Where(current => current?.GetConnection() != null))
                     current.GetConnection().SendData(bytes);

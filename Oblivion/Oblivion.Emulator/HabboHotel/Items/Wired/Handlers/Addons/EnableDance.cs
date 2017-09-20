@@ -41,7 +41,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
             if (stuff[0] == null)
                 return false;
 
-            var roomUser = (RoomUser)stuff[0];
+            var roomUser = (RoomUser) stuff[0];
 
             int danceId;
 

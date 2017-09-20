@@ -309,13 +309,16 @@ namespace Oblivion.HabboHotel.Groups
 
             if (page < 1)
                 page = 0;
-
             response.AppendInteger(theGroup.Id);
             response.AppendString(theGroup.Name);
             response.AppendInteger(theGroup.RoomId);
             response.AppendString(theGroup.Badge);
 
             var list = Split(GetGroupUsersByString(theGroup, searchVal, reqType));
+            if (page > list.Count)
+            {
+                page = list.Count;
+            }
 
             if (reqType == 0)
             {

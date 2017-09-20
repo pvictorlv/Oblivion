@@ -291,8 +291,9 @@ namespace Oblivion
                     Pooling = true,
                     AllowZeroDateTime = true,
                     ConvertZeroDateTime = true,
-                    DefaultCommandTimeout = 300u,
-                    ConnectionTimeout = 10u
+                    DefaultCommandTimeout = 30,
+                    Logging = false,
+                    ConnectionTimeout = 10
                 };
 
                 Manager = new DatabaseManager(mySqlConnectionStringBuilder.ToString(), DatabaseConnectionType);

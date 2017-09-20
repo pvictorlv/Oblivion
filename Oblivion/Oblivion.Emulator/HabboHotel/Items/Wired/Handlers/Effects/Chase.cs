@@ -57,7 +57,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             var toRemove = new Queue<RoomItem>();
 
             if (Items.Any())
-            {
                 foreach (var item in Items)
                 {
                     if (item == null || Room.GetRoomItemHandler().GetItem(item.Id) == null)
@@ -68,7 +67,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
                     HandleMovement(item);
                 }
-            }
 
 
             while (toRemove.Count > 0)
@@ -104,7 +102,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 Room.GetWiredHandler().ExecuteWired(Interaction.TriggerCollision, user);
             }
             else if (Room.GetGameMap().SquareIsOpen(newPoint.X, newPoint.Y, false))
-                Room.GetRoomItemHandler().SetFloorItem(null, item, newPoint.X, newPoint.Y, item.Rot, false, false, true, true, true);
+            {
+                Room.GetRoomItemHandler().SetFloorItem(null, item, newPoint.X, newPoint.Y, item.Rot, false, false, true,
+                    true, true);
+            }
         }
     }
 }

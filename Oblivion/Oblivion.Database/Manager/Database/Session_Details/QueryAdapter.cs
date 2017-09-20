@@ -21,6 +21,13 @@ namespace Oblivion.Database.Manager.Database.Session_Details
         protected IngresCommand CommandIngress;
         protected NpgsqlCommand CommandPgSql;
 
+        public void Dispose()
+        {
+            CommandMySql.Dispose();
+            Client.ReportDone();
+            GC.SuppressFinalize(this);
+        }
+
         public QueryAdapter(IDatabaseClient client)
         {
             Client = client;
@@ -231,7 +238,7 @@ namespace Oblivion.Database.Manager.Database.Session_Details
                     catch (Exception exception)
                     {
                         Writer.Writer.LogQueryError(exception, CommandMySql.CommandText);
-                        throw exception;
+                     //   throw exception;
                     }
                     break;
             }            
@@ -300,7 +307,7 @@ namespace Oblivion.Database.Manager.Database.Session_Details
                     catch (Exception exception)
                     {
                         Writer.Writer.LogQueryError(exception, CommandMySql.CommandText);
-                        throw exception;
+                      //  throw exception;
                     }
                     break;
             }
@@ -494,7 +501,6 @@ namespace Oblivion.Database.Manager.Database.Session_Details
                     catch (Exception exception)
                     {
                         Writer.Writer.LogQueryError(exception, CommandMySql.CommandText);
-                        throw exception;
                     }
                     break;
             }

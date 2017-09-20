@@ -22,13 +22,13 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         public override bool Execute(GameClient session, string[] pms)
         {
             ushort maxUsers;
-            if (!ushort.TryParse(pms[0], out maxUsers) || maxUsers == 0 || maxUsers > 200)
+            if (!ushort.TryParse(pms[0], out maxUsers) || maxUsers == 0 || maxUsers > (200 * Oblivion.Multipy))
             {
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("command_setmax_error_number"));
                 return true;
             }
 
-            if (maxUsers > 100 && !(session.GetHabbo().Vip || session.GetHabbo().HasFuse("fuse_vip_commands")))
+            if (maxUsers > 100 * Oblivion.Multipy && !(session.GetHabbo().Vip || session.GetHabbo().HasFuse("fuse_vip_commands")))
             {
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("command_setmax_error_max"));
                 return true;
