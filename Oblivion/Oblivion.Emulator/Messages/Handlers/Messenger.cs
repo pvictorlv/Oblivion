@@ -140,10 +140,12 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void FollowBuddy()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var userId = Request.GetUInteger();
             var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
 
-            if (clientByUserId == null || clientByUserId.GetHabbo() == null) return;
+            if (clientByUserId?.GetHabbo() == null) return;
             if (clientByUserId.GetHabbo().GetMessenger() == null || clientByUserId.GetHabbo().CurrentRoom == null)
             {
                 if (Session.GetHabbo().GetMessenger() == null) return;
@@ -172,6 +174,8 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void SendInstantInvite()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var num = Request.GetInteger();
             var list = new List<uint>();
             for (var i = 0; i < num; i++) list.Add(Request.GetUInteger());

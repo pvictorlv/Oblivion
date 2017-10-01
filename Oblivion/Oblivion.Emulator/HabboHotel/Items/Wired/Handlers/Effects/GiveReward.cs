@@ -52,20 +52,14 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool Execute(params object[] stuff)
         {
-            if (stuff[0] == null)
-                return false;
-
             var user = (RoomUser) stuff[0];
-
+            if (user == null) return false;
             if (stuff[1] == null)
                 return false;
 
             var item = (Interaction) stuff[1];
 
             if (_mBanned.Contains(item))
-                return false;
-
-            if (user == null)
                 return false;
 
             if (OtherExtraString2 == null)

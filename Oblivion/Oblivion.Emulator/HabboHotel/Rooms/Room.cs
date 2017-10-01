@@ -1346,7 +1346,8 @@ namespace Oblivion.HabboHotel.Rooms
             foreach (var current2 in GetRoomItemHandler().WallItems)
                 current2.Destroy();
             ActiveTrades.Clear();
-
+            _roomItemHandler.Destroy();
+            _roomUserManager.Destroy();
             RoomData = null;
             Oblivion.GetGame().GetRoomManager().RemoveRoomData(RoomId);
         }

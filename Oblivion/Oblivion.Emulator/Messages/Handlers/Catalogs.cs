@@ -23,6 +23,8 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         public void CatalogueMode()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var rank = Session.GetHabbo().Rank;
 
             if (rank < 1)
@@ -36,6 +38,8 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         public void CatalogueIndex()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var rank = Session.GetHabbo().Rank;
 
             if (rank < 1)
@@ -49,6 +53,8 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         public void CataloguePage()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var pageId = Request.GetInteger();
 
             Request.GetInteger();
@@ -69,6 +75,8 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         public void MarketPlaceConfiguration()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var message = new ServerMessage(LibraryParser.OutgoingRequest("MarketplaceConfigurationMessageComposer"));
             message.AppendBool(true);
             message.AppendInteger(1);
@@ -86,6 +94,8 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         public void CanMakeOffer()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var errorCode = Session.GetHabbo().TradeLockExpire > 0 ? 6 : 1;
 
             var message =
@@ -101,6 +111,8 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         public void CatalogueClubPage()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var requestType = Request.GetInteger();
 
             Session.SendMessage(CatalogPageComposer.ComposeClubPurchasePage(Session, requestType));
@@ -111,6 +123,8 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         public void ReloadEcotron()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             Response.Init(LibraryParser.OutgoingRequest("ReloadEcotronMessageComposer"));
             Response.AppendInteger(1);
             Response.AppendInteger(0);
@@ -122,6 +136,8 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         public void GiftWrappingConfig()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             Response.Init(LibraryParser.OutgoingRequest("GiftWrappingConfigurationMessageComposer"));
             Response.AppendBool(true);
             Response.AppendInteger(1);
@@ -153,6 +169,8 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         public void GetRecyclerRewards()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             Response.Init(LibraryParser.OutgoingRequest("RecyclerRewardsMessageComposer"));
 
             var ecotronRewardsLevels = Oblivion.GetGame().GetCatalog().GetEcotronRewardsLevels();
@@ -209,6 +227,8 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         public void PurchaseGift()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var pageId = Request.GetInteger();
             var itemId = Request.GetUInteger();
             var extraData = Request.GetString();
@@ -227,6 +247,8 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         public void CheckPetName()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var petName = Request.GetString();
             var i = 0;
 
@@ -248,6 +270,9 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         public void CatalogueOffer()
         {
+            if (Session?.GetHabbo() == null)
+                return;
+            
             var num = Request.GetInteger();
             var catalogItem = Oblivion.GetGame().GetCatalog().GetItemFromOffer(num);
 
@@ -267,6 +292,8 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         public void GetOffers()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var MinCost = Request.GetInteger();
             var MaxCost = Request.GetInteger();
             var SearchQuery = Request.GetString();

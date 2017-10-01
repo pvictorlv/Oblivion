@@ -338,7 +338,7 @@ namespace Oblivion.HabboHotel.Rooms
 
                     return new RoomModel((int) row["door_x"], (int) row["door_y"], (double) row["door_z"],
                         (int) row["door_dir"],
-                        (string) row["heightmap"], "", false, "");
+                        (string) row["heightmap"], "", false);
                 }
                 dbClient.SetQuery("SELECT * FROM rooms_models WHERE id = @name LIMIT 1");
                 dbClient.AddParameter("name", model);
@@ -348,7 +348,7 @@ namespace Oblivion.HabboHotel.Rooms
                 return new RoomModel((int) dataRow["door_x"], (int) dataRow["door_y"],
                     (double) dataRow["door_z"],
                     (int) dataRow["door_dir"], (string) dataRow["heightmap"], staticFurniMap,
-                    Oblivion.EnumToBool(dataRow["club_only"].ToString()), (string) dataRow["poolmap"]);
+                    Oblivion.EnumToBool(dataRow["club_only"].ToString()));
             }
         }
 

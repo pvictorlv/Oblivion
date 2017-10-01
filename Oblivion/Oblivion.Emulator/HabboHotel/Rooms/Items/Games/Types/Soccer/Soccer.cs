@@ -51,6 +51,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             }
         }
 
+        internal int GetBallCount() => _balls.Count; 
         internal void AddBall(RoomItem item)
         {
             if (!_balls.Contains(item))

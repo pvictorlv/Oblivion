@@ -273,11 +273,6 @@ namespace Oblivion.HabboHotel.Users
         internal Dictionary<int, NaviLogs> NavigatorLogs;
 
         /// <summary>
-        ///     The nux passed
-        /// </summary>
-        internal bool NuxPassed;
-
-        /// <summary>
         ///     The on duty
         /// </summary>
         internal bool OnDuty;
@@ -438,7 +433,6 @@ namespace Oblivion.HabboHotel.Users
         /// <param name="lastChange">The last change.</param>
         /// <param name="tradeLocked">if set to <c>true</c> [trade locked].</param>
         /// <param name="tradeLockExpire">The trade lock expire.</param>
-        /// <param name="nuxPassed">if set to <c>true</c> [nux passed].</param>
         /// <param name="buildersExpire">The builders expire.</param>
         /// <param name="buildersItemsMax">The builders items maximum.</param>
         /// <param name="buildersItemsUsed">The builders items used.</param>
@@ -452,7 +446,6 @@ namespace Oblivion.HabboHotel.Users
             int dailyRespectPoints, int dailyPetRespectPoints, bool hasFriendRequestsDisabled, uint currentQuestId, int achievementPoints, int lastOnline, bool appearOffline,
             bool hideInRoom, bool vip, double createDate, string citizenShip, int diamonds,
             HashSet<GroupMember> groups, uint favId, int lastChange, bool tradeLocked, int tradeLockExpire,
-            bool nuxPassed,
             int buildersExpire, int buildersItemsMax, int buildersItemsUsed, bool onDuty,
             Dictionary<int, NaviLogs> naviLogs, int dailyCompetitionVotes, uint dutyLevel, bool disableAlert)
         {
@@ -491,7 +484,6 @@ namespace Oblivion.HabboHotel.Users
             CreateDate = createDate;
             LoadingChecksPassed = false;
             FloodTime = 0;
-            NuxPassed = nuxPassed;
             CurrentRoomId = 0u;
             TimeLoggedOn = DateTime.Now;
             HomeRoom = homeRoom;

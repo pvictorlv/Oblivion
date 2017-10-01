@@ -58,6 +58,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
         public bool Execute(params object[] stuff)
         {
             var roomUser = (RoomUser) stuff[0];
+            if (roomUser == null) return false;
 
             if (!string.IsNullOrEmpty(OtherString) && roomUser.GetUserName() != OtherString &&
                 !roomUser.GetClient().GetHabbo().IsTeleporting)

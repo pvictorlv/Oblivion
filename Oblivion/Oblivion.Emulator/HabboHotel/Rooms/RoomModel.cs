@@ -1,6 +1,5 @@
 using System;
 using System.Globalization;
-using System.Linq;
 using Oblivion.HabboHotel.Rooms.Chat.Enums;
 
 namespace Oblivion.HabboHotel.Rooms
@@ -38,11 +37,6 @@ namespace Oblivion.HabboHotel.Rooms
         internal double DoorZ;
 
         /// <summary>
-        ///     The got public pool
-        /// </summary>
-        internal bool GotPublicPool;
-
-        /// <summary>
         ///     The heightmap
         /// </summary>
         internal string Heightmap;
@@ -56,11 +50,6 @@ namespace Oblivion.HabboHotel.Rooms
         ///     The map size y
         /// </summary>
         internal int MapSizeY;
-
-        /// <summary>
-        ///     The m room modelfx
-        /// </summary>
-        internal byte[][] MRoomModelfx;
 
         /// <summary>
         ///     The sq character
@@ -97,8 +86,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="heightmap">The heightmap.</param>
         /// <param name="staticFurniMap">The static furni map.</param>
         /// <param name="clubOnly">if set to <c>true</c> [club only].</param>
-        /// <param name="poolmap">The poolmap.</param>
-        internal RoomModel(int doorX, int doorY, double doorZ, int doorOrientation, string heightmap, string staticFurniMap, bool clubOnly, string poolmap)
+        internal RoomModel(int doorX, int doorY, double doorZ, int doorOrientation, string heightmap, string staticFurniMap, bool clubOnly)
         {
             try
             {
@@ -108,8 +96,6 @@ namespace Oblivion.HabboHotel.Rooms
                 DoorOrientation = doorOrientation;
                 Heightmap = heightmap.ToLower();
                 StaticFurniMap = staticFurniMap;
-
-                GotPublicPool = !string.IsNullOrEmpty(poolmap);
 
                 heightmap = heightmap.Replace($"{Convert.ToChar(10)}", string.Empty);
 
@@ -138,14 +124,6 @@ namespace Oblivion.HabboHotel.Rooms
 
                 for (var i = 0; i < MapSizeX; i++)
                     SqChar[i] = new char[MapSizeY];
-
-                if (GotPublicPool)
-                {
-                    MRoomModelfx = new byte[MapSizeX][];
-
-                    for (var i = 0; i < MapSizeX; i++)
-                        MRoomModelfx[i] = new byte[MapSizeY];
-                }
 
                 for (var y = 0; y < MapSizeY; y++)
                 {

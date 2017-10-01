@@ -47,7 +47,6 @@ namespace Oblivion.Configuration
                 Logging.HandleException(ex, "Oblivion.Configuration.ConnectionHandling");
             }
         }
-
         /// <summary>
         /// Closes the connection.
         /// </summary>

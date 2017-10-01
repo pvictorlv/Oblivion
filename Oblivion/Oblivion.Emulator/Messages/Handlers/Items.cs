@@ -16,7 +16,6 @@ using Oblivion.HabboHotel.Quests;
 using Oblivion.HabboHotel.RoomBots;
 using Oblivion.Messages.Enums;
 using Oblivion.Messages.Parsers;
-using Oblivion.Util;
 
 namespace Oblivion.Messages.Handlers
 {
@@ -220,6 +219,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void GetTrainerPanel()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var petId = Request.GetUInteger();
             var currentRoom = Session.GetHabbo().CurrentRoom;
             if (currentRoom == null)
@@ -250,6 +251,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void PlacePostIt()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             if (room == null || !room.CheckRights(Session))
                 return;
@@ -327,7 +330,11 @@ namespace Oblivion.Messages.Handlers
                         y = int.Parse(dataBits[2]);
                         rot = int.Parse(dataBits[3]);
                         z = room.GetGameMap().SqAbsoluteHeight(x, y);
-
+                        if (room.GotSoccer())
+                        {
+                            if (room.GetSoccer().GetBallCount() > 5)
+                                    goto CannotSetItem;
+                        }
                         if (z >= 100)
                             goto CannotSetItem;
 
@@ -441,6 +448,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void TakeItem()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             Request.GetInteger();
             var room = Session.GetHabbo().CurrentRoom;
             if (room?.GetRoomItemHandler() == null || Session.GetHabbo() == null)
@@ -512,6 +521,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void MoveItem()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var id = Convert.ToUInt32(Math.Abs(Request.GetInteger()));
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             if (room == null)
@@ -580,6 +591,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void MoveWallItem()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var room =
                 Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             if (room == null || !room.CheckRights(Session))
@@ -606,6 +619,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void TriggerItem()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             if (room == null)
                 return;
@@ -669,6 +684,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void TriggerItemDiceSpecial()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var room =
                 Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             var item = room?.GetRoomItemHandler().GetItem(Request.GetUInteger());
@@ -681,6 +698,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void OpenPostit()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             var item = room?.GetRoomItemHandler().GetItem(Request.GetUInteger());
             if (item == null || item.GetBaseItem().InteractionType != Interaction.PostIt)
@@ -693,6 +712,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void SavePostit()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             var item = room?.GetRoomItemHandler().GetItem(Request.GetUInteger());
             if (item == null || item.GetBaseItem().InteractionType != Interaction.PostIt)
@@ -710,6 +731,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void DeletePostit()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             if (room == null || !room.CheckRights(Session, true))
                 return;
@@ -721,6 +744,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void OpenGift()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             if ((DateTime.Now - Session.GetHabbo().LastGiftOpenTime).TotalSeconds <= 15.0)
             {
                 Session.SendNotif(Oblivion.GetLanguage().GetVar("gift_one"));
@@ -827,6 +852,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void GetMoodlight()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var room =
                 Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             if (room == null || !room.CheckRights(Session, true))
@@ -862,6 +889,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void UpdateMoodlight()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var room =
                 Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             if (room == null || !room.CheckRights(Session, true) || room.MoodlightData == null)
@@ -884,6 +913,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void SwitchMoodlightStatus()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var room =
                 Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             if (room == null || !room.CheckRights(Session, true) || room.MoodlightData == null)
@@ -901,6 +932,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void SaveRoomBg()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             if (room == null || !room.CheckRights(Session, true))
                 return;
@@ -932,6 +965,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void InitTrade()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var room =
                 Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             if (room == null)
@@ -962,6 +997,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void TileStackMagicSetHeight()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var room =
                 Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             if (room == null) return;
@@ -999,6 +1036,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void OfferTradeItem()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var room =
                 Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             if (room == null || !room.CanTradeInRoom)
@@ -1012,6 +1051,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void OfferTradeItems()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var room =
                 Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             if (room == null || !room.CanTradeInRoom)
@@ -1036,6 +1077,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void TakeBackTradeItem()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var room =
                 Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             if (room == null || !room.CanTradeInRoom)
@@ -1049,6 +1092,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void StopTrade()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var room =
                 Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             if (room == null || !room.CanTradeInRoom)
@@ -1058,6 +1103,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void AcceptTrade()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var room =
                 Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             if (room == null || !room.CanTradeInRoom)
@@ -1068,6 +1115,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void UnacceptTrade()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var room =
                 Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             if (room == null || !room.CanTradeInRoom)
@@ -1078,6 +1127,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void CompleteTrade()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             var room =
                 Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             if (room == null || !room.CanTradeInRoom)
@@ -1090,6 +1141,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void RecycleItems()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             if (!Session.GetHabbo().InRoom)
                 return;
             var num = Request.GetInteger();
@@ -1135,6 +1188,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void RedeemExchangeFurni()
         {
+            if (Session?.GetHabbo() == null)
+                return;
             if (Session?.GetHabbo() == null) return;
 
             var room =
@@ -1619,7 +1674,7 @@ namespace Oblivion.Messages.Handlers
                 room.GetRoomItemHandler().RemoveFurniture(Session, item.Id, false);
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer"));
                 serverMessage.AppendInteger(1);
-                pet.Serialize(serverMessage, false);
+                pet.Serialize(serverMessage);
                 room.SendMessage(serverMessage);
                 if (isForHorse)
                 {
@@ -1682,7 +1737,7 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().GetInventoryComponent().UpdateItems(true);
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer"));
             serverMessage.AppendInteger(1);
-            pet.Serialize(serverMessage, false);
+            pet.Serialize(serverMessage);
             room.SendMessage(serverMessage);
             var serverMessage2 = new ServerMessage(LibraryParser.OutgoingRequest("SerializePetMessageComposer"));
             serverMessage2.AppendInteger(pet.PetData.VirtualId);

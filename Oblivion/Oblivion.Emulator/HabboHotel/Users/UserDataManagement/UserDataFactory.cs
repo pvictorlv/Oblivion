@@ -65,7 +65,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery("SELECT * FROM users WHERE auth_ticket = @ticket");
+                queryReactor.SetQuery("SELECT id,username,look,rank,builders_expire,navilogs,disabled_alert,DutyLevel,OnDuty,builders_items_max,builders_items_used,motto,gender,last_online,credits,activity_points,is_muted,home_room,hide_online,hide_inroom,block_newfriends,vip,account_created,talent_status,diamonds,last_name_change,trade_lock,trade_lock_expire FROM users WHERE auth_ticket = @ticket");
                 queryReactor.AddParameter("ticket", sessionTicket);
                 dataRow = queryReactor.GetRow();
                 if (dataRow == null)
@@ -91,7 +91,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                     $"SELECT talent_id, talent_state FROM users_talents WHERE userId = {userId}");
                 talentsTable = queryReactor.GetTable();
 
-                queryReactor.SetQuery($"SELECT COUNT(*) FROM users_stats WHERE id = {userId}");
+                queryReactor.SetQuery($"SELECT COUNT(id) FROM users_stats WHERE id = {userId}");
 
                 if (int.Parse(queryReactor.GetString()) == 0)
                     queryReactor.RunFastQuery($"INSERT INTO users_stats (id) VALUES ({userId})");
@@ -109,14 +109,14 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                     $"SELECT subscription_id, timestamp_activated, timestamp_expire, timestamp_lastgift FROM users_subscriptions WHERE user_id = {userId} AND timestamp_expire > UNIX_TIMESTAMP() ORDER BY subscription_id DESC LIMIT 1");
                 subscriptionsRow = queryReactor.GetRow();
 
-                queryReactor.SetQuery($"SELECT * FROM users_badges WHERE user_id = {userId}");
+                queryReactor.SetQuery($"SELECT badge_id,badge_slot FROM users_badges WHERE user_id = {userId}");
                 badgesTable = queryReactor.GetTable();
 
                 queryReactor.SetQuery(
-                    $"SELECT `items_rooms`.* , COALESCE(`items_groups`.`group_id`, 0) AS group_id FROM `items_rooms` LEFT OUTER JOIN `items_groups` ON `items_rooms`.`id` = `items_groups`.`id` WHERE room_id='0' AND user_id={userId} LIMIT 8000");
+                    $"SELECT id,base_item,group_id,extra_data,songcode FROM `items_rooms` WHERE room_id='0' AND user_id={userId} LIMIT 8000");
                 itemsTable = queryReactor.GetTable();
 
-                queryReactor.SetQuery($"SELECT * FROM users_effects WHERE user_id = {userId}");
+                queryReactor.SetQuery($"SELECT effect_id,total_duration,is_activated,activated_stamp,type FROM users_effects WHERE user_id = {userId}");
                 effectsTable = queryReactor.GetTable();
 
                 queryReactor.SetQuery(
@@ -211,10 +211,10 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                     (int) subscriptionsRow["timestamp_lastgift"]);
 
             var items = (from DataRow row in itemsTable.Rows
-                let id = Convert.ToUInt32(row[0])
-                let itemId = Convert.ToUInt32(row[3])
+                let id = Convert.ToUInt32(row["id"])
+                let itemId = Convert.ToUInt32(row["base_item"])
                 where Oblivion.GetGame().GetItemManager().ContainsItem(itemId)
-                let extraData = !DBNull.Value.Equals(row[4]) ? (string) row[4] : string.Empty
+                let extraData = !DBNull.Value.Equals(row["extra_data"]) ? (string) row["extra_data"] : string.Empty
                 let @group = Convert.ToUInt32(row["group_id"])
                 let songCode = (string) row["songcode"]
                 select new UserItem(id, itemId, extraData, @group, songCode)).ToList();
@@ -354,7 +354,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery($"SELECT * FROM users WHERE id = '{userId}'");
+                queryReactor.SetQuery($"SELECT id,username,block_newfriends,navilogs,disabled_alert,DutyLevel,OnDuty,builders_items_max,builders_items_used,builders_expire,look,rank,motto,gender,last_online,credits,activity_points,is_muted,home_room,hide_online,hide_inroom,vip,account_created,talent_status,diamonds,last_name_change,trade_lock,trade_lock_expire FROM users WHERE id = '{userId}'");
 
                 dataRow = queryReactor.GetRow();
 

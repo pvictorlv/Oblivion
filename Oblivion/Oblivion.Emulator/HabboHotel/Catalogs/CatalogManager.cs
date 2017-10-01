@@ -342,7 +342,7 @@ namespace Oblivion.HabboHotel.Catalogs
                 if (table4 != null)
                 {
                     foreach (DataRow row in table4.Rows)
-                        HabboClubItems.Add(new CatalogItem(row, "Habbo VIP"));
+                        HabboClubItems.Add(new CatalogItem(row, row["item_names"].ToString()));
                 }
                 if (table5 != null)
                 {

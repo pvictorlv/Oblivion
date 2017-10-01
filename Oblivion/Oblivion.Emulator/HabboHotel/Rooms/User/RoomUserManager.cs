@@ -36,6 +36,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         private readonly List<RoomUser> _removeUsers;
 
+
         /// <summary>
         ///     The _bots
         /// </summary>
@@ -126,7 +127,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     Gets the room user count.
         /// </summary>
         /// <returns>System.Int32.</returns>
-        internal int GetRoomUserCount() => UserList.Count - _bots.Count - _pets.Count > 1
+        internal int GetRoomUserCount() => UserList?.Count - _bots?.Count - _pets?.Count > 1
             ? (UserList.Count - _bots.Count - _pets.Count) * Oblivion.Multipy
             : 1;
 
@@ -181,7 +182,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer"));
             serverMessage.AppendInteger(1);
-            roomUser.Serialize(serverMessage, _userRoom.GetGameMap().GotPublicPool);
+            roomUser.Serialize(serverMessage);
             _userRoom.SendMessage(serverMessage);
             roomUser.BotAi.OnSelfEnterRoom();
             if (roomUser.IsPet)
@@ -361,6 +362,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                 {
                     var room = _userRoom;
                     var model = room.GetGameMap().Model;
+                    if (model == null) return;
+
                     roomUserByHabbo.MoveTo(model.DoorX, model.DoorY);
                     roomUserByHabbo.CanWalk = false;
                     session.GetMessageHandler()
@@ -444,6 +447,8 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="user">The user.</param>
         internal void RemoveRoomUser(RoomUser user)
         {
+            if (user == null) return;
+            
             RoomUser junk;
             if (!UserList.TryRemove(user.InternalRoomId, out junk)) return;
 
@@ -685,9 +690,13 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             if (user == null) return;
 
-            if (user.Statusses.ContainsKey("lay") || user.Statusses.ContainsKey("sit"))
+            if (user.Statusses.ContainsKey("lay"))
             {
                 user.Statusses.Remove("lay");
+                user.UpdateNeeded = true;
+            }
+            if (user.Statusses.ContainsKey("sit"))
+            {
                 user.Statusses.Remove("sit");
                 user.UpdateNeeded = true;
             }
@@ -1302,7 +1311,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                 _userRoom.GetGameMap()
                     .UpdateUserMovement(new Point(roomUsers.Coordinate.X, roomUsers.Coordinate.Y),
                         new Point(roomUsers.SetX, roomUsers.SetY), roomUsers);
-                var hasItemInPlace = _userRoom.GetGameMap().GetCoordinatedItems(new Point(roomUsers.X, roomUsers.Y));
+                var hasItemInPlace = _userRoom.GetGameMap().GetCoordinatedItems(new Point(roomUsers.X, roomUsers.Y))
+                    .ToList();
 
                 // Set His Actual X,Y,Z Position...
                 roomUsers.X = roomUsers.SetX;
@@ -1310,7 +1320,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 roomUsers.Z = roomUsers.SetZ;
 
                 // Check Sub Items Interactionables
-                foreach (var roomItem in hasItemInPlace.ToArray())
+                foreach (var roomItem in hasItemInPlace)
                 {
                     roomItem.UserWalksOffFurni(roomUsers);
                     switch (roomItem.GetBaseItem().InteractionType)
@@ -1350,7 +1360,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             break;
                     }
                 }
-
+                hasItemInPlace.Clear();
                 // Let's Update user Status..
                 UpdateUserStatus(roomUsers, true);
                 return false;
@@ -1587,24 +1597,6 @@ namespace Oblivion.HabboHotel.Rooms.User
         }
 
         /// <summary>
-        ///     Destroys this instance.
-        /// </summary>
-        internal void Destroy()
-        {
-            _userRoom = null;
-            UsersByUserName.Clear();
-            UsersByUserName = null;
-            UsersByUserId.Clear();
-            UsersByUserId = null;
-//            OnUserEnter = null;
-            _pets.Clear();
-            _bots.Clear();
-            _pets = null;
-            _bots = null;
-            UserList = null;
-        }
-
-        /// <summary>
         ///     Updates the user effect.
         /// </summary>
         /// <param name="user">The user.</param>
@@ -1753,7 +1745,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         var serverMessage =
                             new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer"));
                         serverMessage.AppendInteger(1);
-                        user.Serialize(serverMessage, _userRoom.GetGameMap().GotPublicPool);
+                        user.Serialize(serverMessage);
                         _userRoom.SendMessage(serverMessage);
                     }
                     if (!user.IsBot)
@@ -1797,6 +1789,26 @@ namespace Oblivion.HabboHotel.Rooms.User
         }
 
         /// <summary>
+        ///     Destroys this instance.
+        /// </summary>
+        internal void Destroy()
+        {
+            _userRoom = null;
+            ToSet.Clear();
+            ToSet = null;
+            UsersByUserName.Clear();
+            UsersByUserName = null;
+            UsersByUserId.Clear();
+            UsersByUserId = null;
+            _pets.Clear();
+            _bots.Clear();
+            _pets = null;
+            _bots = null;
+            UserList = null;
+        }
+
+
+        /// <summary>
         ///     Handles the <see cref="E:Remove" /> event.
         /// </summary>
         /// <param name="user"></param>
@@ -1804,7 +1816,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             try
             {
-                if (user == null || user.GetClient() == null) return;
+                if (user?.GetClient() == null) return;
                 var client = user.GetClient();
                 var list = UserList.Values.Where(current => current.IsBot && !current.IsPet && current.BotAi != null);
                 var list2 = new List<RoomUser>();

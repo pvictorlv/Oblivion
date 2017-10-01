@@ -50,13 +50,15 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 !string.Equals(user2.GetUserName(), session.GetHabbo().UserName,
                     StringComparison.CurrentCultureIgnoreCase))
             {
-                user2.Statusses.Add("lay", "0.55");
-                user2.IsLyingDown = true;
-                user2.UpdateNeeded = true;
+                if (!user2.Statusses.ContainsKey("lay"))
+                {
+                    user2.Statusses.Add("lay", "0.55");
+                    user2.IsLyingDown = true;
+                    user2.UpdateNeeded = true;
+                }
                 user.Chat(user.GetClient(), $"Eu te matei {user2.GetUserName()}!", true, 0, 3);
                 user2.Chat(user2.GetClient(), "Estou morto :(", true, 0,
                     3);
-                return true;
             }
             return true;
         }

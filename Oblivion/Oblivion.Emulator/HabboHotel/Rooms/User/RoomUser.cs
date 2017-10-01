@@ -1104,8 +1104,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     Serializes the specified message.
         /// </summary>
         /// <param name="message">The message.</param>
-        /// <param name="gotPublicRoom">if set to <c>true</c> [got public room].</param>
-        internal void Serialize(ServerMessage message, bool gotPublicRoom)
+        internal void Serialize(ServerMessage message)
         {
             if (message == null)
                 return;

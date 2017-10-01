@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -161,6 +160,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         {
             try
             {
+                if (dbClient == null) return;
                 if (!_updatedItems.Any() && !_removedItems.Any() &&
                     _room.GetRoomUserManager().PetCount <= 0)
                     return;
@@ -168,21 +168,24 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 var queryChunk = new QueryChunk();
                 var queryChunk2 = new QueryChunk();
 
-                foreach (var itemId in _removedItems)
+                var list = _removedItems.ToList();
+                foreach (var itemId in list)
                 {
                     queryChunk.AddQuery("UPDATE items_rooms SET room_id='0', x='0', y='0', z='0', rot='0' WHERE id = " +
                                         itemId);
                 }
+                list.Clear();
 
-                foreach (var roomItem in _updatedItems.Select(GetItem).Where(roomItem => roomItem != null))
+                var list2 = _updatedItems.Select(GetItem).ToList();
+
+                foreach (var roomItem in list2)
                 {
                     if (roomItem.GetBaseItem() != null && roomItem.GetBaseItem().IsGroupItem)
                     {
                         try
                         {
                             var gD = roomItem.GroupData.Split(';');
-                            roomItem.ExtraData = roomItem.ExtraData + ";" + gD[1] + ";" +
-                                                 gD[2] + ";" + gD[3];
+                            roomItem.ExtraData = roomItem.ExtraData + ";" + gD[1] + ";" + gD[2] + ";" + gD[3];
                         }
                         catch
                         {
@@ -192,9 +195,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
                     if (roomItem.RoomId == 0) continue;
 
-                    if (roomItem.GetBaseItem().Name.Contains("wallpaper_single") ||
-                        roomItem.GetBaseItem().Name.Contains("floor_single") ||
-                        roomItem.GetBaseItem().Name.Contains("landscape_single"))
+                    if (roomItem.GetBaseItem().Name.Contains("wallpaper_single") || roomItem.GetBaseItem().Name.Contains("floor_single") || roomItem.GetBaseItem().Name.Contains("landscape_single"))
                     {
                         queryChunk.AddQuery("DELETE FROM items_rooms WHERE id = " + roomItem.Id + " LIMIT 1");
                         continue;
@@ -209,8 +210,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
                     if (roomItem.IsFloorItem)
                     {
-                        query +=
-                            $", x={roomItem.X}, y={roomItem.Y}, z='{roomItem.Z.ToString(CultureInfo.InvariantCulture).Replace(',', '.')}', rot={roomItem.Rot}";
+                        query += $", x={roomItem.X}, y={roomItem.Y}, z='{roomItem.Z.ToString(CultureInfo.InvariantCulture).Replace(',', '.')}', rot={roomItem.Rot}";
                     }
                     else
                     {
@@ -222,9 +222,10 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     queryChunk2.AddQuery(query);
                 }
 
+                list2.Clear();
                 _room.GetRoomUserManager().AppendPetsUpdateString(dbClient);
 
-                session?.GetHabbo().GetInventoryComponent().RunDbUpdate();
+                session?.GetHabbo()?.GetInventoryComponent().RunDbUpdate();
 
                 _updatedItems.Clear();
                 _removedItems.Clear();
@@ -445,7 +446,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.RunFastQuery(
-                    "SELECT items_rooms.* , COALESCE(items_groups.group_id, 0) AS group_id FROM items_rooms LEFT OUTER JOIN items_groups ON items_rooms.id = items_groups.id WHERE items_rooms.room_id = " +
+                    "SELECT i.id, i.x, i.y, i.z, i.rot, i.user_id, i.base_item,i.wall_pos,i.extra_data,i.songcode,i.builders,i.group_id FROM items_rooms AS i WHERE i.room_id = " +
                     _room.RoomId + " LIMIT 5000");
 
                 var table = queryReactor.GetTable();
@@ -1208,13 +1209,16 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 return new List<ServerMessage>();
             if (_roolerCycle >= _rollerSpeed || _rollerSpeed == 0)
             {
-                if (Rollers.Count <= 0)
-                    return new List<ServerMessage>();
+                var list = Rollers.ToList();
 
+                if (list.Count <= 0)
+                {
+                    list.Clear();
+                    return new List<ServerMessage>();
+                }
                 _rollerItemsMoved.Clear();
                 _rollerUsersMoved.Clear();
                 _rollerMessages.Clear();
-                var list = Rollers.ToList();
                 foreach (var current in list)
                 {
                     if (current == null) continue;

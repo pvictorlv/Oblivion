@@ -108,15 +108,10 @@ namespace Oblivion.HabboHotel.Users.Messenger
             if (Friends == null)
                 return;
 
-            var clientsById = Oblivion.GetGame().GetClientManager().GetClientsById(Friends.Keys);
+            var clientsById = Oblivion.GetGame().GetClientManager().GetClientsById(Friends.Keys).Where(
+                current => current?.GetHabbo() != null && current.GetHabbo().GetMessenger() != null).ToList();
 
-            if (clientsById == null)
-                return;
-
-            foreach (
-                var current in
-                clientsById.Where(
-                    current => current?.GetHabbo() != null && current.GetHabbo().GetMessenger() != null))
+            foreach (var current in clientsById)
             {
                 var user = current.GetHabbo();
                 var messenger = user?.GetMessenger();
@@ -127,6 +122,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
                     UpdateFriend(user.Id, current, notification);
                 }
             }
+            clientsById.Clear();
         }
 
         /// <summary>

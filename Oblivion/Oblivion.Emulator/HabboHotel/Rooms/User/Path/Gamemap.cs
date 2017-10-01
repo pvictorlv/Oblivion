@@ -41,11 +41,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         internal bool DiagonalEnabled;
 
         /// <summary>
-        ///     The got public pool
-        /// </summary>
-        internal bool GotPublicPool;
-
-        /// <summary>
         ///     The guild gates
         /// </summary>
         internal Dictionary<Point, RoomItem> GuildGates;
@@ -76,7 +71,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
             Model = new DynamicRoomModel(StaticModel, room);
             CoordinatedItems = new Dictionary<Point, List<RoomItem>>();
-            GotPublicPool = room.RoomData.Model.GotPublicPool;
             GameMap = new byte[Model.MapSizeX, Model.MapSizeY];
             ItemHeightMap = new double[Model.MapSizeX, Model.MapSizeY];
             _userMap = new HybridDictionary();
@@ -467,19 +461,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                             }
                         }
                     }
-                    if (GotPublicPool)
-                    {
-                        for (var l = 0; l < StaticModel.MapSizeY; l++)
-                        {
-                            for (var m = 0; m < StaticModel.MapSizeX; m++)
-                            {
-                                if (StaticModel.MRoomModelfx[m][l] != 0)
-                                {
-                                    EffectMap[m, l] = StaticModel.MRoomModelfx[m][l];
-                                }
-                            }
-                        }
-                    }
                 }
 
                 else
@@ -512,19 +493,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                                     case SquareState.Pool:
                                         EffectMap[num3, n] = 6;
                                         break;
-                                }
-                            }
-                        }
-                    }
-                    if (GotPublicPool)
-                    {
-                        for (var num4 = 0; num4 < StaticModel.MapSizeY; num4++)
-                        {
-                            for (var num5 = 0; num5 < StaticModel.MapSizeX; num5++)
-                            {
-                                if (StaticModel.MRoomModelfx[num5][num4] != 0)
-                                {
-                                    EffectMap[num5, num4] = StaticModel.MRoomModelfx[num5][num4];
                                 }
                             }
                         }
@@ -597,16 +565,16 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool RemoveCoordinatedItem(RoomItem item, Point coord)
         {
-            var items = new List<RoomItem>();
-            if (!CoordinatedItems.TryGetValue(coord, out items))
-            {
+            if (item == null)
                 return false;
-            }
 
-            items.Remove(item);
-            CoordinatedItems.Remove(coord);
-            CoordinatedItems.Add(coord, items);
-            return true;
+            var items = CoordinatedItems[coord];
+            if (items != null)
+            {
+                items.Remove(item);
+                return true;
+            }
+            return false;
         }
 
         internal List<RoomItem> GetCoordinatedHeighestItems(Point coord)
@@ -646,20 +614,22 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool RemoveFromMap(RoomItem item, bool handleGameItem)
         {
+            if (item == null) return false;
+
             RemoveSpecialItem(item);
             if (_room.GotSoccer())
                 _room.GetSoccer().OnGateRemove(item);
             var result = false;
-            foreach (var current in item.GetCoords)
-            {
-                if (RemoveCoordinatedItem(item, current)) result = true;
-            }
+             foreach (var current in item.GetCoords)
+             {
+                 if (RemoveCoordinatedItem(item, current))
+                     result = true;
+             }
             var hybridDictionary = new HybridDictionary();
             foreach (var current2 in item.GetCoords)
             {
-                if (CoordinatedItems.ContainsKey(current2))
+                if (CoordinatedItems.TryGetValue(current2, out List<RoomItem> value))
                 {
-                    var value = CoordinatedItems[current2];
                     if (!hybridDictionary.Contains(current2))
                         hybridDictionary.Add(current2, value);
                 }
@@ -781,11 +751,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="Override">if set to <c>true</c> [override].</param>
         /// <param name="horseId">The horse identifier.</param>
         /// <returns><c>true</c> if this instance can walk the specified x; otherwise, <c>false</c>.</returns>
-        internal bool CanWalk(int x, int y, bool Override, uint horseId = 0u)
-        {
-            return _room.RoomData.AllowWalkThrough || Override ||
-                   _room.GetRoomUserManager().GetUserForSquare(x, y) == null;
-        }
+        internal bool CanWalk(int x, int y, bool Override, uint horseId = 0u) => _room.RoomData.AllowWalkThrough || Override ||
+                                                                                 _room.GetRoomUserManager().GetUserForSquare(x, y) == null;
 
         /// <summary>
         ///     Gets the floor status.
@@ -825,10 +792,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
         /// <returns><c>true</c> if this instance [can roll item here] the specified x; otherwise, <c>false</c>.</returns>
-        internal bool CanRollItemHere(int x, int y)
-        {
-            return ValidTile(x, y) && Model.SqState[x][y] != SquareState.Blocked;
-        }
+        internal bool CanRollItemHere(int x, int y) => ValidTile(x, y) && Model.SqState[x][y] != SquareState.Blocked;
 
         /// <summary>
         ///     Squares the is open.
@@ -837,10 +801,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="y">The y.</param>
         /// <param name="pOverride">if set to <c>true</c> [p override].</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool SquareIsOpen(int x, int y, bool pOverride)
-        {
-            return (Model.MapSizeX - 1 >= x && Model.MapSizeY - 1 >= y) && CanWalk(GameMap[x, y], pOverride);
-        }
+        internal bool SquareIsOpen(int x, int y, bool pOverride) => (Model.MapSizeX - 1 >= x && Model.MapSizeY - 1 >= y) && CanWalk(GameMap[x, y], pOverride);
 
         /// <summary>
         ///     Determines whether [is valid step3] [the specified user].

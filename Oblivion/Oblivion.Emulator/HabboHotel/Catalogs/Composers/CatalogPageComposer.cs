@@ -8,6 +8,7 @@ using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
+using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Catalogs.Composers
 {
@@ -186,9 +187,8 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                 }
 
                 message.AppendBool(true);
-                var fuckingArray = item.Name.Split('_');
+                var fuckingArray = item.Name.Split('_'); //HABBO_CLUB_VIP_1_MONTH
                 double dayTime = 31;
-
                 if (item.Name.Contains("DAY"))
                     dayTime = int.Parse(fuckingArray[3]);
                 else if (item.Name.Contains("MONTH"))
@@ -208,7 +208,6 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                     newExpiryDate =
                         Oblivion.UnixToDateTime(session.GetHabbo().GetSubscriptionManager().GetSubscription().ExpireTime)
                             .AddDays(dayTime);
-
                 message.AppendInteger((int)dayTime / 31);
                 message.AppendInteger((int)dayTime);
                 message.AppendBool(false);

@@ -62,8 +62,8 @@ namespace Oblivion.Messages.Parsers
 
                     Console.WriteLine();
                 }
-
-                StaticRequestHandler staticRequestHandler = Incoming[message.Id];
+                
+                var staticRequestHandler = Incoming[message.Id];
                 staticRequestHandler(handler);
             }
             else if (Oblivion.DebugMode)

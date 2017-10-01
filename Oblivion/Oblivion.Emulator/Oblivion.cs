@@ -179,8 +179,7 @@ namespace Oblivion
 
             var plugins = new List<IPlugin>(pluginTypes.Count);
 
-            plugins.AddRange(pluginTypes.Select(type => (IPlugin) Activator.CreateInstance(type))
-                .Where(plugin => plugin != null));
+            plugins.AddRange(pluginTypes.Select(type => (IPlugin) Activator.CreateInstance(type)));
 
             return plugins;
         }

@@ -421,7 +421,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
                 queuedServerMessage.AppendResponse(Oblivion.GetGame().GetAchievementManager().AchievementDataCached);
 
-                if (!GetHabbo().NuxPassed && ExtraSettings.NewUsersGiftsEnabled)
+                if (!GetHabbo().Vip && ExtraSettings.NewUsersGiftsEnabled)
                     queuedServerMessage.AppendResponse( new ServerMessage(LibraryParser.OutgoingRequest("NuxSuggestFreeGiftsMessageComposer")));
 
                 queuedServerMessage.AppendResponse(GetHabbo().GetAvatarEffectsInventoryComponent().GetPacket());

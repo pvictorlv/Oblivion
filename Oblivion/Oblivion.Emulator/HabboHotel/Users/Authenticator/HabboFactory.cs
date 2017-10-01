@@ -61,7 +61,6 @@ namespace Oblivion.HabboHotel.Users.Authenticator
             var lastChange = (int)dRow["last_name_change"];
             var tradeLocked = Oblivion.EnumToBool(dRow["trade_lock"].ToString());
             var tradeLockExpire = int.Parse(dRow["trade_lock_expire"].ToString());
-            var nuxPassed = Oblivion.EnumToBool(dRow["nux_passed"].ToString());
 
             /* builders club */
             var buildersExpire = (int)dRow["builders_expire"];
@@ -74,22 +73,28 @@ namespace Oblivion.HabboHotel.Users.Authenticator
             var disableAlert = Oblivion.EnumToBool(dRow["disabled_alert"].ToString());
             var navilogs = new Dictionary<int, NaviLogs>();
             var navilogstring = (string)dRow["navilogs"];
-            if (navilogstring.Length > 0)
-                foreach (
-                    var naviLogs in
-                        navilogstring.Split(';')
-                            .Where(value => navilogstring.Contains(","))
-                            .Select(
-                                value =>
-                                    new NaviLogs(int.Parse(value.Split(',')[0]), value.Split(',')[1],
-                                        value.Split(',')[2]))
-                            .Where(naviLogs => !navilogs.ContainsKey(naviLogs.Id)))
-                    navilogs.Add(naviLogs.Id, naviLogs);
+            if (navilogstring.Length <= 0)
+                return new Habbo(id, userName, ras, motto, look, gender, credits, activityPoints, muted, homeRoom,
+                    respect, dailyRespectPoints, dailyPetRespectPoints,
+                    hasFriendRequestsDisabled, currentQuestId, achievementPoints,
+                    lastOnline, appearOffline, hideInRoom, vip, createDate, citizenship, diamonds, @group, favId,
+                    lastChange, tradeLocked, tradeLockExpire, buildersExpire, buildersItemsMax,
+                    buildersItemsUsed, onDuty, navilogs, dailyCompetitionVotes, dutyLevel, disableAlert);
+            foreach (
+                var naviLogs in
+                navilogstring.Split(';')
+                    .Where(value => navilogstring.Contains(","))
+                    .Select(
+                        value =>
+                            new NaviLogs(int.Parse(value.Split(',')[0]), value.Split(',')[1],
+                                value.Split(',')[2]))
+                    .Where(naviLogs => !navilogs.ContainsKey(naviLogs.Id)))
+                navilogs.Add(naviLogs.Id, naviLogs);
 
             return new Habbo(id, userName, ras, motto, look, gender, credits, activityPoints, muted, homeRoom, respect, dailyRespectPoints, dailyPetRespectPoints,
                 hasFriendRequestsDisabled, currentQuestId, achievementPoints,
                 lastOnline, appearOffline, hideInRoom, vip, createDate, citizenship, diamonds, group, favId,
-                lastChange, tradeLocked, tradeLockExpire, nuxPassed, buildersExpire, buildersItemsMax,
+                lastChange, tradeLocked, tradeLockExpire, buildersExpire, buildersItemsMax,
                 buildersItemsUsed, onDuty, navilogs, dailyCompetitionVotes, dutyLevel, disableAlert);
         }
     }
