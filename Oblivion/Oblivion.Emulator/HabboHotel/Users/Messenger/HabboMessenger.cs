@@ -204,10 +204,14 @@ namespace Oblivion.HabboHotel.Users.Messenger
             OnNewFriendship(friendId);
 
             var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(friendId);
+            var myClient = Oblivion.GetGame().GetClientManager().GetClientByUserId(_userId);
 
             Oblivion.GetGame()
                 .GetAchievementManager()
                 .ProgressUserAchievement(clientByUserId, "ACH_FriendListSize", 1, true);
+            Oblivion.GetGame()
+                .GetAchievementManager()
+                .ProgressUserAchievement(myClient, "ACH_FriendListSize", 1, true);
 
             if (clientByUserId?.GetHabbo().GetMessenger() != null)
                 clientByUserId.GetHabbo().GetMessenger().OnNewFriendship(_userId);

@@ -861,11 +861,9 @@ namespace Oblivion.Messages.Handlers
                 return;
 
             var rand = new Random();
-            habboForId.Data.Relations = (
-                from x in habboForId.Data.Relations
-                orderby rand.Next()
-                select x).ToDictionary(item => item.Key,
-                item => item.Value);
+            var dictionary = (habboForId.Data.Relations.ToList().OrderBy(x => rand.Next())).ToDictionary(pair => pair.Key, pair => pair.Value);
+            habboForId.Data.Relations = dictionary;
+
             var num = habboForId.Data.Relations.Count(x => x.Value.Type == 1);
             var num2 = habboForId.Data.Relations.Count(x => x.Value.Type == 2);
             var num3 = habboForId.Data.Relations.Count(x => x.Value.Type == 3);

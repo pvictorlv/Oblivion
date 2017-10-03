@@ -324,7 +324,7 @@ namespace Oblivion.HabboHotel.Groups
             {
                 response.AppendInteger(list.Count);
 
-                if (theGroup.Members.Count > 0 && list.Count > 0 && list[page] != null)
+                if (theGroup.Members.Count > 0 && list.Count >= page)
                 {
                     response.AppendInteger(list[page].Count);
 

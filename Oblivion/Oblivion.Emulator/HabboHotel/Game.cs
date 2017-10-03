@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Achievements;
@@ -498,10 +497,8 @@ namespace Oblivion.HabboHotel
         /// </summary>
         internal void StartGameLoop()
         {
-            const int stackSize = 1024 * 1024 * 256;
-
             GameLoopActiveExt = true;
-            _gameLoop = new Thread(MainGameLoop, stackSize);
+            _gameLoop = new Thread(MainGameLoop);
             _gameLoop.Start();
         }
 
