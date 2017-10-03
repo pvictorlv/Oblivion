@@ -4,10 +4,7 @@ using System;
 using System.Data;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.Database.Manager.Session_Details.Interfaces;
-using FirebirdSql.Data.FirebirdClient;
-using Ingres.Client;
 using MySql.Data.MySqlClient;
-using Npgsql;
 
 #endregion
 
@@ -17,9 +14,6 @@ namespace Oblivion.Database.Manager.Database.Session_Details
     {
         protected IDatabaseClient Client;
         protected MySqlCommand CommandMySql;
-        protected FbCommand CommandFireBird;
-        protected IngresCommand CommandIngress;
-        protected NpgsqlCommand CommandPgSql;
 
         public void Dispose()
         {
@@ -28,61 +22,27 @@ namespace Oblivion.Database.Manager.Database.Session_Details
             GC.SuppressFinalize(this);
         }
 
-        public QueryAdapter(IDatabaseClient client)
-        {
-            Client = client;
-        }
+        public QueryAdapter(IDatabaseClient client) => Client = client;
 
-        private static bool DbEnabled
-        {
-            get { return DatabaseManager.DbEnabled; }
-        }
+        private static bool DbEnabled => DatabaseManager.DbEnabled;
 
         public void AddParameter(string name, byte[] data)
         {
-            switch (DatabaseManager.DatabaseConnectionType.ToLower())
-            {
-                case "firebird":
-                    CommandFireBird.Parameters.Add(new FbParameter(name, FbDbType.Text, data.Length));
-                    break;
-
-                case "ingres":
-                case "ingress":
-                    CommandIngress.Parameters.Add(new IngresParameter(name, DbType.String, data.Length));
-                    break;
-
-                case "pgsql":
-                    CommandPgSql.Parameters.Add(new NpgsqlParameter(name, DbType.String, data.Length));
-                    break;
-
-                default: // mySql
-                    CommandMySql.Parameters.Add(new MySqlParameter(name, MySqlDbType.Blob, data.Length));
-                    break;
-            }
+            CommandMySql.Parameters.Add(new MySqlParameter(name, MySqlDbType.Blob, data.Length));
         }
 
         public void AddParameter(string parameterName, object val)
         {
-            switch (DatabaseManager.DatabaseConnectionType.ToLower())
+            try
             {
-                case "firebird":
-                    CommandFireBird.Parameters.AddWithValue(parameterName, val);
-                    break;
-
-                case "ingres":
-                case "ingress":
-                    CommandIngress.Parameters.Add(parameterName, val);
-                    break;
-
-                case "pgsql":
-                    CommandPgSql.Parameters.AddWithValue(parameterName, val);
-                    break;
-
-                default: // mySql
-                    CommandMySql.Parameters.AddWithValue(parameterName, val);
-                    break;
+                CommandMySql.Parameters.AddWithValue(parameterName, val);
+            }
+            catch (Exception e)
+            {
+                Writer.Writer.LogQueryError(e, CommandMySql?.CommandText);
             }
         }
+
 
         public bool FindsResult()
         {
@@ -90,61 +50,16 @@ namespace Oblivion.Database.Manager.Database.Session_Details
                 return false;
             var hasRows = false;
 
-            switch (DatabaseManager.DatabaseConnectionType.ToLower())
+            try
             {
-                case "firebird":
-                    try
-                    {
-                        using (var reader = CommandFireBird.ExecuteReader())
-                            hasRows = reader.HasRows;
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandFireBird.CommandText);
-                        throw exception;
-                    }
-                    break;
-
-                case "ingres":
-                case "ingress":
-                    try
-                    {
-                        using (var reader = CommandIngress.ExecuteReader())
-                            hasRows = reader.HasRows;
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandIngress.CommandText);
-                        throw exception;
-                    }
-                    break;
-
-                case "pgsql":
-                    try
-                    {
-                        using (var reader = CommandPgSql.ExecuteReader())
-                            hasRows = reader.HasRows;
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandPgSql.CommandText);
-                        throw exception;
-                    }
-                    break;
-
-                default:
-                    try
-                    {
-                        using (var reader = CommandMySql.ExecuteReader())
-                            hasRows = reader.HasRows;
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandMySql.CommandText);
-                        throw exception;
-                    }
-                    break;
+                using (var reader = CommandMySql.ExecuteReader())
+                    hasRows = reader.HasRows;
             }
+            catch (Exception exception)
+            {
+                Writer.Writer.LogQueryError(exception, CommandMySql?.CommandText);
+            }
+
 
             return hasRows;
         }
@@ -163,8 +78,7 @@ namespace Oblivion.Database.Manager.Database.Session_Details
             }
             catch (Exception exception)
             {
-                Writer.Writer.LogQueryError(exception, CommandMySql.CommandText);
-                throw exception;
+                Writer.Writer.LogQueryError(exception, CommandMySql?.CommandText);
             }
             return result;
         }
@@ -175,73 +89,20 @@ namespace Oblivion.Database.Manager.Database.Session_Details
                 return null;
 
             DataRow row = null;
-            switch (DatabaseManager.DatabaseConnectionType.ToLower())
+
+            try
             {
-                case "firebird":
-                    try
-                    {
-                        var dataSet = new DataSet();
-                        using (var adapter = new FbDataAdapter(CommandFireBird))
-                            adapter.Fill(dataSet);
-                        if ((dataSet.Tables.Count > 0) && (dataSet.Tables[0].Rows.Count == 1))
-                            row = dataSet.Tables[0].Rows[0];
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandFireBird.CommandText);
-                        throw exception;
-                    }
-                    break;
+                var dataSet = new DataSet();
+                using (var adapter = new MySqlDataAdapter(CommandMySql))
+                    adapter.Fill(dataSet);
+                if ((dataSet.Tables.Count > 0) && (dataSet.Tables[0].Rows.Count == 1))
+                    row = dataSet.Tables[0].Rows[0];
+            }
+            catch (Exception exception)
+            {
+                Writer.Writer.LogQueryError(exception, CommandMySql?.CommandText);
+            }
 
-                case "ingres":
-                case "ingress":
-                    try
-                    {
-                        var dataSet = new DataSet();
-                        using (var adapter = new IngresDataAdapter(CommandIngress))
-                            adapter.Fill(dataSet);
-                        if ((dataSet.Tables.Count > 0) && (dataSet.Tables[0].Rows.Count == 1))
-                            row = dataSet.Tables[0].Rows[0];
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandIngress.CommandText);
-                        throw exception;
-                    }
-                    break;
-
-                case "pgsql":
-                    try
-                    {
-                        var dataSet = new DataSet();
-                        using (var adapter = new NpgsqlDataAdapter(CommandPgSql))
-                            adapter.Fill(dataSet);
-                        if ((dataSet.Tables.Count > 0) && (dataSet.Tables[0].Rows.Count == 1))
-                            row = dataSet.Tables[0].Rows[0];
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandPgSql.CommandText);
-                        throw exception;
-                    }
-                    break;
-
-                default:
-                    try
-                    {
-                        var dataSet = new DataSet();
-                        using (var adapter = new MySqlDataAdapter(CommandMySql))
-                            adapter.Fill(dataSet);
-                        if ((dataSet.Tables.Count > 0) && (dataSet.Tables[0].Rows.Count == 1))
-                            row = dataSet.Tables[0].Rows[0];
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandMySql.CommandText);
-                     //   throw exception;
-                    }
-                    break;
-            }            
             return row;
         }
 
@@ -252,65 +113,19 @@ namespace Oblivion.Database.Manager.Database.Session_Details
 
             var str = string.Empty;
 
-            switch (DatabaseManager.DatabaseConnectionType.ToLower())
+
+            try
             {
-                case "firebird":
-                    try
-                    {
-                        var obj2 = CommandFireBird.ExecuteScalar();
-                        if (obj2 != null)
-                            str = obj2.ToString();
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandFireBird.CommandText);
-                        throw exception;
-                    }
-                    break;
-
-                case "ingres":
-                case "ingress":
-                    try
-                    {
-                        var obj2 = CommandIngress.ExecuteScalar();
-                        if (obj2 != null)
-                            str = obj2.ToString();
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandIngress.CommandText);
-                        throw exception;
-                    }
-                    break;
-
-                case "pgsql":
-                    try
-                    {
-                        var obj2 = CommandPgSql.ExecuteScalar();
-                        if (obj2 != null)
-                            str = obj2.ToString();
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandPgSql.CommandText);
-                        throw exception;
-                    }
-                    break;
-
-                default:
-                    try
-                    {
-                        var obj2 = CommandMySql.ExecuteScalar();
-                        if (obj2 != null)
-                            str = obj2.ToString();
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandMySql.CommandText);
-                      //  throw exception;
-                    }
-                    break;
+                var obj2 = CommandMySql.ExecuteScalar();
+                if (obj2 != null)
+                    str = obj2.ToString();
             }
+            catch (Exception exception)
+            {
+                Writer.Writer.LogQueryError(exception, CommandMySql?.CommandText);
+                //  throw exception;
+            }
+
             return str;
         }
 
@@ -320,60 +135,15 @@ namespace Oblivion.Database.Manager.Database.Session_Details
             if (!DbEnabled)
                 return dataTable;
 
-            switch (DatabaseManager.DatabaseConnectionType.ToLower())
+
+            try
             {
-                case "firebird":
-                    try
-                    {
-                        using (var adapter = new FbDataAdapter(CommandFireBird))
-                            adapter.Fill(dataTable);
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandFireBird.CommandText);
-                        throw exception;
-                    }
-                    break;
-
-                case "ingres":
-                case "ingress":
-                    try
-                    {
-                        using (var adapter = new IngresDataAdapter(CommandIngress))
-                            adapter.Fill(dataTable);
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandIngress.CommandText);
-                        throw exception;
-                    }
-                    break;
-
-                case "pgsql":
-                    try
-                    {
-                        using (var adapter = new NpgsqlDataAdapter(CommandPgSql))
-                            adapter.Fill(dataTable);
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandPgSql.CommandText);
-                        throw exception;
-                    }
-                    break;
-
-                default:
-                    try
-                    {
-                        using (var adapter = new MySqlDataAdapter(CommandMySql))
-                            adapter.Fill(dataTable);
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandMySql.CommandText);
-                        throw exception;
-                    }
-                    break;
+                using (var adapter = new MySqlDataAdapter(CommandMySql))
+                    adapter.Fill(dataTable);
+            }
+            catch (Exception exception)
+            {
+                Writer.Writer.LogQueryError(exception, CommandMySql?.CommandText);
             }
             return dataTable;
         }
@@ -384,59 +154,15 @@ namespace Oblivion.Database.Manager.Database.Session_Details
                 return 0L;
             var lastInsertedId = 0L;
 
-            switch (DatabaseManager.DatabaseConnectionType.ToLower())
+            try
             {
-                case "firebird":
-                    try
-                    {
-                        CommandFireBird.ExecuteScalar();
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandFireBird.CommandText);
-                        throw exception;
-                    }
-                    break;
-
-                case "ingres":
-                case "ingress":
-                    try
-                    {
-                        CommandIngress.ExecuteScalar();
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandIngress.CommandText);
-                        throw exception;
-                    }
-                    break;
-
-                case "pgsql":
-                    try
-                    {
-                        CommandPgSql.ExecuteScalar();
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandPgSql.CommandText);
-                        throw exception;
-                    }
-                    break;
-
-                default:
-                    try
-                    {
-                        CommandMySql.ExecuteScalar();
-                        lastInsertedId = CommandMySql.LastInsertedId;
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandMySql.CommandText);
-                        throw exception;
-                    }
-                    break;
+                CommandMySql.ExecuteScalar();
+                lastInsertedId = CommandMySql.LastInsertedId;
             }
-
+            catch (Exception exception)
+            {
+                Writer.Writer.LogQueryError(exception, CommandMySql.CommandText);
+            }
             return lastInsertedId;
         }
 
@@ -453,84 +179,28 @@ namespace Oblivion.Database.Manager.Database.Session_Details
             if (!DbEnabled)
                 return;
 
-            switch (DatabaseManager.DatabaseConnectionType.ToLower())
+            try
             {
-                case "firebird":
-                case "FireBird":
-                    try
-                    {
-                        CommandFireBird.ExecuteNonQuery();
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandFireBird.CommandText);
-                        throw exception;
-                    }
-                    break;
-
-                case "ingres":
-                case "ingress":
-                    try
-                    {
-                        CommandIngress.ExecuteNonQuery();
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandIngress.CommandText);
-                        throw exception;
-                    }
-                    break;
-
-                case "pgsql":
-                    try
-                    {
-                        CommandPgSql.ExecuteNonQuery();
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandPgSql.CommandText);
-                        throw exception;
-                    }
-                    break;
-
-                default:
-                    try
-                    {
-                        CommandMySql.ExecuteNonQuery();
-                    }
-                    catch (Exception exception)
-                    {
-                        Writer.Writer.LogQueryError(exception, CommandMySql.CommandText);
-                    }
-                    break;
+//                Writer.Writer.WriteLine(CommandMySql?.CommandText);
+                CommandMySql.ExecuteNonQuery();
+            }
+            catch (Exception exception)
+            {
+                Writer.Writer.LogQueryError(exception, CommandMySql?.CommandText);
             }
         }
 
         public void SetQuery(string query)
         {
-            switch (DatabaseManager.DatabaseConnectionType.ToLower())
+            try
             {
-                case "firebird":
-                case "FireBird":
-                    CommandFireBird.Parameters.Clear();
-                    CommandFireBird.CommandText = query;
-                    break;
+                CommandMySql.Parameters.Clear();
+                CommandMySql.CommandText = query;
+            }
+            catch (Exception exception)
+            {
+                Writer.Writer.LogQueryError(exception, CommandMySql?.CommandText);
 
-                case "ingres":
-                case "ingress":
-                    CommandIngress.Parameters.Clear();
-                    CommandIngress.CommandText = query;
-                    break;
-
-                case "pgsql":
-                    CommandPgSql.Parameters.Clear();
-                    CommandPgSql.CommandText = query;
-                    break;
-
-                default: // mySql
-                    CommandMySql.Parameters.Clear();
-                    CommandMySql.CommandText = query;
-                    break;
             }
         }
     }

@@ -70,11 +70,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     The sq state
         /// </summary>
         internal SquareState[][] SqState;
-
-        /// <summary>
-        ///     The static furni map
-        /// </summary>
-        internal string StaticFurniMap;
+        
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="RoomModel" /> class.
@@ -84,9 +80,8 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="doorZ">The door z.</param>
         /// <param name="doorOrientation">The door orientation.</param>
         /// <param name="heightmap">The heightmap.</param>
-        /// <param name="staticFurniMap">The static furni map.</param>
         /// <param name="clubOnly">if set to <c>true</c> [club only].</param>
-        internal RoomModel(int doorX, int doorY, double doorZ, int doorOrientation, string heightmap, string staticFurniMap, bool clubOnly)
+        internal RoomModel(int doorX, int doorY, double doorZ, int doorOrientation, string heightmap, bool clubOnly)
         {
             try
             {
@@ -95,7 +90,6 @@ namespace Oblivion.HabboHotel.Rooms
                 DoorZ = doorZ;
                 DoorOrientation = doorOrientation;
                 Heightmap = heightmap.ToLower();
-                StaticFurniMap = staticFurniMap;
 
                 heightmap = heightmap.Replace($"{Convert.ToChar(10)}", string.Empty);
 
@@ -131,10 +125,10 @@ namespace Oblivion.HabboHotel.Rooms
 
                     for (var x = 0; x < MapSizeX; x++)
                     {
-                        char c = 'x';
+                        var c = 'x';
 
                         if(x < text2.Length)
-                            c = (char)text2[x];
+                            c = text2[x];
 
                         if (x == doorX && y == doorY)
                         {

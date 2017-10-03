@@ -7,7 +7,7 @@ using Oblivion.Database.Manager.Session_Details.Interfaces;
 
 namespace Oblivion.Database.Manager.Database.Session_Details.Interfaces
 {
-    public interface IQueryAdapter : IRegularQueryAdapter, IDisposable
+    public interface IQueryAdapter : IRegularQueryAdapter
     {
         void DoCommit();
 

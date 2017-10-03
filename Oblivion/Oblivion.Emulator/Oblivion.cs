@@ -295,7 +295,7 @@ namespace Oblivion
                     ConnectionTimeout = 10
                 };
 
-                Manager = new DatabaseManager(mySqlConnectionStringBuilder.ToString(), DatabaseConnectionType);
+                Manager = new DatabaseManager(mySqlConnectionStringBuilder.ToString());
 
                 using (var queryReactor = GetDatabaseManager().GetQueryReactor())
                 {

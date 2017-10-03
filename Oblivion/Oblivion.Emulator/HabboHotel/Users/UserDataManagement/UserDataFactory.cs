@@ -263,7 +263,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
                 if (num4 != userId && !friends.ContainsKey(num4))
                     friends.Add(num4,
-                        new MessengerBuddy(num4, pUsername, pLook, pMotto, pLastOnline, pAppearOffline, pHideInroom));
+                        new MessengerBuddy(num4, pUsername, pLook, pMotto, pAppearOffline, pHideInroom));
             }
 
             var friendsRequests = new Dictionary<uint, MessengerRequest>();

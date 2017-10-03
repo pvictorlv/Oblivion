@@ -495,10 +495,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                     if (GetBaseItem() == null) return 0;
                     if (!GetBaseItem().StackMultipler) return GetBaseItem().Height;
                     if (string.IsNullOrEmpty(ExtraData)) ExtraData = "0";
-                    if (!int.TryParse(ExtraData, out int data))
-                        return Z;
-                    
-                    return GetBaseItem().ToggleHeight[data];
+                    return !int.TryParse(ExtraData, out int data) ? Z : GetBaseItem().ToggleHeight[data];
                 }
                 catch (Exception e)
                 {

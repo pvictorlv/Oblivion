@@ -53,6 +53,7 @@ namespace Oblivion.Connection.Net
             PolicyRequest = null;
             SwitchParserRequest = null;
         }
+        
 
         /// <summary>
         /// Creates a new object that is a copy of the current instance.

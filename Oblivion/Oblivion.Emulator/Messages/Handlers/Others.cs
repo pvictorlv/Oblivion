@@ -409,7 +409,7 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void PurchaseTargetedOffer()
         {
-            var offerId = Request.GetInteger();
+            Request.GetInteger();
             var quantity = Request.GetInteger();
             var offer = Oblivion.GetGame().GetTargetedOfferManager().CurrentOffer;
             if (offer == null) return;

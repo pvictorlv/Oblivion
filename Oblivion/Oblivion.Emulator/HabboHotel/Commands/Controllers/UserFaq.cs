@@ -23,7 +23,6 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override bool Execute(GameClient session, string[] pms)
         {
-            var targetRoom = session.GetHabbo().CurrentRoom;
             DataTable data;
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {

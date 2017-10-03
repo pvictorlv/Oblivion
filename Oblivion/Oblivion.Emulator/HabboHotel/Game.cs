@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
@@ -158,7 +159,7 @@ namespace Oblivion.HabboHotel
         /// <summary>
         ///     The _game loop
         /// </summary>
-        private Task _gameLoop;
+        private Thread _gameLoop;
 
         /// <summary>
         ///     The client manager cycle ended
@@ -497,8 +498,10 @@ namespace Oblivion.HabboHotel
         /// </summary>
         internal void StartGameLoop()
         {
+            const int stackSize = 1024 * 1024 * 256;
+
             GameLoopActiveExt = true;
-            _gameLoop = new Task(MainGameLoop);
+            _gameLoop = new Thread(MainGameLoop, stackSize);
             _gameLoop.Start();
         }
 
@@ -537,7 +540,7 @@ namespace Oblivion.HabboHotel
         /// <summary>
         ///     Mains the game loop.
         /// </summary>
-        private async void MainGameLoop()
+        private void MainGameLoop()
         {
             while (GameLoopActiveExt)
             {
@@ -554,7 +557,7 @@ namespace Oblivion.HabboHotel
                     Logging.LogCriticalException($"Exception in Game Loop!: {ex}");
                 }
 
-                await Task.Delay(GameLoopSleepTimeExt);
+                Thread.Sleep(GameLoopSleepTimeExt);
             }
         }
     }

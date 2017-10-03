@@ -18,22 +18,22 @@ namespace Oblivion.HabboHotel.Quests.Composer
         internal static ServerMessage Compose(GameClient session, Quest quest)
         {
             var amountOfQuestsInCategory = Oblivion.GetGame().GetQuestManager().GetAmountOfQuestsInCategory(quest.Category);
-            var i = (quest == null) ? amountOfQuestsInCategory : quest.Number;
-            var i2 = (quest == null) ? 0 : session.GetHabbo().GetQuestProgress(quest.Id);
+            var i = quest.Number;
+            var i2 = session.GetHabbo().GetQuestProgress(quest.Id);
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("QuestCompletedMessageComposer"));
             serverMessage.AppendString(quest.Category);
             serverMessage.AppendInteger(i);
             serverMessage.AppendInteger(quest.Name.Contains("xmas2012") ? 1 : amountOfQuestsInCategory);
-            serverMessage.AppendInteger((quest == null) ? 3 : quest.RewardType);
-            serverMessage.AppendInteger((quest == null) ? 0u : quest.Id);
-            serverMessage.AppendBool(quest != null && session.GetHabbo().CurrentQuestId == quest.Id);
-            serverMessage.AppendString((quest == null) ? string.Empty : quest.ActionName);
-            serverMessage.AppendString((quest == null) ? string.Empty : quest.DataBit);
-            serverMessage.AppendInteger((quest == null) ? 0 : quest.Reward);
-            serverMessage.AppendString((quest == null) ? string.Empty : quest.Name);
+            serverMessage.AppendInteger(quest.RewardType);
+            serverMessage.AppendInteger(quest.Id);
+            serverMessage.AppendBool(session.GetHabbo().CurrentQuestId == quest.Id);
+            serverMessage.AppendString(quest.ActionName);
+            serverMessage.AppendString(quest.DataBit);
+            serverMessage.AppendInteger(quest.Reward);
+            serverMessage.AppendString(quest.Name);
             serverMessage.AppendInteger(i2);
-            serverMessage.AppendInteger((quest == null) ? 0u : quest.GoalData);
-            serverMessage.AppendInteger((quest == null) ? 0 : quest.TimeUnlock);
+            serverMessage.AppendInteger(quest.GoalData);
+            serverMessage.AppendInteger(quest.TimeUnlock);
             serverMessage.AppendString("");
             serverMessage.AppendString("");
             serverMessage.AppendBool(true);

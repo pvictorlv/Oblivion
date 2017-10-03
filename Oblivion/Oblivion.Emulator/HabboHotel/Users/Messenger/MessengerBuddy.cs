@@ -49,10 +49,9 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="userName">Name of the user.</param>
         /// <param name="look">The look.</param>
         /// <param name="motto">The motto.</param>
-        /// <param name="lastOnline">The last online.</param>
         /// <param name="appearOffline">if set to <c>true</c> [appear offline].</param>
         /// <param name="hideInroom">if set to <c>true</c> [hide inroom].</param>
-        internal MessengerBuddy(uint userId, string userName, string look, string motto, int lastOnline,
+        internal MessengerBuddy(uint userId, string userName, string look, string motto,
             bool appearOffline, bool hideInroom)
         {
             Id = userId;

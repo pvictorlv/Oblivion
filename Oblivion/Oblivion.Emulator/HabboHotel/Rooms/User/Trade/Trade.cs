@@ -375,7 +375,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         {
             {
                 foreach (
-                    var tradeUser in _users.Where(tradeUser => tradeUser != null && tradeUser.GetRoomUser() != null))
+                    var tradeUser in _users.Where(tradeUser => tradeUser?.GetRoomUser() != null))
                 {
                     tradeUser.GetRoomUser().RemoveStatus("trd");
                     tradeUser.GetRoomUser().UpdateNeeded = true;
@@ -393,7 +393,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         {
             {
                 foreach (
-                    var tradeUser in _users.Where(tradeUser => tradeUser != null && tradeUser.GetRoomUser() != null))
+                    var tradeUser in _users.Where(tradeUser => tradeUser?.GetRoomUser() != null))
                 {
                     tradeUser.GetRoomUser().RemoveStatus("trd");
                     tradeUser.GetRoomUser().UpdateNeeded = true;
@@ -417,7 +417,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             }
 
             {
-                foreach (var tradeUser in _users.Where(tradeUser => tradeUser != null && tradeUser.GetClient() != null))
+                foreach (var tradeUser in _users.Where(tradeUser => tradeUser?.GetClient() != null))
                 {
                     tradeUser.GetClient().SendMessage(message);
                 }
@@ -444,9 +444,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         ///     Gets the room.
         /// </summary>
         /// <returns>Room.</returns>
-        private Room GetRoom()
-        {
-            return Oblivion.GetGame().GetRoomManager().GetRoom(_roomId);
-        }
+        private Room GetRoom() => Oblivion.GetGame().GetRoomManager().GetRoom(_roomId);
     }
 }

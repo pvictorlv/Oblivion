@@ -49,7 +49,7 @@ namespace Oblivion.Enclosure
                 var connectedItems = GetConnectedItems(_currentlyChecking);
                 if (connectedItems.Count > 1)
                 {
-                    var list2 = handleListOfConnectedPoints(connectedItems, _currentlyChecking);
+                    var list2 = handleListOfConnectedPoints(connectedItems);
                     list.AddRange(list2.Where(current => current.Count >= 4)
                         .Select(FindClosed)
                         .Where(pointField => true));
@@ -151,8 +151,7 @@ namespace Oblivion.Enclosure
         }
 
         private IEnumerable<LinkedList<AStarSolver<GameField>.PathNode>> handleListOfConnectedPoints(
-            List<Point> pointList,
-            GametileUpdate update)
+            List<Point> pointList)
         {
             var list = new List<LinkedList<AStarSolver<GameField>.PathNode>>();
             var num = 0;

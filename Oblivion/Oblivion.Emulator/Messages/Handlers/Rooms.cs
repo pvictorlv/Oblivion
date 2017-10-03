@@ -1656,7 +1656,7 @@ namespace Oblivion.Messages.Handlers
 
                         return;
                     }
-                var doorZ = 0.0;
+                double doorZ;
                 var charDoor = lines[doorY][doorX];
                 if (charDoor >= (char) 97 && charDoor <= 119) // a-w
                     doorZ = charDoor - 87;
@@ -1668,7 +1668,7 @@ namespace Oblivion.Messages.Handlers
                         "REPLACE INTO rooms_models_customs (roomid,door_x,door_y,door_z,door_dir,heightmap) VALUES ('" +
                         room.RoomId + "', '" + doorX + "','" +
                         doorY + "','" + doorZ.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + "','" +
-                        doorOrientation + "',@newmodel,'')");
+                        doorOrientation + "',@newmodel)");
                     queryReactor.AddParameter("newmodel", heightMap);
                     queryReactor.RunQuery();
 
@@ -2571,8 +2571,8 @@ namespace Oblivion.Messages.Handlers
             }
             else
             {
-                var coords = room.GetGameMap().CoordinatedItems.Keys.OfType<Point>().ToArray();
-                Response.AppendInteger(coords.Length);
+                var coords = room.GetGameMap().CoordinatedItems.Keys.ToList();
+                Response.AppendInteger(coords.Count);
 
                 foreach (var point in coords)
                 {

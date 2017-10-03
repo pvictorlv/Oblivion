@@ -499,6 +499,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="count">The count.</param>
         internal void UpdateUserCount(uint count)
         {
+//            Out.WriteLine(count.ToString());
             _roomUserCount = count;
             if (_userRoom?.RoomData == null)
                 return;
@@ -1590,9 +1591,21 @@ namespace Oblivion.HabboHotel.Rooms.User
                 {
                     idleCount++;
                 }
+                if (userInRoomCount > 1 && Oblivion.Multipy > 1)
+                {
+                    if (_roomUserCount != userInRoomCount * (uint) Oblivion.Multipy)
+                    {
+                        UpdateUserCount(userInRoomCount * (uint) Oblivion.Multipy);
+                    }
+                }
+                else
+                {
+                    if (_roomUserCount != userInRoomCount)
+                    {
+                        UpdateUserCount(userInRoomCount);
+                    }
+                }
 
-                if (_roomUserCount != userInRoomCount)
-                    UpdateUserCount((userInRoomCount > 1) ? userInRoomCount * (uint) Oblivion.Multipy : 1);
             }
         }
 

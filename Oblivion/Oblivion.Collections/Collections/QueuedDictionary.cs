@@ -43,15 +43,9 @@ namespace Oblivion.Collections
             _onCycleEventQueue = new ConcurrentQueue<OnCycleDoneDelegate>();
         }
 
-        public ICollection<TV> Values
-        {
-            get { return Inner.Values; }
-        }
+        public ICollection<TV> Values => Inner.Values;
 
-        public ICollection<T> Keys
-        {
-            get { return Inner.Keys; }
-        }
+        public ICollection<T> Keys => Inner.Keys;
 
         public ConcurrentDictionary<T, TV> Inner { get; set; }
 
@@ -61,8 +55,7 @@ namespace Oblivion.Collections
             WorkAddQueue();
             WorkUpdateQueue();
             WorkOnEventDoneQueue();
-            if (_onCycleDone != null)
-                _onCycleDone(null, new EventArgs());
+            _onCycleDone?.Invoke(null, new EventArgs());
         }
 
         public void Add(T key, TV value)
@@ -82,15 +75,9 @@ namespace Oblivion.Collections
             _removeQueue.Enqueue(key);
         }
 
-        public TV GetValue(T key)
-        {
-            return Inner.ContainsKey(key) ? Inner[key] : default(TV);
-        }
+        public TV GetValue(T key) => Inner.ContainsKey(key) ? Inner[key] : default(TV);
 
-        public bool ContainsKey(T key)
-        {
-            return Inner.ContainsKey(key);
-        }
+        public bool ContainsKey(T key) => Inner.ContainsKey(key);
 
         public void Clear()
         {
@@ -102,15 +89,11 @@ namespace Oblivion.Collections
             _onCycleEventQueue.Enqueue(function);
         }
 
-        public List<KeyValuePair<T, TV>> ToList()
-        {
-            return Inner.ToList();
-        }
+        public List<KeyValuePair<T, TV>> ToList() => Inner.ToList();
 
         public void Destroy()
         {
-            if (Inner != null)
-                Inner.Clear();
+            Inner?.Clear();
             if (_addQueue != null && _addQueue.Any())
             {
                 KeyValuePair<T, TV> item;
@@ -166,8 +149,7 @@ namespace Oblivion.Collections
                 else
                     Inner.TryAdd(item.Key, item.Value);
 
-                if (_onAdd != null)
-                    _onAdd(item, null);
+                _onAdd?.Invoke(item, null);
             }
         }
 
@@ -182,8 +164,7 @@ namespace Oblivion.Collections
                     Inner[item.Key] = item.Value;
                 else
                     Inner.TryAdd(item.Key, item.Value);
-                if (_onUpdate != null)
-                    _onUpdate(item, null);
+                _onUpdate?.Invoke(item, null);
             }
         }
 
@@ -195,14 +176,13 @@ namespace Oblivion.Collections
             T item;
             while (_removeQueue.TryDequeue(out item))
             {
-                TV junkItem;
                 if (Inner.ContainsKey(item))
                 {
                     var value = Inner[item];
+                    TV junkItem;
                     Inner.TryRemove(item, out junkItem);
                     var keyValuePair = new KeyValuePair<T, TV>(item, value);
-                    if (_onRemove != null)
-                        _onRemove(keyValuePair, null);
+                    _onRemove?.Invoke(keyValuePair, null);
                 }
                 else
                     list.Add(item);

@@ -11,53 +11,35 @@ namespace Oblivion.Database.Manager.Database.Session_Details
     {
         public NormalQueryReactor(IDatabaseClient client) : base(client)
         {
-            switch (DatabaseManager.DatabaseConnectionType.ToLower())
-            {
-                case "firebird":
-                    CommandFireBird = client.CreateNewCommandFireBird();
-                    break;
-
-                case "ingres":
-                case "ingress":
-                    CommandIngress = client.CreateNewCommandIngress();
-                    break;
-
-                case "pgsql":
-                    CommandPgSql = client.CreateNewCommandPgSql();
-                    break;
-
-                default: // mySql
-                    CommandMySql = client.CreateNewCommandMySql();
-                    break;
-            }
+            CommandMySql = client.CreateNewCommandMySql();
         }
 
-       /* public void Dispose()
-        {
-            switch (DatabaseManager.DatabaseConnectionType.ToLower())
-            {
-                case "firebird":
-                    CommandFireBird.Dispose();
-                    Client.ReportDone();
-                    break;
-
-                case "ingres":
-                case "ingress":
-                    CommandIngress.Dispose();
-                    Client.ReportDone();
-                    break;
-
-                case "pgsql":
-                    CommandPgSql.Dispose();
-                    Client.ReportDone();
-                    break;
-
-                default: // mySql
-                    CommandMySql.Dispose();
-                    Client.ReportDone();
-                    break;
-            }
-        }*/
+        /* public void Dispose()
+         {
+             switch (DatabaseManager.DatabaseConnectionType.ToLower())
+             {
+                 case "firebird":
+                     CommandFireBird.Dispose();
+                     Client.ReportDone();
+                     break;
+ 
+                 case "ingres":
+                 case "ingress":
+                     CommandIngress.Dispose();
+                     Client.ReportDone();
+                     break;
+ 
+                 case "pgsql":
+                     CommandPgSql.Dispose();
+                     Client.ReportDone();
+                     break;
+ 
+                 default: // mySql
+                     CommandMySql.Dispose();
+                     Client.ReportDone();
+                     break;
+             }
+         }*/
 
         public void DoCommit()
         {

@@ -57,12 +57,14 @@ namespace Oblivion
         /// </summary>
         public static void InitEnvironment()
         {
+
             if (Oblivion.IsLive)
                 return;
 
             Console.CursorVisible = false;
             var currentDomain = AppDomain.CurrentDomain;
             currentDomain.UnhandledException += ExceptionHandler;
+
             Oblivion.Initialize();
         }
 

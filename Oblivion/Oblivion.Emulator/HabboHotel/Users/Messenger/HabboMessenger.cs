@@ -272,14 +272,14 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 }
 
                 messengerBuddy = new MessengerBuddy(friendId, (string) row["Username"], (string) row["look"],
-                    (string) row["motto"], (int) row["last_online"], Oblivion.EnumToBool(row["hide_online"].ToString()),
+                    (string) row["motto"], Oblivion.EnumToBool(row["hide_online"].ToString()),
                     Oblivion.EnumToBool(row["hide_inroom"].ToString()));
             }
             else
             {
                 var habbo = clientByUserId.GetHabbo();
 
-                messengerBuddy = new MessengerBuddy(friendId, habbo.UserName, habbo.Look, habbo.Motto, 0,
+                messengerBuddy = new MessengerBuddy(friendId, habbo.UserName, habbo.Look, habbo.Motto,
                     habbo.AppearOffline, habbo.HideInRoom);
                 messengerBuddy.UpdateUser();
             }

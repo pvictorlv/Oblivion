@@ -54,10 +54,9 @@ namespace Oblivion.HabboHotel.RoomBots
         /// <param name="roomBot">The room bot.</param>
         /// <param name="virtualId">The virtual identifier.</param>
         /// <param name="botId">The bot identifier.</param>
-        /// <param name="type">The type.</param>
         /// <param name="isBartender">if set to <c>true</c> [is bartender].</param>
         /// <param name="speechInterval">The speech interval.</param>
-        internal GenericBot(RoomBot roomBot, int virtualId, int botId, AiType type, bool isBartender, int speechInterval)
+        internal GenericBot(RoomBot roomBot, int virtualId, int botId, bool isBartender, int speechInterval)
         {
             _id = botId;
             _virtualId = virtualId;

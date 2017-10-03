@@ -12,7 +12,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
     public class GiveReward : IWiredItem
     {
-        private readonly List<Interaction> _mBanned;
 
         public GiveReward(RoomItem item, Room room)
         {
@@ -21,7 +20,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             OtherString = string.Empty;
             OtherExtraString = string.Empty;
             OtherExtraString2 = string.Empty;
-            _mBanned = new List<Interaction>();
         }
 
         public Interaction Type => Interaction.ActionGiveReward;
@@ -58,9 +56,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 return false;
 
             var item = (Interaction) stuff[1];
-
-            if (_mBanned.Contains(item))
-                return false;
+            
 
             if (OtherExtraString2 == null)
                 return false;

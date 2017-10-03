@@ -124,7 +124,6 @@ namespace Oblivion.Connection.Connection
             try
             {
                 var socket = _listener.EndAcceptSocket(ar);
-                if (socket == null) return;
 
                 if (socket.Connected)
                 {

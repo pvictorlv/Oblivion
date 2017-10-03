@@ -29,11 +29,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public int WhenMoveIsBlocked => (int) _whenMoveIsBlocked;
 
-        public Queue ToWork
-        {
-            get { return null; }
-            set { }
-        }
 
         public Interaction Type => Interaction.ActionMoveToDir;
 

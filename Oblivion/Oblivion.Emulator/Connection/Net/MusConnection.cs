@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Data;
 using System.Net.Sockets;
 using System.Text;
-using MySql.Data.MySqlClient.Memcached;
 using Oblivion.HabboHotel.Camera;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages;
@@ -13,46 +11,46 @@ namespace Oblivion.Connection.Net
 {
     internal class MusConnection
     {
-        private readonly Socket Conn;
-        private readonly byte[] dataBuffering = new byte[1024]; // 1024
+        private readonly Socket _conn;
+        private readonly byte[] _dataBuffering = new byte[1024]; // 1024
 
-        internal MusConnection(Socket Conn)
+        internal MusConnection(Socket conn)
         {
-            this.Conn = Conn;
-            Conn.BeginReceive(dataBuffering, 0, dataBuffering.Length, SocketFlags.None, RecieveData, this.Conn);
+            _conn = conn;
+            conn.BeginReceive(_dataBuffering, 0, _dataBuffering.Length, SocketFlags.None, RecieveData, _conn);
         }
 
         internal void RecieveData(IAsyncResult iAr)
         {
             try
             {
-                var bytes = 0;
+                int bytes;
                 try
                 {
-                    bytes = Conn.EndReceive(iAr);
+                    bytes = _conn.EndReceive(iAr);
                 }
                 catch
                 {
-                    mDisconnect();
+                    MDisconnect();
                     return;
                 }
 
-                var data = Encoding.Default.GetString(dataBuffering, 0, bytes);
+                var data = Encoding.Default.GetString(_dataBuffering, 0, bytes);
 
                 if (data.Length > 0)
-                    dArrival(data);
+                    DArrival(data);
             }
             catch
             {
             }
-            mDisconnect();
+            MDisconnect();
         }
 
-        private void dArrival(string Data)
+        private void DArrival(string data)
         {
             try
             {
-                var Params = Data.Split(Convert.ToChar(1));
+                var Params = data.Split(Convert.ToChar(1));
                 var header = Oblivion.FilterInjectionChars(Params[0]);
                 var param = Oblivion.FilterInjectionChars(Params[1]).Split(':');
 
@@ -61,10 +59,10 @@ namespace Oblivion.Connection.Net
                 switch (header)
                 {
                     case "ha":
-                        var HotelAlert =
+                        var hotelAlert =
                             new ServerMessage(LibraryParser.OutgoingRequest("BroadcastNotifMessageComposer"));
-                        HotelAlert.AppendString($"{param}\r\n- {"Hotel Management"}");
-                        Oblivion.GetGame().GetClientManager().QueueBroadcaseMessage(HotelAlert);
+                        hotelAlert.AppendString($"{param}\r\n- Hotel Management");
+                        Oblivion.GetGame().GetClientManager().QueueBroadcaseMessage(hotelAlert);
                         break;
 
                     case "alert":
@@ -83,19 +81,17 @@ namespace Oblivion.Connection.Net
 
                     case "add_preview":
                     {
-                        var PhotoId = Convert.ToInt32(param[0]);
+                        var photoId = Convert.ToInt32(param[0]);
                         var cUserId = Convert.ToInt32(param[1]);
-                        var CreatedAt = Convert.ToInt64(param[2]);
+                        var createdAt = Convert.ToInt64(param[2]);
                         clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId((uint) cUserId);
 
                         if (clientByUserId?.GetHabbo() == null || clientByUserId.GetHabbo().CurrentRoomId < 1)
-                        {
                             return;
-                        }
 
                         Oblivion.GetGame()
                             .GetCameraManager()
-                            .AddPreview(new CameraPhotoPreview(PhotoId, cUserId, CreatedAt));
+                            .AddPreview(new CameraPhotoPreview(photoId, cUserId, createdAt));
                         break;
                     }
 
@@ -108,9 +104,8 @@ namespace Oblivion.Connection.Net
                         int diamonds;
                         using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                         {
-                            DataRow row;
                             dbClient.SetQuery("SELECT diamonds FROM users WHERE id = " + UserId);
-                            row = dbClient.GetRow();
+                            var row = dbClient.GetRow();
                             if (row == null) return;
 
                             diamonds = Convert.ToInt32(row["diamonds"]);
@@ -156,7 +151,7 @@ namespace Oblivion.Connection.Net
                         var furniId = Convert.ToInt32(param[1]);
 
                         clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
-                        if (clientByUserId == null || clientByUserId.GetHabbo() == null ||
+                        if (clientByUserId?.GetHabbo() == null ||
                             clientByUserId.GetHabbo().GetInventoryComponent() == null)
                             return;
 
@@ -170,7 +165,7 @@ namespace Oblivion.Connection.Net
                         var credits = Convert.ToInt32(param[1]);
 
                         clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
-                        if (clientByUserId != null && clientByUserId.GetHabbo() != null)
+                        if (clientByUserId?.GetHabbo() != null)
                         {
                             clientByUserId.GetHabbo().Credits = credits;
                             clientByUserId.GetHabbo().UpdateCreditsBalance();
@@ -186,14 +181,13 @@ namespace Oblivion.Connection.Net
                         clientByUserId.GetHabbo().SerializeClub();
                         break;
                     case "reload_bans":
-                        
+
                         break;
                     default:
                         return;
                     case "goto":
                     {
                         var muserId = Convert.ToUInt32(param[0]);
-                        var roomStr = param[1];
 
                         clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(muserId);
                         if (clientByUserId?.GetHabbo() == null)
@@ -227,15 +221,15 @@ namespace Oblivion.Connection.Net
             }
             finally
             {
-                mDisconnect();
+                MDisconnect();
             }
         }
 
-        private void mDisconnect()
+        private void MDisconnect()
         {
             try
             {
-                Conn.Close();
+                _conn.Close();
             }
             catch
             {

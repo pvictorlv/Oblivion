@@ -134,14 +134,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         /// </summary>
         internal void Destroy()
         {
-            if (_banzaiTeleports != null)
-            {
-                _banzaiTeleports.Destroy();
-            }
-            if (_banzaiPyramids != null)
-            {
-                _banzaiPyramids.Clear();
-            }
+            _banzaiTeleports?.Destroy();
+            _banzaiPyramids?.Clear();
             _banzaiPyramids = null;
             _banzaiTeleports = null;
             _room = null;

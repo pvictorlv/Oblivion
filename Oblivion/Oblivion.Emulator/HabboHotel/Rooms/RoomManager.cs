@@ -11,6 +11,8 @@ using Oblivion.HabboHotel.Events;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Navigators.Interfaces;
 using Oblivion.HabboHotel.Rooms.Data;
+using Oblivion.Util;
+
 //using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Rooms
@@ -138,7 +140,6 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 return room.RoomData.Model;
             }
-
             return LoadModel(model, roomId);
         }
 
@@ -325,30 +326,37 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="dbClient">The database client.</param>
         internal RoomModel LoadModel(string model, uint roomid)
         {
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            try
             {
-                if (model == "custom")
+                using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    dbClient.SetQuery("SELECT * FROM rooms_models_customs WHERE roomid = @room LIMIT 1");
-                    dbClient.AddParameter("room", roomid);
-                    var row = dbClient.GetRow();
+                    if (model == "custom")
+                    {
+                        dbClient.SetQuery("SELECT * FROM rooms_models_customs WHERE roomid = @room LIMIT 1");
+                        dbClient.AddParameter("room", roomid);
+                        var row = dbClient.GetRow();
 
-                    if (row == null) return null;
+                        if (row == null) return null;
 
 
-                    return new RoomModel((int) row["door_x"], (int) row["door_y"], (double) row["door_z"],
-                        (int) row["door_dir"],
-                        (string) row["heightmap"], "", false);
+                        return new RoomModel((int) row["door_x"], (int) row["door_y"], (double) row["door_z"],
+                            (int) row["door_dir"],
+                            (string) row["heightmap"], false);
+                    }
+                    dbClient.SetQuery("SELECT * FROM rooms_models WHERE id = @name LIMIT 1");
+                    dbClient.AddParameter("name", model);
+                    var dataRow = dbClient.GetRow();
+                    if (dataRow == null) return null;
+                    return new RoomModel((int) dataRow["door_x"], (int) dataRow["door_y"],
+                        (double) dataRow["door_z"],
+                        (int) dataRow["door_dir"], (string) dataRow["heightmap"],
+                        Oblivion.EnumToBool(dataRow["club_only"].ToString()));
                 }
-                dbClient.SetQuery("SELECT * FROM rooms_models WHERE id = @name LIMIT 1");
-                dbClient.AddParameter("name", model);
-                var dataRow = dbClient.GetRow();
-                if (dataRow == null) return null;
-                var staticFurniMap = (string) dataRow["public_items"];
-                return new RoomModel((int) dataRow["door_x"], (int) dataRow["door_y"],
-                    (double) dataRow["door_z"],
-                    (int) dataRow["door_dir"], (string) dataRow["heightmap"], staticFurniMap,
-                    Oblivion.EnumToBool(dataRow["club_only"].ToString()));
+            }
+            catch (Exception e)
+            {
+                Logging.HandleException(e, "loadmodel");
+                return new RoomModel(0, 0, 0, 0, "xxxxxx", false); 
             }
         }
 

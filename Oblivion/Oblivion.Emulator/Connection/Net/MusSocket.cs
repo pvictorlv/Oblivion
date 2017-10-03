@@ -49,7 +49,7 @@ namespace Oblivion.Connection.Net
                 {
                     Out.WriteLine("The ip " + ip + " are trying to send mus request");
                 }*/
-                var nConnection = new MusConnection(nSocket);
+                new MusConnection(nSocket);
             }
             catch (Exception e)
             {

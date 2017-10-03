@@ -1,10 +1,8 @@
 ﻿using Oblivion.HabboHotel.Navigators;
 using Oblivion.HabboHotel.Navigators.Enums;
 using Oblivion.HabboHotel.Navigators.Interfaces;
-using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.Messages.Parsers;
-using Oblivion.Util;
 
 namespace Oblivion.Messages.Handlers
 {
@@ -278,7 +276,7 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void GetOwnRooms()
         {
-            if (Session == null || Session.GetHabbo() == null)
+            if (Session?.GetHabbo() == null)
                 return;
 
             if (Session.GetHabbo().OwnRoomsSerialized == false)
@@ -389,7 +387,7 @@ namespace Oblivion.Messages.Handlers
         internal void ToggleStaffPick()
         {
             var roomId = Request.GetUInteger();
-            var current = Request.GetBool();
+            Request.GetBool();
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(roomId);
             Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_Spr", 1, true);
             if (room == null) return;

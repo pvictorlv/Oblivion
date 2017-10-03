@@ -10,19 +10,17 @@ namespace Oblivion.Database
     public sealed class DatabaseManager
     {
         private readonly string _connectionStr;
-        private readonly string _typer;
 
-        public DatabaseManager(string connectionStr, string connType)
+        public DatabaseManager(string connectionStr)
         {
             _connectionStr = connectionStr;
-            _typer = connType;
         }
 
         public IQueryAdapter GetQueryReactor()
         {
             try
             {
-                IDatabaseClient databaseClient = new DatabaseConnection(_connectionStr, _typer);
+                IDatabaseClient databaseClient = new DatabaseConnection(_connectionStr);
                 databaseClient.Connect();
                 return databaseClient.GetQueryReactor();
             }

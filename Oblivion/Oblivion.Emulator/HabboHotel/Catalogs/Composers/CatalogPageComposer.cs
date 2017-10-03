@@ -8,7 +8,6 @@ using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
-using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Catalogs.Composers
 {
@@ -27,7 +26,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
         internal static ServerMessage ComposeIndex(uint rank, string type, GameClient session)
         {
             var pages =
-                Oblivion.GetGame().GetCatalog().Categories.Values.OfType<CatalogPage>().ToList();
+                Oblivion.GetGame().GetCatalog().Categories.Values.ToList();
 
             var sortedPages = pages.Where(x => x.ParentId == -2 && x.MinRank <= rank).OrderBy(x => x.OrderNum);
 

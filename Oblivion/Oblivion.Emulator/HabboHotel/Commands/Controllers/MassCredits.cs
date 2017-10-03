@@ -29,8 +29,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             foreach (var client in Oblivion.GetGame().GetClientManager().Clients.Values)
             {
-                if (client == null || client.GetHabbo() == null) continue;
-                var habbo = client.GetHabbo();
+                if (client?.GetHabbo() == null) continue;
                 client.GetHabbo().Credits += amount;
                 client.GetHabbo().UpdateCreditsBalance();
                 client.SendNotif(Oblivion.GetLanguage().GetVar("command_mass_credits_one_give") + amount +

@@ -331,7 +331,7 @@ namespace Oblivion.HabboHotel.RoomBots
             if (aiType == AiType.Pet)
                 return new PetBot(virtualId);
 
-            return new GenericBot(this, virtualId, botId, AiType, IsBartender, SpeechInterval);
+            return new GenericBot(this, virtualId, botId, IsBartender, SpeechInterval);
         }
     }
 }

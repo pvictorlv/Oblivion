@@ -455,8 +455,7 @@ namespace Oblivion.HabboHotel.GameClients
                 var timeSpan = DateTime.Now - now;
 
                 if (timeSpan.TotalSeconds > 3.0)
-                    Console.WriteLine("GameClientManager.GiveBadges spent: {0} seconds in working.",
-                        timeSpan.TotalSeconds);
+                    Console.WriteLine($"GameClientManager.GiveBadges spent: {timeSpan.TotalSeconds} seconds in working.");
             }
             catch (Exception ex)
             {

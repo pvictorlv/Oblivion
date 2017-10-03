@@ -1,7 +1,6 @@
 #region
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using Oblivion.Database.Manager.Database.Database_Exceptions;
@@ -15,7 +14,6 @@ namespace Oblivion.Database.Manager.Database
 {
     public class DatabaseManager
     {
-        public static string DatabaseConnectionType = "MySQL";
         public static bool DbEnabled = true;
         private readonly uint _beginClientAmount;
         private readonly uint _maxPoolSize;

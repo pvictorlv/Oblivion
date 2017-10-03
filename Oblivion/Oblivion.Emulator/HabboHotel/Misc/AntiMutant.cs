@@ -16,10 +16,7 @@ namespace Oblivion.HabboHotel.Misc
         /// <summary>
         ///     Initializes a new instance of the <see cref="AntiMutant" /> class.
         /// </summary>
-        public AntiMutant()
-        {
-            _parts = new Dictionary<string, Dictionary<string, Figure>>();
-        }
+        public AntiMutant() => _parts = new Dictionary<string, Dictionary<string, Figure>>();
 
         /// <summary>
         ///     Runs the look.
@@ -39,7 +36,7 @@ namespace Oblivion.HabboHotel.Misc
             {
                 var newPart = part;
                 var tPart = part.Split('-');
-                if (tPart.Count() < 2)
+                if (tPart.Length < 2)
                 {
                     flagForDefault = true;
                     continue;
@@ -47,8 +44,8 @@ namespace Oblivion.HabboHotel.Misc
                 var partName = tPart[0];
                 var partId = tPart[1];
                 if (!_parts.ContainsKey(partName) || !_parts[partName].ContainsKey(partId) ||
-                    (genderLook != "U" && _parts[partName][partId].Gender != "U" &&
-                     _parts[partName][partId].Gender != genderLook))
+                    genderLook != "U" && _parts[partName][partId].Gender != "U" &&
+                    _parts[partName][partId].Gender != genderLook)
                     newPart = SetDefault(partName, genderLook);
                 if (!fParts.Contains(partName))
                     fParts.Add(partName);
@@ -65,7 +62,7 @@ namespace Oblivion.HabboHotel.Misc
             foreach (var requiredPart in requiredParts.Where(requiredPart => !fParts.Contains(requiredPart) &&
                                                                              !toReturnFigureParts.Contains(
                                                                                  SetDefault(requiredPart, genderLook)))
-                )
+            )
                 toReturnFigureParts.Add(SetDefault(requiredPart, genderLook));
             return string.Join(".", toReturnFigureParts);
         }
@@ -82,7 +79,7 @@ namespace Oblivion.HabboHotel.Misc
             foreach (var part in figureParts)
             {
                 var tPart = part.Split('-');
-                if (tPart.Count() < 2)
+                if (tPart.Length < 2)
                     continue;
                 var partName = tPart[0];
                 var partId = tPart[1];
@@ -105,10 +102,10 @@ namespace Oblivion.HabboHotel.Misc
         {
             var partId = "0";
             if (!_parts.ContainsKey(partName))
-                return string.Format("{0}-{1}-0", partName, partId);
+                return $"{partName}-{partId}-0";
             var part = _parts[partName].FirstOrDefault(x => x.Value.Gender == gender || gender == "U");
             partId = part.Equals(default(KeyValuePair<string, Figure>)) ? "0" : part.Key;
-            return string.Format("{0}-{1}-0", partName, partId);
+            return $"{partName}-{partId}-0";
         }
     }
 }

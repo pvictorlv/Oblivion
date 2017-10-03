@@ -1,10 +1,7 @@
 #region
 
 using System;
-using FirebirdSql.Data.FirebirdClient;
-using Ingres.Client;
 using MySql.Data.MySqlClient;
-using Npgsql;
 
 #endregion
 
@@ -19,18 +16,7 @@ namespace Oblivion.Database.Manager.Database.Session_Details.Interfaces
         IQueryAdapter GetQueryReactor();
 
         MySqlCommand CreateNewCommandMySql();
-
-        FbCommand CreateNewCommandFireBird();
-
-        IngresCommand CreateNewCommandIngress();
-
-        IngresTransaction GetTransactionIngress();
-
-        NpgsqlCommand CreateNewCommandPgSql();
-
-        NpgsqlTransaction GetTransactionPgSql();
-
-        FbTransaction GetTransactionFireBird();
+        
 
         MySqlTransaction GetTransactionMySql();
 

@@ -89,20 +89,8 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FirebirdSql.Data.FirebirdClient">
-      <HintPath>..\bin\$(Configuration)\$(Platform)\Lib\Database\FirebirdSql.Data.FirebirdClient.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Ingres.Stereo">
-      <HintPath>..\bin\$(Configuration)\$(Platform)\Lib\Database\Ingres.Stereo.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="Npgsql">
-      <HintPath>..\bin\$(Configuration)\$(Platform)\Lib\Database\Npgsql.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

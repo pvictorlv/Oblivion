@@ -1,6 +1,5 @@
 using System;
 using Oblivion.HabboHotel.Navigators.Enums;
-using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.Messages;
 
@@ -183,7 +182,7 @@ namespace Oblivion.HabboHotel.Navigators.Interfaces
                 message.AppendString(Caption);
                 message.AppendString(Image);
                 message.AppendInteger(ParentId);
-                message.AppendInteger(RoomInfo != null ? RoomInfo.UsersNow : 0);
+                message.AppendInteger(RoomInfo?.UsersNow ?? 0);
                 message.AppendInteger((ItemType == PublicItemType.None)
                     ? 0
                     : ((ItemType == PublicItemType.Tag)
@@ -213,10 +212,6 @@ namespace Oblivion.HabboHotel.Navigators.Interfaces
                     case PublicItemType.PublicFlat:
                     {
                         RoomInfo.Serialize(message);
-                        break;
-                    }
-                    default:
-                    {
                         break;
                     }
                 }

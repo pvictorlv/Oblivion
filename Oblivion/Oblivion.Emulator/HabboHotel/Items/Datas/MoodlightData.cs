@@ -42,9 +42,7 @@ namespace Oblivion.HabboHotel.Items.Datas
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery(
-                    string.Format(
-                        "SELECT enabled,current_preset,preset_one,preset_two,preset_three FROM items_moodlight WHERE item_id='{0}'",
-                        itemId));
+                    $"SELECT enabled,current_preset,preset_one,preset_two,preset_three FROM items_moodlight WHERE item_id='{itemId}'");
                 row = queryReactor.GetRow();
             }
             if (row != null)
@@ -102,10 +100,7 @@ namespace Oblivion.HabboHotel.Items.Datas
         /// </summary>
         /// <param name="intensity">The intensity.</param>
         /// <returns><c>true</c> if [is valid intensity] [the specified intensity]; otherwise, <c>false</c>.</returns>
-        internal static bool IsValidIntensity(int intensity)
-        {
-            return intensity >= 0 && intensity <= 255;
-        }
+        internal static bool IsValidIntensity(int intensity) => intensity >= 0 && intensity <= 255;
 
         /// <summary>
         ///     Enables this instance.
@@ -114,8 +109,7 @@ namespace Oblivion.HabboHotel.Items.Datas
         {
             Enabled = true;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery(string.Format("UPDATE items_moodlight SET enabled = '1' WHERE item_id = {0}",
-                    ItemId));
+                queryReactor.RunFastQuery($"UPDATE items_moodlight SET enabled = '1' WHERE item_id = {ItemId}");
         }
 
         /// <summary>
@@ -125,8 +119,7 @@ namespace Oblivion.HabboHotel.Items.Datas
         {
             Enabled = false;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery(string.Format("UPDATE items_moodlight SET enabled = '0' WHERE item_id = {0}",
-                    ItemId));
+                queryReactor.RunFastQuery($"UPDATE items_moodlight SET enabled = '0' WHERE item_id = {ItemId}");
         }
 
         /// <summary>
@@ -142,7 +135,7 @@ namespace Oblivion.HabboHotel.Items.Datas
             if (!IsValidColor(color) || (!IsValidIntensity(intensity) && !hax))
                 return;
 
-            var text = "one";
+            string text;
             switch (preset)
             {
                 case 2:
@@ -161,8 +154,7 @@ namespace Oblivion.HabboHotel.Items.Datas
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery(
-                    string.Format("UPDATE items_moodlight SET preset_{0}='{1},{2},{3}' WHERE item_id='{4}'", text, color,
-                        intensity, Oblivion.BoolToEnum(bgOnly), ItemId));
+                    $"UPDATE items_moodlight SET preset_{text}='{color},{intensity},{Oblivion.BoolToEnum(bgOnly)}' WHERE item_id='{ItemId}'");
                 queryReactor.RunQuery();
             }
 

@@ -392,7 +392,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// <summary>
         ///     Remove Items On Room GroupBy Username
         /// </summary>
-        /// <param name="p">The p.</param>
         /// <param name="roomItemList"></param>
         /// <param name="session"></param>
         internal void RemoveItemsByOwner(ref List<RoomItem> roomItemList, ref GameClient session)

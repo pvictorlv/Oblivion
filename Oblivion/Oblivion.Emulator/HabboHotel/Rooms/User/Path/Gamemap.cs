@@ -1322,7 +1322,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         {
             try
             {
-                if (item == null || coord == null)
+                if (item == null)
                     return false;
 
                 if (coord.X > Model.MapSizeX - 1)
