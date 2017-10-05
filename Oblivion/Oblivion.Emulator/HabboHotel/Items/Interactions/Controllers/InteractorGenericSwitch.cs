@@ -46,7 +46,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             foreach (
                 var current in
-                    room.GetRoomUserManager().UserList.Values.Where(current => current.Statusses.ContainsKey("sit")))
+                room.GetRoomUserManager().UserList.Values.Where(current => current.Statusses.ContainsKey("sit") && (current.X == item.X && current.Y == item.Y)))
                 room.GetRoomUserManager().UpdateUserStatus(current, true);
         }
 
@@ -84,7 +84,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             foreach (
                 var current in
-                    room.GetRoomUserManager().UserList.Values.Where(current => current.Statusses.ContainsKey("sit")))
+                    room.GetRoomUserManager().UserList.Values.Where(current => current.Statusses.ContainsKey("sit") && (current.X == item.X && current.Y == item.Y)))
                 room.GetRoomUserManager().UpdateUserStatus(current, true);
         }
     }

@@ -533,9 +533,9 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     Gets the room users.
         /// </summary>
         /// <returns>HashSet&lt;RoomUser&gt;.</returns>
-        internal HashSet<RoomUser> GetRoomUsers()
+        internal List<RoomUser> GetRoomUsers()
         {
-            return new HashSet<RoomUser>(UserList.Values.Where(x => x.IsBot == false));
+            return new List<RoomUser>(UserList.Values.Where(x => x.IsBot == false));
         }
 
         /// <summary>

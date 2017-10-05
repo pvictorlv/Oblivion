@@ -678,7 +678,7 @@ namespace Oblivion.Messages.Handlers
             item.Interactor.OnTrigger(Session, item, Request.GetInteger(), hasRightsOne);
             item.OnTrigger(room.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id));
             //Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.ExploreFindItem, item.GetBaseItem().itemId);
-            foreach (var current in room.GetRoomUserManager().UserList.Values.Where(current => current != null))
+            foreach (var current in room.GetRoomUserManager().UserList.Values.Where(current => current.Statusses.ContainsKey("sit") && (current.X == item.X && current.Y == item.Y)))
                 room.GetRoomUserManager().UpdateUserStatus(current, true);
         }
 

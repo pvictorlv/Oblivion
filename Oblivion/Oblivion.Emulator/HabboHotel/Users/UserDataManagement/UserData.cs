@@ -3,7 +3,6 @@ using Oblivion.HabboHotel.Achievements.Interfaces;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Pets;
 using Oblivion.HabboHotel.RoomBots;
-using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.HabboHotel.Users.Badges;
 using Oblivion.HabboHotel.Users.Inventory;
@@ -86,7 +85,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         /// <summary>
         ///     The rooms
         /// </summary>
-        internal HashSet<RoomData> Rooms;
+        internal List<RoomData> Rooms;
 
         /// <summary>
         ///     The subscriptions
@@ -150,7 +149,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             Dictionary<int, UserTalent> talents, List<uint> favouritedRooms, List<uint> ignores, List<string> tags,
             Subscription sub, List<Badge> badges, List<UserItem> inventory, List<AvatarEffect> effects,
             Dictionary<uint, MessengerBuddy> friends, Dictionary<uint, MessengerRequest> requests,
-            HashSet<RoomData> rooms, Dictionary<uint, Pet> pets, Dictionary<uint, int> quests, Habbo user,
+            List<RoomData> rooms, Dictionary<uint, Pet> pets, Dictionary<uint, int> quests, Habbo user,
             Dictionary<uint, RoomBot> bots, Dictionary<int, Relationship> relations, HashSet<uint> suggestedPolls,
             uint miniMailCount, List<string> blockedCommands)
         {

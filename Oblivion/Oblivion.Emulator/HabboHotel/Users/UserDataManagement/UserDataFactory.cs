@@ -284,13 +284,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 }
             }
 
-            var myRooms = new HashSet<RoomData>();
-
-            foreach (DataRow row in myRoomsTable.Rows)
-            {
-                var roomId = Convert.ToUInt32(row["id"]);
-                myRooms.Add(Oblivion.GetGame().GetRoomManager().FetchRoomData(roomId, row));
-            }
+            var myRooms = (from DataRow row in myRoomsTable.Rows let roomId = Convert.ToUInt32(row["id"]) select Oblivion.GetGame().GetRoomManager().FetchRoomData(roomId, row)).ToList();
 
             var pets = new Dictionary<uint, Pet>();
 
@@ -389,7 +383,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             var effects = new List<AvatarEffect>();
             var friends = new Dictionary<uint, MessengerBuddy>();
             var requests = new Dictionary<uint, MessengerRequest>();
-            var rooms = new HashSet<RoomData>();
+            var rooms = new List<RoomData>();
             var pets = new Dictionary<uint, Pet>();
             var quests = new Dictionary<uint, int>();
             var bots = new Dictionary<uint, RoomBot>();

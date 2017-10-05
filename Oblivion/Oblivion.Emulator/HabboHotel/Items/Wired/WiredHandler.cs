@@ -183,33 +183,42 @@ namespace Oblivion.HabboHotel.Items.Wired
                 var wireds = _wiredItems.ToList();
                 foreach (var item in wireds)
                 {
-                    if (item?.Item == null)
-                        continue;
-
-                    var selectedItem = _room.GetRoomItemHandler().GetItem(item.Item.Id);
-
-                    if (selectedItem == null)
+                    try
                     {
+                        if (item?.Item == null)
+                            continue;
+
+                        var selectedItem = _room.GetRoomItemHandler().GetItem(item.Item.Id);
+
+                        if (selectedItem == null)
+                        {
+                            _wiredItems.Remove(item);
+                            continue;
+                        }
+
+
+                        var cycle = item as IWiredCycler;
+                        if (cycle == null) continue;
+
+                        if (cycle.TickCount <= 0)
+                        {
+                            cycle.OnCycle();
+                        }
+                        else
+                            cycle.TickCount--;
+                    }
+                    catch (Exception e)
+                    {
+                        Writer.Writer.HandleException(e, "WiredHandler.cs:OnCycle");
                         _wiredItems.Remove(item);
-                        continue;
                     }
-
-
-                    var cycle = item as IWiredCycler;
-                    if (cycle == null) continue;
-
-                    if (cycle.TickCount <= 0)
-                    {
-                        cycle.OnCycle();
-                    }
-                    else
-                        cycle.TickCount--;
                 }
                 wireds.Clear();
             }
             catch (Exception e)
             {
                 Writer.Writer.HandleException(e, "WiredHandler.cs:OnCycle");
+
             }
         }
         

@@ -103,13 +103,13 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <DebugSymbols>false</DebugSymbols>
+    <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\bin\Release\x64\</OutputPath>
     <DefineConstants>
     </DefineConstants>
     <Optimize>true</Optimize>
     <FileAlignment>4096</FileAlignment>
-    <DebugType>none</DebugType>
+    <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>none</ErrorReport>

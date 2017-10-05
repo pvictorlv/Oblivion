@@ -277,7 +277,10 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         {
             var coordKey = Formatter.PointToInt(coord);
             var users = (List<RoomUser>) _userMap[coordKey];
-            users?.Remove(user);
+            if (users != null && users.Contains(user))
+            {
+                users.Remove(user);
+            }
         }
 
         /// <summary>
@@ -568,11 +571,14 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             if (item == null)
                 return false;
 
-            var items = CoordinatedItems[coord];
-            if (items != null)
+            if (CoordinatedItems.ContainsKey(coord))
             {
-                items.Remove(item);
-                return true;
+                var items = CoordinatedItems[coord];
+                if (items != null)
+                {
+                    items.Remove(item);
+                    return true;
+                }
             }
             return false;
         }
@@ -614,7 +620,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool RemoveFromMap(RoomItem item, bool handleGameItem)
         {
-            if (item == null) return false;
+            if (item?.GetCoords == null) return false;
 
             RemoveSpecialItem(item);
             if (_room.GotSoccer())
@@ -625,26 +631,25 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                  if (RemoveCoordinatedItem(item, current))
                      result = true;
              }
-            var hybridDictionary = new HybridDictionary();
+            var dictionary = new Dictionary<Point, List<RoomItem>>();
             foreach (var current2 in item.GetCoords)
             {
                 if (CoordinatedItems.TryGetValue(current2, out List<RoomItem> value))
                 {
-                    if (!hybridDictionary.Contains(current2))
-                        hybridDictionary.Add(current2, value);
+                    if (!dictionary.ContainsKey(current2))
+                        dictionary.Add(current2, value);
                 }
                 SetDefaultValue(current2.X, current2.Y);
             }
-            foreach (Point point2 in hybridDictionary.Keys)
+            foreach (var it in dictionary)
             {
-                var list = (List<RoomItem>) hybridDictionary[point2];
-                foreach (var current3 in list)
-                    ConstructMapForItem(current3, point2);
+                foreach (var current3 in it.Value)
+                    ConstructMapForItem(current3, it.Key);
             }
             if (GuildGates.ContainsKey(item.Coordinate))
                 GuildGates.Remove(item.Coordinate);
-            _room.GetRoomItemHandler().OnHeightMapUpdate(hybridDictionary.Keys);
-            hybridDictionary.Clear();
+            _room.GetRoomItemHandler().OnHeightMapUpdate(dictionary.Keys);
+            dictionary.Clear();
 
             return result;
         }

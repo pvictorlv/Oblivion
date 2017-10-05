@@ -43,17 +43,17 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <summary>
         ///     The _m added items
         /// </summary>
-        private readonly HybridDictionary _mAddedItems;
+        private readonly List<uint> _mAddedItems;
 
         /// <summary>
         ///     The _m removed items
         /// </summary>
-        private readonly HybridDictionary _mRemovedItems;
+        private readonly List<uint> _mRemovedItems;
 
         /// <summary>
         ///     The _wall items
         /// </summary>
-        private readonly HybridDictionary _wallItems;
+        private readonly List<UserItem> _wallItems;
 
         /// <summary>
         ///     The _is updated
@@ -86,7 +86,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             _mClient = client;
             UserId = userId;
             _floorItems = new List<UserItem>();
-            _wallItems = new HybridDictionary();
+            _wallItems = new List<UserItem>();
             SongDisks = new HybridDictionary();
 
             foreach (var current in userData.Inventory)
@@ -94,15 +94,15 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 if (current.BaseItem.InteractionType == Interaction.MusicDisc)
                     SongDisks.Add(current.Id, current);
                 if (current.IsWallItem)
-                    _wallItems.Add(current.Id, current);
+                    _wallItems.Add(current);
                 else
                     _floorItems.Add(current);
             }
 
             _inventoryPets = new HybridDictionary();
             _inventoryBots = new HybridDictionary();
-            _mAddedItems = new HybridDictionary();
-            _mRemovedItems = new HybridDictionary();
+            _mAddedItems = new List<uint>();
+            _mRemovedItems = new List<uint>();
             _isUpdated = false;
 
             foreach (var bot in userData.Bots)
@@ -115,7 +115,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <summary>
         /// Gel all items
         /// </summary>
-        public IEnumerable<UserItem> GetItems => _floorItems.Concat(_wallItems.Values.OfType<UserItem>().ToList());
+        public IEnumerable<UserItem> GetItems => _floorItems.Concat(_wallItems.ToList());
 
         public int TotalItems => _floorItems.Count + _wallItems.Count + SongDisks.Count;
 
@@ -328,8 +328,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
                 if (userItem.IsWallItem)
                 {
-                    if (!_wallItems.Contains(id))
-                        _wallItems.Add(id, userItem);
+                    if (!_wallItems.Contains(userItem))
+                        _wallItems.Add(userItem);
                 }
                 else if (!_floorItems.Contains(userItem))
                     _floorItems.Add(userItem);
@@ -401,14 +401,15 @@ namespace Oblivion.HabboHotel.Users.Inventory
             {
                 return it;
             }
-            return (UserItem) _wallItems[id];
+
+            return _wallItems.FirstOrDefault(x => x.Id == id);
         }
 
         internal bool HasBaseItem(uint id)
         {
             return
                 _floorItems.Any(item => item?.BaseItem != null && item.BaseItem.ItemId == id) ||
-                _wallItems.Values.Cast<UserItem>().Any(item => item?.BaseItem != null && item.BaseItem.ItemId == id);
+                _wallItems.Any(item => item?.BaseItem != null && item.BaseItem.ItemId == id);
         }
 
         /// <summary>
@@ -537,7 +538,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 SongDisks.Add(userItem.Id, userItem);
 
             if (userItem.IsWallItem)
-                _wallItems.Add(userItem.Id, userItem);
+                _wallItems.Add(userItem);
             else
                 _floorItems.Add(userItem);
 
@@ -545,7 +546,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 _mRemovedItems.Remove(id);
 
             if (!_mAddedItems.Contains(id))
-                _mAddedItems.Add(id, userItem);
+                _mAddedItems.Add(id);
 
             return userItem;
         }
@@ -580,8 +581,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             SongDisks.Remove(id);
             _floorItems.Remove(item);
-            _wallItems.Remove(id);
-            _mRemovedItems.Add(id, item);
+            _wallItems.Remove(item);
+            _mRemovedItems.Add(id);
         }
 
         /// <summary>
@@ -590,7 +591,9 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <returns>ServerMessage.</returns>
         internal ServerMessage SerializeFloorItemInventory()
         {
-            var i = (_floorItems.Count + SongDisks.Count + _wallItems.Count);
+            var floor = _floorItems.ToList();
+            var wall = _wallItems.ToList();
+            var i = (floor.Count + SongDisks.Count + wall.Count);
 
             if (i > 2800)
                 _mClient.SendMessage(StaticMessage.AdviceMaxItems);
@@ -602,7 +605,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             var inc = 0;
 
-            foreach (var userItem in _floorItems.ToList())
+            foreach (var userItem in floor)
             {
                 if (inc == 3500)
                     return serverMessage;
@@ -611,8 +614,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
                 userItem.SerializeFloor(serverMessage, true);
             }
-
-            foreach (var userItem in _wallItems.Values.OfType<UserItem>().ToList())
+            floor.Clear();
+            foreach (var userItem in wall)
             {
                 if (inc == 3500)
                     return serverMessage;
@@ -621,7 +624,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
                 userItem.SerializeWall(serverMessage, true);
             }
-
+            wall.Clear();
             foreach (UserItem userItem in SongDisks.Values)
             {
                 if (inc == 3500)
@@ -634,22 +637,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             return serverMessage;
         }
-
-        /// <summary>
-        ///     Serializes the wall item inventory.
-        /// </summary>
-        /// <returns>ServerMessage.</returns>
-        internal ServerMessage SerializeWallItemInventory()
-        {
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("LoadInventoryMessageComposer"));
-            serverMessage.AppendString("I");
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(_wallItems.Count);
-            foreach (var userItem in _wallItems.Values.OfType<UserItem>().ToList())
-                userItem.SerializeWall(serverMessage, true);
-            return serverMessage;
-        }
+        
 
         /// <summary>
         ///     Serializes the pet inventory.
@@ -731,8 +719,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
                 if (_mAddedItems.Count > 0)
                 {
-                    foreach (UserItem userItem in _mAddedItems.Values)
-                        queryChunk.AddQuery($"UPDATE items_rooms SET user_id='{UserId}', room_id='0' WHERE id='{userItem.Id}'");
+                    foreach (var itemId in _mAddedItems)
+                        queryChunk.AddQuery($"UPDATE items_rooms SET user_id='{UserId}', room_id='0' WHERE id='{itemId}'");
 
                     _mAddedItems.Clear();
                 }
@@ -741,13 +729,13 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 {
                     try
                     {
-                        foreach (UserItem userItem2 in _mRemovedItems.Values)
+                        foreach (var itemId in _mRemovedItems)
                         {
                             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                                 GetClient().GetHabbo().CurrentRoom.GetRoomItemHandler().SaveFurniture(queryReactor);
 
-                            if (SongDisks.Contains(userItem2.Id))
-                                SongDisks.Remove(userItem2.Id);
+                            if (SongDisks.Contains(itemId))
+                                SongDisks.Remove(itemId);
                         }
                     }
                     catch
@@ -844,7 +832,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         {
             var item = GetItem(itemId);
 
-            return SongDisks.Contains(itemId) || _floorItems.Contains(item) || _wallItems.Contains(itemId);
+            return SongDisks.Contains(itemId) || _floorItems.Contains(item) || _wallItems.Contains(item);
         }
 
         /// <summary>
