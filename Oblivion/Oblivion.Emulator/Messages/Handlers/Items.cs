@@ -294,7 +294,11 @@ namespace Oblivion.Messages.Handlers
 
                 var placementData = Request.GetString();
                 var dataBits = placementData.Split(' ');
-                var itemId = uint.Parse(dataBits[0].Replace("-", string.Empty));
+                uint itemId;
+                if (!uint.TryParse(dataBits[0].Replace("-", string.Empty), out itemId))
+                {
+                    return;
+                }
                 var item = Session.GetHabbo().GetInventoryComponent().GetItem(itemId);
 
                 if (item == null)

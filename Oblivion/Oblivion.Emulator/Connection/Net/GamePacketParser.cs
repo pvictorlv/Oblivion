@@ -172,9 +172,8 @@ namespace Oblivion.Connection.Net
         {
             try
             {
-                using (ClientMessage clientMessage =
-                    ClientMessageFactory.GetClientMessage(messageId, packetContent, position, packetLength))
-                    if (_currentClient?.GetMessageHandler() != null)
+                using (var clientMessage = ClientMessageFactory.GetClientMessage(messageId, packetContent, position, packetLength))
+                    if (clientMessage != null && _currentClient?.GetMessageHandler() != null)
                         _currentClient.GetMessageHandler().HandleRequest(clientMessage);
             }
             catch (Exception e)

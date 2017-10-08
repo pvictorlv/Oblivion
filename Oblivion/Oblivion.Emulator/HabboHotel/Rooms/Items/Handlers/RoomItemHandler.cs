@@ -176,8 +176,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 }
                 list.Clear();
 
-                var list2 = _updatedItems.Select(GetItem).ToList();
-
+                var list2 = _updatedItems.Select(GetItem).Where(it => it != null).ToList();
+                
                 foreach (var roomItem in list2)
                 {
                     if (roomItem.GetBaseItem() != null && roomItem.GetBaseItem().IsGroupItem)
