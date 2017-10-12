@@ -1086,9 +1086,8 @@ namespace Oblivion.HabboHotel.Catalogs
                                 break;
 
                             case Interaction.GuildForum:
-                                uint groupId;
 
-                                uint.TryParse(extraData, out groupId);
+                                uint.TryParse(extraData, out var groupId);
 
                                 var group = Oblivion.GetGame().GetGroupManager().GetGroup(groupId);
 

@@ -3,8 +3,6 @@ using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Models;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Rooms.User;
-using Oblivion.Messages;
-using Oblivion.Messages.Parsers;
 
 namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
@@ -17,8 +15,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             if (session == null || num <= 0)
                 return;
 
-            int num2;
-            int.TryParse(item.ExtraData, out num2);
+            int.TryParse(item.ExtraData, out var num2);
             int num3;
 
             if (num2 <= 0)

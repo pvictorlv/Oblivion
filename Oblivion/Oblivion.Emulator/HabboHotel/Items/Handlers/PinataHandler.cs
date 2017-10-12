@@ -53,8 +53,7 @@ namespace Oblivion.HabboHotel.Items.Handlers
                 !Pinatas.ContainsKey(item.GetBaseItem().ItemId))
                 return;
 
-            PinataItem pinataItem;
-            Pinatas.TryGetValue(item.GetBaseItem().ItemId, out pinataItem);
+            Pinatas.TryGetValue(item.GetBaseItem().ItemId, out var pinataItem);
 
             if (pinataItem == null || pinataItem.Rewards.Count < 1)
                 return;

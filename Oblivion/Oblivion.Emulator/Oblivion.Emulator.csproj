@@ -193,7 +193,6 @@
     <Compile Include="HabboHotel\Commands\Controllers\SellRoom.cs" />
     <Compile Include="HabboHotel\Commands\Interfaces\Command.cs" />
     <Compile Include="HabboHotel\Commands\CommandsManager.cs" />
-    <Compile Include="HabboHotel\Commands\Controllers\AddVideo.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\DisableEvent.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\DisablePush.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\DisconnectUser.cs" />
@@ -293,6 +292,7 @@
     <Compile Include="HabboHotel\Items\Wired\Handlers\Conditions\UserIsInTeam.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Addons\RegenMap.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Effects\RollerSpeed.cs" />
+    <Compile Include="HabboHotel\Items\Wired\Handlers\Triggers\UserSaysCommand.cs" />
     <Compile Include="HabboHotel\Misc\AntiMutant.cs" />
     <Compile Include="HabboHotel\Misc\CoinsManager.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\About.cs" />
@@ -353,7 +353,6 @@
     <Compile Include="HabboHotel\Commands\Controllers\RoomUnMute.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\SetMax.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\SetSpeed.cs" />
-    <Compile Include="HabboHotel\Commands\Controllers\SetVideos.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\Shutdown.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\Sit.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\FollowUser.cs" />
@@ -485,7 +484,6 @@
     <Compile Include="HabboHotel\Items\Wired\WiredHandler.cs" />
     <Compile Include="HabboHotel\Items\Wired\WiredSaver.cs" />
     <Compile Include="HabboHotel\Users\EmoticonManager.cs" />
-    <Compile Include="HabboHotel\Users\YoutubeManager.cs" />
     <Compile Include="HabboHotel\Users\HallOfFame.cs" />
     <Compile Include="HabboHotel\Users\UserPreferences.cs" />
     <Compile Include="HabboHotel\Users\Inventory\UserClothing.cs" />

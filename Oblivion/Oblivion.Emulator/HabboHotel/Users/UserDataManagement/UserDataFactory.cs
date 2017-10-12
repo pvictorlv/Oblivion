@@ -168,7 +168,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 queryReactor.SetQuery("SELECT command_name FROM user_blockcmd WHERE user_id = '" + userId + "'");
                 dBlockedCommands = queryReactor.GetTable();
 
-                queryReactor.RunFastQuery($"UPDATE users SET online='1' WHERE id = {userId} LIMIT 1");
+//                queryReactor.RunFastQuery($"UPDATE users SET online='1' WHERE id = {userId} LIMIT 1");
             }
 
             var achievements = new Dictionary<string, UserAchievement>();
@@ -257,7 +257,6 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 var pUsername = (string) row["username"];
                 var pLook = (string) row["look"];
                 var pMotto = (string) row["motto"];
-                var pLastOnline = Convert.ToInt32(row["last_online"]);
                 var pAppearOffline = Oblivion.EnumToBool(row["hide_online"].ToString());
                 var pHideInroom = Oblivion.EnumToBool(row["hide_inroom"].ToString());
 

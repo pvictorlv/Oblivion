@@ -686,7 +686,6 @@ namespace Oblivion.HabboHotel.Rooms.User
             _mRoom = null;
             _mClient = null;
             LastPhotoPreview = null;
-
         }
 
         /// <summary>
@@ -719,7 +718,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
             }
 
-            if (msg.Length > 100) 
+            if (msg.Length > 100)
                 return;
 
             if (!BobbaFilter.CanTalk(session, msg))
@@ -743,7 +742,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                 }
             }
 
-           
 
             if (!IsBot && IsFlooded && FloodExpiryTime <= Oblivion.GetUnixTimeStamp())
                 IsFlooded = false;
@@ -761,8 +759,9 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                 var habbo = GetClient().GetHabbo();
 
-                if (GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSay, this, msg))
-                    return;
+                if (GetRoom().GotWireds())
+                    if (GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSay, this, msg))
+                        return;
 
                 GetRoom().AddChatlog(session.GetHabbo().Id, msg, true);
 
@@ -804,10 +803,10 @@ namespace Oblivion.HabboHotel.Rooms.User
                     {
                         message = new ServerMessage(LibraryParser.OutgoingRequest("FloodFilterMessageComposer"));
                         habbo.SpamProtectionCount++;
-                        if ((habbo.SpamProtectionCount%2) == 0)
-                            habbo.SpamProtectionTime = 10*habbo.SpamProtectionCount;
+                        if ((habbo.SpamProtectionCount % 2) == 0)
+                            habbo.SpamProtectionTime = 10 * habbo.SpamProtectionCount;
                         else
-                            habbo.SpamProtectionTime = 10*(habbo.SpamProtectionCount - 1);
+                            habbo.SpamProtectionTime = 10 * (habbo.SpamProtectionCount - 1);
                         habbo.SpamProtectionBol = true;
                         var j = habbo.SpamProtectionTime - span.Seconds;
                         message.AppendInteger(j);
@@ -951,7 +950,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                              current.GetBaseItem().InteractionType == Interaction.Bed ||
                              current.GetBaseItem().InteractionType == Interaction.PressurePadBed ||
                              current.GetBaseItem().InteractionType == Interaction.Guillotine
-                                )))
+                            )))
                     return;
 
             UnIdle();

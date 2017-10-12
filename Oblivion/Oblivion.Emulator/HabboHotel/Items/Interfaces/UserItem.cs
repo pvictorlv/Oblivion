@@ -67,18 +67,18 @@ namespace Oblivion.HabboHotel.Items.Interfaces
 
             if (BaseItem == null)
                 return;
-
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-            {
-                queryReactor.SetQuery($"SELECT * FROM items_limited WHERE item_id={id} LIMIT 1");
-                var row = queryReactor.GetRow();
-
-                if (row != null)
+            if (BaseItem.IsRare)
+                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    uint.TryParse(row[1].ToString(), out LimitedSellId);
-                    uint.TryParse(row[2].ToString(), out LimitedStack);
+                    queryReactor.SetQuery($"SELECT * FROM items_limited WHERE item_id={id} LIMIT 1");
+                    var row = queryReactor.GetRow();
+
+                    if (row != null)
+                    {
+                        uint.TryParse(row[1].ToString(), out LimitedSellId);
+                        uint.TryParse(row[2].ToString(), out LimitedStack);
+                    }
                 }
-            }
 
             IsWallItem = (BaseItem.Type == 'i');
             SongCode = songCode;
@@ -133,7 +133,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             {
                 if (BaseItem.InteractionType == Interaction.Gift)
                 {
-                    var split = ExtraData.Split((char)9);
+                    var split = ExtraData.Split((char) 9);
                     int ribbon, color;
                     int.TryParse(split[2], out ribbon);
                     int.TryParse(split[3], out color);

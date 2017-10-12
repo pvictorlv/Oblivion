@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -8,7 +7,6 @@ using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
-using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Items.Wired
 {
@@ -413,15 +411,6 @@ namespace Oblivion.HabboHotel.Items.Wired
                     wiredHandler.ReloadWired(wired12);
                     break;
                 }
-                case Interaction.ActionJoinTeam:
-                {
-                    request.GetInteger();
-                    var team = request.GetInteger();
-                    var wired = wiredHandler.GetWired(item);
-                    wired.Delay = team * 500;
-                    wiredHandler.ReloadWired(wired);
-                    break;
-                }
                 case Interaction.ActionBotTalk:
                 {
                     request.GetInteger();
@@ -522,6 +511,8 @@ namespace Oblivion.HabboHotel.Items.Wired
                 }
                 case Interaction.ConditionUserIsNotInTeam:
                 case Interaction.ConditionUserIsInTeam:
+                case Interaction.ActionJoinTeam:
+                case Interaction.ActionLeaveTeam:
                 {
                     request.GetInteger();
                     var team = request.GetInteger();

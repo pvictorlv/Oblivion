@@ -124,8 +124,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
                     var roomItem = new RoomItem(insertId, user.RoomId, item.GetBaseItem().ItemId, item.ExtraData,
                         user.LastSelectedX, user.LastSelectedY, item.Z, item.Rot, session.GetHabbo().CurrentRoom,
-                        user.UserId, item.GroupId,
-                        Oblivion.GetGame().GetItemManager().GetItem(item.GetBaseItem().ItemId).FlatId, item.SongCode,
+                        user.UserId, item.GroupId, item.SongCode,
                         item.IsBuilder);
                     room.GetRoomItemHandler().DeveloperSetFloorItem(session, roomItem);
                 }

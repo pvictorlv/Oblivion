@@ -399,8 +399,7 @@ namespace Oblivion.HabboHotel.Users
         ///     The vip
         /// </summary>
         internal bool Vip;
-
-        internal YoutubeManager YoutubeManager;
+     
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Habbo" /> class.
@@ -674,7 +673,6 @@ namespace Oblivion.HabboHotel.Users
             MinimailUnreadMessages = data.MiniMailCount;
             ClothingManager = new UserClothing(Id);
             Preferences = new UserPreferences(Id);
-            YoutubeManager = new YoutubeManager(Id);
             Data = data;
 
         }
@@ -1097,8 +1095,6 @@ namespace Oblivion.HabboHotel.Users
         /// </summary>
         /// <returns>SubscriptionManager.</returns>
         internal SubscriptionManager GetSubscriptionManager() => _subscriptionManager;
-
-        internal YoutubeManager GetYoutubeManager() => YoutubeManager;
 
         /// <summary>
         ///     Gets the messenger.

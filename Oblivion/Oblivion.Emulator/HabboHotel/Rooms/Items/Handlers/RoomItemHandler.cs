@@ -494,7 +494,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         {
                             var wallCoord = new WallCoordinate(':' + locationData.Split(':')[1]);
                             var value = new RoomItem(id, _room.RoomId, baseItemId, extraData, wallCoord, _room, ownerId,
-                                groupId, item.FlatId,
+                                groupId,
                                 Oblivion.EnumToBool((string) dataRow["builders"]));
 
                             WallItems.Add(value);
@@ -503,7 +503,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         {
                             var roomItem = new RoomItem(id, _room.RoomId, baseItemId, extraData, x, y, z, rot, _room,
                                 ownerId,
-                                groupId, item.FlatId, songCode,
+                                groupId, songCode,
                                 Oblivion.EnumToBool((string) dataRow["builders"]));
 
                             if (!_room.GetGameMap().ValidTile(x, y))
@@ -555,6 +555,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         _room.GetRoomMusicController();
                     }
                 }
+
+                if (_room.GotMusicController())
+                    _room.LoadMusic();
             }
         }
 

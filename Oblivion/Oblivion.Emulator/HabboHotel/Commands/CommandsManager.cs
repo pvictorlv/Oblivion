@@ -41,9 +41,7 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("followable", new HideInRoom());
             CommandsDictionary.Add("commands", new CommandList());
             CommandsDictionary.Add("disable_diagonal", new DisableDiagonal());
-            CommandsDictionary.Add("setvideos", new SetVideos());
             CommandsDictionary.Add("disableevent", new DisableEvent());
-            CommandsDictionary.Add("setvideo", new AddVideo());
             CommandsDictionary.Add("follow", new FollowUser());
             CommandsDictionary.Add("faq", new UserFaq());
 
@@ -199,8 +197,7 @@ namespace Oblivion.HabboHotel.Commands
                         }
                         command.Alias = aliasStr;
                     }
-                    short minRank;
-                    if (short.TryParse(commandRow["rank"].ToString(), out minRank)) command.MinRank = minRank;
+                    if (short.TryParse(commandRow["rank"].ToString(), out var minRank)) command.MinRank = minRank;
                 }
             }
         }
@@ -237,6 +234,14 @@ namespace Oblivion.HabboHotel.Commands
                 client.SendWhisper("Comando bloqueado!");
                 return false;
             }
+
+
+            if (client.GetHabbo().CurrentRoom.GotWireds())
+            {
+//                client.GetHabbo().CurrentRoom.GetWiredHandler().ExecuteWired();
+                
+            }
+
             var command = CommandsDictionary[commandName];
 
             if (!CanUse(command.MinRank, client)) return false;

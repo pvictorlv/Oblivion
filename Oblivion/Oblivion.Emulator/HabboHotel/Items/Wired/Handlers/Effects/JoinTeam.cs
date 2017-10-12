@@ -45,7 +45,11 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 return false;
 
             var roomUser = (RoomUser) stuff[0];
-            var team = Delay / 500;
+            if (!int.TryParse(OtherString, out var team))
+            {
+                return false;
+            }
+
             var t = roomUser.GetClient().GetHabbo().CurrentRoom.GetTeamManagerForFreeze();
 
             if (roomUser.Team != Team.None)
@@ -54,27 +58,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 roomUser.Team = Team.None;
             }
 
-            switch (team)
-            {
-                case 1:
-                    roomUser.Team = Team.Red;
-                    break;
-
-                case 2:
-                    roomUser.Team = Team.Green;
-                    break;
-
-                case 3:
-                    roomUser.Team = Team.Blue;
-                    break;
-
-                case 4:
-                    roomUser.Team = Team.Yellow;
-                    break;
-            }
-
+            roomUser.Team = (Team) team;
             t.AddUser(roomUser);
-            roomUser.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(Delay + 39);
+            roomUser.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(team + 39);
 
             return true;
         }

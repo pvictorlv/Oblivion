@@ -53,11 +53,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
         public bool Execute(params object[] stuff)
         {
-            var roomUser = stuff?[0] as RoomUser;
-
-            if (roomUser == null)
+            if (!(stuff?[0] is RoomUser roomUser))
                 return false;
-            if (!int.TryParse(OtherString, out int team))
+            if (!int.TryParse(OtherString, out var team))
             {
                 return false;
             }

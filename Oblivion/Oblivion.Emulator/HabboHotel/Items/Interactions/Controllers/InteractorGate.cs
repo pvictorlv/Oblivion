@@ -24,8 +24,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 item.GetRoom().GetGameMap().SquareHasUsers(item.X, item.Y))
                 return;
 
-            int currentMode;
-            int.TryParse(item.ExtraData, out currentMode);
+            int.TryParse(item.ExtraData, out var currentMode);
             int newMode;
 
             if (currentMode <= 0)
@@ -41,10 +40,11 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             item.ExtraData = newMode.ToString();
             item.UpdateState();
             item.GetRoom().GetGameMap().UpdateMapForItem(item);
-            item.GetRoom()
-                .GetWiredHandler()
-                .ExecuteWired(Interaction.TriggerStateChanged,
-                    item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id), item);
+            if (item.GetRoom().GotWireds())
+                item.GetRoom()
+                    .GetWiredHandler()
+                    .ExecuteWired(Interaction.TriggerStateChanged,
+                        item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id), item);
         }
 
         public override void OnWiredTrigger(RoomItem item)

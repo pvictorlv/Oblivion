@@ -10,6 +10,7 @@ using Oblivion.HabboHotel.Items.Wired.Handlers.Effects;
 using Oblivion.HabboHotel.Items.Wired.Handlers.Triggers;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
+using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Items.Wired
 {
@@ -18,13 +19,11 @@ namespace Oblivion.HabboHotel.Items.Wired
         private Room _room;
 
         private List<IWiredItem> _wiredItems;
-//        private Queue _cycleItems;
 
         public WiredHandler(Room room)
         {
             _wiredItems = new List<IWiredItem>();
             _room = room;
-//            _cycleItems = new Queue();
         }
 
         public static void OnEvent(IWiredItem item)
@@ -76,9 +75,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
                 foreach (var s in array)
                 {
-                    int value;
-
-                    if (!int.TryParse(s, out value))
+                    if (!int.TryParse(s, out var value))
                         continue;
 
                     var item = _room.GetRoomItemHandler().GetItem(Convert.ToUInt32(value));
@@ -163,11 +160,14 @@ namespace Oblivion.HabboHotel.Items.Wired
                         wiredItem => wiredItem != null && wiredItem.Type == type))
                         wiredItem.Execute(stuff);
                 else if (_wiredItems.Any(current => current != null && current.Type == type && current.Execute(stuff)))
+                {
                     return true;
+                }
             }
             catch (Exception e)
             {
                 Writer.Writer.HandleException(e, "WiredHandler.cs:ExecuteWired Type: " + type);
+
             }
 
             return false;
@@ -175,53 +175,45 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         public void OnCycle()
         {
-            try
-            {
-                if (_wiredItems == null || _room == null || _wiredItems.Count <= 0)
-                    return;
+            if (_wiredItems == null || _room == null || _wiredItems.Count <= 0)
+                return;
 
-                var wireds = _wiredItems.ToList();
-                foreach (var item in wireds)
+            var wireds = _wiredItems.ToList();
+            foreach (var item in wireds)
+            {
+                try
                 {
-                    try
+                    if (item?.Item == null)
+                        continue;
+
+                    var selectedItem = _room.GetRoomItemHandler().GetItem(item.Item.Id);
+
+                    if (selectedItem == null)
                     {
-                        if (item?.Item == null)
-                            continue;
-
-                        var selectedItem = _room.GetRoomItemHandler().GetItem(item.Item.Id);
-
-                        if (selectedItem == null)
-                        {
-                            _wiredItems.Remove(item);
-                            continue;
-                        }
-
-
-                        var cycle = item as IWiredCycler;
-                        if (cycle == null) continue;
-
-                        if (cycle.TickCount <= 0)
-                        {
-                            cycle.OnCycle();
-                        }
-                        else
-                            cycle.TickCount--;
-                    }
-                    catch (Exception e)
-                    {
-                        Writer.Writer.HandleException(e, "WiredHandler.cs:OnCycle");
                         _wiredItems.Remove(item);
+                        continue;
                     }
-                }
-                wireds.Clear();
-            }
-            catch (Exception e)
-            {
-                Writer.Writer.HandleException(e, "WiredHandler.cs:OnCycle");
 
+
+                    var cycle = item as IWiredCycler;
+                    if (cycle == null) continue;
+
+                    if (cycle.TickCount <= 0)
+                    {
+                        cycle.OnCycle();
+                    }
+                    else
+                        cycle.TickCount--;
+                }
+                catch (Exception e)
+                {
+                    Writer.Writer.HandleException(e, "WiredHandler.cs:OnCycle");
+                    _wiredItems.Remove(item);
+                }
             }
+            wireds.Clear();
         }
-        
+
 
         public void AddWired(IWiredItem item)
         {
@@ -231,10 +223,8 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         public void RemoveWired(IWiredItem item)
         {
-            if (!_wiredItems.Contains(item))
+            if (_wiredItems.Contains(item))
                 _wiredItems.Remove(item);
-
-            _wiredItems.Remove(item);
         }
 
         public void RemoveWired(RoomItem item)
@@ -243,6 +233,7 @@ namespace Oblivion.HabboHotel.Items.Wired
             if (current == null)
                 return;
             current.Items.Clear();
+            current.Items = null;
             current.Item = null;
             current.Room = null;
             _wiredItems.Remove(current);

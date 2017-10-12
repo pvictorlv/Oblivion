@@ -199,7 +199,8 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Gets the user count.
         /// </summary>
         /// <value>The user count.</value>
-        internal int UserCount => _roomUserManager?.GetRoomUserCount() != null ? _roomUserManager.GetRoomUserCount() : 0;
+        internal int UserCount =>
+            _roomUserManager?.GetRoomUserCount() != null ? _roomUserManager.GetRoomUserCount() : 0;
 
         /// <summary>
         ///     Gets the tag count.
@@ -225,7 +226,6 @@ namespace Oblivion.HabboHotel.Rooms
         /// <value>The room data.</value>
         internal RoomData RoomData { get; private set; }
 
- 
 
         internal void Start(RoomData data, bool forceLoad = false)
         {
@@ -239,6 +239,13 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         /// <returns>WiredHandler.</returns>
         public WiredHandler GetWiredHandler() => _wiredHandler ?? (_wiredHandler = new WiredHandler(this));
+
+
+        /// <summary>
+        ///     Check if handler isn't null
+        /// </summary>
+        /// <returns>WiredHandler.</returns>
+        public bool GotWireds() => _wiredHandler != null;
 
         /// <summary>
         ///     Gets the game map.
@@ -268,13 +275,15 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Gets the team manager for banzai.
         /// </summary>
         /// <returns>TeamManager.</returns>
-        internal TeamManager GetTeamManagerForBanzai() => TeamBanzai ?? (TeamBanzai = TeamManager.CreateTeamforGame("banzai"));
+        internal TeamManager GetTeamManagerForBanzai() =>
+            TeamBanzai ?? (TeamBanzai = TeamManager.CreateTeamforGame("banzai"));
 
         /// <summary>
         ///     Gets the team manager for freeze.
         /// </summary>
         /// <returns>TeamManager.</returns>
-        internal TeamManager GetTeamManagerForFreeze() => TeamFreeze ?? (TeamFreeze = TeamManager.CreateTeamforGame("freeze"));
+        internal TeamManager GetTeamManagerForFreeze() =>
+            TeamFreeze ?? (TeamFreeze = TeamManager.CreateTeamforGame("freeze"));
 
         /// <summary>
         ///     Gets the banzai.
@@ -298,13 +307,15 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Gets the game item handler.
         /// </summary>
         /// <returns>GameItemHandler.</returns>
-        internal GameItemHandler GetGameItemHandler() => _gameItemHandler ?? (_gameItemHandler = new GameItemHandler(this));
+        internal GameItemHandler GetGameItemHandler() =>
+            _gameItemHandler ?? (_gameItemHandler = new GameItemHandler(this));
 
         /// <summary>
         ///     Gets the room music controller.
         /// </summary>
         /// <returns>RoomMusicController.</returns>
-        internal SoundMachineManager GetRoomMusicController() => _musicController ?? (_musicController = new SoundMachineManager());
+        internal SoundMachineManager GetRoomMusicController() =>
+            _musicController ?? (_musicController = new SoundMachineManager());
 
         /// <summary>
         ///     Gots the music controller.
@@ -350,7 +361,7 @@ namespace Oblivion.HabboHotel.Rooms
                 if (table == null)
                     return;
                 foreach (var roomBot in from DataRow dataRow in table.Rows select BotManager.GenerateBotFromRow(dataRow)
-                    )
+                )
                     _roomUserManager.DeployBot(roomBot, null);
             }
         }
@@ -455,7 +466,8 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="user">The user.</param>
         internal void OnUserEnter(RoomUser user)
         {
-            GetWiredHandler().ExecuteWired(Interaction.TriggerRoomEnter, user);
+            if (GotWireds())
+                GetWiredHandler().ExecuteWired(Interaction.TriggerRoomEnter, user);
 
             //int count = 0;
 
@@ -526,7 +538,8 @@ namespace Oblivion.HabboHotel.Rooms
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery($"SELECT items_songs.songid,items_rooms.id,items_rooms.base_item FROM items_songs LEFT JOIN items_rooms ON items_rooms.id = items_songs.itemid WHERE items_songs.roomid = {RoomId}");
+                queryReactor.SetQuery(
+                    $"SELECT items_songs.songid,items_rooms.id,items_rooms.base_item FROM items_songs LEFT JOIN items_rooms ON items_rooms.id = items_songs.itemid WHERE items_songs.roomid = {RoomId}");
 
                 table = queryReactor.GetTable();
             }
@@ -613,7 +626,8 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="checkForGroups">if set to <c>true</c> [check for groups].</param>
         /// <param name="groupMembers"></param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool CheckRights(GameClient session, bool requireOwnerShip = false, bool checkForGroups = false, bool groupMembers = false)
+        internal bool CheckRights(GameClient session, bool requireOwnerShip = false, bool checkForGroups = false,
+            bool groupMembers = false)
         {
             try
             {
@@ -661,7 +675,8 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="checkForGroups">if set to <c>true</c> [check for groups].</param>
         /// <param name="groupMembers"></param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool CheckRightsDoorBell(GameClient session, bool requireOwnerShip = false, bool checkForGroups = false,
+        internal bool CheckRightsDoorBell(GameClient session, bool requireOwnerShip = false,
+            bool checkForGroups = false,
             bool groupMembers = false)
         {
             try
@@ -746,8 +761,9 @@ namespace Oblivion.HabboHotel.Rooms
 
                     if (GotMusicController())
                         GetRoomMusicController().Update(this);
+                    if (GotWireds())
+                        GetWiredHandler().OnCycle();
 
-                    GetWiredHandler().OnCycle();
                     WorkRoomKickQueue();
                 }
                 catch (Exception e)
@@ -771,7 +787,8 @@ namespace Oblivion.HabboHotel.Rooms
             try
             {
                 if (_roomUserManager?.UserList != null)
-                    foreach (var user in _roomUserManager.UserList.Values.Where(user => user?.GetClient()?.GetConnection() != null && !user.IsBot))
+                    foreach (var user in _roomUserManager.UserList.Values.Where(user =>
+                        user?.GetClient()?.GetConnection() != null && !user.IsBot))
                     {
                         user.GetClient().GetConnection().SendData(message);
                     }
@@ -1140,7 +1157,7 @@ namespace Oblivion.HabboHotel.Rooms
         internal void UpdateFurniture()
         {
             var list = new List<ServerMessage>();
-  
+
             foreach (var roomItem in GetRoomItemHandler().FloorItems.ToList())
             {
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer"));
@@ -1247,7 +1264,6 @@ namespace Oblivion.HabboHotel.Rooms
             WordFilter = wordFilter;
 
             LoadRights();
-            LoadMusic();
             LoadBans();
             InitUserBots();
 
@@ -1275,9 +1291,9 @@ namespace Oblivion.HabboHotel.Rooms
                     var list = new List<RoomUser>();
                     foreach (
                         var current in
-                            _roomUserManager.UserList.Values.Where(
-                                current =>
-                                    !current.IsBot && current.GetClient().GetHabbo().Rank < (ulong) roomKick.MinRank))
+                        _roomUserManager.UserList.Values.Where(
+                            current =>
+                                !current.IsBot && current.GetClient().GetHabbo().Rank < (ulong) roomKick.MinRank))
                     {
                         if (roomKick.Alert.Length > 0)
                             current.GetClient()
@@ -1330,10 +1346,10 @@ namespace Oblivion.HabboHotel.Rooms
             UsersWithRights.Clear();
             Bans.Clear();
             LoadedGroups.Clear();
-            
-            RoomData.RoomChat.Clear();
 
-            GetWiredHandler().Destroy();
+            RoomData.RoomChat.Clear();
+            _wiredHandler?.Destroy();
+            _wiredHandler = null;
             foreach (var current in GetRoomItemHandler().FloorItems)
                 current.Destroy();
             foreach (var current2 in GetRoomItemHandler().WallItems)

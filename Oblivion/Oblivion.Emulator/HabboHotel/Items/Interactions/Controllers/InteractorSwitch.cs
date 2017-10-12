@@ -22,8 +22,8 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             if (Gamemap.TilesTouching(item.X, item.Y, roomUser.X, roomUser.Y))
             {
                 var num = item.GetBaseItem().Modes - 1;
-                int num2, num3;
-                int.TryParse(item.ExtraData, out num2);
+                int num3;
+                int.TryParse(item.ExtraData, out var num2);
 
                 if (num2 <= 0)
                     num3 = 1;
@@ -37,7 +37,8 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
                 item.ExtraData = num3.ToString();
                 item.UpdateState();
-                item.GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerStateChanged, roomUser, item);
+                if (item.GetRoom().GotWireds())
+                    item.GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerStateChanged, roomUser, item);
 
                 return;
             }

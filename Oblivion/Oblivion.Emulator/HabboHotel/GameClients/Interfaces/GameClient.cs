@@ -213,9 +213,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             {
                 var ip = GetConnection().GetIp();
 
-                uint errorCode;
-
-                var userData = UserDataFactory.GetUserData(authTicket, out errorCode);
+                var userData = UserDataFactory.GetUserData(authTicket, out var errorCode);
 
                 if (errorCode == 1 || errorCode == 2)
                     return false;
@@ -249,7 +247,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 }
 
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                    queryReactor.RunFastQuery($"UPDATE users SET ip_last='{ip}' WHERE id={GetHabbo().Id}");
+                    queryReactor.RunFastQuery($"UPDATE users SET ip_last='{ip}', online = '1' WHERE id={GetHabbo().Id}");
 
                 userData.User.Init(this, userData);
 

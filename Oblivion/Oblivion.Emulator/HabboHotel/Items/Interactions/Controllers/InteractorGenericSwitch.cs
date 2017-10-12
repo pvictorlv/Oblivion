@@ -18,8 +18,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             Oblivion.GetGame().GetQuestManager().ProgressUserQuest(session, QuestType.FurniSwitch);
 
-            int num2;
-            int.TryParse(item.ExtraData, out num2);
+            int.TryParse(item.ExtraData, out var num2);
             int num3;
 
             if (num2 <= 0)
@@ -34,10 +33,11 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             item.ExtraData = num3.ToString();
             item.UpdateState();
-            item.GetRoom()
-                .GetWiredHandler()
-                .ExecuteWired(Interaction.TriggerStateChanged,
-                    item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id), item);
+            if (item.GetRoom().GotWireds())
+                item.GetRoom()
+                    .GetWiredHandler()
+                    .ExecuteWired(Interaction.TriggerStateChanged,
+                        item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id), item);
 
             if (!item.GetBaseItem().StackMultipler)
                 return;
@@ -46,7 +46,8 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             foreach (
                 var current in
-                room.GetRoomUserManager().UserList.Values.Where(current => current.Statusses.ContainsKey("sit") && (current.X == item.X && current.Y == item.Y)))
+                room.GetRoomUserManager().UserList.Values.Where(current =>
+                    current.Statusses.ContainsKey("sit") && current.X == item.X && current.Y == item.Y))
                 room.GetRoomUserManager().UpdateUserStatus(current, true);
         }
 
@@ -57,9 +58,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             if (num == 0)
                 return;
 
-            int num2;
-
-            if (!int.TryParse(item.ExtraData, out num2))
+            if (!int.TryParse(item.ExtraData, out var num2))
                 return;
 
             int num3;
@@ -84,7 +83,8 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             foreach (
                 var current in
-                    room.GetRoomUserManager().UserList.Values.Where(current => current.Statusses.ContainsKey("sit") && (current.X == item.X && current.Y == item.Y)))
+                room.GetRoomUserManager().UserList.Values.Where(current =>
+                    current.Statusses.ContainsKey("sit") && (current.X == item.X && current.Y == item.Y)))
                 room.GetRoomUserManager().UpdateUserStatus(current, true);
         }
     }

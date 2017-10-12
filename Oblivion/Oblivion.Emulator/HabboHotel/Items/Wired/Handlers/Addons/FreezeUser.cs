@@ -41,9 +41,16 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
 
             var roomUser = (RoomUser) stuff[0];
 
-            roomUser.Freezed = !roomUser.Freezed;
-            roomUser.GetClient().SendWhisper(roomUser.Freezed ? "Você foi congelado" : "Você foi descongelado");
-
+            roomUser.Frozen = !roomUser.Frozen;
+            if (roomUser.Frozen)
+            {
+                roomUser.ApplyEffect(12);
+                roomUser.GetClient().SendWhisper("Você foi congelado");
+            }
+            else
+            {
+                roomUser.GetClient().SendWhisper("Você foi descongelado");
+            }
             return true;
         }
     }
