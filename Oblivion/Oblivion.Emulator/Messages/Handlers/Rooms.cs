@@ -1367,9 +1367,9 @@ namespace Oblivion.Messages.Handlers
                 return;
             if (!flag)
             {
-                if (!room.WordFilter.Contains(text))
+                if (!room.RoomData.WordFilter.Contains(text))
                     return;
-                room.WordFilter.Remove(text);
+                room.RoomData.WordFilter.Remove(text);
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
                     queryReactor.SetQuery("DELETE FROM rooms_wordfilter WHERE room_id = @id AND word = @word");
@@ -1379,14 +1379,14 @@ namespace Oblivion.Messages.Handlers
                     return;
                 }
             }
-            if (room.WordFilter.Contains(text))
+            if (room.RoomData.WordFilter.Contains(text))
                 return;
             if (text.Contains("+"))
             {
                 Session.SendNotif(Oblivion.GetLanguage().GetVar("character_error_plus"));
                 return;
             }
-            room.WordFilter.Add(text);
+            room.RoomData.WordFilter.Add(text);
             using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryreactor2.SetQuery("INSERT INTO rooms_wordfilter (room_id, word) VALUES (@id, @word);");
@@ -1404,8 +1404,8 @@ namespace Oblivion.Messages.Handlers
                 return;
             var serverMessage = new ServerMessage();
             serverMessage.Init(LibraryParser.OutgoingRequest("RoomLoadFilterMessageComposer"));
-            serverMessage.AppendInteger(room.WordFilter.Count);
-            foreach (var current in room.WordFilter)
+            serverMessage.AppendInteger(room.RoomData.WordFilter.Count);
+            foreach (var current in room.RoomData.WordFilter)
                 serverMessage.AppendString(current);
             Response = serverMessage;
             SendResponse();
@@ -2220,9 +2220,7 @@ namespace Oblivion.Messages.Handlers
             }
             ClearRoomLoading();
 
-            Poll poll;
-
-            if (!Oblivion.GetGame().GetPollManager().TryGetPoll(CurrentLoadingRoom.RoomId, out poll) ||
+            if (!Oblivion.GetGame().GetPollManager().TryGetPoll(CurrentLoadingRoom.RoomId, out var poll) ||
                 Session.GetHabbo().GotPollData(poll.Id))
                 return;
 
@@ -2433,13 +2431,12 @@ namespace Oblivion.Messages.Handlers
             var roomUserByHabbo = currentRoom.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
             var roomUserByHabbo2 = currentRoom.GetRoomUserManager().GetRoomUserByHabbo(text2);
 
-            msg = currentRoom.WordFilter.Aggregate(msg,
+            msg = currentRoom.RoomData.WordFilter.Aggregate(msg,
                 (current1, current) => Regex.Replace(current1, current, "bobba", RegexOptions.IgnoreCase));
             msg =
                 HttpUtility.HtmlEncode(msg);
-            BlackWord word;
 
-            if (BlackWordsManager.Check(msg, BlackWordType.Hotel, out word))
+            if (BlackWordsManager.Check(msg, BlackWordType.Hotel, out var word))
             {
                 var settings = word.TypeSettings;
 

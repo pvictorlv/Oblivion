@@ -189,11 +189,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     The users with rights
         /// </summary>
         internal List<uint> UsersWithRights;
-
-        /// <summary>
-        ///     The word filter
-        /// </summary>
-        internal List<string> WordFilter;
+        
 
         /// <summary>
         ///     Gets the user count.
@@ -1230,7 +1226,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="forceLoad"></param>
         private void InitializeFromRoomData(RoomData data, bool forceLoad)
         {
-            Initialize(data.Id, data, data.AllowRightsOverride, data.WordFilter, forceLoad);
+            Initialize(data.Id, data, data.AllowRightsOverride, forceLoad);
         }
 
         /// <summary>
@@ -1239,12 +1235,10 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="id">The identifier.</param>
         /// <param name="roomData">The room data.</param>
         /// <param name="rightOverride">if set to <c>true</c> [right override].</param>
-        /// <param name="wordFilter">The word filter.</param>
         /// <param name="forceLoad"></param>
-        private void Initialize(uint id, RoomData roomData, bool rightOverride, List<string> wordFilter, bool forceLoad)
+        private void Initialize(uint id, RoomData roomData, bool rightOverride, bool forceLoad)
         {
             RoomData = roomData;
-
             Disposed = false;
             RoomId = id;
             Bans = new Dictionary<long, double>();
@@ -1261,12 +1255,32 @@ namespace Oblivion.HabboHotel.Rooms
             _gameMap = new Gamemap(this);
             _roomItemHandler = new RoomItemHandler(this);
             _roomUserManager = new RoomUserManager(this);
-            WordFilter = wordFilter;
 
             LoadRights();
             LoadBans();
             InitUserBots();
+            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                queryReactor.SetQuery(
+                    $"SELECT user_id, message, timestamp FROM users_chatlogs WHERE room_id = {id} ORDER BY timestamp ASC LIMIT 150");
+                var table = queryReactor.GetTable();
 
+                foreach (DataRow dataRow in table.Rows)
+                    roomData.RoomChat.Push(new Chatlog((uint)dataRow[0], (string)dataRow[1],
+                        Oblivion.UnixToDateTime(int.Parse(dataRow[2].ToString())), false));
+
+                queryReactor.SetQuery($"SELECT word FROM rooms_wordfilter WHERE room_id = {id}");
+                var tableFilter = queryReactor.GetTable();
+
+                foreach (DataRow dataRow in tableFilter.Rows)
+                    roomData.WordFilter.Add(dataRow["word"].ToString());
+
+                queryReactor.SetQuery(
+                    $"SELECT command_name FROM room_blockcmd WHERE room_id = '{id}'");
+                var tableCmd = queryReactor.GetTable();
+                foreach (DataRow data in tableCmd.Rows)
+                    roomData.BlockedCommands.Add(data["command_name"].ToString());
+            }
             if (!forceLoad)
             {
                 _roomThread = new Task(StartRoomProcessing);

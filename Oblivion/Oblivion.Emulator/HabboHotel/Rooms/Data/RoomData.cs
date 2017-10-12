@@ -291,7 +291,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         ///     Fills the specified row.
         /// </summary>
         /// <param name="row">The row.</param>
-        internal void Fill(DataRow row, bool fastLoad)
+        internal void Fill(DataRow row)
         {
             try
             {
@@ -305,39 +305,23 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 RoomChat = new ConcurrentStack<Chatlog>();
                 WordFilter = new List<string>();
                 BlockedCommands = new List<string>();
+
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    queryReactor.SetQuery("SELECT id FROM users WHERE username = @name");
-                    queryReactor.AddParameter("name", Owner);
-
-                    var integer = Convert.ToUInt32(queryReactor.GetInteger());
-
-                    OwnerId = integer != uint.MinValue ? Convert.ToInt32(integer) : 0;
-
-                    if (!fastLoad)
+                    uint integer;
+                    var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(Owner);
+                    if (client != null)
                     {
-                        queryReactor.SetQuery(
-                            $"SELECT user_id, message, timestamp FROM users_chatlogs WHERE room_id = {Id} ORDER BY timestamp ASC LIMIT 150");
-                        var table = queryReactor.GetTable();
-
-                        foreach (DataRow dataRow in table.Rows)
-                            RoomChat.Push(new Chatlog((uint) dataRow[0], (string) dataRow[1],
-                                Oblivion.UnixToDateTime(int.Parse(dataRow[2].ToString())), false));
-
-                        queryReactor.SetQuery($"SELECT word FROM rooms_wordfilter WHERE room_id = {Id}");
-                        var tableFilter = queryReactor.GetTable();
-
-                        foreach (DataRow dataRow in tableFilter.Rows)
-                            WordFilter.Add(dataRow["word"].ToString());
-
-                        queryReactor.SetQuery(
-                            $"SELECT command_name FROM room_blockcmd WHERE room_id = '{Id}'");
-                        var tableCmd = queryReactor.GetTable();
-                        foreach (DataRow data in tableCmd.Rows)
-                            BlockedCommands.Add(data["command_name"].ToString());
+                        integer = client.GetHabbo().Id;
                     }
+                    else
+                    {
+                        queryReactor.SetQuery("SELECT id FROM users WHERE username = @name");
+                        queryReactor.AddParameter("name", Owner);
+                        integer = Convert.ToUInt32(queryReactor.GetInteger());
+                    }
+                    OwnerId = integer != uint.MinValue ? Convert.ToInt32(integer) : 0;
                 }
-
                 var roomState = row["state"].ToString().ToLower();
 
                 switch (roomState)
@@ -385,10 +369,12 @@ namespace Oblivion.HabboHotel.Rooms.Data
 
                 AllowRightsOverride = false;
 
-                Group = Oblivion.GetGame().GetGroupManager().GetGroup(GroupId);
-                Event = Oblivion.GetGame().GetRoomEvents().GetEvent(Id);
-                if (!fastLoad)
-                    _model = Oblivion.GetGame().GetRoomManager().GetModel(ModelName, Id);
+                if (GroupId > 0)
+                    Group = Oblivion.GetGame().GetGroupManager().GetGroup(GroupId);
+                if (Id > 0)
+                    Event = Oblivion.GetGame().GetRoomEvents().GetEvent(Id);
+                _model = Oblivion.GetGame().GetRoomManager().GetModel(ModelName, Id);
+
                 CompetitionStatus = 0;
 
 

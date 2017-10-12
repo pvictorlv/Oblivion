@@ -974,7 +974,7 @@ namespace Oblivion.HabboHotel.Navigators
                 {
                     foreach (var rData in dTable.Rows.Cast<DataRow>().Select(row => Oblivion.GetGame()
                         .GetRoomManager()
-                        .FetchRoomData(Convert.ToUInt32(row["id"]), row)).Where(rData => !rooms.Contains(rData)))
+                        .FetchRoomData(Convert.ToUInt32(row["id"]), row, true)).Where(rData => !rooms.Contains(rData)))
                         rooms.Add(rData);
                 }
             }

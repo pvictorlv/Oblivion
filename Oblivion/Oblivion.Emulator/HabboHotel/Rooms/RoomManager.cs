@@ -184,7 +184,7 @@ namespace Oblivion.HabboHotel.Rooms
                 if (dataRow == null)
                     return null;
 
-                roomData.Fill(dataRow, fastLoad);
+                roomData.Fill(dataRow);
                 LoadedRoomData.TryAdd(roomId, roomData);
             }
 
@@ -254,7 +254,7 @@ namespace Oblivion.HabboHotel.Rooms
                 return LoadedRoomData[roomId];
             }
             var roomData = new RoomData();
-            roomData.Fill(dRow, fastLoad);
+            roomData.Fill(dRow);
             LoadedRoomData.TryAdd(roomId, roomData);
             return roomData;
         }
@@ -358,6 +358,7 @@ namespace Oblivion.HabboHotel.Rooms
                 Logging.HandleException(e, "loadmodel");
                 return new RoomModel(0, 0, 0, 0, "xxxxxx", false); 
             }
+
         }
 
 

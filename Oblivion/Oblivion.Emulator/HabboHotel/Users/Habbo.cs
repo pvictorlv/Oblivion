@@ -693,7 +693,7 @@ namespace Oblivion.HabboHotel.Users
                 foreach (DataRow dataRow in table.Rows)
                     Data.Rooms.Add(Oblivion.GetGame()
                         .GetRoomManager()
-                        .FetchRoomData(Convert.ToUInt32(dataRow["id"]), dataRow));
+                        .FetchRoomData(Convert.ToUInt32(dataRow["id"]), dataRow, true));
             }
         }
 

@@ -314,8 +314,6 @@ namespace Oblivion.HabboHotel.GameClients
             if (!_idUserNameRegister.Contains(userId))
                 _idUserNameRegister.Add(userId, userName);
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.SetQuery($"UPDATE users SET online='1' WHERE id={userId} LIMIT 1");
         }
 
         /// <summary>

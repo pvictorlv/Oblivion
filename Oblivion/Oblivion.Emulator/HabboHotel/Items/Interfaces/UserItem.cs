@@ -67,6 +67,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
 
             if (BaseItem == null)
                 return;
+
             if (BaseItem.IsRare)
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {

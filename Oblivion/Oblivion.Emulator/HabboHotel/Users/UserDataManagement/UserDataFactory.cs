@@ -75,7 +75,6 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 userName = dataRow["username"].ToString();
                 look = dataRow["look"].ToString();
 
-                queryReactor.RunFastQuery($"UPDATE users SET online = '1' WHERE id = {userId}");
 
                 if (Oblivion.GetGame().GetClientManager().GetClientByUserId(userId) != null)
                     Oblivion.GetGame()
@@ -283,7 +282,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 }
             }
 
-            var myRooms = (from DataRow row in myRoomsTable.Rows let roomId = Convert.ToUInt32(row["id"]) select Oblivion.GetGame().GetRoomManager().FetchRoomData(roomId, row)).ToList();
+            var myRooms = (from DataRow row in myRoomsTable.Rows let roomId = Convert.ToUInt32(row["id"]) select Oblivion.GetGame().GetRoomManager().FetchRoomData(roomId, row, true)).ToList();
 
             var pets = new Dictionary<uint, Pet>();
 

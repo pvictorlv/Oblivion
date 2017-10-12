@@ -771,7 +771,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     rank = session.GetHabbo().Rank;
 
                 msg = GetRoom()
-                    .WordFilter
+                    .RoomData.WordFilter
                     .Aggregate(msg,
                         (current1, current) => Regex.Replace(current1, current, "bobba", RegexOptions.IgnoreCase));
                 msg =
