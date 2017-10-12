@@ -164,7 +164,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         /// <param name="roomId">The room identifier.</param>
         /// <returns>RoomData.</returns>
-        internal RoomData GenerateRoomData(uint roomId)
+        internal RoomData GenerateRoomData(uint roomId, bool fastLoad = false)
         {
             if (LoadedRoomData.ContainsKey(roomId))
             {
@@ -184,7 +184,7 @@ namespace Oblivion.HabboHotel.Rooms
                 if (dataRow == null)
                     return null;
 
-                roomData.Fill(dataRow);
+                roomData.Fill(dataRow, fastLoad);
                 LoadedRoomData.TryAdd(roomId, roomData);
             }
 
@@ -246,7 +246,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="roomId">The room identifier.</param>
         /// <param name="dRow">The d row.</param>
         /// <returns>RoomData.</returns>
-        internal RoomData FetchRoomData(uint roomId, DataRow dRow)
+        internal RoomData FetchRoomData(uint roomId, DataRow dRow, bool fastLoad = false)
         {
             if (LoadedRoomData.ContainsKey(roomId))
             {
@@ -254,7 +254,7 @@ namespace Oblivion.HabboHotel.Rooms
                 return LoadedRoomData[roomId];
             }
             var roomData = new RoomData();
-            roomData.Fill(dRow);
+            roomData.Fill(dRow, fastLoad);
             LoadedRoomData.TryAdd(roomId, roomData);
             return roomData;
         }
@@ -316,7 +316,7 @@ namespace Oblivion.HabboHotel.Rooms
             var table = dbClient.GetTable();
             foreach (
                 var data in
-                from DataRow dataRow in table.Rows select FetchRoomData(Convert.ToUInt32(dataRow["id"]), dataRow))
+                from DataRow dataRow in table.Rows select FetchRoomData(Convert.ToUInt32(dataRow["id"]), dataRow, true))
                 QueueVoteAdd(data);
         }
         

@@ -40,7 +40,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         ///  Room blocked cmd
         /// </summary>
         internal List<string> BlockedCommands;
-        
+
 
         /// <summary>
         ///     The chat balloon
@@ -78,6 +78,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         internal bool DisablePull = false;
 
         internal bool DisablePush = false;
+
 
         /// <summary>
         ///     The event
@@ -290,7 +291,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         ///     Fills the specified row.
         /// </summary>
         /// <param name="row">The row.</param>
-        internal void Fill(DataRow row)
+        internal void Fill(DataRow row, bool fastLoad)
         {
             try
             {
@@ -313,25 +314,28 @@ namespace Oblivion.HabboHotel.Rooms.Data
 
                     OwnerId = integer != uint.MinValue ? Convert.ToInt32(integer) : 0;
 
-                    queryReactor.SetQuery(
-                        $"SELECT user_id, message, timestamp FROM users_chatlogs WHERE room_id = {Id} ORDER BY timestamp ASC LIMIT 150");
-                    var table = queryReactor.GetTable();
+                    if (!fastLoad)
+                    {
+                        queryReactor.SetQuery(
+                            $"SELECT user_id, message, timestamp FROM users_chatlogs WHERE room_id = {Id} ORDER BY timestamp ASC LIMIT 150");
+                        var table = queryReactor.GetTable();
 
-                    foreach (DataRow dataRow in table.Rows)
-                        RoomChat.Push(new Chatlog((uint) dataRow[0], (string) dataRow[1],
-                            Oblivion.UnixToDateTime(int.Parse(dataRow[2].ToString())), false));
+                        foreach (DataRow dataRow in table.Rows)
+                            RoomChat.Push(new Chatlog((uint) dataRow[0], (string) dataRow[1],
+                                Oblivion.UnixToDateTime(int.Parse(dataRow[2].ToString())), false));
 
-                    queryReactor.SetQuery($"SELECT word FROM rooms_wordfilter WHERE room_id = {Id}");
-                    var tableFilter = queryReactor.GetTable();
+                        queryReactor.SetQuery($"SELECT word FROM rooms_wordfilter WHERE room_id = {Id}");
+                        var tableFilter = queryReactor.GetTable();
 
-                    foreach (DataRow dataRow in tableFilter.Rows)
-                        WordFilter.Add(dataRow["word"].ToString());
+                        foreach (DataRow dataRow in tableFilter.Rows)
+                            WordFilter.Add(dataRow["word"].ToString());
 
-                    queryReactor.SetQuery(
-                        $"SELECT command_name FROM room_blockcmd WHERE room_id = '{Id}'");
-                    var tableCmd = queryReactor.GetTable();
-                    foreach (DataRow data in tableCmd.Rows)
-                        BlockedCommands.Add(data["command_name"].ToString());
+                        queryReactor.SetQuery(
+                            $"SELECT command_name FROM room_blockcmd WHERE room_id = '{Id}'");
+                        var tableCmd = queryReactor.GetTable();
+                        foreach (DataRow data in tableCmd.Rows)
+                            BlockedCommands.Add(data["command_name"].ToString());
+                    }
                 }
 
                 var roomState = row["state"].ToString().ToLower();
@@ -383,47 +387,13 @@ namespace Oblivion.HabboHotel.Rooms.Data
 
                 Group = Oblivion.GetGame().GetGroupManager().GetGroup(GroupId);
                 Event = Oblivion.GetGame().GetRoomEvents().GetEvent(Id);
-                _model = Oblivion.GetGame().GetRoomManager().GetModel(ModelName, Id);
+                if (!fastLoad)
+                    _model = Oblivion.GetGame().GetRoomManager().GetModel(ModelName, Id);
                 CompetitionStatus = 0;
 
-                /*
-                var dictionary = new Dictionary<int, int>();
-                if (!string.IsNullOrEmpty(row["icon_items"].ToString()))
-                {
-                    string[] array = row["icon_items"].ToString().Split('|');
-                    foreach (string text in array)
-                    {
-                        if (string.IsNullOrEmpty(text))
-                        {
-                            continue;
-                        }
-                        string[] array2 = text.Replace('.', ',').Split(',');
-                        int key = 0;
-                        int value = 0;
-                        int.TryParse(array2[0], out key);
-                        if (array2.Length > 1)
-                        {
-                            int.TryParse(array2[1], out value);
-                        }
-                        try
-                        {
-                            if (!dictionary.ContainsKey(key))
-                            {
-                                dictionary.Add(key, value);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Logging.LogException("Exception: " + ex + "[" + text + "]");
-                        }
-                    }
-                }
-                 */
 
                 Tags = new List<string>();
 
-                //if (row.IsNull("tags") || !string.IsNullOrEmpty(row["tags"].ToString()))
-                // @issue 96
                 if (row.IsNull("tags") || string.IsNullOrEmpty(row["tags"].ToString()))
                     return;
 
@@ -446,7 +416,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         internal void Serialize(ServerMessage message, bool showEvents = false, bool enterRoom = false)
         {
             if (message == null) return;
-            
+
             message.AppendInteger(Id);
             message.AppendString(Name);
             message.AppendInteger(OwnerId);

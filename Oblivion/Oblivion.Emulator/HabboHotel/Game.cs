@@ -485,7 +485,7 @@ namespace Oblivion.HabboHotel
                 BlackWordsManager.Load();
                 SoundMachineSongManager.Initialize();
                 LowPriorityWorker.Init(queryReactor);
-                _roomManager.InitVotedRooms(queryReactor);
+//                _roomManager.InitVotedRooms(queryReactor);
                 _roomManager.LoadCompetitionManager();
             }
             StartGameLoop();
