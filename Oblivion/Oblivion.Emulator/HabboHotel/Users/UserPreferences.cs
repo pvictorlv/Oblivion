@@ -36,7 +36,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery("SELECT * FROM users_preferences WHERE userid = " + _userId);
+                queryReactor.SetQuery("SELECT prefer_old_chat,ignore_room_invite,disable_camera_follow,volume,newnavi_x,newnavi_y,newnavi_width,newnavi_height,chat_color FROM users_preferences WHERE userid = " + _userId);
                 queryReactor.AddParameter("userid", _userId);
                 row = queryReactor.GetRow();
 

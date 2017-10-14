@@ -102,14 +102,14 @@ namespace Oblivion.Messages.Handlers
                 return;
             Response.Init(LibraryParser.OutgoingRequest("UserTagsMessageComposer"));
             Response.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Id);
-            Response.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Tags.Count);
-            foreach (string current in roomUserByHabbo.GetClient().GetHabbo().Tags)
+            Response.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Data.Tags.Count);
+            foreach (var current in roomUserByHabbo.GetClient().GetHabbo().Data.Tags)
                 Response.AppendString(current);
             SendResponse();
 
             if (Session != roomUserByHabbo.GetClient())
                 return;
-            if (Session.GetHabbo().Tags.Count >= 5)
+            if (Session.GetHabbo().Data.Tags.Count >= 5)
                 Oblivion.GetGame()
                     .GetAchievementManager()
                     .ProgressUserAchievement(roomUserByHabbo.GetClient(), "ACH_UserTags", 5);
@@ -466,7 +466,7 @@ namespace Oblivion.Messages.Handlers
                                 !Session.GetHabbo().GetMessenger().FriendshipExists(habbo.Id) &&
                                 Session.GetHabbo().GetMessenger().RequestExists(habbo.Id));
             Response.AppendBool(Oblivion.GetGame().GetClientManager().GetClientByUserId(habbo.Id) != null);
-            var groups = Oblivion.GetGame().GetGroupManager().GetUserGroups(habbo.Id);
+            var groups = habbo.UserGroups;
             Response.AppendInteger(groups.Count);
             foreach (var group in groups.Select(groupUs => Oblivion.GetGame().GetGroupManager()
                 .GetGroup(groupUs.GroupId))
@@ -703,7 +703,7 @@ namespace Oblivion.Messages.Handlers
         internal void CheckName()
         {
             var text = Request.GetString();
-            if (text.ToLower() == Session.GetHabbo().UserName.ToLower())
+            if (string.Equals(text, Session.GetHabbo().UserName, StringComparison.CurrentCultureIgnoreCase))
             {
                 Response.Init(LibraryParser.OutgoingRequest("NameChangedUpdatesMessageComposer"));
                 Response.AppendInteger(0);
@@ -992,9 +992,10 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().CurrentQuestId = quest.Id;
                 Session.SendMessage(QuestStartedComposer.Compose(Session, quest));
                 Oblivion.GetGame().GetQuestManager().ActivateQuest(Session, Request);
-                queryReactor.SetQuery("SELECT id FROM rooms_data WHERE state='open' ORDER BY users_now DESC LIMIT 1");
-                var @string = queryReactor.GetString();
-                roomData = Oblivion.GetGame().GetRoomManager().GenerateRoomData(uint.Parse(@string));
+//                queryReactor.SetQuery("SELECT id FROM rooms_data WHERE state='open' ORDER BY users_now DESC LIMIT 1");
+//                var @string = queryReactor.GetString();
+                
+                roomData = Oblivion.GetGame().GetRoomManager().GetActiveRooms().FirstOrDefault(x => x.Key.UsersNow > 0 && x.Key.State == 0).Key;
             }
             if (roomData != null)
             {
@@ -1170,8 +1171,7 @@ namespace Oblivion.Messages.Handlers
         internal void HotelViewCountdown()
         {
             string time = Request.GetString();
-            DateTime date;
-            DateTime.TryParse(time, out date);
+            DateTime.TryParse(time, out var date);
             TimeSpan diff = date - DateTime.Now;
             Response.Init(LibraryParser.OutgoingRequest("HotelViewCountdownMessageComposer"));
             Response.AppendString(time);

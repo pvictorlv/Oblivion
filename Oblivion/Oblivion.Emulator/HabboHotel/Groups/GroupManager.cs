@@ -182,6 +182,8 @@ namespace Oblivion.HabboHotel.Groups
             if (Groups == null)
                 return null;
 
+            if (groupId <= 0) return null;
+
             if (Groups.TryGetValue(groupId, out Guild grp))
                 return grp;
 
@@ -226,7 +228,7 @@ namespace Oblivion.HabboHotel.Groups
                     if (rank >= 1)
                     {
                         if (!admins.ContainsKey(userId))
-                        admins.Add(userId, membGroup);
+                            admins.Add(userId, membGroup);
                     }
                 }
 
@@ -251,7 +253,7 @@ namespace Oblivion.HabboHotel.Groups
                     (int) row["who_can_read"], (int) row["who_can_post"], (int) row["who_can_thread"],
                     (int) row["who_can_mod"], Oblivion.EnumToBool(row["has_chat"].ToString()));
 
-                if (!Groups.ContainsKey((uint)row[0]))
+                if (!Groups.ContainsKey((uint) row[0]))
                     Groups.Add((uint) row[0], group);
 
                 return group;
@@ -270,13 +272,14 @@ namespace Oblivion.HabboHotel.Groups
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery(
-                    $"SELECT u.username, u.look, g.group_id, g.rank, g.date_join, g.has_chat FROM groups_members g INNER JOIN users u ON (g.user_id = u.id) WHERE g.user_id={userId}");
+                    $"SELECT u.username, u.look, g.group_id, g.rank, g.date_join FROM groups_members g INNER JOIN users u ON (g.user_id = u.id) WHERE g.user_id={userId}");
 
                 var table = queryReactor.GetTable();
 
                 foreach (DataRow dataRow in table.Rows)
                     list.Add(new GroupMember(userId, dataRow["username"].ToString(), dataRow["look"].ToString(),
-                        (uint) dataRow["group_id"], Convert.ToInt16(dataRow["rank"]), (int) dataRow["date_join"], Oblivion.EnumToBool(dataRow["has_chat"].ToString())));
+                        (uint) dataRow["group_id"], Convert.ToInt16(dataRow["rank"]), (int) dataRow["date_join"],
+                        false));
             }
 
             return list;

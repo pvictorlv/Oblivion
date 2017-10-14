@@ -505,9 +505,9 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
 
             _userRoom.RoomData.UsersNow = count;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery("UPDATE rooms_data SET users_now = " + count + " WHERE id = " +
-                                          _userRoom.RoomId + " LIMIT 1");
+//            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+//                queryReactor.RunFastQuery("UPDATE rooms_data SET users_now = " + count + " WHERE id = " +
+//                                          _userRoom.RoomId + " LIMIT 1");
             Oblivion.GetGame().GetRoomManager().QueueActiveRoomUpdate(_userRoom.RoomData);
         }
 

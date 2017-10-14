@@ -333,12 +333,7 @@ namespace Oblivion.HabboHotel.Users
         ///     The spectator mode
         /// </summary>
         internal bool SpectatorMode;
-
-        /// <summary>
-        ///     The tags
-        /// </summary>
-        internal List<string> Tags;
-
+        
         /// <summary>
         ///     The talents
         /// </summary>
@@ -490,7 +485,6 @@ namespace Oblivion.HabboHotel.Users
             AppearOffline = appearOffline;
             FavoriteRooms = new List<uint>();
             MutedUsers = new List<uint>();
-            Tags = new List<string>();
             Achievements = new Dictionary<string, UserAchievement>();
             Talents = new Dictionary<int, UserTalent>();
             RatedRooms = new HashSet<uint>();
@@ -524,24 +518,7 @@ namespace Oblivion.HabboHotel.Users
             DisableEventAlert = disableAlert;
         }
 
-        internal int Diamonds
-        {
-            get
-            {
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                {
-                    queryReactor.SetQuery($"SELECT diamonds FROM users WHERE id = {Id}");
-                    var diamonds = queryReactor.GetInteger();
-                    return diamonds;
-                }
-            }
-            set
-            {
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                    queryReactor.RunFastQuery(
-                        string.Format("UPDATE users SET diamonds = {1} WHERE id = {0}", Id, value));
-            }
-        }
+        internal int Diamonds { get; set; }
 
         /// <summary>
         ///     Gets a value indicating whether this instance can change name.
@@ -693,7 +670,7 @@ namespace Oblivion.HabboHotel.Users
                 foreach (DataRow dataRow in table.Rows)
                     Data.Rooms.Add(Oblivion.GetGame()
                         .GetRoomManager()
-                        .FetchRoomData(Convert.ToUInt32(dataRow["id"]), dataRow, true));
+                        .FetchRoomData(Convert.ToUInt32(dataRow["id"]), dataRow, Id));
             }
         }
 
@@ -707,7 +684,6 @@ namespace Oblivion.HabboHotel.Users
             LoadTalents(data.Talents);
             LoadFavorites(data.FavouritedRooms);
             LoadMutedUsers(data.Ignores);
-            LoadTags(data.Tags);
             Data = data;
         }
 
@@ -754,15 +730,6 @@ namespace Oblivion.HabboHotel.Users
         internal void LoadMutedUsers(List<uint> usersMuted)
         {
             MutedUsers = usersMuted;
-        }
-
-        /// <summary>
-        ///     Loads the tags.
-        /// </summary>
-        /// <param name="tags">The tags.</param>
-        internal void LoadTags(List<string> tags)
-        {
-            Tags = tags;
         }
 
         /// <summary>

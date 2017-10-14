@@ -282,7 +282,6 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 }
             }
 
-            var myRooms = (from DataRow row in myRoomsTable.Rows let roomId = Convert.ToUInt32(row["id"]) select Oblivion.GetGame().GetRoomManager().FetchRoomData(roomId, row, true)).ToList();
 
             var pets = new Dictionary<uint, Pet>();
 
@@ -327,6 +326,9 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
           
             var blockedCommands = (from DataRow r in dBlockedCommands.Rows select r["command_name"].ToString())
                 .ToList();
+
+            var myRooms = (from DataRow row in myRoomsTable.Rows let roomId = Convert.ToUInt32(row["id"].ToString()) select Oblivion.GetGame().GetRoomManager().FetchRoomData(roomId, row, userId)).ToList();
+
             return new UserData(userId, achievements, talents, favorites, ignoreUsers, tags, subscriptions, badges,
                 items, effects, friends, friendsRequests, myRooms, pets, quests, user, inventoryBots, relationShips,
                 pollSuggested, miniMailCount, blockedCommands);
@@ -339,6 +341,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         /// <returns>UserData.</returns>
         internal static UserData GetUserData(int userId)
         {
+            //todo: improve it
             DataRow dataRow;
             uint num;
             DataRow row;

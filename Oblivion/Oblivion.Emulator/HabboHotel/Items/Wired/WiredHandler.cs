@@ -10,7 +10,6 @@ using Oblivion.HabboHotel.Items.Wired.Handlers.Effects;
 using Oblivion.HabboHotel.Items.Wired.Handlers.Triggers;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
-using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Items.Wired
 {
@@ -51,7 +50,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery("SELECT * FROM items_wireds WHERE id=@id LIMIT 1");
+                queryReactor.SetQuery("SELECT string,bool,delay,extra_string,extra_string_2,items FROM items_wireds WHERE id=@id LIMIT 1");
                 queryReactor.AddParameter("id", fItem.Item.Id);
 
                 var row = queryReactor.GetRow();

@@ -135,9 +135,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 if (BaseItem.InteractionType == Interaction.Gift)
                 {
                     var split = ExtraData.Split((char) 9);
-                    int ribbon, color;
-                    int.TryParse(split[2], out ribbon);
-                    int.TryParse(split[3], out color);
+                    int.TryParse(split[2], out var ribbon);
+                    int.TryParse(split[3], out var color);
                     extraParam = (ribbon * 1000) + color;
                 }
             }

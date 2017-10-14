@@ -181,14 +181,10 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             
             TimePingedReceived = DateTime.Now;
 
-            var packetParser = _connection.Parser as InitialPacketParser;
-
-            if (packetParser != null)
+            if (_connection.Parser is InitialPacketParser packetParser)
                 packetParser.PolicyRequest += PolicyRequest;
 
-            var initialPacketParser = _connection.Parser as InitialPacketParser;
-
-            if (initialPacketParser != null)
+            if (_connection.Parser is InitialPacketParser initialPacketParser)
                 initialPacketParser.SwitchParserRequest += SwitchParserRequest;
 
             _connection.StartPacketProcessing();
@@ -252,11 +248,6 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 userData.User.Init(this, userData);
 
                 var queuedServerMessage = new QueuedServerMessage(_connection);
-/*
-                var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UniqueMachineIDMessageComposer"));
-
-                serverMessage.AppendString(MachineId);
-                queuedServerMessage.AppendResponse(serverMessage);*/
 
                 queuedServerMessage.AppendResponse(new ServerMessage(LibraryParser.OutgoingRequest("AuthenticationOKMessageComposer")));
 
@@ -266,12 +257,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 serverMessage2.AppendInteger(_habbo.HomeRoom);
                 queuedServerMessage.AppendResponse(serverMessage2);
 
-               var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("MinimailCountMessageComposer"));
-
-                serverMessage.AppendInteger(_habbo.MinimailUnreadMessages);
-                queuedServerMessage.AppendResponse(serverMessage);
-
-                serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FavouriteRoomsMessageComposer"));
+                var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FavouriteRoomsMessageComposer"));
 
                 serverMessage.AppendInteger(30);
 
@@ -399,10 +385,10 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 serverMessage.AppendInteger(27);
                 serverMessage.AppendString("auto_reply");
                 queuedServerMessage.AppendResponse(serverMessage);
-
+/*
                 serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("EnableTradingMessageComposer"));
                 serverMessage.AppendBool(true);
-                queuedServerMessage.AppendResponse(serverMessage);
+                queuedServerMessage.AppendResponse(serverMessage);*/
                 userData.User.UpdateCreditsBalance();
 
                 serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ActivityPointsMessageComposer"));

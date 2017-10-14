@@ -291,7 +291,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         ///     Fills the specified row.
         /// </summary>
         /// <param name="row">The row.</param>
-        internal void Fill(DataRow row)
+        internal void Fill(DataRow row, uint user = 0u)
         {
             try
             {
@@ -310,16 +310,17 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 {
                     uint integer;
                     var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(Owner);
-                    if (client != null)
-                    {
-                        integer = client.GetHabbo().Id;
-                    }
-                    else
+                    if (client == null && user == 0)
                     {
                         queryReactor.SetQuery("SELECT id FROM users WHERE username = @name");
                         queryReactor.AddParameter("name", Owner);
                         integer = Convert.ToUInt32(queryReactor.GetInteger());
                     }
+                    else
+                    {
+                        integer = client?.GetHabbo().Id ?? user;
+                    }
+
                     OwnerId = integer != uint.MinValue ? Convert.ToInt32(integer) : 0;
                 }
                 var roomState = row["state"].ToString().ToLower();
@@ -354,7 +355,6 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 int.TryParse(row["kick_settings"].ToString(), out WhoCanKick);
                 int.TryParse(row["ban_settings"].ToString(), out WhoCanBan);
 
-                uint.TryParse(row["users_now"].ToString(), out UsersNow);
                 uint.TryParse(row["users_max"].ToString(), out UsersMax);
                 uint.TryParse(row["group_id"].ToString(), out GroupId);
                 uint.TryParse(row["chat_balloon"].ToString(), out ChatBalloon);

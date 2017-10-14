@@ -16,7 +16,6 @@ using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.PathFinding;
 using Oblivion.HabboHotel.Pets;
 using Oblivion.HabboHotel.Pets.Enums;
-using Oblivion.HabboHotel.Polls;
 using Oblivion.HabboHotel.Polls.Enums;
 using Oblivion.HabboHotel.Quests;
 using Oblivion.HabboHotel.RoomBots;
@@ -24,7 +23,6 @@ using Oblivion.HabboHotel.Rooms;
 using Oblivion.Messages.Parsers;
 using Oblivion.Security.BlackWords;
 using Oblivion.Security.BlackWords.Enums;
-using Oblivion.Security.BlackWords.Structs;
 using Oblivion.Util;
 
 namespace Oblivion.Messages.Handlers
@@ -37,8 +35,7 @@ namespace Oblivion.Messages.Handlers
         public void GetPetBreeds()
         {
             var type = Request.GetString();
-            string petType;
-            var petId = PetRace.GetPetId(type, out petType);
+            var petId = PetRace.GetPetId(type, out var petType);
             var races = PetRace.GetRacesForRaceId(petId);
             var message = new ServerMessage(LibraryParser.OutgoingRequest("SellablePetBreedsMessageComposer"));
             message.AppendString(petType);
@@ -546,8 +543,7 @@ namespace Oblivion.Messages.Handlers
             }
             else
             {
-                Response.Init(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
-                Response.AppendInteger(0);
+                Response.Init(LibraryParser.OutgoingRequest("YouAreNotControllerMessageComposer"));
                 queuedServerMessage.AppendResponse(GetResponse());
             }
 
@@ -753,18 +749,13 @@ namespace Oblivion.Messages.Handlers
             room.RoomData.SerializeRoomData(GetResponse(), Session, true, null, show);
             SendResponse();
 
-            DataTable table;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-            {
-                queryReactor.SetQuery($"SELECT user_id FROM rooms_rights WHERE room_id={room.RoomId}");
-                table = queryReactor.GetTable();
-            }
+            
             Response.Init(LibraryParser.OutgoingRequest("LoadRoomRightsListMessageComposer"));
             GetResponse().AppendInteger(room.RoomData.Id);
-            GetResponse().AppendInteger(table.Rows.Count);
+            GetResponse().AppendInteger(room.UsersWithRights.Count);
 
-            foreach (var habboForId in table.Rows.Cast<DataRow>()
-                .Select(dataRow => Oblivion.GetHabboById((uint) dataRow[0])).Where(habboForId => habboForId != null))
+            foreach (var habboForId in room.UsersWithRights
+                .Select(Oblivion.GetHabboById).Where(habboForId => habboForId != null))
             {
                 GetResponse().AppendInteger(habboForId.Id);
                 GetResponse().AppendString(habboForId.UserName);
@@ -1002,15 +993,9 @@ namespace Oblivion.Messages.Handlers
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             if (room == null || !room.CheckRights(Session, true))
                 return;
-            DataTable table;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+
+            foreach (var num in room.UsersWithRights)
             {
-                queryReactor.SetQuery($"SELECT user_id FROM rooms_rights WHERE room_id={room.RoomId}");
-                table = queryReactor.GetTable();
-            }
-            foreach (DataRow dataRow in table.Rows)
-            {
-                var num = (uint) dataRow[0];
                 var roomUserByHabbo = room.GetRoomUserManager().GetRoomUserByHabbo(num);
                 Response.Init(LibraryParser.OutgoingRequest("RemoveRightsMessageComposer"));
                 Response.AppendInteger(room.RoomId);

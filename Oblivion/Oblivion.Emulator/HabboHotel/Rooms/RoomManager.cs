@@ -136,7 +136,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <returns>RoomModel.</returns>
         internal RoomModel GetModel(string model, uint roomId)
         {
-            if (LoadedRooms.TryGetValue(roomId, out Room room))
+            if (LoadedRooms.TryGetValue(roomId, out var room))
             {
                 return room.RoomData.Model;
             }
@@ -246,7 +246,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="roomId">The room identifier.</param>
         /// <param name="dRow">The d row.</param>
         /// <returns>RoomData.</returns>
-        internal RoomData FetchRoomData(uint roomId, DataRow dRow, bool fastLoad = false)
+        internal RoomData FetchRoomData(uint roomId, DataRow dRow, uint user = 0u)
         {
             if (LoadedRoomData.ContainsKey(roomId))
             {
@@ -254,7 +254,7 @@ namespace Oblivion.HabboHotel.Rooms
                 return LoadedRoomData[roomId];
             }
             var roomData = new RoomData();
-            roomData.Fill(dRow);
+            roomData.Fill(dRow, user);
             LoadedRoomData.TryAdd(roomId, roomData);
             return roomData;
         }
@@ -316,7 +316,7 @@ namespace Oblivion.HabboHotel.Rooms
             var table = dbClient.GetTable();
             foreach (
                 var data in
-                from DataRow dataRow in table.Rows select FetchRoomData(Convert.ToUInt32(dataRow["id"]), dataRow, true))
+                from DataRow dataRow in table.Rows select FetchRoomData(Convert.ToUInt32(dataRow["id"]), dataRow))
                 QueueVoteAdd(data);
         }
         
@@ -520,7 +520,7 @@ namespace Oblivion.HabboHotel.Rooms
                     queryReactor.SetQuery(
                         "UPDATE rooms_data SET caption = @caption, description = @description, password = @password, category = " +
                         room.RoomData.Category + ", state = '" + state +
-                        "', tags = @tags, users_now = '0', users_max = " +
+                        "', tags = @tags, users_max = " +
                         room.RoomData.UsersMax + ", allow_pets = '" + Oblivion.BoolToEnum(room.RoomData.AllowPets) +
                         "', allow_pets_eat = '" +
                         Oblivion.BoolToEnum(room.RoomData.AllowPetsEating) + "', allow_walkthrough = '" +

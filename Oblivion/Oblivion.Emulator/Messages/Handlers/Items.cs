@@ -780,7 +780,7 @@ namespace Oblivion.Messages.Handlers
 
             Session.GetHabbo().LastGiftOpenTime = DateTime.Now;
             var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor();
-            queryReactor.SetQuery("SELECT * FROM users_gifts WHERE gift_id = " + item.Id);
+            queryReactor.SetQuery("SELECT item_id,extra_data FROM users_gifts WHERE gift_id = " + item.Id);
             var row = queryReactor.GetRow();
             if (row == null)
             {
@@ -1817,28 +1817,25 @@ namespace Oblivion.Messages.Handlers
             DataRow row;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery("SELECT * FROM items_vouchers WHERE voucher = @vo LIMIT 1");
+                queryReactor.SetQuery("SELECT value,extra_duckets FROM items_vouchers WHERE voucher = @vo LIMIT 1");
                 queryReactor.AddParameter("vo", query);
                 row = queryReactor.GetRow();
             }
-
+            if (row != null)
             {
-                if (row != null)
+                isValid = true;
+                using (
+                    var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    isValid = true;
-                    using (
-                        var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                    {
-                        queryreactor2.SetQuery("DELETE FROM items_vouchers WHERE voucher = @vou LIMIT 1");
-                        queryreactor2.AddParameter("vou", query);
-                        queryreactor2.RunQuery();
-                    }
-                    Session.GetHabbo().Credits += (int) row["value"];
-                    Session.GetHabbo().UpdateCreditsBalance();
-                    Session.GetHabbo().NotifyNewPixels((int) row["extra_duckets"]);
+                    queryreactor2.SetQuery("DELETE FROM items_vouchers WHERE voucher = @vou LIMIT 1");
+                    queryreactor2.AddParameter("vou", query);
+                    queryreactor2.RunQuery();
                 }
-                Session.GetHabbo().NotifyVoucher(isValid, productName, productDescription);
+                Session.GetHabbo().Credits += (int) row["value"];
+                Session.GetHabbo().UpdateCreditsBalance();
+                Session.GetHabbo().NotifyNewPixels((int) row["extra_duckets"]);
             }
+            Session.GetHabbo().NotifyVoucher(isValid, productName, productDescription);
         }
 
         internal void RemoveHanditem()
