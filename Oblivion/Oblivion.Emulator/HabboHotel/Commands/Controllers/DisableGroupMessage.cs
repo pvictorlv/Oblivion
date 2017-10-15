@@ -4,9 +4,6 @@ using System.Text;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Groups.Interfaces;
-using Oblivion.Messages;
-using Oblivion.Messages.Parsers;
-using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
 {
@@ -39,7 +36,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 client.SendWhisper("Você deve estar no quarto do grupo para usar esse comando!");
                 return false;
             }
-            if (!gp.Members.TryGetValue(client.GetHabbo().Id, out GroupMember member))
+            if (!gp.Members.TryGetValue(client.GetHabbo().Id, out var member))
             {
                 client.SendWhisper("Você não está no grupo!");
                 return false;
@@ -51,7 +48,14 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 dbClient.RunFastQuery(
                     $"UPDATE groups_members SET has_chat = '{Oblivion.BoolToEnum(member.HasChat)}' WHERE user_id = '{member.Id}' AND group_id = '{member.GroupId}'");
             }
-            client.GetHabbo().GetMessenger().SerializeUpdate(gp, member.HasChat);
+            if (!member.HasChat)
+            {
+                client.GetHabbo().GetMessenger().OnDisableChat((int) gp.Id);
+            }
+            else
+            {
+                client.GetHabbo().GetMessenger().SerializeUpdate(gp);
+            }
             client.SendWhisper(member.HasChat ? "O chat foi ativado" : "o chat foi desativado");
             return true;
         }

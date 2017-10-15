@@ -448,7 +448,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         internal void RemoveRoomUser(RoomUser user)
         {
             if (user == null) return;
-            
+
             RoomUser junk;
             if (!UserList.TryRemove(user.InternalRoomId, out junk)) return;
 
@@ -981,9 +981,12 @@ namespace Oblivion.HabboHotel.Rooms.User
                 }
                 if (cycleGameItems)
                 {
-                    _userRoom.GetSoccer().OnUserWalk(user);
-                    _userRoom.GetBanzai().OnUserWalk(user);
-                    _userRoom.GetFreeze().OnUserWalk(user);
+                    if (_userRoom.GotSoccer())
+                        _userRoom.GetSoccer().OnUserWalk(user);
+                    if (_userRoom.GotBanzai())
+                        _userRoom.GetBanzai().OnUserWalk(user);
+                    if (_userRoom.GotFreeze())
+                        _userRoom.GetFreeze().OnUserWalk(user);
                 }
             }
             catch (Exception e)
@@ -1413,8 +1416,9 @@ namespace Oblivion.HabboHotel.Rooms.User
 
             // Region Check User Got Freezed
             if (_userRoom.GotFreeze())
+            {
                 Freeze.CycleUser(roomUsers);
-
+            }
             // Region Variable Registering
             var invalidStep = false;
             // Region Check User Tile Selection
@@ -1605,7 +1609,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                         UpdateUserCount(userInRoomCount);
                     }
                 }
-
             }
         }
 

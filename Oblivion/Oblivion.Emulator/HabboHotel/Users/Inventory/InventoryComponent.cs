@@ -291,7 +291,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery("SELECT id,base_item,extra_data,group_id,song_code FROM items_rooms WHERE user_id=@userid AND room_id='0' LIMIT 8000;");
+                queryReactor.SetQuery("SELECT id,base_item,extra_data,group_id,songcode FROM items_rooms WHERE user_id=@userid AND room_id='0' LIMIT 8000;");
                 queryReactor.AddParameter("userid", ((int) UserId));
 
                 table = queryReactor.GetTable();

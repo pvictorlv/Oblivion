@@ -679,7 +679,6 @@ namespace Oblivion.Messages.Handlers
                 }
             }
             item.Interactor.OnTrigger(Session, item, Request.GetInteger(), hasRightsOne);
-            item.OnTrigger(room.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id));
             //Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.ExploreFindItem, item.GetBaseItem().itemId);
             foreach (var current in room.GetRoomUserManager().UserList.Values.Where(current => current.Statusses.ContainsKey("sit") && (current.X == item.X && current.Y == item.Y)))
                 room.GetRoomUserManager().UpdateUserStatus(current, true);
@@ -696,7 +695,6 @@ namespace Oblivion.Messages.Handlers
                 return;
             var hasRights = room.CheckRights(Session);
             item.Interactor.OnTrigger(Session, item, -1, hasRights);
-            item.OnTrigger(room.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id));
         }
 
         internal void OpenPostit()
@@ -780,7 +778,7 @@ namespace Oblivion.Messages.Handlers
 
             Session.GetHabbo().LastGiftOpenTime = DateTime.Now;
             var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor();
-            queryReactor.SetQuery("SELECT item_id,extra_data FROM users_gifts WHERE gift_id = " + item.Id);
+            queryReactor.SetQuery("SELECT item_id,extradata FROM users_gifts WHERE gift_id = " + item.Id);
             var row = queryReactor.GetRow();
             if (row == null)
             {

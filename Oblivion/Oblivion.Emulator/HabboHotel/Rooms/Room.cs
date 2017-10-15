@@ -30,6 +30,7 @@ using Oblivion.HabboHotel.SoundMachine;
 using Oblivion.HabboHotel.SoundMachine.Songs;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
+using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Rooms
 {
@@ -750,16 +751,18 @@ namespace Oblivion.HabboHotel.Rooms
                     _game?.OnCycle();
 
                     if (GotBanzai())
+                    {
                         _banzai.OnCycle();
-
-//                    if (GotSoccer())
-//                        _soccer.OnCycle();
+                    }
 
                     if (GotMusicController())
+                    {
                         GetRoomMusicController().Update(this);
+                    }
                     if (GotWireds())
+                    {
                         GetWiredHandler().OnCycle();
-
+                    }
                     WorkRoomKickQueue();
                 }
                 catch (Exception e)
@@ -1295,10 +1298,11 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         private void WorkRoomKickQueue()
         {
-            if (_roomKick.Count <= 0)
-                return;
             lock (_roomKick.SyncRoot)
             {
+                if (_roomKick.Count <= 0)
+                    return;
+
                 while (_roomKick.Count > 0)
                 {
                     var roomKick = (RoomKick) _roomKick.Dequeue();
@@ -1345,12 +1349,21 @@ namespace Oblivion.HabboHotel.Rooms
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 GetRoomItemHandler().SaveFurniture(queryReactor);
-                queryReactor.RunFastQuery($"UPDATE rooms_data SET users_now=0 WHERE id = {RoomId} LIMIT 1");
             }
             if (GotSoccer())
             {
                 _soccer.Destroy();
                 _soccer = null;
+            }
+            if (GotBanzai())
+            {
+                _banzai.Destroy();
+                _banzai = null;
+            }
+            if (GotFreeze())
+            {
+                _freeze.Destroy();
+                _freeze = null;
             }
             _processTimer?.Dispose();
             _processTimer = null;
@@ -1362,8 +1375,11 @@ namespace Oblivion.HabboHotel.Rooms
             LoadedGroups.Clear();
 
             RoomData.RoomChat.Clear();
-            _wiredHandler?.Destroy();
-            _wiredHandler = null;
+            if (GotWireds())
+            {
+                _wiredHandler.Destroy();
+                _wiredHandler = null;
+            }
             foreach (var current in GetRoomItemHandler().FloorItems)
                 current.Destroy();
             foreach (var current2 in GetRoomItemHandler().WallItems)

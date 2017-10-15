@@ -51,7 +51,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
 
         internal void OnCycle()
         {
-            _pucks.OnCycle();
+            if (_pucks.Values.Count > 0)
+                _pucks.OnCycle();
         }
 
         internal void AddPuck(RoomItem item)
@@ -78,8 +79,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
 
                 if (differenceX > 1 || differenceX < -1 || differenceY > 1 || differenceY < -1)
                     continue;
-                var newX = (differenceX*-1) + roomItem.X;
-                var newY = (differenceY*-1) + roomItem.Y;
+                var newX = (differenceX * -1) + roomItem.X;
+                var newY = (differenceY * -1) + roomItem.Y;
 
                 if (roomItem.InteractingBallUser == user.GetClient() && _room.GetGameMap().ValidTile(newX, newY))
                 {
@@ -255,16 +256,16 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
 
             for (var i = 1; i < length; i++)
             {
-                newX = (differenceX*-i) + item.X;
-                newY = (differenceY*-i) + item.Y;
+                newX = (differenceX * -i) + item.X;
+                newY = (differenceY * -i) + item.Y;
                 if (!_room.GetGameMap().ItemCanBePlacedHere(newX, newY))
                 {
                     if (i == 1) break;
                     if (i != length) affectedTiles.Add(new Point(newX, newY));
 
                     i = i - 1;
-                    newX = differenceX*-i;
-                    newY = differenceY*-i;
+                    newX = differenceX * -i;
+                    newY = differenceY * -i;
 
                     newX = newX + item.X;
                     newY = newY + item.Y;
@@ -289,10 +290,11 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
 
         internal void Destroy()
         {
-            BanzaiTiles.Clear();
-            _pucks.Clear();
-            Array.Clear(_floorMap, 0, _floorMap.Length);
-            _field.Destroy();
+            BanzaiTiles?.Clear();
+            _pucks?.Clear();
+            if (_floorMap != null)
+                Array.Clear(_floorMap, 0, _floorMap.Length);
+            _field?.Destroy();
             _room = null;
             BanzaiTiles = null;
             _pucks = null;
@@ -307,7 +309,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                 item.Value = 3;
                 item.Team = team;
             }
-            var num = item.Value + ((int) item.Team)*3 - 1;
+            var num = item.Value + ((int) item.Team) * 3 - 1;
 
             item.ExtraData = num.ToString();
         }
@@ -347,7 +349,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                 }
             }
 
-            var newColor = item.Value + ((int) item.Team*3) - 1;
+            var newColor = item.Value + ((int) item.Team * 3) - 1;
             item.ExtraData = newColor.ToString();
         }
 
@@ -389,11 +391,11 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             _room.GetGameMap().GetCoordinatedItems(coord);
             foreach (
                 var roomItem in
-                    BanzaiTiles.Values.Cast<RoomItem>()
-                        .Where(
-                            roomItem =>
-                                roomItem.GetBaseItem().InteractionType == Interaction.BanzaiFloor &&
-                                (roomItem.X == coord.X && roomItem.Y == coord.Y)))
+                BanzaiTiles.Values.Cast<RoomItem>()
+                    .Where(
+                        roomItem =>
+                            roomItem.GetBaseItem().InteractionType == Interaction.BanzaiFloor &&
+                            (roomItem.X == coord.X && roomItem.Y == coord.Y)))
             {
                 SetMaxForTile(roomItem, team, user);
                 _room.GetGameManager().AddPointToTeam(team, user);

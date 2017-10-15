@@ -290,7 +290,7 @@ namespace Oblivion
                     Pooling = true,
                     AllowZeroDateTime = true,
                     ConvertZeroDateTime = true,
-                    DefaultCommandTimeout = 30,
+                    DefaultCommandTimeout = 60,
                     Logging = false,
                     ConnectionTimeout = 10
                 };
@@ -687,7 +687,6 @@ namespace Oblivion
                 using (var queryReactor = Manager.GetQueryReactor())
                 {
                     queryReactor.RunFastQuery("UPDATE users SET online = '0'");
-                    queryReactor.RunFastQuery("UPDATE rooms_data SET users_now = 0");
                     queryReactor.RunFastQuery("TRUNCATE TABLE users_rooms_visits");
                 }
 

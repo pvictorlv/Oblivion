@@ -325,10 +325,30 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 .GetMessageHandler()
                 .GetResponse()
                 .Init(LibraryParser.OutgoingRequest("FriendUpdateMessageComposer"));
-            GetClient().GetMessageHandler().GetResponse().AppendInteger(0); //count
+            GetClient().GetMessageHandler().GetResponse().AppendInteger(1); //count
+            GetClient().GetMessageHandler().GetResponse().AppendInteger(1); //count
+            GetClient().GetMessageHandler().GetResponse().AppendString("Grupos"); //count
             GetClient().GetMessageHandler().GetResponse().AppendInteger(1);
             GetClient().GetMessageHandler().GetResponse().AppendInteger(-1);
             GetClient().GetMessageHandler().GetResponse().AppendInteger(friend);
+            GetClient().GetMessageHandler().SendResponse();
+        }
+        /// <summary>
+        ///     Remove user from group chat
+        /// </summary>
+        /// <param name="groupId">The group.</param>
+        internal void OnDisableChat(int groupId)
+        {
+            GetClient()
+                .GetMessageHandler()
+                .GetResponse()
+                .Init(LibraryParser.OutgoingRequest("FriendUpdateMessageComposer"));
+            GetClient().GetMessageHandler().GetResponse().AppendInteger(1); //count
+            GetClient().GetMessageHandler().GetResponse().AppendInteger(1); //count
+            GetClient().GetMessageHandler().GetResponse().AppendString("Grupos"); //count
+            GetClient().GetMessageHandler().GetResponse().AppendInteger(1);
+            GetClient().GetMessageHandler().GetResponse().AppendInteger(-1);
+            GetClient().GetMessageHandler().GetResponse().AppendInteger(-groupId);
             GetClient().GetMessageHandler().SendResponse();
         }
 
@@ -447,9 +467,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="message">The message.</param>
         internal void SendInstantMessage(Guild gp, string message)
         {
-            BlackWord word;
-
-            if (BlackWordsManager.Check(message, BlackWordType.Hotel, out word))
+            if (BlackWordsManager.Check(message, BlackWordType.Hotel, out var word))
             {
                 var settings = word.TypeSettings;
                 if (settings.ShowMessage)
@@ -486,9 +504,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="message">The message.</param>
         internal void SendInstantMessage(uint toId, string message)
         {
-            BlackWord word;
-
-            if (BlackWordsManager.Check(message, BlackWordType.Hotel, out word))
+            if (BlackWordsManager.Check(message, BlackWordType.Hotel, out var word))
             {
                 var settings = word.TypeSettings;
                 //GetClient().HandlePublicist(word.Word, message, "WHISPER", settings);
@@ -597,7 +613,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             serverMessage.AppendInteger(300);
             serverMessage.AppendInteger(800);
             serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(2);
+            serverMessage.AppendInteger(1);
             serverMessage.AppendString("Grupos");
             return serverMessage;
         }
@@ -619,7 +635,6 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 .ToList();
 
             serverMessage.AppendInteger(Friends.Count + groups.Count);
-
             foreach (var current in Friends.Values)
             {
                 current.UpdateUser();
@@ -634,7 +649,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 serverMessage.AppendBool(group.HasChat);
                 serverMessage.AppendBool(false);
                 serverMessage.AppendString(group.Badge);
-                serverMessage.AppendInteger(2);
+                serverMessage.AppendInteger(1);
                 serverMessage.AppendString(group.Description);
                 serverMessage.AppendString("");
                 serverMessage.AppendString("");
@@ -670,11 +685,12 @@ namespace Oblivion.HabboHotel.Users.Messenger
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FriendUpdateMessageComposer"));
             serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(2);
+            serverMessage.AppendInteger(1);
             serverMessage.AppendString("Grupos");
             serverMessage.AppendInteger(1);
             serverMessage.AppendInteger(0);
             friend.Serialize(serverMessage, GetClient());
+            serverMessage.AppendBool(false);
             return serverMessage;
         }
 
@@ -683,21 +699,21 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="group">The group.</param>
         /// <returns>ServerMessage.</returns>
-        internal ServerMessage SerializeUpdate(Guild group, bool flag = true)
+        internal ServerMessage SerializeUpdate(Guild group)
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FriendUpdateMessageComposer"));
             serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(2);
+            serverMessage.AppendInteger(1);
             serverMessage.AppendString("Grupos");
             serverMessage.AppendInteger(1);
             serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(group.Id);
+            serverMessage.AppendInteger(-Convert.ToInt32(group.Id));
             serverMessage.AppendString(group.Name);
             serverMessage.AppendInteger(1);
-            serverMessage.AppendBool(flag);
+            serverMessage.AppendBool(true);
             serverMessage.AppendBool(false);
             serverMessage.AppendString(string.Empty);
-            serverMessage.AppendInteger(2); //category
+            serverMessage.AppendInteger(1); //category
             serverMessage.AppendString(group.Name);
             serverMessage.AppendString(string.Empty);
             serverMessage.AppendString(string.Empty);

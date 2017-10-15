@@ -119,7 +119,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             message.AppendInteger(Id);
             message.AppendString(UserName);
-            message.AppendInteger(IsOnline || Id == 0);
+            message.AppendInteger(1);
 
             message.AppendBool(Id == 0 || (!_appearOffline || session.GetHabbo().Rank >= 4) && IsOnline);
             message.AppendBool(Id != 0 && (!_hideInroom || session.GetHabbo().Rank >= 4) && InRoom);

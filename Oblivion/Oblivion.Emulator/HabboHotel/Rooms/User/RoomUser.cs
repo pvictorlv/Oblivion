@@ -727,9 +727,8 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (session?.GetHabbo() == null)
                 return;
 
-            BlackWord word;
             if (!(msg.StartsWith(":deleteblackword ") && session.GetHabbo().Rank > 4) &&
-                BlackWordsManager.Check(msg, BlackWordType.Hotel, out word))
+                BlackWordsManager.Check(msg, BlackWordType.Hotel, out var word))
             {
                 var settings = word.TypeSettings;
                 //session.HandlePublicist(word.Word, msg, "CHAT", settings);

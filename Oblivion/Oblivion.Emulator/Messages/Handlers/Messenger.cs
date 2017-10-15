@@ -112,6 +112,44 @@ namespace Oblivion.Messages.Handlers
             if (Session.GetHabbo().GetMessenger() == null) return;
             if (!string.IsNullOrWhiteSpace(text))
             {
+                var habbo = Session.GetHabbo();
+                if (habbo.Rank < 4)
+                {
+                    var span = DateTime.Now - habbo.SpamFloodTime;
+                    if ((span.TotalSeconds > habbo.SpamProtectionTime) && habbo.SpamProtectionBol)
+                    {
+                        _floodCount = 0;
+                        habbo.SpamProtectionBol = false;
+                        habbo.SpamProtectionAbuse = 0;
+                    }
+                    else if (span.TotalSeconds > 4.0)
+                        _floodCount = 0;
+                    ServerMessage message;
+                    if ((span.TotalSeconds < habbo.SpamProtectionTime) && habbo.SpamProtectionBol)
+                    {
+                        message = new ServerMessage(LibraryParser.OutgoingRequest("FloodFilterMessageComposer"));
+                        var i = habbo.SpamProtectionTime - span.Seconds;
+                        message.AppendInteger(i);
+                        habbo.GetClient().SendMessage(message);
+                        return;
+                    }
+                    if (((span.TotalSeconds < 4.0) && (_floodCount > 5)) && (habbo.Rank < 5))
+                    {
+                        message = new ServerMessage(LibraryParser.OutgoingRequest("FloodFilterMessageComposer"));
+                        habbo.SpamProtectionCount++;
+                        if ((habbo.SpamProtectionCount % 2) == 0)
+                            habbo.SpamProtectionTime = 10 * habbo.SpamProtectionCount;
+                        else
+                            habbo.SpamProtectionTime = 10 * (habbo.SpamProtectionCount - 1);
+                        habbo.SpamProtectionBol = true;
+                        var j = habbo.SpamProtectionTime - span.Seconds;
+                        message.AppendInteger(j);
+                        habbo.GetClient().SendMessage(message);
+                        return;
+                    }
+                    habbo.SpamFloodTime = DateTime.Now;
+                }
+
                 if (toId > 0)
                 {
                     Session.GetHabbo().GetMessenger().SendInstantMessage((uint)toId, text);

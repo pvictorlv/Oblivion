@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
@@ -45,11 +46,19 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 dbClient.RunFastQuery(
                     $"UPDATE groups_data SET has_chat = '{Oblivion.BoolToEnum(gp.HasChat)}' WHERE id = '{gp.Id}'");
             }
-            foreach (var userClient in gp.Members.Values.Select(user => Oblivion.GetGame().GetClientManager().GetClientByUserName(user.Name)).Where(userClient => userClient?.GetHabbo()?.GetMessenger() != null))
+
+
+            foreach (var member in gp.Members.Keys)
             {
-                userClient.GetHabbo().GetMessenger().SerializeUpdate(gp, gp.HasChat);
+                var user = Oblivion.GetGame().GetClientManager().GetClientByUserId(member);
+                if (user?.GetHabbo() == null) continue;
+                if (!gp.HasChat)
+                    user.GetHabbo().GetMessenger().OnDisableChat((int) gp.Id);
+                else
+                    user.GetHabbo().GetMessenger().SerializeUpdate(gp);
             }
             client.SendWhisper(gp.HasChat ? "O chat foi ativado" : "o chat foi desativado");
+
             return true;
         }
     }

@@ -60,7 +60,7 @@ namespace Oblivion.HabboHotel.Users
         ///     The _m client
         /// </summary>
         private GameClient _mClient;
-
+        
         /// <summary>
         ///     The _messenger
         /// </summary>
@@ -911,7 +911,7 @@ namespace Oblivion.HabboHotel.Users
 
             if (_messenger.Requests.Count > Oblivion.FriendRequestLimit)
                 client.SendNotif(Oblivion.GetLanguage().GetVar("user_friend_request_max"));
-            _messenger.OnStatusChanged(false);
+//            _messenger.OnStatusChanged(false);
 
         }
 
@@ -1198,6 +1198,6 @@ namespace Oblivion.HabboHotel.Users
         ///     Gets the client.
         /// </summary>
         /// <returns>GameClient.</returns>
-        private GameClient GetClient() => Oblivion.GetGame().GetClientManager().GetClientByUserId(Id);
+        internal GameClient GetClient() => _mClient;
     }
 }

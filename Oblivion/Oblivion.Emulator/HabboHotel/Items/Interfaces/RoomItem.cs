@@ -773,14 +773,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             AffectedTiles = tiles;
         }
 
-        /// <summary>
-        ///     Called when [trigger].
-        /// </summary>
-        /// <param name="user">The user.</param>
-        internal void OnTrigger(RoomUser user)
-        {
-//            ItemTriggerEventHandler?.Invoke(null, new ItemTriggeredArgs(user, this));
-        }
+
 
         /// <summary>
         ///     Destroys this instance.
@@ -793,6 +786,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             PetsList?.Clear();
             PetsList = null;
             WallCoord = null;
+            InteractingBallUser = null;
         }
 
         /// <summary>

@@ -97,7 +97,9 @@ namespace Oblivion.HabboHotel.Navigators
                 PromoCategories.Clear();
 
                 foreach (DataRow dataRow in table4.Rows)
-                    PromoCategories.Add((int) dataRow["id"],  new PromoCat((int) dataRow["id"], (string) dataRow["caption"], (int) dataRow["min_rank"], Oblivion.EnumToBool((string) dataRow["visible"])));
+                    PromoCategories.Add((int) dataRow["id"],
+                        new PromoCat((int) dataRow["id"], (string) dataRow["caption"], (int) dataRow["min_rank"],
+                            Oblivion.EnumToBool((string) dataRow["visible"])));
             }
 
             if (table != null)
@@ -105,7 +107,8 @@ namespace Oblivion.HabboHotel.Navigators
                 PrivateCategories.Clear();
 
                 foreach (DataRow dataRow in table.Rows)
-                    PrivateCategories.Add((int) dataRow["id"], new FlatCat((int) dataRow["id"], (string) dataRow["caption"], (int) dataRow["min_rank"]));
+                    PrivateCategories.Add((int) dataRow["id"],
+                        new FlatCat((int) dataRow["id"], (string) dataRow["caption"], (int) dataRow["min_rank"]));
             }
 
             if (table2 != null)
@@ -166,7 +169,8 @@ namespace Oblivion.HabboHotel.Navigators
         /// <param name="rooms">The rooms.</param>
         /// <param name="category">The category.</param>
         /// <param name="direct">if set to <c>true</c> [direct].</param>
-        public void SerializeNavigatorPopularRoomsNews(ref ServerMessage reply, KeyValuePair<RoomData, uint>[] rooms, int category, bool direct)
+        public void SerializeNavigatorPopularRoomsNews(ref ServerMessage reply, KeyValuePair<RoomData, uint>[] rooms,
+            int category, bool direct)
         {
             if (rooms == null || !rooms.Any())
             {
@@ -196,7 +200,8 @@ namespace Oblivion.HabboHotel.Navigators
         /// <returns>ServerMessage.</returns>
         internal ServerMessage SerializePromotionCategories()
         {
-            var categories =  new ServerMessage(LibraryParser.OutgoingRequest("CatalogPromotionGetCategoriesMessageComposer"));
+            var categories =
+                new ServerMessage(LibraryParser.OutgoingRequest("CatalogPromotionGetCategoriesMessageComposer"));
             categories.AppendInteger(PromoCategories.Count); //count
 
             foreach (var cat in PromoCategories.Values)
@@ -382,7 +387,8 @@ namespace Oblivion.HabboHotel.Navigators
             navigatorMetaDataParser.AppendInteger(0);
             session.SendMessage(navigatorMetaDataParser);
 
-            var navigatorLiftedRoomsParser = new ServerMessage(LibraryParser.OutgoingRequest("NavigatorLiftedRoomsComposer"));
+            var navigatorLiftedRoomsParser =
+                new ServerMessage(LibraryParser.OutgoingRequest("NavigatorLiftedRoomsComposer"));
             navigatorLiftedRoomsParser.AppendInteger(NavigatorHeaders.Count);
 
             foreach (var navHeader in NavigatorHeaders)
@@ -395,7 +401,8 @@ namespace Oblivion.HabboHotel.Navigators
 
             session.SendMessage(navigatorLiftedRoomsParser);
 
-            var collapsedCategoriesMessageParser = new ServerMessage(LibraryParser.OutgoingRequest("NavigatorCategorys"));
+            var collapsedCategoriesMessageParser =
+                new ServerMessage(LibraryParser.OutgoingRequest("NavigatorCategorys"));
             collapsedCategoriesMessageParser.AppendInteger(FlatCatsCount + 4);
 
             foreach (FlatCat flat in PrivateCategories.Values)
@@ -489,7 +496,8 @@ namespace Oblivion.HabboHotel.Navigators
         internal ServerMessage SerializePublicRooms()
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("OfficialRoomsMessageComposer"));
-            var rooms = _publicItems.Values.Where(current => current.ParentId <= 0 && current.RoomData != null).ToArray();
+            var rooms = _publicItems.Values.Where(current => current.ParentId <= 0 && current.RoomData != null)
+                .ToArray();
 
             serverMessage.AppendInteger(rooms.Length);
 
@@ -537,7 +545,9 @@ namespace Oblivion.HabboHotel.Navigators
 
             var array = session.GetHabbo().FavoriteRooms.ToArray();
 
-            foreach (var roomData in array.Select(roomId => Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId)).Where(roomData => roomData != null))
+            foreach (var roomData in array
+                .Select(roomId => Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId))
+                .Where(roomData => roomData != null))
                 roomData.Serialize(serverMessage);
 
             serverMessage.AppendBool(false);
@@ -558,7 +568,8 @@ namespace Oblivion.HabboHotel.Navigators
 
             serverMessage.StartArray();
 
-            foreach (var roomData in session.GetHabbo().RecentlyVisitedRooms.Select(current => Oblivion.GetGame().GetRoomManager().GenerateRoomData(current)))
+            foreach (var roomData in session.GetHabbo().RecentlyVisitedRooms
+                .Select(current => Oblivion.GetGame().GetRoomManager().GenerateRoomData(current)))
             {
                 roomData.Serialize(serverMessage);
                 serverMessage.SaveArray();
@@ -596,7 +607,8 @@ namespace Oblivion.HabboHotel.Navigators
         {
             var search = _publicItems.Where(i => i.Value.RoomId == roomId);
 
-            IEnumerable<KeyValuePair<uint, PublicItem>> keyValuePairs = search as KeyValuePair<uint, PublicItem>[] ?? search.ToArray();
+            IEnumerable<KeyValuePair<uint, PublicItem>> keyValuePairs =
+                search as KeyValuePair<uint, PublicItem>[] ?? search.ToArray();
 
             if (!keyValuePairs.Any() || keyValuePairs.FirstOrDefault().Value == null)
                 return null;
@@ -610,55 +622,38 @@ namespace Oblivion.HabboHotel.Navigators
         /// <returns>ServerMessage.</returns>
         internal ServerMessage SerializePopularRoomTags()
         {
-            var dictionary = new Dictionary<string, int>();
-            ServerMessage result;
+            var dictionary = new Dictionary<string, uint>();
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            var table = Oblivion.GetGame().GetRoomManager().GetActiveRooms().Where(x => x.Key.UsersNow > 0);
+
+            foreach (var room in table)
             {
-                queryReactor.SetQuery("SELECT tags, users_now FROM rooms_data WHERE roomtype = 'private' AND users_now > 0 ORDER BY users_now DESC LIMIT 50");
-                var table = queryReactor.GetTable();
+                var list = room.Key.Tags;
 
-                if (table != null)
+                foreach (var current in list)
                 {
-                    foreach (DataRow dataRow in table.Rows)
-                    {
-                        int usersNow;
-
-                        if (!string.IsNullOrEmpty(dataRow["users_now"].ToString()))
-                            usersNow = (int) dataRow["users_now"];
-                        else
-                            usersNow = 0;
-
-                        var array = dataRow["tags"].ToString().Split(',');
-                        var list = array.ToList();
-
-                        foreach (var current in list)
-                        {
-                            if (dictionary.ContainsKey(current))
-                                dictionary[current] += usersNow;
-                            else
-                                dictionary.Add(current, usersNow);
-                        }
-                    }
+                    if (dictionary.ContainsKey(current))
+                        dictionary[current] += room.Key.UsersNow;
+                    else
+                        dictionary.Add(current, room.Key.UsersNow);
                 }
-
-                var list2 = new List<KeyValuePair<string, int>>(dictionary);
-
-                list2.Sort((firstPair, nextPair) => firstPair.Value.CompareTo(nextPair.Value));
-
-                var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("PopularRoomTagsMessageComposer"));
-                serverMessage.AppendInteger(list2.Count);
-
-                foreach (var current2 in list2)
-                {
-                    serverMessage.AppendString(current2.Key);
-                    serverMessage.AppendInteger(current2.Value);
-                }
-
-                result = serverMessage;
             }
 
-            return result;
+
+            var list2 = new List<KeyValuePair<string, uint>>(dictionary);
+
+            list2.Sort((firstPair, nextPair) => firstPair.Value.CompareTo(nextPair.Value));
+
+            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("PopularRoomTagsMessageComposer"));
+            serverMessage.AppendInteger(list2.Count);
+
+            foreach (var current2 in list2)
+            {
+                serverMessage.AppendString(current2.Key);
+                serverMessage.AppendInteger(current2.Value);
+            }
+
+            return serverMessage;
         }
 
         /// <summary>
@@ -696,7 +691,7 @@ namespace Oblivion.HabboHotel.Navigators
                 case -5:
                 case -4:
                 {
-                    reply.AppendInteger(mode*(-1));
+                    reply.AppendInteger(mode * (-1));
 
                     var activeFriends =
                         session.GetHabbo()
@@ -726,7 +721,7 @@ namespace Oblivion.HabboHotel.Navigators
                         SerializeNavigatorRooms(ref reply, rooms);
 
                         if (rooms != null)
-                                Array.Clear(rooms, 0, rooms.Length);
+                            Array.Clear(rooms, 0, rooms.Length);
                     }
                     catch (Exception)
                     {
@@ -748,7 +743,7 @@ namespace Oblivion.HabboHotel.Navigators
                         SerializeNavigatorPopularRooms(ref reply, rooms);
 
                         if (rooms != null)
-                                Array.Clear(rooms, 0, rooms.Length);
+                            Array.Clear(rooms, 0, rooms.Length);
                     }
                     catch
                     {
@@ -816,7 +811,8 @@ namespace Oblivion.HabboHotel.Navigators
         /// </summary>
         /// <param name="reply">The reply.</param>
         /// <param name="rooms">The rooms.</param>
-        private static void SerializeNavigatorPopularRooms(ref ServerMessage reply, ICollection<KeyValuePair<RoomData, uint>> rooms)
+        private static void SerializeNavigatorPopularRooms(ref ServerMessage reply,
+            ICollection<KeyValuePair<RoomData, uint>> rooms)
         {
             if (rooms == null || !rooms.Any())
             {
@@ -838,7 +834,8 @@ namespace Oblivion.HabboHotel.Navigators
         /// </summary>
         /// <param name="reply">The reply.</param>
         /// <param name="rooms">The rooms.</param>
-        private static void SerializeNavigatorRooms(ref ServerMessage reply, ICollection<KeyValuePair<RoomData, int>> rooms)
+        private static void SerializeNavigatorRooms(ref ServerMessage reply,
+            ICollection<KeyValuePair<RoomData, int>> rooms)
         {
             reply.AppendString(string.Empty);
 
@@ -951,19 +948,22 @@ namespace Oblivion.HabboHotel.Navigators
                 {
                     if (containsOwner)
                     {
-                        dbClient.SetQuery("SELECT * FROM rooms_data WHERE owner = @query AND roomtype = 'private' LIMIT 50");
+                        dbClient.SetQuery(
+                            "SELECT * FROM rooms_data WHERE owner = @query AND roomtype = 'private' LIMIT 50");
                         dbClient.AddParameter("query", searchQuery);
                         dTable = dbClient.GetTable();
                     }
                     else if (containsGroup)
                     {
-                        dbClient.SetQuery("SELECT * FROM rooms_data JOIN groups_data ON rooms_data.id = groups_data.room_id WHERE groups_data.name LIKE @query AND roomtype = 'private' LIMIT 50");
+                        dbClient.SetQuery(
+                            "SELECT * FROM rooms_data JOIN groups_data ON rooms_data.id = groups_data.room_id WHERE groups_data.name LIKE @query AND roomtype = 'private' LIMIT 50");
                         dbClient.AddParameter("query", "%" + searchQuery + "%");
                         dTable = dbClient.GetTable();
                     }
                     else
                     {
-                        dbClient.SetQuery("SELECT * FROM rooms_data WHERE caption LIKE @query AND roomtype = 'private' LIMIT " +
+                        dbClient.SetQuery(
+                            "SELECT * FROM rooms_data WHERE caption LIKE @query AND roomtype = 'private' LIMIT " +
                             (50 - rooms.Count));
                         dbClient.AddParameter("query", $"'%{searchQuery}%'");
                         dTable = dbClient.GetTable();
