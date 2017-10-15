@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -62,10 +63,14 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         internal Dictionary<uint, RoomItem> BreedingTerrier, BreedingBear;
 
         /// <summary>
-        ///     The floor items
+        ///     The items
         /// </summary>
-        internal ConcurrentList<RoomItem> FloorItems, WallItems, Rollers;
+        internal ConcurrentDictionary<uint, RoomItem> FloorItems, WallItems;
 
+        /// <summary>
+        /// The rollers in room
+        /// </summary>
+        internal ConcurrentList<RoomItem> Rollers;
         /// <summary>
         ///     The hopper count
         /// </summary>
@@ -81,8 +86,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             _removedItems = new List<uint>();
             _updatedItems = new List<uint>();
             Rollers = new ConcurrentList<RoomItem>();
-            WallItems = new ConcurrentList<RoomItem>();
-            FloorItems = new ConcurrentList<RoomItem>();
+            WallItems = new ConcurrentDictionary<uint, RoomItem>();
+            FloorItems = new ConcurrentDictionary<uint, RoomItem>();
             _roomItemUpdateQueue = new Queue();
             BreedingBear = new Dictionary<uint, RoomItem>();
             BreedingTerrier = new Dictionary<uint, RoomItem>();
@@ -105,8 +110,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
         internal RoomItem GetItem(uint itemId)
         {
-            var it = FloorItems.FirstOrDefault(x => x.Id == itemId);
-            return it ?? WallItems.FirstOrDefault(x => x.Id == itemId);
+            if (FloorItems.TryGetValue(itemId, out var item)) return item;
+            return WallItems.TryGetValue(itemId, out item) ? item : null;
         }
 
         /// <summary>
@@ -328,7 +333,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         {
             var items = new List<RoomItem>();
             var roomGamemap = _room.GetGameMap();
-            foreach (var item in FloorItems.ToList())
+            foreach (var item in FloorItems.Values.ToList())
             {
                 if (item.IsWired)
                 {
@@ -353,7 +358,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 items.Add(item);
             }
 
-            foreach (var item in WallItems.ToList())
+            foreach (var item in WallItems.Values.ToList())
             {
                 item.Interactor.OnRemove(session, item);
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("PickUpWallItemMessageComposer"));
@@ -387,7 +392,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             return items;
         }
 
-        public IEnumerable<RoomItem> GetWallAndFloor => FloorItems.Concat(WallItems);
+        public IEnumerable<RoomItem> GetWallAndFloor => FloorItems.Values.Concat(WallItems.Values);
 
         /// <summary>
         ///     Remove Items On Room GroupBy Username
@@ -436,10 +441,10 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// </summary>
         internal void LoadFurniture()
         {
-            if (FloorItems == null) FloorItems = new ConcurrentList<RoomItem>();
+            if (FloorItems == null) FloorItems = new ConcurrentDictionary<uint, RoomItem>();
             else FloorItems.Clear();
 
-            if (WallItems == null) WallItems = new ConcurrentList<RoomItem>();
+            if (WallItems == null) WallItems = new ConcurrentDictionary<uint, RoomItem>();
             else WallItems.Clear();
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -497,7 +502,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                                 groupId,
                                 Oblivion.EnumToBool((string) dataRow["builders"]));
 
-                            WallItems.Add(value);
+                            WallItems.TryAdd(value.Id, value);
                         }
                         else
                         {
@@ -526,7 +531,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                             {
                                 if (item.InteractionType == Interaction.Hopper) HopperCount++;
 
-                                FloorItems.Add(roomItem);
+                                FloorItems.TryAdd(roomItem.Id, roomItem);
                             }
                         }
                     }
@@ -535,7 +540,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     }
                 }
 
-                foreach (var current in FloorItems)
+                foreach (var current in FloorItems.Values)
                 {
                     if (current.IsWired)
                     {
@@ -612,11 +617,11 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
             if (item.IsWallItem)
             {
-                WallItems.Remove(item);
+                WallItems.TryRemove(item.Id, out _);
             }
             else
             {
-                FloorItems.Remove(item);
+                FloorItems.TryRemove(item.Id, out _);
                 _room.GetGameMap().RemoveFromMap(item);
             }
 
@@ -884,9 +889,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             if (!onRoller && session != null) item.Interactor.OnPlace(session, item);
             if (newItem)
             {
-                if (FloorItems.Contains(item)) return true;
-                if (item.IsFloorItem) FloorItems.Add(item);
-                else if (item.IsWallItem) WallItems.Add(item);
+                if (FloorItems.ContainsKey(item.Id)) return true;
+                if (item.IsFloorItem) FloorItems.TryAdd(item.Id, item);
+                else if (item.IsWallItem) WallItems.TryAdd(item.Id, item);
 
                 AddOrUpdateItem(item.Id);
                 if (sendMessage)
@@ -894,7 +899,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("AddFloorItemMessageComposer"));
                     item.Serialize(serverMessage);
                     serverMessage.AppendString(_room.RoomData.Group != null
-                        ? session.GetHabbo().UserName
+                        ? session?.GetHabbo().UserName
                         : _room.RoomData.Owner);
                     _room.SendMessage(serverMessage);
                 }
@@ -941,8 +946,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
         internal void DeveloperSetFloorItem(GameClient session, RoomItem item)
         {
-            if (FloorItems.Contains(item)) return;
-            FloorItems.Add(item);
+            if (FloorItems.ContainsKey(item.Id)) return;
+            FloorItems.TryAdd(item.Id, item);
 
             AddOrUpdateItem(item.Id);
 
@@ -1085,9 +1090,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool SetWallItem(GameClient session, RoomItem item)
         {
-            if (!item.IsWallItem || WallItems.Contains(item))
+            if (!item.IsWallItem || WallItems.ContainsKey(item.Id))
                 return false;
-            if (FloorItems.Contains(item))
+            if (FloorItems.ContainsKey(item.Id))
                 return true;
             item.Interactor.OnPlace(session, item);
             if (item.GetBaseItem().InteractionType == Interaction.Dimmer && _room.MoodlightData == null)
@@ -1096,7 +1101,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 item.ExtraData = _room.MoodlightData.GenerateExtraData();
             }
 
-            WallItems.Add(item);
+            WallItems.TryAdd(item.Id, item);
             AddOrUpdateItem(item.Id);
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("AddWallItemMessageComposer"));
@@ -1209,7 +1214,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         {
             if (!GotRollers)
                 return new List<ServerMessage>();
-            if (_roolerCycle >= _rollerSpeed || _rollerSpeed == 0)
+            if (_roolerCycle >= _rollerSpeed || _rollerSpeed <= 0)
             {
                 var list = Rollers.ToList();
 
@@ -1291,7 +1296,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
         internal bool HasFurniByItemName(string name)
         {
-            var element = FloorItems.Where(i => i.GetBaseItem().Name == name);
+            var element = FloorItems.Values.Where(i => i.GetBaseItem().Name == name);
             return element.Any();
         }
     }

@@ -39,7 +39,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             var roomUser = (RoomUser) stuff[0];
             
             foreach (var item in Items)
-                if (item.IsWired && Room.GetRoomItemHandler().FloorItems.Contains(item))
+                if (item.IsWired && Room.GetRoomItemHandler().FloorItems.Values.Contains(item))
                 {
                     var wired = Room.GetWiredHandler().GetWired(item);
                     if (wired != null && wired.Type != Interaction.ActionCallStacks &&

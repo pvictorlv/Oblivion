@@ -96,23 +96,19 @@ namespace Oblivion.Collections
             Inner?.Clear();
             if (_addQueue != null && _addQueue.Any())
             {
-                KeyValuePair<T, TV> item;
-                while (_addQueue.TryDequeue(out item)) { }
+                while (_addQueue.TryDequeue(out _)) { }
             }
             if (_updateQueue != null && _updateQueue.Any())
             {
-                KeyValuePair<T, TV> item;
-                while (_updateQueue.TryDequeue(out item)) { }
+                while (_updateQueue.TryDequeue(out _)) { }
             }
             if (_removeQueue != null && _removeQueue.Any())
             {
-                T item;
-                while (_removeQueue.TryDequeue(out item)) { }
+                while (_removeQueue.TryDequeue(out _)) { }
             }
             if (_onCycleEventQueue != null && _onCycleEventQueue.Any())
             {
-                OnCycleDoneDelegate item;
-                while (_onCycleEventQueue.TryDequeue(out item)) { }
+                while (_onCycleEventQueue.TryDequeue(out _)) { }
             }
             Inner = null;
             _addQueue = null;
@@ -130,8 +126,7 @@ namespace Oblivion.Collections
             if (_onCycleEventQueue.Any())
                 return;
 
-            OnCycleDoneDelegate item;
-            while (_onCycleEventQueue.TryDequeue(out item))
+            while (_onCycleEventQueue.TryDequeue(out var item))
             {
                 item();
             }
@@ -141,8 +136,7 @@ namespace Oblivion.Collections
         {
             if (!_addQueue.Any())
                 return;
-            KeyValuePair<T, TV> item;
-            while (_addQueue.TryDequeue(out item))
+            while (_addQueue.TryDequeue(out var item))
             {
                 if (Inner.ContainsKey(item.Key))
                     Inner[item.Key] = item.Value;
@@ -157,8 +151,7 @@ namespace Oblivion.Collections
         {
             if (!_updateQueue.Any())
                 return;
-            KeyValuePair<T, TV> item;
-            while (_updateQueue.TryDequeue(out item))
+            while (_updateQueue.TryDequeue(out var item))
             {
                 if (Inner.ContainsKey(item.Key))
                     Inner[item.Key] = item.Value;
@@ -173,14 +166,12 @@ namespace Oblivion.Collections
             if (!_removeQueue.Any())
                 return;
             var list = new List<T>();
-            T item;
-            while (_removeQueue.TryDequeue(out item))
+            while (_removeQueue.TryDequeue(out var item))
             {
                 if (Inner.ContainsKey(item))
                 {
                     var value = Inner[item];
-                    TV junkItem;
-                    Inner.TryRemove(item, out junkItem);
+                    Inner.TryRemove(item, out _);
                     var keyValuePair = new KeyValuePair<T, TV>(item, value);
                     _onRemove?.Invoke(keyValuePair, null);
                 }

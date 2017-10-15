@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -21,12 +22,12 @@ namespace Oblivion.HabboHotel.SoundMachine
         /// <summary>
         ///     The _m loaded disks
         /// </summary>
-        private Dictionary<uint, SongItem> _mLoadedDisks;
+        private ConcurrentDictionary<uint, SongItem> _mLoadedDisks;
 
         /// <summary>
         ///     The _m playlist
         /// </summary>
-        private SortedDictionary<int, SongInstance> _mPlaylist;
+        private ConcurrentDictionary<int, SongInstance> _mPlaylist;
 
         /// <summary>
         ///     The _m room output item
@@ -43,8 +44,8 @@ namespace Oblivion.HabboHotel.SoundMachine
         /// </summary>
         public SoundMachineManager()
         {
-            _mLoadedDisks = new Dictionary<uint, SongItem>();
-            _mPlaylist = new SortedDictionary<int, SongInstance>();
+            _mLoadedDisks = new ConcurrentDictionary<uint, SongItem>();
+            _mPlaylist = new ConcurrentDictionary<int, SongInstance>();
         }
 
         /// <summary>
@@ -77,9 +78,9 @@ namespace Oblivion.HabboHotel.SoundMachine
                     return 0;
 
                 if (TimePlaying >= CurrentSong.SongData.LengthSeconds)
-                    return (int)CurrentSong.SongData.LengthSeconds;
+                    return (int) CurrentSong.SongData.LengthSeconds;
 
-                return (int)(TimePlaying * 1000.0);
+                return (int) (TimePlaying * 1000.0);
             }
         }
 
@@ -93,11 +94,9 @@ namespace Oblivion.HabboHotel.SoundMachine
             {
                 var sortedDictionary = new SortedDictionary<int, SongInstance>();
 
-                lock (_mPlaylist)
-                {
-                    foreach (var current in _mPlaylist)
-                        sortedDictionary.Add(current.Key, current.Value);
-                }
+                foreach (var current in _mPlaylist)
+                    sortedDictionary.Add(current.Key, current.Value);
+
 
                 return sortedDictionary;
             }
@@ -159,18 +158,14 @@ namespace Oblivion.HabboHotel.SoundMachine
             if (song == null)
                 return -1;
 
-            lock (_mLoadedDisks)
-                if (_mLoadedDisks.ContainsKey(diskItem.ItemId))
-                    return -1;
+            if (_mLoadedDisks.ContainsKey(diskItem.ItemId))
+                return -1;
 
-            lock (_mLoadedDisks)
-                _mLoadedDisks.Add(diskItem.ItemId, diskItem);
+            _mLoadedDisks.TryAdd(diskItem.ItemId, diskItem);
+
 
             var count = _mPlaylist.Count;
-
-            lock (_mPlaylist)
-                _mPlaylist.Add(count, new SongInstance(diskItem, song));
-
+            _mPlaylist.TryAdd(count, new SongInstance(diskItem, song));
             return count;
         }
 
@@ -181,26 +176,20 @@ namespace Oblivion.HabboHotel.SoundMachine
         /// <returns>SongItem.</returns>
         public SongItem RemoveDisk(int playlistIndex)
         {
-            SongInstance songInstance;
-            lock (_mPlaylist)
-            {
-                if (!_mPlaylist.ContainsKey(playlistIndex))
-                    return null;
+            if (!_mPlaylist.ContainsKey(playlistIndex))
+                return null;
 
-                songInstance = _mPlaylist[playlistIndex];
+            _mPlaylist.TryRemove(playlistIndex, out var songInstance);
 
-                _mPlaylist.Remove(playlistIndex);
-            }
 
-            lock (_mLoadedDisks)
-                _mLoadedDisks.Remove(songInstance.DiskItem.ItemId);
+            _mLoadedDisks.TryRemove(songInstance.DiskItem.ItemId, out var item);
 
             RepairPlaylist();
 
             if (playlistIndex == SongQueuePosition)
                 PlaySong();
 
-            return songInstance.DiskItem;
+            return item;
         }
 
         /// <summary>
@@ -211,17 +200,15 @@ namespace Oblivion.HabboHotel.SoundMachine
         {
             if (IsPlaying && (CurrentSong == null || TimePlaying >= CurrentSong.SongData.LengthSeconds + 1.0))
             {
-                lock (_mPlaylist)
+                if (!_mPlaylist.Any())
                 {
-                    if (!_mPlaylist.Any())
-                    {
-                        Stop();
-                        _mRoomOutputItem.ExtraData = "0";
-                        _mRoomOutputItem.UpdateState();
-                    }
-                    else
-                        SetNextSong();
+                    Stop();
+                    _mRoomOutputItem.ExtraData = "0";
+                    _mRoomOutputItem.UpdateState();
                 }
+                else
+                    SetNextSong();
+
 
                 _mBroadcastNeeded = true;
             }
@@ -238,16 +225,11 @@ namespace Oblivion.HabboHotel.SoundMachine
         /// </summary>
         public void RepairPlaylist()
         {
-            List<SongItem> list;
+            var list = _mLoadedDisks.Values.ToList();
+            _mLoadedDisks.Clear();
 
-            lock (_mLoadedDisks)
-            {
-                list = _mLoadedDisks.Values.ToList();
-                _mLoadedDisks.Clear();
-            }
 
-            lock (_mPlaylist)
-                _mPlaylist.Clear();
+            _mPlaylist.Clear();
 
             foreach (var current in list)
                 AddDisk(current);
@@ -270,17 +252,13 @@ namespace Oblivion.HabboHotel.SoundMachine
             if (SongQueuePosition >= _mPlaylist.Count)
                 SongQueuePosition = 0;
 
-            lock (_mPlaylist)
+            if (!_mPlaylist.Any())
             {
-                if (!_mPlaylist.Any())
-                {
-                    Stop();
-                    return;
-                }
+                Stop();
+                return;
             }
 
-            lock (_mPlaylist)
-                CurrentSong = _mPlaylist[SongQueuePosition];
+            CurrentSong = _mPlaylist[SongQueuePosition];
 
             _mStartedPlayingTimestamp = Oblivion.GetUnixTimeStamp();
             _mBroadcastNeeded = true;
@@ -312,11 +290,9 @@ namespace Oblivion.HabboHotel.SoundMachine
         /// </summary>
         public void Reset()
         {
-            lock (_mLoadedDisks)
-                _mLoadedDisks.Clear();
+            _mLoadedDisks.Clear();
 
-            lock (_mPlaylist)
-                _mPlaylist.Clear();
+            _mPlaylist.Clear();
 
             _mRoomOutputItem = null;
             SongQueuePosition = -1;
@@ -331,7 +307,8 @@ namespace Oblivion.HabboHotel.SoundMachine
         {
             if (CurrentSong != null)
             {
-                instance.SendMessage(SoundMachineComposer.ComposePlayingComposer(CurrentSong.SongData.Id, SongQueuePosition, 0));
+                instance.SendMessage(
+                    SoundMachineComposer.ComposePlayingComposer(CurrentSong.SongData.Id, SongQueuePosition, 0));
                 return;
             }
 
@@ -347,7 +324,8 @@ namespace Oblivion.HabboHotel.SoundMachine
             if (user.IsBot || user.GetClient() == null || CurrentSong == null)
                 return;
 
-            user.GetClient().SendMessage(SoundMachineComposer.ComposePlayingComposer(CurrentSong.SongData.Id, SongQueuePosition, SongSyncTimestamp));
+            user.GetClient().SendMessage(SoundMachineComposer.ComposePlayingComposer(CurrentSong.SongData.Id,
+                SongQueuePosition, SongSyncTimestamp));
         }
 
         /// <summary>
@@ -355,17 +333,14 @@ namespace Oblivion.HabboHotel.SoundMachine
         /// </summary>
         internal void Destroy()
         {
-            lock (_mLoadedDisks)
-                _mLoadedDisks?.Clear();
+            _mLoadedDisks?.Clear();
 
-            lock (_mPlaylist)
-                _mPlaylist?.Clear();
 
-            lock (_mPlaylist)
-                _mPlaylist = null;
+            _mPlaylist?.Clear();
+            _mPlaylist = null;
 
-            lock (_mLoadedDisks)
-                _mLoadedDisks = null;
+
+            _mLoadedDisks = null;
 
             CurrentSong = null;
             _mRoomOutputItem = null;

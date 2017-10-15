@@ -30,7 +30,6 @@ using Oblivion.HabboHotel.SoundMachine;
 using Oblivion.HabboHotel.SoundMachine.Songs;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
-using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Rooms
 {
@@ -1157,13 +1156,13 @@ namespace Oblivion.HabboHotel.Rooms
         {
             var list = new List<ServerMessage>();
 
-            foreach (var roomItem in GetRoomItemHandler().FloorItems.ToList())
+            foreach (var roomItem in GetRoomItemHandler().FloorItems.Values.ToList())
             {
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer"));
                 roomItem.Serialize(serverMessage);
                 list.Add(serverMessage);
             }
-            foreach (var roomItem2 in GetRoomItemHandler().WallItems.ToArray())
+            foreach (var roomItem2 in GetRoomItemHandler().WallItems.Values.ToList())
             {
                 var serverMessage2 =
                     new ServerMessage(LibraryParser.OutgoingRequest("UpdateRoomWallItemMessageComposer"));
@@ -1365,6 +1364,17 @@ namespace Oblivion.HabboHotel.Rooms
                 _freeze.Destroy();
                 _freeze = null;
             }
+            if (GotWireds())
+            {
+                _wiredHandler.Destroy();
+                _wiredHandler = null;
+            }
+            if (GotMusicController())
+            {
+                _musicController.Destroy();
+                _musicController = null;
+            }
+
             _processTimer?.Dispose();
             _processTimer = null;
             RoomData.Tags.Clear();
@@ -1375,14 +1385,10 @@ namespace Oblivion.HabboHotel.Rooms
             LoadedGroups.Clear();
 
             RoomData.RoomChat.Clear();
-            if (GotWireds())
-            {
-                _wiredHandler.Destroy();
-                _wiredHandler = null;
-            }
-            foreach (var current in GetRoomItemHandler().FloorItems)
+
+            foreach (var current in GetRoomItemHandler().FloorItems.Values)
                 current.Destroy();
-            foreach (var current2 in GetRoomItemHandler().WallItems)
+            foreach (var current2 in GetRoomItemHandler().WallItems.Values)
                 current2.Destroy();
             ActiveTrades.Clear();
             _roomItemHandler.Destroy();

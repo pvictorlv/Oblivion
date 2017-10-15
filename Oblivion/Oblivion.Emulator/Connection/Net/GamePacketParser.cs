@@ -73,91 +73,88 @@ namespace Oblivion.Connection.Net
         /// <param name="length">The length.</param>
         public void HandlePacketData(byte[] data, int length)
         {
-            if (length > 0 && _currentClient != null)
+            if (length <= 0 || _currentClient == null) return;
+            short messageId = 0;
+
+            try
             {
-                short messageId = 0;
+                int pos;
 
-                try
+                for (pos = 0; pos < length;)
                 {
-                    int pos;
-
-                    for (pos = 0; pos < length;)
+                    if (_currentPacketLength == -1)
                     {
-                        if (_currentPacketLength == -1)
+                        if (length < IntSize)
                         {
-                            if (length < IntSize)
-                            {
-                                BufferCopy(data, length); 
-                                break;
-                            }
-
-                            _currentPacketLength = HabboEncoding.DecodeInt32(data, ref pos);
+                            BufferCopy(data, length); 
+                            break;
                         }
 
-                        if (_currentPacketLength < 2 || _currentPacketLength > 4096)
-                        {
-                            _currentPacketLength = -1;
+                        _currentPacketLength = HabboEncoding.DecodeInt32(data, ref pos);
+                    }
 
-                            break; 
+                    if (_currentPacketLength < 2 || _currentPacketLength > 4096)
+                    {
+                        _currentPacketLength = -1;
+
+                        break; 
+                    }
+
+                    if (_currentPacketLength == ((length - pos) + _bufferPos)) 
+                    {
+                        if (_bufferPos != 0) 
+                        {
+                            BufferCopy(data, length, pos);
+
+                            pos = 0;
+
+                            messageId = HabboEncoding.DecodeInt16(_bufferedData, ref pos);
+
+                            HandleMessage(messageId, _bufferedData, 2, _currentPacketLength);
+                        }
+                        else
+                        {
+                            messageId = HabboEncoding.DecodeInt16(data, ref pos); 
+                            HandleMessage(messageId, data, pos, _currentPacketLength);
                         }
 
-                        if (_currentPacketLength == ((length - pos) + _bufferPos)) 
+                        pos = length;
+                        _currentPacketLength = -1;
+                    }
+                    else 
+                    {
+                        int remainder = ((length - pos)) - (_currentPacketLength - _bufferPos);
+
+                        if (_bufferPos != 0)
                         {
-                            if (_bufferPos != 0) 
-                            {
-                                BufferCopy(data, length, pos);
+                            int toCopy = remainder - _bufferPos;
 
-                                pos = 0;
+                            BufferCopy(data, toCopy, pos);
 
-                                messageId = HabboEncoding.DecodeInt16(_bufferedData, ref pos);
+                            int zero = 0;
 
-                                HandleMessage(messageId, _bufferedData, 2, _currentPacketLength);
-                            }
-                            else
-                            {
-                                messageId = HabboEncoding.DecodeInt16(data, ref pos); 
-                                HandleMessage(messageId, data, pos, _currentPacketLength);
-                            }
-
-                            pos = length;
-                            _currentPacketLength = -1;
-                        }
-                        else 
-                        {
-                            int remainder = ((length - pos)) - (_currentPacketLength - _bufferPos);
-
-                            if (_bufferPos != 0)
-                            {
-                                int toCopy = remainder - _bufferPos;
-
-                                BufferCopy(data, toCopy, pos);
-
-                                int zero = 0;
-
-                                messageId = HabboEncoding.DecodeInt16(_bufferedData, ref zero);
+                            messageId = HabboEncoding.DecodeInt16(_bufferedData, ref zero);
  
-                                HandleMessage(messageId, _bufferedData, 2, _currentPacketLength); 
-                            }
-                            else
-                            {
-                                messageId = HabboEncoding.DecodeInt16(data, ref pos);
-
-                                HandleMessage(messageId, data, pos, _currentPacketLength);
-
-                                // ReSharper disable once RedundantAssignment
-                                pos -= 2; 
-                            }
-
-                            _currentPacketLength = -1;
-
-                            pos = (length - remainder);
+                            HandleMessage(messageId, _bufferedData, 2, _currentPacketLength); 
                         }
+                        else
+                        {
+                            messageId = HabboEncoding.DecodeInt16(data, ref pos);
+                                
+                            HandleMessage(messageId, data, pos, _currentPacketLength);
+
+//                            pos -= 2; 
+                        }
+
+                        _currentPacketLength = -1;
+
+                        pos = (length - remainder);
                     }
                 }
-                catch (Exception exception)
-                {
-                    Logging.HandleException(exception, $"packet handling ----> {messageId}");
-                }
+            }
+            catch (Exception exception)
+            {
+                Logging.HandleException(exception, $"packet handling ----> {messageId}");
             }
         }
 
@@ -182,14 +179,13 @@ namespace Oblivion.Connection.Net
             }
         }
 
-        // ReSharper disable once MethodOverloadWithOptionalParameter
         /// <summary>
         /// Buffers the copy.
         /// </summary>
         /// <param name="data">The data.</param>
         /// <param name="bytes">The bytes.</param>
         /// <param name="offset">The offset.</param>
-        private void BufferCopy(byte[] data, int bytes, int offset = 0)
+        private void BufferCopy(byte[] data, int bytes, int offset)
         {
             for (int i = 0; i < (bytes - offset); i++)
                 _bufferedData[_bufferPos++] = data[i + offset];

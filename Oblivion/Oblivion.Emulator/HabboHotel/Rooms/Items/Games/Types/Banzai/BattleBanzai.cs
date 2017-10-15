@@ -127,7 +127,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
 
         internal void ResetTiles()
         {
-            foreach (var roomItem in _room.GetRoomItemHandler().FloorItems)
+            foreach (var roomItem in _room.GetRoomItemHandler().FloorItems.Values)
             {
                 switch (roomItem.GetBaseItem().InteractionType)
                 {

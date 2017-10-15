@@ -56,7 +56,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
                 return true;
 
             foreach (var current in Items.Where(current => current != null &&
-                                                           Room.GetRoomItemHandler().FloorItems.Contains(current)))
+                                                           Room.GetRoomItemHandler().FloorItems.Values.Contains(current)))
             {
                 var toContinue = false;
 

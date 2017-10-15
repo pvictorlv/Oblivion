@@ -346,7 +346,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
 
         internal RoomItem GetFirstHighscore()
         {
-            using (var enumerator = _room.GetRoomItemHandler().FloorItems.ToList().GetEnumerator())
+            using (var enumerator = _room.GetRoomItemHandler().FloorItems.Values.ToList().GetEnumerator())
             {
                 while (enumerator.MoveNext())
                 {

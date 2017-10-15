@@ -57,7 +57,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
         public bool Execute(params object[] stuff) => !Items.Any() ||
                                                       Items
                                                           .Where(current => current != null && Room.GetRoomItemHandler()
-                                                                                .FloorItems.Contains(current))
+                                                                                .FloorItems.ContainsKey(current.Id))
                                                           .Where(current => !current.AffectedTiles.Values.Any(
                                                               current2 => Room.GetGameMap()
                                                                   .SquareHasUsers(current2.X, current2.Y)))

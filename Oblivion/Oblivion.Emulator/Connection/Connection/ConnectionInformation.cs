@@ -259,8 +259,7 @@ namespace Oblivion.Connection.Connection
         /// <param name="packet">The packet.</param>
         /// <param name="bytesReceived"></param>
         private void HandlePacketData(byte[] packet, int bytesReceived)
-        {
-//                Arc4ServerSide?.Parse(ref packet);
+        { 
             Parser?.HandlePacketData(packet, bytesReceived);
         }
 

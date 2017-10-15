@@ -353,13 +353,13 @@ namespace Oblivion.HabboHotel.RoomBots
                         var petNest =
                             GetRoom()
                                 .GetRoomItemHandler()
-                                .FloorItems.Where(x => x.GetBaseItem().InteractionType == Interaction.PetNest);
-                        if (!petNest.Any())
+                                .FloorItems.Values.FirstOrDefault(x => x.GetBaseItem().InteractionType == Interaction.PetNest);
+                        if (petNest == null)
                         {
                             lazy = true;
+                            break;
                         }
-                        var roomItems = petNest.FirstOrDefault();
-                        roomUser.MoveTo(roomItems.X, roomItems.Y);
+                        roomUser.MoveTo(petNest.X, petNest.Y);
                         roomUser.PetData.AddExperience(40);
                         var rndmEnergy = new Random().Next(25, 51);
                         if (roomUser.PetData.Energy < (Pet.MaxEnergy - rndmEnergy))

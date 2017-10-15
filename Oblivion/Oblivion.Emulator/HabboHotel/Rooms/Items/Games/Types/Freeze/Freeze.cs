@@ -59,10 +59,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
             user.ShieldCounter = 10;
             user.ApplyEffect((int) (user.Team + 39));
         }
-
-        internal static void OnCycle()
-        {
-        }
+        
 
         internal void StartGame()
         {
@@ -214,16 +211,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
             ExitTeleport = null;
             _rnd = null;
         }
-
-        internal void FreezeStart()
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void FreezeEnd()
-        {
-            throw new NotImplementedException();
-        }
+        
 
         private static void ActivateShield(RoomUser user)
         {

@@ -78,9 +78,7 @@ namespace Oblivion.HabboHotel.SoundMachine
         /// <returns>SongData.</returns>
         internal static SongData GetSong(uint songId)
         {
-            SongData result;
-
-            Songs.TryGetValue(songId, out result);
+            Songs.TryGetValue(songId, out var result);
 
             return result;
         }

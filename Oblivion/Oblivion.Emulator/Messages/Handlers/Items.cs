@@ -863,7 +863,7 @@ namespace Oblivion.Messages.Handlers
                 foreach (
                     var current in
                     room.GetRoomItemHandler()
-                        .WallItems.Where(
+                        .WallItems.Values.Where(
                             current => current.GetBaseItem().InteractionType == Interaction.Dimmer))
                     room.MoodlightData = new MoodlightData(current.Id);
 
@@ -2139,7 +2139,7 @@ namespace Oblivion.Messages.Handlers
                     Session.GetHabbo().Id, 0, "", true);
                 Session.GetHabbo().BuildersItemsUsed++;
 
-                actualRoom.GetRoomItemHandler().FloorItems.Add(newItem);
+                actualRoom.GetRoomItemHandler().FloorItems.TryAdd(newItem.Id, newItem);
 
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("AddFloorItemMessageComposer"));
                 newItem.Serialize(message);
@@ -2175,7 +2175,7 @@ namespace Oblivion.Messages.Handlers
                 var newItem = new RoomItem(insertId, actualRoom.RoomId, item.BaseId, extradata,
                     new WallCoordinate(wallcoords), actualRoom, Session.GetHabbo().Id, 0,
                     true);
-                actualRoom.GetRoomItemHandler().WallItems.Add(newItem);
+                actualRoom.GetRoomItemHandler().WallItems.TryAdd(newItem.Id, newItem);
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("AddWallItemMessageComposer"));
                 newItem.Serialize(message);
                 message.AppendString(Session.GetHabbo().UserName);

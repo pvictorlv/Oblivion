@@ -68,9 +68,9 @@ namespace Oblivion.HabboHotel.Items
         }
 
         /// <summary>
-        ///     Returns a <see cref="System.String" /> that represents this instance.
+        ///     Returns a <see cref="string" /> that represents this instance.
         /// </summary>
-        /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
+        /// <returns>A <see cref="string" /> that represents this instance.</returns>
         public override string ToString() => ":w=" + _widthX + "," + _widthY + " " + "l=" + _lengthX + "," + _lengthY + " " + _side;
 
         /// <summary>

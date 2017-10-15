@@ -2080,8 +2080,8 @@ namespace Oblivion.Messages.Handlers
                 return;
             }
             var queuedServerMessage = new QueuedServerMessage(Session.GetConnection());
-            var array = CurrentLoadingRoom.GetRoomItemHandler().FloorItems.ToList();
-            var array2 = CurrentLoadingRoom.GetRoomItemHandler().WallItems.ToList();
+            var array = CurrentLoadingRoom.GetRoomItemHandler().FloorItems.Values.ToList();
+            var array2 = CurrentLoadingRoom.GetRoomItemHandler().WallItems.Values.ToList();
             Response.Init(LibraryParser.OutgoingRequest("RoomFloorItemsMessageComposer"));
 
             if (CurrentLoadingRoom.RoomData.Group != null)

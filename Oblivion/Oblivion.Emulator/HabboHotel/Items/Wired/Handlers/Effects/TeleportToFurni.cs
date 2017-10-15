@@ -44,7 +44,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (!ToWorkConcurrentQueue.Any())
                 return true;
 
-            if (Room?.GetRoomItemHandler() == null || Room.GetRoomItemHandler().FloorItems == null)
+            if (Room?.GetRoomItemHandler() == null || Room.GetRoomItemHandler().FloorItems.Values == null)
                 return false;
 
             var num = Oblivion.Now();
@@ -167,7 +167,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             RoomItem roomItem = null;
 
             foreach (var current in Items.Where(current => current != null &&
-                                                           Room.GetRoomItemHandler().FloorItems.Contains(current)))
+                                                           Room.GetRoomItemHandler().FloorItems.Values.Contains(current)))
                 roomItem = current;
 
             if (roomItem == null)

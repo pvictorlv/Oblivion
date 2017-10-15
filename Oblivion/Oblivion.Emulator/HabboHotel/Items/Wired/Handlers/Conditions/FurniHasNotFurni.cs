@@ -59,14 +59,14 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
         }
 
         public bool AllItemsHaveNotFurni() => Items
-            .Where(item => item != null && Room.GetRoomItemHandler().FloorItems.Contains(item)).All(current => !current
+            .Where(item => item != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(item)).All(current => !current
                 .AffectedTiles.Values.Where(square => Room.GetGameMap().SquareHasFurni(square.X, square.Y)).Any(
                     square => Room.GetGameMap().GetRoomItemForSquare(square.X, square.Y)
                         .Any(squareItem => squareItem.Id != current.Id &&
                                            squareItem.Z + squareItem.Height >= current.Z + current.Height)));
 
         public bool AnyItemHaveNotFurni() => Items
-            .Where(item => item != null && Room.GetRoomItemHandler().FloorItems.Contains(item)).Any(current => current
+            .Where(item => item != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(item)).Any(current => current
                 .AffectedTiles.Values.Where(square => Room.GetGameMap().SquareHasFurni(square.X, square.Y)).Any(
                     square => !Room.GetGameMap().GetRoomItemForSquare(square.X, square.Y)
                         .Any(squareItem => squareItem.Id != current.Id &&

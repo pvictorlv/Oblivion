@@ -33,7 +33,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OnCycle()
         {
-            if (Room?.GetRoomItemHandler() == null || Room.GetRoomItemHandler().FloorItems == null || !_requested ||
+            if (Room?.GetRoomItemHandler() == null || Room.GetRoomItemHandler().FloorItems.Values == null || !_requested ||
                 _next < 1)
                 return false;
 

@@ -70,7 +70,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 return false;
 
             if (roomItem.GetRoom() == null || roomItem.GetRoom().GetRoomItemHandler() == null || roomItem.GetRoom()
-                    .GetRoomItemHandler().FloorItems
+                    .GetRoomItemHandler().FloorItems.Values
                     .Any(i => i.X == roomItem.X && i.Y == roomItem.Y && i.Z > roomItem.Z))
                 return false;
 

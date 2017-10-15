@@ -67,13 +67,7 @@ namespace Oblivion.Messages
         /// When StartArray is called, it'll return _arrayCurrentBuffer. Else it will return _buffer.
         /// </summary>
         /// <value>The c message.</value>
-        private MemoryStream CurrentMessage
-        {
-            get
-            {
-                return _onArray ? _arrayCurrentBuffer : _buffer;
-            }
-        }
+        private MemoryStream CurrentMessage => _onArray ? _arrayCurrentBuffer : _buffer;
 
         /// <summary>
         /// Initializes the specified header.

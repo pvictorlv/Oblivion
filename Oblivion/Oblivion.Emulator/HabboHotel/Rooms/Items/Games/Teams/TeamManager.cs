@@ -56,11 +56,13 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
             if (Game.ToLower() == "banzai")
             {
                 var currentRoom = user.GetClient().GetHabbo().CurrentRoom;
-                using (var enumerator = currentRoom.GetRoomItemHandler().FloorItems.GetEnumerator())
+                using (var enumerator = currentRoom.GetRoomItemHandler().FloorItems.Values.GetEnumerator())
                 {
                     while (enumerator.MoveNext())
                     {
                         var current = enumerator.Current;
+                        if (current == null) continue;
+
                         if (current.GetBaseItem().InteractionType.Equals(Interaction.BanzaiGateBlue))
                         {
                             current.ExtraData = BlueTeam.Count.ToString();
@@ -119,7 +121,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
             else if (Game.ToLower() == "freeze")
             {
                 var currentRoom2 = user.GetClient().GetHabbo().CurrentRoom;
-                foreach (var current6 in currentRoom2.GetRoomItemHandler().FloorItems)
+                foreach (var current6 in currentRoom2.GetRoomItemHandler().FloorItems.Values)
                 {
                     switch (current6.GetBaseItem().InteractionType)
                     {
@@ -168,7 +170,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
             switch (Game.ToLower())
             {
                 case "banzai":
-                    using (var enumerator = currentRoom.GetRoomItemHandler().FloorItems.GetEnumerator())
+                    using (var enumerator = currentRoom.GetRoomItemHandler().FloorItems.Values.GetEnumerator())
                     {
                         while (enumerator.MoveNext())
                         {
@@ -230,7 +232,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                     break;
 
                 case "freeze":
-                    foreach (var current6 in currentRoom.GetRoomItemHandler().FloorItems)
+                    foreach (var current6 in currentRoom.GetRoomItemHandler().FloorItems.Values)
                     {
                         switch (current6.GetBaseItem().InteractionType)
                         {
