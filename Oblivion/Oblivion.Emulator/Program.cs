@@ -12,7 +12,6 @@ namespace Oblivion
         /// </summary>
         /// <param name="args">The arguments.</param>
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
-        [STAThread]
         public static void Main(string[] args)
         {
             StartEverything();

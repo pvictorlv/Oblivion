@@ -212,14 +212,14 @@ namespace Oblivion.HabboHotel.Achievements
                 var user = session.GetHabbo();
                 UserAchievement userAchievement;
 
-                if (!user.Achievements.ContainsKey(achievementGroup))
+                if (!user.Data.Achievements.ContainsKey(achievementGroup))
                 {
                     userAchievement = new UserAchievement(achievementGroup, 0, 0);
-                    user.Achievements.Add(achievementGroup, userAchievement);
+                    user.Data.Achievements.Add(achievementGroup, userAchievement);
                 }
                 else
                 {
-                    if (!user.Achievements.TryGetValue(achievementGroup, out userAchievement))
+                    if (!user.Data.Achievements.TryGetValue(achievementGroup, out userAchievement))
                     {
                         return false;
                     }

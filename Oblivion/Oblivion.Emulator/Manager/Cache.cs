@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Oblivion.Configuration;
-using Oblivion.HabboHotel.Rooms.Data;
-using Oblivion.HabboHotel.Users;
 
 namespace Oblivion.Manager
 {
@@ -68,10 +66,7 @@ namespace Oblivion.Manager
 
             foreach (var userId in toRemove)
             {
-                Habbo nullHabbo;
-
-                if (Oblivion.UsersCached.TryRemove(userId, out nullHabbo))
-                    nullHabbo = null;
+                Oblivion.UsersCached.TryRemove(userId, out _);
             }
         }
 
@@ -84,10 +79,7 @@ namespace Oblivion.Manager
 
             foreach (var roomId in toRemove)
             {
-                RoomData nullRoom;
-
-                if (Oblivion.GetGame().GetRoomManager().LoadedRoomData.TryRemove(roomId, out nullRoom))
-                    nullRoom = null;
+                Oblivion.GetGame().GetRoomManager().LoadedRoomData.TryRemove(roomId, out _);
             }
         }
     }

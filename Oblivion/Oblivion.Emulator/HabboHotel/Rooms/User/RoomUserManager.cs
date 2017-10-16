@@ -449,8 +449,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             if (user == null) return;
 
-            RoomUser junk;
-            if (!UserList.TryRemove(user.InternalRoomId, out junk)) return;
+            if (!UserList.TryRemove(user.InternalRoomId, out _)) return;
 
             user.InternalRoomId = -1;
             _userRoom.GetGameMap().GameMap[user.X, user.Y] = user.SqState;
@@ -460,7 +459,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             serverMessage.AppendString(user.VirtualId.ToString());
             _userRoom.SendMessage(serverMessage);
 
-            OnRemove(junk);
+            OnRemove(user);
         }
 
         /// <summary>
@@ -499,15 +498,12 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="count">The count.</param>
         internal void UpdateUserCount(uint count)
         {
-//            Out.WriteLine(count.ToString());
             _roomUserCount = count;
             if (_userRoom?.RoomData == null)
                 return;
 
             _userRoom.RoomData.UsersNow = count;
-//            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-//                queryReactor.RunFastQuery("UPDATE rooms_data SET users_now = " + count + " WHERE id = " +
-//                                          _userRoom.RoomId + " LIMIT 1");
+
             Oblivion.GetGame().GetRoomManager().QueueActiveRoomUpdate(_userRoom.RoomData);
         }
 
@@ -596,7 +592,8 @@ namespace Oblivion.HabboHotel.Rooms.User
             var list = new List<uint>();
             foreach (var current in GetPets().Where(current => !list.Contains(current.PetId)))
             {
-                list.Add(current.PetId);
+                if (!list.Contains(current.PetId))
+                    list.Add(current.PetId);
                 switch (current.DbState)
                 {
                     case DatabaseUpdateState.NeedsInsert:
@@ -659,7 +656,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                         continue;
                     current.UpdateNeeded = false;
                 }
-                list.Add(current);
+                if (!list.Contains(current))
+                    list.Add(current);
             }
             if (!list.Any())
                 return null;
@@ -669,17 +667,6 @@ namespace Oblivion.HabboHotel.Rooms.User
             foreach (var current2 in list)
                 current2.SerializeStatus(serverMessage);
             return serverMessage;
-        }
-
-        /// <summary>
-        ///     Backups the counters.
-        /// </summary>
-        /// <param name="primaryCounter">The primary counter.</param>
-        /// <param name="secondaryCounter">The secondary counter.</param>
-        internal void BackupCounters(ref int primaryCounter, ref int secondaryCounter)
-        {
-            primaryCounter = _primaryPrivateUserId;
-            secondaryCounter = _secondaryPrivateUserId;
         }
 
         /// <summary>
@@ -1307,69 +1294,75 @@ namespace Oblivion.HabboHotel.Rooms.User
 
         internal bool UserCanWalkInTile(RoomUser roomUsers)
         {
-            // Check if User CanWalk...
-            if ((_userRoom.GetGameMap().CanWalk(roomUsers.SetX, roomUsers.SetY, roomUsers.AllowOverride)) ||
-                (roomUsers.RidingHorse))
+            try
             {
-                // Let's Update his Movement...
-                _userRoom.GetGameMap()
-                    .UpdateUserMovement(new Point(roomUsers.Coordinate.X, roomUsers.Coordinate.Y),
-                        new Point(roomUsers.SetX, roomUsers.SetY), roomUsers);
-                var hasItemInPlace = _userRoom.GetGameMap().GetCoordinatedItems(new Point(roomUsers.X, roomUsers.Y))
-                    .ToList();
-
-                // Set His Actual X,Y,Z Position...
-                roomUsers.X = roomUsers.SetX;
-                roomUsers.Y = roomUsers.SetY;
-                roomUsers.Z = roomUsers.SetZ;
-
-                // Check Sub Items Interactionables
-                foreach (var roomItem in hasItemInPlace)
+                // Check if User CanWalk...
+                if ((_userRoom.GetGameMap().CanWalk(roomUsers.SetX, roomUsers.SetY, roomUsers.AllowOverride)) ||
+                    (roomUsers.RidingHorse))
                 {
-                    roomItem.UserWalksOffFurni(roomUsers);
-                    switch (roomItem.GetBaseItem().InteractionType)
+                    // Let's Update his Movement...
+                    _userRoom.GetGameMap()
+                        .UpdateUserMovement(new Point(roomUsers.Coordinate.X, roomUsers.Coordinate.Y),
+                            new Point(roomUsers.SetX, roomUsers.SetY), roomUsers);
+                    var hasItemInPlace = _userRoom.GetGameMap().GetCoordinatedItems(new Point(roomUsers.X, roomUsers.Y))
+                        .ToList();
+
+                    // Set His Actual X,Y,Z Position...
+                    roomUsers.X = roomUsers.SetX;
+                    roomUsers.Y = roomUsers.SetY;
+                    roomUsers.Z = roomUsers.SetZ;
+
+                    // Check Sub Items Interactionables
+                    foreach (var roomItem in hasItemInPlace)
                     {
-                        case Interaction.QuickTeleport:
-                        case Interaction.GuildGate:
-                        case Interaction.WalkInternalLink:
-                        case Interaction.FloorSwitch:
-                            roomItem.Interactor.OnUserWalk(roomUsers.GetClient(), roomItem, roomUsers);
-                            break;
-                        case Interaction.RunWaySage:
-                        case Interaction.ChairState:
-                        case Interaction.Shower:
-                        case Interaction.PressurePad:
-                        case Interaction.PressurePadBed:
-                        case Interaction.Guillotine:
-                            roomItem.ExtraData = "0";
-                            roomItem.UpdateState();
-                            break;
+                        roomItem.UserWalksOffFurni(roomUsers);
+                        switch (roomItem.GetBaseItem().InteractionType)
+                        {
+                            case Interaction.QuickTeleport:
+                            case Interaction.GuildGate:
+                            case Interaction.WalkInternalLink:
+                            case Interaction.FloorSwitch:
+                                roomItem.Interactor.OnUserWalk(roomUsers.GetClient(), roomItem, roomUsers);
+                                break;
+                            case Interaction.RunWaySage:
+                            case Interaction.ChairState:
+                            case Interaction.Shower:
+                            case Interaction.PressurePad:
+                            case Interaction.PressurePadBed:
+                            case Interaction.Guillotine:
+                                roomItem.ExtraData = "0";
+                                roomItem.UpdateState();
+                                break;
 
-                        case Interaction.Tent:
-                        case Interaction.BedTent:
-                            if (!roomUsers.IsBot && roomUsers.OnCampingTent)
-                            {
-                                var serverMessage = new ServerMessage();
-                                serverMessage.Init(
-                                    LibraryParser.OutgoingRequest("UpdateFloorItemExtraDataMessageComposer"));
-                                serverMessage.AppendString(roomItem.Id.ToString());
-                                serverMessage.AppendInteger(0);
-                                serverMessage.AppendString("0");
-                                roomUsers.GetClient().SendMessage(serverMessage);
-                                roomUsers.OnCampingTent = false;
-                            }
-                            break;
+                            case Interaction.Tent:
+                            case Interaction.BedTent:
+                                if (!roomUsers.IsBot && roomUsers.OnCampingTent)
+                                {
+                                    var serverMessage = new ServerMessage();
+                                    serverMessage.Init(
+                                        LibraryParser.OutgoingRequest("UpdateFloorItemExtraDataMessageComposer"));
+                                    serverMessage.AppendString(roomItem.Id.ToString());
+                                    serverMessage.AppendInteger(0);
+                                    serverMessage.AppendString("0");
+                                    roomUsers.GetClient().SendMessage(serverMessage);
+                                    roomUsers.OnCampingTent = false;
+                                }
+                                break;
 
-                        case Interaction.None:
-                            break;
+                            case Interaction.None:
+                                break;
+                        }
                     }
+                    hasItemInPlace.Clear();
+                    // Let's Update user Status..
+                    UpdateUserStatus(roomUsers, true);
+                    return false;
                 }
-                hasItemInPlace.Clear();
-                // Let's Update user Status..
-                UpdateUserStatus(roomUsers, true);
-                return false;
             }
-
+            catch (Exception e)
+            {
+                Logging.HandleException(e, "UserCanWalkInTile");
+            }
             return true;
         }
 

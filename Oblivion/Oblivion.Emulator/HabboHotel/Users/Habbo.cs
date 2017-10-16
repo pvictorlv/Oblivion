@@ -16,7 +16,6 @@ using Oblivion.HabboHotel.Users.Subscriptions;
 using Oblivion.HabboHotel.Users.UserDataManagement;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
-//using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Users
 {
@@ -28,8 +27,7 @@ namespace Oblivion.HabboHotel.Users
         /// <summary>
         ///     The _my groups
         /// </summary>
-        private readonly List<uint> _myGroups;
-
+        private List<uint> _myGroups;
 
         /// <summary>
         ///     The _avatar effects inventory component
@@ -70,11 +68,6 @@ namespace Oblivion.HabboHotel.Users
         ///     The _subscription manager
         /// </summary>
         private SubscriptionManager _subscriptionManager;
-
-        /// <summary>
-        ///     The achievements
-        /// </summary>
-        internal Dictionary<string, UserAchievement> Achievements;
 
         /// <summary>
         ///     The credits
@@ -485,7 +478,6 @@ namespace Oblivion.HabboHotel.Users
             AppearOffline = appearOffline;
             FavoriteRooms = new List<uint>();
             MutedUsers = new List<uint>();
-            Achievements = new Dictionary<string, UserAchievement>();
             Talents = new Dictionary<int, UserTalent>();
             RatedRooms = new HashSet<uint>();
             Respect = respect;
@@ -680,7 +672,6 @@ namespace Oblivion.HabboHotel.Users
         /// <param name="data">The data.</param>
         internal void LoadData(UserData data)
         {
-            LoadAchievements(data.Achievements);
             LoadTalents(data.Talents);
             LoadFavorites(data.FavouritedRooms);
             LoadMutedUsers(data.Ignores);
@@ -791,15 +782,6 @@ namespace Oblivion.HabboHotel.Users
         }
 
         /// <summary>
-        ///     Loads the achievements.
-        /// </summary>
-        /// <param name="achievements">The achievements.</param>
-        internal void LoadAchievements(Dictionary<string, UserAchievement> achievements)
-        {
-            Achievements = achievements;
-        }
-
-        /// <summary>
         ///     Loads the talents.
         /// </summary>
         /// <param name="talents">The talents.</param>
@@ -825,7 +807,7 @@ namespace Oblivion.HabboHotel.Users
             }
 
             var navilogs = string.Empty;
-
+            
             if (NavigatorLogs.Any())
             {
                 navilogs = NavigatorLogs.Values.Aggregate(navilogs,
@@ -878,9 +860,12 @@ namespace Oblivion.HabboHotel.Users
                 _messenger.Destroy();
                 _messenger = null;
             }
-
+            GuideOtherUser = null;
+            _subscriptionManager = null;
             _avatarEffectsInventoryComponent?.Dispose();
-
+            _badgeComponent = null;
+            _myGroups.Clear();
+            _myGroups = null;
             Data.Dispose();
             Data = null;
             _mClient = null;
@@ -1105,8 +1090,7 @@ namespace Oblivion.HabboHotel.Users
         /// <returns>System.Int32.</returns>
         internal int GetQuestProgress(uint p)
         {
-            int result;
-            Data.Quests.TryGetValue(p, out result);
+            Data.Quests.TryGetValue(p, out var result);
             return result;
         }
 
@@ -1117,9 +1101,7 @@ namespace Oblivion.HabboHotel.Users
         /// <returns>UserAchievement.</returns>
         internal UserAchievement? GetAchievementData(string p)
         {
-            UserAchievement result;
-
-            if (Achievements.TryGetValue(p, out result))
+            if (Data.Achievements.TryGetValue(p, out var result))
                 return result;
 
             return null;
@@ -1132,8 +1114,7 @@ namespace Oblivion.HabboHotel.Users
         /// <returns>UserTalent.</returns>
         internal UserTalent GetTalentData(int t)
         {
-            UserTalent result;
-            Talents.TryGetValue(t, out result);
+            Talents.TryGetValue(t, out var result);
             return result;
         }
 

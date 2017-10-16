@@ -6,9 +6,6 @@ using System.Text;
 
 namespace Oblivion.Messages
 {
-    /// <summary>
-    /// Class ServerMessage.
-    /// </summary>
     internal class ServerMessage : IDisposable
     {
         /// <summary>
@@ -222,8 +219,7 @@ namespace Oblivion.Messages
             {
                 i++;
 
-                int value;
-                if (!int.TryParse(text, out value))
+                if (!int.TryParse(text, out var value))
                     value = defaultValue;
 
                 if (maxValue != 0 && value > maxValue)

@@ -350,7 +350,7 @@ namespace Oblivion.HabboHotel.Groups
 
                 var paging = (page <= list.Count) ? list[page] : null;
 
-                if ((theGroup.Admins.Count > 0) && (list.Count > 0) && paging != null)
+                if ((theGroup.Admins.Count > 0) && (list.Count >= page) && paging != null)
                 {
                     response.AppendInteger(list[page].Count);
 
@@ -371,7 +371,7 @@ namespace Oblivion.HabboHotel.Groups
             {
                 response.AppendInteger(theGroup.Requests.Count);
 
-                if (theGroup.Requests.Count > 0 && list.Count > 0 && list[page] != null)
+                if (theGroup.Requests.Count > 0 && list.Count >= page && list[page] != null)
                 {
                     response.AppendInteger(list[page].Count);
 

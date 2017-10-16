@@ -534,8 +534,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="coord">The coord.</param>
         internal void AddCoordinatedItem(RoomItem item, Point coord)
         {
-            var items = new List<RoomItem>();
-            if (!CoordinatedItems.TryGetValue(coord, out items))
+            if (!CoordinatedItems.TryGetValue(coord, out var items))
             {
                 items = new List<RoomItem> {item};
 
@@ -555,11 +554,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// </summary>
         /// <param name="coord">The coord.</param>
         /// <returns>List&lt;RoomItem&gt;.</returns>
-        internal List<RoomItem> GetCoordinatedItems(Point coord)
-        {
-            var items = new List<RoomItem>();
-            return !CoordinatedItems.TryGetValue(coord, out items) ? new List<RoomItem>() : items;
-        }
+        internal List<RoomItem> GetCoordinatedItems(Point coord) =>
+            !CoordinatedItems.TryGetValue(coord, out var items) ? new List<RoomItem>() : items;
 
         /// <summary>
         ///     Removes the coordinated item.
@@ -586,8 +582,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
         internal List<RoomItem> GetCoordinatedHeighestItems(Point coord)
         {
-            var items = new List<RoomItem>();
-            if (!CoordinatedItems.TryGetValue(coord, out items))
+            if (!CoordinatedItems.TryGetValue(coord, out var items))
             {
                 return new List<RoomItem>();
             }
@@ -644,8 +639,12 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             }
             foreach (var it in dictionary)
             {
+                if (it.Value == null) continue;
                 foreach (var current3 in it.Value)
+                {
+                    if (current3 == null) continue;
                     ConstructMapForItem(current3, it.Key);
+                }
             }
             if (GuildGates.ContainsKey(item.Coordinate))
                 GuildGates.Remove(item.Coordinate);
@@ -906,7 +905,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             var userForSquare = _room.GetRoomUserManager().GetUserForSquare(to.X, to.Y);
             if (userForSquare != null && endOfPath && !_room.RoomData.AllowWalkThrough)
             {
-                user.HasPathBlocked = true;
                 user.Path.Clear();
                 user.IsWalking = false;
                 user.RemoveStatus("mv");
@@ -925,7 +923,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             }
             else if (userForSquare != null && !_room.RoomData.AllowWalkThrough && !userForSquare.IsWalking)
                 return false;
-            user.HasPathBlocked = false;
             return true;
         }
 
@@ -938,8 +935,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool AntiChoques(int x, int y, RoomUser user)
         {
-            RoomUser roomUser;
-            _room.GetRoomUserManager().ToSet.TryGetValue(new Point(x, y), out roomUser);
+            _room.GetRoomUserManager().ToSet.TryGetValue(new Point(x, y), out var roomUser);
             return (roomUser == null || roomUser == user);
         }
 
@@ -995,13 +991,16 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 return false;
             if (Override)
                 return true;
-            if (GameMap[to.X, to.Y] == 3 && !endOfPath || GameMap[to.X, to.Y] == 0 ||
-                GameMap[to.X, to.Y] == 2 && !endOfPath)
-                return false;
+
+            if (GameMap.GetLength(0) >= to.X && GameMap.GetLength(1) >= to.Y)
+            {
+                if (GameMap[to.X, to.Y] == 3 && !endOfPath || GameMap[to.X, to.Y] == 0 ||
+                    GameMap[to.X, to.Y] == 2 && !endOfPath)
+                    return false;
+            }
             var userForSquare = _room.GetRoomUserManager().GetUserForSquare(to.X, to.Y);
             if (userForSquare != null && endOfPath && !_room.RoomData.AllowWalkThrough)
             {
-                user.HasPathBlocked = true;
                 user.Path.Clear();
                 user.IsWalking = false;
                 user.RemoveStatus("mv");
@@ -1354,6 +1353,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     Model.OpenSquare(coord.X, coord.Y, item.Z);
                     Model.SetUpdateState();
                 }
+
+
                 if (ItemHeightMap[coord.X, coord.Y] <= item.TotalHeight)
                 {
                     ItemHeightMap[coord.X, coord.Y] = item.TotalHeight - Model.SqFloorHeight[item.X][item.Y];
@@ -1391,34 +1392,36 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     {
                         Writer.Writer.LogException(e.ToString());
                     }
-
-                    if (item.GetBaseItem().Walkable)
+                    if (GameMap.GetLength(0) >= coord.X && GameMap.GetLength(1) >= coord.Y)
                     {
-                        if (GameMap[coord.X, coord.Y] != 3)
-                            GameMap[coord.X, coord.Y] = 1;
+                        if (item.GetBaseItem().Walkable)
+                        {
+                            if (GameMap[coord.X, coord.Y] != 3)
+                                GameMap[coord.X, coord.Y] = 1;
+                        }
+                        else if (item.Z <= Model.SqFloorHeight[item.X][item.Y] + 0.1 &&
+                                 item.GetBaseItem().InteractionType == Interaction.Gate && item.ExtraData == "1")
+                        {
+                            if (GameMap[coord.X, coord.Y] != 3)
+                                GameMap[coord.X, coord.Y] = 1;
+                        }
+                        else if (item.GetBaseItem().IsSeat)
+                            GameMap[coord.X, coord.Y] = 3;
+                        else if (item.GetBaseItem().InteractionType == Interaction.Bed ||
+                                 item.GetBaseItem().InteractionType == Interaction.Guillotine ||
+                                 item.GetBaseItem().InteractionType == Interaction.BedTent)
+                        {
+                            //if (coord.X == item.X && coord.Y == item.Y)
+                            GameMap[coord.X, coord.Y] = 3;
+                        }
+                        else if (GameMap[coord.X, coord.Y] != 3)
+                            GameMap[coord.X, coord.Y] = 0;
                     }
-                    else if (item.Z <= Model.SqFloorHeight[item.X][item.Y] + 0.1 &&
-                             item.GetBaseItem().InteractionType == Interaction.Gate && item.ExtraData == "1")
-                    {
-                        if (GameMap[coord.X, coord.Y] != 3)
-                            GameMap[coord.X, coord.Y] = 1;
-                    }
-                    else if (item.GetBaseItem().IsSeat)
+                    if (item.GetBaseItem().InteractionType == Interaction.Bed ||
+                        item.GetBaseItem().InteractionType == Interaction.Guillotine ||
+                        item.GetBaseItem().InteractionType == Interaction.BedTent)
                         GameMap[coord.X, coord.Y] = 3;
-                    else if (item.GetBaseItem().InteractionType == Interaction.Bed ||
-                             item.GetBaseItem().InteractionType == Interaction.Guillotine ||
-                             item.GetBaseItem().InteractionType == Interaction.BedTent)
-                    {
-                        //if (coord.X == item.X && coord.Y == item.Y)
-                        GameMap[coord.X, coord.Y] = 3;
-                    }
-                    else if (GameMap[coord.X, coord.Y] != 3)
-                        GameMap[coord.X, coord.Y] = 0;
                 }
-                if (item.GetBaseItem().InteractionType == Interaction.Bed ||
-                    item.GetBaseItem().InteractionType == Interaction.Guillotine ||
-                    item.GetBaseItem().InteractionType == Interaction.BedTent)
-                    GameMap[coord.X, coord.Y] = 3;
             }
             catch (Exception ex)
             {
@@ -1438,7 +1441,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             switch (item.GetBaseItem().InteractionType)
             {
                 case Interaction.BanzaiFloor:
-                    _room.GetBanzai().AddTile(item, item.Id);
+                    _room.GetBanzai().AddTile(item);
                     break;
 
                 case Interaction.BanzaiTele:
@@ -1484,7 +1487,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             switch (item.GetBaseItem().InteractionType)
             {
                 case Interaction.BanzaiFloor:
-                    _room.GetBanzai().RemoveTile(item.Id);
+                    _room.GetBanzai().RemoveTile(item);
                     break;
 
                 case Interaction.BanzaiTele:
@@ -1492,7 +1495,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     break;
 
                 case Interaction.BanzaiPuck:
-                    _room.GetBanzai().RemovePuck(item.Id);
+                    _room.GetBanzai().RemovePuck(item);
                     break;
 
                 case Interaction.BanzaiPyramid:

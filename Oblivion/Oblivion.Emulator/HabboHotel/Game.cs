@@ -180,11 +180,6 @@ namespace Oblivion.HabboHotel
                 AbstractBar bar = new AnimatedBar();
                 const int wait = 15, end = 5;
 
-                uint itemsLoaded;
-                uint navigatorLoaded;
-                uint achievementLoaded;
-                uint pollLoaded;
-
                 Progress(bar, wait, end, "Cleaning dirty in database...");
                 DatabaseCleanup(queryReactor);
 
@@ -198,7 +193,7 @@ namespace Oblivion.HabboHotel
 
                 Progress(bar, wait, end, "Loading Items...");
                 _itemManager = new ItemManager();
-                _itemManager.LoadItems(queryReactor, out itemsLoaded);
+                _itemManager.LoadItems(queryReactor, out _);
 
                 _cameraManager = new CameraPhotoManager();
                 _cameraManager.Init(_itemManager);
@@ -218,7 +213,7 @@ namespace Oblivion.HabboHotel
 
                 Progress(bar, wait, end, "Loading NavigatorManager...");
                 _navigatorManager = new NavigatorManager();
-                _navigatorManager.Initialize(queryReactor, out navigatorLoaded);
+                _navigatorManager.Initialize(queryReactor, out _);
 
                 Progress(bar, wait, end, "Loading Groups...");
                 _groupManager = new GroupManager();
@@ -264,10 +259,10 @@ namespace Oblivion.HabboHotel
 
                 Progress(bar, wait, end, "Loading Polls...");
                 _pollManager = new PollManager();
-                _pollManager.Init(queryReactor, out pollLoaded);
+                _pollManager.Init(queryReactor, out _);
 
                 Progress(bar, wait, end, "Loading Achievements...");
-                _achievementManager = new AchievementManager(queryReactor, out achievementLoaded);
+                _achievementManager = new AchievementManager(queryReactor, out _);
 
                 Progress(bar, wait, end, "Loading StaticMessages ...");
                 StaticMessagesManager.Load();
@@ -476,15 +471,13 @@ namespace Oblivion.HabboHotel
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                uint catalogPageLoaded;
                 PetRace.Init(queryReactor);
-                _catalog.Initialize(queryReactor, out catalogPageLoaded);
+                _catalog.Initialize(queryReactor, out _);
                 Filter.Load();
                 BobbaFilter.InitSwearWord();
                 BlackWordsManager.Load();
                 SoundMachineSongManager.Initialize();
                 LowPriorityWorker.Init(queryReactor);
-//                _roomManager.InitVotedRooms(queryReactor);
                 _roomManager.LoadCompetitionManager();
             }
             StartGameLoop();

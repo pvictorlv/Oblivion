@@ -50,7 +50,8 @@ namespace Oblivion.HabboHotel.Items.Wired
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery("SELECT string,bool,delay,extra_string,extra_string_2,items FROM items_wireds WHERE id=@id LIMIT 1");
+                queryReactor.SetQuery(
+                    "SELECT string,bool,delay,extra_string,extra_string_2,items FROM items_wireds WHERE id=@id LIMIT 1");
                 queryReactor.AddParameter("id", fItem.Item.Id);
 
                 var row = queryReactor.GetRow();
@@ -166,7 +167,6 @@ namespace Oblivion.HabboHotel.Items.Wired
             catch (Exception e)
             {
                 Writer.Writer.HandleException(e, "WiredHandler.cs:ExecuteWired Type: " + type);
-
             }
 
             return false;
@@ -206,8 +206,9 @@ namespace Oblivion.HabboHotel.Items.Wired
                 }
                 catch (Exception e)
                 {
-                    Writer.Writer.HandleException(e, "WiredHandler.cs:OnCycle");
-                    _wiredItems.Remove(item);
+                    Writer.Writer.HandleException(e, "WiredHandler.cs:OnCycle, ROOM ID: " + _room.RoomId);
+                    if (item != null)
+                        _wiredItems?.Remove(item);
                 }
             }
             wireds.Clear();

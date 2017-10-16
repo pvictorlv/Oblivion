@@ -1,9 +1,9 @@
+#region
+
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Drawing;
 using System.Linq;
-using Oblivion.Collections;
 using Oblivion.Enclosure;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -14,210 +14,206 @@ using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
 using Oblivion.Util;
 
+#endregion
+
 namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
 {
-    internal class BattleBanzai
+    public class BattleBanzai
     {
+        private List<RoomItem> _banzaiTiles;
+        private List<RoomItem> _pucks;
+        private Room _room;
         private GameField _field;
         private byte[,] _floorMap;
-        private QueuedDictionary<uint, RoomItem> _pucks;
-        private Room _room;
         private double _timestarted;
-        internal HybridDictionary BanzaiTiles;
 
         public BattleBanzai(Room room)
         {
             _room = room;
-            BanzaiTiles = new HybridDictionary();
             IsBanzaiActive = false;
-            _pucks = new QueuedDictionary<uint, RoomItem>();
-            _timestarted = 0.0;
+            _timestarted = 0;
+            _pucks = new List<RoomItem>();
+            _banzaiTiles = new List<RoomItem>();
         }
 
-        internal bool IsBanzaiActive { get; private set; }
+        public bool IsBanzaiActive { get; private set; }
 
-        internal void AddTile(RoomItem item, uint itemId)
+        public void AddTile(RoomItem item)
         {
-            if (BanzaiTiles.Contains(itemId))
-                return;
-
-            BanzaiTiles.Add(itemId, item);
+            if (!_banzaiTiles.Contains(item))
+                _banzaiTiles.Add(item);
         }
 
-        internal void RemoveTile(uint itemId)
+        public void RemoveTile(RoomItem item)
         {
-            BanzaiTiles.Remove(itemId);
+            if (_banzaiTiles.Contains(item))
+                _banzaiTiles.Remove(item);
         }
 
-        internal void OnCycle()
+        public void AddPuck(RoomItem item)
         {
-            if (_pucks.Values.Count > 0)
-                _pucks.OnCycle();
+            if (!_pucks.Contains(item))
+                _pucks.Add(item);
         }
 
-        internal void AddPuck(RoomItem item)
+        public void RemovePuck(RoomItem item)
         {
-            if (_pucks.ContainsKey(item.Id))
-                return;
-
-            _pucks.Add(item.Id, item);
+            if (_pucks.Contains(item))
+                _pucks.Remove(item);
         }
 
-        internal void RemovePuck(uint itemId)
+      
+        internal void OnUserWalk(RoomUser User)
         {
-            _pucks.Remove(itemId);
-        }
-
-        internal void OnUserWalk(RoomUser user)
-        {
-            if (user == null) return;
-
-            foreach (var roomItem in _pucks.Values)
+            if (User == null) return;
+            foreach (var item in _pucks.ToList())
             {
-                var differenceX = user.X - roomItem.X;
-                var differenceY = user.Y - roomItem.Y;
-
-                if (differenceX > 1 || differenceX < -1 || differenceY > 1 || differenceY < -1)
-                    continue;
-                var newX = (differenceX * -1) + roomItem.X;
-                var newY = (differenceY * -1) + roomItem.Y;
-
-                if (roomItem.InteractingBallUser == user.GetClient() && _room.GetGameMap().ValidTile(newX, newY))
+                var num = User.X - item.X;
+                var num2 = User.Y - item.Y;
+                if (num <= 1 && num >= -1 && num2 <= 1 && num2 >= -1)
                 {
-                    roomItem.InteractingBallUser = null;
-                    MovePuck(roomItem, user.GetClient(), user.Coordinate, roomItem.Coordinate, 6, user.Team);
+                    var x = num * -1;
+                    var y = num2 * -1;
+                    x += item.X;
+                    y += item.Y;
+                    if (item.InteractingUser == User.UserId && _room.GetGameMap().ValidTile(x, y))
+                    {
+                        item.InteractingUser = 0;
+                        MovePuck(item, User.GetClient(), User.Coordinate, item.Coordinate, 6, User.Team);
+                    }
+                    else if (_room.GetGameMap().ValidTile(x, y))
+                    {
+                        MovePuck(item, User.GetClient(), x, y, User.Team);
+                    }
                 }
-                else if (_room.GetGameMap().ValidTile(newX, newY))
-                    MovePuck(roomItem, user.GetClient(), newX, newY, user.Team);
             }
-
             if (IsBanzaiActive)
-                HandleBanzaiTiles(user.Coordinate, user.Team, user);
+                HandleBanzaiTiles(User.Coordinate, User.Team, User);
         }
 
-        internal void BanzaiStart()
+        public void BanzaiStart()
         {
             if (IsBanzaiActive)
                 return;
 
-            _room.GetGameManager().StartGame();
             _floorMap = new byte[_room.GetGameMap().Model.MapSizeY, _room.GetGameMap().Model.MapSizeX];
             _field = new GameField(_floorMap, true);
             _timestarted = Oblivion.GetUnixTimeStamp();
             _room.GetGameManager().LockGates();
-
             for (var i = 1; i < 5; i++)
                 _room.GetGameManager().Points[i] = 0;
 
-            foreach (RoomItem roomItem in BanzaiTiles.Values)
+            foreach (var tile in _banzaiTiles)
             {
-                roomItem.ExtraData = "1";
-                roomItem.Value = 0;
-                roomItem.Team = Team.None;
-                roomItem.UpdateState();
+                tile.ExtraData = "1";
+                tile.Value = 0;
+                tile.Team = Team.None;
+                tile.UpdateState();
             }
 
             ResetTiles();
             IsBanzaiActive = true;
+
+            if (_room.GotWireds())
             _room.GetWiredHandler().ExecuteWired(Interaction.TriggerGameStart);
 
-            foreach (var roomUser in _room.GetRoomUserManager().GetRoomUsers())
-                roomUser.LockedTilesCount = 0;
+            foreach (var user in _room.GetRoomUserManager().GetRoomUsers())
+                user.LockedTilesCount = 0;
         }
 
-        internal void ResetTiles()
+        public void ResetTiles()
         {
-            foreach (var roomItem in _room.GetRoomItemHandler().FloorItems.Values)
+            foreach (var item in _room.GetRoomItemHandler().FloorItems.Values)
             {
-                switch (roomItem.GetBaseItem().InteractionType)
+                var type = item.GetBaseItem().InteractionType;
+
+                switch (type)
                 {
                     case Interaction.BanzaiScoreBlue:
                     case Interaction.BanzaiScoreRed:
                     case Interaction.BanzaiScoreYellow:
                     case Interaction.BanzaiScoreGreen:
-                        roomItem.ExtraData = "0";
-                        roomItem.UpdateState();
+                        item.ExtraData = "0";
+                        item.UpdateState();
                         break;
                 }
             }
         }
 
-        internal void BanzaiEnd()
+        public void BanzaiEnd(bool userTriggered = false)
         {
             IsBanzaiActive = false;
             _room.GetGameManager().StopGame();
             _floorMap = null;
-            _room.GetWiredHandler().ExecuteWired(Interaction.TriggerGameEnd);
 
-            var winningTeam = _room.GetGameManager().GetWinningTeam();
+            if (!userTriggered && _room.GotWireds())
+                _room.GetWiredHandler().ExecuteWired(Interaction.TriggerGameEnd);
+
+            var winners = _room.GetGameManager().GetWinningTeam();
             _room.GetGameManager().UnlockGates();
+            foreach (var tile in _banzaiTiles)
+                if (tile.Team == winners)
+                {
+                    tile.InteractionCount = 0;
+                    tile.InteractionCountHelper = 0;
+                    tile.UpdateNeeded = true;
+                }
+                else if (tile.Team == Team.None)
+                {
+                    tile.ExtraData = "0";
+                    tile.UpdateState();
+                }
 
-            foreach (RoomItem roomItem in BanzaiTiles.Values)
+            if (winners != Team.None)
             {
-                if (roomItem.Team == winningTeam)
+                var Winners = _room.GetRoomUserManager().GetRoomUsers();
+
+                foreach (var User in Winners)
                 {
-                    roomItem.InteractionCount = 0;
-                    roomItem.InteractionCountHelper = 0;
-                    roomItem.UpdateNeeded = true;
+                    if (User.Team != Team.None)
+                        if (Oblivion.GetUnixTimeStamp() - _timestarted > 5)
+                        {
+                            Oblivion.GetGame()
+                                .GetAchievementManager()
+                                .ProgressUserAchievement(User.GetClient(), "ACH_BattleBallTilesLocked",
+                                    User.LockedTilesCount);
+                            Oblivion.GetGame()
+                                .GetAchievementManager()
+                                .ProgressUserAchievement(User.GetClient(), "ACH_BattleBallPlayer", 1);
+                        }
+                   
+                            if (Oblivion.GetUnixTimeStamp() - _timestarted > 5)
+                                Oblivion.GetGame()
+                                    .GetAchievementManager()
+                                    .ProgressUserAchievement(User.GetClient(), "ACH_BattleBallWinner", 1);
+                        
+                           
+
+                    var waveAtWin = new ServerMessage(LibraryParser.OutgoingRequest("RoomUserActionMessageComposer"));
+                    waveAtWin.AppendInteger(User.VirtualId);
+                    waveAtWin.AppendInteger(1);
+                    _room.SendMessage(waveAtWin);
                 }
-                else if (roomItem.Team == Team.None)
-                {
-                    roomItem.ExtraData = "0";
-                    roomItem.UpdateState();
-                }
+                _field?.Destroy();
             }
-
-            if (winningTeam == Team.None)
-                return;
-
-            foreach (var avatar in _room.GetRoomUserManager().GetRoomUsers())
-            {
-                if (avatar.Team != Team.None && Oblivion.GetUnixTimeStamp() - _timestarted > 5.0)
-                {
-                    Oblivion.GetGame()
-                        .GetAchievementManager()
-                        .ProgressUserAchievement(avatar.GetClient(), "ACH_BattleBallTilesLocked",
-                            avatar.LockedTilesCount);
-                    Oblivion.GetGame()
-                        .GetAchievementManager()
-                        .ProgressUserAchievement(avatar.GetClient(), "ACH_BattleBallPlayer", 1);
-                }
-
-                if ((winningTeam == Team.Red && avatar.CurrentEffect != 33) ||
-                    (winningTeam == Team.Green && avatar.CurrentEffect != 34) ||
-                    (winningTeam == Team.Blue && avatar.CurrentEffect != 35) ||
-                    (winningTeam == Team.Yellow && avatar.CurrentEffect != 36))
-                    continue;
-                //todo: clean this up not sure yet.
-
-                if (Oblivion.GetUnixTimeStamp() - _timestarted > 5.0)
-                {
-                    Oblivion.GetGame()
-                        .GetAchievementManager()
-                        .ProgressUserAchievement(avatar.GetClient(), "ACH_BattleBallWinner", 1);
-                }
-
-                var waveAtWin = new ServerMessage(LibraryParser.OutgoingRequest("RoomUserActionMessageComposer"));
-                waveAtWin.AppendInteger(avatar.VirtualId);
-                waveAtWin.AppendInteger(1);
-                _room.SendMessage(waveAtWin);
-            }
-            _field.Destroy();
         }
 
-        internal void MovePuck(RoomItem item, GameClient client, int newX, int newY, Team team)
+        public void MovePuck(RoomItem item, GameClient mover, int newX, int newY, Team Team)
         {
             if (!_room.GetGameMap().ItemCanBePlacedHere(newX, newY))
                 return;
 
             var oldRoomCoord = item.Coordinate;
 
-            double newZ = _room.GetGameMap().Model.SqFloorHeight[newX][newY];
-            if (oldRoomCoord.X == newX && oldRoomCoord.Y == newY) return;
 
-            item.ExtraData = ((int) team).ToString();
+            if (oldRoomCoord.X == newX && oldRoomCoord.Y == newY)
+                return;
+
+            item.ExtraData = Convert.ToInt32(Team).ToString();
             item.UpdateNeeded = true;
             item.UpdateState();
+
+            double newZ = _room.GetGameMap().Model.SqFloorHeight[newX][newY];
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ItemAnimationMessageComposer"));
             serverMessage.AppendInteger(oldRoomCoord.X);
@@ -231,176 +227,179 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             serverMessage.AppendInteger(-1);
             _room.SendMessage(serverMessage);
 
-            _room.GetRoomItemHandler()
-                .SetFloorItem(client, item, newX, newY, item.Rot, false, false, false, false, false);
+            _room.GetRoomItemHandler().SetFloorItem(mover, item, newX, newY, item.Rot, false, false, false);
 
-            if (client?.GetHabbo() == null)
+            if (mover?.GetHabbo() == null)
                 return;
 
-            var user = client.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(client.GetHabbo().Id);
-
+            var user = mover.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(mover.GetHabbo().Id);
             if (IsBanzaiActive)
-                HandleBanzaiTiles(new Point(newX, newY), team, user);
+                HandleBanzaiTiles(new Point(newX, newY), Team, user);
         }
 
-        internal void MovePuck(RoomItem item, GameClient client, Point user, Point ball, int length, Team team)
+        internal void MovePuck(RoomItem item, GameClient client, Point user, Point ball, int length, Team Team)
         {
-            var differenceX = user.X - ball.X;
-            var differenceY = user.Y - ball.Y;
-
-            if (differenceX > 1 || differenceX < -1 || differenceY > 1 || differenceY < -1) return;
-
-            var affectedTiles = new List<Point>();
-            var newX = ball.X;
-            var newY = ball.Y;
-
-            for (var i = 1; i < length; i++)
+            var num = user.X - ball.X;
+            var num2 = user.Y - ball.Y;
+            if (num <= 1 && num >= -1 && num2 <= 1 && num2 >= -1)
             {
-                newX = (differenceX * -i) + item.X;
-                newY = (differenceY * -i) + item.Y;
-                if (!_room.GetGameMap().ItemCanBePlacedHere(newX, newY))
+                var list = new List<Point>();
+                var x = ball.X;
+                var y = ball.Y;
+                for (var i = 1; i < length; i++)
                 {
-                    if (i == 1) break;
-                    if (i != length) affectedTiles.Add(new Point(newX, newY));
-
-                    i = i - 1;
-                    newX = differenceX * -i;
-                    newY = differenceY * -i;
-
-                    newX = newX + item.X;
-                    newY = newY + item.Y;
-                    break;
+                    x = num * (0 - i);
+                    y = num2 * (0 - i);
+                    x += item.X;
+                    y += item.Y;
+                    if (!_room.GetGameMap().ItemCanBePlacedHere(x, y))
+                    {
+                        if (i != 1)
+                        {
+                            if (i != length)
+                                list.Add(new Point(x, y));
+                            i--;
+                            x = num * (0 - i);
+                            y = num2 * (0 - i);
+                            x += item.X;
+                            y += item.Y;
+                        }
+                        break;
+                    }
+                    if (i != length)
+                        list.Add(new Point(x, y));
                 }
-                if (i != length)
-                    affectedTiles.Add(new Point(newX, newY));
+                if (client?.GetHabbo() != null)
+                {
+                    var roomUserByHabbo =
+                        client.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(client.GetHabbo().Id);
+                    foreach (var point in list)
+                        HandleBanzaiTiles(point, Team, roomUserByHabbo);
+                    if (x != ball.X || y != ball.Y)
+                        MovePuck(item, client, x, y, Team);
+                }
             }
-
-            if (client?.GetHabbo() == null)
-                return;
-
-            var roomUserByHabbo =
-                client.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(client.GetHabbo().Id);
-
-            foreach (var coord in affectedTiles)
-                HandleBanzaiTiles(coord, team, roomUserByHabbo);
-
-            if (newX != ball.X || newY != ball.Y)
-                MovePuck(item, client, newX, newY, team);
         }
 
-        internal void Destroy()
+        private void SetTile(RoomItem item, Team Team, RoomUser user)
         {
-            BanzaiTiles?.Clear();
-            _pucks?.Clear();
-            if (_floorMap != null)
-                Array.Clear(_floorMap, 0, _floorMap.Length);
-            _field?.Destroy();
-            _room = null;
-            BanzaiTiles = null;
-            _pucks = null;
-            _floorMap = null;
-            _field = null;
-        }
-
-        private static void SetMaxForTile(RoomItem item, Team team, RoomUser user)
-        {
-            if (item.Value < 3)
-            {
-                item.Value = 3;
-                item.Team = team;
-            }
-            var num = item.Value + ((int) item.Team) * 3 - 1;
-
-            item.ExtraData = num.ToString();
-        }
-
-        private void SetTile(RoomItem item, Team team, RoomUser user)
-        {
-            if (item.Team != team)
+            if (item.Team == Team)
             {
                 if (item.Value < 3)
                 {
-                    item.Team = team;
-                    item.Value = 1;
+                    item.Value++;
+                    if (item.Value == 3)
+                    {
+                        user.LockedTilesCount++;
+                        _room.GetGameManager().AddPointToTeam(item.Team, user);
+                        _field.UpdateLocation(item.X, item.Y, (byte)Team);
+                        var gfield = _field.DoUpdate();
+                        foreach (var gameField in gfield)
+                        {
+                            var t = (Team)gameField.ForValue;
+                            foreach (var p in gameField.GetPoints())
+                            {
+                                HandleMaxBanzaiTiles(new Point(p.X, p.Y), t, user);
+                                _floorMap[p.Y, p.X] = gameField.ForValue;
+                            }
+                        }
+                    }
                 }
             }
             else
             {
                 if (item.Value < 3)
                 {
-                    ++item.Value;
-                    if (item.Value == 3)
-                    {
-                        ++user.LockedTilesCount;
-                        _room.GetGameManager().AddPointToTeam(item.Team, user);
-                        _field.UpdateLocation(item.X, item.Y, (byte) (uint) team);
-
-                        foreach (var pointField in _field.DoUpdate())
-                        {
-                            if (pointField == null) continue;
-                            var team1 = (Team) pointField.ForValue;
-                            foreach (var point in pointField.GetPoints())
-                            {
-                                HandleMaxBanzaiTiles(new Point(point.X, point.Y), team1, user);
-                                _floorMap[point.Y, point.X] = pointField.ForValue;
-                            }
-                        }
-                    }
+                    item.Team = Team;
+                    item.Value = 1;
                 }
             }
 
-            var newColor = item.Value + ((int) item.Team * 3) - 1;
+
+            var newColor = item.Value + Convert.ToInt32(item.Team) * 3 - 1;
             item.ExtraData = newColor.ToString();
         }
 
-        private void HandleBanzaiTiles(Point coord, Team team, RoomUser user)
+        private void HandleBanzaiTiles(Point coord, Team Team, RoomUser user)
         {
-            if (team == Team.None) return;
-            _room.GetGameMap().GetCoordinatedItems(coord);
-            var num = 0;
-            foreach (RoomItem roomItem in BanzaiTiles.Values)
+            if (Team == Team.None)
+                return;
+
+            var i = 0;
+            foreach (var _item in _banzaiTiles.ToList())
             {
-                if (roomItem.GetBaseItem().InteractionType != Interaction.BanzaiFloor)
+                if (_item.GetBaseItem().InteractionType != Interaction.BanzaiFloor)
                 {
                     user.Team = Team.None;
                     user.ApplyEffect(0);
+                    continue;
                 }
-                else if (roomItem.ExtraData.Equals("5") || roomItem.ExtraData.Equals("8") ||
-                         roomItem.ExtraData.Equals("11") || roomItem.ExtraData.Equals("14"))
+
+                if (_item.ExtraData.Equals("5") || _item.ExtraData.Equals("8") || _item.ExtraData.Equals("11") ||
+                    _item.ExtraData.Equals("14"))
                 {
-                    ++num;
+                    i++;
+                    continue;
                 }
-                else if (roomItem.X == coord.X && roomItem.Y == coord.Y)
-                {
-                    SetTile(roomItem, team, user);
-                    if (roomItem.ExtraData.Equals("5") || roomItem.ExtraData.Equals("8") ||
-                        roomItem.ExtraData.Equals("11") || roomItem.ExtraData.Equals("14"))
-                    {
-                        ++num;
-                    }
-                    roomItem.UpdateState(false, true);
-                }
+
+                if (_item.X != coord.X || _item.Y != coord.Y)
+                    continue;
+
+                SetTile(_item, Team, user);
+                if (_item.ExtraData.Equals("5") || _item.ExtraData.Equals("8") || _item.ExtraData.Equals("11") ||
+                    _item.ExtraData.Equals("14"))
+                    i++;
+                _item.UpdateState(false, true);
             }
-            if (num != BanzaiTiles.Count) return;
-            BanzaiEnd();
+            if (i == _banzaiTiles.Count)
+                BanzaiEnd();
         }
 
-        private void HandleMaxBanzaiTiles(Point coord, Team team, RoomUser user)
+        private void HandleMaxBanzaiTiles(Point coord, Team Team, RoomUser user)
         {
-            if (team == Team.None) return;
-            _room.GetGameMap().GetCoordinatedItems(coord);
+            if (Team == Team.None)
+                return;
+
             foreach (
-                var roomItem in
-                BanzaiTiles.Values.Cast<RoomItem>()
-                    .Where(
-                        roomItem =>
-                            roomItem.GetBaseItem().InteractionType == Interaction.BanzaiFloor &&
-                            (roomItem.X == coord.X && roomItem.Y == coord.Y)))
+                var _item in
+                _banzaiTiles.Where(
+                        _item =>
+                            _item.GetBaseItem().InteractionType == Interaction.BanzaiFloor && _item.X == coord.X &&
+                            _item.Y == coord.Y))
             {
-                SetMaxForTile(roomItem, team, user);
-                _room.GetGameManager().AddPointToTeam(team, user);
-                roomItem.UpdateState(false, true);
+                SetMaxForTile(_item, Team);
+                _room.GetGameManager().AddPointToTeam(Team, user);
+                _item.UpdateState(false, true);
             }
+        }
+
+        private static void SetMaxForTile(RoomItem item, Team Team)
+        {
+            if (item.Value < 3)
+            {
+                item.Value = 3;
+                item.Team = Team;
+            }
+
+            var newColor = item.Value + Convert.ToInt32(item.Team) * 3 - 1;
+            item.ExtraData = newColor.ToString();
+        }
+
+        public void Destroy()
+        {
+            _banzaiTiles.Clear();
+            _pucks.Clear();
+
+            if (_floorMap != null)
+                Array.Clear(_floorMap, 0, _floorMap.Length);
+
+            _field?.Destroy();
+
+            _room = null;
+            _banzaiTiles = null;
+            _pucks = null;
+            _floorMap = null;
+            _field = null;
         }
     }
 }

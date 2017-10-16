@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -5,6 +6,7 @@ using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Users.UserDataManagement;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
+using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Users.Badges
 {
@@ -199,5 +201,6 @@ namespace Oblivion.HabboHotel.Users.Badges
 
             return serverMessage;
         }
+        
     }
 }

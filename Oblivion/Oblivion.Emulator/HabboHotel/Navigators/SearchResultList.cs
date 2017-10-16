@@ -4,7 +4,6 @@ using System.Data;
 using System.Linq;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Navigators.Interfaces;
-using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.Messages;
 
@@ -178,8 +177,7 @@ namespace Oblivion.HabboHotel.Navigators
                 case "friends_rooms":
                 {
                     var i = 0;
-                    if (session == null || session.GetHabbo() == null || session.GetHabbo().GetMessenger() == null ||
-                        session.GetHabbo().GetMessenger().GetActiveFriendsRooms() == null)
+                    if (session?.GetHabbo() == null || session.GetHabbo().GetMessenger() == null || session.GetHabbo().GetMessenger().GetActiveFriendsRooms() == null)
                     {
                         message.AppendInteger(0);
                         return;

@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -22,21 +21,13 @@ using Oblivion.Messages.Parsers;
 using Oblivion.Security;
 using Oblivion.Security.BlackWords;
 using Oblivion.Security.BlackWords.Enums;
-using Oblivion.Security.BlackWords.Structs;
 using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Rooms.User
 {
-    /// <summary>
-    ///     Class RoomUser.
-    /// </summary>
+   
     public class RoomUser : IEquatable<RoomUser>
     {
-        /// <summary>
-        ///     The _events
-        /// </summary>
-        public Queue Events1 { get; }
-
         /// <summary>
         ///     The _flood count
         /// </summary>
@@ -147,6 +138,9 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         internal int GoalX;
 
+        internal int LastSelectedX, CopyX;
+        internal int LastSelectedY, CopyY;
+
         /// <summary>
         ///     The goal y
         /// </summary>
@@ -161,11 +155,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     The handeling ball status
         /// </summary>
         internal int HandelingBallStatus = 0;
-
-        /// <summary>
-        ///     The has path blocked
-        /// </summary>
-        internal bool HasPathBlocked;
+        
 
         /// <summary>
         ///     The horse identifier
@@ -420,50 +410,10 @@ namespace Oblivion.HabboHotel.Rooms.User
             SqState = 3;
             InternalRoomId = 0;
             CurrentItemEffect = ItemEffectType.None;
-            Events1 = new Queue();
             FreezeLives = 0;
             InteractingGate = false;
             GateId = 0u;
             LastInteraction = 0;
-            LockedTilesCount = 0;
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="RoomUser" /> class.
-        /// </summary>
-        /// <param name="habboId">The habbo identifier.</param>
-        /// <param name="roomId">The room identifier.</param>
-        /// <param name="virtualId">The virtual identifier.</param>
-        /// <param name="pClient">The p client.</param>
-        /// <param name="room">The room.</param>
-        internal RoomUser(uint habboId, uint roomId, int virtualId, GameClient pClient, Room room)
-        {
-            _mClient = pClient;
-            Freezed = false;
-            HabboId = habboId;
-            RoomId = roomId;
-            VirtualId = virtualId;
-            IdleTime = 0;
-            X = 0;
-            Y = 0;
-            Z = 0.0;
-            RotHead = 0;
-            RotBody = 0;
-            UserTimeInCurrentRoom = 0;
-            UpdateNeeded = true;
-            Statusses = new Dictionary<string, string>();
-            TeleDelay = -1;
-            LastInteraction = 0;
-            AllowOverride = false;
-            CanWalk = true;
-            IsSpectator = GetClient().GetHabbo().SpectatorMode;
-            SqState = 3;
-            InternalRoomId = 0;
-            CurrentItemEffect = ItemEffectType.None;
-            _mRoom = room;
-            Events1 = new Queue();
-            InteractingGate = false;
-            GateId = 0u;
             LockedTilesCount = 0;
         }
 
@@ -682,10 +632,20 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         internal void Dispose()
         {
-            Statusses.Clear();
+            Statusses?.Clear();
+            Path?.Clear();
+
+            BotAi?.Dispose();
+
             _mRoom = null;
             _mClient = null;
+            Statusses = null;
+            Path = null;
             LastPhotoPreview = null;
+            FollowingOwner = null;
+            LastPhotoPreview = null;
+            BotAi = null;
+            PetData = null;
         }
 
         /// <summary>
@@ -731,8 +691,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                 BlackWordsManager.Check(msg, BlackWordType.Hotel, out var word))
             {
                 var settings = word.TypeSettings;
-                //session.HandlePublicist(word.Word, msg, "CHAT", settings);
-
                 if (settings.ShowMessage)
                 {
                     session.SendWhisper("A mensagem contém a palavra: " + word.Word +
@@ -843,36 +801,6 @@ namespace Oblivion.HabboHotel.Rooms.User
             GetRoom().GetRoomUserManager().TurnHeads(X, Y, HabboId);
         }
 
-        /// <summary>
-        ///     Increments the and check flood.
-        /// </summary>
-        /// <param name="muteTime">The mute time.</param>
-        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool IncrementAndCheckFlood(out int muteTime)
-        {
-            muteTime = 20;
-            var timeSpan = DateTime.Now - GetClient().GetHabbo().SpamFloodTime;
-            if (timeSpan.TotalSeconds > GetClient().GetHabbo().SpamProtectionTime &&
-                GetClient().GetHabbo().SpamProtectionBol)
-            {
-                _floodCount = 0;
-                GetClient().GetHabbo().SpamProtectionBol = false;
-                GetClient().GetHabbo().SpamProtectionAbuse = 0;
-            }
-            else if (timeSpan.TotalSeconds > 2.0)
-                _floodCount = 0;
-
-            {
-                if (timeSpan.TotalSeconds < 2.0 && _floodCount > 6 && GetClient().GetHabbo().Rank < 5u)
-                {
-                    muteTime = GetClient().GetHabbo().SpamProtectionTime - timeSpan.Seconds + 30;
-                    return true;
-                }
-                GetClient().GetHabbo().SpamFloodTime = DateTime.Now;
-                _floodCount++;
-                return false;
-            }
-        }
 
         /// <summary>
         ///     Clears the movement.
@@ -1269,24 +1197,13 @@ namespace Oblivion.HabboHotel.Rooms.User
 
             return _mClient = Oblivion.GetGame().GetClientManager().GetClientByUserId(HabboId);
         }
-
-        /// <summary>
-        ///     Sends the message.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        internal void SendMessage(byte[] message)
-        {
-            if (GetClient() == null || GetClient().GetConnection() == null) return;
-            GetClient().GetConnection().SendData(message);
-        }
-
+        
         /// <summary>
         ///     Gets the room.
         /// </summary>
         /// <returns>Room.</returns>
         internal Room GetRoom() => _mRoom ?? (_mRoom = Oblivion.GetGame().GetRoomManager().GetRoom(RoomId));
 
-        internal int LastSelectedX, CopyX;
-        internal int LastSelectedY, CopyY;
+
     }
 }

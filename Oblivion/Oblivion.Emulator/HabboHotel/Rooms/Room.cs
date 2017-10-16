@@ -748,11 +748,13 @@ namespace Oblivion.HabboHotel.Rooms
                     _gameItemHandler?.OnCycle();
 
                     _game?.OnCycle();
+/*
 
                     if (GotBanzai())
                     {
                         _banzai.OnCycle();
                     }
+*/
 
                     if (GotMusicController())
                     {

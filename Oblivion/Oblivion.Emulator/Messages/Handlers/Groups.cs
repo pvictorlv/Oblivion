@@ -123,11 +123,9 @@ namespace Oblivion.Messages.Handlers
 
             var image = Oblivion.GetGame().GetGroupManager().GenerateGuildImage(guildBase, guildBaseColor, gStates);
 
-            Guild theGroup;
-
             Oblivion.GetGame().GetGroupManager().CreateGroup(name, description, roomid, image, Session,
                 (!Oblivion.GetGame().GetGroupManager().SymbolColours.Contains(color)) ? 1 : color,
-                (!Oblivion.GetGame().GetGroupManager().BackGroundColours.Contains(num3)) ? 1 : num3, out theGroup);
+                (!Oblivion.GetGame().GetGroupManager().BackGroundColours.Contains(num3)) ? 1 : num3, out var theGroup);
 
             Session.SendMessage(CatalogPageComposer.PurchaseOk(0u, "CREATE_GUILD", 10));
             Response.Init(LibraryParser.OutgoingRequest("GroupRoomMessageComposer"));
@@ -1361,7 +1359,7 @@ namespace Oblivion.Messages.Handlers
             {
                 GroupMember memberShip;
 
-                var type = 3;
+                int type;
 
                 if (byeGuild.Members.ContainsKey(userId))
                 {
