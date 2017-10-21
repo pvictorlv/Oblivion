@@ -2418,8 +2418,6 @@ namespace Oblivion.Messages.Handlers
 
             msg = currentRoom.RoomData.WordFilter.Aggregate(msg,
                 (current1, current) => Regex.Replace(current1, current, "bobba", RegexOptions.IgnoreCase));
-            msg =
-                HttpUtility.HtmlEncode(msg);
 
             if (BlackWordsManager.Check(msg, BlackWordType.Hotel, out var word))
             {

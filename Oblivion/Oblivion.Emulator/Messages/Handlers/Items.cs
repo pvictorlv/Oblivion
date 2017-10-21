@@ -336,7 +336,7 @@ namespace Oblivion.Messages.Handlers
                         if (room.GotSoccer())
                         {
                             if (room.GetSoccer().GetBallCount() > 5)
-                                    goto CannotSetItem;
+                                goto CannotSetItem;
                         }
                         if (z >= 100)
                             goto CannotSetItem;
@@ -680,7 +680,8 @@ namespace Oblivion.Messages.Handlers
             }
             item.Interactor.OnTrigger(Session, item, Request.GetInteger(), hasRightsOne);
             //Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.ExploreFindItem, item.GetBaseItem().itemId);
-            foreach (var current in room.GetRoomUserManager().UserList.Values.Where(current => current.Statusses.ContainsKey("sit") && (current.X == item.X && current.Y == item.Y)))
+            foreach (var current in room.GetRoomUserManager().UserList.Values.Where(current =>
+                current.Statusses.ContainsKey("sit") && (current.X == item.X && current.Y == item.Y)))
                 room.GetRoomUserManager().UpdateUserStatus(current, true);
         }
 
@@ -936,8 +937,11 @@ namespace Oblivion.Messages.Handlers
             if (Session?.GetHabbo() == null)
                 return;
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
-            if (room == null || !room.CheckRights(Session, true))
+            if (room == null)
                 return;
+
+            if (!room.CheckRights(Session, false)) return;
+
             var item = room.GetRoomItemHandler().GetItem(room.TonerData.ItemId);
             if (item == null || item.GetBaseItem().InteractionType != Interaction.RoomBg)
                 return;

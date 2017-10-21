@@ -4,6 +4,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Web;
 using Oblivion.Security.BlackWords.Enums;
 using Oblivion.Security.BlackWords.Structs;
 using Oblivion.Util;
@@ -66,9 +67,7 @@ namespace Oblivion.Security.BlackWords
 
         public static void AddBlackWord(string typeStr, string word)
         {
-            BlackWordType type;
-
-            if (!Enum.TryParse(typeStr, true, out type))
+            if (!Enum.TryParse(typeStr, true, out BlackWordType type))
                 return;
 
             if (Words.Any(wordStruct => wordStruct.Type == type && word.Contains(wordStruct.Word)))
@@ -87,9 +86,7 @@ namespace Oblivion.Security.BlackWords
 
         public static void DeleteBlackWord(string typeStr, string word)
         {
-            BlackWordType type;
-
-            if (!Enum.TryParse(typeStr, true, out type))
+            if (!Enum.TryParse(typeStr, true, out BlackWordType type))
                 return;
 
             var wordStruct = Words.FirstOrDefault(wordS => wordS.Type == type && word.Contains(wordS.Word));
@@ -180,11 +177,14 @@ namespace Oblivion.Security.BlackWords
             if (!Replaces.ContainsKey(type))
                 return false;
 
+            var oldStr = str;
+            str = HttpUtility.HtmlDecode(str) ?? oldStr;
+            str = str.Replace("&nbsp;", "");
+
             var data = Replaces[type];
 
             if (str.Contains("s2.vc") || str.Contains("abre.ai"))
                 return true;
-            str = str.Replace("&nbsp;", "");
 
             str = Regex.Replace(str, "[àâäàáâãäåÀÁÂÃÄÅ@4ª∂]", "a");
             str = Regex.Replace(str, "[ß8]", "b");

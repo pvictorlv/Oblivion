@@ -34,7 +34,7 @@ namespace Oblivion.HabboHotel.Misc
         /// </summary>
         internal static void Process()
         {
-            if (_lowPriorityStopWatch.ElapsedMilliseconds >= 120000 || !_isExecuted)
+            if (_lowPriorityStopWatch.ElapsedMilliseconds >= 30000 || !_isExecuted)
             {
                 _isExecuted = true;
                 _lowPriorityStopWatch.Restart();
@@ -44,14 +44,18 @@ namespace Oblivion.HabboHotel.Misc
                     var loadedRoomsCount = Oblivion.GetGame().GetRoomManager().LoadedRoomsCount;
                     var dateTime = new DateTime((DateTime.Now - Oblivion.ServerStarted).Ticks);
 
-                    Console.Title = string.Concat("OblivionEmulator v" + Oblivion.Version + "." + Oblivion.Build + " | TIME: ",
+                    Console.Title = string.Concat(
+                        "OblivionEmulator v" + Oblivion.Version + "." + Oblivion.Build + " | TIME: ",
                         int.Parse(dateTime.ToString("dd")) - 1 + dateTime.ToString(":HH:mm:ss"), " | ONLINE COUNT: ",
                         clientCount, " | ROOM COUNT: ", loadedRoomsCount);
+
+                    if (clientCount < _userPeak)
+                    {
+                        return;
+                    }
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        if (clientCount > _userPeak)
-                            _userPeak = clientCount;
-
+                        _userPeak = clientCount;
                         queryReactor.RunFastQuery(string.Concat("UPDATE server_status SET stamp = '",
                             Oblivion.GetUnixTimeStamp(), "', users_online = ", clientCount, ", rooms_loaded = ",
                             loadedRoomsCount, ", server_ver = 'Oblivion Emulator', userpeak = ", _userPeak));

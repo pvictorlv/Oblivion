@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
 using Oblivion.HabboHotel.Camera;
 using Oblivion.HabboHotel.Commands;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -25,7 +24,6 @@ using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Rooms.User
 {
-   
     public class RoomUser : IEquatable<RoomUser>
     {
         /// <summary>
@@ -155,7 +153,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     The handeling ball status
         /// </summary>
         internal int HandelingBallStatus = 0;
-        
+
 
         /// <summary>
         ///     The horse identifier
@@ -678,14 +676,16 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
             }
 
+
+            if (session?.GetHabbo() == null)
+                return;
+
             if (msg.Length > 100)
                 return;
 
             if (!BobbaFilter.CanTalk(session, msg))
                 return;
 
-            if (session?.GetHabbo() == null)
-                return;
 
             if (!(msg.StartsWith(":deleteblackword ") && session.GetHabbo().Rank > 4) &&
                 BlackWordsManager.Check(msg, BlackWordType.Hotel, out var word))
@@ -731,8 +731,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                     .RoomData.WordFilter
                     .Aggregate(msg,
                         (current1, current) => Regex.Replace(current1, current, "bobba", RegexOptions.IgnoreCase));
-                msg =
-                    HttpUtility.HtmlEncode(msg);
 
                 if (rank < 4)
                 {
@@ -1197,13 +1195,11 @@ namespace Oblivion.HabboHotel.Rooms.User
 
             return _mClient = Oblivion.GetGame().GetClientManager().GetClientByUserId(HabboId);
         }
-        
+
         /// <summary>
         ///     Gets the room.
         /// </summary>
         /// <returns>Room.</returns>
         internal Room GetRoom() => _mRoom ?? (_mRoom = Oblivion.GetGame().GetRoomManager().GetRoom(RoomId));
-
-
     }
 }

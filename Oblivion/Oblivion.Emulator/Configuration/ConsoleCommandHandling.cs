@@ -148,6 +148,11 @@ namespace Oblivion.Configuration
                         break;
                     }
 
+                    case "dlog":
+                    {
+                        Logging.DisabledState = !Logging.DisabledState;
+                        break;
+                    }
                     case "lag":
                         if (Oblivion.DebugMode)
                         {
@@ -177,11 +182,9 @@ namespace Oblivion.Configuration
                                     // Connect to the remote endpoint.
                                     client.BeginConnect(remoteEP, ConnectCallback, client);
                                 }).Start();
-                                if (countable == 150)
-                                {
-                                    Thread.Sleep(5000);
-                                    countable = 0;
-                                }
+                                if (countable != 150) continue;
+                                Thread.Sleep(5000);
+                                countable = 0;
                             }
                             Out.WriteLine("Lag Test started");
                         }

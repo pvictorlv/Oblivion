@@ -270,8 +270,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             serverMessage.AppendString(roomUserByVirtualId.VirtualId.ToString());
             _userRoom.SendMessage(serverMessage);
 
-            RoomUser roomUser;
-            UserList.TryRemove(roomUserByVirtualId.InternalRoomId, out roomUser);
+            UserList.TryRemove(roomUserByVirtualId.InternalRoomId, out _);
         }
 
         /// <summary>
@@ -425,11 +424,10 @@ namespace Oblivion.HabboHotel.Rooms.User
                     }
 
                     using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                        if (session.GetHabbo() != null)
-                            queryreactor2.RunFastQuery(string.Concat(
-                                "UPDATE users_rooms_visits SET exit_timestamp = '", Oblivion.GetUnixTimeStamp(),
-                                "' WHERE room_id = '", _userRoom.RoomId, "' AND user_id = '", userId,
-                                "' ORDER BY exit_timestamp DESC LIMIT 1"));
+                        queryreactor2.RunFastQuery(string.Concat(
+                            "UPDATE users_rooms_visits SET exit_timestamp = '", Oblivion.GetUnixTimeStamp(),
+                            "' WHERE room_id = '", _userRoom.RoomId, "' AND user_id = '", userId,
+                            "' ORDER BY exit_timestamp DESC LIMIT 1"));
                 }
                 UsersByUserId.Remove(roomUserByHabbo.UserId);
                 UsersByUserName.Remove(session.GetHabbo().UserName.ToLower());
@@ -676,7 +674,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="cycleGameItems">if set to <c>true</c> [cyclegameitems].</param>
         internal void UpdateUserStatus(RoomUser user, bool cycleGameItems)
         {
-            if (user == null) return;
+            if (user?.Statusses == null) return;
 
             if (user.Statusses.ContainsKey("lay"))
             {
@@ -777,8 +775,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             }
                             else
                             {
-                                if (user.Statusses["lay"] != TextHandling.GetString(item.GetBaseItem().Height))
-                                    user.Statusses["lay"] = TextHandling.GetString(item.GetBaseItem().Height);
+                                user.Statusses["lay"] = TextHandling.GetString(item.GetBaseItem().Height);
                             }
 
                             user.Z = item.Z;
@@ -1379,6 +1376,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     RemoveUserFromRoom(roomUsers.GetClient(), false, false);
                 else
                     RemoveRoomUser(roomUsers);
+                return;
             }
 
             // Region Check User Remove Unlocking

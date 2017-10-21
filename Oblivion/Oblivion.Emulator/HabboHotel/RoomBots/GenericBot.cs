@@ -61,9 +61,9 @@ namespace Oblivion.HabboHotel.RoomBots
             _id = botId;
             _virtualId = virtualId;
             _isBartender = isBartender;
-            _speechInterval = speechInterval < 2 ? 2000 : speechInterval*1000;
+            _speechInterval = speechInterval < 2 ? 2000 : speechInterval * 1000;
 
-             if (roomBot != null && roomBot.AutomaticChat && roomBot.RandomSpeech != null && roomBot.RandomSpeech.Any())
+            if (roomBot != null && roomBot.AutomaticChat && roomBot.RandomSpeech != null && roomBot.RandomSpeech.Any())
                 _chatTimer = new Timer(ChatTimerTick, null, _speechInterval, _speechInterval);
             _actionCount = Random.Next(10, 30 + virtualId);
         }
@@ -426,7 +426,6 @@ namespace Oblivion.HabboHotel.RoomBots
             {
                 if (user != null)
                 {
-
                     switch (randomSpeech)
                     {
                         case ":sit":
@@ -464,16 +463,14 @@ namespace Oblivion.HabboHotel.RoomBots
                     {
                         randomSpeech = randomSpeech.Replace("%user_count%",
                             GetRoom().GetRoomUserManager().GetRoomUserCount().ToString());
-                        if (GetRoom().GetRoomItemHandler().FloorItems.Values != null &&
-                            GetRoom().GetRoomItemHandler().WallItems.Values != null)
-                        {
-                            randomSpeech = randomSpeech.Replace("%item_count%",
-                                GetRoom().GetRoomItemHandler().TotalItems.ToString());
-                            randomSpeech = randomSpeech.Replace("%floor_item_count%",
-                                GetRoom().GetRoomItemHandler().FloorItems.Values.Count.ToString());
-                            randomSpeech = randomSpeech.Replace("%wall_item_count%",
-                                GetRoom().GetRoomItemHandler().WallItems.Values.Count.ToString());
-                        }
+
+                        randomSpeech = randomSpeech.Replace("%item_count%",
+                            GetRoom().GetRoomItemHandler().TotalItems.ToString());
+                        randomSpeech = randomSpeech.Replace("%floor_item_count%",
+                            GetRoom().GetRoomItemHandler().FloorItems.Values.Count.ToString());
+                        randomSpeech = randomSpeech.Replace("%wall_item_count%",
+                            GetRoom().GetRoomItemHandler().WallItems.Values.Count.ToString());
+
 
                         if (GetRoom().RoomData != null)
                         {

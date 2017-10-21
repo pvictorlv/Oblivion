@@ -135,6 +135,8 @@ namespace Oblivion.Writer
         {
             try
             {
+                if (DisabledState)
+                    return;
                 File.AppendAllText(path, Environment.NewLine + content, Encoding.ASCII);
             }
             catch
