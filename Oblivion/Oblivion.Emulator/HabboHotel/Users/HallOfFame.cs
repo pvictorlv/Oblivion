@@ -27,7 +27,7 @@ namespace Oblivion.HabboHotel.Users
                 if (table == null)
                     return;
 
-                foreach (DataRow row in table.Rows)
+                /* TODO CHECK */ foreach (DataRow row in table.Rows)
                     Rankings.Add(new HallOfFameElement((uint) row["user_id"], (int) row["score"],
                         (string) row["competition"]));
             }

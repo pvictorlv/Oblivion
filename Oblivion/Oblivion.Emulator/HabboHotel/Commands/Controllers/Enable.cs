@@ -27,9 +27,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     .GetRoomUserByHabbo(session.GetHabbo().UserName);
             if (user.RidingHorse) return true;
             if (user.IsLyingDown) return true;
-            ushort effect;
 
-            if (!ushort.TryParse(pms[0], out effect)) return true;
+            if (!ushort.TryParse(pms[0], out var effect)) return true;
             if (effect == 102 && !session.GetHabbo().HasFuse("fuse_mod")) return true;
             if (effect == 140 && !(session.GetHabbo().Vip || session.GetHabbo().HasFuse("fuse_vip_commands")))
                 return true;

@@ -44,7 +44,7 @@ namespace Oblivion.HabboHotel.Quests
             _quests.Clear();
             dbClient.SetQuery("SELECT * FROM users_quests");
             var table = dbClient.GetTable();
-            foreach (DataRow dataRow in table.Rows)
+            /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
             {
                 var id = Convert.ToUInt32(dataRow["id"]);
                 var category = (string) dataRow["type"];

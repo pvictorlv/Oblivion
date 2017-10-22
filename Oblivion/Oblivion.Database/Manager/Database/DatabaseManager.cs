@@ -39,7 +39,7 @@ namespace Oblivion.Database.Manager.Database
                 _isConnected = false;
                 if (_databaseClients == null)
                     return;
-                foreach (var current in _databaseClients)
+                /* TODO CHECK */ foreach (var current in _databaseClients)
                 {
                     if (!current.IsAvailable())
                         current.Dispose();

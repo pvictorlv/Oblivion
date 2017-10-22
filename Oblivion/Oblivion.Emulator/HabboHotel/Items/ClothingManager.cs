@@ -30,7 +30,7 @@ namespace Oblivion.HabboHotel.Items
             ClothingItems = new Dictionary<string, ClothingItem>();
             _table = dbClient.GetTable();
 
-            foreach (DataRow dataRow in _table.Rows)
+            /* TODO CHECK */ foreach (DataRow dataRow in _table.Rows)
                 ClothingItems.Add((string)dataRow["item_name"], new ClothingItem(dataRow));
         }
 

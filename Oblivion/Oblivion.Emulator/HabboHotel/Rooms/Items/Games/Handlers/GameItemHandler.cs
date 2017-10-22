@@ -110,7 +110,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
             var countId = Oblivion.GetRandomNumber(0, items.Count());
             var countAmount = 0;
 
-            foreach (var current in items.Where(current => current != null))
+            /* TODO CHECK */ foreach (var current in items.Where(current => current != null))
             {
                 if (countAmount != countId)
                 {
@@ -146,7 +146,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         /// </summary>
         private void CyclePyramids()
         {
-            foreach (var item in _banzaiPyramids.Select(pyramid => pyramid.Value).Where(current => current != null))
+            /* TODO CHECK */ foreach (var item in _banzaiPyramids.Select(pyramid => pyramid.Value).Where(current => current != null))
             {
                 if (item.InteractionCountHelper == 0 && item.ExtraData == "1")
                 {

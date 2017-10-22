@@ -46,7 +46,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             dbClient.SetQuery("SELECT * FROM messenger_offline_messages");
             var table = dbClient.GetTable();
 
-            foreach (DataRow dataRow in table.Rows)
+            /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
             {
                 var key = (uint) dataRow[1];
                 var id = (uint) dataRow[2];

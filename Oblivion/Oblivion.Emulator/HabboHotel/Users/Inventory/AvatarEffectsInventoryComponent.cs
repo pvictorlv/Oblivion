@@ -44,7 +44,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             _userId = userId;
             _session = client;
             _effects = new List<AvatarEffect>();
-            foreach (var current in data.Effects)
+            /* TODO CHECK */ foreach (var current in data.Effects)
                 if (!current.HasExpired)
                     _effects.Add(current);
                 else
@@ -62,7 +62,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("EffectsInventoryMessageComposer"));
             serverMessage.AppendInteger(_effects.Count);
 
-            foreach (var current in _effects)
+            /* TODO CHECK */ foreach (var current in _effects)
             {
                 serverMessage.AppendInteger(current.EffectId);
                 serverMessage.AppendInteger(current.Type); // type (0 : normal - 1 : costume)
@@ -173,7 +173,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             if (!_effects.Any())
                 return;
             var list = _effects.Where(current => current.HasExpired).ToList();
-            foreach (var current2 in list)
+            /* TODO CHECK */ foreach (var current2 in list)
                 StopEffect(current2.EffectId);
             list.Clear();
         }

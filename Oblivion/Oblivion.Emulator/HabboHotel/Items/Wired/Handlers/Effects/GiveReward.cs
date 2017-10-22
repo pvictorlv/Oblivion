@@ -77,7 +77,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 return true;
             }
 
-            foreach (var dataStr in OtherString.Split(';'))
+            /* TODO CHECK */ foreach (var dataStr in OtherString.Split(';'))
             {
                 var dataArray = dataStr.Split(',');
 

@@ -33,7 +33,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var builder = new StringBuilder();
             builder.Append(" - FAQ - \r\r");
 
-            foreach (DataRow row in data.Rows)
+            /* TODO CHECK */ foreach (DataRow row in data.Rows)
             {
                 builder.Append("Q: " + (string)row["question"] + "\r");
                 builder.Append("A: " + (string)row["answer"] + "\r\r");

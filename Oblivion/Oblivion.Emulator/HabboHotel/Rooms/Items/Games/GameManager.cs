@@ -94,7 +94,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
 
             TeamPoints[(int) team] = num;
 //            OnScoreChanged?.Invoke(null, new TeamScoreChangedArgs(num, team, user));
-            foreach (
+            /* TODO CHECK */ foreach (
                 var current in
                     GetFurniItems(team).Values.Where(current => !IsSoccerGoal(current.GetBaseItem().InteractionType)))
             {
@@ -215,7 +215,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
                 goto IL_151;
             }
             IL_108:
-            foreach (
+            /* TODO CHECK */ foreach (
                 var result in
                     _yellowTeamItems.Values.Where(
                         current4 => current4.GetBaseItem().InteractionType == Interaction.FreezeYellowCounter))
@@ -226,18 +226,18 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
 
         internal void UnlockGates()
         {
-            foreach (var current in _redTeamItems.Values) UnlockGate(current);
-            foreach (var current2 in _greenTeamItems.Values) UnlockGate(current2);
-            foreach (var current3 in _blueTeamItems.Values) UnlockGate(current3);
-            foreach (var current4 in _yellowTeamItems.Values) UnlockGate(current4);
+            /* TODO CHECK */ foreach (var current in _redTeamItems.Values) UnlockGate(current);
+            /* TODO CHECK */ foreach (var current2 in _greenTeamItems.Values) UnlockGate(current2);
+            /* TODO CHECK */ foreach (var current3 in _blueTeamItems.Values) UnlockGate(current3);
+            /* TODO CHECK */ foreach (var current4 in _yellowTeamItems.Values) UnlockGate(current4);
         }
 
         internal void LockGates()
         {
-            foreach (var current in _redTeamItems.Values) LockGate(current);
-            foreach (var current2 in _greenTeamItems.Values) LockGate(current2);
-            foreach (var current3 in _blueTeamItems.Values) LockGate(current3);
-            foreach (var current4 in _yellowTeamItems.Values) LockGate(current4);
+            /* TODO CHECK */ foreach (var current in _redTeamItems.Values) LockGate(current);
+            /* TODO CHECK */ foreach (var current2 in _greenTeamItems.Values) LockGate(current2);
+            /* TODO CHECK */ foreach (var current3 in _blueTeamItems.Values) LockGate(current3);
+            /* TODO CHECK */ foreach (var current4 in _yellowTeamItems.Values) LockGate(current4);
         }
 
         internal void StopGame()
@@ -266,7 +266,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             var item = GetFirstHighscore();
             if (item == null) return;
             var score = GetScoreForTeam(team);
-            foreach (var winner in winners) item.HighscoreData.AddUserScore(item, winner.GetUserName(), score);
+            /* TODO CHECK */ foreach (var winner in winners) item.HighscoreData.AddUserScore(item, winner.GetUserName(), score);
             item.UpdateState(false, true);
         }
 
@@ -331,7 +331,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
         {
             var interactionType = item.GetBaseItem().InteractionType;
             if (!InteractionTypes.AreFamiliar(GlobalInteractions.GameGate, interactionType)) return;
-            foreach (var current in _room.GetGameMap().GetRoomUsers(new Point(item.X, item.Y))) current.SqState = 0;
+            /* TODO CHECK */ foreach (var current in _room.GetGameMap().GetRoomUsers(new Point(item.X, item.Y))) current.SqState = 0;
             _room.GetGameMap().GameMap[item.X, item.Y] = 0;
         }
 
@@ -340,7 +340,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             var interactionType = item.GetBaseItem().InteractionType;
             if (!InteractionTypes.AreFamiliar(GlobalInteractions.GameGate, interactionType)) return;
 
-            foreach (var current in _room.GetGameMap().GetRoomUsers(new Point(item.X, item.Y))) current.SqState = 1;
+            /* TODO CHECK */ foreach (var current in _room.GetGameMap().GetRoomUsers(new Point(item.X, item.Y))) current.SqState = 1;
             _room.GetGameMap().GameMap[item.X, item.Y] = 1;
         }
 

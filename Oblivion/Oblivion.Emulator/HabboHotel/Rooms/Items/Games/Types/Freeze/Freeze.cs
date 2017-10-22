@@ -71,7 +71,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
 
             if (ExitTeleport == null) return;
 
-            foreach (
+            /* TODO CHECK */ foreach (
                 var user in
                     _freezeTiles.Values.Select(
                         tile => _room.GetGameMap().GetRoomUsers(new Point(tile.X, tile.Y)))
@@ -85,7 +85,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
             _room.GetGameManager().UnlockGates();
             _room.GetGameManager().StopGame();
             var winningTeam = _room.GetGameManager().GetWinningTeam();
-            foreach (var avatar in _room.GetRoomUserManager().UserList.Values)
+            /* TODO CHECK */ foreach (var avatar in _room.GetRoomUserManager().UserList.Values)
             {
                 avatar.FreezeLives = 0;
                 if (avatar.Team != winningTeam) continue;
@@ -100,7 +100,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
 
         internal void ResetGame()
         {
-            foreach (
+            /* TODO CHECK */ foreach (
                 var roomItem in
                     _freezeBlocks.Values.Where(
                         roomItem =>
@@ -122,7 +122,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
 
             if (user.X == user.GoalX && user.GoalY == user.Y && user.ThrowBallAtGoal)
             {
-                foreach (
+                /* TODO CHECK */ foreach (
                     var roomItem in
                         _freezeTiles.Values.Where(
                             roomItem =>
@@ -143,7 +143,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
                     }
                 }
             }
-            foreach (
+            /* TODO CHECK */ foreach (
                 var roomItem in
                     _freezeBlocks.Values.Where(
                         roomItem =>
@@ -238,7 +238,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
         private void CountTeamPoints()
         {
             _room.GetGameManager().Reset();
-            foreach (
+            /* TODO CHECK */ foreach (
                 var roomUser in
                     _room.GetRoomUserManager()
                         .UserList.Values.Where(
@@ -259,7 +259,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
 
         private void HandleBanzaiFreezeItems(IEnumerable<RoomItem> items)
         {
-            foreach (var roomItem in items)
+            /* TODO CHECK */ foreach (var roomItem in items)
             {
                 switch (roomItem.GetBaseItem().InteractionType)
                 {

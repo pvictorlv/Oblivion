@@ -120,7 +120,7 @@ namespace Oblivion.Configuration
 
                 WallItems = new Dictionary<string, FurniData>();
 
-                foreach (XmlNode node in xmlParser.DocumentElement.SelectNodes("/furnidata/wallitemtypes/furnitype"))
+                 foreach (XmlNode node in xmlParser.DocumentElement.SelectNodes("/furnidata/wallitemtypes/furnitype"))
                     WallItems.Add(node.Attributes["classname"].Value,
                         new FurniData(int.Parse(node.Attributes["id"].Value), node.SelectSingleNode("name").InnerText));
             }

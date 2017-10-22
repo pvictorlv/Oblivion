@@ -112,7 +112,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 badgesTable = queryReactor.GetTable();
 
                 queryReactor.SetQuery(
-                    $"SELECT id,base_item,group_id,extra_data,songcode FROM `items_rooms` WHERE room_id='0' AND user_id={userId} LIMIT 8000");
+                    $"SELECT id,base_item,group_id,extra_data,songcode FROM `items_rooms` WHERE room_id='0' AND user_id={userId} LIMIT 5000");
                 itemsTable = queryReactor.GetTable();
 
                 queryReactor.SetQuery($"SELECT effect_id,total_duration,is_activated,activated_stamp,type FROM users_effects WHERE user_id = {userId}");
@@ -172,7 +172,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             var achievements = new Dictionary<string, UserAchievement>();
 
-            foreach (DataRow row in achievementsTable.Rows)
+            /* TODO CHECK */ foreach (DataRow row in achievementsTable.Rows)
             {
                 var text = (string) row["group"];
                 var level = (int) row["level"];
@@ -183,7 +183,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             var talents = new Dictionary<int, UserTalent>();
 
-            foreach (DataRow row in talentsTable.Rows)
+            /* TODO CHECK */ foreach (DataRow row in talentsTable.Rows)
             {
                 var num2 = (int) row["talent_id"];
                 var state = (int) row["talent_state"];
@@ -228,7 +228,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             var pollSuggested = new HashSet<uint>();
 
-            foreach (var pId in from DataRow row in pollsTable.Rows select (uint) row["poll_id"])
+            /* TODO CHECK */ foreach (var pId in from DataRow row in pollsTable.Rows select (uint) row["poll_id"])
                 pollSuggested.Add(pId);
 
             var friends = new Dictionary<uint, MessengerBuddy>();
@@ -250,7 +250,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 }
             }
 
-            foreach (DataRow row in friendsTable.Rows)
+            /* TODO CHECK */ foreach (DataRow row in friendsTable.Rows)
             {
                 var num4 = Convert.ToUInt32(row["id"]);
                 var pUsername = (string) row["username"];
@@ -266,7 +266,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             var friendsRequests = new Dictionary<uint, MessengerRequest>();
 
-            foreach (DataRow row in friendsRequestsTable.Rows)
+            /* TODO CHECK */ foreach (DataRow row in friendsRequestsTable.Rows)
             {
                 var num5 = Convert.ToUInt32(row["from_id"]);
                 var num6 = Convert.ToUInt32(row["to_id"]);
@@ -285,7 +285,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             var pets = new Dictionary<uint, Pet>();
 
-            foreach (DataRow row in petsTable.Rows)
+            /* TODO CHECK */ foreach (DataRow row in petsTable.Rows)
             {
                 using (var queryreactor3 = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
@@ -299,7 +299,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             }
 
             var quests = new Dictionary<uint, int>();
-            foreach (DataRow row in questsTable.Rows)
+            /* TODO CHECK */ foreach (DataRow row in questsTable.Rows)
             {
                 var key = Convert.ToUInt32(row["quest_id"]);
                 var value3 = (int) row["progress"];
@@ -312,7 +312,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             var groups = new HashSet<GroupMember>();
 
-            foreach (DataRow row in groupsTable.Rows)
+            /* TODO CHECK */ foreach (DataRow row in groupsTable.Rows)
                 groups.Add(new GroupMember(userId, userName, look, (uint) row["group_id"], Convert.ToInt16(row["rank"]),
                     (int) row["date_join"], Oblivion.EnumToBool(row["has_chat"].ToString())));
 

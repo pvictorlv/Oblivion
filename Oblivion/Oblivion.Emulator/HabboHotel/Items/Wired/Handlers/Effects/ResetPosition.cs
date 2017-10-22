@@ -57,7 +57,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             var rot = booleans[1] == "true";
             var position = booleans[2] == "true";
 
-            foreach (var itemData in OtherExtraString.Split('/'))
+            /* TODO CHECK */ foreach (var itemData in OtherExtraString.Split('/'))
             {
                 if (string.IsNullOrWhiteSpace(itemData))
                     continue;

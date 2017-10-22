@@ -73,7 +73,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
                 var array = row["items"].ToString().Split(';');
 
-                foreach (var s in array)
+                /* TODO CHECK */ foreach (var s in array)
                 {
                     if (!int.TryParse(s, out var value))
                         continue;
@@ -99,7 +99,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 var text = string.Empty;
                 var num = 0;
 
-                foreach (var current in fItem.Items)
+                /* TODO CHECK */ foreach (var current in fItem.Items)
                 {
                     if (num != 0) text += ";";
                     text += current.Id;
@@ -143,7 +143,7 @@ namespace Oblivion.HabboHotel.Items.Wired
         {
             lock (_wiredItems)
             {
-                foreach (var current in _wiredItems.Where(current => current != null && current.Type == type))
+                /* TODO CHECK */ foreach (var current in _wiredItems.Where(current => current != null && current.Type == type))
                     current.OtherExtraString = "0";
             }
         }
@@ -156,7 +156,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     return false;
 
                 if (type == Interaction.TriggerCollision)
-                    foreach (var wiredItem in _wiredItems.Where(
+                    /* TODO CHECK */ foreach (var wiredItem in _wiredItems.Where(
                         wiredItem => wiredItem != null && wiredItem.Type == type))
                         wiredItem.Execute(stuff);
                 else if (_wiredItems.Any(current => current != null && current.Type == type && current.Execute(stuff)))
@@ -178,7 +178,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 return;
 
             var wireds = _wiredItems.ToList();
-            foreach (var item in wireds)
+            /* TODO CHECK */ foreach (var item in wireds)
             {
                 try
                 {

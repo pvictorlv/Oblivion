@@ -96,19 +96,27 @@ namespace Oblivion.Collections
             Inner?.Clear();
             if (_addQueue != null && _addQueue.Any())
             {
-                while (_addQueue.TryDequeue(out _)) { }
+                while (_addQueue.TryDequeue(out _))
+                {
+                }
             }
             if (_updateQueue != null && _updateQueue.Any())
             {
-                while (_updateQueue.TryDequeue(out _)) { }
+                while (_updateQueue.TryDequeue(out _))
+                {
+                }
             }
             if (_removeQueue != null && _removeQueue.Any())
             {
-                while (_removeQueue.TryDequeue(out _)) { }
+                while (_removeQueue.TryDequeue(out _))
+                {
+                }
             }
             if (_onCycleEventQueue != null && _onCycleEventQueue.Any())
             {
-                while (_onCycleEventQueue.TryDequeue(out _)) { }
+                while (_onCycleEventQueue.TryDequeue(out _))
+                {
+                }
             }
             Inner = null;
             _addQueue = null;

@@ -59,7 +59,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             if (!Items.Any())
                 return true;
 
-            foreach (var current in Items.Where(current => current != null &&
+            /* TODO CHECK */ foreach (var current in Items.Where(current => current != null &&
                                                            Room.GetRoomItemHandler().FloorItems.Values.Contains(current)))
             {
                 if (current.AffectedTiles.Values.Any(

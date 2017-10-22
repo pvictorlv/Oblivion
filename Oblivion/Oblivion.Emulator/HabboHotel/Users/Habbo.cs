@@ -659,7 +659,7 @@ namespace Oblivion.HabboHotel.Users
 
                 var table = dbClient.GetTable();
 
-                foreach (DataRow dataRow in table.Rows)
+                /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
                     Data.Rooms.Add(Oblivion.GetGame()
                         .GetRoomManager()
                         .FetchRoomData(Convert.ToUInt32(dataRow["id"]), dataRow, Id));
@@ -888,7 +888,7 @@ namespace Oblivion.HabboHotel.Users
             if (Oblivion.OfflineMessages.ContainsKey(Id))
             {
                 var list = Oblivion.OfflineMessages[Id];
-                foreach (var current in list)
+                /* TODO CHECK */ foreach (var current in list)
                     client.SendMessage(_messenger.SerializeOfflineMessages(current));
                 Oblivion.OfflineMessages.Remove(Id);
                 OfflineMessage.RemoveAllMessages(Oblivion.GetDatabaseManager().GetQueryReactor(), Id);
@@ -1143,7 +1143,7 @@ namespace Oblivion.HabboHotel.Users
                 dTable = dbClient.GetTable();
             }
 
-            foreach (DataRow dRow in dTable.Rows)
+            /* TODO CHECK */ foreach (DataRow dRow in dTable.Rows)
                 _myGroups.Add(Convert.ToUInt32(dRow["id"]));
 
             _loadedMyGroups = true;

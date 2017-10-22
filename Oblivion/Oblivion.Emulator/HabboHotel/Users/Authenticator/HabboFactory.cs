@@ -80,7 +80,7 @@ namespace Oblivion.HabboHotel.Users.Authenticator
                     lastOnline, appearOffline, hideInRoom, vip, createDate, citizenship, diamonds, @group, favId,
                     lastChange, tradeLocked, tradeLockExpire, buildersExpire, buildersItemsMax,
                     buildersItemsUsed, onDuty, navilogs, dailyCompetitionVotes, dutyLevel, disableAlert);
-            foreach (
+            /* TODO CHECK */ foreach (
                 var naviLogs in
                 navilogstring.Split(';')
                     .Where(value => navilogstring.Contains(","))

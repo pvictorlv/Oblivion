@@ -37,7 +37,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 dTable = queryReactor.GetTable();
             }
 
-            foreach (DataRow dRow in dTable.Rows)
+            /* TODO CHECK */ foreach (DataRow dRow in dTable.Rows)
                 Clothing.Add((string) dRow["clothing"]);
         }
 
@@ -65,11 +65,11 @@ namespace Oblivion.HabboHotel.Users.Inventory
         internal void Serialize(ServerMessage message)
         {
             message.StartArray();
-            foreach (
+            /* TODO CHECK */ foreach (
                 var item1 in
                     Clothing.Select(clothing1 => Oblivion.GetGame().GetClothingManager().GetClothesInFurni(clothing1)))
             {
-                foreach (var clothe in item1.Clothes)
+                /* TODO CHECK */ foreach (var clothe in item1.Clothes)
                     message.AppendInteger(clothe);
 
                 message.SaveArray();
@@ -77,11 +77,11 @@ namespace Oblivion.HabboHotel.Users.Inventory
             message.EndArray();
             message.StartArray();
 
-            foreach (
+            /* TODO CHECK */ foreach (
                 var item2 in
                     Clothing.Select(clothing2 => Oblivion.GetGame().GetClothingManager().GetClothesInFurni(clothing2)))
             {
-                foreach (var clothe in item2.Clothes)
+                /* TODO CHECK */ foreach (var clothe in item2.Clothes)
                     message.AppendString(item2.ItemName);
                 message.SaveArray();
             }

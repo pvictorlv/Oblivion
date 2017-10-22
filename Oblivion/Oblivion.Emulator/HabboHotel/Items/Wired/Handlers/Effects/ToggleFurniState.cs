@@ -35,7 +35,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             var num = Oblivion.Now();
 
             if (_mNext < num)
-                foreach (var current in Items.Where(
+                /* TODO CHECK */ foreach (var current in Items.Where(
                     current => current != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(current)))
                     current.Interactor.OnWiredTrigger(current);
 

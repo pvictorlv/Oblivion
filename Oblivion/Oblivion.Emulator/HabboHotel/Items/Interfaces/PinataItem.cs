@@ -29,7 +29,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             ItemBaseId = Convert.ToUInt32(row["item_baseid"]);
             var text = row["rewards"].ToString();
             var array = text.Split(';');
-            foreach (var value in array)
+            /* TODO CHECK */ foreach (var value in array)
                 Rewards.Add(Convert.ToUInt32(value));
         }
     }

@@ -36,7 +36,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             var data = roomFwd.GetReversedBytes();
 
-            foreach (var user in users.Where(user => user != null && user.GetClient() != null))
+            /* TODO CHECK */ foreach (var user in users.Where(user => user != null && user.GetClient() != null))
                 user.GetClient().SendMessage(data);
 
             return true;

@@ -78,7 +78,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                foreach (
+                /* TODO CHECK */ foreach (
                     var item in
                         room.GetGameMap()
                             .GetAllRoomItemForSquare(user.LastSelectedX, user.LastSelectedY))
@@ -107,7 +107,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                foreach (
+                /* TODO CHECK */ foreach (
                     var item in
                         room.GetGameMap()
                             .GetAllRoomItemForSquare(user.CopyX, user.CopyY))
@@ -302,7 +302,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     {
                         text.AppendLine("Displaying info of all users of this room");
 
-                        foreach (var roomUser in session.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUsers())
+                        /* TODO CHECK */ foreach (var roomUser in session.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUsers())
                             AppendUserInfo(roomUser, text);
 
                         session.SendNotifWithScroll(text.ToString());
@@ -326,7 +326,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                         text.AppendLine(
                             $"Displaying info of coordinates: (X/Y)  {user.LastSelectedX}/{user.LastSelectedY}");
 
-                        foreach (
+                        /* TODO CHECK */ foreach (
                             var item in
                                 session.GetHabbo()
                                     .CurrentRoom.GetGameMap()

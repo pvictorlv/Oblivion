@@ -70,7 +70,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 toAdd.Add(roomUser);
             }
 
-            foreach (var roomUserToAdd in toAdd.Where(roomUserToAdd => !ToWorkConcurrentQueue.Contains(roomUserToAdd)))
+            /* TODO CHECK */ foreach (var roomUserToAdd in toAdd.Where(roomUserToAdd => !ToWorkConcurrentQueue.Contains(roomUserToAdd)))
                 ToWorkConcurrentQueue.Enqueue(roomUserToAdd);
 
             toAdd.Clear();
@@ -166,7 +166,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             RoomItem roomItem = null;
 
-            foreach (var current in Items.Where(current => current != null &&
+            /* TODO CHECK */ foreach (var current in Items.Where(current => current != null &&
                                                            Room.GetRoomItemHandler().FloorItems.Values.Contains(current)))
                 roomItem = current;
 

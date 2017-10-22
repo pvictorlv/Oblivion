@@ -22,7 +22,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override bool Execute(GameClient session, string[] pms)
         {
-            foreach (
+            /* TODO CHECK */ foreach (
                 var client in
                     Oblivion.GetGame()
                         .GetClientManager()

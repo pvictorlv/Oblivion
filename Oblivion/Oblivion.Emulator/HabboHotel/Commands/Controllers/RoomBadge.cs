@@ -23,7 +23,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         {
             if (pms[0].Length < 2) return true;
             var room = session.GetHabbo().CurrentRoom;
-            foreach (var current in room.GetRoomUserManager().UserList.Values)
+            /* TODO CHECK */ foreach (var current in room.GetRoomUserManager().UserList.Values)
             {
                 try
                 {

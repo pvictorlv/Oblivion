@@ -29,7 +29,7 @@ namespace Oblivion.HabboHotel.Users.Badges
         {
             BadgeList = new HybridDictionary();
 
-            foreach (var current in data.Badges.Where(current => !BadgeList.Contains(current.Code)))
+            /* TODO CHECK */ foreach (var current in data.Badges.Where(current => !BadgeList.Contains(current.Code)))
                 BadgeList.Add(current.Code, current);
 
             _userId = userId;
@@ -132,7 +132,7 @@ namespace Oblivion.HabboHotel.Users.Badges
         /// </summary>
         internal void ResetSlots()
         {
-            foreach (Badge badge in BadgeList.Values)
+            /* TODO CHECK */ foreach (Badge badge in BadgeList.Values)
                 badge.Slot = 0;
         }
 
@@ -182,7 +182,7 @@ namespace Oblivion.HabboHotel.Users.Badges
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("LoadBadgesWidgetMessageComposer"));
             serverMessage.AppendInteger(Count);
 
-            foreach (Badge badge in BadgeList.Values)
+            /* TODO CHECK */ foreach (Badge badge in BadgeList.Values)
             {
                 serverMessage.AppendInteger(1);
                 serverMessage.AppendString(badge.Code);
@@ -193,7 +193,7 @@ namespace Oblivion.HabboHotel.Users.Badges
 
             serverMessage.AppendInteger(list.Count);
 
-            foreach (var current in list)
+            /* TODO CHECK */ foreach (var current in list)
             {
                 serverMessage.AppendInteger(current.Slot);
                 serverMessage.AppendString(current.Code);

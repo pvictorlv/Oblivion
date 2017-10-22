@@ -21,7 +21,7 @@ namespace Oblivion.HabboHotel.Quests.Composer
         {
             var dictionary = new Dictionary<string, int>();
             var dictionary2 = new Dictionary<string, Quest>();
-            foreach (var current in quests)
+            /* TODO CHECK */ foreach (var current in quests)
             {
                 if (!current.Category.Contains("xmas2012"))
                 {
@@ -40,9 +40,9 @@ namespace Oblivion.HabboHotel.Quests.Composer
                     }
                 }
             }
-            foreach (var current2 in quests)
+            /* TODO CHECK */ foreach (var current2 in quests)
             {
-                foreach (var current3 in dictionary)
+                /* TODO CHECK */ foreach (var current3 in dictionary)
                 {
                     if (!current2.Category.Contains("xmas2012") && current2.Category == current3.Key &&
                         current2.Number == current3.Value)
@@ -54,14 +54,14 @@ namespace Oblivion.HabboHotel.Quests.Composer
             }
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("QuestListMessageComposer"));
             serverMessage.AppendInteger(dictionary2.Count);
-            foreach (var current4 in dictionary2)
+            /* TODO CHECK */ foreach (var current4 in dictionary2)
             {
                 if (current4.Value != null)
                 {
                     SerializeQuest(serverMessage, session, current4.Value, current4.Key);
                 }
             }
-            foreach (var current5 in dictionary2)
+            /* TODO CHECK */ foreach (var current5 in dictionary2)
             {
                 if (current5.Value == null)
                 {

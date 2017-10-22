@@ -61,7 +61,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
             RoomItem lastitem = null;
 
-            foreach (var current in Items)
+            /* TODO CHECK */ foreach (var current in Items)
             {
                 if (lastitem == null)
                 {

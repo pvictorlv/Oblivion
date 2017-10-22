@@ -34,7 +34,7 @@ namespace Oblivion.HabboHotel.Items.Handlers
             Pinatas = new Dictionary<uint, PinataItem>();
             _table = dbClient.GetTable();
 
-            foreach (DataRow dataRow in _table.Rows)
+            /* TODO CHECK */ foreach (DataRow dataRow in _table.Rows)
             {
                 var value = new PinataItem(dataRow);
                 Pinatas.Add(uint.Parse(dataRow["item_baseid"].ToString()), value);

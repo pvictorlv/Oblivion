@@ -50,7 +50,7 @@ namespace Oblivion.HabboHotel.Support
             var table = dbClient.GetTable();
             double num = Oblivion.GetUnixTimeStamp();
 
-            foreach (DataRow dataRow in table.Rows)
+            /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
             {
                 var text = (string) dataRow["value"];
                 var reasonMessage = (string) dataRow["reason"];
@@ -229,7 +229,7 @@ namespace Oblivion.HabboHotel.Support
                 {
                     using (var queryreactor4 = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        foreach (DataRow dataRow in dataTable.Rows)
+                        /* TODO CHECK */ foreach (DataRow dataRow in dataTable.Rows)
                             queryreactor4.RunFastQuery(
                                 $"UPDATE users_info SET bans = bans + 1 WHERE user_id = {Convert.ToUInt32(dataRow["id"])}");
                     }

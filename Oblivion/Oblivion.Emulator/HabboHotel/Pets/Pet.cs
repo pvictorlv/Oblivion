@@ -404,7 +404,7 @@ namespace Oblivion.HabboHotel.Pets
                 var availableCommands = new List<short>();
 
                 tp.AppendInteger(PetCommands.Count);
-                foreach (var sh in PetCommands.Keys)
+                /* TODO CHECK */ foreach (var sh in PetCommands.Keys)
                 {
                     tp.AppendInteger(sh);
                     if (PetCommands[sh])
@@ -412,7 +412,7 @@ namespace Oblivion.HabboHotel.Pets
                 }
 
                 tp.AppendInteger(availableCommands.Count);
-                foreach (var sh in availableCommands)
+                /* TODO CHECK */ foreach (var sh in availableCommands)
                     tp.AppendInteger(sh);
                 ownerSession.SendMessage(tp);
             }
@@ -476,8 +476,7 @@ namespace Oblivion.HabboHotel.Pets
             if (Type == 16u && MoplaBreed != null)
             {
                 var array = MoplaBreed.PlantData.Substring(12).Split(' ');
-                var array2 = array;
-                foreach (var s in array2)
+                /* TODO CHECK */ foreach (var s in array)
                     message.AppendInteger(int.Parse(s));
                 message.AppendInteger(MoplaBreed.GrowingStatus);
                 return;

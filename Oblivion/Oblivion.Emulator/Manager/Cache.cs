@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Oblivion.Configuration;
+using Oblivion.HabboHotel.Rooms.Data;
 
 namespace Oblivion.Manager
 {
@@ -45,13 +46,12 @@ namespace Oblivion.Manager
 
         private static void ClearUserCache()
         {
-            var toRemove = new List<uint>();
 
-            foreach (var user in Oblivion.UsersCached)
+            foreach (var user in Oblivion.UsersCached.ToArray())
             {
                 if (user.Value == null)
                 {
-                    toRemove.Add(user.Key);
+                    Oblivion.UsersCached.TryRemove(user.Key, out _);
                     return;
                 }
 
@@ -61,12 +61,7 @@ namespace Oblivion.Manager
                 if ((DateTime.Now - user.Value.LastUsed).TotalMilliseconds < 1800000)
                     continue;
 
-                toRemove.Add(user.Key);
-            }
-
-            foreach (var userId in toRemove)
-            {
-                Oblivion.UsersCached.TryRemove(userId, out _);
+                Oblivion.UsersCached.TryRemove(user.Key, out _);
             }
         }
 
@@ -75,12 +70,15 @@ namespace Oblivion.Manager
             if (Oblivion.GetGame() == null || Oblivion.GetGame().GetRoomManager() == null || Oblivion.GetGame().GetRoomManager().LoadedRoomData == null)
                 return;
 
-            var toRemove = (from roomData in Oblivion.GetGame().GetRoomManager().LoadedRoomData where roomData.Value != null && roomData.Value.UsersNow <= 0 where !((DateTime.Now - roomData.Value.LastUsed).TotalMilliseconds < 1800000) select roomData.Key).ToList();
-
-            foreach (var roomId in toRemove)
+            foreach (var roomData in Oblivion.GetGame().GetRoomManager().LoadedRoomData.ToArray())
             {
-                Oblivion.GetGame().GetRoomManager().LoadedRoomData.TryRemove(roomId, out _);
+                if (roomData.Value != null && roomData.Value.UsersNow <= 0)
+                {
+                    if (!((DateTime.Now - roomData.Value.LastUsed).TotalMilliseconds < 1800000))
+                        Oblivion.GetGame().GetRoomManager().LoadedRoomData.TryRemove(roomData.Key, out _);
+                }
             }
+            
         }
     }
 }

@@ -207,7 +207,7 @@ namespace Oblivion.AStar.Algorithm
                 else
                     StoreNeighborNodesNoDiagonal(x, neighborNodes);
 
-                foreach (var t in neighborNodes)
+               foreach (var t in neighborNodes)
                 {
                     var y = t;
 

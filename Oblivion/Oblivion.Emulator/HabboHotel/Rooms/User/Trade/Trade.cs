@@ -54,7 +54,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             _tradeStage = 1;
             _roomId = roomId;
             var users = _users;
-            foreach (var tradeUser in users.Where(tradeUser => !tradeUser.GetRoomUser().Statusses.ContainsKey("trd")))
+            /* TODO CHECK */ foreach (var tradeUser in users.Where(tradeUser => !tradeUser.GetRoomUser().Statusses.ContainsKey("trd")))
             {
                 tradeUser.GetRoomUser().AddStatus("trd", "");
                 tradeUser.GetRoomUser().UpdateNeeded = true;
@@ -216,7 +216,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         internal void ClearAccepted()
         {
             var users = _users;
-            foreach (var tradeUser in users)
+            /* TODO CHECK */ foreach (var tradeUser in users)
             {
                 tradeUser.HasAccepted = false;
             }
@@ -233,7 +233,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
 
             serverMessage.AppendInteger(firstUser.UserId);
             serverMessage.AppendInteger(firstUser.OfferedItems.Count);
-            foreach (var current in firstUser.OfferedItems)
+            /* TODO CHECK */ foreach (var current in firstUser.OfferedItems)
             {
                 serverMessage.AppendInteger(current.Id);
                 serverMessage.AppendString(current.BaseItem.Type.ToString().ToLower());
@@ -256,7 +256,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             serverMessage.AppendInteger(0);
             serverMessage.AppendInteger(1);
             serverMessage.AppendInteger(secondUser.OfferedItems.Count);
-            foreach (var current in secondUser.OfferedItems)
+            /* TODO CHECK */ foreach (var current in secondUser.OfferedItems)
             {
                 serverMessage.AppendInteger(current.Id);
                 serverMessage.AppendString(current.BaseItem.Type.ToString().ToLower());
@@ -310,7 +310,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             }
             GetTradeUser(_twoId).GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
             GetTradeUser(_oneId).GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
-            foreach (var current3 in offeredItems)
+            /* TODO CHECK */ foreach (var current3 in offeredItems)
             {
                 GetTradeUser(_oneId).GetClient().GetHabbo().GetInventoryComponent().RemoveItem(current3.Id, false);
                 GetTradeUser(_twoId)
@@ -323,7 +323,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
                 GetTradeUser(_oneId).GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
                 GetTradeUser(_twoId).GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
             }
-            foreach (var current4 in offeredItems2)
+            /* TODO CHECK */ foreach (var current4 in offeredItems2)
             {
                 GetTradeUser(_twoId).GetClient().GetHabbo().GetInventoryComponent().RemoveItem(current4.Id, false);
                 GetTradeUser(_oneId)
@@ -345,7 +345,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             }
             serverMessage.AppendInteger(i);
             serverMessage.AppendInteger(offeredItems.Count);
-            foreach (var current6 in offeredItems)
+            /* TODO CHECK */ foreach (var current6 in offeredItems)
             {
                 serverMessage.AppendInteger(current6.Id);
             }
@@ -359,7 +359,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             }
             serverMessage2.AppendInteger(i);
             serverMessage2.AppendInteger(offeredItems2.Count);
-            foreach (var current8 in offeredItems2)
+            /* TODO CHECK */ foreach (var current8 in offeredItems2)
             {
                 serverMessage2.AppendInteger(current8.Id);
             }
@@ -374,7 +374,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         internal void CloseTradeClean()
         {
             {
-                foreach (
+                /* TODO CHECK */ foreach (
                     var tradeUser in _users.Where(tradeUser => tradeUser?.GetRoomUser() != null))
                 {
                     tradeUser.GetRoomUser().RemoveStatus("trd");
@@ -392,7 +392,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         internal void CloseTrade(uint userId)
         {
             {
-                foreach (
+                /* TODO CHECK */ foreach (
                     var tradeUser in _users.Where(tradeUser => tradeUser?.GetRoomUser() != null))
                 {
                     tradeUser.GetRoomUser().RemoveStatus("trd");
@@ -417,7 +417,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             }
 
             {
-                foreach (var tradeUser in _users.Where(tradeUser => tradeUser?.GetClient() != null))
+                /* TODO CHECK */ foreach (var tradeUser in _users.Where(tradeUser => tradeUser?.GetClient() != null))
                 {
                     tradeUser.GetClient().SendMessage(message);
                 }

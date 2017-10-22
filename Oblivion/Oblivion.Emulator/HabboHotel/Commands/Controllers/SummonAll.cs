@@ -26,7 +26,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var messageBytes =
                 GameClient.GetBytesNotif(string.Format("You have all been summoned by\r- {0}:\r\n{1}",
                     session.GetHabbo().UserName, reason));
-            foreach (var client in Oblivion.GetGame().GetClientManager().Clients.Values)
+            /* TODO CHECK */ foreach (var client in Oblivion.GetGame().GetClientManager().Clients.Values)
             {
                 if (session.GetHabbo().CurrentRoom == null ||
                     session.GetHabbo().CurrentRoomId == client.GetHabbo().CurrentRoomId)

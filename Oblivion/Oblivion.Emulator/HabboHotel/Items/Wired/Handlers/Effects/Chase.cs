@@ -57,7 +57,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             var toRemove = new Queue<RoomItem>();
 
             if (Items.Any())
-                foreach (var item in Items)
+                /* TODO CHECK */ foreach (var item in Items)
                 {
                     if (item == null || Room.GetRoomItemHandler().GetItem(item.Id) == null)
                     {

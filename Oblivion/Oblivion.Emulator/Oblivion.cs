@@ -173,7 +173,7 @@ namespace Oblivion
             var pluginType = typeof(IPlugin);
             var pluginTypes = new List<Type>();
 
-            foreach (var types in from assembly in assemblies where assembly != null select assembly.GetTypes())
+            /* TODO CHECK */ foreach (var types in from assembly in assemblies where assembly != null select assembly.GetTypes())
                 pluginTypes.AddRange(types.Where(type => type != null && !type.IsInterface && !type.IsAbstract)
                     .Where(type => type.GetInterface(pluginType.FullName) != null));
 
@@ -327,7 +327,7 @@ namespace Oblivion
                 var plugins = LoadPlugins();
 
                 if (plugins != null)
-                    foreach (var item in plugins.Where(item => item != null))
+                    /* TODO CHECK */ foreach (var item in plugins.Where(item => item != null))
                     {
                         Plugins.Add(item.PluginName, item);
 
@@ -347,7 +347,7 @@ namespace Oblivion
                 Out.WriteLine("Loaded " + _languages.Count() + " Languages Vars", "Oblivion.Lang");
 
                 if (plugins != null)
-                    foreach (var itemTwo in plugins)
+                    /* TODO CHECK */ foreach (var itemTwo in plugins)
                         itemTwo?.message_void();
 
                 if (ConsoleTimerOn)
@@ -682,7 +682,7 @@ namespace Oblivion
 
                 GetConnectionManager().Destroy();
 
-                foreach (Guild group in _game.GetGroupManager().Groups.Values) group.UpdateForum();
+                /* TODO CHECK */ foreach (Guild group in _game.GetGroupManager().Groups.Values) group.UpdateForum();
 
                 using (var queryReactor = Manager.GetQueryReactor())
                 {

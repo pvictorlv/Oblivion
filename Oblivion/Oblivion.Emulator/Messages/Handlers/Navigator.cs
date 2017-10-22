@@ -99,7 +99,7 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().NavigatorLogs.Add(naviLogs.Id, naviLogs);
             var message = new ServerMessage(LibraryParser.OutgoingRequest("NavigatorSavedSearchesComposer"));
             message.AppendInteger(Session.GetHabbo().NavigatorLogs.Count);
-            foreach (NaviLogs navi in Session.GetHabbo().NavigatorLogs.Values)
+            /* TODO CHECK */ foreach (NaviLogs navi in Session.GetHabbo().NavigatorLogs.Values)
             {
                 message.AppendInteger(navi.Id);
                 message.AppendString(navi.Value1);
@@ -156,7 +156,7 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().NavigatorLogs.Remove(searchId);
             var message = new ServerMessage(LibraryParser.OutgoingRequest("NavigatorSavedSearchesComposer"));
             message.AppendInteger(Session.GetHabbo().NavigatorLogs.Count);
-            foreach (NaviLogs navi in Session.GetHabbo().NavigatorLogs.Values)
+            /* TODO CHECK */ foreach (NaviLogs navi in Session.GetHabbo().NavigatorLogs.Values)
             {
                 message.AppendInteger(navi.Id);
                 message.AppendString(navi.Value1);

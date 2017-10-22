@@ -1272,7 +1272,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             {
                                 var array = clientByUserId.GetHabbo().Look.Split('.');
                                 var array2 = array;
-                                foreach (var text2 in array2)
+                                /* TODO CHECK */ foreach (var text2 in array2)
                                 {
                                     var str = text2;
                                     if (text2.Contains("ha")) str = "ha-1006-1326";
@@ -1682,7 +1682,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                         message.AppendInteger(0);
                         message.AppendInteger(2);
                         message.AppendInteger(data.Length);
-                        foreach (var datak in data) message.AppendString(datak);
+                        /* TODO CHECK */ foreach (var datak in data) message.AppendString(datak);
                         break;
 
                     case Interaction.Moplaseed:
@@ -1706,7 +1706,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                         {
                             var arrayData = ExtraData.Split((char) 9);
                             message.AppendInteger(arrayData.Length / 2);
-                            foreach (var dataStr in arrayData) message.AppendString(dataStr);
+                            /* TODO CHECK */ foreach (var dataStr in arrayData) message.AppendString(dataStr);
                         }
                         else message.AppendInteger(0);
                         break;

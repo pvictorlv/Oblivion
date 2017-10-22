@@ -41,7 +41,7 @@ namespace Oblivion.Security.BlackWords
                 if (table == null)
                     return;
 
-                foreach (DataRow row in table.Rows)
+                /* TODO CHECK */ foreach (DataRow row in table.Rows)
                 {
                     var word = row["word"].ToString();
                     var typeStr = row["type"].ToString();
@@ -140,7 +140,7 @@ namespace Oblivion.Security.BlackWords
 
             if (File.Exists("Settings\\BlackWords\\" + typeStr + ".ini"))
             {
-                foreach (var array in File.ReadAllLines("Settings\\BlackWords\\" + typeStr + ".ini").Where(line => !line.StartsWith("#") || !line.StartsWith("//") || line.Contains("=")).Select(line => line.Split('=')))
+                /* TODO CHECK */ foreach (var array in File.ReadAllLines("Settings\\BlackWords\\" + typeStr + ".ini").Where(line => !line.StartsWith("#") || !line.StartsWith("//") || line.Contains("=")).Select(line => line.Split('=')))
                 {
                     if (array[0] == "filterType") filter = array[1];
                     if (array[0] == "maxAdvices") maxAdvices = uint.Parse(array[1]);

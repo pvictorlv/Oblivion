@@ -61,7 +61,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 client.SendWhisper("Insira um valor válido no final do preço! (c para créditos e d para diamantes)");
                 return false;
             }
-            foreach (var userInRoom in currentRoom.GetRoomUserManager().GetRoomUsers())
+            /* TODO CHECK */ foreach (var userInRoom in currentRoom.GetRoomUserManager().GetRoomUsers())
                 userInRoom?.GetClient()?
                     .SendWhisper($"A sala está a venda pelo preço de {roomCost}{roomCostType}");
 

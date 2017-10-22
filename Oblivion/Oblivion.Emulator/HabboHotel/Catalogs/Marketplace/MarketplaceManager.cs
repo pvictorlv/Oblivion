@@ -50,7 +50,7 @@ namespace Oblivion.HabboHotel.Catalogs.Marketplace
         {
             var dictionary = new Dictionary<int, MarketOffer>();
             var dictionary2 = new Dictionary<int, int>();
-            foreach (var item in MarketItems)
+            /* TODO CHECK */ foreach (var item in MarketItems)
                 if (dictionary.ContainsKey(item.SpriteId))
                 {
                     if (dictionary[item.SpriteId].TotalPrice > item.TotalPrice)

@@ -32,7 +32,7 @@ namespace Oblivion.HabboHotel.Misc
 
             var figureParts = look.Split('.');
             var genderLook = GetLookGender(look);
-            foreach (var part in figureParts)
+            /* TODO CHECK */ foreach (var part in figureParts)
             {
                 var newPart = part;
                 var tPart = part.Split('-');
@@ -59,7 +59,7 @@ namespace Oblivion.HabboHotel.Misc
                 toReturnFigureParts.AddRange("hr-115-42.hd-190-1.ch-215-62.lg-285-91.sh-290-62".Split('.'));
             }
 
-            foreach (var requiredPart in requiredParts.Where(requiredPart => !fParts.Contains(requiredPart) &&
+            /* TODO CHECK */ foreach (var requiredPart in requiredParts.Where(requiredPart => !fParts.Contains(requiredPart) &&
                                                                              !toReturnFigureParts.Contains(
                                                                                  SetDefault(requiredPart, genderLook)))
             )
@@ -76,7 +76,7 @@ namespace Oblivion.HabboHotel.Misc
         {
             var figureParts = look.Split('.');
 
-            foreach (var part in figureParts)
+            /* TODO CHECK */ foreach (var part in figureParts)
             {
                 var tPart = part.Split('-');
                 if (tPart.Length < 2)

@@ -63,7 +63,7 @@ namespace Oblivion.HabboHotel.Items
 
             List<double> heights = null;
 
-            foreach (DataRow dataRow in table.Rows)
+            /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
             {
                 try
                 {
@@ -145,7 +145,7 @@ namespace Oblivion.HabboHotel.Items
 
         internal bool GetItem(string itemName, out Item item)
         {
-            foreach (var entry in _items)
+            /* TODO CHECK */ foreach (var entry in _items)
             {
                 item = entry.Value;
 

@@ -27,13 +27,7 @@ namespace Oblivion.Enclosure
                 theArray.GetUpperBound(1) + 1, theArray.GetUpperBound(0) + 1);
         }
 
-        public bool this[int y, int x]
-        {
-            get
-            {
-                return y >= 0 && x >= 0 && y <= _currentField.GetUpperBound(0) && x <= _currentField.GetUpperBound(1);
-            }
-        }
+        public bool this[int y, int x] => y >= 0 && x >= 0 && y <= _currentField.GetUpperBound(0) && x <= _currentField.GetUpperBound(1);
 
         public void UpdateLocation(int x, int y, byte value)
         {
@@ -151,7 +145,7 @@ namespace Oblivion.Enclosure
         }
 
         private IEnumerable<LinkedList<AStarSolver<GameField>.PathNode>> handleListOfConnectedPoints(
-            List<Point> pointList)
+            IReadOnlyCollection<Point> pointList)
         {
             var list = new List<LinkedList<AStarSolver<GameField>.PathNode>>();
             var num = 0;

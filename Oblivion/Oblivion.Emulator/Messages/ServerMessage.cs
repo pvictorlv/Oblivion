@@ -155,7 +155,7 @@ namespace Oblivion.Messages
         /// <param name="messages">The messages.</param>
         public void AppendServerMessages(List<ServerMessage> messages)
         {
-            foreach (ServerMessage message in messages)
+            /* TODO CHECK */ foreach (ServerMessage message in messages)
             {
                 AppendServerMessage(message);
             }
@@ -215,7 +215,7 @@ namespace Oblivion.Messages
 
             uint i = 0;
 
-            foreach (string text in array.TakeWhile(text => i != lenght))
+            /* TODO CHECK */ foreach (string text in array.TakeWhile(text => i != lenght))
             {
                 i++;
 

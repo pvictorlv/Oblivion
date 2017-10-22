@@ -58,7 +58,7 @@ namespace Oblivion.HabboHotel.SoundMachine
                 queryReactor.SetQuery("SELECT * FROM items_songs_data ORDER BY id");
                 DataTable table = queryReactor.GetTable();
 
-                foreach (var songFromDataRow in from DataRow dRow in table.Rows select GetSongFromDataRow(dRow))
+                /* TODO CHECK */ foreach (var songFromDataRow in from DataRow dRow in table.Rows select GetSongFromDataRow(dRow))
                     Songs.Add(songFromDataRow.Id, songFromDataRow);
             }
         }

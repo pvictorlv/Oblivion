@@ -27,7 +27,7 @@ namespace Oblivion.Configuration
 
             var table = dbClient.GetTable();
 
-            foreach (DataRow dataRow in table.Rows)
+           foreach (DataRow dataRow in table.Rows)
                 DbData.Add(dataRow[0].ToString(), dataRow[1].ToString());
         }
     }

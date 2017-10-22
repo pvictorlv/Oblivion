@@ -123,7 +123,7 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
 
             Items = new Dictionary<uint, CatalogItem>();
             FlatOffers = new Dictionary<int, uint>();
-            foreach (
+            /* TODO CHECK */ foreach (
                 var catalogItem in
                     cataItems.Values.Where(x => x.PageId == id && x.GetFirstBaseItem() != null))
             {

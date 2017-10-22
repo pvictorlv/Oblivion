@@ -221,7 +221,7 @@ namespace Oblivion.Messages.Handlers
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleInvitationMessageComposer"));
             serverMessage.AppendInteger(Session.GetHabbo().Id);
             serverMessage.AppendString(s);
-            foreach (var clientByUserId in (from current in list
+            /* TODO CHECK */ foreach (var clientByUserId in (from current in list
                     where Session.GetHabbo().GetMessenger().FriendshipExists(current)
                     select Oblivion.GetGame().GetClientManager().GetClientByUserId(current))
                 .TakeWhile(

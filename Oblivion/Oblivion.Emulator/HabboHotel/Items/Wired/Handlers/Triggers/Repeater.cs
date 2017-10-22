@@ -42,9 +42,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             var success = false;
 
             if (conditions.Any())
-                foreach (var current in conditions)
+                /* TODO CHECK */ foreach (var current in conditions)
                 {
-                    foreach (var avatar in avatars)
+                    /* TODO CHECK */ foreach (var avatar in avatars)
                     {
                         if (avatar?.GetClient() == null || avatar.GetClient().GetHabbo() == null ||
                             !current.Execute(avatar.GetClient().GetHabbo()))
@@ -75,7 +75,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             }
             else
             {
-                foreach (var current2 in effects.Where(current2 => current2.Execute(null, Type)))
+                /* TODO CHECK */ foreach (var current2 in effects.Where(current2 => current2.Execute(null, Type)))
                     WiredHandler.OnEvent(current2);
             }
 

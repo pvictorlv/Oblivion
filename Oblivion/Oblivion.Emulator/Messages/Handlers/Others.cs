@@ -416,7 +416,7 @@ namespace Oblivion.Messages.Handlers
             if (Session.GetHabbo().Credits < offer.CostCredits * quantity) return;
             if (Session.GetHabbo().ActivityPoints < offer.CostDuckets * quantity) return;
             if (Session.GetHabbo().Diamonds < offer.CostDiamonds * quantity) return;
-            foreach (var item in offer.Products
+            /* TODO CHECK */ foreach (var item in offer.Products
                 .Select(product => Oblivion.GetGame().GetItemManager().GetItemByName(product))
                 .Where(item => item != null))
                 Oblivion.GetGame().GetCatalog().DeliverItems(Session, item, quantity, string.Empty, 0, 0, string.Empty);

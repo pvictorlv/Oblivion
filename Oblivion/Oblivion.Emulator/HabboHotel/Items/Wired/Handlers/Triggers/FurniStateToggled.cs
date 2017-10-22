@@ -76,7 +76,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             var effects = Room.GetWiredHandler().GetEffects(this);
 
             if (conditions.Any())
-                foreach (var current2 in conditions)
+                /* TODO CHECK */ foreach (var current2 in conditions)
                 {
                     if (!current2.Execute(roomUser)) return false;
                     WiredHandler.OnEvent(current2);
@@ -98,7 +98,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             }
             else if (effects.Any())
             {
-                foreach (var current3 in effects.Where(current3 => current3.Execute(roomUser, Type)))
+                /* TODO CHECK */ foreach (var current3 in effects.Where(current3 => current3.Execute(roomUser, Type)))
                     WiredHandler.OnEvent(current3);
             }
 

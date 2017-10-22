@@ -16,5 +16,6 @@ namespace Oblivion.Database.Manager.Database.Session_Details.Interfaces
         long InsertQuery();
 
         void RunQuery();
+        void RunQuery(string query);
     }
 }

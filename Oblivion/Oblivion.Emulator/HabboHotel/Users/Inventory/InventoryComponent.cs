@@ -291,7 +291,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery("SELECT id,base_item,extra_data,group_id,songcode FROM items_rooms WHERE user_id=@userid AND room_id='0' LIMIT 8000;");
+                queryReactor.SetQuery(
+                    "SELECT id,base_item,extra_data,group_id,songcode FROM items_rooms WHERE user_id=@userid AND room_id='0' LIMIT 8000;");
                 queryReactor.AddParameter("userid", ((int) UserId));
 
                 table = queryReactor.GetTable();
@@ -382,7 +383,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 LoadInventory();
             }
 
-            _mClient.GetMessageHandler().GetResponse().Init(LibraryParser.OutgoingRequest("UpdateInventoryMessageComposer"));
+            _mClient.GetMessageHandler().GetResponse()
+                .Init(LibraryParser.OutgoingRequest("UpdateInventoryMessageComposer"));
 
             _mClient.GetMessageHandler().SendResponse();
         }
@@ -487,7 +489,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <param name="limtot">The limtot.</param>
         /// <param name="songCode">The song code.</param>
         /// <returns>UserItem.</returns>
-        internal UserItem AddNewItem(uint id, uint baseItem, string extraData, uint thGroup, bool insert, bool fromRoom, int limno, int limtot, string songCode = "")
+        internal UserItem AddNewItem(uint id, uint baseItem, string extraData, uint thGroup, bool insert, bool fromRoom,
+            int limno, int limtot, string songCode = "")
         {
             _isUpdated = false;
 
@@ -496,13 +499,15 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 if (fromRoom)
                 {
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                        queryReactor.RunFastQuery("UPDATE items_rooms SET user_id = '" + UserId + "', room_id= '0' WHERE (id='" + id + "')");
+                        queryReactor.RunFastQuery("UPDATE items_rooms SET user_id = '" + UserId +
+                                                  "', room_id= '0' WHERE (id='" + id + "')");
                 }
                 else
                 {
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        queryReactor.SetQuery($"INSERT INTO items_rooms (base_item, user_id, group_id) VALUES ('{baseItem}', '{UserId}', '{thGroup}');");
+                        queryReactor.SetQuery(
+                            $"INSERT INTO items_rooms (base_item, user_id, group_id) VALUES ('{baseItem}', '{UserId}', '{thGroup}');");
 
                         if (id == 0)
                             id = ((uint) queryReactor.InsertQuery());
@@ -517,11 +522,13 @@ namespace Oblivion.HabboHotel.Users.Inventory
                         }
 
                         if (limno > 0)
-                            queryReactor.RunFastQuery($"INSERT INTO items_limited VALUES ('{id}', '{limno}', '{limtot}');");
+                            queryReactor.RunFastQuery(
+                                $"INSERT INTO items_limited VALUES ('{id}', '{limno}', '{limtot}');");
 
                         if (!string.IsNullOrEmpty(songCode))
                         {
-                            queryReactor.SetQuery($"UPDATE items_rooms SET songcode='{songCode}' WHERE id='{id}' LIMIT 1");
+                            queryReactor.SetQuery(
+                                $"UPDATE items_rooms SET songcode='{songCode}' WHERE id='{id}' LIMIT 1");
                             queryReactor.RunQuery();
                         }
                     }
@@ -598,9 +605,9 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <returns>ServerMessage.</returns>
         internal ServerMessage SerializeFloorItemInventory()
         {
-            var floor = _floorItems.Values.ToList();
-            var wall = _wallItems.Values.ToList();
-            var i = (floor.Count + SongDisks.Count + wall.Count);
+
+            var items = GetItems;
+            var i = items.Count() + SongDisks.Count;
 
             if (i > 2800)
                 _mClient.SendMessage(StaticMessage.AdviceMaxItems);
@@ -611,27 +618,19 @@ namespace Oblivion.HabboHotel.Users.Inventory
             serverMessage.AppendInteger(i > 2800 ? 2800 : i);
 
             var inc = 0;
-
-            foreach (var userItem in floor)
+           
+            foreach (var userItem in GetItems)
             {
                 if (inc == 3500)
                     return serverMessage;
 
                 inc++;
 
-                userItem.SerializeFloor(serverMessage, true);
+                if (userItem.IsWallItem)
+                    userItem.SerializeWall(serverMessage, true);
+                else
+                    userItem.SerializeFloor(serverMessage, true);
             }
-            floor.Clear();
-            foreach (var userItem in wall)
-            {
-                if (inc == 3500)
-                    return serverMessage;
-
-                inc++;
-
-                userItem.SerializeWall(serverMessage, true);
-            }
-            wall.Clear();
             foreach (UserItem userItem in SongDisks.Values)
             {
                 if (inc == 3500)
@@ -644,7 +643,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             return serverMessage;
         }
-        
+
         /// <summary>
         ///     Add item to inventory
         /// </summary>
@@ -678,11 +677,10 @@ namespace Oblivion.HabboHotel.Users.Inventory
             {
                 serverMessage.AppendString(string.Empty);
                 serverMessage.AppendInteger(0);
-
             }
             return serverMessage;
         }
-        
+
 
         /// <summary>
         ///     Serializes the pet inventory.
@@ -695,6 +693,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             serverMessage.AppendInteger(1);
             var list = _inventoryPets.Values.Cast<Pet>().ToList();
             serverMessage.AppendInteger(list.Count);
+            /* TODO CHECK */
             foreach (var current in list)
                 current.SerializeInventory(serverMessage);
             return serverMessage;
@@ -711,6 +710,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             var list = _inventoryBots.Values.OfType<RoomBot>().ToList();
             serverMessage.AppendInteger(list.Count);
+            /* TODO CHECK */
             foreach (var current in list)
             {
                 serverMessage.AppendInteger(current.BotId);
@@ -736,19 +736,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         ///     Adds the item.
         /// </summary>
         /// <param name="item">The item.</param>
-        internal void AddItem(RoomItem item)
-        {
-            AddNewItem(item.Id, item.BaseItem, item.ExtraData, item.GroupId, true, true, 0, 0, item.SongCode);
-        }
-
-        /// <summary>
-        ///     Runs the cycle update.
-        /// </summary>
-        internal void RunCycleUpdate()
-        {
-            _isUpdated = true;
-            RunDbUpdate();
-        }
+        internal void AddItem(RoomItem item) => AddNewItem(item.Id, item.BaseItem, item.ExtraData, item.GroupId, true, true, 0, 0, item.SongCode);
 
         /// <summary>
         ///     Runs the database update.
@@ -760,13 +748,16 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 if (_mRemovedItems.Count <= 0 && _mAddedItems.Count <= 0 && _inventoryPets.Count <= 0)
                     return;
 
-                var queryChunk = new QueryChunk();
 
                 if (_mAddedItems.Count > 0)
                 {
-                    foreach (var itemId in _mAddedItems)
-                        queryChunk.AddQuery($"UPDATE items_rooms SET user_id='{UserId}', room_id='0' WHERE id='{itemId}'");
-
+                    using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    {
+                        /* TODO CHECK */
+                        foreach (var itemId in _mAddedItems)
+                            dbClient.RunFastQuery(
+                                $"UPDATE items_rooms SET user_id='{UserId}', room_id='0' WHERE id='{itemId}'");
+                    }
                     _mAddedItems.Clear();
                 }
 
@@ -774,6 +765,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 {
                     try
                     {
+                        /* TODO CHECK */
                         foreach (var itemId in _mRemovedItems)
                         {
                             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -791,6 +783,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     _mRemovedItems.Clear();
                 }
 
+                var queryChunk = new QueryChunk();
+
                 foreach (Pet current in _inventoryPets.Values)
                 {
                     if (current.DbState == DatabaseUpdateState.NeedsUpdate)
@@ -799,9 +793,17 @@ namespace Oblivion.HabboHotel.Users.Inventory
                         queryChunk.AddParameter($"{current.PetId}race", current.Race);
                         queryChunk.AddParameter($"{current.PetId}color", current.Color);
 
-                        queryChunk.AddQuery(string.Concat("UPDATE bots SET room_id = ", current.RoomId, ", name = @", current.PetId, "name, x = ", current.X, ", Y = ", current.Y, ", Z = ", current.Z, " WHERE id = ", current.PetId));
+                        queryChunk.AddQuery(string.Concat("UPDATE bots SET room_id = ", current.RoomId, ", name = @",
+                            current.PetId, "name, x = ", current.X, ", Y = ", current.Y, ", Z = ", current.Z,
+                            " WHERE id = ", current.PetId));
 
-                        queryChunk.AddQuery(string.Concat("UPDATE pets_data SET race = @", current.PetId, "race, color = @", current.PetId, "color, type = ", current.Type, ", experience = ", current.Experience, ", energy = ", current.Energy, ", nutrition = ", current.Nutrition, ", respect = ", current.Respect, ", createstamp = '", current.CreationStamp, "', lasthealth_stamp = ", Oblivion.DateTimeToUnix(current.LastHealth), ", untilgrown_stamp = ", Oblivion.DateTimeToUnix(current.UntilGrown), " WHERE id = ", current.PetId));
+                        queryChunk.AddQuery(string.Concat("UPDATE pets_data SET race = @", current.PetId,
+                            "race, color = @", current.PetId, "color, type = ", current.Type, ", experience = ",
+                            current.Experience, ", energy = ", current.Energy, ", nutrition = ", current.Nutrition,
+                            ", respect = ", current.Respect, ", createstamp = '", current.CreationStamp,
+                            "', lasthealth_stamp = ", Oblivion.DateTimeToUnix(current.LastHealth),
+                            ", untilgrown_stamp = ", Oblivion.DateTimeToUnix(current.UntilGrown), " WHERE id = ",
+                            current.PetId));
                     }
 
                     current.DbState = DatabaseUpdateState.Updated;
@@ -816,40 +818,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
             }
         }
 
-        /// <summary>
-        ///     Serializes the music discs.
-        /// </summary>
-        /// <returns>ServerMessage.</returns>
-        internal ServerMessage SerializeMusicDiscs()
-        {
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SongsLibraryMessageComposer"));
-
-            serverMessage.AppendInteger(SongDisks.Count);
-
-            foreach (var current in from x in _floorItems.Values where x.BaseItem.InteractionType == Interaction.MusicDisc select x)
-            {
-                uint.TryParse(current.ExtraData, out var i);
-
-                serverMessage.AppendInteger(current.Id);
-                serverMessage.AppendInteger(i);
-            }
-
-            return serverMessage;
-        }
-
-        /// <summary>
-        ///     Gets the pets.
-        /// </summary>
-        /// <returns>List&lt;Pet&gt;.</returns>
-        internal List<Pet> GetPets() => _inventoryPets.Values.Cast<Pet>().ToList();
-
-        /// <summary>
-        ///     Sends the floor inventory update.
-        /// </summary>
-        internal void SendFloorInventoryUpdate()
-        {
-//            _mClient.SendMessage(SerializeFloorItemInventory());
-        }
 
         /// <summary>
         ///     Sends the new items.
@@ -871,7 +839,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// </summary>
         /// <param name="itemId">The item identifier.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        private bool UserHoldsItem(uint itemId) => SongDisks.Contains(itemId) || _floorItems.ContainsKey(itemId) || _wallItems.ContainsKey(itemId);
+        private bool UserHoldsItem(uint itemId) => SongDisks.Contains(itemId) || _floorItems.ContainsKey(itemId) ||
+                                                   _wallItems.ContainsKey(itemId);
 
         /// <summary>
         ///     Gets the client.

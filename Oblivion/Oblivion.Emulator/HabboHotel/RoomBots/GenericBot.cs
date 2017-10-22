@@ -203,7 +203,7 @@ namespace Oblivion.HabboHotel.RoomBots
                 case "sirva":
                     if (GetRoom().CheckRights(user.GetClient()))
                     {
-                        foreach (var current in GetRoom().GetRoomUserManager().GetRoomUsers())
+                        /* TODO CHECK */ foreach (var current in GetRoom().GetRoomUserManager().GetRoomUsers())
                             current.CarryItem(Random.Next(1, 38));
                         GetRoomUser().Chat(null, "Worth. Agora você tem algo para devorar todos.", false, 0);
                         return;

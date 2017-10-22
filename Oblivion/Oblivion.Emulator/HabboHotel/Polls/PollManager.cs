@@ -49,7 +49,7 @@ namespace Oblivion.HabboHotel.Polls
             if (table == null)
                 return;
 
-            foreach (DataRow dataRow in table.Rows)
+            /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
             {
                 var num = uint.Parse(dataRow["id"].ToString());
 
@@ -73,7 +73,7 @@ namespace Oblivion.HabboHotel.Polls
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool TryGetPoll(uint roomId, out Poll poll)
         {
-            foreach (var current in Polls.Values.Where(current => current.RoomId == roomId))
+            /* TODO CHECK */ foreach (var current in Polls.Values.Where(current => current.RoomId == roomId))
             {
                 poll = current;
                 return true;

@@ -100,7 +100,7 @@ namespace Oblivion.HabboHotel.Navigators
                 case "hotel_view":
                 {
                     SerializeSearchResultListStatics("popular", false, message, session);
-                    foreach (FlatCat flat in Oblivion.GetGame().GetNavigator().PrivateCategories.Values)
+                    /* TODO CHECK */ foreach (FlatCat flat in Oblivion.GetGame().GetNavigator().PrivateCategories.Values)
                         SerializeSearchResultListFlatcats(flat.Id, false, message);
                     break;
                 }
@@ -115,7 +115,7 @@ namespace Oblivion.HabboHotel.Navigators
                 }
                 case "roomads_view":
                 {
-                    foreach (FlatCat flat in Oblivion.GetGame().GetNavigator().PrivateCategories.Values)
+                    /* TODO CHECK */ foreach (FlatCat flat in Oblivion.GetGame().GetNavigator().PrivateCategories.Values)
                         SerializePromotionsResultListFlatcats(flat.Id, false, message);
                     SerializeSearchResultListStatics("top_promotions", false, message, session);
                     break;
@@ -140,7 +140,7 @@ namespace Oblivion.HabboHotel.Navigators
                 {
                     var i = 0;
                     message.StartArray();
-                    foreach (var data in session.GetHabbo().Data.Rooms.Where(data => data != null))
+                    /* TODO CHECK */ foreach (var data in session.GetHabbo().Data.Rooms.Where(data => data != null))
                     {
                         data.Serialize(message);
                         message.SaveArray();
@@ -161,7 +161,7 @@ namespace Oblivion.HabboHotel.Navigators
                     message.AppendInteger(session.GetHabbo().FavoriteRooms.Count > (direct ? 40 : 8)
                         ? (direct ? 40 : 8)
                         : session.GetHabbo().FavoriteRooms.Count);
-                    foreach (
+                    /* TODO CHECK */ foreach (
                         var data in
                             session.GetHabbo()
                                 .FavoriteRooms.Select(
@@ -190,7 +190,7 @@ namespace Oblivion.HabboHotel.Navigators
                             .Take((direct ? 40 : 8))
                             .ToList();
                     message.AppendInteger(roomsFriends.Count);
-                    foreach (var data in roomsFriends.Where(data => data != null))
+                    /* TODO CHECK */ foreach (var data in roomsFriends.Where(data => data != null))
                     {
                         data.Serialize(message);
 
@@ -214,7 +214,7 @@ namespace Oblivion.HabboHotel.Navigators
                             break;
                         }
                         message.AppendInteger(rooms.Length);
-                        foreach (var room in rooms) room.Key.Serialize(message);
+                        /* TODO CHECK */ foreach (var room in rooms) room.Key.Serialize(message);
                     }
                     catch (Exception e)
                     {
@@ -229,7 +229,7 @@ namespace Oblivion.HabboHotel.Navigators
                     {
                         rooms = Oblivion.GetGame().GetRoomManager().GetEventRooms();
                         message.AppendInteger(rooms.Length);
-                        foreach (var room in rooms) room.Key.Serialize(message);
+                        /* TODO CHECK */ foreach (var room in rooms) room.Key.Serialize(message);
                     }
                     catch
                     {
@@ -241,7 +241,7 @@ namespace Oblivion.HabboHotel.Navigators
                 {
                     var i = 0;
                     message.StartArray();
-                    foreach (var data in from xGroupId in session.GetHabbo().MyGroups
+                    /* TODO CHECK */ foreach (var data in from xGroupId in session.GetHabbo().MyGroups
                         select Oblivion.GetGame().GetGroupManager().GetGroup(xGroupId)
                         into xGroup
                         where xGroup != null
@@ -261,7 +261,7 @@ namespace Oblivion.HabboHotel.Navigators
                 {
                     var i = 0;
                     message.StartArray();
-                    foreach (var roomData in session.GetHabbo()
+                    /* TODO CHECK */ foreach (var roomData in session.GetHabbo()
                         .RecentlyVisitedRooms.Select(
                             roomId => Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId))
                         .Where(roomData => roomData != null))
@@ -322,20 +322,20 @@ namespace Oblivion.HabboHotel.Navigators
             var rooms = new List<RoomData>();
             if (!containsOwner)
             {
-                var initForeach = false;
+                var initforeach = false;
                 try
                 {
                     if (Oblivion.GetGame().GetRoomManager().GetActiveRooms() != null &&
                         Oblivion.GetGame().GetRoomManager().GetActiveRooms().Any())
-                        initForeach = true;
+                        initforeach = true;
                 }
                 catch
                 {
-                    initForeach = false;
+                    initforeach = false;
                 }
-                if (initForeach)
+                if (initforeach)
                 {
-                    foreach (var rms in Oblivion.GetGame().GetRoomManager().GetActiveRooms())
+                    /* TODO CHECK */ foreach (var rms in Oblivion.GetGame().GetRoomManager().GetActiveRooms())
                     {
                         if (rms.Key.Name.ToLower().Contains(searchQuery.ToLower()) && rooms.Count <= 50)
                             rooms.Add(rms.Key);
@@ -372,7 +372,7 @@ namespace Oblivion.HabboHotel.Navigators
                 }
                 if (dTable != null)
                 {
-                    foreach (
+                    /* TODO CHECK */ foreach (
                         var rData in
                             dTable.Rows.Cast<DataRow>()
                                 .Select(
@@ -383,7 +383,7 @@ namespace Oblivion.HabboHotel.Navigators
                 }
             }
             message.AppendInteger(rooms.Count);
-            foreach (var data in rooms.Where(data => data != null)) data.Serialize(message);
+            /* TODO CHECK */ foreach (var data in rooms.Where(data => data != null)) data.Serialize(message);
         }
     }
 }

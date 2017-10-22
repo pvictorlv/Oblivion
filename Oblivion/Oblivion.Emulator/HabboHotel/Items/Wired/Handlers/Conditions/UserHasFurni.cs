@@ -61,11 +61,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
             var itemsIdsArray = OtherString.Split(';');
 
-            foreach (var itemIdStr in itemsIdsArray)
+            /* TODO CHECK */ foreach (var itemIdStr in itemsIdsArray)
             {
-                uint itemId;
-
-                if (!uint.TryParse(itemIdStr, out itemId))
+                if (!uint.TryParse(itemIdStr, out var itemId))
                     continue;
 
                 if (roomUser.GetClient().GetHabbo().GetInventoryComponent().HasBaseItem(itemId))

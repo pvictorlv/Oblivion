@@ -315,6 +315,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
             var randomNumber = new Random().Next(0, WalkableList.Count);
             var num = 0;
+            /* TODO CHECK */
             foreach (var current in WalkableList)
             {
                 if (num == randomNumber)
@@ -410,6 +411,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
                 if (checkLines)
                 {
+                    /* TODO CHECK */
                     foreach (var roomItems in _room.GetRoomItemHandler().FloorItems.Values.ToList())
                     {
                         if (roomItems.X > Model.MapSizeX && roomItems.X > xMap)
@@ -503,6 +505,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 }
 
 
+                /* TODO CHECK */
                 foreach (var item in _room.GetRoomItemHandler().FloorItems.Values.ToList())
                 {
                     if (!AddItemToMap(item))
@@ -511,6 +514,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
                 if (!_room.RoomData.AllowWalkThrough)
                 {
+                    /* TODO CHECK */
                     foreach (var current in _room.GetRoomUserManager().UserList.Values)
                     {
                         current.SqState = GameMap[current.X, current.Y];
@@ -593,6 +597,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             var returnItems = new List<RoomItem>();
             double heighest = -1;
 
+            /* TODO CHECK */
             foreach (var i in items)
             {
                 if (i.TotalHeight > heighest)
@@ -622,33 +627,28 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             if (_room.GotSoccer())
                 _room.GetSoccer().OnGateRemove(item);
             var result = false;
+            var dictionary = new List<Point>();
             foreach (var current in item.GetCoords)
             {
                 if (RemoveCoordinatedItem(item, current))
                     result = true;
-            }
-            var dictionary = new Dictionary<Point, List<RoomItem>>();
-            foreach (var current2 in item.GetCoords)
-            {
-                if (CoordinatedItems.TryGetValue(current2, out List<RoomItem> value))
+                if (CoordinatedItems.TryGetValue(current, out var value))
                 {
-                    if (!dictionary.ContainsKey(current2))
-                        dictionary.Add(current2, value);
+                    if (!dictionary.Contains(current))
+                    {
+                        dictionary.Add(current);
+                        foreach (var current3 in value)
+                        {
+                            if (current3 == null) continue;
+                            ConstructMapForItem(current3, current);
+                        }
+                    }
                 }
-                SetDefaultValue(current2.X, current2.Y);
-            }
-            foreach (var it in dictionary)
-            {
-                if (it.Value == null) continue;
-                foreach (var current3 in it.Value)
-                {
-                    if (current3 == null) continue;
-                    ConstructMapForItem(current3, it.Key);
-                }
+                SetDefaultValue(current.X, current.Y);
             }
             if (GuildGates.ContainsKey(item.Coordinate))
                 GuildGates.Remove(item.Coordinate);
-            _room.GetRoomItemHandler().OnHeightMapUpdate(dictionary.Keys);
+            _room.GetRoomItemHandler().OnHeightMapUpdate(dictionary);
             dictionary.Clear();
 
             return result;
@@ -731,6 +731,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             }
             if (item.GetBaseItem().Type != 's')
                 return true;
+            
             foreach (var coord in item.GetCoords.Select(current => new Point(current.X, current.Y)))
             {
                 AddCoordinatedItem(item, coord);
@@ -1104,6 +1105,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 double[] highestStack = {Model.SqFloorHeight[x][y]};
                 var deductable = 0.0;
 
+                /* TODO CHECK */
                 foreach (
                     var item in
                     itemsOnSquare.Where(
@@ -1228,37 +1230,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             _room = null;
             StaticModel = null;
         }
-
-        /// <summary>
-        ///     Gets the highest item for square.
-        /// </summary>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
-        /// <param name="z">The z.</param>
-        /// <param name="exception">The exception.</param>
-        /// <returns>RoomItem.</returns>
-        internal RoomItem GetHighestItemForSquare(int x, int y, out double z, RoomItem exception = null)
-        {
-            RoomItem roomItem = null;
-            var num = -1.0;
-            var num2 = 0.0;
-            foreach (var current in GetRoomItemForSquare(x, y))
-            {
-                if (current.Z > num)
-                {
-                    num = current.Z;
-                    num2 = current.GetBaseItem().Height;
-                    roomItem = current;
-                }
-                if (exception == null || exception != roomItem)
-                    continue;
-                num = -1.0;
-                num2 = 0.0;
-                roomItem = null;
-            }
-            z = num + num2;
-            return roomItem;
-        }
+        
 
         /// <summary>
         ///     Gets the new heightmap.

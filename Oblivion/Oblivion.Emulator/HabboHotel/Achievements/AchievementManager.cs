@@ -51,7 +51,7 @@ namespace Oblivion.HabboHotel.Achievements
             AchievementDataCached = new ServerMessage(LibraryParser.OutgoingRequest("SendAchievementsRequirementsMessageComposer"));
             AchievementDataCached.AppendInteger(Achievements.Count);
 
-            foreach (var ach in Achievements.Values)
+            /* TODO CHECK */ foreach (var ach in Achievements.Values)
             {
                 AchievementDataCached.AppendString(ach.GroupName.Replace("ACH_", string.Empty));
                 AchievementDataCached.AppendInteger(ach.Levels.Count);

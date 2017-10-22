@@ -78,7 +78,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 currentRoom.RoomData.Owner = user.UserName;
 
                 //Change Item Owners
-                foreach (var CurrentItem in currentRoom.GetRoomItemHandler().GetWallAndFloor)
+                /* TODO CHECK */ foreach (var CurrentItem in currentRoom.GetRoomItemHandler().GetWallAndFloor)
                 {
                     CurrentItem.UserId = user.Id;
                 }
@@ -116,7 +116,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
               
                 var UsersToReturn = currentRoom.GetRoomUserManager().GetRoomUsers();
                 Oblivion.GetGame().GetRoomManager().UnloadRoom(currentRoom, "Room sold");
-                foreach (var User in UsersToReturn.Where(User => User?.GetClient() != null))
+                /* TODO CHECK */ foreach (var User in UsersToReturn.Where(User => User?.GetClient() != null))
                 {
                     var forwardToRoom = new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
                     forwardToRoom.AppendInteger(currentRoom.RoomId);

@@ -75,7 +75,7 @@ namespace Oblivion.HabboHotel.Events
             WorkUpdate();
             SortCollection();
 
-            foreach (var current in _eventCategories.Values)
+            /* TODO CHECK */ foreach (var current in _eventCategories.Values)
                 current.OnCycle();
         }
 

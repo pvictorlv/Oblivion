@@ -107,7 +107,7 @@ namespace Oblivion.HabboHotel.Pets
             _table = dbClient.GetTable();
             _petCommands = new Dictionary<string, PetCommand>();
 
-            foreach (DataRow row in _table.Rows)
+            /* TODO CHECK */ foreach (DataRow row in _table.Rows)
                 _petCommands.Add(row[1].ToString(),  new PetCommand(Convert.ToInt32(row[0].ToString()), row[1].ToString()));
         }
 

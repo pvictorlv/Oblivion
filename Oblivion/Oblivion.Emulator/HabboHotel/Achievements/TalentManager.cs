@@ -29,7 +29,7 @@ namespace Oblivion.HabboHotel.Achievements
 
             DataTable table = dbClient.GetTable();
 
-            foreach (Talent talent in from DataRow dataRow in table.Rows select new Talent(
+            /* TODO CHECK */ foreach (Talent talent in from DataRow dataRow in table.Rows select new Talent(
                 (int)dataRow["id"], 
                 (string)dataRow["type"], 
                 (int)dataRow["parent_category"],
@@ -124,7 +124,7 @@ namespace Oblivion.HabboHotel.Achievements
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool TryGetTalent(string achGroup, out Talent talent)
         {
-            foreach (var current in Talents.Values.Where(current => current.AchievementGroup == achGroup))
+            /* TODO CHECK */ foreach (var current in Talents.Values.Where(current => current.AchievementGroup == achGroup))
             {
                 talent = current;
                 return true;

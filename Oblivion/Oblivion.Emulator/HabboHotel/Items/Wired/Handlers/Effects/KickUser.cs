@@ -106,7 +106,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
                 lock (_mUsers)
                 {
-                    foreach (var user in _mUsers)
+                    /* TODO CHECK */ foreach (var user in _mUsers)
                         Room.GetRoomUserManager().RemoveUserFromRoom(user.GetClient(), true, false);
                 }
 

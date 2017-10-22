@@ -151,11 +151,11 @@ namespace Oblivion.Collections
             }
         }
 
-        public void ForEach(Action<T> action)
+        public void Foreach(Action<T> action)
         {
             using (_lock.WriteLock())
             {
-                foreach (var item in _inner)
+               foreach (var item in _inner)
                     action(item);
             }
         }

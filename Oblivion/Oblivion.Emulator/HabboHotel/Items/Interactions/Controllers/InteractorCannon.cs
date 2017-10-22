@@ -103,7 +103,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             var toRemove = new HashSet<RoomUser>();
 
-            foreach (
+            /* TODO CHECK */ foreach (
                 var user in
                     _mCoords.SelectMany(
                         coord =>
@@ -118,7 +118,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 toRemove.Add(user);
             }
 
-            foreach (var user in toRemove)
+            /* TODO CHECK */ foreach (var user in toRemove)
             {
                 room.GetRoomUserManager().RemoveUserFromRoom(user.GetClient(), true, false);
                 user.GetClient().SendMessage(serverMessage);

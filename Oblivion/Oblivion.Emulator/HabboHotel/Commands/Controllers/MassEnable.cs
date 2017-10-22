@@ -27,7 +27,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(session.GetHabbo().CurrentRoomId);
             room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
-            foreach (var user in room.GetRoomUserManager().GetRoomUsers().Where(user => !user.RidingHorse))
+            /* TODO CHECK */ foreach (var user in room.GetRoomUserManager().GetRoomUsers().Where(user => !user.RidingHorse))
                 user.ApplyEffect(effectId);
             return true;
         }

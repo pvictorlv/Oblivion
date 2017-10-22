@@ -48,7 +48,7 @@ namespace Oblivion.HabboHotel.Roles
             var table = dbClient.GetTable();
             if (table != null)
             {
-                foreach (DataRow dataRow in table.Rows)
+                /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
                 {
                     if (!_cmdRights.ContainsKey((string) dataRow[0]))
                     {
@@ -56,7 +56,7 @@ namespace Oblivion.HabboHotel.Roles
                     }
                     else
                     {
-                        Logging.LogException(string.Format("Duplicate Fuse Command \"{0}\" found", dataRow[0]));
+                        Logging.LogException($"Duplicate Fuse Command \"{dataRow[0]}\" found");
                     }
                 }
             }
@@ -66,7 +66,7 @@ namespace Oblivion.HabboHotel.Roles
             {
                 return;
             }
-            foreach (DataRow dataRow2 in table2.Rows)
+            /* TODO CHECK */ foreach (DataRow dataRow2 in table2.Rows)
             {
                 if ((int) dataRow2[3] == 0)
                 {
@@ -76,7 +76,7 @@ namespace Oblivion.HabboHotel.Roles
                     }
                     else
                     {
-                        Logging.LogException(string.Format("Unknown Subscription Fuse \"{0}\" found", dataRow2[0]));
+                        Logging.LogException($"Unknown Subscription Fuse \"{dataRow2[0]}\" found");
                     }
                 }
                 else
@@ -87,7 +87,7 @@ namespace Oblivion.HabboHotel.Roles
                     }
                     else
                     {
-                        Logging.LogException(string.Format("Unknown fuse type \"{0}\" found", dataRow2[3]));
+                        Logging.LogException($"Unknown fuse type \"{dataRow2[3]}\" found");
                     }
                 }
             }
@@ -145,7 +145,7 @@ namespace Oblivion.HabboHotel.Roles
         internal List<string> GetRightsForRank(uint rankId)
         {
             var list = new List<string>();
-            foreach (var current in _rights.Where(current => rankId >= current.Value && !list.Contains(current.Key)))
+            /* TODO CHECK */ foreach (var current in _rights.Where(current => rankId >= current.Value && !list.Contains(current.Key)))
             {
                 list.Add(current.Key);
             }

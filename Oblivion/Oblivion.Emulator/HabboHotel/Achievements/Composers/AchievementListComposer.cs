@@ -22,7 +22,7 @@ namespace Oblivion.HabboHotel.Achievements.Composers
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("AchievementListMessageComposer"));
             serverMessage.AppendInteger(achievements.Count);
 
-            foreach (var achievement in achievements)
+            /* TODO CHECK */ foreach (var achievement in achievements)
             {
                 var achievementData = session.GetHabbo().GetAchievementData(achievement.GroupName);
 

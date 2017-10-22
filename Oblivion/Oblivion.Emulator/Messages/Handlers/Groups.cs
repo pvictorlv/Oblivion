@@ -30,7 +30,7 @@ namespace Oblivion.Messages.Handlers
             Response.AppendInteger(10);
             Response.AppendInteger(list.Count);
 
-            foreach (RoomData current2 in list)
+            /* TODO CHECK */ foreach (RoomData current2 in list)
                 NewMethod(current2);
 
             Response.AppendInteger(5);
@@ -59,33 +59,33 @@ namespace Oblivion.Messages.Handlers
         {
             Response.Init(LibraryParser.OutgoingRequest("GroupPurchasePartsMessageComposer"));
             Response.AppendInteger(Oblivion.GetGame().GetGroupManager().Bases.Count);
-            foreach (GroupBases current in Oblivion.GetGame().GetGroupManager().Bases)
+            /* TODO CHECK */ foreach (GroupBases current in Oblivion.GetGame().GetGroupManager().Bases)
             {
                 Response.AppendInteger(current.Id);
                 Response.AppendString(current.Value1);
                 Response.AppendString(current.Value2);
             }
             Response.AppendInteger(Oblivion.GetGame().GetGroupManager().Symbols.Count);
-            foreach (GroupSymbols current2 in Oblivion.GetGame().GetGroupManager().Symbols)
+            /* TODO CHECK */ foreach (GroupSymbols current2 in Oblivion.GetGame().GetGroupManager().Symbols)
             {
                 Response.AppendInteger(current2.Id);
                 Response.AppendString(current2.Value1);
                 Response.AppendString(current2.Value2);
             }
             Response.AppendInteger(Oblivion.GetGame().GetGroupManager().BaseColours.Count);
-            foreach (GroupBaseColours current3 in Oblivion.GetGame().GetGroupManager().BaseColours)
+            /* TODO CHECK */ foreach (GroupBaseColours current3 in Oblivion.GetGame().GetGroupManager().BaseColours)
             {
                 Response.AppendInteger(current3.Id);
                 Response.AppendString(current3.Colour);
             }
             Response.AppendInteger(Oblivion.GetGame().GetGroupManager().SymbolColours.Count);
-            foreach (GroupSymbolColours current4 in Oblivion.GetGame().GetGroupManager().SymbolColours.Values)
+            /* TODO CHECK */ foreach (GroupSymbolColours current4 in Oblivion.GetGame().GetGroupManager().SymbolColours.Values)
             {
                 Response.AppendInteger(current4.Id);
                 Response.AppendString(current4.Colour);
             }
             Response.AppendInteger(Oblivion.GetGame().GetGroupManager().BackGroundColours.Count);
-            foreach (GroupBackGroundColours current5 in Oblivion.GetGame().GetGroupManager().BackGroundColours.Values)
+            /* TODO CHECK */ foreach (GroupBackGroundColours current5 in Oblivion.GetGame().GetGroupManager().BackGroundColours.Values)
             {
                 Response.AppendInteger(current5.Id);
                 Response.AppendString(current5.Colour);
@@ -155,7 +155,7 @@ namespace Oblivion.Messages.Handlers
 
                 serverMessage.AppendInteger(CurrentLoadingRoom.LoadedGroups.Count);
 
-                foreach (var current in CurrentLoadingRoom.LoadedGroups)
+                /* TODO CHECK */ foreach (var current in CurrentLoadingRoom.LoadedGroups)
                 {
                     serverMessage.AppendInteger(current.Key);
                     serverMessage.AppendString(current.Value);
@@ -547,7 +547,7 @@ namespace Oblivion.Messages.Handlers
                     Response.Init(LibraryParser.OutgoingRequest("RoomGroupMessageComposer"));
                     Response.AppendInteger(Session.GetHabbo().CurrentRoom.LoadedGroups.Count);
 
-                    foreach (KeyValuePair<uint, string> current in Session.GetHabbo().CurrentRoom.LoadedGroups)
+                    /* TODO CHECK */ foreach (KeyValuePair<uint, string> current in Session.GetHabbo().CurrentRoom.LoadedGroups)
                     {
                         Response.AppendInteger(current.Key);
                         Response.AppendString(current.Value);
@@ -893,7 +893,7 @@ namespace Oblivion.Messages.Handlers
 
                 int indx = 0;
 
-                foreach (GroupForumPost post in posts)
+                /* TODO CHECK */ foreach (GroupForumPost post in posts)
                 {
                     messageBuffer.AppendInteger(indx++ - 1);
                     messageBuffer.AppendInteger(indx - 1);
@@ -945,7 +945,7 @@ namespace Oblivion.Messages.Handlers
                 message.AppendInteger(startIndex);
                 message.AppendInteger(threadCount);
 
-                foreach (GroupForumPost thread in threads)
+                /* TODO CHECK */ foreach (GroupForumPost thread in threads)
                 {
                     message.AppendInteger(thread.Id);
                     message.AppendInteger(thread.PosterId);
@@ -1024,7 +1024,7 @@ namespace Oblivion.Messages.Handlers
 
                         message.AppendInteger(table.Rows.Count);
 
-                        foreach (Guild theGroup in groupList)
+                        /* TODO CHECK */ foreach (Guild theGroup in groupList)
                             theGroup.SerializeForumRoot(message);
 
                         Session.SendMessage(message);
@@ -1044,7 +1044,7 @@ namespace Oblivion.Messages.Handlers
                     message.AppendInteger(startIndex);
                     message.AppendInteger(groupList.Count);
 
-                    foreach (Guild theGroup in groupList)
+                    /* TODO CHECK */ foreach (Guild theGroup in groupList)
                         theGroup.SerializeForumRoot(message);
 
                     Session.SendMessage(message);
@@ -1097,7 +1097,7 @@ namespace Oblivion.Messages.Handlers
             var num2 = 0;
             var array2 = array;
 
-            foreach (var text in array2)
+            /* TODO CHECK */ foreach (var text in array2)
             {
                 Response.AppendInteger((text.Length >= 6)
                     ? uint.Parse(text.Substring(0, 3))
@@ -1193,7 +1193,7 @@ namespace Oblivion.Messages.Handlers
                     Response.Init(LibraryParser.OutgoingRequest("RoomGroupMessageComposer"));
                     Response.AppendInteger(room.LoadedGroups.Count);
 
-                    foreach (KeyValuePair<uint, string> current2 in room.LoadedGroups)
+                    /* TODO CHECK */ foreach (KeyValuePair<uint, string> current2 in room.LoadedGroups)
                     {
                         Response.AppendInteger(current2.Key);
                         Response.AppendString(current2.Value);
@@ -1217,7 +1217,7 @@ namespace Oblivion.Messages.Handlers
                         Response.Init(LibraryParser.OutgoingRequest("RoomGroupMessageComposer"));
                         Response.AppendInteger(Session.GetHabbo().CurrentRoom.LoadedGroups.Count);
 
-                        foreach (KeyValuePair<uint, string> current in Session.GetHabbo().CurrentRoom.LoadedGroups)
+                        /* TODO CHECK */ foreach (KeyValuePair<uint, string> current in Session.GetHabbo().CurrentRoom.LoadedGroups)
                         {
                             Response.AppendInteger(current.Key);
                             Response.AppendString(current.Value);
@@ -1282,7 +1282,7 @@ namespace Oblivion.Messages.Handlers
 
             if (room != null)
             {
-                foreach (RoomUser current in room.GetRoomUserManager().GetRoomUsers())
+                /* TODO CHECK */ foreach (RoomUser current in room.GetRoomUserManager().GetRoomUsers())
                 {
                     if (room.RoomData.OwnerId != current.UserId && !theGroup.Admins.ContainsKey(current.UserId) &&
                         theGroup.Members.ContainsKey(current.UserId))
@@ -1492,7 +1492,7 @@ namespace Oblivion.Messages.Handlers
                 Session.SendNotif(Oblivion.GetLanguage().GetVar("command_group_has_no_room"));
             else
             {
-                foreach (var user in group.Members.Values)
+                /* TODO CHECK */ foreach (var user in group.Members.Values)
                 {
                     var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(user.Id);
 

@@ -49,7 +49,7 @@ namespace Oblivion.Connection.Connection
                return false;
             }
 
-            foreach (var str in BannedList)
+            /* TODO CHECK */ foreach (var str in BannedList)
             {
                 if (str?.Target == null) continue;
 

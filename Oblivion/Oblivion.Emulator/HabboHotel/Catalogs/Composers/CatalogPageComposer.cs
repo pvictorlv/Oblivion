@@ -43,7 +43,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
             message.AppendInteger(0);
             message.AppendInteger(CalcTreeSize(session, pages, -1));
 
-            foreach (var cat in sortedPages)
+            /* TODO CHECK */ foreach (var cat in sortedPages)
             {
                 message.AppendBool(cat.Visible);
                 message.AppendInteger(cat.IconImage);
@@ -52,7 +52,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                 message.AppendString(cat.Caption);
                 message.AppendInteger(cat.FlatOffers.Count);
 
-                foreach (var i in cat.FlatOffers.Keys)
+                /* TODO CHECK */ foreach (var i in cat.FlatOffers.Keys)
                     message.AppendInteger(i);
                 message.AppendInteger(CalcTreeSize(session, pages, (int) cat.PageId));
 
@@ -60,7 +60,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                 var sortedSubPages =
                     pages.Where(x => x.ParentId == cat.PageId && x.MinRank <= rank).OrderBy(x => x.OrderNum);
 
-                foreach (var child in sortedSubPages)
+                /* TODO CHECK */ foreach (var child in sortedSubPages)
                 {
                     message.AppendBool(child.Visible);
                     message.AppendInteger(child.IconImage);
@@ -69,11 +69,11 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                     message.AppendString(child.Caption);
                     message.AppendInteger(child.FlatOffers.Count);
 
-                    foreach (var i2 in child.FlatOffers.Keys)
+                    /* TODO CHECK */ foreach (var i2 in child.FlatOffers.Keys)
                         message.AppendInteger(i2);
 
                     message.AppendInteger(CalcTreeSize(session, pages, (int) child.PageId));
-                    foreach (var subCat in pages.Where(baby => baby.ParentId == child.PageId && baby.MinRank <= rank))
+                    /* TODO CHECK */ foreach (var subCat in pages.Where(baby => baby.ParentId == child.PageId && baby.MinRank <= rank))
                     {
                         message.AppendBool(subCat.Visible);
                         message.AppendInteger(subCat.IconImage);
@@ -82,7 +82,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                         message.AppendString(subCat.Caption);
                         message.AppendInteger(subCat.FlatOffers.Count);
 
-                        foreach (var i2 in subCat.FlatOffers.Keys)
+                        /* TODO CHECK */ foreach (var i2 in subCat.FlatOffers.Keys)
                             message.AppendInteger(i2);
 
                         message.AppendInteger(0);
@@ -114,19 +114,19 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
             message.AppendString(mode);
             message.AppendString(page.Layout);
             message.AppendInteger(page.PageString1.Count);
-            foreach (var str in page.PageString1)
+            /* TODO CHECK */ foreach (var str in page.PageString1)
             {
                 message.AppendString(str);
             }
             message.AppendInteger(page.PageString2.Count);
-            foreach (var str in page.PageString2)
+            /* TODO CHECK */ foreach (var str in page.PageString2)
             {
                 message.AppendString(str);
             }
             if (!page.Layout.Equals("frontpage") && !page.Layout.Equals("frontpage") && !page.Layout.Equals("recycler"))
             {
                 message.AppendInteger(page.Items.Count);
-                foreach (CatalogItem item in page.Items.Values)
+                /* TODO CHECK */ foreach (CatalogItem item in page.Items.Values)
                     ComposeItem(item, message);
             }
             else
@@ -141,7 +141,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
             {
                 List<DataRow> list = Oblivion.GetGame().GetCatalog().IndexText;
                 message.AppendInteger(list.Count); // count
-                foreach (var Catalog in list)
+                /* TODO CHECK */ foreach (var Catalog in list)
                 {
                     message.AppendInteger(1); // id
                     message.AppendString(Convert.ToString(Catalog["title"])); // name
@@ -167,7 +167,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
 
             message.AppendInteger(habboClubItems.Count);
 
-            foreach (var item in habboClubItems)
+            /* TODO CHECK */ foreach (var item in habboClubItems)
             {
                 message.AppendInteger(item.Id);
                 message.AppendString(item.Name);
@@ -248,7 +248,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
 
             if (items != null)
             {
-                foreach (var itemDic in items)
+                /* TODO CHECK */ foreach (var itemDic in items)
                 {
                     var item = itemDic.Key;
                     message.AppendString(item.Type.ToString());
@@ -325,7 +325,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                     }
                     break;
             }
-            foreach (var baseItem in item.Items.Keys)
+            /* TODO CHECK */ foreach (var baseItem in item.Items.Keys)
             {
                 if (item.Name == "g0 group_product" || item.Name.StartsWith("builders_club_addon_") ||
                     item.Name.StartsWith("builders_club_time_"))

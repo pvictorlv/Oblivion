@@ -165,7 +165,7 @@ namespace Oblivion.HabboHotel.Commands
                 dbClient.SetQuery("SELECT command, description, params, rank, alias FROM server_fuses");
                 var commandsTable = dbClient.GetTable();
 
-                foreach (DataRow commandRow in commandsTable.Rows)
+                /* TODO CHECK */ foreach (DataRow commandRow in commandsTable.Rows)
                 {
                     var key = commandRow["command"].ToString();
                     if (!CommandsDictionary.ContainsKey(key)) continue;
@@ -179,7 +179,7 @@ namespace Oblivion.HabboHotel.Commands
                     if (!string.IsNullOrEmpty(commandRow["alias"].ToString()))
                     {
                         var aliasStr = commandRow["alias"].ToString().Replace(" ", "").Replace(";", ",");
-                        foreach (var alias in aliasStr.Split(',').Where(alias => !string.IsNullOrEmpty(alias)))
+                        /* TODO CHECK */ foreach (var alias in aliasStr.Split(',').Where(alias => !string.IsNullOrEmpty(alias)))
                         {
                             if (AliasDictionary.ContainsKey(alias))
                             {

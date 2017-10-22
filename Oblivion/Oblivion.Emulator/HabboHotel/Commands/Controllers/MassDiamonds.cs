@@ -27,7 +27,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 session.SendNotif(Oblivion.GetLanguage().GetVar("enter_numbers"));
                 return true;
             }
-            foreach (var client in Oblivion.GetGame().GetClientManager().Clients.Values)
+            /* TODO CHECK */ foreach (var client in Oblivion.GetGame().GetClientManager().Clients.Values)
             {
                 if (client == null || client.GetHabbo() == null) continue;
                 var habbo = client.GetHabbo();

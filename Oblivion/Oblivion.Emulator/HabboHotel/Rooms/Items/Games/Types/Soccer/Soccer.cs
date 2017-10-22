@@ -72,12 +72,12 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
 
         internal void OnCycle()
         {
-            if (_balls == null)
+            if (_balls == null || !_balls.Any())
                 return;
 
             lock (_balls)
             {
-                foreach (var ball in _balls.ToList().Where(ball => ball != null).Where(ball => ball.BallIsMoving))
+                /* TODO CHECK */ foreach (var ball in _balls.ToList().Where(ball => ball != null).Where(ball => ball.BallIsMoving))
                 {
                     MoveBallProcess(ball, ball.InteractingBallUser);
                 }
@@ -143,7 +143,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
 
             lock (_balls)
             {
-                foreach (var ball in _balls)
+                /* TODO CHECK */ foreach (var ball in _balls)
                 {
                     if (user.SetX == ball.X && user.SetY == ball.Y && user.GoalX == ball.X && user.GoalY == ball.Y &&
                         user.HandelingBallStatus == 0) // super chute.
@@ -290,54 +290,51 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
 
 //                var total = item.ExtraData == "55" ? 6 : 1;
 //                for (var i = 0; i != total; i++)
+
+                if (item.ComeDirection == IComeDirection.Null)
                 {
-                    if (item.ComeDirection == IComeDirection.Null)
-                    {
-                        item.BallIsMoving = false;
-                        break;
-                    }
-
-                    var resetX = newX;
-                    var resetY = newY;
-
-                    ComeDirection.GetNewCoords(item.ComeDirection, ref newX, ref newY);
-
-                    var ignoreUsers = false;
-
-                    if (_room.GetGameMap().SquareHasUsers(newX, newY))
-                    {
-                        if (item.ExtraData != "55" && item.ExtraData != "44")
-                        {
-                            item.BallIsMoving = false;
-                            break;
-                        }
-                        ignoreUsers = true;
-                    }
-
-                    if (ignoreUsers == false)
-                        if (!_room.GetGameMap().ItemCanBePlacedHere(newX, newY))
-                        {
-                            item.ComeDirection = ComeDirection.InverseDirections(_room, item.ComeDirection, newX, newY);
-                            newX = resetX;
-                            newY = resetY;
-                            tryes++;
-                            if (tryes > 2)
-                                item.BallIsMoving = false;
-                            continue;
-                        }
-
-                    if (MoveBall(item, client, newX, newY))
-                    {
-                        item.BallIsMoving = false;
-                        break;
-                    }
-
-                    int number;
-                    int.TryParse(item.ExtraData, out number);
-                    if (number > 11)
-                        item.ExtraData = (int.Parse(item.ExtraData) - 11).ToString();
-
+                    item.BallIsMoving = false;
+                    break;
                 }
+
+                var resetX = newX;
+                var resetY = newY;
+
+                ComeDirection.GetNewCoords(item.ComeDirection, ref newX, ref newY);
+
+                var ignoreUsers = false;
+
+                if (_room.GetGameMap().SquareHasUsers(newX, newY))
+                {
+                    if (item.ExtraData != "55" && item.ExtraData != "44")
+                    {
+                        item.BallIsMoving = false;
+                        break;
+                    }
+                    ignoreUsers = true;
+                }
+
+                if (ignoreUsers == false)
+                    if (!_room.GetGameMap().ItemCanBePlacedHere(newX, newY))
+                    {
+                        item.ComeDirection = ComeDirection.InverseDirections(_room, item.ComeDirection, newX, newY);
+                        newX = resetX;
+                        newY = resetY;
+                        tryes++;
+                        if (tryes > 2)
+                            item.BallIsMoving = false;
+                        continue;
+                    }
+
+                if (MoveBall(item, client, newX, newY))
+                {
+                    item.BallIsMoving = false;
+                    break;
+                }
+
+                int.TryParse(item.ExtraData, out var number);
+                if (number > 11)
+                    item.ExtraData = (int.Parse(item.ExtraData) - 11).ToString();
 
                 item.BallValue++;
 

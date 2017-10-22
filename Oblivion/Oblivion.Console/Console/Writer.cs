@@ -66,13 +66,15 @@ namespace Oblivion.Writer
 
         public static void LogThreadException(string exception, string threadName)
         {
-            WriteToFile("Logs\\ErrorLog.txt", string.Concat("Error en thread ", threadName, ": \r\n", exception, "\r\n\r\n"));
+            WriteToFile("Logs\\ErrorLog.txt",
+                string.Concat("Error en thread ", threadName, ": \r\n", exception, "\r\n\r\n"));
             WriteLine("An thread error was registered, in thread: " + threadName, ConsoleColor.Red);
         }
 
         public static void LogQueryError(Exception exception, string query)
         {
-            WriteToFile("Logs\\MySQLErrors.txt", string.Concat("The query error was in: \r\n", query, "\r\n", exception, "\r\n\r\n"));
+            WriteToFile("Logs\\MySQLErrors.txt",
+                string.Concat("The query error was in: \r\n", query, "\r\n", exception, "\r\n\r\n"));
             WriteLine("A MySQL exception was registered.", ConsoleColor.Red);
         }
 
@@ -85,7 +87,8 @@ namespace Oblivion.Writer
         public static void HandleException(Exception pException, string pLocation)
         {
             var stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine(string.Concat("Exception logged ", DateTime.Now.ToString(), " in ", pLocation, ":"));
+            stringBuilder.AppendLine(
+                string.Concat("Exception logged ", DateTime.Now.ToString(), " in ", pLocation, ":"));
             stringBuilder.AppendLine(pException.ToString());
             if (pException.InnerException != null)
             {
@@ -104,7 +107,8 @@ namespace Oblivion.Writer
             }
             stringBuilder.AppendLine("Data:");
             foreach (DictionaryEntry dictionaryEntry in pException.Data)
-                stringBuilder.AppendLine(string.Concat("  Key: ", dictionaryEntry.Key, "Value: ", dictionaryEntry.Value));
+                stringBuilder.AppendLine(
+                    string.Concat("  Key: ", dictionaryEntry.Key, "Value: ", dictionaryEntry.Value));
             stringBuilder.AppendLine("Message:");
             stringBuilder.AppendLine(pException.Message);
             if (pException.StackTrace != null)

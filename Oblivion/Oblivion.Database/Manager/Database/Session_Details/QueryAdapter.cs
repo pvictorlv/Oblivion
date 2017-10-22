@@ -194,9 +194,25 @@ namespace Oblivion.Database.Manager.Database.Session_Details
         {
             try
             {
-//                Writer.Writer.WriteLine(query);
+                Writer.Writer.WriteLine(query);
                 CommandMySql.Parameters.Clear();
                 CommandMySql.CommandText = query;
+            }
+            catch (Exception exception)
+            {
+                Writer.Writer.LogQueryError(exception, CommandMySql?.CommandText);
+
+            }
+        }
+        public void RunQuery(string query)
+        {
+            try
+            {
+                Writer.Writer.WriteLine(query);
+//                CommandMySql.Parameters.Clear();
+                CommandMySql.CommandText = query;
+                CommandMySql.ExecuteNonQuery();
+
             }
             catch (Exception exception)
             {

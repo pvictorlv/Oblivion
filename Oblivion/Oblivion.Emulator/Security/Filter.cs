@@ -30,7 +30,7 @@ namespace Oblivion.Security
         /// </summary>
         public static void Load()
         {
-            foreach (var line in File.ReadAllLines("Settings\\filter.ini", Encoding.Default).Where(line => !line.StartsWith("#") || !line.StartsWith("//") || line.Contains("=")))
+            /* TODO CHECK */ foreach (var line in File.ReadAllLines("Settings\\filter.ini", Encoding.Default).Where(line => !line.StartsWith("#") || !line.StartsWith("//") || line.Contains("=")))
             {
                 var array = line.Split('=');
                 var mode = array[0];
@@ -43,7 +43,7 @@ namespace Oblivion.Security
 
                 var dic = new Dictionary<string, string>();
 
-                foreach (object[] item in items)
+                /* TODO CHECK */ foreach (object[] item in items)
                 {
                     var key = item[0].ToString();
                     var value = string.Empty;
@@ -93,7 +93,7 @@ namespace Oblivion.Security
             var normalizedString = s.Normalize(NormalizationForm.FormD);
             var stringBuilder = new StringBuilder();
 
-            foreach (var c in normalizedString.Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark))
+            /* TODO CHECK */ foreach (var c in normalizedString.Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark))
                 stringBuilder.Append(c);
 
             return stringBuilder.ToString().Normalize(NormalizationForm.FormC);

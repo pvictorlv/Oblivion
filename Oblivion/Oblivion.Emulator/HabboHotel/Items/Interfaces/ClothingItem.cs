@@ -42,7 +42,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 {
                     var array = text.Split(',');
 
-                    foreach (var value in array)
+                    /* TODO CHECK */ foreach (var value in array)
                     {
                         if (value != null)
                             Clothes.Add(string.IsNullOrWhiteSpace(value)

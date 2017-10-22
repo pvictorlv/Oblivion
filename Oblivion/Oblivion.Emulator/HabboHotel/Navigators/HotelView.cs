@@ -81,7 +81,7 @@ namespace Oblivion.HabboHotel.Navigators
         internal ServerMessage SmallPromoComposer(ServerMessage message)
         {
             message.AppendInteger(HotelViewPromosIndexers.Count);
-            foreach (var current in HotelViewPromosIndexers)
+            /* TODO CHECK */ foreach (var current in HotelViewPromosIndexers)
                 current.Serialize(message);
             return message;
         }
@@ -116,7 +116,7 @@ namespace Oblivion.HabboHotel.Navigators
                     "SELECT * from hotelview_promos WHERE hotelview_promos.enabled = '1' ORDER BY hotelview_promos.`index` DESC");
                 var table = queryReactor.GetTable();
 
-                foreach (DataRow dataRow in table.Rows)
+                /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
                     HotelViewPromosIndexers.Add(new SmallPromo(Convert.ToInt32(dataRow[0]), (string) dataRow[1],
                         (string) dataRow[2], (string) dataRow[3], Convert.ToInt32(dataRow[4]), (string) dataRow[5],
                         (string) dataRow[6]));
@@ -130,7 +130,7 @@ namespace Oblivion.HabboHotel.Navigators
                 queryReactor.SetQuery("SELECT * FROM hotelview_badges WHERE enabled = '1'");
                 var table = queryReactor.GetTable();
 
-                foreach (DataRow dataRow in table.Rows)
+                /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
                     HotelViewBadges.Add((string) dataRow[0], (string) dataRow[1]);
             }
         }

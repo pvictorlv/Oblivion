@@ -103,7 +103,7 @@ namespace Oblivion.Messages.Handlers
             Response.Init(LibraryParser.OutgoingRequest("UserTagsMessageComposer"));
             Response.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Id);
             Response.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Data.Tags.Count);
-            foreach (var current in roomUserByHabbo.GetClient().GetHabbo().Data.Tags)
+            /* TODO CHECK */ foreach (var current in roomUserByHabbo.GetClient().GetHabbo().Data.Tags)
                 Response.AppendString(current);
             SendResponse();
 
@@ -134,7 +134,7 @@ namespace Oblivion.Messages.Handlers
                 msg.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Id);
 
                 msg.StartArray();
-                foreach (var badge in
+                /* TODO CHECK */ foreach (var badge in
                     roomUserByHabbo.GetClient()
                         .GetHabbo()
                         .GetBadgeComponent()
@@ -393,7 +393,7 @@ namespace Oblivion.Messages.Handlers
             serverMessage.AppendInteger(Session.GetHabbo().Id);
 
             serverMessage.StartArray();
-            foreach (
+            /* TODO CHECK */ foreach (
                 var badge in
                 Session.GetHabbo()
                     .GetBadgeComponent()
@@ -471,7 +471,7 @@ namespace Oblivion.Messages.Handlers
             msg.AppendBool(Oblivion.GetGame().GetClientManager().GetClientByUserId(habbo.Id) != null);
             var groups = habbo.UserGroups;
             msg.AppendInteger(groups.Count);
-            foreach (var group in groups.Select(groupUs => Oblivion.GetGame().GetGroupManager()
+            /* TODO CHECK */ foreach (var group in groups.Select(groupUs => Oblivion.GetGame().GetGroupManager()
                 .GetGroup(groupUs.GroupId))
             )
                 if (group != null)
@@ -510,7 +510,7 @@ namespace Oblivion.Messages.Handlers
             msg2.AppendInteger(habbo.Id);
             msg2.StartArray();
 
-            foreach (
+            /* TODO CHECK */ foreach (
                 var badge in habbo.GetBadgeComponent().BadgeList.Values.Cast<Badge>().Where(badge => badge.Slot > 0))
             {
                 msg2.AppendInteger(badge.Slot);
@@ -631,7 +631,7 @@ namespace Oblivion.Messages.Handlers
                 else
                 {
                     GetResponse().AppendInteger(table.Rows.Count);
-                    foreach (DataRow dataRow in table.Rows)
+                    /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
                     {
                         GetResponse().AppendInteger(Convert.ToUInt32(dataRow["slot_id"]));
                         GetResponse().AppendString((string) dataRow["look"]);
@@ -775,7 +775,7 @@ namespace Oblivion.Messages.Handlers
                     Response.AppendInteger(5);
                     Response.AppendString(text);
                     Response.AppendInteger(table.Rows.Count);
-                    foreach (DataRow dataRow in table.Rows)
+                    /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
                         Response.AppendString($"{text}{dataRow[0]}");
                     SendResponse();
                 }
@@ -833,7 +833,7 @@ namespace Oblivion.Messages.Handlers
                     Response.AppendInteger(Session.GetHabbo().CurrentRoom.RoomId);
                     Response.AppendString(text);
                 }
-                foreach (var current in Session.GetHabbo().Data.Rooms)
+                /* TODO CHECK */ foreach (var current in Session.GetHabbo().Data.Rooms)
                 {
                     current.Owner = text;
                     current.SerializeRoomData(Response, Session, false, true);
@@ -841,9 +841,9 @@ namespace Oblivion.Messages.Handlers
                     if (room != null)
                         room.RoomData.Owner = text;
                 }
-                foreach (var current2 in Session.GetHabbo().GetMessenger().Friends.Values)
+                /* TODO CHECK */ foreach (var current2 in Session.GetHabbo().GetMessenger().Friends.Values)
                     if (current2.Client != null)
-                        foreach (
+                        /* TODO CHECK */ foreach (
                             var current3 in
                             current2.Client.GetHabbo()
                                 .GetMessenger()
@@ -876,7 +876,7 @@ namespace Oblivion.Messages.Handlers
             Response.Init(LibraryParser.OutgoingRequest("RelationshipMessageComposer"));
             Response.AppendInteger(habboForId.Id);
             Response.AppendInteger(habboForId.Data.Relations.Count);
-            foreach (var current in habboForId.Data.Relations.Values)
+            /* TODO CHECK */ foreach (var current in habboForId.Data.Relations.Values)
             {
                 var habboForId2 = Oblivion.GetHabboById(Convert.ToUInt32(current.UserId));
                 if (habboForId2 == null)
@@ -1107,7 +1107,7 @@ namespace Oblivion.Messages.Handlers
             Response.AppendString(trackType);
             Response.AppendInteger(talents.Count);
 
-            foreach (var current in talents)
+            /* TODO CHECK */ foreach (var current in talents)
             {
                 Response.AppendInteger(current.Level);
 
@@ -1118,7 +1118,7 @@ namespace Oblivion.Messages.Handlers
                 var talents2 = Oblivion.GetGame().GetTalentManager().GetTalents(trackType, current.Id);
                 Response.AppendInteger(talents2.Count);
 
-                foreach (var current2 in talents2)
+                /* TODO CHECK */ foreach (var current2 in talents2)
                 {
                     var userAchievement = Session.GetHabbo().GetAchievementData(current2.AchievementGroup);
                     var num = (failLevel != -1 && failLevel < current2.Level)
@@ -1243,7 +1243,7 @@ namespace Oblivion.Messages.Handlers
                 .Where(e => e.Competition == code);
             GetResponse().StartArray();
             int rank = 1;
-            foreach (HallOfFameElement element in rankings)
+            /* TODO CHECK */ foreach (HallOfFameElement element in rankings)
             {
                 Habbo user = Oblivion.GetHabboById(element.UserId);
                 if (user == null) continue;

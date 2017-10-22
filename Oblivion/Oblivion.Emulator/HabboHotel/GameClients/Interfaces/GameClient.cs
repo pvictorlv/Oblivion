@@ -267,7 +267,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 {
                     serverMessage.AppendInteger(userData.User.FavoriteRooms.Count);
 
-                    foreach (var i in userData.User.FavoriteRooms)
+                    /* TODO CHECK */ foreach (var i in userData.User.FavoriteRooms)
                         serverMessage.AppendInteger(i);
                 }
 

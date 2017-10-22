@@ -25,7 +25,7 @@ namespace Oblivion.HabboHotel.Pets
             dbClient.SetQuery("SELECT * FROM pets_speech");
             var table = dbClient.GetTable();
 
-            foreach (DataRow dataRow in table.Rows)
+            /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
                 _values.Add(dataRow[0].ToString(), dataRow[1].ToString().Split(';'));
         }
 

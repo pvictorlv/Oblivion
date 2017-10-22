@@ -790,7 +790,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             chatMsg.AppendString(msg);
             chatMsg.AppendInteger(ChatEmotions.GetEmotionsForText(msg));
             chatMsg.AppendInteger(textColor);
-            chatMsg.AppendInteger(0); // links count (foreach string string bool)
+            chatMsg.AppendInteger(0); // links count (/* TODO CHECK */ foreach string string bool)
             chatMsg.AppendInteger(count);
             GetRoom().BroadcastChatMessage(chatMsg, this, session.GetHabbo().Id);
 
@@ -1143,7 +1143,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 stringBuilder.AppendFormat("/{0}{1}", PetData.MoplaBreed.GrowStatus, (Statusses.Count >= 1) ? "/" : "");
             lock (Statusses)
             {
-                foreach (var current in Statusses.ToList())
+                /* TODO CHECK */ foreach (var current in Statusses.ToList())
                 {
                     stringBuilder.Append(current.Key);
                     if (!string.IsNullOrEmpty(current.Value))

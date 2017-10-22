@@ -40,7 +40,7 @@ namespace Oblivion.Messages.Handlers
             var message = new ServerMessage(LibraryParser.OutgoingRequest("SellablePetBreedsMessageComposer"));
             message.AppendString(petType);
             message.AppendInteger(races.Count);
-            foreach (var current in races)
+            /* TODO CHECK */ foreach (var current in races)
             {
                 message.AppendInteger(petId);
                 message.AppendInteger(current.Color1);
@@ -208,7 +208,7 @@ namespace Oblivion.Messages.Handlers
                     .UserList.Values.Where(current => current != null && !current.IsSpectator);
             Response.Init(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer"));
             Response.StartArray();
-            foreach (var current2 in list)
+            /* TODO CHECK */ foreach (var current2 in list)
                 try
                 {
                     current2.Serialize(Response);
@@ -230,7 +230,7 @@ namespace Oblivion.Messages.Handlers
             Response.AppendBool(CurrentLoadingRoom.CheckRights(Session, true));
             queuedServerMessage.AppendResponse(GetResponse());
 
-            foreach (var habboForId in CurrentLoadingRoom.UsersWithRights.Select(Oblivion.GetHabboById))
+            /* TODO CHECK */ foreach (var habboForId in CurrentLoadingRoom.UsersWithRights.Select(Oblivion.GetHabboById))
             {
                 GetResponse().Init(LibraryParser.OutgoingRequest("GiveRoomRightsMessageComposer"));
                 GetResponse().AppendInteger(CurrentLoadingRoom.RoomId);
@@ -247,7 +247,7 @@ namespace Oblivion.Messages.Handlers
                 Oblivion.GetGame().GetRoomEvents().SerializeEventInfo(CurrentLoadingRoom.RoomId);
 
             CurrentLoadingRoom.JustLoaded = false;
-            foreach (var current4 in CurrentLoadingRoom.GetRoomUserManager().UserList.Values
+            /* TODO CHECK */ foreach (var current4 in CurrentLoadingRoom.GetRoomUserManager().UserList.Values
                 .Where(current4 => current4 != null))
             {
                 if (current4.IsBot)
@@ -490,7 +490,7 @@ namespace Oblivion.Messages.Handlers
             }
             Response.Init(LibraryParser.OutgoingRequest("RoomGroupMessageComposer"));
             Response.AppendInteger(CurrentLoadingRoom.LoadedGroups.Count);
-            foreach (var guild1 in CurrentLoadingRoom.LoadedGroups)
+            /* TODO CHECK */ foreach (var guild1 in CurrentLoadingRoom.LoadedGroups)
             {
                 Response.AppendInteger(guild1.Key);
                 Response.AppendString(guild1.Value);
@@ -659,7 +659,7 @@ namespace Oblivion.Messages.Handlers
                 .AppendInteger(room.RoomData.Model.MapSizeX * room.RoomData.Model.MapSizeY > 200 ? 50 : 25);
 
             GetResponse().AppendInteger(room.TagCount);
-            foreach (var s in room.RoomData.Tags)
+            /* TODO CHECK */ foreach (var s in room.RoomData.Tags)
                 GetResponse().AppendString(s);
             GetResponse().AppendInteger(room.RoomData.TradeState);
             GetResponse().AppendInteger(room.RoomData.AllowPets);
@@ -754,7 +754,7 @@ namespace Oblivion.Messages.Handlers
             GetResponse().AppendInteger(room.RoomData.Id);
             GetResponse().AppendInteger(room.UsersWithRights.Count);
 
-            foreach (var habboForId in room.UsersWithRights
+            /* TODO CHECK */ foreach (var habboForId in room.UsersWithRights
                 .Select(Oblivion.GetHabboById).Where(habboForId => habboForId != null))
             {
                 GetResponse().AppendInteger(habboForId.Id);
@@ -859,7 +859,7 @@ namespace Oblivion.Messages.Handlers
             Response.Init(LibraryParser.OutgoingRequest("RoomBannedListMessageComposer"));
             Response.AppendInteger(num);
             Response.AppendInteger(list.Count);
-            foreach (var current in list)
+            /* TODO CHECK */ foreach (var current in list)
             {
                 Response.AppendInteger(current);
                 Response.AppendString(Oblivion.GetHabboById(current) != null
@@ -876,7 +876,7 @@ namespace Oblivion.Messages.Handlers
             Response.Init(LibraryParser.OutgoingRequest("LoadRoomRightsListMessageComposer"));
             Response.AppendInteger(Session.GetHabbo().CurrentRoom.RoomId);
             Response.AppendInteger(Session.GetHabbo().CurrentRoom.UsersWithRights.Count);
-            foreach (var current in Session.GetHabbo().CurrentRoom.UsersWithRights)
+            /* TODO CHECK */ foreach (var current in Session.GetHabbo().CurrentRoom.UsersWithRights)
             {
                 var habboForId = Oblivion.GetHabboById(current);
                 Response.AppendInteger(current);
@@ -994,7 +994,7 @@ namespace Oblivion.Messages.Handlers
             if (room == null || !room.CheckRights(Session, true))
                 return;
 
-            foreach (var num in room.UsersWithRights)
+            /* TODO CHECK */ foreach (var num in room.UsersWithRights)
             {
                 var roomUserByHabbo = room.GetRoomUserManager().GetRoomUserByHabbo(num);
                 Response.Init(LibraryParser.OutgoingRequest("RemoveRightsMessageComposer"));
@@ -1390,7 +1390,7 @@ namespace Oblivion.Messages.Handlers
             var serverMessage = new ServerMessage();
             serverMessage.Init(LibraryParser.OutgoingRequest("RoomLoadFilterMessageComposer"));
             serverMessage.AppendInteger(room.RoomData.WordFilter.Count);
-            foreach (var current in room.RoomData.WordFilter)
+            /* TODO CHECK */ foreach (var current in room.RoomData.WordFilter)
                 serverMessage.AppendString(current);
             Response = serverMessage;
             SendResponse();
@@ -1532,7 +1532,7 @@ namespace Oblivion.Messages.Handlers
             serverMessage.Init(LibraryParser.OutgoingRequest("CatalogPromotionGetRoomsMessageComposer"));
             serverMessage.AppendBool(true);
             serverMessage.AppendInteger(Session.GetHabbo().Data.Rooms.Count);
-            foreach (var current in Session.GetHabbo().Data.Rooms)
+            /* TODO CHECK */ foreach (var current in Session.GetHabbo().Data.Rooms)
             {
                 serverMessage.AppendInteger(current.Id);
                 serverMessage.AppendString(current.Name);
@@ -2103,7 +2103,7 @@ namespace Oblivion.Messages.Handlers
                     }
                 }
                 Response.AppendInteger(CurrentLoadingRoom.RoomData.Group.Members.Count + 1);
-                foreach (var current2 in CurrentLoadingRoom.RoomData.Group.Members.Values)
+                /* TODO CHECK */ foreach (var current2 in CurrentLoadingRoom.RoomData.Group.Members.Values)
                 {
                     Response.AppendInteger(current2.Id);
                     Response.AppendString(Oblivion.GetHabboById(current2.Id).UserName);
@@ -2119,7 +2119,7 @@ namespace Oblivion.Messages.Handlers
                 Response.AppendString(CurrentLoadingRoom.RoomData.Owner);
             }
             Response.AppendInteger(array.Count);
-            foreach (var roomItem in array)
+            /* TODO CHECK */ foreach (var roomItem in array)
                 roomItem.Serialize(Response);
             queuedServerMessage.AppendResponse(GetResponse());
             Response.Init(LibraryParser.OutgoingRequest("RoomWallItemsMessageComposer"));
@@ -2140,7 +2140,7 @@ namespace Oblivion.Messages.Handlers
                     }
                 }
                 Response.AppendInteger(CurrentLoadingRoom.RoomData.Group.Members.Count + 1);
-                foreach (var current4 in CurrentLoadingRoom.RoomData.Group.Members.Values)
+                /* TODO CHECK */ foreach (var current4 in CurrentLoadingRoom.RoomData.Group.Members.Values)
                 {
                     Response.AppendInteger(current4.Id);
                     Response.AppendString(Oblivion.GetHabboById(current4.Id).UserName);
@@ -2157,7 +2157,7 @@ namespace Oblivion.Messages.Handlers
             }
             Response.AppendInteger(array2.Count);
             var array4 = array2;
-            foreach (var roomItem2 in array4)
+            /* TODO CHECK */ foreach (var roomItem2 in array4)
                 roomItem2.Serialize(Response);
 
             queuedServerMessage.AppendResponse(GetResponse());
@@ -2230,7 +2230,7 @@ namespace Oblivion.Messages.Handlers
             var campaingName = "";
             var parser = text.Split(';');
 
-            foreach (
+            /* TODO CHECK */ foreach (
                 var data in from t in parser where !string.IsNullOrEmpty(t) && !t.EndsWith(",") select t.Split(','))
                 campaingName = data[1];
 
@@ -2269,7 +2269,7 @@ namespace Oblivion.Messages.Handlers
             serverMessage.AppendString(poll.Thanks);
             serverMessage.AppendInteger(poll.Questions.Count);
 
-            foreach (var current in poll.Questions)
+            /* TODO CHECK */ foreach (var current in poll.Questions)
             {
                 var questionNumber = poll.Questions.IndexOf(current) + 1;
 
@@ -2483,7 +2483,7 @@ namespace Oblivion.Messages.Handlers
             if (!roomUserByRank.Any())
                 return;
 
-            foreach (var current2 in roomUserByRank)
+            /* TODO CHECK */ foreach (var current2 in roomUserByRank)
                 if (current2 != null && current2.HabboId != roomUserByHabbo2.HabboId &&
                     current2.HabboId != roomUserByHabbo.HabboId && current2.GetClient() != null)
                 {
@@ -2554,7 +2554,7 @@ namespace Oblivion.Messages.Handlers
                 var coords = room.GetGameMap().CoordinatedItems.Keys.ToList();
                 Response.AppendInteger(coords.Count);
 
-                foreach (var point in coords)
+                /* TODO CHECK */ foreach (var point in coords)
                 {
                     Response.AppendInteger(point.X);
                     Response.AppendInteger(point.Y);

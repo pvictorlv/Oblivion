@@ -261,7 +261,7 @@ namespace Oblivion.HabboHotel.Catalogs
                 {
                     if (table != null)
                     {
-                        foreach (DataRow dataRow in table.Rows)
+                        /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
                         {
                             if (string.IsNullOrEmpty(dataRow["item_id"].ToString()) ||
                                 string.IsNullOrEmpty(dataRow["amounts"].ToString()))
@@ -272,9 +272,7 @@ namespace Oblivion.HabboHotel.Catalogs
                             if (source.Contains(';'))
                                 firstItem = dataRow["item_id"].ToString().Split(';')[0];
 
-                            Item item;
-
-                            if (!Oblivion.GetGame().GetItemManager().GetItem(Convert.ToUInt32(firstItem), out item))
+                            if (!Oblivion.GetGame().GetItemManager().GetItem(Convert.ToUInt32(firstItem), out var item))
                             {
                                 continue;
                             }
@@ -307,7 +305,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
                 if (table2 != null)
                 {
-                    foreach (DataRow dataRow2 in table2.Rows)
+                    /* TODO CHECK */ foreach (DataRow dataRow2 in table2.Rows)
                     {
                         var visible = false;
                         var enabled = false;
@@ -329,7 +327,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
                 if (table3 != null)
                 {
-                    foreach (DataRow dataRow3 in table3.Rows)
+                    /* TODO CHECK */ foreach (DataRow dataRow3 in table3.Rows)
                     {
                         EcotronRewards.Add(new EcotronReward(Convert.ToUInt32(dataRow3["display_id"]),
                             Convert.ToUInt32(dataRow3["item_id"]), Convert.ToUInt32(dataRow3["reward_level"])));
@@ -341,12 +339,12 @@ namespace Oblivion.HabboHotel.Catalogs
 
                 if (table4 != null)
                 {
-                    foreach (DataRow row in table4.Rows)
+                    /* TODO CHECK */ foreach (DataRow row in table4.Rows)
                         HabboClubItems.Add(new CatalogItem(row, row["item_names"].ToString()));
                 }
                 if (table5 != null)
                 {
-                    foreach (DataRow row in table5.Rows)
+                    /* TODO CHECK */ foreach (DataRow row in table5.Rows)
                         IndexText.Add(row);
                 }
             }
@@ -402,8 +400,7 @@ namespace Oblivion.HabboHotel.Catalogs
             if (!Categories.ContainsKey(pageId))
                 return;
 
-            CatalogPage catalogPage;
-            Categories.TryGetValue(pageId, out catalogPage);
+            Categories.TryGetValue(pageId, out var catalogPage);
 
             if (catalogPage == null || !catalogPage.Enabled || !catalogPage.Visible || session?.GetHabbo() == null)
                 return;
@@ -531,7 +528,7 @@ namespace Oblivion.HabboHotel.Catalogs
                 session.GetHabbo().UpdateSeasonalCurrencyBalance();
             }
 
-            foreach (var baseItem in item.Items.Keys)
+            /* TODO CHECK */ foreach (var baseItem in item.Items.Keys)
             {
                 if (isGift)
                 {
@@ -912,7 +909,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
                 session.GetMessageHandler().GetResponse().AppendInteger(list.Count);
 
-                foreach (var current3 in list)
+                /* TODO CHECK */ foreach (var current3 in list)
                     session.GetMessageHandler().GetResponse().AppendInteger(current3.Id);
 
                 session.GetMessageHandler().SendResponse();

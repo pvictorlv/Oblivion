@@ -48,7 +48,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
 
 
-            foreach (var member in gp.Members.Keys)
+            /* TODO CHECK */ foreach (var member in gp.Members.Keys)
             {
                 var user = Oblivion.GetGame().GetClientManager().GetClientByUserId(member);
                 if (user?.GetHabbo() == null) continue;

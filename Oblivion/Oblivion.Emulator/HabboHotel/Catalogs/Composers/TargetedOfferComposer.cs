@@ -37,7 +37,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
             message.AppendString(string.Empty);
             message.StartArray();
 
-            foreach (var product in offer.Products)
+            /* TODO CHECK */ foreach (var product in offer.Products)
             {
                 message.AppendString(product);
                 message.SaveArray();

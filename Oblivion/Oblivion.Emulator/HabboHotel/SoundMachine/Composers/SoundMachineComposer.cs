@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.SoundMachine.Songs;
 using Oblivion.Messages;
@@ -68,13 +67,6 @@ namespace Oblivion.HabboHotel.SoundMachine.Composers
         }
 
         /// <summary>
-        /// Composes the specified session.
-        /// </summary>
-        /// <param name="session">The session.</param>
-        /// <returns>ServerMessage.</returns>
-        internal static ServerMessage Compose(GameClient session) => session.GetHabbo().GetInventoryComponent().SerializeMusicDiscs();
-
-        /// <summary>
         /// Composes the specified playlist capacity.
         /// </summary>
         /// <param name="playlistCapacity">The playlist capacity.</param>
@@ -87,7 +79,7 @@ namespace Oblivion.HabboHotel.SoundMachine.Composers
             serverMessage.AppendInteger(playlistCapacity);
             serverMessage.AppendInteger(playlist.Count);
 
-            foreach (SongInstance current in playlist)
+             foreach (SongInstance current in playlist)
             {
                 serverMessage.AppendInteger(current.DiskItem.ItemId);
                 serverMessage.AppendInteger(current.SongData.Id);

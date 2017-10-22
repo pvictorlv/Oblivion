@@ -42,7 +42,7 @@ namespace Oblivion.Messages.Handlers
                 item.GetBaseItem().InteractionType != Interaction.BreedingBear)
                 return;
 
-            foreach (var pet in item.PetsList)
+            /* TODO CHECK */ foreach (var pet in item.PetsList)
             {
                 pet.WaitingForBreading = 0;
                 pet.BreadingTile = new Point();
@@ -198,7 +198,7 @@ namespace Oblivion.Messages.Handlers
             if (pet.DbState != DatabaseUpdateState.NeedsInsert)
                 pet.DbState = DatabaseUpdateState.NeedsUpdate;
 
-            foreach (var pet2 in item.PetsList)
+            /* TODO CHECK */ foreach (var pet2 in item.PetsList)
             {
                 pet2.WaitingForBreading = 0;
                 pet2.BreadingTile = new Point();
@@ -235,7 +235,7 @@ namespace Oblivion.Messages.Handlers
             var availableCommands = new List<short>();
 
             Response.AppendInteger(petData.PetCommands.Count);
-            foreach (var sh in petData.PetCommands.Keys)
+            /* TODO CHECK */ foreach (var sh in petData.PetCommands.Keys)
             {
                 Response.AppendInteger(sh);
                 if (petData.PetCommands[sh])
@@ -243,7 +243,7 @@ namespace Oblivion.Messages.Handlers
             }
 
             Response.AppendInteger(availableCommands.Count);
-            foreach (var sh in availableCommands)
+            /* TODO CHECK */ foreach (var sh in availableCommands)
                 Response.AppendInteger(sh);
 
             SendResponse();
@@ -467,7 +467,7 @@ namespace Oblivion.Messages.Handlers
                 case Interaction.BreedingTerrier:
                     if (room.GetRoomItemHandler().BreedingTerrier.ContainsKey(item.Id))
                         room.GetRoomItemHandler().BreedingTerrier.Remove(item.Id);
-                    foreach (var pet in item.PetsList)
+                    /* TODO CHECK */ foreach (var pet in item.PetsList)
                     {
                         pet.WaitingForBreading = 0;
                         pet.BreadingTile = new Point();
@@ -486,7 +486,7 @@ namespace Oblivion.Messages.Handlers
                 case Interaction.BreedingBear:
                     if (room.GetRoomItemHandler().BreedingBear.ContainsKey(item.Id))
                         room.GetRoomItemHandler().BreedingBear.Remove(item.Id);
-                    foreach (var pet in item.PetsList)
+                    /* TODO CHECK */ foreach (var pet in item.PetsList)
                     {
                         pet.WaitingForBreading = 0;
                         pet.BreadingTile = new Point();
@@ -563,7 +563,7 @@ namespace Oblivion.Messages.Handlers
             if (item.GetBaseItem().InteractionType == Interaction.BreedingTerrier ||
                 item.GetBaseItem().InteractionType == Interaction.BreedingBear)
             {
-                foreach (var pet in item.PetsList)
+                /* TODO CHECK */ foreach (var pet in item.PetsList)
                 {
                     pet.WaitingForBreading = 0;
                     pet.BreadingTile = new Point();
@@ -680,7 +680,7 @@ namespace Oblivion.Messages.Handlers
             }
             item.Interactor.OnTrigger(Session, item, Request.GetInteger(), hasRightsOne);
             //Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.ExploreFindItem, item.GetBaseItem().itemId);
-            foreach (var current in room.GetRoomUserManager().UserList.Values.Where(current =>
+            /* TODO CHECK */ foreach (var current in room.GetRoomUserManager().UserList.Values.Where(current =>
                 current.Statusses.ContainsKey("sit") && (current.X == item.X && current.Y == item.Y)))
                 room.GetRoomUserManager().UpdateUserStatus(current, true);
         }
@@ -843,7 +843,7 @@ namespace Oblivion.Messages.Handlers
                     .GetCatalog()
                     .DeliverItems(Session, item2, 1, (string) row["extradata"], 0, 0, string.Empty);
                 Response.AppendInteger(list.Count);
-                foreach (var current in list)
+                /* TODO CHECK */ foreach (var current in list)
                     Response.AppendInteger(current.Id);
                 SendResponse();
                 Session.GetHabbo().GetInventoryComponent().UpdateItems(true);
@@ -861,7 +861,7 @@ namespace Oblivion.Messages.Handlers
             if (room == null || !room.CheckRights(Session, true))
                 return;
             if (room.MoodlightData == null)
-                foreach (
+                /* TODO CHECK */ foreach (
                     var current in
                     room.GetRoomItemHandler()
                         .WallItems.Values.Where(
@@ -876,7 +876,7 @@ namespace Oblivion.Messages.Handlers
             var num = 0;
 
             {
-                foreach (var current2 in room.MoodlightData.Presets)
+                /* TODO CHECK */ foreach (var current2 in room.MoodlightData.Presets)
                 {
                     num++;
                     Response.AppendInteger(num);
@@ -1073,7 +1073,7 @@ namespace Oblivion.Messages.Handlers
             {
                 var allItems = Session.GetHabbo().GetInventoryComponent().GetItems
                     .Where(x => x.BaseItemId == item.BaseItemId).Take(amount);
-                foreach (var it in allItems)
+                /* TODO CHECK */ foreach (var it in allItems)
                 {
                     userTrade.OfferItem(Session.GetHabbo().Id, it);
                 }
@@ -2388,7 +2388,7 @@ namespace Oblivion.Messages.Handlers
             array[0] = Session.GetHabbo().Gender.ToLower();
             array[1] = string.Empty;
             var array2 = Session.GetHabbo().Look.Split('.');
-            foreach (
+            /* TODO CHECK */ foreach (
                 var text in
                 array2.Where(
                     text =>

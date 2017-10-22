@@ -70,7 +70,7 @@ namespace Oblivion.HabboHotel.Polls
             message.AppendInteger(1);
             message.AppendInteger(Answers.Count);
 
-            foreach (var current in Answers)
+            /* TODO CHECK */ foreach (var current in Answers)
             {
                 message.AppendString(current);
                 message.AppendString(current);

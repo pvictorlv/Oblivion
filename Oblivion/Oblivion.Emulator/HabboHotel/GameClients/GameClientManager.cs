@@ -23,12 +23,10 @@ namespace Oblivion.HabboHotel.GameClients
         ///     The _badge queue
         /// </summary>
 //        private readonly Queue _badgeQueue;
-
         /// <summary>
         ///     The _id user name register
         /// </summary>
 //        private readonly HybridDictionary _idUserNameRegister;
-
         /// <summary>
         ///     The _user identifier register
         /// </summary>
@@ -38,7 +36,6 @@ namespace Oblivion.HabboHotel.GameClients
         ///     The _user name identifier register
         /// </summary>
 //        private readonly HybridDictionary _userNameIdRegister;
-
         /// <summary>
         ///     The _user name register
         /// </summary>
@@ -76,14 +73,17 @@ namespace Oblivion.HabboHotel.GameClients
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <returns>GameClient.</returns>
-        internal GameClient GetClientByUserId(uint userId) => _userIdRegister.Contains(userId) ? (GameClient)_userIdRegister[userId] : null;
+        internal GameClient GetClientByUserId(uint userId) =>
+            _userIdRegister.Contains(userId) ? (GameClient) _userIdRegister[userId] : null;
 
         /// <summary>
         ///     Gets the name of the client by user.
         /// </summary>
         /// <param name="userName">Name of the user.</param>
         /// <returns>GameClient.</returns>
-        internal GameClient GetClientByUserName(string userName) => _userNameRegister.Contains(userName.ToLower()) ? (GameClient)_userNameRegister[userName.ToLower()] : null;
+        internal GameClient GetClientByUserName(string userName) => _userNameRegister.Contains(userName.ToLower())
+            ? (GameClient) _userNameRegister[userName.ToLower()]
+            : null;
 
         /// <summary>
         ///     Gets the client.
@@ -120,7 +120,8 @@ namespace Oblivion.HabboHotel.GameClients
         /// </summary>
         /// <param name="users">The users.</param>
         /// <returns>IEnumerable&lt;GameClient&gt;.</returns>
-        internal IEnumerable<GameClient> GetClientsById(Dictionary<uint, MessengerBuddy>.KeyCollection users) => users.Select(GetClientByUserId).Where(clientByUserId => clientByUserId != null);
+        internal IEnumerable<GameClient> GetClientsById(Dictionary<uint, MessengerBuddy>.KeyCollection users) =>
+            users.Select(GetClientByUserId).Where(clientByUserId => clientByUserId != null);
 
         /// <summary>
         ///     Sends the super notif.
@@ -133,7 +134,8 @@ namespace Oblivion.HabboHotel.GameClients
         /// <param name="linkTitle">The link title.</param>
         /// <param name="broadCast">if set to <c>true</c> [broad cast].</param>
         /// <param name="Event">if set to <c>true</c> [event].</param>
-        internal void SendSuperNotif(string title, string notice, string picture, GameClient client, string link, string linkTitle, bool broadCast, bool Event)
+        internal void SendSuperNotif(string title, string notice, string picture, GameClient client, string link,
+            string linkTitle, bool broadCast, bool Event)
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
 
@@ -192,7 +194,8 @@ namespace Oblivion.HabboHotel.GameClients
         /// <param name="exclude">The exclude.</param>
         internal void StaffAlert(ServerMessage message, uint exclude = 0u)
         {
-            var gameClients = Clients.Values.Where(x => x.GetHabbo() != null && x.GetHabbo().Rank >= Oblivion.StaffAlertMinRank && x.GetHabbo().Id != exclude);
+            var gameClients = Clients.Values.Where(x =>
+                x.GetHabbo() != null && x.GetHabbo().Rank >= Oblivion.StaffAlertMinRank && x.GetHabbo().Id != exclude);
 
             foreach (var current in gameClients)
                 current.SendMessage(message);
@@ -206,7 +209,8 @@ namespace Oblivion.HabboHotel.GameClients
         {
             var bytes = message.GetReversedBytes();
 
-            foreach (var current in Clients.Values.Where(current => current?.GetHabbo() != null).Where(current => (current.GetHabbo().Rank == 4u || current.GetHabbo().Rank == 5u) || current.GetHabbo().Rank == 6u))
+            foreach (var current in Clients.Values.Where(current => current?.GetHabbo() != null).Where(current =>
+                (current.GetHabbo().Rank == 4u || current.GetHabbo().Rank == 5u) || current.GetHabbo().Rank == 6u))
                 current.GetConnection().SendData(bytes);
         }
 
@@ -235,14 +239,6 @@ namespace Oblivion.HabboHotel.GameClients
             Clients.TryRemove(client.ConnectionId, out client);
         }
 
-        /// <summary>
-        ///     Queues the broadcase message.
-        /// </summary>
-        /// <param name="message">The message.</param>
-//        internal void QueueBroadcaseMessage(ServerMessage message)
-//        {
-//            _broadcastQueue.Enqueue(message.GetReversedBytes());
-//        }
 
         /// <summary>
         /// Send message for all users
@@ -252,7 +248,7 @@ namespace Oblivion.HabboHotel.GameClients
         public void SendMessage(ServerMessage Packet, string fuse = "")
         {
             var bytes = Packet.GetReversedBytes();
-            
+
 
             foreach (var Client in Clients.Values.Where(Client => Client?.GetHabbo() != null))
             {
@@ -296,7 +292,6 @@ namespace Oblivion.HabboHotel.GameClients
 
 //            if (!_idUserNameRegister.Contains(userId))
 //                _idUserNameRegister.Add(userId, userName);
-
         }
 
         /// <summary>
@@ -374,11 +369,9 @@ namespace Oblivion.HabboHotel.GameClients
             if (!_userNameRegister.Contains(oldName.ToLower()))
                 return;
 
-            var old = (GameClient)_userNameRegister[oldName.ToLower()];
+            var old = (GameClient) _userNameRegister[oldName.ToLower()];
             _userNameRegister.Remove(oldName.ToLower());
             _userNameRegister.Add(newName.ToLower(), old);
         }
-        
-       
     }
 }

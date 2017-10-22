@@ -26,11 +26,11 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             var array2 = array[1].Split('.');
 
-            foreach (var text in array2)
+            /* TODO CHECK */ foreach (var text in array2)
             {
                 var array3 = session.GetHabbo().Look.Split('.');
 
-                foreach (var text2 in array3)
+                /* TODO CHECK */ foreach (var text2 in array3)
                 {
                     if (text2.Split('-')[0] == text.Split('-')[0])
                     {

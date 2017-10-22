@@ -68,7 +68,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             for (var i = 0; i < 10; i++)
             {
                 Thread.Sleep(1000);
-                foreach (var roomUser in users)
+                /* TODO CHECK */ foreach (var roomUser in users)
                 {
                     var user = Oblivion.GetHabboById(roomUser.UserId);
                     if (user.AnsweredPool)
@@ -86,7 +86,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 }
             }
 
-            foreach (var roomUser in users)
+            /* TODO CHECK */ foreach (var roomUser in users)
                 Oblivion.GetHabboById(roomUser.UserId).AnsweredPool = false;
         }
     }

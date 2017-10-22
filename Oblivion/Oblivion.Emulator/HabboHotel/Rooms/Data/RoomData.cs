@@ -383,7 +383,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 if (row.IsNull("tags") || string.IsNullOrEmpty(row["tags"].ToString()))
                     return;
 
-                foreach (var item in row["tags"].ToString().Split(','))
+                /* TODO CHECK */ foreach (var item in row["tags"].ToString().Split(','))
                     Tags.Add(item);
             }
             catch (Exception ex)
@@ -417,7 +417,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
             message.AppendInteger(Category);
 
             message.AppendInteger(TagCount);
-            foreach (var current in Tags) message.AppendString(current);
+            /* TODO CHECK */ foreach (var current in Tags) message.AppendString(current);
 
             string imageData = null;
 

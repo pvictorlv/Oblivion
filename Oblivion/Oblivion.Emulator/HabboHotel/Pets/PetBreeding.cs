@@ -79,7 +79,7 @@ namespace Oblivion.HabboHotel.Pets
                 case 3:
                     message.AppendInteger(TerrierEpicRace.Length);
 
-                    foreach (var value in TerrierEpicRace)
+                    /* TODO CHECK */ foreach (var value in TerrierEpicRace)
                         message.AppendInteger(value);
 
                     break;
@@ -87,7 +87,7 @@ namespace Oblivion.HabboHotel.Pets
                 case 4:
                     message.AppendInteger(BearEpicRace.Length);
 
-                    foreach (var value in BearEpicRace)
+                    /* TODO CHECK */ foreach (var value in BearEpicRace)
                         message.AppendInteger(value);
 
                     break;
@@ -100,7 +100,7 @@ namespace Oblivion.HabboHotel.Pets
                 case 3:
                     message.AppendInteger(TerrierRareRace.Length);
 
-                    foreach (var value in TerrierRareRace)
+                    /* TODO CHECK */ foreach (var value in TerrierRareRace)
                         message.AppendInteger(value);
 
                     break;
@@ -108,7 +108,7 @@ namespace Oblivion.HabboHotel.Pets
                 case 4:
                     message.AppendInteger(BearRareRace.Length);
 
-                    foreach (var value in BearRareRace)
+                    /* TODO CHECK */ foreach (var value in BearRareRace)
                         message.AppendInteger(value);
 
                     break;
@@ -121,7 +121,7 @@ namespace Oblivion.HabboHotel.Pets
                 case 3:
                     message.AppendInteger(TerrierNoRareRace.Length);
 
-                    foreach (var value in TerrierNoRareRace)
+                    /* TODO CHECK */ foreach (var value in TerrierNoRareRace)
                         message.AppendInteger(value);
 
                     break;
@@ -129,7 +129,7 @@ namespace Oblivion.HabboHotel.Pets
                 case 4:
                     message.AppendInteger(BearNoRareRace.Length);
 
-                    foreach (var value in BearNoRareRace)
+                    /* TODO CHECK */ foreach (var value in BearNoRareRace)
                         message.AppendInteger(value);
 
                     break;
@@ -142,7 +142,7 @@ namespace Oblivion.HabboHotel.Pets
                 case 3:
                     message.AppendInteger(TerrierNormalRace.Length);
 
-                    foreach (var value in TerrierNormalRace)
+                    /* TODO CHECK */ foreach (var value in TerrierNormalRace)
                         message.AppendInteger(value);
 
                     break;
@@ -150,7 +150,7 @@ namespace Oblivion.HabboHotel.Pets
                 case 4:
                     message.AppendInteger(BearNormalRace.Length);
 
-                    foreach (var value in BearNormalRace)
+                    /* TODO CHECK */ foreach (var value in BearNormalRace)
                         message.AppendInteger(value);
 
                     break;

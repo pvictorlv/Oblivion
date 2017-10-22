@@ -77,7 +77,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
                 return false;
             }
 
-            foreach (var current in Items)
+            /* TODO CHECK */ foreach (var current in Items)
             {
                 if (current == null || !itemsOriginalData.ContainsKey(current.Id))
                     return false;

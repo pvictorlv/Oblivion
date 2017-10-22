@@ -68,7 +68,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                             current.ExtraData = BlueTeam.Count.ToString();
                             current.UpdateState();
                             if (BlueTeam.Count != 5) continue;
-                            foreach (
+                            /* TODO CHECK */ foreach (
                                 var current2 in
                                 currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
                                 current2.SqState = 0;
@@ -81,7 +81,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                                 current.ExtraData = RedTeam.Count.ToString();
                                 current.UpdateState();
                                 if (RedTeam.Count != 5) continue;
-                                foreach (
+                                /* TODO CHECK */ foreach (
                                     var current3 in
                                     currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
                                     current3.SqState = 0;
@@ -94,7 +94,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                                     current.ExtraData = GreenTeam.Count.ToString();
                                     current.UpdateState();
                                     if (GreenTeam.Count != 5) continue;
-                                    foreach (
+                                    /* TODO CHECK */ foreach (
                                         var current4 in
                                         currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
                                         current4.SqState = 0;
@@ -107,7 +107,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                                     current.ExtraData = YellowTeam.Count.ToString();
                                     current.UpdateState();
                                     if (YellowTeam.Count != 5) continue;
-                                    foreach (
+                                    /* TODO CHECK */ foreach (
                                         var current5 in
                                         currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
                                         current5.SqState = 0;
@@ -121,7 +121,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
             else if (Game.ToLower() == "freeze")
             {
                 var currentRoom2 = user.GetClient().GetHabbo().CurrentRoom;
-                foreach (var current6 in currentRoom2.GetRoomItemHandler().FloorItems.Values)
+                /* TODO CHECK */ foreach (var current6 in currentRoom2.GetRoomItemHandler().FloorItems.Values)
                 {
                     switch (current6.GetBaseItem().InteractionType)
                     {
@@ -180,7 +180,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                                 current.ExtraData = BlueTeam.Count.ToString();
                                 current.UpdateState();
                                 if (currentRoom.GetGameMap().GameMap[current.X, current.Y] != 0) continue;
-                                foreach (
+                                /* TODO CHECK */ foreach (
                                     var current2 in
                                     currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
                                     current2.SqState = 1;
@@ -193,7 +193,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                                     current.ExtraData = RedTeam.Count.ToString();
                                     current.UpdateState();
                                     if (currentRoom.GetGameMap().GameMap[current.X, current.Y] != 0) continue;
-                                    foreach (
+                                    /* TODO CHECK */ foreach (
                                         var current3 in
                                         currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
                                         current3.SqState = 1;
@@ -206,7 +206,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                                         current.ExtraData = GreenTeam.Count.ToString();
                                         current.UpdateState();
                                         if (currentRoom.GetGameMap().GameMap[current.X, current.Y] != 0) continue;
-                                        foreach (
+                                        /* TODO CHECK */ foreach (
                                             var current4 in
                                             currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
                                             current4.SqState = 1;
@@ -219,7 +219,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                                         current.ExtraData = YellowTeam.Count.ToString();
                                         current.UpdateState();
                                         if (currentRoom.GetGameMap().GameMap[current.X, current.Y] != 0) continue;
-                                        foreach (
+                                        /* TODO CHECK */ foreach (
                                             var current5 in
                                             currentRoom.GetGameMap().GetRoomUsers(new Point(current.X, current.Y)))
                                             current5.SqState = 1;
@@ -232,7 +232,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                     break;
 
                 case "freeze":
-                    foreach (var current6 in currentRoom.GetRoomItemHandler().FloorItems.Values)
+                    /* TODO CHECK */ foreach (var current6 in currentRoom.GetRoomItemHandler().FloorItems.Values)
                     {
                         switch (current6.GetBaseItem().InteractionType)
                         {

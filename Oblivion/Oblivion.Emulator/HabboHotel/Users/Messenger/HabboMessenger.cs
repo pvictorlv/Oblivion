@@ -85,7 +85,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         {
             var clientsById = Oblivion.GetGame().GetClientManager().GetClientsById(Friends.Keys);
 
-            foreach (
+            /* TODO CHECK */ foreach (
                 var current in
                 clientsById.Where(current => current.GetHabbo() != null && current.GetHabbo().GetMessenger() != null)
             )
@@ -109,7 +109,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             var clientsById = Oblivion.GetGame().GetClientManager().GetClientsById(Friends.Keys).Where(
                 current => current?.GetHabbo() != null && current.GetHabbo().GetMessenger() != null).ToList();
 
-            foreach (var current in clientsById)
+            /* TODO CHECK */ foreach (var current in clientsById)
             {
                 var user = current.GetHabbo();
                 var messenger = user?.GetMessenger();
@@ -159,7 +159,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             serverMessage.AppendInteger(type);
             serverMessage.AppendString(name);
 
-            foreach (var current in Friends.Values.Where(current => current.Client != null))
+            /* TODO CHECK */ foreach (var current in Friends.Values.Where(current => current.Client != null))
                 current.Client.SendMessage(serverMessage);
         }
 
@@ -485,7 +485,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             var sender = GetClient().GetHabbo();
 
-            foreach (var client in from usr in gp.Members.Values
+            /* TODO CHECK */ foreach (var client in from usr in gp.Members.Values
                 let client = Oblivion.GetGame().GetClientManager().GetClientByUserId(usr.Id)
                 where client?.GetHabbo()?.GetMessenger() != null && client.GetHabbo().Id != sender.Id && usr.HasChat
                 select client)
@@ -632,13 +632,13 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 .ToList();
 
             serverMessage.AppendInteger(Friends.Count + groups.Count);
-            foreach (var current in Friends.Values)
+            /* TODO CHECK */ foreach (var current in Friends.Values)
             {
                 current.UpdateUser();
                 current.Serialize(serverMessage, client);
             }
 
-            foreach (var group in groups)
+            /* TODO CHECK */ foreach (var group in groups)
             {
                 serverMessage.AppendInteger(-Convert.ToInt32(group.Id));
                 serverMessage.AppendString(group.Name);
@@ -737,7 +737,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             var requests = Requests.Values.Take((int) Oblivion.FriendRequestLimit);
 
-            foreach (var current in requests)
+            /* TODO CHECK */ foreach (var current in requests)
                 current.Serialize(serverMessage);
 
             return serverMessage;
@@ -755,7 +755,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             var list = new List<SearchResult>();
             var list2 = new List<SearchResult>();
 
-            foreach (var current in searchResult)
+            /* TODO CHECK */ foreach (var current in searchResult)
             {
                 if (FriendshipExists(current.UserId))
                     list.Add(current);
@@ -767,12 +767,12 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             serverMessage.AppendInteger(list.Count);
 
-            foreach (var current2 in list)
+            /* TODO CHECK */ foreach (var current2 in list)
                 current2.Searialize(serverMessage);
 
             serverMessage.AppendInteger(list2.Count);
 
-            foreach (var current3 in list2)
+            /* TODO CHECK */ foreach (var current3 in list2)
                 current3.Searialize(serverMessage);
 
             return serverMessage;
@@ -786,7 +786,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         {
             var toReturn = new HashSet<RoomData>();
 
-            foreach (
+            /* TODO CHECK */ foreach (
                 var current in
                 from p in Friends.Values where p != null && p.InRoom && p.CurrentRoom?.RoomData != null select p)
                 toReturn.Add(current.CurrentRoom.RoomData);

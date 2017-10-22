@@ -19,7 +19,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         {
             var message = string.Join(" ", pms);
             if (string.IsNullOrEmpty(message)) return true;
-            foreach (var client in Oblivion.GetGame().GetClientManager().Clients.Values)
+            /* TODO CHECK */ foreach (var client in Oblivion.GetGame().GetClientManager().Clients.Values)
             {
                 var serverMessage = new ServerMessage();
                 serverMessage.Init(LibraryParser.OutgoingRequest("WhisperMessageComposer"));

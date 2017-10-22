@@ -88,7 +88,7 @@ namespace Oblivion.Security
                 if (table == null)
                     return;
 
-                foreach (DataRow row in table.Rows)
+                /* TODO CHECK */ foreach (DataRow row in table.Rows)
                     Word.Add(row[0].ToString().ToLower());
             }
 

@@ -177,7 +177,7 @@ namespace Oblivion.Messages.Handlers
 
             Response.AppendInteger(ecotronRewardsLevels.Count);
 
-            foreach (var current in ecotronRewardsLevels)
+            /* TODO CHECK */ foreach (var current in ecotronRewardsLevels)
             {
                 Response.AppendInteger(current);
                 Response.AppendInteger(current);
@@ -187,7 +187,7 @@ namespace Oblivion.Messages.Handlers
 
                 Response.AppendInteger(ecotronRewardsForLevel.Count);
 
-                foreach (var current2 in ecotronRewardsForLevel)
+                /* TODO CHECK */ foreach (var current2 in ecotronRewardsForLevel)
                 {
                     Response.AppendString(current2.GetBaseItem().PublicName);
                     Response.AppendInteger(1);
@@ -337,7 +337,7 @@ namespace Oblivion.Messages.Handlers
             Oblivion.GetGame().GetCatalog().GetMarketplace().MarketItems.Clear();
             Oblivion.GetGame().GetCatalog().GetMarketplace().MarketItemKeys.Clear();
             if (table != null)
-                foreach (var row in table.Rows.Cast<DataRow>().Where(row => !Oblivion.GetGame().GetCatalog()
+                /* TODO CHECK */ foreach (var row in table.Rows.Cast<DataRow>().Where(row => !Oblivion.GetGame().GetCatalog()
                     .GetMarketplace().MarketItemKeys.Contains(Convert.ToInt32(row["offer_id"]))))
                 {
                     Oblivion.GetGame().GetCatalog().GetMarketplace().MarketItemKeys
@@ -352,7 +352,7 @@ namespace Oblivion.Messages.Handlers
             var dictionary = new Dictionary<int, MarketOffer>();
             var dictionary2 = new Dictionary<int, int>();
 
-            foreach (var item in Oblivion.GetGame().GetCatalog().GetMarketplace().MarketItems)
+            /* TODO CHECK */ foreach (var item in Oblivion.GetGame().GetCatalog().GetMarketplace().MarketItems)
                 if (dictionary.ContainsKey(item.SpriteId))
                 {
                     if (item.LimitedNumber > 0)
@@ -384,7 +384,7 @@ namespace Oblivion.Messages.Handlers
                 }
             var message = new ServerMessage(LibraryParser.OutgoingRequest("MarketPlaceOffersMessageComposer"));
             message.AppendInteger(dictionary.Count);
-            foreach (var pair in dictionary.Values.Where(x => x.TotalPrice >= MinCost && x.TotalPrice <= MaxCost))
+            /* TODO CHECK */ foreach (var pair in dictionary.Values.Where(x => x.TotalPrice >= MinCost && x.TotalPrice <= MaxCost))
             {
                 message.AppendInteger(pair.OfferId);
                 message.AppendInteger(1);
@@ -430,7 +430,7 @@ namespace Oblivion.Messages.Handlers
 
             var responseList = new List<ServerMessage>();
 
-            foreach (var habboGroup in userGroups.Where(current => current != null)
+            /* TODO CHECK */ foreach (var habboGroup in userGroups.Where(current => current != null)
                 .Select(current => Oblivion.GetGame().GetGroupManager().GetGroup(current.GroupId)))
             {
                 if (habboGroup == null)

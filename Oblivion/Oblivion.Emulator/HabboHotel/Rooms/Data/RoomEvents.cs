@@ -27,7 +27,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
             {
                 queryReactor.SetQuery("SELECT * FROM rooms_events WHERE `expire` > UNIX_TIMESTAMP()");
                 var table = queryReactor.GetTable();
-                foreach (DataRow dataRow in table.Rows)
+                /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
                 {
                     _events.Add((uint) dataRow[0],
                         new RoomEvent((uint) dataRow[0], dataRow[1].ToString(), dataRow[2].ToString(), (int) dataRow[3],

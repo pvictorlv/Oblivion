@@ -6,7 +6,6 @@ using System.Data;
 using System.Linq;
 using Oblivion.Collections;
 using Oblivion.Configuration;
-using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Events;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Navigators.Interfaces;
@@ -294,21 +293,7 @@ namespace Oblivion.HabboHotel.Rooms
             return data;
         }
 
-        /// <summary>
-        ///     Initializes the voted rooms.
-        /// </summary>
-        /// <param name="dbClient">The database client.</param>
-        internal void InitVotedRooms(IQueryAdapter dbClient)
-        {
-            dbClient.SetQuery(
-                "SELECT * FROM rooms_data WHERE score > 0 AND roomtype = 'private' ORDER BY score DESC LIMIT 40");
-            var table = dbClient.GetTable();
-            foreach (
-                var data in
-                from DataRow dataRow in table.Rows select FetchRoomData(Convert.ToUInt32(dataRow["id"]), dataRow))
-                QueueVoteAdd(data);
-        }
-        
+
         /// <summary>
         ///     Loads the models.
         /// </summary>
@@ -368,7 +353,7 @@ namespace Oblivion.HabboHotel.Rooms
                 if (sinceBallLastTime.TotalMilliseconds >= 180)
                 {
                     _cycleBallLastExecution = DateTime.Now;
-                    foreach (var Room in LoadedBallRooms.ToList())
+                    /* TODO CHECK */ foreach (var Room in LoadedBallRooms.ToList())
                     {
                         try
                         {
@@ -543,7 +528,7 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    foreach (var current in room.GetRoomUserManager().UserList.Values.Where(current => current != null))
+                   foreach (var current in room.GetRoomUserManager().UserList.Values.Where(current => current != null))
                     {
                         if (current.IsPet)
                         {
@@ -593,7 +578,7 @@ namespace Oblivion.HabboHotel.Rooms
             }
 
             LoadedRooms.TryRemove(room.RoomId, out var _);
-
+            LoadedBallRooms.Remove(room);
 //            Out.WriteLine(string.Format("Room #{0} was unloaded, reason: " + reason, room.RoomId),
 //                "Oblivion.Room.Manager", ConsoleColor.DarkGray);
 

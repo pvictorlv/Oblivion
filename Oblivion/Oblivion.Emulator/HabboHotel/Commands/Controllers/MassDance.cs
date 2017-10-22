@@ -34,7 +34,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(session.GetHabbo().CurrentRoomId);
             var roomUsers = room.GetRoomUserManager().GetRoomUsers();
 
-            foreach (var roomUser in roomUsers)
+            /* TODO CHECK */ foreach (var roomUser in roomUsers)
             {
                 var message =
                     new ServerMessage(LibraryParser.OutgoingRequest("DanceStatusMessageComposer"));

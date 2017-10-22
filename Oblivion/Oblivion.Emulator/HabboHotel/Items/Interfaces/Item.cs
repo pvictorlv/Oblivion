@@ -194,7 +194,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             FlatId = flatId;
             IsGroupItem = Name.ToLower().ContainsAny("gld_", "guild_", "grp");
 
-            if (vendingIds.Contains(",")) foreach (var s in vendingIds.Split(',')) VendingIds.Add(int.Parse(s));
+            if (vendingIds.Contains(",")) /* TODO CHECK */ foreach (var s in vendingIds.Split(',')) VendingIds.Add(int.Parse(s));
             else if (!vendingIds.Equals(string.Empty) && int.Parse(vendingIds) > 0)
                 VendingIds.Add(int.Parse(vendingIds));
         }

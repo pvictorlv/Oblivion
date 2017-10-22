@@ -101,7 +101,7 @@ namespace Oblivion.Util
 
             dbClient.SetQuery(_queries.ToString());
 
-            foreach (var current in _parameters)
+            /* TODO CHECK */ foreach (var current in _parameters)
                 dbClient.AddParameter(current.Key, current.Value);
 
             dbClient.RunQuery();

@@ -143,20 +143,17 @@ namespace Oblivion.Configuration
                         break;
 
                     case "currency.loop.time.in.minutes":
-                        int i;
-                        if (int.TryParse(theParams[1], out i))
+                        if (int.TryParse(theParams[1], out var i))
                             CurrentyLoopTimeInMinutes = i;
                         break;
 
                     case "credits.to.give":
-                        int j;
-                        if (int.TryParse(theParams[1], out j))
+                        if (int.TryParse(theParams[1], out var j))
                             CreditsToGive = j;
                         break;
 
                     case "pixels.to.give":
-                        int k;
-                        if (int.TryParse(theParams[1], out k))
+                        if (int.TryParse(theParams[1], out var k))
                             PixelsToGive = k;
                         break;
 
@@ -165,8 +162,7 @@ namespace Oblivion.Configuration
                         break;
 
                     case "diamonds.to.give":
-                        int l;
-                        if (int.TryParse(theParams[1], out l))
+                        if (int.TryParse(theParams[1], out var l))
                             DiamondsToGive = l;
                         break;
 
@@ -195,8 +191,7 @@ namespace Oblivion.Configuration
                         break;
 
                     case "newuser.gift.yttv2.id":
-                        uint u;
-                        if (uint.TryParse(theParams[1], out u))
+                        if (uint.TryParse(theParams[1], out var u))
                             NewUserGiftYttv2Id = u;
                         break;
 

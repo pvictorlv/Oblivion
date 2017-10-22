@@ -130,7 +130,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (Room?.GetRoomItemHandler() == null)
                 return;
 
-            foreach (var item in Items)
+            /* TODO CHECK */ foreach (var item in Items)
             {
                 if (item == null || Room.GetRoomItemHandler().GetItem(item.Id) == null)
                 {

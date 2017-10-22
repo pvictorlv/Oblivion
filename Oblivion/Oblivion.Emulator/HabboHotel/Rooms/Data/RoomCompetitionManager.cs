@@ -29,7 +29,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 queryReactor.SetQuery("SELECT * FROM rooms_competitions_entries WHERE competition_id = " + Id);
                 var table = queryReactor.GetTable();
                 if (table == null) return;
-                foreach (DataRow row in table.Rows)
+                /* TODO CHECK */ foreach (DataRow row in table.Rows)
                 {
                     var roomId = (uint) row["room_id"];
                     var roomData = Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId);
@@ -68,7 +68,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
             {
                 message.StartArray();
 
-                foreach (var furni in RequiredFurnis)
+                /* TODO CHECK */ foreach (var furni in RequiredFurnis)
                 {
                     message.AppendString(furni);
                     message.SaveArray();
@@ -82,7 +82,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 {
                     message.StartArray();
 
-                    foreach (var furni in RequiredFurnis)
+                    /* TODO CHECK */ foreach (var furni in RequiredFurnis)
                     {
                         if (!room.GetRoomItemHandler().HasFurniByItemName(furni))
                         {

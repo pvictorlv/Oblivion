@@ -94,7 +94,7 @@ namespace Oblivion.HabboHotel.SoundMachine
             {
                 var sortedDictionary = new SortedDictionary<int, SongInstance>();
 
-                foreach (var current in _mPlaylist)
+                /* TODO CHECK */ foreach (var current in _mPlaylist)
                     sortedDictionary.Add(current.Key, current.Value);
 
 
@@ -231,7 +231,7 @@ namespace Oblivion.HabboHotel.SoundMachine
 
             _mPlaylist.Clear();
 
-            foreach (var current in list)
+            /* TODO CHECK */ foreach (var current in list)
                 AddDisk(current);
         }
 

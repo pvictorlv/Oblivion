@@ -71,7 +71,7 @@ namespace Oblivion.HabboHotel.Groups
                 if (table == null)
                     return;
 
-                foreach (DataRow row in table.Rows)
+                /* TODO CHECK */ foreach (DataRow row in table.Rows)
                 {
                     switch (row["type"].ToString().ToLower())
                     {
@@ -213,7 +213,7 @@ namespace Oblivion.HabboHotel.Groups
 
                 uint userId;
 
-                foreach (DataRow dataRow in groupMembersTable.Rows)
+                /* TODO CHECK */ foreach (DataRow dataRow in groupMembersTable.Rows)
                 {
                     userId = (uint) dataRow["user_id"];
 
@@ -232,7 +232,7 @@ namespace Oblivion.HabboHotel.Groups
                     }
                 }
 
-                foreach (DataRow dataRow in groupRequestsTable.Rows)
+                /* TODO CHECK */ foreach (DataRow dataRow in groupRequestsTable.Rows)
                 {
                     userId = (uint) dataRow["user_id"];
 
@@ -276,7 +276,7 @@ namespace Oblivion.HabboHotel.Groups
 
                 var table = queryReactor.GetTable();
 
-                foreach (DataRow dataRow in table.Rows)
+                /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
                     list.Add(new GroupMember(userId, dataRow["username"].ToString(), dataRow["look"].ToString(),
                         (uint) dataRow["group_id"], Convert.ToInt16(dataRow["rank"]), (int) dataRow["date_join"],
                         false));

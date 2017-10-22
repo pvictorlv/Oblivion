@@ -21,13 +21,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override bool Execute(GameClient session, string[] pms)
         {
-            int amount;
-            if (!int.TryParse(pms[0], out amount))
+            if (!int.TryParse(pms[0], out var amount))
             {
                 session.SendNotif(Oblivion.GetLanguage().GetVar("enter_numbers"));
                 return true;
             }
-            foreach (var client in Oblivion.GetGame().GetClientManager().Clients.Values)
+           foreach (var client in Oblivion.GetGame().GetClientManager().Clients.Values)
             {
                 if (client?.GetHabbo() == null) continue;
                 client.GetHabbo().Credits += amount;

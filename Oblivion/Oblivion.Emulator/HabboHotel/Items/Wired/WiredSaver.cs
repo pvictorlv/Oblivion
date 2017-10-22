@@ -265,7 +265,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     var dataToSave = string.Empty;
                     var extraStringForWi = string.Empty;
 
-                    foreach (var aItem in items)
+                    /* TODO CHECK */ foreach (var aItem in items)
                     {
 //                        if (aItem.GetBaseItem().InteractionType == Interaction.Dice)
 //                        {
