@@ -673,7 +673,7 @@ namespace Oblivion
                     restart
                         ? "<b>The hotel is shutting down for a break.<)/b>\nYou may come back later.\r\n<b>So long!</b>"
                         : "<b>The hotel is shutting down for a break.</b><br />You may come back soon. Don't worry, everything's going to be saved..<br /><b>So long!</b>\r\n~ This session was powered by OblivionEmulator");
-                GetGame().GetClientManager().QueueBroadcaseMessage(serverMessage);
+                GetGame().GetClientManager().SendMessage(serverMessage);
                 Console.Title = "Oblivion Emulator | Shutting down...";
 
                 _game.StopGameLoop();

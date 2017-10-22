@@ -24,7 +24,7 @@ using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Rooms.User
 {
-    public class RoomUser : IEquatable<RoomUser>
+    public class RoomUser
     {
         /// <summary>
         ///     The _flood count
@@ -796,7 +796,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
             GetRoom().OnUserSay(this, msg, shout);
 
-            GetRoom().GetRoomUserManager().TurnHeads(X, Y, HabboId);
+//            GetRoom().GetRoomUserManager().TurnHeads(X, Y, HabboId);
         }
 
 

@@ -103,7 +103,7 @@ namespace Oblivion.Configuration
                         var message = new ServerMessage(LibraryParser.OutgoingRequest("BroadcastNotifMessageComposer"));
                         message.AppendString(str);
                         message.AppendString(string.Empty);
-                        GetGame().GetClientManager().QueueBroadcaseMessage(message);
+                        GetGame().GetClientManager().SendMessage(message);
                         Console.WriteLine("[{0}] was sent!", str);
                         return;
                     }
@@ -244,7 +244,7 @@ namespace Oblivion.Configuration
                         msg.AppendBool(false);
                         GetGame()
                             .GetClientManager()
-                            .QueueBroadcaseMessage(msg);
+                            .SendMessage(msg);
 
                         Console.WriteLine("Catalogue was re-loaded.");
                         Console.WriteLine();

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -23,21 +22,12 @@ namespace Oblivion.HabboHotel.GameClients
         /// <summary>
         ///     The _badge queue
         /// </summary>
-        private readonly Queue _badgeQueue;
-
-        /// <summary>
-        ///     The _broadcast queue
-        /// </summary>
-        private readonly ConcurrentQueue<byte[]> _broadcastQueue;
-
-        private readonly ConcurrentQueue<GameClient> _clientsAddQueue;
-
-        private readonly ConcurrentQueue<GameClient> _clientsToRemove;
+//        private readonly Queue _badgeQueue;
 
         /// <summary>
         ///     The _id user name register
         /// </summary>
-        private readonly HybridDictionary _idUserNameRegister;
+//        private readonly HybridDictionary _idUserNameRegister;
 
         /// <summary>
         ///     The _user identifier register
@@ -47,7 +37,7 @@ namespace Oblivion.HabboHotel.GameClients
         /// <summary>
         ///     The _user name identifier register
         /// </summary>
-        private readonly HybridDictionary _userNameIdRegister;
+//        private readonly HybridDictionary _userNameIdRegister;
 
         /// <summary>
         ///     The _user name register
@@ -65,14 +55,14 @@ namespace Oblivion.HabboHotel.GameClients
         internal GameClientManager()
         {
             Clients = new ConcurrentDictionary<uint, GameClient>();
-            _clientsAddQueue = new ConcurrentQueue<GameClient>();
-            _clientsToRemove = new ConcurrentQueue<GameClient>();
-            _badgeQueue = new Queue();
-            _broadcastQueue = new ConcurrentQueue<byte[]>();
+//            _clientsAddQueue = new ConcurrentQueue<GameClient>();
+//            _clientsToRemove = new ConcurrentQueue<GameClient>();
+//            _badgeQueue = new Queue();
+//            _broadcastQueue = new ConcurrentQueue<byte[]>();
             _userNameRegister = new HybridDictionary();
             _userIdRegister = new HybridDictionary();
-            _userNameIdRegister = new HybridDictionary();
-            _idUserNameRegister = new HybridDictionary();
+//            _userNameIdRegister = new HybridDictionary();
+//            _idUserNameRegister = new HybridDictionary();
         }
 
         /// <summary>
@@ -188,30 +178,11 @@ namespace Oblivion.HabboHotel.GameClients
 
             if (broadCast)
             {
-                QueueBroadcaseMessage(serverMessage);
+                SendMessage(serverMessage);
                 return;
             }
 
             client.SendMessage(serverMessage);
-        }
-
-        /// <summary>
-        ///     Called when [cycle].
-        /// </summary>
-        internal void OnCycle()
-        {
-            try
-            {
-                AddClients();
-                RemoveClients();
-                GiveBadges();
-                BroadcastPackets();
-                Oblivion.GetGame().ClientManagerCycleEnded = true;
-            }
-            catch (Exception ex)
-            {
-                Logging.LogThreadException(ex.ToString(), "GameClientManager.OnCycle Exception --> Not inclusive");
-            }
         }
 
         /// <summary>
@@ -249,7 +220,7 @@ namespace Oblivion.HabboHotel.GameClients
             var gameClient = new GameClient(clientId, connection);
 
             Clients.AddOrUpdate(clientId, gameClient, (key, value) => gameClient);
-            _clientsAddQueue.Enqueue(gameClient);
+            gameClient.StartConnection();
         }
 
         /// <summary>
@@ -259,26 +230,38 @@ namespace Oblivion.HabboHotel.GameClients
         internal void DisposeConnection(uint clientId)
         {
             var client = GetClient(clientId);
-            _clientsToRemove.Enqueue(client);
+            if (client == null) return;
+            client.Stop();
+            Clients.TryRemove(client.ConnectionId, out client);
         }
 
         /// <summary>
         ///     Queues the broadcase message.
         /// </summary>
         /// <param name="message">The message.</param>
-        internal void QueueBroadcaseMessage(ServerMessage message)
-        {
-            _broadcastQueue.Enqueue(message.GetReversedBytes());
-        }
+//        internal void QueueBroadcaseMessage(ServerMessage message)
+//        {
+//            _broadcastQueue.Enqueue(message.GetReversedBytes());
+//        }
 
         /// <summary>
-        ///     Queues the badge update.
+        /// Send message for all users
         /// </summary>
-        /// <param name="badge">The badge.</param>
-        internal void QueueBadgeUpdate(string badge)
+        /// <param name="Packet"></param>
+        /// <param name="fuse"></param>
+        public void SendMessage(ServerMessage Packet, string fuse = "")
         {
-            lock (_badgeQueue.SyncRoot)
-                _badgeQueue.Enqueue(badge);
+            var bytes = Packet.GetReversedBytes();
+            
+
+            foreach (var Client in Clients.Values.Where(Client => Client?.GetHabbo() != null))
+            {
+                if (!string.IsNullOrEmpty(fuse))
+                    if (!Client.GetHabbo().HasFuse(fuse))
+                        continue;
+
+                Client.GetConnection().SendDataAsync(bytes);
+            }
         }
 
         /// <summary>
@@ -308,11 +291,11 @@ namespace Oblivion.HabboHotel.GameClients
             else
                 _userIdRegister.Add(userId, client);
 
-            if (!_userNameIdRegister.Contains(userName))
-                _userNameIdRegister.Add(userName, userId);
+//            if (!_userNameIdRegister.Contains(userName))
+//                _userNameIdRegister.Add(userName, userId);
 
-            if (!_idUserNameRegister.Contains(userId))
-                _idUserNameRegister.Add(userId, userName);
+//            if (!_idUserNameRegister.Contains(userId))
+//                _idUserNameRegister.Add(userId, userName);
 
         }
 
@@ -395,98 +378,7 @@ namespace Oblivion.HabboHotel.GameClients
             _userNameRegister.Remove(oldName.ToLower());
             _userNameRegister.Add(newName.ToLower(), old);
         }
-
-        private void AddClients()
-        {
-            if (_clientsAddQueue.Count > 0)
-            {
-                GameClient client;
-
-                while (_clientsAddQueue.TryDequeue(out client))
-                    client.StartConnection();
-            }
-        }
-
-        private void RemoveClients()
-        {
-            if (_clientsToRemove.Count > 0)
-            {
-                GameClient client;
-
-                while (_clientsToRemove.TryDequeue(out client))
-                {
-                    if (client != null)
-                    {
-                        client.Stop();
-                        Clients.TryRemove(client.ConnectionId, out client);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        ///     Gives the badges.
-        /// </summary>
-        private void GiveBadges()
-        {
-            try
-            {
-                var now = DateTime.Now;
-
-                if (_badgeQueue.Count > 0)
-                {
-                    lock (_badgeQueue.SyncRoot)
-                    {
-                        while (_badgeQueue.Count > 0)
-                        {
-                            var badge = (string)_badgeQueue.Dequeue();
-
-                            foreach (var current in Clients.Values.Where(current => current.GetHabbo() != null))
-                            {
-                                current.GetHabbo().GetBadgeComponent().GiveBadge(badge, true, current);
-                                current.SendNotif(Oblivion.GetLanguage().GetVar("user_earn_badge"));
-                            }
-                        }
-                    }
-                }
-
-                var timeSpan = DateTime.Now - now;
-
-                if (timeSpan.TotalSeconds > 3.0)
-                    Console.WriteLine($"GameClientManager.GiveBadges spent: {timeSpan.TotalSeconds} seconds in working.");
-            }
-            catch (Exception ex)
-            {
-                Logging.LogThreadException(ex.ToString(), "GameClientManager.GiveBadges Exception --> Not inclusive");
-            }
-        }
-
-        /// <summary>
-        ///     Broadcasts the packets.
-        /// </summary>
-        private void BroadcastPackets()
-        {
-            try
-            {
-                if (!_broadcastQueue.Any())
-                    return;
-
-                var now = DateTime.Now;
-
-                _broadcastQueue.TryDequeue(out byte[] bytes);
-
-                foreach (var current in Clients.Values.Where(current => current?.GetConnection() != null))
-                    current.GetConnection().SendData(bytes);
-
-                var timeSpan = DateTime.Now - now;
-
-                if (timeSpan.TotalSeconds > 3.0)
-                    Console.WriteLine("GameClientManager.BroadcastPackets spent: {0} seconds in working.", timeSpan.TotalSeconds);
-            }
-            catch (Exception ex)
-            {
-                Logging.LogThreadException(ex.ToString(), "GameClientManager.BroadcastPackets Exception --> Not inclusive");
-            }
-        }
+        
+       
     }
 }

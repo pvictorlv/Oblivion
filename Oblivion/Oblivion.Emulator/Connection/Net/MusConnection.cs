@@ -62,7 +62,7 @@ namespace Oblivion.Connection.Net
                         var hotelAlert =
                             new ServerMessage(LibraryParser.OutgoingRequest("BroadcastNotifMessageComposer"));
                         hotelAlert.AppendString($"{param}\r\n- Hotel Management");
-                        Oblivion.GetGame().GetClientManager().QueueBroadcaseMessage(hotelAlert);
+                        Oblivion.GetGame().GetClientManager().SendMessage(hotelAlert);
                         break;
 
                     case "alert":

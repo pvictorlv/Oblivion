@@ -33,7 +33,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             msg.AppendBool(false);
             Oblivion.GetGame()
                 .GetClientManager()
-                .QueueBroadcaseMessage(msg);
+                .SendMessage(msg);
             return true;
         }
     }

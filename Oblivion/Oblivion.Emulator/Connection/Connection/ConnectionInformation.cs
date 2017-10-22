@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.Messages.Parsers;
 
@@ -277,6 +278,25 @@ namespace Oblivion.Connection.Connection
             catch (Exception e)
             {
 //                Logging.HandleException(e, "SendData - ConnectionInformation.cs");
+                HandleDisconnect(e);
+            }
+        }
+
+        /// <summary>
+        /// Sends the data.
+        /// </summary>
+        /// <param name="packet">The packet.</param>
+        public async Task SendDataAsync(byte[] packet)
+        {
+            await Task.Yield();
+            if (_socket == null || !_socket.Connected) return;
+            try
+            {
+                _socket.BeginSend(packet, 0, packet.Length, 0, OnSendCompleted, _socket);
+            }
+            catch (Exception e)
+            {
+                //                Logging.HandleException(e, "SendData - ConnectionInformation.cs");
                 HandleDisconnect(e);
             }
         }

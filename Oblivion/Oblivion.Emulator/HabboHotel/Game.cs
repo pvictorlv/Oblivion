@@ -163,7 +163,7 @@ namespace Oblivion.HabboHotel
         /// <summary>
         ///     The client manager cycle ended
         /// </summary>
-        internal bool ClientManagerCycleEnded, RoomManagerCycleEnded;
+        internal bool RoomManagerCycleEnded;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Game" /> class.
@@ -537,9 +537,8 @@ namespace Oblivion.HabboHotel
                 try
                 {
                     RoomManagerCycleEnded = false;
-                    ClientManagerCycleEnded = false;
                     _roomManager.OnCycle();
-                    _clientManager.OnCycle();
+//                    _clientManager.OnCycle();
                 }
                 catch (Exception ex)
                 {

@@ -490,13 +490,10 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="shout">if set to <c>true</c> [shout].</param>
         internal void OnUserSay(RoomUser user, string message, bool shout)
         {
-            foreach (var current in _roomUserManager.UserList.Values)
+            foreach (var current in _roomUserManager.UserList.Values.Where(x => x.IsBot || x.IsPet))
             {
                 try
                 {
-                    if (!current.IsBot && !current.IsPet)
-                        continue;
-
                     if (!current.IsPet && message.ToLower().StartsWith(current.BotData.Name.ToLower()))
                     {
                         message = message.Substring(current.BotData.Name.Length);
@@ -762,7 +759,10 @@ namespace Oblivion.HabboHotel.Rooms
                     }
                     if (GotWireds())
                     {
-                        GetWiredHandler().OnCycle();
+                        Task.Run(() =>
+                        {
+                            GetWiredHandler().OnCycle();
+                        });
                     }
                     WorkRoomKickQueue();
                 }

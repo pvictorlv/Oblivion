@@ -34,7 +34,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             msg.AppendBool(false);
             Oblivion.GetGame()
                 .GetClientManager()
-                .QueueBroadcaseMessage(msg);
+                .SendMessage(msg);
             var message = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
             message.AppendString("ninja_promo_LTD");
             message.AppendInteger(4);
@@ -48,7 +48,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             message.AppendString("linkTitle");
             message.AppendString("Ver o Raro");
 
-            Oblivion.GetGame().GetClientManager().QueueBroadcaseMessage(message);
+            Oblivion.GetGame().GetClientManager().SendMessage(message);
             return true;
         }
     }

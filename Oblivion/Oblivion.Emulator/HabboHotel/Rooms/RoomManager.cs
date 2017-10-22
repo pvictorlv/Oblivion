@@ -592,9 +592,7 @@ namespace Oblivion.HabboHotel.Rooms
                 }
             }
 
-            Room junkRoom;
-            LoadedRooms.TryRemove(room.RoomId, out junkRoom);
-            junkRoom = null;
+            LoadedRooms.TryRemove(room.RoomId, out var _);
 
 //            Out.WriteLine(string.Format("Room #{0} was unloaded, reason: " + reason, room.RoomId),
 //                "Oblivion.Room.Manager", ConsoleColor.DarkGray);

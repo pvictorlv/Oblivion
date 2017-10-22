@@ -10,8 +10,6 @@ using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
 using Oblivion.Security.BlackWords;
 using Oblivion.Security.BlackWords.Enums;
-using Oblivion.Security.BlackWords.Structs;
-using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Users.Messenger
 {
@@ -629,9 +627,8 @@ namespace Oblivion.HabboHotel.Users.Messenger
             serverMessage.AppendInteger(0);
 
             var client = GetClient();
-            GroupMember memb;
             var groups = Oblivion.GetGame().GetGroupManager().Groups.Values
-                .Where(gp => gp.Members.TryGetValue(client.GetHabbo().Id, out memb) && gp.HasChat && memb.HasChat)
+                .Where(gp => gp.Members.TryGetValue(client.GetHabbo().Id, out var memb) && gp.HasChat && memb.HasChat)
                 .ToList();
 
             serverMessage.AppendInteger(Friends.Count + groups.Count);
