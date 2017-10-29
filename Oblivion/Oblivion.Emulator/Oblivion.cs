@@ -320,17 +320,7 @@ namespace Oblivion
                 ConsoleTimerOn = bool.Parse(ConfigurationData.Data["console.clear.enabled"]);
                 FriendRequestLimit = (uint) int.Parse(ConfigurationData.Data["client.maxrequests"]);
 
-
-                LibraryParser.Incoming = new Dictionary<int, LibraryParser.StaticRequestHandler>();
-                LibraryParser.Library = new Dictionary<string, string>();
-                LibraryParser.Outgoing = new Dictionary<string, int>();
-                LibraryParser.Config = new Dictionary<string, string>();
-
-                LibraryParser.RegisterLibrary();
-                LibraryParser.RegisterOutgoing();
-                LibraryParser.RegisterIncoming();
-                LibraryParser.RegisterConfig();
-
+                LibraryParser.RegisterAll();
 
                 Plugins = new Dictionary<string, IPlugin>();
 

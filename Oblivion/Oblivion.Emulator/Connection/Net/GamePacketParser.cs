@@ -171,7 +171,7 @@ namespace Oblivion.Connection.Net
             {
                 if (_currentClient.IsAir)
                 {
-                    int newMessageId = AirPacketTranslator.GetInstance().ReplaceIncomingHeader((short) messageId);
+                    int newMessageId = AirPacketTranslator.ReplaceIncomingHeader((short) messageId);
 
                     if (newMessageId == 0)
                     {

@@ -15,6 +15,9 @@ namespace Oblivion.Messages.Parsers
         internal static Dictionary<string, int> Outgoing;
         internal static Dictionary<string, string> Config;
 
+        internal static Dictionary<short, short> IncomingAir;
+        internal static Dictionary<short, short> OutgoingAir;
+
         private static List<uint> _registeredOutoings;
 
         internal static int CountReleases;
@@ -34,6 +37,19 @@ namespace Oblivion.Messages.Parsers
             Writer.Writer.LogMessage("Outgoing " + packetName + " doesn't exist.");
 
             return -1;
+        }
+
+        public static void RegisterAll()
+        {
+            Incoming = new Dictionary<int, StaticRequestHandler>();
+            Library = new Dictionary<string, string>();
+            Outgoing = new Dictionary<string, int>();
+            Config = new Dictionary<string, string>();
+
+            IncomingAir = new Dictionary<short, short>();
+            OutgoingAir = new Dictionary<short, short>();
+
+            ReloadDictionarys();
         }
 
         public static void Initialize()
@@ -88,6 +104,8 @@ namespace Oblivion.Messages.Parsers
             Outgoing.Clear();
             Library.Clear();
             Config.Clear();
+            IncomingAir.Clear();
+            OutgoingAir.Clear();
 
             RegisterLibrary();
             RegisterConfig();
@@ -101,19 +119,28 @@ namespace Oblivion.Messages.Parsers
 
             var filePaths = Directory.GetFiles($"{Environment.CurrentDirectory}\\Packets", "*.incoming");
 
-            /* TODO CHECK */ foreach (var fileContents in filePaths.Select(currentFile => File.ReadAllLines(currentFile, Encoding.UTF8)))
+            /* TODO CHECK */
+            foreach (var fileContents in filePaths.Select(currentFile => File.ReadAllLines(currentFile, Encoding.UTF8)))
             {
                 CountReleases++;
 
-                /* TODO CHECK */ foreach (var fields in fileContents.Where(line => !string.IsNullOrEmpty(line) && !line.StartsWith("[")).Select(line => line.Replace(" ", string.Empty).Split('=')))
+                /* TODO CHECK */
+                foreach (var fields in fileContents.Where(line => !string.IsNullOrEmpty(line) && !line.StartsWith("[")).Select(line => line.Replace(" ", string.Empty).Split('=')))
                 {
                     var packetName = fields[0];
 
                     if (fields[1].Contains('/'))
-                        fields[1] = fields[1].Split('/')[0];
+                    {
+                        string[] packets = fields[1].Split('/');
+
+                        if (Int16.TryParse(packets[0], out Int16 oldHeader) && Int16.TryParse(packets[1], out Int16 newHeader))
+                            IncomingAir.Add(newHeader, oldHeader);
+
+                        fields[1] = packets[0];
+                    }
 
                     var packetId = fields[1].ToLower().Contains('x') ? Convert.ToInt32(fields[1], 16) : Convert.ToInt32(fields[1]);
-
+                    
                     if (!Library.ContainsKey(packetName))
                         continue;
 
@@ -154,7 +181,14 @@ namespace Oblivion.Messages.Parsers
             /* TODO CHECK */ foreach (var fields in filePaths.Select(File.ReadAllLines).SelectMany(fileContents => fileContents.Where(line => !string.IsNullOrEmpty(line) && !line.StartsWith("[")).Select(line => line.Replace(" ", string.Empty).Split('='))))
             {
                 if (fields[1].Contains('/'))
-                    fields[1] = fields[1].Split('/')[0];
+                {
+                    string[] packets = fields[1].Split('/');
+
+                    if (Int16.TryParse(packets[0], out Int16 oldHeader) && Int16.TryParse(packets[1], out Int16 newHeader))
+                        OutgoingAir.Add(oldHeader, newHeader);
+
+                    fields[1] = packets[0];
+                }
 
                 var packetName = fields[0];
                 var packetId = int.Parse(fields[1]);
