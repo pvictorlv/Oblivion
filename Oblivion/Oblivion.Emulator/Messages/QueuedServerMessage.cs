@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Oblivion.Connection.Connection;
+using System;
 
 namespace Oblivion.Messages
 {
@@ -11,7 +12,7 @@ namespace Oblivion.Messages
         /// <summary>
         /// The _packet
         /// </summary>
-        private readonly List<byte> _packet;
+        private List<byte[]> _packets;
 
         /// <summary>
         /// The _user connection
@@ -25,21 +26,21 @@ namespace Oblivion.Messages
         public QueuedServerMessage(ConnectionInformation connection)
         {
             _userConnection = connection;
-            _packet = new List<byte>();
+            _packets = new List<byte[]>();
         }
 
         /// <summary>
         /// Gets the get packet.
         /// </summary>
         /// <value>The get packet.</value>
-        internal byte[] GetPacket => _packet.ToArray();
+        internal List<byte[]> GetPacket => _packets;
 
         /// <summary>
         /// Disposes this instance.
         /// </summary>
-        internal void Dispose()
+        public void Dispose()
         {
-            _packet.Clear();
+            _packets.Clear();
             _userConnection = null;
         }
 
@@ -62,11 +63,22 @@ namespace Oblivion.Messages
         }
 
         /// <summary>
+        /// Adds the bytes.
+        /// </summary>
+        /// <param name="bytes">The bytes.</param>
+        internal void AddBytes(List<byte[]> bytes)
+        {
+            foreach (byte[] byteArray in bytes)
+                AppendBytes(byteArray);
+        }
+
+        /// <summary>
         /// Sends the response.
         /// </summary>
         internal void SendResponse()
         {
-            _userConnection?.SendData(_packet.ToArray());
+            foreach (var packet in _packets)
+                _userConnection?.SendData(packet);
 
             Dispose();
         }
@@ -75,9 +87,9 @@ namespace Oblivion.Messages
         /// Appends the bytes.
         /// </summary>
         /// <param name="bytes">The bytes.</param>
-        private void AppendBytes(IEnumerable<byte> bytes)
+        private void AppendBytes(byte[] bytes)
         {
-            _packet.AddRange(bytes);
+            _packets.Add(bytes);
         }
     }
 }

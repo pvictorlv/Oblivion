@@ -184,3 +184,4 @@ UpgradeLog*.htm
 # Microsoft Fakes
 FakesAssemblies/
 *.DotSettings
+/.vs/Oblivion/v15/Server/sqlite3

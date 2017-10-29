@@ -2456,9 +2456,9 @@ namespace Oblivion.Messages.Parsers
         /// Gets the client version message event.
         /// </summary>
         /// <param name="handler">The handler.</param>
-        internal static void GetClientVersionMessageEvent(GameClientMessageHandler handler)
+        internal static void ReleaseVersion(GameClientMessageHandler handler)
         {
-            handler.GetClientVersionMessageEvent();
+            handler.ReleaseVersion();
         }
 
         /// <summary>

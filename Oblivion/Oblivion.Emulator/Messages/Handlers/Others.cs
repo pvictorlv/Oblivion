@@ -6,6 +6,8 @@ using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Quests.Composer;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.Messages.Parsers;
+using Oblivion.Encryption.Encryption;
+using Oblivion.Encryption.Encryption.Hurlant.Crypto.Prng;
 
 namespace Oblivion.Messages.Handlers
 {
@@ -94,23 +96,12 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Gets the client version message event.
         /// </summary>
-        internal void GetClientVersionMessageEvent()
+        internal void ReleaseVersion()
         {
             var release = Request.GetString();
-            if (release.Contains("201409222303-304766480"))
-            {
-                Session.GetHabbo().ReleaseName = "304766480";
-                Console.WriteLine("[Handled] Release Id: RELEASE63-201409222303-304766480");
-            }
-            else if (release.Contains("201411201226-580134750"))
-            {
-                Session.GetHabbo().ReleaseName = "304766480";
-                Console.WriteLine("[Handled] Release Id: RELEASE63-201411201226-580134750");
-            }
-            else
-            {
-                LibraryParser.ReleaseName = "Undefined Release";
-            }
+
+            if (release.StartsWith("AIR63"))
+                Session.IsAir = true;
         }
 
         /// <summary>
@@ -158,10 +149,13 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void InitCrypto()
         {
-            Response.Init(LibraryParser.OutgoingRequest("InitCryptoMessageComposer"));
-            Response.AppendString("Oblivion");
-            Response.AppendString("Disabled Crypto");
-            SendResponse();
+            if (Session.IsAir)
+            {
+                Response.Init(884);
+                Response.AppendString(Handler.GetRsaDiffieHellmanPrimeKey().ToLower());
+                Response.AppendString(Handler.GetRsaDiffieHellmanGeneratorKey().ToLower());
+                SendResponse();
+            }
         }
 
 
@@ -170,13 +164,25 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void SecretKey()
         {
-            Request.GetString();
+            var cipherKey = Request.GetString();
+            var sharedKey = Handler.CalculateDiffieHellmanSharedKey(cipherKey);
 
+            if (Session.IsAir)
+            {
+                Response.Init(1838);
+                Response.AppendString(Handler.GetRsaDiffieHellmanPublicKey().ToLower());
+                Response.AppendBool(false);
+                SendResponse();
 
-            Response.Init(LibraryParser.OutgoingRequest("SecretKeyMessageComposer"));
-            Response.AppendString("Crypto disabled");
-            Response.AppendBool(false); //Rc4 clientside.
-            SendResponse();
+                var data = sharedKey.ToByteArray();
+
+                if (data[data.Length - 1] == 0)
+                    Array.Resize(ref data, data.Length - 1);
+
+                Array.Reverse(data, 0, data.Length);
+
+                Session.GetConnection().Arc4ServerSide = new ARC4(data);
+            }
         }
 
         internal void InitConsole()
@@ -207,6 +213,9 @@ namespace Oblivion.Messages.Handlers
                 return;
 
             var sso = Request.GetString();
+
+            if (Session.GetConnection().IsAir)
+                sso = "SSO-123";
             if (string.IsNullOrEmpty(sso) || string.IsNullOrWhiteSpace(sso) || sso.Length < 5)
                 Session.Disconnect("Invalid sso");
             if (Session.TryLogin(sso) == false)

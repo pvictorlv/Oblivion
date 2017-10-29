@@ -256,7 +256,7 @@ namespace Oblivion.HabboHotel.GameClients
                     if (!Client.GetHabbo().HasFuse(fuse))
                         continue;
 
-                Client.GetConnection().SendDataAsync(bytes);
+                Client.GetConnection().SendData(bytes);
             }
         }
 

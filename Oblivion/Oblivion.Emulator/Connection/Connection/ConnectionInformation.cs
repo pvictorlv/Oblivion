@@ -4,6 +4,8 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.Messages.Parsers;
+using Oblivion.Encryption.Encryption.Hurlant.Crypto.Prng;
+using Oblivion.Messages;
 
 namespace Oblivion.Connection.Connection
 {
@@ -56,6 +58,9 @@ namespace Oblivion.Connection.Connection
         /// <value>The parser.</value>
         public IDataParser Parser { get; set; }
 
+
+        public bool IsAir { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ConnectionInformation" /> class.
         /// </summary>
@@ -90,6 +95,8 @@ namespace Oblivion.Connection.Connection
                     DisconnectAction = value;
             }
         }
+
+        internal ARC4 Arc4ServerSide;
 
         /// <summary>
         /// Reads the asynchronous.
@@ -260,7 +267,8 @@ namespace Oblivion.Connection.Connection
         /// <param name="packet">The packet.</param>
         /// <param name="bytesReceived"></param>
         private void HandlePacketData(byte[] packet, int bytesReceived)
-        { 
+        {
+            Arc4ServerSide?.Parse(ref packet);
             Parser?.HandlePacketData(packet, bytesReceived);
         }
 
@@ -271,6 +279,18 @@ namespace Oblivion.Connection.Connection
         public void SendData(byte[] packet)
         {
             if (_socket == null || !_socket.Connected) return;
+
+            if (IsAir)
+            {
+                short newHeader = AirPacketTranslator.GetInstance().ReplaceOutgoingHeader(ref packet, out short oldHeader);
+            
+                if (newHeader == 0)
+                {
+                    Console.WriteLine("Header " + oldHeader + " wasn't translated to packet air.");
+                    return;
+                }
+            }
+
             try
             {
                 _socket.BeginSend(packet, 0, packet.Length, 0, OnSendCompleted, _socket);
@@ -278,25 +298,6 @@ namespace Oblivion.Connection.Connection
             catch (Exception e)
             {
 //                Logging.HandleException(e, "SendData - ConnectionInformation.cs");
-                HandleDisconnect(e);
-            }
-        }
-
-        /// <summary>
-        /// Sends the data.
-        /// </summary>
-        /// <param name="packet">The packet.</param>
-        public async Task SendDataAsync(byte[] packet)
-        {
-            await Task.Yield();
-            if (_socket == null || !_socket.Connected) return;
-            try
-            {
-                _socket.BeginSend(packet, 0, packet.Length, 0, OnSendCompleted, _socket);
-            }
-            catch (Exception e)
-            {
-                //                Logging.HandleException(e, "SendData - ConnectionInformation.cs");
                 HandleDisconnect(e);
             }
         }

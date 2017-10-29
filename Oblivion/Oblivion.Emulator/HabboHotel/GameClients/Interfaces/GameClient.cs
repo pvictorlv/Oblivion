@@ -87,6 +87,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// </summary>
         /// <value>The connection identifier.</value>
         internal uint ConnectionId { get; }
+        public bool IsAir { get => _connection.IsAir; set => _connection.IsAir = value; }
 
         /// <summary>
         ///     Handles the publicist.

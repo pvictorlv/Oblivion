@@ -169,6 +169,19 @@ namespace Oblivion.Connection.Net
         {
             try
             {
+                if (_currentClient.IsAir)
+                {
+                    int newMessageId = AirPacketTranslator.GetInstance().ReplaceIncomingHeader((short) messageId);
+
+                    if (newMessageId == 0)
+                    {
+                        Console.WriteLine("Incoming not translated to air: " + messageId);
+                        return;
+                    }
+
+                    messageId = newMessageId;
+                }
+
                 using (var clientMessage = ClientMessageFactory.GetClientMessage(messageId, packetContent, position, packetLength))
                     if (clientMessage != null && _currentClient?.GetMessageHandler() != null)
                         _currentClient.GetMessageHandler().HandleRequest(clientMessage);
