@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Navigators;
+﻿using System.Linq;
+using Oblivion.HabboHotel.Navigators;
 using Oblivion.HabboHotel.Navigators.Enums;
 using Oblivion.HabboHotel.Navigators.Interfaces;
 using Oblivion.HabboHotel.Rooms.Data;
@@ -35,15 +36,15 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void GetPub()
         {
-           /* uint roomId = Request.GetUInteger();
-            RoomData roomData = Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId);
-            if (roomData == null)
-                return;
-            GetResponse().Init(LibraryParser.OutgoingRequest("453"));
-            GetResponse().AppendInteger(roomData.Id);
-            GetResponse().AppendString(roomData.CcTs);
-            GetResponse().AppendInteger(roomData.Id);
-            SendResponse();*/
+            /* uint roomId = Request.GetUInteger();
+             RoomData roomData = Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId);
+             if (roomData == null)
+                 return;
+             GetResponse().Init(LibraryParser.OutgoingRequest("453"));
+             GetResponse().AppendInteger(roomData.Id);
+             GetResponse().AppendString(roomData.CcTs);
+             GetResponse().AppendInteger(roomData.Id);
+             SendResponse();*/
         }
 
         /// <summary>
@@ -77,6 +78,7 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session == null)
                 return;
+
             string name = Request.GetString();
             string junk = Request.GetString();
             Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializeNewNavigator(name, junk, Session));
@@ -99,7 +101,8 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().NavigatorLogs.Add(naviLogs.Id, naviLogs);
             var message = new ServerMessage(LibraryParser.OutgoingRequest("NavigatorSavedSearchesComposer"));
             message.AppendInteger(Session.GetHabbo().NavigatorLogs.Count);
-            /* TODO CHECK */ foreach (NaviLogs navi in Session.GetHabbo().NavigatorLogs.Values)
+            /* TODO CHECK */
+            foreach (NaviLogs navi in Session.GetHabbo().NavigatorLogs.Values)
             {
                 message.AppendInteger(navi.Id);
                 message.AppendString(navi.Value1);
@@ -138,6 +141,56 @@ namespace Oblivion.Messages.Handlers
         }
 
         /// <summary>
+        /// Hardcode to get users room via habbo air
+        /// </summary>
+        private int count;
+
+        internal void HabboAirGetUserRooms()
+        {
+            count++;
+            if (count <= 10) return;
+
+            /*
+             * [0][0][0]N[11][2]
+             * [0][0][0][5]
+             * [0][0][0][0]
+             * [0][1]
+             * [0]wS
+             * [0][6]ngkvvt
+             * [3]?[13])
+             * [0][9]martim067
+             * [0][0][0][0]
+             * [0][0][0][0]
+             * [0][0][0]   //room limit
+             * [0][0][0][0]
+             * [0][1][0][0]
+             * [0][0][0][0]
+             * [0][0][0][0]
+             * [0][10][0][0]
+             * [0][0][0][0]
+             * [0]8
+             * [0]
+             
+             */
+            var message = new ServerMessage(2818);
+
+            message.AppendInteger(5);
+            message.AppendInteger(0);
+            message.AppendBool(false);
+            var i = 0;
+            message.StartArray();
+            foreach (var data in Session.GetHabbo().Data.Rooms.Where(data => data != null))
+            {
+                data.Serialize(message);
+                message.SaveArray();
+            }
+            message.EndArray();
+            message.AppendBool(false);
+
+            Session.SendMessage(message);
+        }
+
+        /// <summary>
         /// News the navigator add saved search.
         /// </summary>
         internal void NewNavigatorAddSavedSearch()
@@ -156,7 +209,8 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().NavigatorLogs.Remove(searchId);
             var message = new ServerMessage(LibraryParser.OutgoingRequest("NavigatorSavedSearchesComposer"));
             message.AppendInteger(Session.GetHabbo().NavigatorLogs.Count);
-            /* TODO CHECK */ foreach (NaviLogs navi in Session.GetHabbo().NavigatorLogs.Values)
+            /* TODO CHECK */
+            foreach (NaviLogs navi in Session.GetHabbo().NavigatorLogs.Values)
             {
                 message.AppendInteger(navi.Id);
                 message.AppendString(navi.Value1);
@@ -218,7 +272,8 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session.GetHabbo() == null)
                 return;
-            Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializeNavigator(Session, int.Parse(Request.GetString())));
+            Session.SendMessage(Oblivion.GetGame().GetNavigator()
+                .SerializeNavigator(Session, int.Parse(Request.GetString())));
         }
 
         /// <summary>
@@ -396,12 +451,14 @@ namespace Oblivion.Messages.Handlers
                 var pubItem = Oblivion.GetGame().GetNavigator().GetPublicItem(roomId);
                 if (pubItem == null) // not picked
                 {
-                    queryReactor.SetQuery("INSERT INTO navigator_publics (bannertype, room_id, category_parent_id) VALUES ('0', @roomId, '-2')");
+                    queryReactor.SetQuery(
+                        "INSERT INTO navigator_publics (bannertype, room_id, category_parent_id) VALUES ('0', @roomId, '-2')");
                     queryReactor.AddParameter("roomId", room.RoomId);
                     queryReactor.RunQuery();
                     queryReactor.RunFastQuery("SELECT last_insert_id()");
-                    var publicItemId = (uint)queryReactor.GetInteger();
-                    var publicItem = new PublicItem(publicItemId, 0, string.Empty, string.Empty, string.Empty, PublicImageType.Internal, room.RoomId, 0, -2, false, 1, string.Empty);
+                    var publicItemId = (uint) queryReactor.GetInteger();
+                    var publicItem = new PublicItem(publicItemId, 0, string.Empty, string.Empty, string.Empty,
+                        PublicImageType.Internal, room.RoomId, 0, -2, false, 1, string.Empty);
                     Oblivion.GetGame().GetNavigator().AddPublicItem(publicItem);
                 }
                 else // picked

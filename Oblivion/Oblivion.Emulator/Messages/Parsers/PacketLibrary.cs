@@ -2657,6 +2657,9 @@ namespace Oblivion.Messages.Parsers
         internal static void NewNavigatorResize(GameClientMessageHandler handler)
         {
             handler.NewNavigatorResize();
+        }internal static void HabboAirGetUserRooms(GameClientMessageHandler handler)
+        {
+            handler.HabboAirGetUserRooms();
         }
 
         /// <summary>

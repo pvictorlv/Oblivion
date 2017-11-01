@@ -62,11 +62,12 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                 _pucks.Remove(item);
         }
 
-      
+
         internal void OnUserWalk(RoomUser User)
         {
             if (User == null) return;
-            /* TODO CHECK */ foreach (var item in _pucks.ToList())
+            /* TODO CHECK */
+            foreach (var item in _pucks.ToList())
             {
                 var num = User.X - item.X;
                 var num2 = User.Y - item.Y;
@@ -103,7 +104,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             for (var i = 1; i < 5; i++)
                 _room.GetGameManager().Points[i] = 0;
 
-            /* TODO CHECK */ foreach (var tile in _banzaiTiles)
+            /* TODO CHECK */
+            foreach (var tile in _banzaiTiles)
             {
                 tile.ExtraData = "1";
                 tile.Value = 0;
@@ -115,15 +117,17 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             IsBanzaiActive = true;
 
             if (_room.GotWireds())
-            _room.GetWiredHandler().ExecuteWired(Interaction.TriggerGameStart);
+                _room.GetWiredHandler().ExecuteWired(Interaction.TriggerGameStart);
 
-            /* TODO CHECK */ foreach (var user in _room.GetRoomUserManager().GetRoomUsers())
+            /* TODO CHECK */
+            foreach (var user in _room.GetRoomUserManager().GetRoomUsers())
                 user.LockedTilesCount = 0;
         }
 
         public void ResetTiles()
         {
-            /* TODO CHECK */ foreach (var item in _room.GetRoomItemHandler().FloorItems.Values)
+            /* TODO CHECK */
+            foreach (var item in _room.GetRoomItemHandler().FloorItems.Values)
             {
                 var type = item.GetBaseItem().InteractionType;
 
@@ -151,7 +155,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
 
             var winners = _room.GetGameManager().GetWinningTeam();
             _room.GetGameManager().UnlockGates();
-            /* TODO CHECK */ foreach (var tile in _banzaiTiles)
+            /* TODO CHECK */
+            foreach (var tile in _banzaiTiles)
                 if (tile.Team == winners)
                 {
                     tile.InteractionCount = 0;
@@ -168,7 +173,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             {
                 var Winners = _room.GetRoomUserManager().GetRoomUsers();
 
-                /* TODO CHECK */ foreach (var User in Winners)
+                /* TODO CHECK */
+                foreach (var User in Winners)
                 {
                     if (User.Team != Team.None)
                         if (Oblivion.GetUnixTimeStamp() - _timestarted > 5)
@@ -181,13 +187,12 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                                 .GetAchievementManager()
                                 .ProgressUserAchievement(User.GetClient(), "ACH_BattleBallPlayer", 1);
                         }
-                   
-                            if (Oblivion.GetUnixTimeStamp() - _timestarted > 5)
-                                Oblivion.GetGame()
-                                    .GetAchievementManager()
-                                    .ProgressUserAchievement(User.GetClient(), "ACH_BattleBallWinner", 1);
-                        
-                           
+
+                    if (Oblivion.GetUnixTimeStamp() - _timestarted > 5)
+                        Oblivion.GetGame()
+                            .GetAchievementManager()
+                            .ProgressUserAchievement(User.GetClient(), "ACH_BattleBallWinner", 1);
+
 
                     var waveAtWin = new ServerMessage(LibraryParser.OutgoingRequest("RoomUserActionMessageComposer"));
                     waveAtWin.AppendInteger(User.VirtualId);
@@ -273,7 +278,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                 {
                     var roomUserByHabbo =
                         client.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(client.GetHabbo().Id);
-                    /* TODO CHECK */ foreach (var point in list)
+                    /* TODO CHECK */
+                    foreach (var point in list)
                         HandleBanzaiTiles(point, Team, roomUserByHabbo);
                     if (x != ball.X || y != ball.Y)
                         MovePuck(item, client, x, y, Team);
@@ -292,12 +298,15 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                     {
                         user.LockedTilesCount++;
                         _room.GetGameManager().AddPointToTeam(item.Team, user);
-                        _field.UpdateLocation(item.X, item.Y, (byte)Team);
+                        _field.UpdateLocation(item.X, item.Y, (byte) Team);
                         var gfield = _field.DoUpdate();
-                        /* TODO CHECK */ foreach (var gameField in gfield)
+                        if (gfield == null) return;
+                        /* TODO CHECK */
+                        foreach (var gameField in gfield)
                         {
-                            var t = (Team)gameField.ForValue;
-                            /* TODO CHECK */ foreach (var p in gameField.GetPoints())
+                            var t = (Team) gameField.ForValue;
+                            /* TODO CHECK */
+                            foreach (var p in gameField.GetPoints())
                             {
                                 HandleMaxBanzaiTiles(new Point(p.X, p.Y), t, user);
                                 _floorMap[p.Y, p.X] = gameField.ForValue;
@@ -326,7 +335,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                 return;
 
             var i = 0;
-            /* TODO CHECK */ foreach (var _item in _banzaiTiles.ToList())
+            /* TODO CHECK */
+            foreach (var _item in _banzaiTiles.ToList())
             {
                 if (_item.GetBaseItem().InteractionType != Interaction.BanzaiFloor)
                 {
@@ -360,12 +370,13 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             if (Team == Team.None)
                 return;
 
-            /* TODO CHECK */ foreach (
+            /* TODO CHECK */
+            foreach (
                 var _item in
                 _banzaiTiles.Where(
-                        _item =>
-                            _item.GetBaseItem().InteractionType == Interaction.BanzaiFloor && _item.X == coord.X &&
-                            _item.Y == coord.Y))
+                    _item =>
+                        _item.GetBaseItem().InteractionType == Interaction.BanzaiFloor && _item.X == coord.X &&
+                        _item.Y == coord.Y))
             {
                 SetMaxForTile(_item, Team);
                 _room.GetGameManager().AddPointToTeam(Team, user);

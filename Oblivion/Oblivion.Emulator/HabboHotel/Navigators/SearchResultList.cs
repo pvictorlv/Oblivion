@@ -140,11 +140,12 @@ namespace Oblivion.HabboHotel.Navigators
                 {
                     var i = 0;
                     message.StartArray();
-                    /* TODO CHECK */ foreach (var data in session.GetHabbo().Data.Rooms.Where(data => data != null))
+                        /* TODO CHECK */
+                        foreach (var data in session.GetHabbo().Data.Rooms.Where(data => data != null))
                     {
                         data.Serialize(message);
                         message.SaveArray();
-                        if (i++ == (direct ? 100 : 8)) break;
+                        if (i++ == (direct ? 100 : 25)) break;
                     }
                     message.EndArray();
                     break;

@@ -41,12 +41,12 @@ namespace Oblivion.Enclosure
             {
                 _currentlyChecking = _newEntries.Dequeue();
                 var connectedItems = GetConnectedItems(_currentlyChecking);
+                if (connectedItems == null) continue;
                 if (connectedItems.Count > 1)
                 {
                     var list2 = handleListOfConnectedPoints(connectedItems);
                     list.AddRange(list2.Where(current => current.Count >= 4)
-                        .Select(FindClosed)
-                        .Where(pointField => true));
+                        .Select(FindClosed));
                 }
                 _currentField[_currentlyChecking.Y, _currentlyChecking.X] = _currentlyChecking.Value;
             }
@@ -55,7 +55,7 @@ namespace Oblivion.Enclosure
 
         public byte GetValue(int x, int y)
         {
-            return this[y, x] ? _currentField[y, x] : (byte)0;
+            return this[y, x] ? _currentField[y, x] : (byte) 0;
         }
 
         public byte GetValue(Point p)
@@ -168,31 +168,29 @@ namespace Oblivion.Enclosure
         private List<Point> GetConnectedItems(GametileUpdate update)
         {
             var list = new List<Point>();
+            if (update == null) return list;
             var x = update.X;
             var y = update.Y;
-
+            if (_diagonal)
             {
-                if (_diagonal)
-                {
-                    if (this[y - 1, x - 1] && _currentField[y - 1, x - 1] == update.Value)
-                        list.Add(new Point(x - 1, y - 1));
-                    if (this[y - 1, x + 1] && _currentField[y - 1, x + 1] == update.Value)
-                        list.Add(new Point(x + 1, y - 1));
-                    if (this[y + 1, x - 1] && _currentField[y + 1, x - 1] == update.Value)
-                        list.Add(new Point(x - 1, y + 1));
-                    if (this[y + 1, x + 1] && _currentField[y + 1, x + 1] == update.Value)
-                        list.Add(new Point(x + 1, y + 1));
-                }
-                if (this[y - 1, x] && _currentField[y - 1, x] == update.Value)
-                    list.Add(new Point(x, y - 1));
-                if (this[y + 1, x] && _currentField[y + 1, x] == update.Value)
-                    list.Add(new Point(x, y + 1));
-                if (this[y, x - 1] && _currentField[y, x - 1] == update.Value)
-                    list.Add(new Point(x - 1, y));
-                if (this[y, x + 1] && _currentField[y, x + 1] == update.Value)
-                    list.Add(new Point(x + 1, y));
-                return list;
+                if (this[y - 1, x - 1] && _currentField[y - 1, x - 1] == update.Value)
+                    list.Add(new Point(x - 1, y - 1));
+                if (this[y - 1, x + 1] && _currentField[y - 1, x + 1] == update.Value)
+                    list.Add(new Point(x + 1, y - 1));
+                if (this[y + 1, x - 1] && _currentField[y + 1, x - 1] == update.Value)
+                    list.Add(new Point(x - 1, y + 1));
+                if (this[y + 1, x + 1] && _currentField[y + 1, x + 1] == update.Value)
+                    list.Add(new Point(x + 1, y + 1));
             }
+            if (this[y - 1, x] && _currentField[y - 1, x] == update.Value)
+                list.Add(new Point(x, y - 1));
+            if (this[y + 1, x] && _currentField[y + 1, x] == update.Value)
+                list.Add(new Point(x, y + 1));
+            if (this[y, x - 1] && _currentField[y, x - 1] == update.Value)
+                list.Add(new Point(x - 1, y));
+            if (this[y, x + 1] && _currentField[y, x + 1] == update.Value)
+                list.Add(new Point(x + 1, y));
+            return list;
         }
     }
 }

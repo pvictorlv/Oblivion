@@ -282,8 +282,11 @@ namespace Oblivion.Connection.Connection
 
             if (IsAir)
             {
+                
                 short newHeader = AirPacketTranslator.ReplaceOutgoingHeader(ref packet, out short oldHeader);
-            
+                if (oldHeader == 2818)
+                    newHeader = 2818;
+
                 if (newHeader == 0)
                 {
                     Console.WriteLine("Header " + oldHeader + " wasn't translated to packet air.");

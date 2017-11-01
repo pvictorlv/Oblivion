@@ -174,39 +174,33 @@ namespace Oblivion.Security.BlackWords
         {
             word = Empty;
 
-            if (!Replaces.ContainsKey(type))
+            if (!Replaces.TryGetValue(type, out var data))
                 return false;
 
             var oldStr = str;
             str = HttpUtility.HtmlDecode(str) ?? oldStr;
             str = str.Replace("&nbsp;", "");
 
-            var data = Replaces[type];
-
             if (str.Contains("s2.vc") || str.Contains("abre.ai"))
                 return true;
 
-            str = Regex.Replace(str, "[àâäàáâãäåÀÁÂÃÄÅ@4ª∂]", "a");
-            str = Regex.Replace(str, "[ß8]", "b");
+            str = Regex.Replace(str, "[àâäàáâãäåÀÁÂÃÄÅ@4ª]", "a");
+            str = Regex.Replace(str, "[ß8∞]", "b");
             str = Regex.Replace(str, "[©çÇ¢]", "c");
-            str = Regex.Replace(str, "[Ð]", "d");
             str = Regex.Replace(str, "[éèëêðÉÈËÊ£3∑]", "e");
             str = Regex.Replace(str, "[ìíîïÌÍÎÏ1]", "i");
-            str = Regex.Replace(str, "[ñÑπ]", "n");
+            str = Regex.Replace(str, "[ñÑ]", "n");
             str = Regex.Replace(str, "[òóôõöøÒÓÔÕÖØ0|ºΩ]", "o");
-            str = Regex.Replace(str, "[®]", "r");
-            str = Regex.Replace(str, "[šŠ$5∫§2]", "s");
+            str = Regex.Replace(str, "[$5§2]", "s");
             str = Regex.Replace(str, "[ùúûüµÙÚÛÜ]", "u");
-            str = Regex.Replace(str, "[ÿŸ¥]", "y");
-            str = Regex.Replace(str, "[žŽ]", "z");
-            str = Regex.Replace(str, "[ ',-_¹²³.?´` ƒ()]", "");
-            str = str.Replace("™", "TM");
+            str = Regex.Replace(str, "[ÿ¥]", "y");
+            str = Regex.Replace(str, "[∂∫šŠŸžŽ™ ',-_¹²³.?´` ƒ()]", "");
             str = str.Replace("æ", "ae");
-            str = str.Replace("∞", "oo");
-            str = str.Replace("∞", "oo");
+            str = str.Replace("π", "p");
+            str = str.Replace("Ð", "d");
 
 
-            str = Filter.Replace(data.Filter, str);
+//            str = Filter.Replace(data.Filter, str);
 
             var wordFirst = Words.FirstOrDefault(wordStruct => wordStruct.Type == type && str.Contains(wordStruct.Word));
 
