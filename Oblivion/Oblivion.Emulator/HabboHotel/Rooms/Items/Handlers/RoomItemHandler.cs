@@ -397,6 +397,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         "Your room has more than 5000 items in it. The current limit of items per room is 5000.\nTo view the rest, pick some of these items up!");
                 }
 
+                var wireds = new List<RoomItem>();
                 foreach (DataRow dataRow in table.Rows)
                 {
                     try
@@ -463,27 +464,28 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                             else
                             {
                                 if (item.InteractionType == Interaction.Hopper) HopperCount++;
-
+                                else if (roomItem.IsWired)
+                                {
+//                                    _room.GetWiredHandler().LoadWired(_room.GetWiredHandler().GenerateNewItem(roomItem));
+                                    wireds.Add(roomItem);
+                                }
+                                else if (roomItem.IsRoller)
+                                    GotRollers = true;
+                                else if (roomItem.GetBaseItem().InteractionType == Interaction.Dimmer)
+                                {
+                                    if (_room.MoodlightData == null)
+                                        _room.MoodlightData = new MoodlightData(roomItem.Id);
+                                }
+                                else if (roomItem.GetBaseItem().InteractionType == Interaction.RoomBg && _room.TonerData == null)
+                                    _room.TonerData = new TonerData(roomItem.Id);
+                                else if (roomItem.GetBaseItem().InteractionType == Interaction.JukeBox)
+                                {
+                                    _room.GetRoomMusicController();
+                                }
                                 FloorItems.TryAdd(roomItem.Id, roomItem);
                             }
 
-                            if (roomItem.IsWired)
-                            {
-                                _room.GetWiredHandler().LoadWired(_room.GetWiredHandler().GenerateNewItem(roomItem));
-                            }
-                            else if (roomItem.IsRoller)
-                                GotRollers = true;
-                            else if (roomItem.GetBaseItem().InteractionType == Interaction.Dimmer)
-                            {
-                                if (_room.MoodlightData == null)
-                                    _room.MoodlightData = new MoodlightData(roomItem.Id);
-                            }
-                            else if (roomItem.GetBaseItem().InteractionType == Interaction.RoomBg && _room.TonerData == null)
-                                _room.TonerData = new TonerData(roomItem.Id);
-                            else if (roomItem.GetBaseItem().InteractionType == Interaction.JukeBox)
-                            {
-                                _room.GetRoomMusicController();
-                            }
+                           
 
                         }
                     }
@@ -492,12 +494,11 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     }
                 }
 
-                /* TODO CHECK */
-                /*foreach (var roomItem in FloorItems.Values)
+
+                foreach (var wired in wireds)
                 {
-                    
+                    _room.GetWiredHandler().LoadWired(_room.GetWiredHandler().GenerateNewItem(wired));
                 }
-*/
                 if (_room.GotMusicController())
                     _room.LoadMusic();
             }

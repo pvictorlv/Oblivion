@@ -58,10 +58,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             if (handitem < 0)
                 return false;
 
-            if (roomUser.CarryItemId == handitem)
-                return true;
-
-            return false;
+            return roomUser.CarryItemId == handitem;
         }
     }
 }

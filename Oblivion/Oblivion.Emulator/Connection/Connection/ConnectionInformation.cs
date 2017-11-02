@@ -282,6 +282,7 @@ namespace Oblivion.Connection.Connection
 
             if (IsAir)
             {
+                
                 short newHeader = AirPacketTranslator.ReplaceOutgoingHeader(ref packet, out short oldHeader);
 
                 string packetName = LibraryParser.TryGetOutgoingName(oldHeader);

@@ -287,28 +287,6 @@ namespace Oblivion.HabboHotel.Navigators
         }
 
         /// <summary>
-        ///     Serializes the new flat categories.
-        /// </summary>
-        /// <returns>ServerMessage.</returns>
-        internal ServerMessage SerializeNewFlatCategories()
-        {
-            var flatcat = Oblivion.GetGame().GetNavigator().PrivateCategories.OfType<FlatCat>().ToList();
-
-            var message = new ServerMessage(LibraryParser.OutgoingRequest("NavigatorNewFlatCategoriesMessageComposer"));
-
-            message.AppendInteger(flatcat.Count);
-
-            /* TODO CHECK */ foreach (var cat in flatcat)
-            {
-                message.AppendInteger(cat.Id);
-                message.AppendInteger(cat.UsersNow);
-                message.AppendInteger(500);
-            }
-
-            return message;
-        }
-
-        /// <summary>
         ///     Serializes the nv flat categories.
         /// </summary>
         /// <param name="myWorld">if set to <c>true</c> [my world].</param>

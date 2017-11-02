@@ -23,7 +23,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             if (_mNext == 0L || _mNext < Oblivion.Now())
                 _mNext = Oblivion.Now() + Delay;
         }
-        
+
 
         public ConcurrentQueue<RoomUser> ToWorkConcurrentQueue { get; set; }
 
@@ -39,24 +39,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
             var avatars = Room.GetRoomUserManager().GetRoomUsers();
-            var success = false;
 
             if (conditions.Any())
-                /* TODO CHECK */ foreach (var current in conditions)
+                foreach (var current in conditions)
                 {
-                    /* TODO CHECK */ foreach (var avatar in avatars)
-                    {
-                        if (avatar?.GetClient() == null || avatar.GetClient().GetHabbo() == null ||
-                            !current.Execute(avatar.GetClient().GetHabbo()))
-                            continue;
-
-                        success = true;
-                    }
-
-                    if (!success)
+                    if (!current.Execute(null))
                         return false;
-
-                    success = false;
 
                     WiredHandler.OnEvent(current);
                 }
@@ -75,7 +63,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             }
             else
             {
-                /* TODO CHECK */ foreach (var current2 in effects.Where(current2 => current2.Execute(null, Type)))
+                /* TODO CHECK */
+                foreach (var current2 in effects.Where(current2 => current2.Execute(null, Type)))
                     WiredHandler.OnEvent(current2);
             }
 

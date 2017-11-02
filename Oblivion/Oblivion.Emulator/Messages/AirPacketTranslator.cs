@@ -13,9 +13,9 @@ namespace Oblivion.Messages
         {
             if (LibraryParser.IncomingAir.TryGetValue(messageId, out short newMessageId))
             {
-#if DEBUG
+                #if DEBUG
                 Console.WriteLine($"[AIR][INCOMING] Changed header {messageId} to {newMessageId}");
-#endif
+                #endif
                 return newMessageId;
             }
 
@@ -30,9 +30,9 @@ namespace Oblivion.Messages
 
             if (LibraryParser.OutgoingAir.TryGetValue(oldHeader, out short newHeader))
             {
-#if DEBUG
+                #if DEBUG
                 Console.WriteLine($"[AIR][INCOMING] Changed header {oldHeader} to {newHeader}");
-#endif
+                #endif
                 byte[] newHeaderReverse = BitConverter.GetBytes(newHeader);
                 packet[4] = newHeaderReverse[1];
                 packet[5] = newHeaderReverse[0];
