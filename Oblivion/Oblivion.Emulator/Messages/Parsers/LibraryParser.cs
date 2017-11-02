@@ -18,6 +18,8 @@ namespace Oblivion.Messages.Parsers
         internal static Dictionary<short, short> IncomingAir;
         internal static Dictionary<short, short> OutgoingAir;
 
+        internal static Dictionary<int, string> OutgoingNames;
+
         private static List<uint> _registeredOutoings;
 
         internal static int CountReleases;
@@ -39,6 +41,14 @@ namespace Oblivion.Messages.Parsers
             return -1;
         }
 
+        public static string TryGetOutgoingName(int header)
+        {
+            if (OutgoingNames.TryGetValue(header, out string incomingName))
+                return incomingName;
+
+            return string.Empty;
+        }
+
         public static void RegisterAll()
         {
             Incoming = new Dictionary<int, StaticRequestHandler>();
@@ -48,6 +58,8 @@ namespace Oblivion.Messages.Parsers
 
             IncomingAir = new Dictionary<short, short>();
             OutgoingAir = new Dictionary<short, short>();
+
+            OutgoingNames = new Dictionary<int, string>();
 
             ReloadDictionarys();
         }
@@ -202,6 +214,8 @@ namespace Oblivion.Messages.Parsers
                 }
 
                 Outgoing.Add(packetName, packetId);
+                if (!OutgoingNames.ContainsKey(packetId))
+                    OutgoingNames.Add(packetId, packetName);
             }
 
             _registeredOutoings.Clear();
