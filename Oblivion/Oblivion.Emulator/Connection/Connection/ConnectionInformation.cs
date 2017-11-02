@@ -284,14 +284,16 @@ namespace Oblivion.Connection.Connection
             {
                 
                 short newHeader = AirPacketTranslator.ReplaceOutgoingHeader(ref packet, out short oldHeader);
-                if (oldHeader == 2818)
-                    newHeader = 2818;
+
+                string packetName = LibraryParser.TryGetOutgoingName(oldHeader);
 
                 if (newHeader == 0)
                 {
-                    Console.WriteLine("Header " + oldHeader + " wasn't translated to packet air.");
+                    Console.WriteLine("Header *production* " + oldHeader + " (" + packetName + ") wasn't translated to packet air.");
                     return;
                 }
+                else
+                    Console.WriteLine("Header *production* " + oldHeader + " (" + packetName + ") has been translated to packet air.");
             }
 
             try

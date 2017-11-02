@@ -6,6 +6,7 @@ using Oblivion.Messages;
 using Oblivion.Messages.Factorys;
 using Oblivion.Messages.Parsers;
 using Oblivion.Util;
+using System.Collections.Generic;
 
 namespace Oblivion.Connection.Net
 {
@@ -169,22 +170,27 @@ namespace Oblivion.Connection.Net
         {
             try
             {
+                int oldHeader = messageId;
                 if (_currentClient.IsAir)
-                {
-                    int newMessageId = AirPacketTranslator.ReplaceIncomingHeader((short) messageId);
+                    messageId = AirPacketTranslator.ReplaceIncomingHeader((short) messageId);
 
-                    if (newMessageId == 0)
+                using (var clientMessage = ClientMessageFactory.GetClientMessage(messageId, packetContent, position, packetLength))
+                {
+                    if (messageId == 0 && _currentClient.IsAir)
                     {
-                        Console.WriteLine("Incoming not translated to air: " + messageId);
+                        if (Oblivion.DebugMode)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.Write($"[INCOMING][AIR][REFUSED]");
+                            Console.ResetColor();
+                            Console.WriteLine($"{oldHeader} => " + clientMessage.ToString());
+                        }
                         return;
                     }
 
-                    messageId = newMessageId;
-                }
-
-                using (var clientMessage = ClientMessageFactory.GetClientMessage(messageId, packetContent, position, packetLength))
                     if (clientMessage != null && _currentClient?.GetMessageHandler() != null)
                         _currentClient.GetMessageHandler().HandleRequest(clientMessage);
+                }
             }
             catch (Exception e)
             {
