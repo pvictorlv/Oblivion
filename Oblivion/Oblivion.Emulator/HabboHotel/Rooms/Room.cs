@@ -779,7 +779,7 @@ namespace Oblivion.HabboHotel.Rooms
             try
             {
                 if (_roomUserManager?.UserList != null)
-                    /* TODO CHECK */ foreach (var user in _roomUserManager.UserList.Values.Where(user =>
+                   foreach (var user in _roomUserManager.UserList.Values.Where(user =>
                         user?.GetClient()?.GetConnection() != null && !user.IsBot))
                     {
                         user.GetClient().GetConnection().SendData(message);

@@ -216,10 +216,8 @@ namespace Oblivion.Messages.Handlers
 
             if (Session.GetConnection().IsAir)
                 sso = "SSO-123";
-            if (string.IsNullOrEmpty(sso) || string.IsNullOrWhiteSpace(sso) || sso.Length < 5)
-                Session.Disconnect("Invalid sso");
-            if (Session.TryLogin(sso) == false)
-                Session.Disconnect("banned");
+            if (string.IsNullOrEmpty(sso) || string.IsNullOrWhiteSpace(sso) || sso.Length < 5 || !Session.TryLogin(sso))
+                Session.Disconnect("Invalid sso or banned");              
 
             if (Session != null)
                 Session.TimePingedReceived = DateTime.Now;

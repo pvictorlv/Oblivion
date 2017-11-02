@@ -18,6 +18,7 @@ namespace Oblivion.Connection.Connection
         /// The _socket
         /// </summary>
         public Socket _socket;
+
         /// <summary>
         /// The _remote end point
         /// </summary>
@@ -76,7 +77,6 @@ namespace Oblivion.Connection.Connection
             _remoteEndPoint = socket.RemoteEndPoint;
             _connected = true;
             ChannelId = channelId;
-           
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace Oblivion.Connection.Connection
                     if (bytesReceived != 0)
                     {
                         byte[] array = new byte[bytesReceived];
-                        
+
                         Array.Copy(_buffer, array, bytesReceived);
 
                         HandlePacketData(array, bytesReceived);
@@ -190,7 +190,6 @@ namespace Oblivion.Connection.Connection
                     HandleDisconnect(exception);
                 }
             }
-
         }
 
         /// <summary>
@@ -258,7 +257,7 @@ namespace Oblivion.Connection.Connection
         internal void Disconnect()
         {
             if (_connected)
-                HandleDisconnect(new SocketException((int)SocketError.ConnectionReset));
+                HandleDisconnect(new SocketException((int) SocketError.ConnectionReset));
         }
 
         /// <summary>
@@ -279,26 +278,27 @@ namespace Oblivion.Connection.Connection
         public void SendData(byte[] packet)
         {
             if (_socket == null || !_socket.Connected) return;
-
+            byte[] newHeader = null;
             if (IsAir)
             {
-                
-                short newHeader = AirPacketTranslator.ReplaceOutgoingHeader(ref packet, out short oldHeader);
-
+                newHeader = AirPacketTranslator.ReplaceOutgoingHeader(packet, out var oldHeader);
                 string packetName = LibraryParser.TryGetOutgoingName(oldHeader);
-
-                if (newHeader == 0)
+                if (newHeader == null)
                 {
-                    Console.WriteLine("Header *production* " + oldHeader + " (" + packetName + ") wasn't translated to packet air.");
+                    Console.WriteLine("Header *production* " + oldHeader + " (" + packetName +
+                                      ") wasn't translated to packet air.");
                     return;
                 }
                 else
-                    Console.WriteLine("Header *production* " + oldHeader + " (" + packetName + ") has been translated to packet air.");
+                {
+                    Console.WriteLine("Header *production* " + oldHeader + " (" + packetName +
+                                      ") has been translated to packet air.");
+                }
             }
 
             try
             {
-                _socket.BeginSend(packet, 0, packet.Length, 0, OnSendCompleted, _socket);
+                _socket.BeginSend(newHeader ?? packet, 0, packet.Length, 0, OnSendCompleted, _socket);
             }
             catch (Exception e)
             {
