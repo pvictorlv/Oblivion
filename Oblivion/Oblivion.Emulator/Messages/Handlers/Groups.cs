@@ -1193,7 +1193,7 @@ namespace Oblivion.Messages.Handlers
                     Response.Init(LibraryParser.OutgoingRequest("RoomGroupMessageComposer"));
                     Response.AppendInteger(room.LoadedGroups.Count);
 
-                    /* TODO CHECK */ foreach (KeyValuePair<uint, string> current2 in room.LoadedGroups)
+                     foreach (KeyValuePair<uint, string> current2 in room.LoadedGroups)
                     {
                         Response.AppendInteger(current2.Key);
                         Response.AppendString(current2.Value);

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using Oblivion.Configuration;
@@ -7,6 +8,21 @@ namespace Oblivion
 {
     internal class Program
     {
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool SetWindowPos(
+            IntPtr hWnd,
+            IntPtr hWndInsertAfter,
+            int x,
+            int y,
+            int cx,
+            int cy,
+            int uFlags);
+
+        private const int HWND_TOPMOST = -1;
+        private const int SWP_NOMOVE = 0x0002;
+        private const int SWP_NOSIZE = 0x0001;
+
         /// <summary>
         /// Main Void of Oblivion.Emulator
         /// </summary>
@@ -14,6 +30,12 @@ namespace Oblivion
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public static void Main(string[] args)
         {
+            IntPtr hWnd = Process.GetCurrentProcess().MainWindowHandle;
+
+            SetWindowPos(hWnd,
+                new IntPtr(HWND_TOPMOST),
+                0, 0, 0, 0,
+                SWP_NOMOVE | SWP_NOSIZE);
             StartEverything();
 
             while (Oblivion.IsLive)
@@ -32,6 +54,7 @@ namespace Oblivion
 
         public static void StartConsoleWindow()
         {
+//            BringWindowToTop();
             Console.BackgroundColor = ConsoleColor.Black;
             Console.Clear();
 //            Console.SetWindowSize(150, 50);

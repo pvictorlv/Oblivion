@@ -2449,11 +2449,11 @@ namespace Oblivion.Messages.Handlers
             if (item?.GetBaseItem().InteractionType != Interaction.Clothing) return;
             var clothes = Oblivion.GetGame().GetClothingManager().GetClothesInFurni(item.GetBaseItem().Name);
             if (clothes == null) return;
-            if (Session.GetHabbo().ClothingManager.Clothing.Contains(clothes.ItemName)) return;
+           /* if (Session.GetHabbo().ClothingManager.Clothing.Contains(clothes.ItemName)) return;
             Session.GetHabbo().ClothingManager.Add(clothes.ItemName);
             GetResponse().Init(LibraryParser.OutgoingRequest("FigureSetIdsMessageComposer"));
             Session.GetHabbo().ClothingManager.Serialize(GetResponse());
-            SendResponse();
+            SendResponse();*/
             room.GetRoomItemHandler().RemoveFurniture(Session, item.Id, false);
             Session.SendMessage(StaticMessage.FiguresetRedeemed);
 

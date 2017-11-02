@@ -147,44 +147,27 @@ namespace Oblivion.Messages.Handlers
 
         internal void HabboAirGetUserRooms()
         {
-            count++;
-            if (count <= 10) return;
+            if (count <= 9)
+            {
+                count++;
+                return;
+            }
 
-            /*
-             * [0][0][0]N[11][2]
-             * [0][0][0][5]
-             * [0][0][0][0]
-             * [0][1]
-             * [0]wS
-             * [0][6]ngkvvt
-             * [3]?[13])
-             * [0][9]martim067
-             * [0][0][0][0]
-             * [0][0][0][0]
-             * [0][0][0]   //room limit
-             * [0][0][0][0]
-             * [0][1][0][0]
-             * [0][0][0][0]
-             * [0][0][0][0]
-             * [0][10][0][0]
-             * [0][0][0][0]
-             * [0]8
-             * [0]
-             
-             */
-            var message = new ServerMessage(2818);
+
+            var message = new ServerMessage(LibraryParser.OutgoingRequest("HabboAirGetRoomUsersComposer"));
 
             message.AppendInteger(5);
-            message.AppendInteger(0);
-            message.AppendBool(false);
-            var i = 0;
-            message.StartArray();
-            foreach (var data in Session.GetHabbo().Data.Rooms.Where(data => data != null))
+            message.AppendString("");
+            message.AppendInteger(Session.GetHabbo().Data.Rooms.Count); //count?
+//            var i = 0;
+            //message.StartArray();
+            foreach (var data in Session.GetHabbo().Data.Rooms)
             {
                 data.Serialize(message);
-                message.SaveArray();
+//                message.SaveArray();
+                //                break;
             }
-            message.EndArray();
+            //            message.EndArray();
             message.AppendBool(false);
 
             Session.SendMessage(message);

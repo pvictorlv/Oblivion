@@ -37,7 +37,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 dTable = queryReactor.GetTable();
             }
 
-            /* TODO CHECK */ foreach (DataRow dRow in dTable.Rows)
+            foreach (DataRow dRow in dTable.Rows)
                 Clothing.Add((string) dRow["clothing"]);
         }
 

@@ -1141,18 +1141,16 @@ namespace Oblivion.HabboHotel.Rooms.User
             stringBuilder.Append("/");
             if (IsPet && PetData.Type == 16u)
                 stringBuilder.AppendFormat("/{0}{1}", PetData.MoplaBreed.GrowStatus, (Statusses.Count >= 1) ? "/" : "");
-            lock (Statusses)
+
+            foreach (var current in Statusses.ToList())
             {
-                /* TODO CHECK */ foreach (var current in Statusses.ToList())
+                stringBuilder.Append(current.Key);
+                if (!string.IsNullOrEmpty(current.Value))
                 {
-                    stringBuilder.Append(current.Key);
-                    if (!string.IsNullOrEmpty(current.Value))
-                    {
-                        stringBuilder.Append(" ");
-                        stringBuilder.Append(current.Value);
-                    }
-                    stringBuilder.Append("/");
+                    stringBuilder.Append(" ");
+                    stringBuilder.Append(current.Value);
                 }
+                stringBuilder.Append("/");
             }
             stringBuilder.Append("/");
             message.AppendString(stringBuilder.ToString());

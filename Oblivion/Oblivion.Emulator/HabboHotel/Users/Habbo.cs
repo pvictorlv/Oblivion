@@ -105,7 +105,7 @@ namespace Oblivion.HabboHotel.Users
         /// <summary>
         ///     The _clothing manager
         /// </summary>
-        internal UserClothing ClothingManager;
+//        internal UserClothing ClothingManager;
 
         /// <summary>
         ///     The create date
@@ -640,7 +640,7 @@ namespace Oblivion.HabboHotel.Users
             SpectatorMode = false;
             Disconnected = false;
             MinimailUnreadMessages = data.MiniMailCount;
-            ClothingManager = new UserClothing(Id);
+//            ClothingManager = new UserClothing(Id);
             Preferences = new UserPreferences(Id);
             Data = data;
 

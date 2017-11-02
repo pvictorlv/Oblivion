@@ -151,7 +151,7 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session.IsAir)
             {
-                Response.Init(884);
+                Response.Init(LibraryParser.OutgoingRequest("InitCryptoMessageComposer"));
                 Response.AppendString(Handler.GetRsaDiffieHellmanPrimeKey().ToLower());
                 Response.AppendString(Handler.GetRsaDiffieHellmanGeneratorKey().ToLower());
                 SendResponse();
@@ -169,7 +169,7 @@ namespace Oblivion.Messages.Handlers
 
             if (Session.IsAir)
             {
-                Response.Init(1838);
+                Response.Init(LibraryParser.OutgoingRequest("SecretKeyMessageComposer"));
                 Response.AppendString(Handler.GetRsaDiffieHellmanPublicKey().ToLower());
                 Response.AppendBool(false);
                 SendResponse();
@@ -312,8 +312,8 @@ namespace Oblivion.Messages.Handlers
             GetResponse().AppendInteger(Session.GetHabbo().AchievementPoints);
             SendResponse();
             GetResponse().Init(LibraryParser.OutgoingRequest("FigureSetIdsMessageComposer"));
-            Session.GetHabbo().ClothingManager.Serialize(GetResponse());
-            SendResponse();
+//            Session.GetHabbo().ClothingManager.Serialize(GetResponse());
+//            SendResponse();
             /*Response.Init(LibraryParser.OutgoingRequest("NewbieStatusMessageComposer"));
             Response.AppendInteger(0);// 2 = new - 1 = nothing - 0 = not new
             SendResponse();*/
