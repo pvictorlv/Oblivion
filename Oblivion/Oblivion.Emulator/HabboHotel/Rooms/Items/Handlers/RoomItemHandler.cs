@@ -101,7 +101,17 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             _rollerMessages = new List<ServerMessage>();
         }
 
-        public int TotalItems => WallItems.Count + FloorItems.Count;
+        public int TotalItems
+        {
+            get
+            {
+                if (WallItems == null)
+                    WallItems = new ConcurrentDictionary<uint, RoomItem>();
+                if (FloorItems == null)
+                    FloorItems = new ConcurrentDictionary<uint, RoomItem>();
+                return WallItems.Count + FloorItems.Count;
+            }
+        }
 
         /// <summary>
         ///     Gets or sets a value indicating whether [got rollers].

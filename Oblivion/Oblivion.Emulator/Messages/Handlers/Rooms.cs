@@ -709,6 +709,7 @@ namespace Oblivion.Messages.Handlers
 
         internal static ServerMessage RoomFloorAndWallComposer(Room room)
         {
+            if (room?.RoomData == null) return null;
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("RoomFloorWallLevelsMessageComposer"));
             serverMessage.AppendBool(room.RoomData.HideWall);
             serverMessage.AppendInteger(room.RoomData.WallThickness);
@@ -718,6 +719,8 @@ namespace Oblivion.Messages.Handlers
 
         internal static ServerMessage SerializeRoomChatOption(Room room)
         {
+            if (room?.RoomData == null) return null;
+
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("RoomChatOptionsMessageComposer"));
             serverMessage.AppendInteger(room.RoomData.ChatType);
             serverMessage.AppendInteger(room.RoomData.ChatBalloon);

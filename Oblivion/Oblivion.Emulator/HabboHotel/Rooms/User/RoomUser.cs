@@ -1131,6 +1131,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="message">The message.</param>
         internal void SerializeStatus(ServerMessage message)
         {
+            if (Statusses == null) return;
             message.AppendInteger(VirtualId);
             message.AppendInteger(X);
             message.AppendInteger(Y);
@@ -1141,7 +1142,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             stringBuilder.Append("/");
             if (IsPet && PetData.Type == 16u)
                 stringBuilder.AppendFormat("/{0}{1}", PetData.MoplaBreed.GrowStatus, (Statusses.Count >= 1) ? "/" : "");
-
+            
             foreach (var current in Statusses.ToList())
             {
                 stringBuilder.Append(current.Key);

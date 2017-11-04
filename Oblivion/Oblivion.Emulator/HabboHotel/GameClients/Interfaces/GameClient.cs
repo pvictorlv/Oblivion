@@ -87,7 +87,15 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// </summary>
         /// <value>The connection identifier.</value>
         internal uint ConnectionId { get; }
-        public bool IsAir { get => _connection.IsAir; set => _connection.IsAir = value; }
+
+        public bool IsAir
+        {
+            get { return _connection != null && _connection.IsAir; }
+            set
+            {
+                if (_connection != null) _connection.IsAir = value;
+            }
+        }
 
         /// <summary>
         ///     Handles the publicist.
@@ -108,12 +116,15 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 serverMessage.AppendString("title");
                 serverMessage.AppendString("Staff Internal Alert");
                 serverMessage.AppendString("message");
-                serverMessage.AppendString("O usuário " + GetHabbo().UserName + " Foi banido por enviar repetidamente palavras repetidas. A última palavra foi: " +
+                serverMessage.AppendString("O usuário " + GetHabbo().UserName +
+                                           " Foi banido por enviar repetidamente palavras repetidas. A última palavra foi: " +
                                            word + ", na frase: " + message);
 
                 Oblivion.GetGame().GetClientManager().StaffAlert(serverMessage);
 
-                Oblivion.GetGame().GetBanManager().BanUser(this, GetHabbo().UserName, 3600, "Você está passando muitos spams de outros hotéis. Por esta razão, sancioná-lo por 1 hora, de modo que você aprender a controlar-se.", false, false);
+                Oblivion.GetGame().GetBanManager().BanUser(this, GetHabbo().UserName, 3600,
+                    "Você está passando muitos spams de outros hotéis. Por esta razão, sancioná-lo por 1 hora, de modo que você aprender a controlar-se.",
+                    false, false);
                 return;
             }
 
@@ -179,7 +190,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             if (_connection == null)
                 return;
 
-            
+
             TimePingedReceived = DateTime.Now;
 
             if (_connection.Parser is InitialPacketParser packetParser)
@@ -221,9 +232,11 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 userData.User.LoadData(userData);
 
 
-                if (userData.User.UserName == null || Oblivion.GetGame().GetBanManager().CheckBan(userData.User.UserName, ip, MachineId))
+                if (userData.User.UserName == null ||
+                    Oblivion.GetGame().GetBanManager().CheckBan(userData.User.UserName, ip, MachineId))
                 {
-                    var banReason = Oblivion.GetGame().GetBanManager().GetBanReason(userData.User.UserName, ip, MachineId);
+                    var banReason = Oblivion.GetGame().GetBanManager()
+                        .GetBanReason(userData.User.UserName, ip, MachineId);
                     SendNotifWithScroll(banReason);
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
@@ -231,26 +244,31 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
                         var supaString = queryReactor.GetString();
 
-                        queryReactor.SetQuery($"SELECT COUNT(user_id) FROM users_bans_access WHERE user_id={_habbo.Id} LIMIT 1");
+                        queryReactor.SetQuery(
+                            $"SELECT COUNT(user_id) FROM users_bans_access WHERE user_id={_habbo.Id} LIMIT 1");
                         var integer = queryReactor.GetInteger();
 
                         if (integer > 0)
-                            queryReactor.RunFastQuery("UPDATE users_bans_access SET attempts = attempts + 1, ip='" + supaString + "' WHERE user_id=" + GetHabbo().Id + " LIMIT 1");
+                            queryReactor.RunFastQuery("UPDATE users_bans_access SET attempts = attempts + 1, ip='" +
+                                                      supaString + "' WHERE user_id=" + GetHabbo().Id + " LIMIT 1");
                         else
-                            queryReactor.RunFastQuery("INSERT INTO users_bans_access (user_id, ip) VALUES (" + GetHabbo().Id + ", '" + supaString + "')");
+                            queryReactor.RunFastQuery("INSERT INTO users_bans_access (user_id, ip) VALUES (" +
+                                                      GetHabbo().Id + ", '" + supaString + "')");
                     }
 
                     return false;
                 }
 
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                    queryReactor.RunFastQuery($"UPDATE users SET ip_last='{ip}', online = '1' WHERE id={GetHabbo().Id}");
+                    queryReactor.RunFastQuery(
+                        $"UPDATE users SET ip_last='{ip}', online = '1' WHERE id={GetHabbo().Id}");
 
                 userData.User.Init(this, userData);
 
                 var queuedServerMessage = new QueuedServerMessage(_connection);
 
-                queuedServerMessage.AppendResponse(new ServerMessage(LibraryParser.OutgoingRequest("AuthenticationOKMessageComposer")));
+                queuedServerMessage.AppendResponse(
+                    new ServerMessage(LibraryParser.OutgoingRequest("AuthenticationOKMessageComposer")));
 
                 var serverMessage2 = new ServerMessage(LibraryParser.OutgoingRequest("HomeRoomMessageComposer"));
 
@@ -268,7 +286,8 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 {
                     serverMessage.AppendInteger(userData.User.FavoriteRooms.Count);
 
-                    /* TODO CHECK */ foreach (var i in userData.User.FavoriteRooms)
+                    /* TODO CHECK */
+                    foreach (var i in userData.User.FavoriteRooms)
                         serverMessage.AppendInteger(i);
                 }
 
@@ -280,7 +299,6 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 rightsMessage.AppendInteger(userData.User.Rank);
                 rightsMessage.AppendInteger(0);
                 queuedServerMessage.AppendResponse(rightsMessage);
-                
 
 
                 serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("EnableNotificationsMessageComposer"));
@@ -400,14 +418,15 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 serverMessage.AppendInteger(userData.User.Diamonds);
                 queuedServerMessage.AppendResponse(serverMessage);
 
-               
+
                 if (userData.User.HasFuse("fuse_mod"))
                     queuedServerMessage.AppendResponse(Oblivion.GetGame().GetModerationTool().SerializeTool(this));
 
                 queuedServerMessage.AppendResponse(Oblivion.GetGame().GetAchievementManager().AchievementDataCached);
 
                 if (!GetHabbo().Vip && ExtraSettings.NewUsersGiftsEnabled)
-                    queuedServerMessage.AppendResponse( new ServerMessage(LibraryParser.OutgoingRequest("NuxSuggestFreeGiftsMessageComposer")));
+                    queuedServerMessage.AppendResponse(
+                        new ServerMessage(LibraryParser.OutgoingRequest("NuxSuggestFreeGiftsMessageComposer")));
 
                 queuedServerMessage.AppendResponse(GetHabbo().GetAvatarEffectsInventoryComponent().GetPacket());
                 queuedServerMessage.SendResponse();
@@ -516,7 +535,8 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <returns>System.Byte[].</returns>
         public static byte[] GetBytesNotif(string message, string title = "Aviso", string picture = "")
         {
-            using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer")))
+            using (var serverMessage =
+                new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer")))
             {
                 serverMessage.AppendString(picture);
                 serverMessage.AppendInteger(4);

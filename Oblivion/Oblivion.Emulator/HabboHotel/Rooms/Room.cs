@@ -189,7 +189,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     The users with rights
         /// </summary>
         internal List<uint> UsersWithRights;
-        
+
 
         /// <summary>
         ///     Gets the user count.
@@ -356,7 +356,8 @@ namespace Oblivion.HabboHotel.Rooms
                 var table = queryReactor.GetTable();
                 if (table == null)
                     return;
-                /* TODO CHECK */ foreach (var roomBot in from DataRow dataRow in table.Rows select BotManager.GenerateBotFromRow(dataRow)
+                /* TODO CHECK */
+                foreach (var roomBot in from DataRow dataRow in table.Rows select BotManager.GenerateBotFromRow(dataRow)
                 )
                     _roomUserManager.DeployBot(roomBot, null);
             }
@@ -385,7 +386,8 @@ namespace Oblivion.HabboHotel.Rooms
         internal void InitBots()
         {
             var botsForRoom = Oblivion.GetGame().GetBotManager().GetBotsForRoom(RoomId);
-            /* TODO CHECK */ foreach (var current in botsForRoom.Where(current => !current.IsPet))
+            /* TODO CHECK */
+            foreach (var current in botsForRoom.Where(current => !current.IsPet))
                 DeployBot(current);
         }
 
@@ -402,7 +404,8 @@ namespace Oblivion.HabboHotel.Rooms
                 if (table == null)
                     return;
 
-                /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
+                /* TODO CHECK */
+                foreach (DataRow dataRow in table.Rows)
                 {
                     queryReactor.SetQuery($"SELECT * FROM pets_data WHERE id = '{dataRow["id"]}' LIMIT 1");
                     var row = queryReactor.GetRow();
@@ -448,7 +451,8 @@ namespace Oblivion.HabboHotel.Rooms
                 current => !current.IsBot && current.GetClient().GetHabbo().Rank < 4u).ToList();
 
             {
-                /* TODO CHECK */ foreach (var t in list)
+                /* TODO CHECK */
+                foreach (var t in list)
                 {
                     GetRoomUserManager().RemoveUserFromRoom(t.GetClient(), true, false);
                     t.GetClient().CurrentRoomUserId = -1;
@@ -468,7 +472,8 @@ namespace Oblivion.HabboHotel.Rooms
             //int count = 0;
 
 
-            /* TODO CHECK */ foreach (var current in _roomUserManager.Bots.Values)
+            /* TODO CHECK */
+            foreach (var current in _roomUserManager.Bots.Values)
             {
                 if (current.IsBot || current.IsPet)
                 {
@@ -489,7 +494,8 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="shout">if set to <c>true</c> [shout].</param>
         internal void OnUserSay(RoomUser user, string message, bool shout)
         {
-            /* TODO CHECK */ foreach (var current in _roomUserManager.Bots.Values)
+            /* TODO CHECK */
+            foreach (var current in _roomUserManager.Bots.Values)
             {
                 try
                 {
@@ -539,7 +545,8 @@ namespace Oblivion.HabboHotel.Rooms
             if (table == null)
                 return;
 
-            /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
+            /* TODO CHECK */
+            foreach (DataRow dataRow in table.Rows)
             {
                 var songId = (uint) dataRow[0];
                 var num = Convert.ToUInt32(dataRow[1]);
@@ -581,7 +588,8 @@ namespace Oblivion.HabboHotel.Rooms
             }
             if (dataTable == null)
                 return;
-            /* TODO CHECK */ foreach (DataRow dataRow in dataTable.Rows)
+            /* TODO CHECK */
+            foreach (DataRow dataRow in dataTable.Rows)
                 UsersWithRights.Add(Convert.ToUInt32(dataRow["user_id"]));
         }
 
@@ -599,7 +607,8 @@ namespace Oblivion.HabboHotel.Rooms
             }
             if (table == null)
                 return;
-            /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
+            /* TODO CHECK */
+            foreach (DataRow dataRow in table.Rows)
                 Bans.Add((uint) dataRow[0], Convert.ToDouble(dataRow[1]));
         }
 
@@ -751,10 +760,7 @@ namespace Oblivion.HabboHotel.Rooms
                     }
                     if (GotWireds())
                     {
-                        Task.Run(() =>
-                        {
-                            GetWiredHandler().OnCycle();
-                        });
+                        Task.Run(() => { GetWiredHandler().OnCycle(); });
                     }
                     WorkRoomKickQueue();
                 }
@@ -779,7 +785,7 @@ namespace Oblivion.HabboHotel.Rooms
             try
             {
                 if (_roomUserManager?.UserList != null)
-                   foreach (var user in _roomUserManager.UserList.Values.Where(user =>
+                    foreach (var user in _roomUserManager.UserList.Values.Where(user =>
                         user?.GetClient()?.GetConnection() != null && !user.IsBot))
                     {
                         user.GetClient().GetConnection().SendData(message);
@@ -803,7 +809,8 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 var packetData = chatMsg.GetReversedBytes();
 
-                /* TODO CHECK */ foreach (var user in _roomUserManager.UserList.Values)
+                /* TODO CHECK */
+                foreach (var user in _roomUserManager.UserList.Values)
                 {
                     if (user.IsBot || user.IsPet)
                         continue;
@@ -856,7 +863,8 @@ namespace Oblivion.HabboHotel.Rooms
                 var totalBytes = new byte[0];
                 var currentWorking = 0;
 
-                /* TODO CHECK */ foreach (var message in messages)
+                /* TODO CHECK */
+                foreach (var message in messages)
                 {
                     var toAppend = message.GetReversedBytes();
 
@@ -864,7 +872,8 @@ namespace Oblivion.HabboHotel.Rooms
 
                     Array.Resize(ref totalBytes, newLength);
 
-                    /* TODO CHECK */ foreach (var t in toAppend)
+                    /* TODO CHECK */
+                    foreach (var t in toAppend)
                     {
                         totalBytes[currentWorking] = t;
                         currentWorking++;
@@ -889,7 +898,8 @@ namespace Oblivion.HabboHotel.Rooms
 
             try
             {
-                /* TODO CHECK */ foreach (var unit in _roomUserManager.UserList.Values)
+                /* TODO CHECK */
+                foreach (var unit in _roomUserManager.UserList.Values)
                 {
                     var user = unit;
                     if (user == null)
@@ -1067,7 +1077,8 @@ namespace Oblivion.HabboHotel.Rooms
             if (ContainsBeds > 0)
             {
                 var furni = GetGameMap().GetCoordinatedItems(new Point(goalX, goalY));
-                /* TODO CHECK */ foreach (var furno in furni)
+                /* TODO CHECK */
+                foreach (var furno in furni)
                 {
                     if (furno.GetBaseItem().InteractionType == Interaction.Bed ||
                         furno.GetBaseItem().InteractionType == Interaction.PressurePadBed)
@@ -1082,7 +1093,8 @@ namespace Oblivion.HabboHotel.Rooms
                             if (user.Y == goalY)
                                 return false;
                         }
-                        /* TODO CHECK */ foreach (var casella in furno.GetCoords)
+                        /* TODO CHECK */
+                        foreach (var casella in furno.GetCoords)
                         {
                             if (casella.X == goalX && casella.Y == goalY)
                             {
@@ -1150,13 +1162,15 @@ namespace Oblivion.HabboHotel.Rooms
         {
             var list = new List<ServerMessage>();
 
-            /* TODO CHECK */ foreach (var roomItem in GetRoomItemHandler().FloorItems.Values.ToList())
+            /* TODO CHECK */
+            foreach (var roomItem in GetRoomItemHandler().FloorItems.Values.ToList())
             {
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer"));
                 roomItem.Serialize(serverMessage);
                 list.Add(serverMessage);
             }
-            /* TODO CHECK */ foreach (var roomItem2 in GetRoomItemHandler().WallItems.Values.ToList())
+            /* TODO CHECK */
+            foreach (var roomItem2 in GetRoomItemHandler().WallItems.Values.ToList())
             {
                 var serverMessage2 =
                     new ServerMessage(LibraryParser.OutgoingRequest("UpdateRoomWallItemMessageComposer"));
@@ -1261,20 +1275,23 @@ namespace Oblivion.HabboHotel.Rooms
                     $"SELECT user_id, message, timestamp FROM users_chatlogs WHERE room_id = {id} ORDER BY timestamp ASC LIMIT 150");
                 var table = queryReactor.GetTable();
 
-                /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
-                    roomData.RoomChat.Push(new Chatlog((uint)dataRow[0], (string)dataRow[1],
+                /* TODO CHECK */
+                foreach (DataRow dataRow in table.Rows)
+                    roomData.RoomChat.Push(new Chatlog((uint) dataRow[0], (string) dataRow[1],
                         Oblivion.UnixToDateTime(int.Parse(dataRow[2].ToString())), false));
 
                 queryReactor.SetQuery($"SELECT word FROM rooms_wordfilter WHERE room_id = {id}");
                 var tableFilter = queryReactor.GetTable();
 
-                /* TODO CHECK */ foreach (DataRow dataRow in tableFilter.Rows)
+                /* TODO CHECK */
+                foreach (DataRow dataRow in tableFilter.Rows)
                     roomData.WordFilter.Add(dataRow["word"].ToString());
 
                 queryReactor.SetQuery(
                     $"SELECT command_name FROM room_blockcmd WHERE room_id = '{id}'");
                 var tableCmd = queryReactor.GetTable();
-                /* TODO CHECK */ foreach (DataRow data in tableCmd.Rows)
+                /* TODO CHECK */
+                foreach (DataRow data in tableCmd.Rows)
                     roomData.BlockedCommands.Add(data["command_name"].ToString());
             }
             if (!forceLoad)
@@ -1291,31 +1308,25 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         private void WorkRoomKickQueue()
         {
+            if (_roomKick == null) return;
+
             lock (_roomKick.SyncRoot)
             {
-                if (_roomKick.Count <= 0)
-                    return;
-
                 while (_roomKick.Count > 0)
                 {
                     var roomKick = (RoomKick) _roomKick.Dequeue();
-                    var list = new List<RoomUser>();
-                    /* TODO CHECK */ foreach (
+                    foreach (
                         var current in
                         _roomUserManager.UserList.Values.Where(
-                            current =>
+                            current => current?.GetClient() != null &&
                                 !current.IsBot && current.GetClient().GetHabbo().Rank < (ulong) roomKick.MinRank))
                     {
                         if (roomKick.Alert.Length > 0)
                             current.GetClient()
                                 .SendNotif(string.Format(Oblivion.GetLanguage().GetVar("kick_mod_room_message"),
                                     roomKick.Alert));
-                        list.Add(current);
-                    }
-                    /* TODO CHECK */ foreach (var current2 in list)
-                    {
-                        GetRoomUserManager().RemoveUserFromRoom(current2.GetClient(), true, false);
-                        current2.GetClient().CurrentRoomUserId = -1;
+                        GetRoomUserManager().RemoveUserFromRoom(current.GetClient(), true, false);
+                        current.GetClient().CurrentRoomUserId = -1;
                     }
                 }
             }
@@ -1380,14 +1391,18 @@ namespace Oblivion.HabboHotel.Rooms
 
             RoomData.RoomChat.Clear();
 
-            /* TODO CHECK */ foreach (var current in GetRoomItemHandler().FloorItems.Values)
+            foreach (var current in _roomItemHandler.GetWallAndFloor)
+            {
                 current.Destroy();
-            /* TODO CHECK */ foreach (var current2 in GetRoomItemHandler().WallItems.Values)
-                current2.Destroy();
+            }
+
             ActiveTrades.Clear();
             _roomItemHandler.Destroy();
+            _roomItemHandler = null;
             _roomUserManager.Destroy();
+            _roomUserManager = null;
             RoomData = null;
+            TonerData = null;
             Oblivion.GetGame().GetRoomManager().RemoveRoomData(RoomId);
         }
     }

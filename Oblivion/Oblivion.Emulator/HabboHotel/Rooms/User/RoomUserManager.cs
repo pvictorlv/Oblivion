@@ -508,7 +508,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         internal RoomUser GetRoomUserByVirtualId(int virtualId) => UserList.ContainsKey(virtualId)
             ? UserList[virtualId]
             : null;
-        
+
         /// <summary>
         ///     Gets the room users.
         /// </summary>
@@ -689,7 +689,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                     user.Z = newZ;
                     user.UpdateNeeded = true;
                 }
-                /* TODO CHECK */ foreach (var item in allRoomItemForSquare)
+                /* TODO CHECK */
+                foreach (var item in allRoomItemForSquare)
                 {
                     if (item.GetBaseItem().InteractionType == Interaction.QuickTeleport ||
                         item.GetBaseItem().InteractionType == Interaction.GuildGate ||
@@ -1094,6 +1095,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
         internal void CheckUserSittableLayable(RoomUser roomUsers)
         {
+            if (roomUsers == null) return;
             // Check if User Is ina  Special Action..
 
             // User is Laying Down..
@@ -1279,7 +1281,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                     roomUsers.Z = roomUsers.SetZ;
 
                     // Check Sub Items Interactionables
-                    /* TODO CHECK */ foreach (var roomItem in hasItemInPlace)
+                    /* TODO CHECK */
+                    foreach (var roomItem in hasItemInPlace)
                     {
                         roomItem.UserWalksOffFurni(roomUsers);
                         switch (roomItem.GetBaseItem().InteractionType)
@@ -1524,7 +1527,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
 
             // Region: Main User Procedure... Really Main..
-             foreach (var roomUsers in UserList.Values)
+            foreach (var roomUsers in UserList.Values)
             {
                 // User Main OnCycle
                 UserCycleOnRoom(roomUsers);
@@ -1798,7 +1801,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                 var list2 = new List<RoomUser>();
 
                 var userOnCurrentItem = _userRoom.GetGameMap().GetCoordinatedItems(new Point(user.X, user.Y));
-                /* TODO CHECK */ foreach (var roomItem in userOnCurrentItem.ToList())
+                /* TODO CHECK */
+                foreach (var roomItem in userOnCurrentItem.ToList())
                 {
                     switch (roomItem.GetBaseItem().InteractionType)
                     {
@@ -1851,7 +1855,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         public void OnUserUpdateStatus(int x, int y)
         {
-             foreach (var current in UserList.Values.Where(current => current.X == x && current.Y == y))
+            foreach (var current in UserList.Values.Where(current => current.X == x && current.Y == y))
                 UpdateUserStatus(current, false);
         }
 

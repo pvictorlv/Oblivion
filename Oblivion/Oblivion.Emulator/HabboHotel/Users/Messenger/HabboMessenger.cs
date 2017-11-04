@@ -133,16 +133,18 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="notification">if set to <c>true</c> [notification].</param>
         internal void UpdateFriend(uint userid, GameClient client, bool notification)
         {
-            if (!Friends.ContainsKey(userid))
+            if (Friends == null) return;
+
+            if (!Friends.TryGetValue(userid, out var friend))
                 return;
 
-            Friends[userid].UpdateUser();
+            friend.UpdateUser();
 
             if (!notification)
                 return;
             var client2 = GetClient();
 
-            client2?.SendMessage(SerializeUpdate(Friends[userid]));
+            client2?.SendMessage(SerializeUpdate(friend));
         }
 
         /// <summary>

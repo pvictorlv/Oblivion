@@ -937,7 +937,7 @@ namespace Oblivion.Messages.Handlers
             if (Session?.GetHabbo() == null)
                 return;
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
-            if (room == null)
+            if (room?.TonerData == null)
                 return;
 
             if (!room.CheckRights(Session, false)) return;

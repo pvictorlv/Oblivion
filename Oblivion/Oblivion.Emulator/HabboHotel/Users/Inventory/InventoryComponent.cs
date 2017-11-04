@@ -605,7 +605,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <returns>ServerMessage.</returns>
         internal ServerMessage SerializeFloorItemInventory()
         {
-
             var items = GetItems;
             var i = items.Count() + SongDisks.Count;
 
@@ -618,7 +617,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             serverMessage.AppendInteger(i > 2800 ? 2800 : i);
 
             var inc = 0;
-           
+
             foreach (var userItem in GetItems)
             {
                 if (inc == 3500)
@@ -736,7 +735,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
         ///     Adds the item.
         /// </summary>
         /// <param name="item">The item.</param>
-        internal void AddItem(RoomItem item) => AddNewItem(item.Id, item.BaseItem, item.ExtraData, item.GroupId, true, true, 0, 0, item.SongCode);
+        internal void AddItem(RoomItem item) => AddNewItem(item.Id, item.BaseItem, item.ExtraData, item.GroupId, true,
+            true, 0, 0, item.SongCode);
 
         /// <summary>
         ///     Runs the database update.
@@ -749,37 +749,40 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     return;
 
 
-                if (_mAddedItems.Count > 0)
+                var added = _mAddedItems.ToList();
+                if (added.Count > 0)
                 {
                     using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        /* TODO CHECK */
-                        foreach (var itemId in _mAddedItems)
+                        foreach (var itemId in added)
                             dbClient.RunFastQuery(
                                 $"UPDATE items_rooms SET user_id='{UserId}', room_id='0' WHERE id='{itemId}'");
                     }
                     _mAddedItems.Clear();
+                    added.Clear();
                 }
 
-                if (_mRemovedItems.Count > 0)
+                var removed = _mRemovedItems.ToList();
+                if (removed.Count > 0)
                 {
                     try
                     {
-                        /* TODO CHECK */
-                        foreach (var itemId in _mRemovedItems)
+                        using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                         {
-                            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                            foreach (var itemId in removed)
+                            {
                                 GetClient().GetHabbo().CurrentRoom.GetRoomItemHandler().SaveFurniture(queryReactor);
 
-                            if (SongDisks.Contains(itemId))
-                                SongDisks.Remove(itemId);
+                                if (SongDisks.Contains(itemId))
+                                    SongDisks.Remove(itemId);
+                            }
                         }
                     }
                     catch
                     {
                         // ignored
                     }
-
+                    removed.Clear();
                     _mRemovedItems.Clear();
                 }
 
