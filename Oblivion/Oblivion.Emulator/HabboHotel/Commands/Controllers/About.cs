@@ -33,15 +33,14 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             message.AppendString("Oblivion Emulator v2");
             message.AppendString("message");
             var info = new StringBuilder();
-            info.Append("<h5><b>Oblivion Emulator v2 - A new world!</b><h5></br></br>");
-            info.Append("<br />");
-             info.AppendFormat(
-                "<b>Créditos:</b> <br />Dark, Claudio Santoro, Kessiler, XDR, <b> Lucca (Droppy)</b><br /> <br /> ");
-            info.AppendFormat("<b>Estatisticas:</b> <br />");
+            info.Append("Oblivion Emulator v2 - A new world!\n\r\r");
+            info.AppendFormat("Developed by Oblivion Team \n\r\r");
+            info.AppendFormat("Credits to Dark, Droppy, Claudio, XDR, Maritnemenite and lots of cool ppl :p");
+            info.AppendFormat("\n\r\r");
+            info.AppendFormat("Stats:\r");
             var userCount = Oblivion.GetGame().GetClientManager().Clients.Count * Oblivion.Multipy;
             var roomsCount = Oblivion.GetGame().GetRoomManager().LoadedRooms.Count;
-            info.AppendFormat("<b>Usuários:</b> {0} em {1}{2}.<br /><br /><br />", userCount, roomsCount,
-                (roomsCount == 1) ? " Quarto" : " Quartos");
+            info.Append($"{userCount} Users in {roomsCount}{((roomsCount == 1) ? " room" : " rooms")}.\n\r\r");
             message.AppendString(info.ToString());
             message.AppendString("linkUrl");
             message.AppendString("event:");

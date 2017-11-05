@@ -19,6 +19,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
     {
 //        private List<RoomItem> _balls;
         private RoomItem _ball;
+
         private RoomItem[] _gates;
         private Room _room;
 
@@ -52,7 +53,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             }
         }
 
-        internal bool GotBall() => _ball != null; 
+        internal bool GotBall() => _ball != null;
 
         internal void AddBall(RoomItem item)
         {
@@ -68,7 +69,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             _gates = null;
             _room = null;
 //            _balls.Clear();
-            _ball = null;
+            lock (_ball)
+                _ball = null;
         }
 
         internal void OnCycle()
@@ -140,13 +142,11 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
 
         internal void OnUserWalk(RoomUser user)
         {
-            if (user == null)
+            if (user == null || _ball == null)
                 return;
 
             lock (_ball)
             {
-//                /* TODO CHECK */ foreach (var _ball in _balls)
-
                 if (user.SetX == _ball.X && user.SetY == _ball.Y && user.GoalX == _ball.X && user.GoalY == _ball.Y &&
                     user.HandelingBallStatus == 0) // super chute.
                 {
@@ -218,11 +218,11 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                             return false;
                 }
             }
-//            else
-//            {
-//                if (!_room.GetGameMap().ItemCanBePlacedHere(newX, newY) || _room.GetGameMap().SquareHasFurni(newX, newY))
-//                    return false;
-//            }
+            else
+            {
+                if (!_room.GetGameMap().HasMapCollision(newX, newY))
+                    return false;
+            }
             var oldRoomCoord = item.Coordinate;
             var itemIsOnGameItem = GameItemOverlaps(item);
             double newZ = _room.GetGameMap().Model.SqFloorHeight[newX][newY];
@@ -384,11 +384,15 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
 
         internal void RemoveBall()
         {
-            _ball = null;
-
             var manager = Oblivion.GetGame().GetRoomManager();
             if (manager.LoadedBallRooms.Contains(_room))
                 manager.LoadedBallRooms.Remove(_room);
+
+            lock (_ball)
+            {
+                _ball.BallIsMoving = false;
+                _ball = null;
+            }
         }
 
         internal void UnRegisterGate(RoomItem item)

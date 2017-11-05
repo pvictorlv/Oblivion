@@ -133,7 +133,6 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
             {
                 message.AppendInteger(0);
             }
-
             message.AppendInteger(-1);
             message.AppendBool(false);
 
@@ -325,7 +324,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                     }
                     break;
             }
-            /* TODO CHECK */ foreach (var baseItem in item.Items.Keys)
+            /* TODO CHECK */ foreach (var baseItem in item.Items)
             {
                 if (item.Name == "g0 group_product" || item.Name.StartsWith("builders_club_addon_") ||
                     item.Name.StartsWith("builders_club_time_"))
@@ -337,8 +336,8 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                 }
                 else
                 {
-                    message.AppendString(baseItem.Type.ToString());
-                    message.AppendInteger(baseItem.SpriteId);
+                    message.AppendString(baseItem.Key.Type.ToString());
+                    message.AppendInteger(baseItem.Key.SpriteId);
 
                     if (item.Name.Contains("wallpaper_single") || item.Name.Contains("floor_single") ||
                         item.Name.Contains("landscape_single"))
@@ -346,7 +345,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                         var array = item.Name.Split('_');
                         message.AppendString(array[2]);
                     }
-                    else if (item.Name.StartsWith("bot_") || baseItem.InteractionType == Interaction.MusicDisc ||
+                    else if (item.Name.StartsWith("bot_") || baseItem.Key.InteractionType == Interaction.MusicDisc ||
                              item.GetFirstBaseItem().Name == "poster")
                         message.AppendString(item.ExtraData);
                     else if (item.Name.StartsWith("poster_"))
@@ -359,12 +358,12 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                         var array3 = item.Name.Split(' ');
                         message.AppendString(array3[1]);
                     }
-                    else if (item.SongId > 0u && baseItem.InteractionType == Interaction.MusicDisc)
+                    else if (item.SongId > 0u && baseItem.Key.InteractionType == Interaction.MusicDisc)
                         message.AppendString(item.ExtraData);
                     else
                         message.AppendString(item.ExtraData ?? string.Empty);
 
-                    message.AppendInteger(item.Items[baseItem]);
+                    message.AppendInteger(baseItem.Value);
                     message.AppendBool(item.IsLimited);
                     if (item.IsLimited)
                     {
@@ -385,7 +384,8 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
             }
 
             message.AppendBool(item.HaveOffer && !item.IsLimited);
-            message.AppendString("");
+            message.AppendString(string.Empty);
+          
         }
     }
 }

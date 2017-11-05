@@ -1060,6 +1060,15 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                                                            GameMap[x, y] == 1;
 
         /// <summary>
+        ///     Items the can be placed here.
+        /// </summary>
+        /// <param name="x">The x.</param>
+        /// <param name="y">The y.</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        internal bool HasMapCollision(int x, int y) => (Model.MapSizeX - 1 >= x && Model.MapSizeY - 1 >= y) &&
+                                                           (x != Model.DoorX || y != Model.DoorY);
+
+        /// <summary>
         ///     Sqs the height of the absolute.
         /// </summary>
         /// <param name="x">The x.</param>

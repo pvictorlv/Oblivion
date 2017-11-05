@@ -17,13 +17,11 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         public override bool Execute(GameClient session, string[] pms)
         {
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(session.GetHabbo().CurrentRoomId);
-            if (room == null) return true;
 
-            var user = room.GetRoomUserManager().GetRoomUserByHabbo(pms[0]);
+            var user = room?.GetRoomUserManager().GetRoomUserByHabbo(pms[0]);
             if (user == null) return true;
 
             var msg = string.Join(" ", pms.Skip(1));
-            if (msg.StartsWith(":")) msg = ' ' + msg;
 
             if (string.IsNullOrEmpty(msg)) return true;
 

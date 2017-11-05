@@ -1678,7 +1678,33 @@ namespace Oblivion.HabboHotel.Rooms.User
                     user.SetPos(model.DoorX, model.DoorY, model.DoorZ);
                     user.SetRot(model.DoorOrientation, false);
 
-                    user.AddStatus(_userRoom.CheckRights(client, true) ? "flatctrl 4" : "flatctrl 1", string.Empty);
+                    //                    user.AddStatus(_userRoom.CheckRights(client, true) ? "flatctrl 4" : "flatctrl 1", string.Empty);
+                    var Session = user.GetClient();
+                    if (_userRoom.CheckRights(Session, true))
+                    {
+                        var msg = new ServerMessage(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
+                        msg.AppendInteger(4);
+                        Session.SendMessage(msg);
+                        msg = new ServerMessage(LibraryParser.OutgoingRequest("HasOwnerRightsMessageComposer"));
+                        Session.SendMessage(msg);
+                        user.AddStatus("flatctrl 4", string.Empty);
+                    }
+                    else if (_userRoom.CheckRights(Session, false, true))
+                    {
+                        var msg = new ServerMessage(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
+                        msg.AppendInteger(1);
+                        Session.SendMessage(msg);
+                        user.AddStatus("flatctrl 3", string.Empty);
+
+                    }
+                    else
+                    {
+                        var msg = new ServerMessage(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
+                        msg.AppendInteger(0);
+                        Session.SendMessage(msg);
+                        msg = new ServerMessage(LibraryParser.OutgoingRequest("YouAreNotControllerMessageComposer"));
+                        Session.SendMessage(msg);
+                    }
 
                     user.CurrentItemEffect = ItemEffectType.None;
 

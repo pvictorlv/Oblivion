@@ -41,7 +41,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage.AppendBool(false);
                     serverMessage.AppendInteger(15);
                     serverMessage.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var current in list) serverMessage.AppendInteger(current.Id);
+                     foreach (var current in list) serverMessage.AppendInteger(current.Id);
                     serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage.AppendInteger(item.Id);
                     serverMessage.AppendString(extraInfo);
@@ -61,7 +61,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage2.AppendBool(false);
                     serverMessage2.AppendInteger(0);
                     serverMessage2.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var current2 in list) serverMessage2.AppendInteger(current2.Id);
+                     foreach (var current2 in list) serverMessage2.AppendInteger(current2.Id);
                     serverMessage2.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage2.AppendInteger(item.Id);
                     serverMessage2.AppendString(extraInfo);
@@ -81,7 +81,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage3.AppendBool(false);
                     serverMessage3.AppendInteger(0);
                     serverMessage3.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var current3 in list) serverMessage3.AppendInteger(current3.Id);
+                     foreach (var current3 in list) serverMessage3.AppendInteger(current3.Id);
                     serverMessage3.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage3.AppendInteger(item.Id);
                     serverMessage3.AppendString(extraInfo);
@@ -101,7 +101,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage4.AppendBool(false);
                     serverMessage4.AppendInteger(0);
                     serverMessage4.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var current4 in list) serverMessage4.AppendInteger(current4.Id);
+                     foreach (var current4 in list) serverMessage4.AppendInteger(current4.Id);
                     serverMessage4.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage4.AppendInteger(item.Id);
                     serverMessage4.AppendString(extraInfo);
@@ -139,7 +139,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage5.AppendBool(false);
                     serverMessage5.AppendInteger(15);
                     serverMessage5.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var current5 in list) serverMessage5.AppendInteger(current5.Id);
+                     foreach (var current5 in list) serverMessage5.AppendInteger(current5.Id);
                     serverMessage5.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage5.AppendInteger(item.Id);
                     serverMessage5.AppendString(extraInfo);
@@ -179,7 +179,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage6.AppendBool(false);
                     serverMessage6.AppendInteger(0);
                     serverMessage6.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var current6 in list) serverMessage6.AppendInteger(current6.Id);
+                     foreach (var current6 in list) serverMessage6.AppendInteger(current6.Id);
                     serverMessage6.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage6.AppendInteger(item.Id);
                     serverMessage6.AppendString(extraInfo);
@@ -218,7 +218,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage8.AppendBool(false);
                     serverMessage8.AppendInteger(15);
                     serverMessage8.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var current8 in list) serverMessage8.AppendInteger(current8.Id);
+                     foreach (var current8 in list) serverMessage8.AppendInteger(current8.Id);
                     serverMessage8.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage8.AppendInteger(item.Id);
                     serverMessage8.AppendString(extraInfo);
@@ -238,7 +238,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage9.AppendBool(false);
                     serverMessage9.AppendInteger(15);
                     serverMessage9.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var current9 in list) serverMessage9.AppendInteger(current9.Id);
+                     foreach (var current9 in list) serverMessage9.AppendInteger(current9.Id);
                     serverMessage9.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage9.AppendInteger(item.Id);
                     serverMessage9.AppendString(extraInfo);
@@ -277,7 +277,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage10.AppendBool(false);
                     serverMessage10.AppendInteger(15);
                     serverMessage10.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var current10 in list) serverMessage10.AppendInteger(current10.Id);
+                     foreach (var current10 in list) serverMessage10.AppendInteger(current10.Id);
                     serverMessage10.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage10.AppendInteger(item.Id);
                     serverMessage10.AppendString(extraInfo);
@@ -366,7 +366,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage21.AppendBool(false);
                     serverMessage21.AppendInteger(15);
                     serverMessage21.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var current20 in list) serverMessage21.AppendInteger(current20.Id);
+                     foreach (var current20 in list) serverMessage21.AppendInteger(current20.Id);
                     serverMessage21.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage21.AppendInteger(item.Id);
                     serverMessage21.AppendString(extraString2);
@@ -382,7 +382,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     {
                         var boolz = extraInfo.Split(',');
 
-                        /* TODO CHECK */ foreach (var stringy in boolz)
+                         foreach (var stringy in boolz)
                             serverMessage21.AppendInteger(stringy.ToLower() == "true" ? 1 : 0);
                     }
                     serverMessage21.AppendInteger(0);
@@ -398,7 +398,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage12.AppendBool(false);
                     serverMessage12.AppendInteger(15);
                     serverMessage12.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var current12 in list) serverMessage12.AppendInteger(current12.Id);
+                     foreach (var current12 in list) serverMessage12.AppendInteger(current12.Id);
                     serverMessage12.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage12.AppendInteger(item.Id);
                     serverMessage12.AppendString(extraString2);
@@ -414,7 +414,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     {
                         var boolz = extraInfo.Split(',');
 
-                        /* TODO CHECK */ foreach (var stringy in boolz)
+                         foreach (var stringy in boolz)
                             serverMessage12.AppendInteger(stringy.ToLower() == "true" ? 1 : 0);
                     }
                     serverMessage12.AppendInteger(0);
@@ -431,7 +431,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage.AppendInteger(15);
 
                     serverMessage.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var roomItem in list.Where(roomItem => roomItem != null))
+                    foreach (var roomItem in list.Where(roomItem => roomItem != null))
                         serverMessage.AppendInteger(roomItem.Id);
 
                     serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
@@ -455,7 +455,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage.AppendInteger(15);
 
                     serverMessage.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var roomItem in list.Where(roomItem => roomItem != null))
+                     foreach (var roomItem in list.Where(roomItem => roomItem != null))
                         serverMessage.AppendInteger(roomItem.Id);
 
                     serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
@@ -523,7 +523,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage16.AppendInteger(15);
 
                     serverMessage16.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var roomItem in list) serverMessage16.AppendInteger(roomItem.Id);
+                     foreach (var roomItem in list) serverMessage16.AppendInteger(roomItem.Id);
 
                     serverMessage16.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage16.AppendInteger(item.Id);
@@ -544,7 +544,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage17.AppendBool(false);
                     serverMessage17.AppendInteger(15);
                     serverMessage17.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var current17 in list) serverMessage17.AppendInteger(current17.Id);
+                     foreach (var current17 in list) serverMessage17.AppendInteger(current17.Id);
                     serverMessage17.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage17.AppendInteger(item.Id);
                     serverMessage17.AppendString(extraInfo);
@@ -598,7 +598,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage19.AppendInteger(50);
                     }
                     else
-                        /* TODO CHECK */ foreach (var integers in extraInfo.Split(','))
+                         foreach (var integers in extraInfo.Split(','))
                             serverMessage19.AppendInteger(int.Parse(integers));
                     serverMessage19.AppendBool(false);
                     serverMessage19.AppendInteger(0);
@@ -620,7 +620,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage19.AppendBool(false);
                     serverMessage19.AppendInteger(15);
                     serverMessage19.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var current18 in list) serverMessage19.AppendInteger(current18.Id);
+                     foreach (var current18 in list) serverMessage19.AppendInteger(current18.Id);
                     serverMessage19.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage19.AppendInteger(item.Id);
                     serverMessage19.AppendInteger(0);
@@ -639,7 +639,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage.AppendBool(false);
                     serverMessage.AppendInteger(15);
                     serverMessage.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var current18 in list) serverMessage.AppendInteger(current18.Id);
+                     foreach (var current18 in list) serverMessage.AppendInteger(current18.Id);
                     serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage.AppendInteger(item.Id);
                     serverMessage.AppendString(string.Empty);
@@ -753,7 +753,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage2.AppendBool(false);
                     serverMessage2.AppendInteger(0);
                     serverMessage2.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var current2 in list) serverMessage2.AppendInteger(current2.Id);
+                     foreach (var current2 in list) serverMessage2.AppendInteger(current2.Id);
                     serverMessage2.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage2.AppendInteger(item.Id);
                     serverMessage2.AppendString(extraInfo);
@@ -773,7 +773,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage2.AppendBool(false);
                     serverMessage2.AppendInteger(15);
                     serverMessage2.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var current2 in list) serverMessage2.AppendInteger(current2.Id);
+                     foreach (var current2 in list) serverMessage2.AppendInteger(current2.Id);
                     serverMessage2.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage2.AppendInteger(item.Id);
                     serverMessage2.AppendString(extraInfo);
@@ -848,7 +848,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage15.AppendBool(false);
                     serverMessage15.AppendInteger(15);
                     serverMessage15.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var current2 in list) serverMessage15.AppendInteger(current2.Id);
+                     foreach (var current2 in list) serverMessage15.AppendInteger(current2.Id);
                     serverMessage15.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage15.AppendInteger(item.Id);
                     serverMessage15.AppendString(extraInfo);
@@ -905,7 +905,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage15.AppendBool(false);
                     serverMessage15.AppendInteger(15);
                     serverMessage15.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var current2 in list) serverMessage15.AppendInteger(current2.Id);
+                     foreach (var current2 in list) serverMessage15.AppendInteger(current2.Id);
                     serverMessage15.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage15.AppendInteger(item.Id);
                     serverMessage15.AppendString(extraInfo);
@@ -924,7 +924,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage.AppendInteger(15);
 
                     serverMessage.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var roomItem in list) serverMessage.AppendInteger(roomItem.Id);
+                     foreach (var roomItem in list) serverMessage.AppendInteger(roomItem.Id);
 
                     serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage.AppendInteger(item.Id);
@@ -961,7 +961,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage.AppendBool(false);
                     serverMessage.AppendInteger(15);
                     serverMessage.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var current15 in list) serverMessage.AppendInteger(current15.Id);
+                     foreach (var current15 in list) serverMessage.AppendInteger(current15.Id);
                     serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage.AppendInteger(item.Id);
                     serverMessage.AppendString(extraInfo);
@@ -984,7 +984,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage25.AppendBool(false);
                     serverMessage25.AppendInteger(15);
                     serverMessage25.AppendInteger(list.Count);
-                    /* TODO CHECK */ foreach (var current24 in list) serverMessage25.AppendInteger(current24.Id);
+                     foreach (var current24 in list) serverMessage25.AppendInteger(current24.Id);
                     serverMessage25.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage25.AppendInteger(item.Id);
                     serverMessage25.AppendString(extraInfo);

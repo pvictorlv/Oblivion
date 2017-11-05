@@ -147,7 +147,7 @@ namespace Oblivion.Messages.Handlers
 
         internal void HabboAirGetUserRooms()
         {
-            if (count <= 9)
+            if (count <= 4)
             {
                 count++;
                 return;

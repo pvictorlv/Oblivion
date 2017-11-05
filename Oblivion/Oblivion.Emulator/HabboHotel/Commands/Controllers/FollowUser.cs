@@ -29,6 +29,31 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
+            var room = client.GetHabbo().CurrentRoom;
+            if (room.RoomData.State == 1)
+            {
+                if (room.UserCount == 0)
+                {
+                    var msg = new ServerMessage(LibraryParser.OutgoingRequest("DoorbellNoOneMessageComposer"));
+                    session.SendMessage(msg);
+                }
+                else
+                {
+                    var msg = new ServerMessage(LibraryParser.OutgoingRequest("DoorbellMessageComposer"));
+                    msg.AppendString("");
+                    session.SendMessage(msg);
+                    var serverMessage3 =
+                        new ServerMessage(LibraryParser.OutgoingRequest("DoorbellMessageComposer"));
+                    serverMessage3.AppendString(session.GetHabbo().UserName);
+                    room.SendMessageToUsersWithRights(serverMessage3);
+                }
+            }
+            if (room.RoomData.State == 2)
+            {
+                session.SendWhisper("room is locked :(");
+                return false;
+            }
+        
             if (client.GetHabbo().CurrentRoom == null ||
                 client.GetHabbo().CurrentRoom == session.GetHabbo().CurrentRoom)
                 return false;

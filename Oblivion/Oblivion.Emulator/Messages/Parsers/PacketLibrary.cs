@@ -1255,6 +1255,11 @@ namespace Oblivion.Messages.Parsers
             handler.LookAt();
         }
 
+        internal static void AirClickUser(GameClientMessageHandler handler)
+        {
+            handler.AirClickUser();
+        }
+
         /// <summary>
         /// Starts the typing.
         /// </summary>
@@ -1380,6 +1385,7 @@ namespace Oblivion.Messages.Parsers
         {
             handler.PlaceItem();
         }
+
         /// <summary>
         /// Places the item.
         /// </summary>
@@ -2665,7 +2671,9 @@ namespace Oblivion.Messages.Parsers
         internal static void NewNavigatorResize(GameClientMessageHandler handler)
         {
             handler.NewNavigatorResize();
-        }internal static void HabboAirGetUserRooms(GameClientMessageHandler handler)
+        }
+
+        internal static void HabboAirGetUserRooms(GameClientMessageHandler handler)
         {
             handler.HabboAirGetUserRooms();
         }
@@ -2732,6 +2740,7 @@ namespace Oblivion.Messages.Parsers
         {
             handler.GetGameListing();
         }
+
         /// <summary>
         /// Init the game center
         /// </summary>

@@ -299,19 +299,23 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                         user.LockedTilesCount++;
                         _room.GetGameManager().AddPointToTeam(item.Team, user);
                         _field.UpdateLocation(item.X, item.Y, (byte) Team);
-                        var gfield = _field.DoUpdate();
-                        if (gfield == null) return;
+                        var gfield = _field.DoUpdate().ToList();
+//                        if (gfield == null) return;
                         /* TODO CHECK */
                         foreach (var gameField in gfield)
                         {
                             var t = (Team) gameField.ForValue;
                             /* TODO CHECK */
-                            foreach (var p in gameField.GetPoints())
+                            var point = gameField.GetPoints().ToList();
+                            foreach (var p in point)
                             {
                                 HandleMaxBanzaiTiles(new Point(p.X, p.Y), t, user);
                                 _floorMap[p.Y, p.X] = gameField.ForValue;
                             }
+                            point.Clear();
+
                         }
+                        gfield.Clear();
                     }
                 }
             }

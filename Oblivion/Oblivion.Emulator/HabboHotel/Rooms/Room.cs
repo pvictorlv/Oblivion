@@ -974,9 +974,10 @@ namespace Oblivion.HabboHotel.Rooms
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery(
-                    $"SELECT user_id FROM rooms_bans WHERE expire > UNIX_TIMESTAMP() AND room_id={RoomId}");
+                    $"SELECT user_id FROM rooms_bans WHERE room_id={RoomId} AND expire > UNIX_TIMESTAMP()");
                 var table = queryReactor.GetTable();
                 list.AddRange(from DataRow dataRow in table.Rows select (uint) dataRow[0]);
+                
             }
             return list;
         }
