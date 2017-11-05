@@ -108,7 +108,7 @@ namespace Oblivion.HabboHotel.Achievements
             if (session.GetHabbo() == null)
                 return;
 
-            UserAchievement? regAch = session.GetHabbo().GetAchievementData("ACH_RegistrationDuration");
+            var regAch = session.GetHabbo().GetAchievementData("ACH_RegistrationDuration");
 
             if (regAch == null)
             {
@@ -116,17 +116,17 @@ namespace Oblivion.HabboHotel.Achievements
                 return;
             }
 
-            if (regAch.Value.Level == 5)
+            if (regAch.Level == 5)
                 return;
 
             double sinceMember = Oblivion.GetUnixTimeStamp() - (int)session.GetHabbo().CreateDate;
 
             var daysSinceMember = Convert.ToInt32(Math.Round(sinceMember / 86400));
 
-            if (daysSinceMember == regAch.Value.Progress)
+            if (daysSinceMember == regAch.Progress)
                 return;
 
-            var days = daysSinceMember - regAch.Value.Progress;
+            var days = daysSinceMember - regAch.Progress;
 
             if (days < 1)
                 return;
@@ -152,7 +152,7 @@ namespace Oblivion.HabboHotel.Achievements
                 return;
             }
 
-            if (clubAch.Value.Level == 5)
+            if (clubAch.Level == 5)
                 return;
 
             var subscription = session.GetHabbo().GetSubscriptionManager().GetSubscription();
@@ -192,150 +192,264 @@ namespace Oblivion.HabboHotel.Achievements
                 ProgressUserAchievement(session, "ACH_BasicClub", 1);
             }
         }
+        /*
 
-        /// <summary>
-        ///     Progresses the user achievement.
-        /// </summary>
-        /// <param name="session">The session.</param>
-        /// <param name="achievementGroup">The achievement group.</param>
-        /// <param name="progressAmount">The progress amount.</param>
-        /// <param name="fromZero">if set to <c>true</c> [from zero].</param>
-        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool ProgressUserAchievement(GameClient session, string achievementGroup, int progressAmount, bool fromZero = false)
-        {
-            if (session?.GetHabbo() == null) return false; 
-
-            if (Achievements.ContainsKey(achievementGroup))
-            {
-                
-                var achievement = Achievements[achievementGroup];
-                var user = session.GetHabbo();
-                UserAchievement userAchievement;
-
-                if (!user.Data.Achievements.ContainsKey(achievementGroup))
+                /// <summary>
+                ///     Progresses the user achievement.
+                /// </summary>
+                /// <param name="session">The session.</param>
+                /// <param name="achievementGroup">The achievement group.</param>
+                /// <param name="progressAmount">The progress amount.</param>
+                /// <param name="fromZero">if set to <c>true</c> [from zero].</param>
+                /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+                internal bool ProgressUserAchievement(GameClient session, string achievementGroup, int progressAmount, bool fromZero = false)
                 {
-                    userAchievement = new UserAchievement(achievementGroup, 0, 0);
-                    user.Data.Achievements.Add(achievementGroup, userAchievement);
-                }
-                else
-                {
-                    if (!user.Data.Achievements.TryGetValue(achievementGroup, out userAchievement))
+                    if (session?.GetHabbo() == null) return false; 
+
+                    if (Achievements.ContainsKey(achievementGroup))
                     {
-                        return false;
-                    }
-                    if (achievement.Levels.Count >= userAchievement.Level + 1) return false;
-                }
+                        var achievement = Achievements[achievementGroup];
+                        var user = session.GetHabbo();
+                        UserAchievement userAchievement;
 
-                var count = achievement.Levels.Count;
-              
-                if (userAchievement.Level >= count)
+                        if (!user.Data.Achievements.ContainsKey(achievementGroup))
+                        {
+                            userAchievement = new UserAchievement(achievementGroup, 0, 0);
+                            user.Data.Achievements.Add(achievementGroup, userAchievement);
+                        }
+                        else
+                        {
+                            if (!user.Data.Achievements.TryGetValue(achievementGroup, out userAchievement))
+                            {
+                                return false;
+                            }
+                            if (achievement.Levels.Count >= userAchievement.Level + 1) return false;
+                        }
+
+                        var count = achievement.Levels.Count;
+
+                        if (userAchievement.Level >= count)
+                            return false;
+
+                        var acount = (userAchievement.Level + 1);
+
+                        if (acount > count)
+                            acount = count;
+
+                        var targetLevelData = achievement.Levels[acount];
+
+                        var achievementColoc = session.GetHabbo().GetAchievementData(achievementGroup);
+
+                        if ((achievementColoc != null) && (fromZero))
+                            fromZero = false;
+
+                        var progress = (fromZero) ? progressAmount : ((userAchievement.Progress + progressAmount));
+
+                        var achievementLevel = userAchievement.Level;
+                        var levelEndCheck = achievementLevel + 1;
+
+                        if (levelEndCheck > count)
+                            levelEndCheck = count;
+
+                        if (progress >= targetLevelData.Requirement)
+                        {
+                            achievementLevel++;
+                            levelEndCheck++;
+                            progress = 0;
+
+                            var userBadgeComponent = user.GetBadgeComponent();
+
+                            if (acount != 1)
+                                userBadgeComponent.RemoveBadge(Convert.ToString($"{achievementGroup}{acount - 1}"), session);
+
+                            userBadgeComponent.GiveBadge($"{achievementGroup}{acount}", true, session);
+
+                            if (levelEndCheck > count)
+                                levelEndCheck = count;
+
+                            user.ActivityPoints += targetLevelData.RewardPixels;
+                            user.NotifyNewPixels(targetLevelData.RewardPixels);
+                            user.UpdateActivityPointsBalance();
+
+                            session.SendMessage(AchievementUnlockedComposer.Compose(achievement, acount,
+                                targetLevelData.RewardPoints, targetLevelData.RewardPixels));
+
+                            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                            {
+                                queryReactor.SetQuery(string.Concat("REPLACE INTO users_achievements VALUES (", user.Id, ", @group, ", achievementLevel, ", ", progress, ")"));
+                                queryReactor.AddParameter("group", achievementGroup);
+                                queryReactor.RunQuery();
+                            }
+
+                            userAchievement.SetLevel(achievementLevel);
+                            userAchievement.SetProgress(progress);
+                            user.AchievementPoints += targetLevelData.RewardPoints;
+                            user.NotifyNewPixels(targetLevelData.RewardPixels);
+                            user.ActivityPoints += targetLevelData.RewardPixels;
+                            user.UpdateActivityPointsBalance();
+
+                            session.SendMessage(AchievementScoreUpdateComposer.Compose(user.AchievementPoints));
+
+                            UserAchievement? achievementData = user.GetAchievementData(achievementGroup);
+
+                            if (achievementData != null)
+                                session.SendMessage(AchievementProgressComposer.Compose(achievement, levelEndCheck, achievement.Levels[levelEndCheck], count, achievementData.Value));
+
+                            Talent talent;
+
+                            if (Oblivion.GetGame().GetTalentManager().TryGetTalent(achievementGroup, out talent))
+                                Oblivion.GetGame().GetTalentManager().CompleteUserTalent(session, talent);
+
+                            return true;
+                        }
+
+                        userAchievement.SetLevel(achievementLevel);
+                        userAchievement.SetProgress(progress);
+
+                        using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        {
+                            queryreactor2.SetQuery(string.Concat("REPLACE INTO users_achievements VALUES (", session.GetHabbo().Id, ", @group, ", achievementLevel, ", ", progress, ")"));
+                            queryreactor2.AddParameter("group", achievementGroup);
+                            queryreactor2.RunQuery();
+                        }
+
+                        var messageHandler = session.GetMessageHandler();
+
+                        if (messageHandler != null)
+                        {
+                            UserAchievement? achievementData = user.GetAchievementData(achievementGroup);
+
+                            if (achievementData != null)
+                                session.SendMessage(AchievementProgressComposer.Compose(achievement, acount, targetLevelData, count, achievementData.Value));
+
+                            messageHandler.GetResponse().Init(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
+                            messageHandler.GetResponse().AppendInteger(-1);
+                            messageHandler.GetResponse().AppendString(user.Look);
+                            messageHandler.GetResponse().AppendString(user.Gender.ToLower());
+                            messageHandler.GetResponse().AppendString(user.Motto);
+                            messageHandler.GetResponse().AppendInteger(user.AchievementPoints);
+                            messageHandler.SendResponse();
+
+                            return true;
+                        }
+                    }
+
                     return false;
-
-                var acount = (userAchievement.Level + 1);
-
-                if (acount > count)
-                    acount = count;
-
-                var targetLevelData = achievement.Levels[acount];
-
-                var achievementColoc = session.GetHabbo().GetAchievementData(achievementGroup);
-
-                if ((achievementColoc != null) && (fromZero))
-                    fromZero = false;
-
-                var progress = (fromZero) ? progressAmount : ((userAchievement.Progress + progressAmount));
-
-                var achievementLevel = userAchievement.Level;
-                var levelEndCheck = achievementLevel + 1;
-
-                if (levelEndCheck > count)
-                    levelEndCheck = count;
-
-                if (progress >= targetLevelData.Requirement)
-                {
-                    achievementLevel++;
-                    levelEndCheck++;
-                    progress = 0;
-
-                    var userBadgeComponent = user.GetBadgeComponent();
-
-                    if (acount != 1)
-                        userBadgeComponent.RemoveBadge(Convert.ToString($"{achievementGroup}{acount - 1}"), session);
-
-                    userBadgeComponent.GiveBadge($"{achievementGroup}{acount}", true, session);
-
-                    if (levelEndCheck > count)
-                        levelEndCheck = count;
-
-                    user.ActivityPoints += targetLevelData.RewardPixels;
-                    user.NotifyNewPixels(targetLevelData.RewardPixels);
-                    user.UpdateActivityPointsBalance();
-
-                    session.SendMessage(AchievementUnlockedComposer.Compose(achievement, acount,
-                        targetLevelData.RewardPoints, targetLevelData.RewardPixels));
-
-                    using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                    {
-                        queryReactor.SetQuery(string.Concat("REPLACE INTO users_achievements VALUES (", user.Id, ", @group, ", achievementLevel, ", ", progress, ")"));
-                        queryReactor.AddParameter("group", achievementGroup);
-                        queryReactor.RunQuery();
-                    }
-
-                    userAchievement.SetLevel(achievementLevel);
-                    userAchievement.SetProgress(progress);
-                    user.AchievementPoints += targetLevelData.RewardPoints;
-                    user.NotifyNewPixels(targetLevelData.RewardPixels);
-                    user.ActivityPoints += targetLevelData.RewardPixels;
-                    user.UpdateActivityPointsBalance();
-
-                    session.SendMessage(AchievementScoreUpdateComposer.Compose(user.AchievementPoints));
-
-                    UserAchievement? achievementData = user.GetAchievementData(achievementGroup);
-
-                    if (achievementData != null)
-                        session.SendMessage(AchievementProgressComposer.Compose(achievement, levelEndCheck, achievement.Levels[levelEndCheck], count, achievementData.Value));
-
-                    Talent talent;
-
-                    if (Oblivion.GetGame().GetTalentManager().TryGetTalent(achievementGroup, out talent))
-                        Oblivion.GetGame().GetTalentManager().CompleteUserTalent(session, talent);
-
-                    return true;
                 }
+        */
 
-                userAchievement.SetLevel(achievementLevel);
-                userAchievement.SetProgress(progress);
+        public bool ProgressUserAchievement(GameClient Session, string AchievementGroup, int ProgressAmount,
+       bool FromZero = false)
+        {
+            if (!Achievements.TryGetValue(AchievementGroup, out var AchievementData) || Session == null)
+                return false;
 
-                using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                {
-                    queryreactor2.SetQuery(string.Concat("REPLACE INTO users_achievements VALUES (", session.GetHabbo().Id, ", @group, ", achievementLevel, ", ", progress, ")"));
-                    queryreactor2.AddParameter("group", achievementGroup);
-                    queryreactor2.RunQuery();
-                }
+//            var AchievementData = _achievements[AchievementGroup];
 
-                var messageHandler = session.GetMessageHandler();
-
-                if (messageHandler != null)
-                {
-                    UserAchievement? achievementData = user.GetAchievementData(achievementGroup);
-
-                    if (achievementData != null)
-                        session.SendMessage(AchievementProgressComposer.Compose(achievement, acount, targetLevelData, count, achievementData.Value));
-
-                    messageHandler.GetResponse().Init(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
-                    messageHandler.GetResponse().AppendInteger(-1);
-                    messageHandler.GetResponse().AppendString(user.Look);
-                    messageHandler.GetResponse().AppendString(user.Gender.ToLower());
-                    messageHandler.GetResponse().AppendString(user.Motto);
-                    messageHandler.GetResponse().AppendInteger(user.AchievementPoints);
-                    messageHandler.SendResponse();
-
-                    return true;
-                }
+            var UserData = Session.GetHabbo().GetAchievementData(AchievementGroup);
+            if (UserData == null)
+            {
+                UserData = new UserAchievement(AchievementGroup, 0, 0);
+                Session.GetHabbo().Data.Achievements.Add(AchievementGroup, UserData);
             }
 
+            var TotalLevels = AchievementData.Levels.Count;
+
+            if (UserData.Level >= TotalLevels)
+                return false; // done, no more.
+
+            var TargetLevel = UserData.Level + 1;
+
+            if (TargetLevel > TotalLevels)
+                TargetLevel = TotalLevels;
+
+            var TargetLevelData = AchievementData.Levels[TargetLevel];
+            int NewProgress;
+            if (FromZero)
+                NewProgress = ProgressAmount;
+            else
+                NewProgress = UserData.Progress + ProgressAmount;
+
+            var NewLevel = UserData.Level;
+            var NewTarget = NewLevel + 1;
+
+            if (NewTarget > TotalLevels)
+                NewTarget = TotalLevels;
+
+            if (NewProgress >= TargetLevelData.Requirement)
+            {
+                NewLevel++;
+                NewTarget++;
+
+
+                NewProgress = 0;
+
+                var userBadgeComponent = Session.GetHabbo().GetBadgeComponent();
+                if (TargetLevel != 1)
+                    userBadgeComponent.RemoveBadge(Convert.ToString($"{AchievementGroup}{TargetLevel - 1}"), Session);
+
+                userBadgeComponent.GiveBadge($"{AchievementGroup}{TargetLevel}", true, Session);
+
+
+                if (NewTarget > TotalLevels)
+                    NewTarget = TotalLevels;
+
+
+                //                Session.SendMessage(new AchievementUnlockedComposer(AchievementData, TargetLevel,
+                //                    TargetLevelData.RewardPoints, TargetLevelData.RewardPixels));
+
+                Session.SendMessage(AchievementUnlockedComposer.Compose(AchievementData, TargetLevel,
+                    TargetLevelData.RewardPoints, TargetLevelData.RewardPixels));
+
+                using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                {
+                    dbClient.SetQuery("REPLACE INTO `users_achievements` VALUES ('" + Session.GetHabbo().Id +
+                                      "', @group, '" + NewLevel + "', '" + NewProgress + "')");
+                    dbClient.AddParameter("group", AchievementGroup);
+                    dbClient.RunQuery();
+                }
+
+                UserData.Level = NewLevel;
+                UserData.Progress = NewProgress;
+
+                Session.GetHabbo().ActivityPoints += TargetLevelData.RewardPixels;
+                Session.GetHabbo().AchievementPoints += TargetLevelData.RewardPoints;
+                Session.GetHabbo().UpdateActivityPointsBalance();
+                //                Session.SendMessage(new AchievementScoreComposer(Session.GetHabbo().GetStats().AchievementPoints));
+                Session.SendMessage(AchievementScoreUpdateComposer.Compose(Session.GetHabbo().AchievementPoints));
+
+                var NewLevelData = AchievementData.Levels[NewTarget];
+//                if (NewLevelData != null)
+//                {
+                    Session.SendMessage(AchievementProgressComposer.Compose(AchievementData, NewTarget, NewLevelData, TotalLevels, Session.GetHabbo().GetAchievementData(AchievementGroup)));
+                //                }
+                //                Session.SendMessage(new AchievementProgressedComposer(AchievementData, NewTarget, NewLevelData,
+                //                    TotalLevels, Session.GetHabbo().GetAchievementData(AchievementGroup)));
+
+                if (Oblivion.GetGame().GetTalentManager().TryGetTalent(AchievementGroup, out var talent))
+                    Oblivion.GetGame().GetTalentManager().CompleteUserTalent(Session, talent);
+                return true;
+            }
+            UserData.Level = NewLevel;
+            UserData.Progress = NewProgress;
+            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                dbClient.SetQuery("REPLACE INTO `users_achievements` VALUES ('" + Session.GetHabbo().Id +
+                                  "', @group, '" +
+                                  NewLevel + "', '" + NewProgress + "')");
+                dbClient.AddParameter("group", AchievementGroup);
+                dbClient.RunQuery();
+            }
+
+//            UserAchievement? achievementData = user.GetAchievementData(achievementGroup);
+
+                Session.SendMessage(AchievementProgressComposer.Compose(AchievementData, TargetLevel, TargetLevelData, TotalLevels, Session.GetHabbo().GetAchievementData(AchievementGroup)));
+
+//            Session.SendMessage(new AchievementProgressedComposer(AchievementData, TargetLevel, TargetLevelData,
+//                TotalLevels, Session.GetHabbo().GetAchievementData(AchievementGroup)));
             return false;
         }
+
 
         /// <summary>
         ///     Gets the achievement.

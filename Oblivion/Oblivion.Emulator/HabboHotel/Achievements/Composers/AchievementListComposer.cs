@@ -48,7 +48,7 @@ namespace Oblivion.HabboHotel.Achievements.Composers
 
                 if (achievementData == null)
                     serverMessage.AppendBool(false);
-                else if (achievementData.Value.Level >= count)
+                else if (achievementData.Level >= count)
                     serverMessage.AppendBool(true);
                 else
                     serverMessage.AppendBool(false);

@@ -415,6 +415,8 @@ namespace Oblivion.Messages.Handlers
                     coordinate, room, Session.GetHabbo().Id, item.GroupId, false);
                 if (room.GetRoomItemHandler().SetWallItem(Session, roomItemWall))
                     Session.GetHabbo().GetInventoryComponent().RemoveItem(itemId, true);
+                Oblivion.GetGame().GetAchievementManager()
+                    .ProgressUserAchievement(Session, "ACH_RoomDecoFurniCount", 1);
                 return;
                 PlaceFloor:
                 if (room.CheckRights(Session))
@@ -426,17 +428,47 @@ namespace Oblivion.Messages.Handlers
                 if (room.GetRoomItemHandler().SetFloorItem(Session, roomItem, x, y, rot, true, false, true))
                 {
                     Session.GetHabbo().GetInventoryComponent().RemoveItem(itemId, true);
+                    Oblivion.GetGame().GetAchievementManager()
+                        .ProgressUserAchievement(Session, "ACH_RoomDecoFurniCount", 1);
                     if (roomItem.IsWired)
                     {
                         var item5 = room.GetWiredHandler().GenerateNewItem(roomItem);
                         room.GetWiredHandler().AddWired(item5);
                         WiredHandler.SaveWired(item5);
                     }
+                    switch (roomItem.GetBaseItem().Name)
+                    {
+                        case "es_skating_ice":
+                            Oblivion.GetGame()
+                                .GetAchievementManager()
+                                .ProgressUserAchievement(Session, "ACH_TagA", 1);
+                            break;
+                        case "val11_floor":
+                            Oblivion.GetGame()
+                                .GetAchievementManager()
+                                .ProgressUserAchievement(Session, "ACH_RbTagA", 1);
+                            break;
+                        case "easter11_grasspatc":
+                            Oblivion.GetGame()
+                                .GetAchievementManager()
+                                .ProgressUserAchievement(Session, "ACH_RbBunnyTag", 1);
+                            break;
+                        case "hole2":
+                        case "hole":
+                            Oblivion.GetGame()
+                                .GetAchievementManager()
+                                .ProgressUserAchievement(Session, "ACH_RoomDecoHoleFurniCount", 1);
+                            break;
+                        case "snowb_slope":
+                            Oblivion.GetGame()
+                                .GetAchievementManager()
+                                .ProgressUserAchievement(Session, "ACH_snowBoardBuild", 1);
+                            break;
+                    }
                 }
 
                 //Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.FurniPlace, 0u);
-                Oblivion.GetGame().GetAchievementManager()
-                    .ProgressUserAchievement(Session, "ACH_RoomDecoFurniCount", 1, true);
+               
                 return;
 
                 CannotSetItem:

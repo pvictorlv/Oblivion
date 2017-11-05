@@ -26,7 +26,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             if (!room.CheckRights(session, true) && !session.GetHabbo().HasFuse("fuse_mod")) return false;
 
             var alert = string.Join(" ", pms);
-            var kick = new RoomKick(alert, (int)session.GetHabbo().Rank);
+            var kick = new RoomKick(alert, session.GetHabbo().Rank);
             Oblivion.GetGame()
                 .GetModerationTool().LogStaffEntry(session.GetHabbo().UserName, string.Empty,
                     "Room kick", "Kicked the whole room");

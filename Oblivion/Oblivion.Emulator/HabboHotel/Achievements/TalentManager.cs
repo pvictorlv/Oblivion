@@ -59,7 +59,7 @@ namespace Oblivion.HabboHotel.Achievements
             GetTalents(trackType, talentLevel).All(
                 current =>
                 session.GetHabbo().GetAchievementData(current.AchievementGroup) == null || 
-                session.GetHabbo().GetAchievementData(current.AchievementGroup).Value.Level < current.AchievementLevel);
+                session.GetHabbo().GetAchievementData(current.AchievementGroup).Level < current.AchievementLevel);
 
         /// <summary>
         ///     Completes the user talent.

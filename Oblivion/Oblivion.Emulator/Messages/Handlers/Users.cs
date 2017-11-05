@@ -98,7 +98,7 @@ namespace Oblivion.Messages.Handlers
         {
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
             var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Request.GetUInteger());
-            if (roomUserByHabbo?.GetClient()?.GetHabbo().Data?.Tags == null || roomUserByHabbo.IsBot)
+            if (roomUserByHabbo?.GetClient()?.GetHabbo()?.Data?.Tags == null || roomUserByHabbo.IsBot)
                 return;
             Response.Init(LibraryParser.OutgoingRequest("UserTagsMessageComposer"));
             Response.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Id);
@@ -163,7 +163,9 @@ namespace Oblivion.Messages.Handlers
             if (room == null || Session.GetHabbo().DailyRespectPoints <= 0)
                 return;
             var roomUserByHabbo = room.GetRoomUserManager().GetRoomUserByHabbo(Request.GetUInteger());
-            if (roomUserByHabbo == null || roomUserByHabbo.GetClient().GetHabbo().Id == Session.GetHabbo().Id ||
+            if (roomUserByHabbo?.GetClient()?.GetHabbo() == null) return;
+
+            if (roomUserByHabbo.GetClient().GetHabbo().Id == Session.GetHabbo().Id ||
                 roomUserByHabbo.IsBot)
                 return;
             Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.SocialRespect);
@@ -1135,7 +1137,7 @@ namespace Oblivion.Messages.Handlers
                         ? 0
                         : (Session.GetHabbo().GetAchievementData(current2.AchievementGroup) == null)
                             ? 1
-                            : userAchievement != null && userAchievement.Value.Level >= current2.AchievementLevel
+                            : userAchievement != null && userAchievement.Level >= current2.AchievementLevel
                                 ? 2
                                 : 1;
                     Response.AppendInteger(current2.GetAchievement().Id);
@@ -1143,9 +1145,9 @@ namespace Oblivion.Messages.Handlers
                     Response.AppendString($"{current2.AchievementGroup}{current2.AchievementLevel}");
                     Response.AppendInteger(num);
 
-                    UserAchievement? achievementData = Session.GetHabbo().GetAchievementData(current2.AchievementGroup);
+                    var achievementData = Session.GetHabbo().GetAchievementData(current2.AchievementGroup);
 
-                    Response.AppendInteger((achievementData != null) ? achievementData.Value.Progress : 0);
+                    Response.AppendInteger((achievementData != null) ? achievementData.Progress : 0);
                     Response.AppendInteger(current2.GetAchievement().Levels[current2.AchievementLevel].Requirement);
 
                     if (num != 2 && failLevel == -1)

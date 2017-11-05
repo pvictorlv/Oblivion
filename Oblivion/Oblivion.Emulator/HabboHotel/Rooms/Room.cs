@@ -1315,18 +1315,16 @@ namespace Oblivion.HabboHotel.Rooms
                 while (_roomKick.Count > 0)
                 {
                     var roomKick = (RoomKick) _roomKick.Dequeue();
-                    foreach (
-                        var current in
-                        _roomUserManager.UserList.Values.Where(
-                            current => current?.GetClient() != null &&
-                                !current.IsBot && current.GetClient().GetHabbo().Rank < (ulong) roomKick.MinRank))
+                    foreach (var current in _roomUserManager.UserList.Values)
                     {
-                        if (roomKick.Alert.Length > 0)
-                            current.GetClient()
-                                .SendNotif(string.Format(Oblivion.GetLanguage().GetVar("kick_mod_room_message"),
-                                    roomKick.Alert));
-                        GetRoomUserManager().RemoveUserFromRoom(current.GetClient(), true, false);
-                        current.GetClient().CurrentRoomUserId = -1;
+                        if (current?.GetClient()?.GetHabbo() != null && !current.IsBot && current.GetClient().GetHabbo().Rank < roomKick.MinRank)
+                        {
+                            if (roomKick.Alert.Length > 0)
+                                current.GetClient()
+                                    .SendNotif(string.Format(Oblivion.GetLanguage().GetVar("kick_mod_room_message"), roomKick.Alert));
+                            GetRoomUserManager().RemoveUserFromRoom(current.GetClient(), true, false);
+                            current.GetClient().CurrentRoomUserId = -1;
+                        }
                     }
                 }
             }

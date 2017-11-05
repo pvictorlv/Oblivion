@@ -3,7 +3,7 @@ namespace Oblivion.HabboHotel.Achievements.Interfaces
     /// <summary>
     ///     Class UserAchievement.
     /// </summary>
-    internal struct UserAchievement
+    internal class UserAchievement
     {
         /// <summary>
         ///     The achievement group

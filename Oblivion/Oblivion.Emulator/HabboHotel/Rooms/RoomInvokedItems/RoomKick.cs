@@ -3,9 +3,9 @@ namespace Oblivion.HabboHotel.Rooms.RoomInvokedItems
     internal struct RoomKick
     {
         internal string Alert;
-        internal int MinRank;
+        internal uint MinRank;
 
-        public RoomKick(string alert, int minRank)
+        public RoomKick(string alert, uint minRank)
         {
             Alert = alert;
             MinRank = minRank;

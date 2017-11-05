@@ -214,8 +214,6 @@ namespace Oblivion.Messages.Handlers
 
             var sso = Request.GetString();
 
-            if (Session.GetConnection().IsAir)
-                sso = "SSO-123";
             if (string.IsNullOrEmpty(sso) || string.IsNullOrWhiteSpace(sso) || sso.Length < 5 || !Session.TryLogin(sso))
                 Session.Disconnect("Invalid sso or banned");              
 

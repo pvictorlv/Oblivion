@@ -146,7 +146,6 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             client2?.SendMessage(SerializeUpdate(friend));
         }
-
         /// <summary>
         ///     Serializes the messenger action.
         /// </summary>
@@ -641,14 +640,13 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 .ToList();
 
             serverMessage.AppendInteger(Friends.Count + groups.Count);
-            /* TODO CHECK */
+
             foreach (var current in Friends.Values)
             {
                 current.UpdateUser();
                 current.Serialize(serverMessage, client);
             }
-
-            /* TODO CHECK */
+            
             foreach (var group in groups)
             {
                 serverMessage.AppendInteger(-Convert.ToInt32(group.Id));
@@ -698,7 +696,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             serverMessage.AppendInteger(1);
             serverMessage.AppendInteger(0);
             friend.Serialize(serverMessage, GetClient());
-            serverMessage.AppendBool(false);
+//            serverMessage.AppendBool(false);
             return serverMessage;
         }
 
