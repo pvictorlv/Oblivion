@@ -174,12 +174,14 @@ namespace Oblivion.Security.BlackWords
         {
             word = Empty;
 
-            if (!Replaces.TryGetValue(type, out var data))
-                return false;
+//            if (!Replaces.TryGetValue(type, out var data))
+//                return false;
+
 
             var oldStr = str;
             str = HttpUtility.HtmlDecode(str) ?? oldStr;
-            str = str.Replace("&nbsp;", "");
+            str = str.Replace("&nbsp;", "").ToLower();
+//            str = Filter.Replace(data.Filter, str);
 
             if (str.Contains("s2.vc") || str.Contains("abre.ai"))
                 return true;
@@ -194,11 +196,11 @@ namespace Oblivion.Security.BlackWords
             str = Regex.Replace(str, "[$5§2]", "s");
             str = Regex.Replace(str, "[ùúûüµÙÚÛÜ]", "u");
             str = Regex.Replace(str, "[ÿ¥]", "y");
-            str = Regex.Replace(str, "[∂∫šŠŸžŽ™ ',-_¹²³.?´` ƒ()]", "");
+            str = Regex.Replace(str, @"[∂∫šŠŸžŽ™ ',-_¹²³.?´` ƒ()*/\\]", "");
             str = str.Replace("æ", "ae");
             str = str.Replace("π", "p");
             str = str.Replace("Ð", "d");
-
+            str = str.Replace("\"", "");
 
 //            str = Filter.Replace(data.Filter, str);
 

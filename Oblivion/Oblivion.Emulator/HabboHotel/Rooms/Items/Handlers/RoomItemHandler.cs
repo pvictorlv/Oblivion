@@ -192,11 +192,11 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 }
                 list.Clear();
 
-                var list2 = _updatedItems.Select(GetItem).Where(it => it != null).ToList();
-
-
-                foreach (var roomItem in list2)
+              
+                foreach (var it in _updatedItems.ToList())
                 {
+                    var roomItem = GetItem(it);
+                    if (roomItem == null) continue;
                     if (roomItem.GetBaseItem() != null && roomItem.GetBaseItem().IsGroupItem)
                     {
                         try
@@ -241,8 +241,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     query += " WHERE id = " + roomItem.Id;
                     dbClient.RunQuery(query);
                 }
-
-                list2.Clear();
                 _room.GetRoomUserManager().AppendPetsUpdateString(dbClient);
 
                 session?.GetHabbo()?.GetInventoryComponent().RunDbUpdate();

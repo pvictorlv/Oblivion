@@ -605,7 +605,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <returns>ServerMessage.</returns>
         internal ServerMessage SerializeFloorItemInventory()
         {
-            var items = GetItems;
+            var items = GetItems.ToList();
             var i = items.Count() + SongDisks.Count;
 
             if (i > 2800)
@@ -618,7 +618,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             var inc = 0;
 
-            foreach (var userItem in GetItems)
+            foreach (var userItem in items)
             {
                 if (inc == 3500)
                     return serverMessage;

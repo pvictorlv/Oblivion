@@ -335,7 +335,7 @@ namespace Oblivion.Messages.Handlers
                         z = room.GetGameMap().SqAbsoluteHeight(x, y);
                         if (room.GotSoccer())
                         {
-                            if (room.GetSoccer().GetBallCount() > 5)
+                            if (room.GetSoccer().GotBall())
                                 goto CannotSetItem;
                         }
                         if (z >= 100)

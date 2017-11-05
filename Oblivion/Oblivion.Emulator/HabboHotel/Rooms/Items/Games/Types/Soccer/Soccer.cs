@@ -17,7 +17,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
 {
     internal class Soccer
     {
-        private List<RoomItem> _balls;
+//        private List<RoomItem> _balls;
+        private RoomItem _ball;
         private RoomItem[] _gates;
         private Room _room;
 
@@ -25,7 +26,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
         {
             _room = room;
             _gates = new RoomItem[4];
-            _balls = new List<RoomItem>();
+//            _balls = new List<RoomItem>();
         }
 
         public static int GetThreadTime(int i)
@@ -51,11 +52,11 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             }
         }
 
-        internal int GetBallCount() => _balls.Count; 
+        internal bool GotBall() => _ball != null; 
+
         internal void AddBall(RoomItem item)
         {
-            if (!_balls.Contains(item))
-                _balls.Add(item);
+            _ball = item;
             var manager = Oblivion.GetGame().GetRoomManager();
             if (!manager.LoadedBallRooms.Contains(_room))
                 manager.LoadedBallRooms.Add(_room);
@@ -66,21 +67,22 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             Array.Clear(_gates, 0, _gates.Length);
             _gates = null;
             _room = null;
-            _balls.Clear();
-            _balls = null;
+//            _balls.Clear();
+            _ball = null;
         }
 
         internal void OnCycle()
         {
-            if (_balls == null || !_balls.Any())
+            if (_ball == null)
                 return;
 
-            lock (_balls)
+            lock (_ball)
             {
-                /* TODO CHECK */ foreach (var ball in _balls.ToList().Where(ball => ball != null).Where(ball => ball.BallIsMoving))
-                {
-                    MoveBallProcess(ball, ball.InteractingBallUser);
-                }
+//                 foreach (var _ball in _balls.ToList().Where(ball => ball != null).Where(ball => ball.BallIsMoving))
+
+                if (!_ball.BallIsMoving) return;
+
+                MoveBallProcess(_ball, _ball.InteractingBallUser);
             }
         }
 
@@ -141,61 +143,56 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             if (user == null)
                 return;
 
-            lock (_balls)
+            lock (_ball)
             {
-                /* TODO CHECK */ foreach (var ball in _balls)
+//                /* TODO CHECK */ foreach (var _ball in _balls)
+
+                if (user.SetX == _ball.X && user.SetY == _ball.Y && user.GoalX == _ball.X && user.GoalY == _ball.Y &&
+                    user.HandelingBallStatus == 0) // super chute.
                 {
-                    if (user.SetX == ball.X && user.SetY == ball.Y && user.GoalX == ball.X && user.GoalY == ball.Y &&
-                        user.HandelingBallStatus == 0) // super chute.
+                    var userPoint = new Point(user.X, user.Y);
+                    _ball.ExtraData = "55";
+                    _ball.BallIsMoving = true;
+                    _ball.BallValue = 1;
+                    MoveBall(_ball, user.GetClient(), userPoint);
+                }
+                else if (user.X == _ball.X && user.Y == _ball.Y && user.HandelingBallStatus == 0)
+                {
+                    var userPoint = new Point(user.SetX, user.SetY);
+                    _ball.ExtraData = "55";
+                    _ball.BallIsMoving = true;
+                    _ball.BallValue = 1;
+                    MoveBall(_ball, user.GetClient(), userPoint);
+                }
+                else
+                {
+                    if (user.HandelingBallStatus == 0 && user.GoalX == _ball.X && user.GoalY == _ball.Y)
+                        return;
+
+                    if (user.SetX == _ball.X && user.SetY == _ball.Y && user.IsWalking &&
+                        (user.X != user.GoalX || user.Y != user.GoalY))
                     {
-                        var userPoint = new Point(user.X, user.Y);
-                        ball.ExtraData = "55";
-                        ball.BallIsMoving = true;
-                        ball.BallValue = 1;
-                        MoveBall(ball, user.GetClient(), userPoint);
-                    }
-                    else if (user.X == ball.X && user.Y == ball.Y && user.HandelingBallStatus == 0)
-                    {
-                        var userPoint = new Point(user.SetX, user.SetY);
-                        ball.ExtraData = "55";
-                        ball.BallIsMoving = true;
-                        ball.BallValue = 1;
-                        MoveBall(ball, user.GetClient(), userPoint);
-                    }
-                    else
-                    {
-                        if (user.HandelingBallStatus == 0 && user.GoalX == ball.X && user.GoalY == ball.Y)
-                            continue;
+                        user.HandelingBallStatus = 1;
+                        var comeDirection =
+                            ComeDirection.GetComeDirection(new Point(user.X, user.Y), _ball.Coordinate);
 
-                        if (user.SetX == ball.X && user.SetY == ball.Y && user.IsWalking &&
-                            (user.X != user.GoalX || user.Y != user.GoalY))
-                        {
-                            user.HandelingBallStatus = 1;
-                            var comeDirection =
-                                ComeDirection.GetComeDirection(new Point(user.X, user.Y), ball.Coordinate);
-
-                            if (comeDirection == IComeDirection.Null)
-                                continue;
-
-                            var newX = user.SetX;
-                            var newY = user.SetY;
-
-                            if (!ball.GetRoom().GetGameMap().ValidTile2(user.SetX, user.SetY) ||
-                                !ball.GetRoom().GetGameMap().ItemCanBePlacedHere(user.SetX, user.SetY))
-                            {
-                                comeDirection = ComeDirection.InverseDirections(_room, comeDirection, user.X, user.Y);
-                                newX = ball.X;
-                                newY = ball.Y;
-                            }
-
-                            ComeDirection.GetNewCoords(comeDirection, ref newX, ref newY);
-                            ball.ExtraData = "11";
-                            MoveBall(ball, user.GetClient(), newX, newY);
-                        }
-                        else
-                        {
+                        if (comeDirection == IComeDirection.Null)
                             return;
+
+                        var newX = user.SetX;
+                        var newY = user.SetY;
+
+                        if (!_ball.GetRoom().GetGameMap().ValidTile2(user.SetX, user.SetY) ||
+                            !_ball.GetRoom().GetGameMap().ItemCanBePlacedHere(user.SetX, user.SetY))
+                        {
+                            comeDirection = ComeDirection.InverseDirections(_room, comeDirection, user.X, user.Y);
+                            newX = _ball.X;
+                            newY = _ball.Y;
                         }
+
+                        ComeDirection.GetNewCoords(comeDirection, ref newX, ref newY);
+                        _ball.ExtraData = "11";
+                        MoveBall(_ball, user.GetClient(), newX, newY);
                     }
                 }
             }
@@ -206,6 +203,11 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             if (item?.GetBaseItem() == null /*|| mover == null || mover.GetHabbo() == null*/)
                 return false;
 
+//            if (_room.GetGameMap().SquareHasFurni(newX, newY))
+//            {
+//                mover.SendWhisper("Has furni");
+//                return false;
+//            }
             if (item.BallIsMoving)
             {
                 if (item.ExtraData == "55" || item.ExtraData == "44")
@@ -216,11 +218,11 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                             return false;
                 }
             }
-            else
-            {
-                if (!_room.GetGameMap().ItemCanBePlacedHere(newX, newY))
-                    return false;
-            }
+//            else
+//            {
+//                if (!_room.GetGameMap().ItemCanBePlacedHere(newX, newY) || _room.GetGameMap().SquareHasFurni(newX, newY))
+//                    return false;
+//            }
             var oldRoomCoord = item.Coordinate;
             var itemIsOnGameItem = GameItemOverlaps(item);
             double newZ = _room.GetGameMap().Model.SqFloorHeight[newX][newY];
@@ -273,7 +275,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
         internal void MoveBallProcess(RoomItem item, GameClient client)
         {
             if (item == null) return;
-            if (!_balls.Contains(item)) return;
+//            if (!_balls.Contains(item)) return;
 
             var tryes = 0;
             var newX = item.Coordinate.X;
@@ -304,6 +306,11 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
 
                 var ignoreUsers = false;
 
+//                if (_room.GetGameMap().SquareHasFurni(newX, newY))
+//                {
+//                    client.SendWhisper("Has furni");
+//                    return;
+//                }
                 if (_room.GetGameMap().SquareHasUsers(newX, newY))
                 {
                     if (item.ExtraData != "55" && item.ExtraData != "44")
@@ -375,17 +382,13 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             _gates[3] = item;
         }
 
-        internal void RemoveBall(RoomItem itemId)
+        internal void RemoveBall()
         {
-            
-            _balls.Remove(itemId);
-            if (_balls.Count <= 0)
-            {
-                var manager = Oblivion.GetGame().GetRoomManager();
-                if (manager.LoadedBallRooms.Contains(_room))
-                    manager.LoadedBallRooms.Remove(_room);
+            _ball = null;
 
-            }
+            var manager = Oblivion.GetGame().GetRoomManager();
+            if (manager.LoadedBallRooms.Contains(_room))
+                manager.LoadedBallRooms.Remove(_room);
         }
 
         internal void UnRegisterGate(RoomItem item)

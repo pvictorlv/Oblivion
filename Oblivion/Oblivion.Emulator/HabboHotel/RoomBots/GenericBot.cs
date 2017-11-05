@@ -18,10 +18,6 @@ namespace Oblivion.HabboHotel.RoomBots
         /// </summary>
         private static readonly Random Random = new Random();
 
-        /// <summary>
-        ///     The _id
-        /// </summary>
-        private readonly int _id;
 
         /// <summary>
         ///     The _is bartender
@@ -53,12 +49,10 @@ namespace Oblivion.HabboHotel.RoomBots
         /// </summary>
         /// <param name="roomBot">The room bot.</param>
         /// <param name="virtualId">The virtual identifier.</param>
-        /// <param name="botId">The bot identifier.</param>
         /// <param name="isBartender">if set to <c>true</c> [is bartender].</param>
         /// <param name="speechInterval">The speech interval.</param>
-        internal GenericBot(RoomBot roomBot, int virtualId, int botId, bool isBartender, int speechInterval)
+        internal GenericBot(RoomBot roomBot, int virtualId, bool isBartender, int speechInterval)
         {
-            _id = botId;
             _virtualId = virtualId;
             _isBartender = isBartender;
             _speechInterval = speechInterval < 2 ? 2000 : speechInterval * 1000;
@@ -203,7 +197,8 @@ namespace Oblivion.HabboHotel.RoomBots
                 case "sirva":
                     if (GetRoom().CheckRights(user.GetClient()))
                     {
-                        /* TODO CHECK */ foreach (var current in GetRoom().GetRoomUserManager().GetRoomUsers())
+                        /* TODO CHECK */
+                        foreach (var current in GetRoom().GetRoomUserManager().GetRoomUsers())
                             current.CarryItem(Random.Next(1, 38));
                         GetRoomUser().Chat(null, "Worth. Agora você tem algo para devorar todos.", false, 0);
                         return;
@@ -424,68 +419,68 @@ namespace Oblivion.HabboHotel.RoomBots
             var user = GetRoomUser();
             try
             {
-                if (user != null)
+                if (user == null) return;
+                switch (randomSpeech)
                 {
-                    switch (randomSpeech)
+                    case ":sit":
                     {
-                        case ":sit":
-                        {
-                            if (user.RotBody % 2 != 0) user.RotBody--;
+                        if (user.RotBody % 2 != 0) user.RotBody--;
 
-                            user.Z = GetRoom().GetGameMap().SqAbsoluteHeight(user.X, user.Y);
-                            if (!user.Statusses.ContainsKey("sit"))
-                            {
-                                user.UpdateNeeded = true;
-                                user.Statusses.Add("sit", "0.55");
-                            }
-                            user.IsSitting = true;
-                            return;
-                        }
-                        case ":stand":
+                        user.Z = GetRoom().GetGameMap().SqAbsoluteHeight(user.X, user.Y);
+                        if (!user.Statusses.ContainsKey("sit"))
                         {
-                            if (user.IsSitting)
-                            {
-                                user.Statusses.Remove("sit");
-                                user.IsSitting = false;
-                                user.UpdateNeeded = true;
-                            }
-                            else if (user.IsLyingDown)
-                            {
-                                user.Statusses.Remove("lay");
-                                user.IsLyingDown = false;
-                                user.UpdateNeeded = true;
-                            }
-                            return;
+                            user.UpdateNeeded = true;
+                            user.Statusses.Add("sit", "0.55");
                         }
+                        user.IsSitting = true;
+                        return;
                     }
-
-                    if (GetRoom() != null)
+                    case ":stand":
                     {
-                        randomSpeech = randomSpeech.Replace("%user_count%",
-                            GetRoom().GetRoomUserManager().GetRoomUserCount().ToString());
-
-                        randomSpeech = randomSpeech.Replace("%item_count%",
-                            GetRoom().GetRoomItemHandler().TotalItems.ToString());
-                        randomSpeech = randomSpeech.Replace("%floor_item_count%",
-                            GetRoom().GetRoomItemHandler().FloorItems.Values.Count.ToString());
-                        randomSpeech = randomSpeech.Replace("%wall_item_count%",
-                            GetRoom().GetRoomItemHandler().WallItems.Values.Count.ToString());
-
-
-                        if (GetRoom().RoomData != null)
+                        if (user.IsSitting)
                         {
-                            randomSpeech = randomSpeech.Replace("%roomname%", GetRoom().RoomData.Name);
-                            randomSpeech = randomSpeech.Replace("%owner%", GetRoom().RoomData.Owner);
+                            user.Statusses.Remove("sit");
+                            user.IsSitting = false;
+                            user.UpdateNeeded = true;
                         }
+                        else if (user.IsLyingDown)
+                        {
+                            user.Statusses.Remove("lay");
+                            user.IsLyingDown = false;
+                            user.UpdateNeeded = true;
+                        }
+                        return;
                     }
-
-                    if (GetBotData() != null) randomSpeech = randomSpeech.Replace("%name%", GetBotData().Name);
-
-                    user.Chat(null, randomSpeech, false, 0);
                 }
+
+                if (GetRoom() != null)
+                {
+                    randomSpeech = randomSpeech.Replace("%user_count%",
+                        GetRoom().GetRoomUserManager().GetRoomUserCount().ToString());
+
+                    randomSpeech = randomSpeech.Replace("%item_count%",
+                        GetRoom().GetRoomItemHandler().TotalItems.ToString());
+                    randomSpeech = randomSpeech.Replace("%floor_item_count%",
+                        GetRoom().GetRoomItemHandler().FloorItems.Values.Count.ToString());
+                    randomSpeech = randomSpeech.Replace("%wall_item_count%",
+                        GetRoom().GetRoomItemHandler().WallItems.Values.Count.ToString());
+
+
+                    if (GetRoom().RoomData != null)
+                    {
+                        randomSpeech = randomSpeech.Replace("%roomname%", GetRoom().RoomData.Name);
+                        randomSpeech = randomSpeech.Replace("%owner%", GetRoom().RoomData.Owner);
+                    }
+                }
+
+                if (GetBotData() != null) randomSpeech = randomSpeech.Replace("%name%", GetBotData().Name);
+
+                user.Chat(null, randomSpeech, false, 0);
             }
             catch (Exception e)
             {
+                if (user == null)
+                    StopTimerTick();
                 Writer.Writer.LogException(e.ToString());
             }
         }

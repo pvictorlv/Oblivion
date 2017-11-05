@@ -29,7 +29,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
     /// <summary>
     ///     Class RoomItem.
     /// </summary>
-    public class RoomItem : IEquatable<RoomItem>
+    public class RoomItem
     {
         /// <summary>
         ///     The _m base item
