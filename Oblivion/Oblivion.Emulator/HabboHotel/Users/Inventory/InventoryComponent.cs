@@ -608,13 +608,13 @@ namespace Oblivion.HabboHotel.Users.Inventory
             var items = GetItems.ToList();
             var i = items.Count() + SongDisks.Count;
 
-            if (i > 2800)
+            if (i > 3500)
                 _mClient.SendMessage(StaticMessage.AdviceMaxItems);
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("LoadInventoryMessageComposer"));
             serverMessage.AppendInteger(1);
             serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(i > 2800 ? 2800 : i);
+            serverMessage.AppendInteger(i > 3500 ? 3500 : i);
 
             var inc = 0;
 

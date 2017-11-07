@@ -1189,30 +1189,25 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     var userForSquare = _room.GetRoomUserManager().GetUserForSquare(current.X, current.Y);
                     if ((roomItemForSquare == null || !roomItemForSquare.Any()) && userForSquare == null)
                         continue;
-                    var coordinatedItems = _room.GetGameMap().GetCoordinatedItems(squareInFront);
+                    var coordinatedItems = _room.GetGameMap().GetCoordinatedItems(squareInFront).Where(current2 => current2.IsRoller).ToList();
                     var flag = false;
                     var num2 = 0.0;
                     var flag2 = true;
                     var frontHasItem = false;
                     /* TODO CHECK */
-                    foreach (var current2 in coordinatedItems.Where(current2 => current2.IsRoller))
+                    foreach (var current2 in coordinatedItems)
                     {
                         flag = true;
                         if (current2.TotalHeight > num2)
                             num2 = current2.TotalHeight;
+                        if (!current2.GetBaseItem().Stackable)
+                            frontHasItem = true;
+                        if (current2.TotalHeight > num2)
+                            flag2 = false;
                     }
-                    if (coordinatedItems.Any(item => !item.GetBaseItem().Stackable)) frontHasItem = true;
                     if (flag)
-                        using (var enumerator3 = coordinatedItems.GetEnumerator())
-                        {
-                            while (enumerator3.MoveNext())
-                            {
-                                var current3 = enumerator3.Current;
-                                if (current3.TotalHeight > num2)
-                                    flag2 = false;
-                            }
-                            goto IL_192;
-                        }
+                        goto IL_192;
+                        
                     goto IL_17C;
                     IL_192:
                     var nextZ = num2;

@@ -538,6 +538,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="coord">The coord.</param>
         internal void AddCoordinatedItem(RoomItem item, Point coord)
         {
+            if (item == null) return;
             if (!CoordinatedItems.TryGetValue(coord, out var items))
             {
                 items = new List<RoomItem> {item};
@@ -547,6 +548,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             }
             else
             {
+                if (items == null) return;
                 if (items.Contains(item)) return;
                 items.Add(item);
                 CoordinatedItems[coord] = items;

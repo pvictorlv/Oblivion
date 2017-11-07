@@ -287,11 +287,6 @@ namespace Oblivion.HabboHotel.GameClients
             else
                 _userIdRegister.Add(userId, client);
 
-//            if (!_userNameIdRegister.Contains(userName))
-//                _userNameIdRegister.Add(userName, userId);
-
-//            if (!_idUserNameRegister.Contains(userId))
-//                _idUserNameRegister.Add(userId, userName);
         }
 
         /// <summary>

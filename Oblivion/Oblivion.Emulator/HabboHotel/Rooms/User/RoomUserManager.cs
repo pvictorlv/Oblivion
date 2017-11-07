@@ -433,7 +433,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             "UPDATE users_rooms_visits SET exit_timestamp = '", Oblivion.GetUnixTimeStamp(),
                             "' WHERE room_id = '", _userRoom.RoomId, "' AND user_id = '", userId,
                             "' ORDER BY exit_timestamp DESC LIMIT 1"));
-                    UsersByUserName.Remove(session.GetHabbo().UserName.ToLower());
+                    UsersByUserName?.Remove(session.GetHabbo().UserName.ToLower());
                 }
                 UsersByUserId.Remove(roomUserByHabbo.UserId);
                 roomUserByHabbo.Dispose();
@@ -1342,6 +1342,8 @@ namespace Oblivion.HabboHotel.Rooms.User
         internal void UserCycleOnRoom(RoomUser roomUsers)
         {
             // Region Check User Elegibility
+            if (roomUsers == null) return;
+
             if (!IsValid(roomUsers))
             {
                 if (roomUsers.GetClient() != null)

@@ -27,7 +27,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var message =
                 new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
 
-            message.AppendString("Oblivion");
+            message.AppendString("");
             message.AppendInteger(4);
             message.AppendString("title");
             message.AppendString("Oblivion Emulator v2");

@@ -70,6 +70,12 @@ namespace Oblivion.HabboHotel.RoomBots
             try
             {
                 if (GetBotData() == null) return;
+
+                if (_disposed)
+                {
+                    return;
+                }
+
                 if (!GetBotData().AutomaticChat || GetBotData().RandomSpeech == null ||
                     !GetBotData().RandomSpeech.Any())
                 {
@@ -97,6 +103,12 @@ namespace Oblivion.HabboHotel.RoomBots
         internal override void OnTimerTick()
         {
             if (GetBotData() == null) return;
+
+            if (_disposed)
+            {
+                StopTimerTick();
+                return;
+            }
 
             if (_actionCount > 0)
             {
@@ -165,6 +177,12 @@ namespace Oblivion.HabboHotel.RoomBots
         /// <param name="message">The message.</param>
         internal override void OnUserSay(RoomUser user, string message)
         {
+
+            if (_disposed)
+            {
+                return;
+            }
+
             if (Gamemap.TileDistance(GetRoomUser().X, GetRoomUser().Y, user.X, user.Y) > 16) return;
 
             if (!_isBartender) return;
@@ -377,6 +395,12 @@ namespace Oblivion.HabboHotel.RoomBots
         /// <param name="message">The message.</param>
         internal override void OnUserShout(RoomUser user, string message)
         {
+
+            if (_disposed)
+            {
+                return;
+            }
+
             if (_isBartender)
             {
                 GetRoomUser()
@@ -419,11 +443,12 @@ namespace Oblivion.HabboHotel.RoomBots
             var user = GetRoomUser();
             try
             {
-                if (user == null) return;
                 switch (randomSpeech)
                 {
                     case ":sit":
                     {
+                        if (user == null) return;
+
                         if (user.RotBody % 2 != 0) user.RotBody--;
 
                         user.Z = GetRoom().GetGameMap().SqAbsoluteHeight(user.X, user.Y);
@@ -437,6 +462,8 @@ namespace Oblivion.HabboHotel.RoomBots
                     }
                     case ":stand":
                     {
+                        if (user == null) return;
+
                         if (user.IsSitting)
                         {
                             user.Statusses.Remove("sit");
@@ -474,13 +501,12 @@ namespace Oblivion.HabboHotel.RoomBots
                 }
 
                 if (GetBotData() != null) randomSpeech = randomSpeech.Replace("%name%", GetBotData().Name);
+                if (user == null) return;
 
                 user.Chat(null, randomSpeech, false, 0);
             }
             catch (Exception e)
             {
-                if (user == null)
-                    StopTimerTick();
                 Writer.Writer.LogException(e.ToString());
             }
         }

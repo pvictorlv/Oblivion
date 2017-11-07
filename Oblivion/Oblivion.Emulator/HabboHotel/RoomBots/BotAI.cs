@@ -16,6 +16,10 @@ namespace Oblivion.HabboHotel.RoomBots
         private Room _room;
 
         /// <summary>
+        /// Set when bot is disposed
+        /// </summary>
+        protected bool _disposed;
+        /// <summary>
         ///     The _room identifier
         /// </summary>
         private uint _roomId;
@@ -84,6 +88,7 @@ namespace Oblivion.HabboHotel.RoomBots
         /// </summary>
         internal void Dispose()
         {
+            _disposed = true;
             _room = null;
             _roomUser = null;
             _roomId = 0;
