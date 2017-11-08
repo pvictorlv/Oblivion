@@ -64,8 +64,13 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             else
             {
                 /* TODO CHECK */
-                foreach (var current2 in effects.Where(current2 => current2.Execute(null, Type)))
-                    WiredHandler.OnEvent(current2);
+                foreach (var current2 in effects)
+                {
+                    if (current2 != null && current2.Execute(null, Type))
+                    {
+                        WiredHandler.OnEvent(current2);
+                    }
+                }
             }
 
             _mNext = Oblivion.Now() + Delay;

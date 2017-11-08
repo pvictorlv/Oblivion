@@ -32,6 +32,8 @@ namespace Oblivion.Messages
 
         public int Length => _length;
 
+        public bool BytesAvailable => Length > (_position - 4);
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ClientMessage"/> class.
         /// </summary>

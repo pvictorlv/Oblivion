@@ -10,6 +10,7 @@ using Oblivion.HabboHotel.Catalogs.Wrappers;
 using Oblivion.HabboHotel.Groups.Interfaces;
 using Oblivion.Messages.Enums;
 using Oblivion.Messages.Parsers;
+using System.Diagnostics;
 
 namespace Oblivion.Messages.Handlers
 {
@@ -42,9 +43,29 @@ namespace Oblivion.Messages.Handlers
                 return;
             var rank = Session.GetHabbo().Rank;
 
+            /*Request.GetString()
+"NORMAL"
+Request.GetString()
+"default_3x3,default_3x3_extrainfo,vip_buy,pets2,pixeleffects,info_duckets,info_loyalty,info_rentables,spaces_new,club_gifts,empty_search,marketplace,sold_ltd_items,roomads,default_3x3_color_grouping,marketplace_own_items,petcustomization,guild_frontpage,guild_custom_furni,mobile_spinner_large,mobile_subscriptions,mobile_credits,mobile_bundles,frontpage4,builders_club_addons,pets,builders_club_addons,pets"
+*/
+
+            string pageType = "NORMAL";
+            string[] allowedPages = null;
+
+            if (Request.BytesAvailable)
+            {
+                pageType = Request.GetString();
+
+                string allowedPagesString = Request.GetString();
+
+                if (allowedPagesString.Contains(","))
+                    allowedPages = allowedPagesString.Split(',');
+            }
+
             if (rank < 1)
                 rank = 1;
-            Session.SendMessage(CatalogPageComposer.ComposeIndex(rank, "NORMAL", Session));
+
+            Session.SendMessage(CatalogPageComposer.ComposeIndex(rank, pageType, allowedPages, Session));
             Session.SendMessage(StaticMessage.CatalogOffersConfiguration);
         }
 
@@ -66,7 +87,7 @@ namespace Oblivion.Messages.Handlers
             if (cPage == null || !cPage.Visible || cPage.MinRank > Session.GetHabbo().Rank)
                 return;
 
-            var message = CatalogPageComposer.ComposePage(cPage, CataMode);
+            var message = CatalogPageComposer.ComposePage(Session, cPage, CataMode);
             Session.SendMessage(message);
         }
 
@@ -177,7 +198,8 @@ namespace Oblivion.Messages.Handlers
 
             Response.AppendInteger(ecotronRewardsLevels.Count);
 
-            /* TODO CHECK */ foreach (var current in ecotronRewardsLevels)
+            /* TODO CHECK */
+            foreach (var current in ecotronRewardsLevels)
             {
                 Response.AppendInteger(current);
                 Response.AppendInteger(current);
@@ -187,7 +209,8 @@ namespace Oblivion.Messages.Handlers
 
                 Response.AppendInteger(ecotronRewardsForLevel.Count);
 
-                /* TODO CHECK */ foreach (var current2 in ecotronRewardsForLevel)
+                /* TODO CHECK */
+                foreach (var current2 in ecotronRewardsForLevel)
                 {
                     Response.AppendString(current2.GetBaseItem().PublicName);
                     Response.AppendInteger(1);
@@ -272,7 +295,7 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session?.GetHabbo() == null)
                 return;
-            
+
             var num = Request.GetInteger();
             var catalogItem = Oblivion.GetGame().GetCatalog().GetItemFromOffer(num);
 
@@ -283,7 +306,7 @@ namespace Oblivion.Messages.Handlers
 
             var message = new ServerMessage(LibraryParser.OutgoingRequest("CatalogOfferMessageComposer"));
 
-            CatalogPageComposer.ComposeItem(catalogItem, message);
+            CatalogPageComposer.ComposeItem(Session, catalogItem, message);
             Session.SendMessage(message);
         }
 
@@ -337,8 +360,9 @@ namespace Oblivion.Messages.Handlers
             Oblivion.GetGame().GetCatalog().GetMarketplace().MarketItems.Clear();
             Oblivion.GetGame().GetCatalog().GetMarketplace().MarketItemKeys.Clear();
             if (table != null)
-                /* TODO CHECK */ foreach (var row in table.Rows.Cast<DataRow>().Where(row => !Oblivion.GetGame().GetCatalog()
-                    .GetMarketplace().MarketItemKeys.Contains(Convert.ToInt32(row["offer_id"]))))
+                /* TODO CHECK */
+                foreach (var row in table.Rows.Cast<DataRow>().Where(row => !Oblivion.GetGame().GetCatalog()
+   .GetMarketplace().MarketItemKeys.Contains(Convert.ToInt32(row["offer_id"]))))
                 {
                     Oblivion.GetGame().GetCatalog().GetMarketplace().MarketItemKeys
                         .Add(Convert.ToInt32(row["offer_id"]));
@@ -352,7 +376,8 @@ namespace Oblivion.Messages.Handlers
             var dictionary = new Dictionary<int, MarketOffer>();
             var dictionary2 = new Dictionary<int, int>();
 
-            /* TODO CHECK */ foreach (var item in Oblivion.GetGame().GetCatalog().GetMarketplace().MarketItems)
+            /* TODO CHECK */
+            foreach (var item in Oblivion.GetGame().GetCatalog().GetMarketplace().MarketItems)
                 if (dictionary.ContainsKey(item.SpriteId))
                 {
                     if (item.LimitedNumber > 0)
@@ -384,7 +409,8 @@ namespace Oblivion.Messages.Handlers
                 }
             var message = new ServerMessage(LibraryParser.OutgoingRequest("MarketPlaceOffersMessageComposer"));
             message.AppendInteger(dictionary.Count);
-            /* TODO CHECK */ foreach (var pair in dictionary.Values.Where(x => x.TotalPrice >= MinCost && x.TotalPrice <= MaxCost))
+            /* TODO CHECK */
+            foreach (var pair in dictionary.Values.Where(x => x.TotalPrice >= MinCost && x.TotalPrice <= MaxCost))
             {
                 message.AppendInteger(pair.OfferId);
                 message.AppendInteger(1);
@@ -430,8 +456,9 @@ namespace Oblivion.Messages.Handlers
 
             var responseList = new List<ServerMessage>();
 
-            /* TODO CHECK */ foreach (var habboGroup in userGroups.Where(current => current != null)
-                .Select(current => Oblivion.GetGame().GetGroupManager().GetGroup(current.GroupId)))
+            /* TODO CHECK */
+            foreach (var habboGroup in userGroups.Where(current => current != null)
+.Select(current => Oblivion.GetGame().GetGroupManager().GetGroup(current.GroupId)))
             {
                 if (habboGroup == null)
                     continue;
