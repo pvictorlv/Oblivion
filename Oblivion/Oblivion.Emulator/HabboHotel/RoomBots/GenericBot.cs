@@ -411,7 +411,7 @@ namespace Oblivion.HabboHotel.RoomBots
         /// <summary>
         ///     Stops the timer tick.
         /// </summary>
-        private void StopTimerTick()
+        internal override void StopTimerTick()
         {
             try
             {
@@ -430,7 +430,7 @@ namespace Oblivion.HabboHotel.RoomBots
         {
             if (GetBotData() == null || GetRoomUser() == null || GetBotData().WasPicked ||
                 GetBotData().RandomSpeech == null ||
-                !GetBotData().RandomSpeech.Any())
+                !GetBotData().RandomSpeech.Any() || _disposed)
             {
                 StopTimerTick();
                 return;

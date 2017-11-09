@@ -333,5 +333,15 @@ namespace Oblivion.HabboHotel.RoomBots
 
             return new GenericBot(this, virtualId, IsBartender, SpeechInterval);
         }
+
+
+        public void Dispose()
+        {
+            RoomUser = null;
+            Responses?.Clear();
+            Responses = null;
+            RandomSpeech?.Clear();
+            RandomSpeech = null;
+        }
     }
 }

@@ -318,7 +318,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                     }
                     else
                     {
-                        integer = client?.GetHabbo().Id ?? user;
+                        integer = client?.GetHabbo()?.Id ?? user;
                     }
 
                     OwnerId = integer != uint.MinValue ? Convert.ToInt32(integer) : 0;

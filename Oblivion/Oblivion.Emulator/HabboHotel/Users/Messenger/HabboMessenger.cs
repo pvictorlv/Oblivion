@@ -73,10 +73,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="senderId">The sender identifier.</param>
         /// <returns>MessengerRequest.</returns>
-        internal MessengerRequest GetRequest(uint senderId)
-        {
-            return Requests.ContainsKey(senderId) ? Requests[senderId] : null;
-        }
+        internal MessengerRequest GetRequest(uint senderId) => Requests.ContainsKey(senderId) ? Requests[senderId] : null;
 
         /// <summary>
         ///     Destroys this instance.
@@ -301,20 +298,14 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="requestId">The request identifier.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool RequestExists(uint requestId)
-        {
-            return Requests != null && Requests.ContainsKey(requestId);
-        }
+        internal bool RequestExists(uint requestId) => Requests != null && Requests.ContainsKey(requestId);
 
         /// <summary>
         ///     Friendships the exists.
         /// </summary>
         /// <param name="friendId">The friend identifier.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool FriendshipExists(uint friendId)
-        {
-            return Friends.ContainsKey(friendId);
-        }
+        internal bool FriendshipExists(uint friendId) => Friends.ContainsKey(friendId);
 
         /// <summary>
         ///     Called when [destroy friendship].
@@ -635,7 +626,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             var client = GetClient();
             var groups = Oblivion.GetGame().GetGroupManager().Groups.Values
                 .Where(gp =>
-                    gp != null && gp.Members.TryGetValue(client.GetHabbo().Id, out var memb) && gp.HasChat &&
+                    gp != null && gp.HasChat && gp.Members.TryGetValue(client.GetHabbo().Id, out var memb) && memb != null && 
                     memb.HasChat)
                 .ToList();
 

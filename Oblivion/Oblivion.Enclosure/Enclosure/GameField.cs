@@ -27,7 +27,7 @@ namespace Oblivion.Enclosure
                 theArray.GetUpperBound(1) + 1, theArray.GetUpperBound(0) + 1);
         }
 
-        public bool this[int y, int x] => y >= 0 && x >= 0 && y <= _currentField.GetUpperBound(0) && x <= _currentField.GetUpperBound(1);
+        public bool this[int y, int x] => y >= 0 && x >= 0 && y <= _currentField?.GetUpperBound(0) && x <= _currentField?.GetUpperBound(1);
 
         public void UpdateLocation(int x, int y, byte value)
         {
@@ -37,6 +37,8 @@ namespace Oblivion.Enclosure
         public List<PointField> DoUpdate(bool oneloop = false)
         {
             var list = new List<PointField>();
+            if (_currentField == null || _newEntries == null) return list;
+
             while (_newEntries.Count > 0)
             {
                 _currentlyChecking = _newEntries.Dequeue();
@@ -55,16 +57,20 @@ namespace Oblivion.Enclosure
 
         public byte GetValue(int x, int y)
         {
+            if (_currentField == null) return 0;
             return this[y, x] ? _currentField[y, x] : (byte) 0;
         }
 
         public byte GetValue(Point p)
         {
+            if (_currentField == null) return 0;
+
             return this[p.Y, p.X] ? _currentField[p.Y, p.X] : (byte)0;
         }
 
         public bool IsBlocked(int x, int y, bool lastTile)
         {
+            if (_currentlyChecking == null) return false;
             return (_currentlyChecking.X == x && _currentlyChecking.Y == y) || GetValue(x, y) != _currentlyChecking.Value;
         }
 
@@ -91,57 +97,54 @@ namespace Oblivion.Enclosure
                 if (current.Y > num4)
                     num4 = current.Y;
             }
-
+            var x = (int) Math.Ceiling((num2 - num) / 2f) + num;
+            var y = (int) Math.Ceiling((num4 - num3) / 2f) + num3;
+            var list = new List<Point>();
+            var list2 = new List<Point> {new Point(_currentlyChecking.X, _currentlyChecking.Y)};
+            list.Add(new Point(x, y));
+            while (list.Any())
             {
-                var x = (int)Math.Ceiling((num2 - num) / 2f) + num;
-                var y = (int)Math.Ceiling((num4 - num3) / 2f) + num3;
-                var list = new List<Point>();
-                var list2 = new List<Point> { new Point(_currentlyChecking.X, _currentlyChecking.Y) };
-                list.Add(new Point(x, y));
-                while (list.Any())
+                var point = list[0];
+                var x2 = point.X;
+                var y2 = point.Y;
+                if (x2 < num)
+                    return null;
+                if (x2 > num2)
+                    return null;
+                if (y2 < num3)
+                    return null;
+                if (y2 > num4)
+                    return null;
+                if (this[y2 - 1, x2] && _currentField[y2 - 1, x2] == 0)
                 {
-                    var point = list[0];
-                    var x2 = point.X;
-                    var y2 = point.Y;
-                    if (x2 < num)
-                        return null;
-                    if (x2 > num2)
-                        return null;
-                    if (y2 < num3)
-                        return null;
-                    if (y2 > num4)
-                        return null;
-                    if (this[y2 - 1, x2] && _currentField[y2 - 1, x2] == 0)
-                    {
-                        var item = new Point(x2, y2 - 1);
-                        if (!list.Contains(item) && !list2.Contains(item))
-                            list.Add(item);
-                    }
-                    if (this[y2 + 1, x2] && _currentField[y2 + 1, x2] == 0)
-                    {
-                        var item = new Point(x2, y2 + 1);
-                        if (!list.Contains(item) && !list2.Contains(item))
-                            list.Add(item);
-                    }
-                    if (this[y2, x2 - 1] && _currentField[y2, x2 - 1] == 0)
-                    {
-                        var item = new Point(x2 - 1, y2);
-                        if (!list.Contains(item) && !list2.Contains(item))
-                            list.Add(item);
-                    }
-                    if (this[y2, x2 + 1] && _currentField[y2, x2 + 1] == 0)
-                    {
-                        var item = new Point(x2 + 1, y2);
-                        if (!list.Contains(item) && !list2.Contains(item))
-                            list.Add(item);
-                    }
-                    if (GetValue(point) == 0)
-                        pointField.Add(point);
-                    list2.Add(point);
-                    list.RemoveAt(0);
+                    var item = new Point(x2, y2 - 1);
+                    if (!list.Contains(item) && !list2.Contains(item))
+                        list.Add(item);
                 }
-                return pointField;
+                if (this[y2 + 1, x2] && _currentField[y2 + 1, x2] == 0)
+                {
+                    var item = new Point(x2, y2 + 1);
+                    if (!list.Contains(item) && !list2.Contains(item))
+                        list.Add(item);
+                }
+                if (this[y2, x2 - 1] && _currentField[y2, x2 - 1] == 0)
+                {
+                    var item = new Point(x2 - 1, y2);
+                    if (!list.Contains(item) && !list2.Contains(item))
+                        list.Add(item);
+                }
+                if (this[y2, x2 + 1] && _currentField[y2, x2 + 1] == 0)
+                {
+                    var item = new Point(x2 + 1, y2);
+                    if (!list.Contains(item) && !list2.Contains(item))
+                        list.Add(item);
+                }
+                if (GetValue(point) == 0)
+                    pointField.Add(point);
+                list2.Add(point);
+                list.RemoveAt(0);
             }
+            return pointField;
         }
 
         private IEnumerable<LinkedList<AStarSolver<GameField>.PathNode>> handleListOfConnectedPoints(
@@ -168,7 +171,7 @@ namespace Oblivion.Enclosure
         private List<Point> GetConnectedItems(GametileUpdate update)
         {
             var list = new List<Point>();
-            if (update == null) return list;
+            if (update == null || _currentField == null) return list;
             var x = update.X;
             var y = update.Y;
             if (_diagonal)

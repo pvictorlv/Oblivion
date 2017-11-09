@@ -62,6 +62,10 @@ namespace Oblivion.HabboHotel.RoomBots
         /// <returns>Room.</returns>
         internal Room GetRoom()
         {
+            if (_room == null)
+            {
+                StopTimerTick();
+            }
             return _room;
         }
 
@@ -69,19 +73,13 @@ namespace Oblivion.HabboHotel.RoomBots
         ///     Gets the room user.
         /// </summary>
         /// <returns>RoomUser.</returns>
-        internal RoomUser GetRoomUser()
-        {
-            return _roomUser;
-        }
+        internal RoomUser GetRoomUser() => _roomUser;
 
         /// <summary>
         ///     Gets the bot data.
         /// </summary>
         /// <returns>RoomBot.</returns>
-        internal RoomBot GetBotData()
-        {
-            return GetRoomUser() == null ? null : GetRoomUser().BotData;
-        }
+        internal RoomBot GetBotData() => GetRoomUser() == null ? null : GetRoomUser().BotData;
 
         /// <summary>
         ///     Disposes this instance.
@@ -89,6 +87,8 @@ namespace Oblivion.HabboHotel.RoomBots
         internal void Dispose()
         {
             _disposed = true;
+            GetBotData().Dispose();
+            StopTimerTick();
             _room = null;
             _roomUser = null;
             _roomId = 0;
@@ -145,5 +145,7 @@ namespace Oblivion.HabboHotel.RoomBots
         ///     Modifieds this instance.
         /// </summary>
         internal abstract void Modified();
+
+        internal abstract void StopTimerTick();
     }
 }

@@ -1404,7 +1404,7 @@ namespace Oblivion.Messages.Handlers
             var userName = Request.GetString();
             var flag = Request.GetBool();
             var clientByUserName = Oblivion.GetGame().GetClientManager().GetClientByUserName(userName);
-            if (clientByUserName == null)
+            if (clientByUserName?.GetHabbo() == null)
                 return;
             if (flag)
             {
@@ -2152,8 +2152,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void GetRoomData3()
         {
-            if (Session.GetHabbo().LoadingRoom <= 0u || !Session.GetHabbo().LoadingChecksPassed ||
-                CurrentLoadingRoom == null || Session == null)
+            if (Session?.GetHabbo() == null || Session.GetHabbo().LoadingRoom <= 0u || !Session.GetHabbo().LoadingChecksPassed ||
+                CurrentLoadingRoom == null)
                 return;
             if (CurrentLoadingRoom.RoomData.UsersNow + 1 > CurrentLoadingRoom.RoomData.UsersMax &&
                 !Session.GetHabbo().HasFuse("fuse_enter_full_rooms"))

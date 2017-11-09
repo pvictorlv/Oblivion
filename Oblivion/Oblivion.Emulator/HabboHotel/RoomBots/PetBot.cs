@@ -71,6 +71,10 @@ namespace Oblivion.HabboHotel.RoomBots
         {
         }
 
+        internal override void StopTimerTick()
+        {
+            
+        }
         /// <summary>
         ///     Modifieds this instance.
         /// </summary>

@@ -37,9 +37,9 @@ namespace Oblivion.HabboHotel.Misc
             try
             {
                 var clients = Oblivion.GetGame().GetClientManager().Clients.Values;
-                /* TODO CHECK */ foreach (
-                    var client in clients.Where(client => client != null && client.GetHabbo() != null))
+                foreach (var client in clients)
                 {
+                    if (client?.GetHabbo() == null) continue;
                     client.GetHabbo().Credits += ExtraSettings.CreditsToGive;
                     client.GetHabbo().UpdateCreditsBalance();
                     client.GetHabbo().ActivityPoints += ExtraSettings.PixelsToGive;
