@@ -938,9 +938,7 @@ namespace Oblivion.HabboHotel.Catalogs
             int limtot, string songCode)
         {
             var list = new List<UserItem>();
-
-            if (item.InteractionType == Interaction.PostIt)
-                amount = amount * 20;
+            
 
             var a = item.Type;
             if (a == 'i' || a == 's')

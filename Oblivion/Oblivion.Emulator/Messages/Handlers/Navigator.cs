@@ -156,18 +156,31 @@ namespace Oblivion.Messages.Handlers
 
             var message = new ServerMessage(LibraryParser.OutgoingRequest("HabboAirGetRoomUsersComposer"));
 
-            message.AppendInteger(5);
+            message.AppendInteger(5); //maybe category
             message.AppendString("");
-            message.AppendInteger(Session.GetHabbo().Data.Rooms.Count); //count?
-//            var i = 0;
-            //message.StartArray();
+            message.AppendInteger(Session.GetHabbo().Data.Rooms.Count);
             foreach (var data in Session.GetHabbo().Data.Rooms)
             {
                 data.Serialize(message);
-//                message.SaveArray();
-                //                break;
             }
-            //            message.EndArray();
+            message.AppendBool(false);
+
+            Session.SendMessage(message);
+        }
+
+        internal void HabboAirGetAllRooms()
+        {
+            var message = new ServerMessage(LibraryParser.OutgoingRequest("HabboAirGetRoomUsersComposer"));
+
+            message.AppendInteger(1); //maybe category
+            message.AppendString("");
+            var rooms = Oblivion.GetGame().GetRoomManager().GetActiveRooms();
+
+            message.AppendInteger(rooms.Length);
+            foreach (var data in rooms)
+            {
+                data.Key.Serialize(message);
+            }
             message.AppendBool(false);
 
             Session.SendMessage(message);

@@ -408,11 +408,11 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 var yMap = 0;
 
                 CoordinatedItems.Clear();
-
+                var floorItems = _room.GetRoomItemHandler().FloorItems.Values.ToList();
                 if (checkLines)
                 {
                     /* TODO CHECK */
-                    foreach (var roomItems in _room.GetRoomItemHandler().FloorItems.Values.ToList())
+                    foreach (var roomItems in floorItems)
                     {
                         if (roomItems.X > Model.MapSizeX && roomItems.X > xMap)
                             xMap = roomItems.X;
@@ -506,12 +506,12 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
 
                 /* TODO CHECK */
-                foreach (var item in _room.GetRoomItemHandler().FloorItems.Values.ToList())
+                foreach (var item in floorItems)
                 {
                     if (!AddItemToMap(item))
                         break;
                 }
-
+                floorItems.Clear();
                 if (!_room.RoomData.AllowWalkThrough)
                 {
                     /* TODO CHECK */
@@ -544,7 +544,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 items = new List<RoomItem> {item};
 
                 if (!CoordinatedItems.ContainsKey(coord))
-                    CoordinatedItems.Add(coord, items);
+                    CoordinatedItems.Add(coord, items);   
             }
             else
             {

@@ -27,7 +27,16 @@ namespace Oblivion.Enclosure
                 theArray.GetUpperBound(1) + 1, theArray.GetUpperBound(0) + 1);
         }
 
-        public bool this[int y, int x] => y >= 0 && x >= 0 && y <= _currentField?.GetUpperBound(0) && x <= _currentField?.GetUpperBound(1);
+        public bool this[int y, int x]
+        {
+            get
+            {
+                if (_currentField?.GetUpperBound(0) == null) return false;
+
+                if (y < 0 || x < 0 || y > _currentField.GetUpperBound(0)) return false;
+                return x <= _currentField.GetUpperBound(1);
+            }
+        }
 
         public void UpdateLocation(int x, int y, byte value)
         {
@@ -42,6 +51,7 @@ namespace Oblivion.Enclosure
             while (_newEntries.Count > 0)
             {
                 _currentlyChecking = _newEntries.Dequeue();
+                if (_currentlyChecking == null) continue;
                 var connectedItems = GetConnectedItems(_currentlyChecking);
                 if (connectedItems == null) continue;
                 if (connectedItems.Count > 1)
@@ -65,13 +75,14 @@ namespace Oblivion.Enclosure
         {
             if (_currentField == null) return 0;
 
-            return this[p.Y, p.X] ? _currentField[p.Y, p.X] : (byte)0;
+            return this[p.Y, p.X] ? _currentField[p.Y, p.X] : (byte) 0;
         }
 
         public bool IsBlocked(int x, int y, bool lastTile)
         {
             if (_currentlyChecking == null) return false;
-            return (_currentlyChecking.X == x && _currentlyChecking.Y == y) || GetValue(x, y) != _currentlyChecking.Value;
+            return (_currentlyChecking.X == x && _currentlyChecking.Y == y) ||
+                   GetValue(x, y) != _currentlyChecking.Value;
         }
 
         public void Destroy()

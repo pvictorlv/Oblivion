@@ -592,11 +592,11 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 return;
 
             var item = GetClient().GetHabbo().GetInventoryComponent().GetItem(id);
-
-            SongDisks.Remove(id);
-            _floorItems.Remove(item.Id);
-            _wallItems.Remove(item.Id);
-            _mRemovedItems.Add(id);
+            if (item == null) return;
+            SongDisks?.Remove(id);
+            _floorItems?.Remove(item.Id);
+            _wallItems?.Remove(item.Id);
+            _mRemovedItems?.Add(id);
         }
 
         /// <summary>

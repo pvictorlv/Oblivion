@@ -2678,6 +2678,11 @@ namespace Oblivion.Messages.Parsers
             handler.HabboAirGetUserRooms();
         }
 
+        internal static void HabboAirGetAllRooms(GameClientMessageHandler handler)
+        {
+            handler.HabboAirGetAllRooms();
+        }
+
         /// <summary>
         /// News the navigator add saved search.
         /// </summary>

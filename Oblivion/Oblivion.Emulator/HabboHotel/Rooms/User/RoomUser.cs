@@ -950,6 +950,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="headOnly">if set to <c>true</c> [head only].</param>
         internal void SetRot(int rotation, bool headOnly)
         {
+            if (Statusses == null) return;
             if (Statusses.ContainsKey("lay") || IsWalking) return;
             var num = RotBody - rotation;
             RotHead = RotBody;

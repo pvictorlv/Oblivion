@@ -49,9 +49,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             var num = Oblivion.Now();
             var toAdd = new List<RoomUser>();
-            RoomUser roomUser;
 
-            while (ToWorkConcurrentQueue.TryDequeue(out roomUser))
+            while (ToWorkConcurrentQueue.TryDequeue(out var roomUser))
             {
                 if (roomUser?.GetClient() == null)
                     continue;
