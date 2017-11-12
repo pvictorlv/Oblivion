@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Oblivion.Configuration;
 using Oblivion.Connection.Connection;
@@ -596,6 +597,9 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 Logging.HandleException(e, "user disconnect");
             }
         }
+
+        
+
 
         /// <summary>
         ///     Sends the message.

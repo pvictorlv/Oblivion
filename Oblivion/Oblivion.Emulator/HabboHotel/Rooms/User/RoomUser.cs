@@ -672,7 +672,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                 botChatmsg.AppendInteger(0);
                 botChatmsg.AppendInteger(count);
 
-                GetRoom().SendMessage(botChatmsg);
+                var location = new Vector2D(X, Y);
+                GetRoom().SendMessageWithRange(location, botChatmsg);
                 return;
             }
 
@@ -687,7 +688,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
 
 
-            if (!(msg.StartsWith(":deleteblackword ") && session.GetHabbo().Rank > 4) &&
+            if (!((msg.StartsWith(":deleteblackword ") || msg.Contains("ban")) && session.GetHabbo().Rank > 4) &&
                 BlackWordsManager.Check(msg, BlackWordType.Hotel, out var word))
             {
                 var settings = word.TypeSettings;
@@ -792,11 +793,9 @@ namespace Oblivion.HabboHotel.Rooms.User
             chatMsg.AppendInteger(textColor);
             chatMsg.AppendInteger(0); // links count (/* TODO CHECK */ foreach string string bool)
             chatMsg.AppendInteger(count);
-            GetRoom().BroadcastChatMessage(chatMsg, this, session.GetHabbo().Id);
+            GetRoom().BroadcastChatMessageWithRange(chatMsg, this, session.GetHabbo().Id);
 
             GetRoom().OnUserSay(this, msg, shout);
-
-//            GetRoom().GetRoomUserManager().TurnHeads(X, Y, HabboId);
         }
 
 
@@ -1143,7 +1142,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             stringBuilder.Append("/");
             if (IsPet && PetData.Type == 16u)
                 stringBuilder.AppendFormat("/{0}{1}", PetData.MoplaBreed.GrowStatus, (Statusses.Count >= 1) ? "/" : "");
-            
+
             foreach (var current in Statusses.ToList())
             {
                 stringBuilder.Append(current.Key);

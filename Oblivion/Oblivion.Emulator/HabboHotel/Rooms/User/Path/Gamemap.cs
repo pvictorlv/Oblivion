@@ -299,10 +299,15 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         {
             var coordKey = Formatter.PointToInt(coord);
             var users = (List<RoomUser>) _userMap[coordKey];
-            if (users != null)
-                return users;
-            return new List<RoomUser>();
+            return users ?? new List<RoomUser>();
         }
+
+        /// <summary>
+        ///     Gets the room users.
+        /// </summary>
+        /// <param name="coord">The coord.</param>
+        /// <returns>List&lt;RoomUser&gt;.</returns>
+        internal List<RoomUser> GetRoomUsersRange(Vector2D coord, int range) => (from userValue in _room.GetRoomUserManager().UserList.Values let location = new Vector2D(userValue.Coordinate.X, userValue.Coordinate.Y) where location.GetDistanceSquared(coord) <= range select userValue).ToList();
 
         /// <summary>
         ///     Gets the random walkable square.
@@ -551,7 +556,11 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 if (items == null) return;
                 if (items.Contains(item)) return;
                 items.Add(item);
-                CoordinatedItems[coord] = items;
+                if (CoordinatedItems.ContainsKey(coord))
+                {
+                    CoordinatedItems.Remove(coord);
+                }
+                CoordinatedItems.Add(coord, items);
             }
         }
 

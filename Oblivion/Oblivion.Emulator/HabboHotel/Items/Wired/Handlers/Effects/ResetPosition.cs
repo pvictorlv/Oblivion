@@ -10,7 +10,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
     public class ResetPosition : IWiredItem
     {
-
         public ResetPosition(RoomItem item, Room room)
         {
             Item = item;
@@ -57,7 +56,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             var rot = booleans[1] == "true";
             var position = booleans[2] == "true";
 
-            /* TODO CHECK */ foreach (var itemData in OtherExtraString.Split('/'))
+            /* TODO CHECK */
+            foreach (var itemData in OtherExtraString.Split('/'))
             {
                 if (string.IsNullOrWhiteSpace(itemData))
                     continue;
@@ -80,9 +80,15 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 if (positions.Length < 3)
                     continue;
 
-                var xToSet = position ? int.Parse(positions[0]) : fItem.X;
-                var yToSet = position ? int.Parse(positions[1]) : fItem.Y;
-                var zToSet = position ? double.Parse(positions[2]) : fItem.Z;
+                int xToSet;
+                if (position) int.TryParse(positions[0], out xToSet);
+                else xToSet = fItem.X;
+                int yToSet;
+                if (position)  int.TryParse(positions[1], out yToSet);
+                else yToSet = fItem.Y;
+                double zToSet;
+                if (position) double.TryParse(positions[2], out zToSet);
+                else zToSet = fItem.Z;
 
 
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ItemAnimationMessageComposer"));

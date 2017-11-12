@@ -267,6 +267,12 @@ namespace Oblivion.Messages
             CurrentMessage.Write(b, 0, b.Length);
         }
 
+        internal void AddBytes(List<byte[]> bytes)
+        {
+            foreach (byte[] byteArray in bytes)
+                AppendBytes(byteArray, false);
+        }
+
         /// <summary>
         /// Appends the byted.
         /// </summary>

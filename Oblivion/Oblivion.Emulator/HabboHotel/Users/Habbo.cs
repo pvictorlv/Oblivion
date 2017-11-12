@@ -874,6 +874,8 @@ namespace Oblivion.HabboHotel.Users
             _mClient = null;
         }
 
+        internal uint LastBellId;
+
         /// <summary>
         ///     Initializes the messenger.
         /// </summary>

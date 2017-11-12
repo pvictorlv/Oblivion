@@ -196,7 +196,7 @@ namespace Oblivion.Security.BlackWords
             str = Regex.Replace(str, "[$5§2]", "s");
             str = Regex.Replace(str, "[ùúûüµÙÚÛÜ]", "u");
             str = Regex.Replace(str, "[ÿ¥]", "y");
-            str = Regex.Replace(str, @"[∂∫šŠŸžŽ™ ',-_¹²³.?´` ƒ()*/\\]", "");
+            str = Regex.Replace(str, @"[—•∂∫šŠŸžŽ™ ',-_¹²³.?´` ƒ()*/\\]", "");
             str = str.Replace("æ", "ae");
             str = str.Replace("π", "p");
             str = str.Replace("Ð", "d");

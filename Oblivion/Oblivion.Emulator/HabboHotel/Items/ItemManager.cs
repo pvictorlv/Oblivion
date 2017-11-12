@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -23,6 +23,9 @@ namespace Oblivion.HabboHotel.Items
         /// </summary>
         private readonly Dictionary<uint, Item> _items;
 
+        private ConcurrentDictionary<uint, long> _itemsByVirtualId;
+        private ConcurrentDictionary<long, uint> _itemsByRealId;
+
         /// <summary>
         ///     The photo identifier
         /// </summary>
@@ -42,6 +45,35 @@ namespace Oblivion.HabboHotel.Items
         {
             LoadItems(dbClient);
             itemLoaded = (uint) _items.Count;
+            _itemsByVirtualId = new ConcurrentDictionary<uint, long>();
+            _itemsByRealId = new ConcurrentDictionary<long, uint>();
+        }
+
+      
+        public uint GetVirtualId(long realId)
+        {
+            if (_itemsByRealId.TryGetValue(realId, out var virtualId))
+            {
+                return virtualId;
+            }
+
+            var newId = (uint)_itemsByVirtualId.Count + 1u;
+            if (_itemsByVirtualId.ContainsKey(newId))
+            {
+                return GetVirtualId(realId);
+            }
+            _itemsByVirtualId.TryAdd(newId, realId);
+            _itemsByRealId.TryAdd(realId, newId);
+            return newId;
+        }
+
+        public long GetRealId(uint virtualId)
+        {
+            if (_itemsByVirtualId.TryGetValue(virtualId, out var realId))
+            {
+                return realId;
+            }
+            return 0;
         }
 
         public int CountItems() => _items.Count;
@@ -63,7 +95,8 @@ namespace Oblivion.HabboHotel.Items
 
             List<double> heights = null;
 
-            /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
+            /* TODO CHECK */
+            foreach (DataRow dataRow in table.Rows)
             {
                 try
                 {
@@ -138,14 +171,12 @@ namespace Oblivion.HabboHotel.Items
             }
         }
 
-        internal Item GetItem(uint id)
-        {
-            return _items.TryGetValue(id, out Item it) ? it : null;
-        }
+        internal Item GetItem(uint id) => _items.TryGetValue(id, out var it) ? it : null;
 
         internal bool GetItem(string itemName, out Item item)
         {
-            /* TODO CHECK */ foreach (var entry in _items)
+            /* TODO CHECK */
+            foreach (var entry in _items)
             {
                 item = entry.Value;
 
@@ -168,7 +199,8 @@ namespace Oblivion.HabboHotel.Items
 
         internal Item GetItemByName(string name) => _items.Values.FirstOrDefault(item => item.Name == name);
 
-        internal Item GetItemBySpriteId(int spriteId) => _items.Values.FirstOrDefault(item => item.SpriteId == spriteId);
+        internal Item GetItemBySpriteId(int spriteId) =>
+            _items.Values.FirstOrDefault(item => item.SpriteId == spriteId);
 
         /// <summary>
         ///     Determines whether the specified identifier contains item.

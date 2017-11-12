@@ -24,7 +24,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         public override bool Execute(GameClient session, string[] pms)
         {
             var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
-            if (client?.GetHabbo() == null)
+            if (client?.GetHabbo()?.CurrentRoom == null)
             {
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
@@ -54,8 +54,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 return false;
             }
         
-            if (client.GetHabbo().CurrentRoom == null ||
-                client.GetHabbo().CurrentRoom == session.GetHabbo().CurrentRoom)
+            if (client.GetHabbo().CurrentRoom == session.GetHabbo().CurrentRoom)
                 return false;
 
             var roomFwd =
