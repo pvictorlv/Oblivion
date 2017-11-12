@@ -130,7 +130,7 @@ namespace Oblivion.HabboHotel.Navigators
                     }
                 case "official-root":
                     {
-                        message.AppendServerMessage(Oblivion.GetGame().GetNavigator().NewPublicRooms);
+                        message.AppendServerMessage(Oblivion.GetGame().GetNavigator().SerializeNewPublicRooms());
                         break;
                     }
                 case "staffpicks":

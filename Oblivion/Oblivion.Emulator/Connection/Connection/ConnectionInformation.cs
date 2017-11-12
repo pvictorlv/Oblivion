@@ -285,15 +285,15 @@ namespace Oblivion.Connection.Connection
                 string packetName = LibraryParser.TryGetOutgoingName(oldHeader);
                 if (newHeader == null)
                 {
-                    Console.WriteLine("Header *production* " + oldHeader + " (" + packetName +
-                                      ") wasn't translated to packet air.");
+                    if (Oblivion.DebugMode)
+                        Console.WriteLine("Header *production* " + oldHeader + " (" + packetName +
+                                          ") wasn't translated to packet air.");
                     return;
                 }
-                else
-                {
+                if (Oblivion.DebugMode)
+
                     Console.WriteLine("Header *production* " + oldHeader + " (" + packetName +
                                       ") has been translated to packet air.");
-                }
             }
 
             try

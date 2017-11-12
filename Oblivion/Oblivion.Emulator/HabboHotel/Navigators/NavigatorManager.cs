@@ -36,7 +36,7 @@ namespace Oblivion.HabboHotel.Navigators
         /// <summary>
         ///     The new public rooms
         /// </summary>
-        internal ServerMessage NewPublicRooms, NewStaffPicks;
+        internal ServerMessage NewStaffPicks;
 
         /// <summary>
         ///     The private categories
@@ -158,7 +158,6 @@ namespace Oblivion.HabboHotel.Navigators
         /// </summary>
         public void LoadNewPublicRooms()
         {
-            NewPublicRooms = SerializeNewPublicRooms();
             NewStaffPicks = SerializeNewStaffPicks();
         }
 
@@ -223,7 +222,7 @@ namespace Oblivion.HabboHotel.Navigators
             var message = new ServerMessage();
             message.StartArray();
 
-            /* TODO CHECK */ foreach (var item in _publicItems.Values)
+           foreach (var item in _publicItems.Values)
             {
                 if (item.ParentId == -1)
                 {

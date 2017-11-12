@@ -542,9 +542,9 @@ namespace Oblivion.Messages.Handlers
 
             Response.Init(LibraryParser.OutgoingRequest("RoomUpdateMessageComposer"));
             Response.AppendInteger(currentLoadingRoom.RoomId);
-//            if (Session.IsAir)
-//                Response.AppendBool(true);
+
             queuedServerMessage.AppendResponse(GetResponse());
+
 
             return queuedServerMessage;
         }
@@ -648,7 +648,6 @@ namespace Oblivion.Messages.Handlers
                 .AppendInteger(room.RoomData.Model.MapSizeX * room.RoomData.Model.MapSizeY > 200 ? 50 : 25);
 
             GetResponse().AppendInteger(room.TagCount);
-            /* TODO CHECK */
             foreach (var s in room.RoomData.Tags)
                 GetResponse().AppendString(s);
             GetResponse().AppendInteger(room.RoomData.TradeState);
@@ -1036,7 +1035,7 @@ namespace Oblivion.Messages.Handlers
                 return;
             var pId = Request.GetUInteger();
             var roomUserByHabbo = room.GetRoomUserManager().GetRoomUserByHabbo(pId);
-            if (roomUserByHabbo == null || roomUserByHabbo.IsBot)
+            if (roomUserByHabbo?.GetClient()?.GetHabbo() == null || roomUserByHabbo.IsBot)
                 return;
             if (room.CheckRights(roomUserByHabbo.GetClient(), true) ||
                 roomUserByHabbo.GetClient().GetHabbo().HasFuse("fuse_mod") ||
@@ -2705,10 +2704,8 @@ namespace Oblivion.Messages.Handlers
             if (User == null)
                 return;
 
-            int photoId;
-
             var str = Request.GetString();
-            if (!int.TryParse(str, out photoId) || photoId < 0)
+            if (!int.TryParse(str, out var photoId) || photoId < 0)
                 return;
 
             var preview = Oblivion.GetGame().GetCameraManager().GetPreview(photoId);

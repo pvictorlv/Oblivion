@@ -869,7 +869,7 @@ namespace Oblivion.HabboHotel.Users
             _badgeComponent = null;
             _myGroups?.Clear();
             _myGroups = null;
-            Data.Dispose();
+            Data?.Dispose();
             Data = null;
             _mClient = null;
         }

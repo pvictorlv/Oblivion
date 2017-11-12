@@ -371,12 +371,14 @@ namespace Oblivion.HabboHotel.Users.Inventory
             }
         }
 
+
         /// <summary>
         ///     Updates the items.
         /// </summary>
         /// <param name="fromDatabase">if set to <c>true</c> [from database].</param>
         internal void UpdateItems(bool fromDatabase)
         {
+           
             if (fromDatabase)
             {
                 RunDbUpdate();
@@ -396,6 +398,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <returns>UserItem.</returns>
         internal UserItem GetItem(uint id)
         {
+
             _isUpdated = false;
             UserItem item;
             if (_floorItems.ContainsKey(id))
@@ -544,7 +547,10 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 RemoveItem(id, false);
 
             if (userItem.BaseItem.InteractionType == Interaction.MusicDisc)
-                SongDisks.Add(userItem.Id, userItem);
+            {
+                if (!SongDisks.Contains(userItem.Id))
+                    SongDisks.Add(userItem.Id, userItem);
+            }
 
             if (userItem.IsWallItem)
                 _wallItems.Add(userItem.Id, userItem);
@@ -557,7 +563,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
             if (!_mAddedItems.Contains(id))
                 _mAddedItems.Add(id);
 
-            AddItemToItemInventory(userItem);
             return userItem;
         }
 
@@ -574,7 +579,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 GetClient().Disconnect("user null RemoveItem");
                 return;
             }
-
             _isUpdated = false;
             GetClient()
                 .GetMessageHandler()
@@ -606,7 +610,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         internal ServerMessage SerializeFloorItemInventory()
         {
             var items = GetItems.ToList();
-            var i = items.Count() + SongDisks.Count;
+            var i = items.Count + SongDisks.Count;
 
             if (i > 3500)
                 _mClient.SendMessage(StaticMessage.AdviceMaxItems);
@@ -643,41 +647,67 @@ namespace Oblivion.HabboHotel.Users.Inventory
             return serverMessage;
         }
 
-        /// <summary>
-        ///     Add item to inventory
-        /// </summary>
-        /// <returns>ServerMessage.</returns>
-        internal ServerMessage AddItemToItemInventory(UserItem item)
+
+        internal void AddItemToItemInventory(RoomItem item, bool dbUpdate)
         {
+
+            var userItem = new UserItem(item.Id, item.BaseItem, item.ExtraData, item.GroupId, item.SongCode);
+
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FurniListAddMessageComposer"));
             serverMessage.AppendInteger(item.Id);
-            serverMessage.AppendString(item.BaseItem.Type.ToString().ToUpper());
-            if (item.LimitedSellId > 0)
+            serverMessage.AppendString(item.GetBaseItem().Type.ToString().ToUpper());
+            serverMessage.AppendInteger(item.Id);
+            serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
+            serverMessage.AppendInteger(1);
+            serverMessage.AppendInteger(0);
+            if (item.LimitedNo > 0)
             {
                 serverMessage.AppendInteger(1);
                 serverMessage.AppendInteger(256);
                 serverMessage.AppendString(item.ExtraData);
-                serverMessage.AppendInteger(item.LimitedSellId);
-                serverMessage.AppendInteger(item.LimitedStack);
+                serverMessage.AppendInteger(item.LimitedNo);
+                serverMessage.AppendInteger(item.LimitedTot);
             }
             else
             {
                 serverMessage.AppendString(item.ExtraData);
             }
 
-            serverMessage.AppendBool(item.BaseItem.AllowRecycle);
-            serverMessage.AppendBool(item.BaseItem.AllowTrade);
-            serverMessage.AppendBool(item.LimitedSellId == 0 && item.BaseItem.AllowInventoryStack);
-            serverMessage.AppendBool(item.BaseItem.IsRare); //can sell in marketplace xD
+            serverMessage.AppendBool(item.GetBaseItem().AllowRecycle);
+            serverMessage.AppendBool(item.GetBaseItem().AllowTrade);
+            serverMessage.AppendBool(item.LimitedNo == 0 && item.GetBaseItem().AllowInventoryStack);
+            serverMessage.AppendBool(item.GetBaseItem().IsRare); //can sell in marketplace xD
             serverMessage.AppendInteger(-1);
-            serverMessage.AppendBool(true);
+            serverMessage.AppendBool(false);
             serverMessage.AppendInteger(-1);
             if (!item.IsWallItem)
             {
                 serverMessage.AppendString(string.Empty);
                 serverMessage.AppendInteger(0);
             }
-            return serverMessage;
+            var id = item.Id;
+            if (UserHoldsItem(id))
+                RemoveItem(id, false);
+
+            if (userItem.BaseItem.InteractionType == Interaction.MusicDisc)
+            {
+                if (!SongDisks.Contains(userItem.Id))
+                    SongDisks.Add(userItem.Id, userItem);
+            }
+
+            if (userItem.IsWallItem)
+                _wallItems.Add(userItem.Id, userItem);
+            else
+            {
+                _floorItems.Add(userItem.Id, userItem);
+            }
+            if (_mRemovedItems.Contains(id))
+                _mRemovedItems.Remove(id);
+
+            if (!_mAddedItems.Contains(id))
+                _mAddedItems.Add(id);
+
+            _mClient.SendMessage(serverMessage);
         }
 
 

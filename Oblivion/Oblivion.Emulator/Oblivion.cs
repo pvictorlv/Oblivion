@@ -68,7 +68,7 @@ namespace Oblivion
         /// <summary>
         /// Multiply current users in rooms
         /// </summary>
-        internal static int Multipy = 1;
+        internal static int Multipy = 2;
 
         /// <summary>
         ///     The staff alert minimum rank

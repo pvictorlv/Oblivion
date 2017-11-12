@@ -562,7 +562,8 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo()
                     .GetInventoryComponent()
                     .AddNewItem(item.Id, item.BaseItem, item.ExtraData, item.GroupId, true, true, 0, 0);
-                Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
+                //                Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
+                Session.GetHabbo().GetInventoryComponent().AddItemToItemInventory(item, false);
             }
         }
 
@@ -1100,7 +1101,8 @@ namespace Oblivion.Messages.Handlers
             var item = Session.GetHabbo().GetInventoryComponent().GetItem(Request.GetUInteger());
             if (userTrade == null || item == null)
                 return;
-            Task.Factory.StartNew(() => { userTrade.OfferItem(Session.GetHabbo().Id, item); });
+            userTrade.OfferItem(Session.GetHabbo().Id, item);
+            userTrade.UpdateTradeWindow();
         }
 
         internal void OfferTradeItems()
@@ -1118,16 +1120,15 @@ namespace Oblivion.Messages.Handlers
             if (userTrade == null || item == null)
                 return;
 
-            Task.Factory.StartNew(() =>
+
+            var allItems = Session.GetHabbo().GetInventoryComponent().GetItems
+                .Where(x => x.BaseItemId == item.BaseItemId).Take(amount);
+            /* TODO CHECK */
+            foreach (var it in allItems)
             {
-                var allItems = Session.GetHabbo().GetInventoryComponent().GetItems
-                    .Where(x => x.BaseItemId == item.BaseItemId).Take(amount);
-                /* TODO CHECK */
-                foreach (var it in allItems)
-                {
-                    userTrade.OfferItem(Session.GetHabbo().Id, it);
-                }
-            });
+                userTrade.OfferItem(Session.GetHabbo().Id, it);
+            }
+            userTrade.UpdateTradeWindow();
         }
 
         internal void TakeBackTradeItem()
@@ -2482,7 +2483,8 @@ namespace Oblivion.Messages.Handlers
                 clientByUserId.GetHabbo()
                     .GetInventoryComponent()
                     .AddNewItem(item.Id, item.BaseItem, item.ExtraData, item.GroupId, true, true, 0, 0);
-                clientByUserId.GetHabbo().GetInventoryComponent().UpdateItems(true);
+                //                clientByUserId.GetHabbo().GetInventoryComponent().UpdateItems(true);
+                clientByUserId.GetHabbo().GetInventoryComponent().AddItemToItemInventory(item, true);
                 return;
             }
             room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);

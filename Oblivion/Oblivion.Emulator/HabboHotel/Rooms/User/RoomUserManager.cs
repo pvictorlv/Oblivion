@@ -1665,13 +1665,50 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             try
             {
-                if (user?.GetClient() == null || user.GetClient().GetHabbo() == null)
+                if (user?.GetClient() == null || user.GetClient().GetHabbo() == null || _userRoom == null)
                     return;
 
                 var client = user.GetClient();
 
-                if (client?.GetHabbo() == null || _userRoom == null)
-                    return;
+
+                if (client.IsAir)
+                {
+                    var msg = new ServerMessage();
+                    _userRoom.RoomData.SerializeRoomData(msg, client, true);
+                    client.SendMessage(msg);
+
+                   /* msg = new ServerMessage(LibraryParser.OutgoingRequest("RoomSettingsDataMessageComposer"));
+                    msg.AppendInteger(_userRoom.RoomId);
+                    msg.AppendString(_userRoom.RoomData.Name);
+                    msg.AppendString(_userRoom.RoomData.Description);
+                    msg.AppendInteger(_userRoom.RoomData.State);
+                    msg.AppendInteger(_userRoom.RoomData.Category);
+                    msg.AppendInteger(_userRoom.RoomData.UsersMax);
+                    msg
+                        .AppendInteger(_userRoom.RoomData.Model.MapSizeX * _userRoom.RoomData.Model.MapSizeY > 200 ? 50 : 25);
+
+                    msg.AppendInteger(_userRoom.TagCount);
+                    foreach (var s in _userRoom.RoomData.Tags)
+                        msg.AppendString(s);
+                    msg.AppendInteger(_userRoom.RoomData.TradeState);
+                    msg.AppendInteger(_userRoom.RoomData.AllowPets);
+                    msg.AppendInteger(_userRoom.RoomData.AllowPetsEating);
+                    msg.AppendInteger(_userRoom.RoomData.AllowWalkThrough);
+                    msg.AppendInteger(_userRoom.RoomData.HideWall);
+                    msg.AppendInteger(_userRoom.RoomData.WallThickness);
+                    msg.AppendInteger(_userRoom.RoomData.FloorThickness);
+                    msg.AppendInteger(_userRoom.RoomData.ChatType);
+                    msg.AppendInteger(_userRoom.RoomData.ChatBalloon);
+                    msg.AppendInteger(_userRoom.RoomData.ChatSpeed);
+                    msg.AppendInteger(_userRoom.RoomData.ChatMaxDistance);
+                    msg.AppendInteger(_userRoom.RoomData.ChatFloodProtection > 2 ? 2 : _userRoom.RoomData.ChatFloodProtection);
+                    msg.AppendBool(false); //allow_dyncats_checkbox
+                    msg.AppendInteger(_userRoom.RoomData.WhoCanMute);
+                    msg.AppendInteger(_userRoom.RoomData.WhoCanKick);
+                    msg.AppendInteger(_userRoom.RoomData.WhoCanBan);
+                    client.SendMessage(msg);*/
+                    //                    queuedServerMessage.AppendResponse(GetResponse());
+                }
 
                 if (!user.IsSpectator)
                 {

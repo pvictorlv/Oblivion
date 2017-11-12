@@ -123,7 +123,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             {
                 tradeUser.OfferedItems.Add(item);
             }
-            UpdateTradeWindow();
+//            UpdateTradeWindow();
         }
 
         /// <summary>
