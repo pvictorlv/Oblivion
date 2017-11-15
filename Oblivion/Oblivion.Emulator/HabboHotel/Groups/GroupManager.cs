@@ -71,7 +71,8 @@ namespace Oblivion.HabboHotel.Groups
                 if (table == null)
                     return;
 
-                /* TODO CHECK */ foreach (DataRow row in table.Rows)
+                /* TODO CHECK */
+                foreach (DataRow row in table.Rows)
                 {
                     switch (row["type"].ToString().ToLower())
                     {
@@ -213,7 +214,8 @@ namespace Oblivion.HabboHotel.Groups
 
                 uint userId;
 
-                /* TODO CHECK */ foreach (DataRow dataRow in groupMembersTable.Rows)
+                /* TODO CHECK */
+                foreach (DataRow dataRow in groupMembersTable.Rows)
                 {
                     userId = (uint) dataRow["user_id"];
 
@@ -232,7 +234,8 @@ namespace Oblivion.HabboHotel.Groups
                     }
                 }
 
-                /* TODO CHECK */ foreach (DataRow dataRow in groupRequestsTable.Rows)
+                /* TODO CHECK */
+                foreach (DataRow dataRow in groupRequestsTable.Rows)
                 {
                     userId = (uint) dataRow["user_id"];
 
@@ -276,7 +279,8 @@ namespace Oblivion.HabboHotel.Groups
 
                 var table = queryReactor.GetTable();
 
-                /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
+                /* TODO CHECK */
+                foreach (DataRow dataRow in table.Rows)
                     list.Add(new GroupMember(userId, dataRow["username"].ToString(), dataRow["look"].ToString(),
                         (uint) dataRow["group_id"], Convert.ToInt16(dataRow["rank"]), (int) dataRow["date_join"],
                         false));
@@ -310,7 +314,7 @@ namespace Oblivion.HabboHotel.Groups
             if (theGroup == null || session == null)
                 return null;
 
-            if (page < 1)
+            if (page <= 1)
                 page = 0;
             response.AppendInteger(theGroup.Id);
             response.AppendString(theGroup.Name);
@@ -327,7 +331,7 @@ namespace Oblivion.HabboHotel.Groups
             {
                 response.AppendInteger(list.Count);
 
-                if (theGroup.Members.Count > 0 && list.Count >= page)
+                if (theGroup.Members.Count > 0 && list.Count - 1 >= page)
                 {
                     response.AppendInteger(list[page].Count);
 
@@ -348,9 +352,9 @@ namespace Oblivion.HabboHotel.Groups
             {
                 response.AppendInteger(theGroup.Admins.Count);
 
-                var paging = (page <= list.Count) ? list[page] : null;
+                var paging = (page <= list.Count - 1) ? list[page] : null;
 
-                if ((theGroup.Admins.Count > 0) && (list.Count >= page) && paging != null)
+                if ((theGroup.Admins.Count > 0) && (list.Count - 1 >= page) && paging != null)
                 {
                     response.AppendInteger(list[page].Count);
 
@@ -371,7 +375,7 @@ namespace Oblivion.HabboHotel.Groups
             {
                 response.AppendInteger(theGroup.Requests.Count);
 
-                if (theGroup.Requests.Count > 0 && list.Count >= page && list[page] != null)
+                if (theGroup.Requests.Count > 0 && list.Count - 1 >= page && list[page] != null)
                 {
                     response.AppendInteger(list[page].Count);
 

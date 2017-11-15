@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Oblivion.HabboHotel.Navigators;
+﻿using Oblivion.HabboHotel.Navigators;
 using Oblivion.HabboHotel.Navigators.Enums;
 using Oblivion.HabboHotel.Navigators.Interfaces;
 using Oblivion.HabboHotel.Rooms.Data;
@@ -101,7 +100,7 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().NavigatorLogs.Add(naviLogs.Id, naviLogs);
             var message = new ServerMessage(LibraryParser.OutgoingRequest("NavigatorSavedSearchesComposer"));
             message.AppendInteger(Session.GetHabbo().NavigatorLogs.Count);
-            /* TODO CHECK */
+
             foreach (NaviLogs navi in Session.GetHabbo().NavigatorLogs.Values)
             {
                 message.AppendInteger(navi.Id);
@@ -205,7 +204,7 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().NavigatorLogs.Remove(searchId);
             var message = new ServerMessage(LibraryParser.OutgoingRequest("NavigatorSavedSearchesComposer"));
             message.AppendInteger(Session.GetHabbo().NavigatorLogs.Count);
-            /* TODO CHECK */
+
             foreach (NaviLogs navi in Session.GetHabbo().NavigatorLogs.Values)
             {
                 message.AppendInteger(navi.Id);
@@ -407,7 +406,8 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session.GetHabbo() == null)
                 return;
-            //this.Session.SendMessage(MercuryEnvironment.GetGame().GetNavigator().SerializeSearchResults(string.Format("tag:{0}", this.Request.PopFixedString())));
+            Session.SendMessage(NavigatorManager.SerializeSearchResults(
+                $"tag:{Request.GetString()}"));
         }
 
         /// <summary>
@@ -418,7 +418,7 @@ namespace Oblivion.Messages.Handlers
             if (Session.GetHabbo() == null)
                 return;
             Request.GetInteger();
-            //this.Session.SendMessage(MercuryEnvironment.GetGame().GetNavigator().SerializeSearchResults(this.Request.PopFixedString()));
+            Session.SendMessage(NavigatorManager.SerializeSearchResults(Request.GetString()));
         }
 
         /// <summary>

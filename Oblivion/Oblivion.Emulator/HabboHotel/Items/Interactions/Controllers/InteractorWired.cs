@@ -35,13 +35,13 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             switch (item.GetBaseItem().InteractionType)
             {
+                case Interaction.ActionLeaveTeam:
                 case Interaction.TriggerTimer:
                 {
                     var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("WiredTriggerMessageComposer"));
                     serverMessage.AppendBool(false);
-                    serverMessage.AppendInteger(15);
-                    serverMessage.AppendInteger(list.Count);
-                     foreach (var current in list) serverMessage.AppendInteger(current.Id);
+                    serverMessage.AppendInteger(5);
+                    serverMessage.AppendInteger(0);
                     serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage.AppendInteger(item.Id);
                     serverMessage.AppendString(extraInfo);
@@ -154,7 +154,6 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 }
                 //backmen
                 case Interaction.ActionJoinTeam:
-                case Interaction.ActionLeaveTeam:
                 case Interaction.ConditionUserIsInTeam:
                 case Interaction.ConditionUserIsNotInTeam:
                 {

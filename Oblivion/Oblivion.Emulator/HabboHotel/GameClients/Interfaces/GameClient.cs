@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Oblivion.Configuration;
 using Oblivion.Connection.Connection;
@@ -91,7 +90,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
         public bool IsAir
         {
-            get { return _connection != null && _connection.IsAir; }
+            get => _connection != null && _connection.IsAir;
             set
             {
                 if (_connection != null) _connection.IsAir = value;
@@ -221,23 +220,23 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             try
             {
                 var ip = GetConnection().GetIp();
-
+                if (ip == null) return false;
                 var userData = UserDataFactory.GetUserData(authTicket, out var errorCode);
-
-                if (errorCode == 1 || errorCode == 2)
+            
+                if (errorCode == 1 || errorCode == 2 || userData?.User == null)
                     return false;
 
                 Oblivion.GetGame().GetClientManager().RegisterClient(this, userData.UserId, userData.User.UserName);
 
                 _habbo = userData.User;
-                userData.User.LoadData(userData);
+                _habbo.LoadData(userData);
 
 
-                if (userData.User.UserName == null ||
-                    Oblivion.GetGame().GetBanManager().CheckBan(userData.User.UserName, ip, MachineId))
+                if (_habbo.UserName == null ||
+                    Oblivion.GetGame().GetBanManager().CheckBan(_habbo.UserName, ip, MachineId))
                 {
                     var banReason = Oblivion.GetGame().GetBanManager()
-                        .GetBanReason(userData.User.UserName, ip, MachineId);
+                        .GetBanReason(_habbo.UserName, ip, MachineId);
                     SendNotifWithScroll(banReason);
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
@@ -264,7 +263,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                     queryReactor.RunFastQuery(
                         $"UPDATE users SET ip_last='{ip}', online = '1' WHERE id={GetHabbo().Id}");
 
-                userData.User.Init(this, userData);
+                _habbo.Init(this, userData);
 
                 var queuedServerMessage = new QueuedServerMessage(_connection);
 
@@ -281,14 +280,14 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
                 serverMessage.AppendInteger(30);
 
-                if (userData.User.FavoriteRooms == null || !userData.User.FavoriteRooms.Any())
+                if (_habbo.FavoriteRooms == null || !_habbo.FavoriteRooms.Any())
                     serverMessage.AppendInteger(0);
                 else
                 {
-                    serverMessage.AppendInteger(userData.User.FavoriteRooms.Count);
+                    serverMessage.AppendInteger(_habbo.FavoriteRooms.Count);
 
                     /* TODO CHECK */
-                    foreach (var i in userData.User.FavoriteRooms)
+                    foreach (var i in _habbo.FavoriteRooms)
                         serverMessage.AppendInteger(i);
                 }
 
@@ -296,8 +295,8 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
                 var rightsMessage = new ServerMessage(LibraryParser.OutgoingRequest("UserClubRightsMessageComposer"));
 
-                rightsMessage.AppendInteger(userData.User.GetSubscriptionManager().HasSubscription ? 2 : 0);
-                rightsMessage.AppendInteger(userData.User.Rank);
+                rightsMessage.AppendInteger(_habbo.GetSubscriptionManager().HasSubscription ? 2 : 0);
+                rightsMessage.AppendInteger(_habbo.Rank);
                 rightsMessage.AppendInteger(0);
                 queuedServerMessage.AppendResponse(rightsMessage);
 
@@ -409,18 +408,18 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("EnableTradingMessageComposer"));
                 serverMessage.AppendBool(true);
                 queuedServerMessage.AppendResponse(serverMessage);*/
-                userData.User.UpdateCreditsBalance();
+                _habbo.UpdateCreditsBalance();
 
                 serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ActivityPointsMessageComposer"));
                 serverMessage.AppendInteger(2);
                 serverMessage.AppendInteger(0);
-                serverMessage.AppendInteger(userData.User.ActivityPoints);
+                serverMessage.AppendInteger(_habbo.ActivityPoints);
                 serverMessage.AppendInteger(5);
-                serverMessage.AppendInteger(userData.User.Diamonds);
+                serverMessage.AppendInteger(_habbo.Diamonds);
                 queuedServerMessage.AppendResponse(serverMessage);
 
 
-                if (userData.User.HasFuse("fuse_mod"))
+                if (_habbo.HasFuse("fuse_mod"))
                     queuedServerMessage.AppendResponse(Oblivion.GetGame().GetModerationTool().SerializeTool(this));
 
                 queuedServerMessage.AppendResponse(Oblivion.GetGame().GetAchievementManager().AchievementDataCached);

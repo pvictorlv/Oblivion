@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Oblivion.Configuration;
-using Oblivion.HabboHotel.Achievements.Interfaces;
 using Oblivion.HabboHotel.Quests;
 using Oblivion.HabboHotel.Quests.Composer;
 using Oblivion.HabboHotel.Rooms.Data;
@@ -1147,7 +1146,7 @@ namespace Oblivion.Messages.Handlers
 
                     var achievementData = Session.GetHabbo().GetAchievementData(current2.AchievementGroup);
 
-                    Response.AppendInteger((achievementData != null) ? achievementData.Progress : 0);
+                    Response.AppendInteger(achievementData?.Progress ?? 0);
                     Response.AppendInteger(current2.GetAchievement().Levels[current2.AchievementLevel].Requirement);
 
                     if (num != 2 && failLevel == -1)

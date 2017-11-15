@@ -10,7 +10,6 @@ using Oblivion.HabboHotel.Catalogs.Wrappers;
 using Oblivion.HabboHotel.Groups.Interfaces;
 using Oblivion.Messages.Enums;
 using Oblivion.Messages.Parsers;
-using System.Diagnostics;
 
 namespace Oblivion.Messages.Handlers
 {

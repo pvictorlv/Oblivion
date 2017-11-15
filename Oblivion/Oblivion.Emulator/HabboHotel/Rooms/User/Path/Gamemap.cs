@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Drawing;
@@ -70,7 +71,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 throw new ArgumentNullException($"No modeldata found for roomID {room.RoomId}");
 
             Model = new DynamicRoomModel(StaticModel, room);
-            CoordinatedItems = new Dictionary<Point, List<RoomItem>>();
+            CoordinatedItems = new ConcurrentDictionary<Point, List<RoomItem>>();
             GameMap = new byte[Model.MapSizeX, Model.MapSizeY];
             ItemHeightMap = new double[Model.MapSizeX, Model.MapSizeY];
             _userMap = new HybridDictionary();
@@ -100,7 +101,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         ///     Gets the coordinated items.
         /// </summary>
         /// <value>The coordinated items.</value>
-        internal Dictionary<Point, List<RoomItem>> CoordinatedItems { get; private set; }
+        internal ConcurrentDictionary<Point, List<RoomItem>> CoordinatedItems { get; private set; }
 
         /// <summary>
         ///     Gets the game map.
@@ -307,7 +308,11 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// </summary>
         /// <param name="coord">The coord.</param>
         /// <returns>List&lt;RoomUser&gt;.</returns>
-        internal List<RoomUser> GetRoomUsersRange(Vector2D coord, int range) => (from userValue in _room.GetRoomUserManager().UserList.Values let location = new Vector2D(userValue.Coordinate.X, userValue.Coordinate.Y) where location.GetDistanceSquared(coord) <= range select userValue).ToList();
+        internal List<RoomUser> GetRoomUsersRange(Vector2D coord, int range) =>
+        (from userValue in _room.GetRoomUserManager().UserList.Values
+            let location = new Vector2D(userValue.Coordinate.X, userValue.Coordinate.Y)
+            where location.GetDistanceSquared(coord) <= range
+            select userValue).ToList();
 
         /// <summary>
         ///     Gets the random walkable square.
@@ -549,18 +554,19 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 items = new List<RoomItem> {item};
 
                 if (!CoordinatedItems.ContainsKey(coord))
-                    CoordinatedItems.Add(coord, items);   
+                    CoordinatedItems.TryAdd(coord, items);
             }
             else
             {
                 if (items == null) return;
-                if (items.Contains(item)) return;
+                items.Remove(item);
                 items.Add(item);
+
                 if (CoordinatedItems.ContainsKey(coord))
                 {
-                    CoordinatedItems.Remove(coord);
+                    CoordinatedItems.TryRemove(coord, out _);
                 }
-                CoordinatedItems.Add(coord, items);
+                CoordinatedItems.TryAdd(coord, items);
             }
         }
 
@@ -583,9 +589,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             if (item == null)
                 return false;
 
-            if (CoordinatedItems.ContainsKey(coord))
+            if (CoordinatedItems.TryGetValue(coord, out var items))
             {
-                var items = CoordinatedItems[coord];
                 if (items != null)
                 {
                     items.Remove(item);
@@ -642,8 +647,11 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             foreach (var current in item.GetCoords)
             {
                 if (RemoveCoordinatedItem(item, current))
+                {
                     result = true;
-                if (CoordinatedItems.TryGetValue(current, out var value))
+                    continue;
+                }
+               /* if (CoordinatedItems.TryGetValue(current, out var value))
                 {
                     if (!dictionary.Contains(current))
                     {
@@ -654,7 +662,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                             ConstructMapForItem(current3, current);
                         }
                     }
-                }
+                }*/
                 SetDefaultValue(current.X, current.Y);
             }
             if (GuildGates.ContainsKey(item.Coordinate))
@@ -742,7 +750,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             }
             if (item.GetBaseItem().Type != 's')
                 return true;
-            
+
             foreach (var coord in item.GetCoords.Select(current => new Point(current.X, current.Y)))
             {
                 AddCoordinatedItem(item, coord);
@@ -1077,7 +1085,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="y">The y.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool HasMapCollision(int x, int y) => (Model.MapSizeX - 1 >= x && Model.MapSizeY - 1 >= y) &&
-                                                           (x != Model.DoorX || y != Model.DoorY);
+                                                       (x != Model.DoorX || y != Model.DoorY);
 
         /// <summary>
         ///     Sqs the height of the absolute.
@@ -1250,7 +1258,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             _room = null;
             StaticModel = null;
         }
-        
+
 
         /// <summary>
         ///     Gets the new heightmap.

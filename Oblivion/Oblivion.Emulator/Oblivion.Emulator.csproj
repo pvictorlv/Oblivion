@@ -107,7 +107,7 @@
     <OutputPath>..\bin\Release\x64\</OutputPath>
     <DefineConstants>
     </DefineConstants>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <FileAlignment>4096</FileAlignment>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -118,6 +118,7 @@
     <LangVersion>default</LangVersion>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <WarningLevel>3</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -194,6 +195,7 @@
     <Compile Include="HabboHotel\Commands\Controllers\FixRoom.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\Multiply.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\SellRoom.cs" />
+    <Compile Include="HabboHotel\Commands\Controllers\ViewClones.cs" />
     <Compile Include="HabboHotel\Commands\Interfaces\Command.cs" />
     <Compile Include="HabboHotel\Commands\CommandsManager.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\DisableEvent.cs" />

@@ -39,7 +39,6 @@ namespace Oblivion.Messages.Handlers
             var message = new ServerMessage(LibraryParser.OutgoingRequest("SellablePetBreedsMessageComposer"));
             message.AppendString(petType);
             message.AppendInteger(races.Count);
-            /* TODO CHECK */
             foreach (var current in races)
             {
                 message.AppendInteger(petId);
@@ -232,12 +231,13 @@ namespace Oblivion.Messages.Handlers
             queuedServerMessage.AppendResponse(GetResponse());
 
             /* TODO CHECK */
-            foreach (var habboForId in CurrentLoadingRoom.UsersWithRights.Select(Oblivion.GetHabboById))
+            foreach (var habboForId in CurrentLoadingRoom.UsersWithRights)
             {
+                var habbo = Oblivion.GetHabboById(habboForId);
                 GetResponse().Init(LibraryParser.OutgoingRequest("GiveRoomRightsMessageComposer"));
                 GetResponse().AppendInteger(CurrentLoadingRoom.RoomId);
-                GetResponse().AppendInteger(habboForId.Id);
-                GetResponse().AppendString(habboForId.UserName);
+                GetResponse().AppendInteger(habbo.Id);
+                GetResponse().AppendString(habbo.UserName);
                 queuedServerMessage.AppendResponse(GetResponse());
             }
 
@@ -2529,7 +2529,7 @@ namespace Oblivion.Messages.Handlers
             var roomUserByHabbo2 = currentRoom.GetRoomUserManager().GetRoomUserByHabbo(text2);
 
             msg = currentRoom.RoomData.WordFilter.Aggregate(msg,
-                (current1, current) => Regex.Replace(current1, current, "bobba", RegexOptions.IgnoreCase));
+                (current1, current) => Regex.Replace(current1, Regex.Escape(current), "bobba", RegexOptions.IgnoreCase));
 
             if (BlackWordsManager.Check(msg, BlackWordType.Hotel, out var word))
             {
@@ -2554,7 +2554,7 @@ namespace Oblivion.Messages.Handlers
             _floodTime = DateTime.Now;
             _floodCount++;
 
-            if (roomUserByHabbo == null || roomUserByHabbo2 == null)
+            if (roomUserByHabbo?.GetClient()?.GetHabbo() == null || roomUserByHabbo2?.GetClient()?.GetHabbo() == null)
             {
                 Session.SendWhisper(msg);
                 return;

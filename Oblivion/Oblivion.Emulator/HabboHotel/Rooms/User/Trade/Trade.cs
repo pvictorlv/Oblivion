@@ -4,7 +4,6 @@ using Oblivion.Configuration;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
-using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Rooms.User.Trade
 {
@@ -100,9 +99,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         /// <returns>TradeUser.</returns>
         internal TradeUser GetTradeUser(uint id)
         {
-            {
-                return _users.FirstOrDefault(t => t != null && t.UserId == id);
-            }
+            return _users.FirstOrDefault(t => t != null && t.UserId == id);
         }
 
         /// <summary>
@@ -288,53 +285,56 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         /// </summary>
         internal void DeliverItems()
         {
-            var offeredItems = GetTradeUser(_oneId).OfferedItems;
-            var offeredItems2 = GetTradeUser(_twoId).OfferedItems;
+            var userOne = GetTradeUser(_oneId);
+            var userTwo = GetTradeUser(_twoId);
+            if (userOne?.GetClient()?.GetHabbo() == null || userTwo?.GetClient()?.GetHabbo() == null) return;
+            var offeredItems = userOne.OfferedItems;
+            var offeredItems2 = userTwo.OfferedItems;
             if (
                 offeredItems.Any(
                     current =>
-                        GetTradeUser(_oneId).GetClient().GetHabbo().GetInventoryComponent().GetItem(current.Id) == null))
+                        userOne.GetClient().GetHabbo().GetInventoryComponent().GetItem(current.Id) == null))
             {
-                GetTradeUser(_oneId).GetClient().SendNotif("El tradeo ha fallado.");
-                GetTradeUser(_twoId).GetClient().SendNotif("El tradeo ha fallado.");
+                userOne.GetClient().SendNotif("El tradeo ha fallado.");
+                userTwo.GetClient().SendNotif("El tradeo ha fallado.");
                 return;
             }
             if (
                 offeredItems2.Any(
                     current2 =>
-                        GetTradeUser(_twoId).GetClient().GetHabbo().GetInventoryComponent().GetItem(current2.Id) == null))
+                        userTwo.GetClient().GetHabbo().GetInventoryComponent().GetItem(current2.Id) == null))
             {
-                GetTradeUser(_oneId).GetClient().SendNotif("El tradeo ha fallado.");
-                GetTradeUser(_twoId).GetClient().SendNotif("El tradeo ha fallado.");
+                userOne.GetClient().SendNotif("El tradeo ha fallado.");
+                userTwo.GetClient().SendNotif("El tradeo ha fallado.");
                 return;
             }
-            GetTradeUser(_twoId).GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
-            GetTradeUser(_oneId).GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
+            userTwo.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
+            userOne.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
             /* TODO CHECK */ foreach (var current3 in offeredItems)
             {
-                GetTradeUser(_oneId).GetClient().GetHabbo().GetInventoryComponent().RemoveItem(current3.Id, false);
-                GetTradeUser(_twoId)
+                userOne.GetClient().GetHabbo().GetInventoryComponent().RemoveItem(current3.Id, false);
+                userTwo
                     .GetClient()
                     .GetHabbo()
                     .GetInventoryComponent()
                     .AddNewItem(current3.Id, current3.BaseItemId, current3.ExtraData, current3.GroupId, false, false, 0,
                         0,
                         current3.SongCode);
-                GetTradeUser(_oneId).GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
-                GetTradeUser(_twoId).GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
+                userOne.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
+                userTwo.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
             }
-            /* TODO CHECK */ foreach (var current4 in offeredItems2)
+           foreach (var current4 in offeredItems2)
             {
-                GetTradeUser(_twoId).GetClient().GetHabbo().GetInventoryComponent().RemoveItem(current4.Id, false);
-                GetTradeUser(_oneId)
+                userTwo.GetClient().GetHabbo().GetInventoryComponent().RemoveItem(current4.Id, false);
+                userOne
                     .GetClient()
                     .GetHabbo()
                     .GetInventoryComponent()
                     .AddNewItem(current4.Id, current4.BaseItemId, current4.ExtraData, current4.GroupId, false, false, 0,
                         0,
                         current4.SongCode);
-                GetTradeUser(_twoId).GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
-                GetTradeUser(_oneId).GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
+                userTwo.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
+                userOne.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
             }
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("NewInventoryObjectMessageComposer"));
             serverMessage.AppendInteger(1);
@@ -349,7 +349,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             {
                 serverMessage.AppendInteger(current6.Id);
             }
-            GetTradeUser(_twoId).GetClient().SendMessage(serverMessage);
+            userTwo.GetClient().SendMessage(serverMessage);
             var serverMessage2 = new ServerMessage(LibraryParser.OutgoingRequest("NewInventoryObjectMessageComposer"));
             serverMessage2.AppendInteger(1);
             i = 1;
@@ -363,9 +363,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             {
                 serverMessage2.AppendInteger(current8.Id);
             }
-            GetTradeUser(_oneId).GetClient().SendMessage(serverMessage2);
-            GetTradeUser(_oneId).GetClient().GetHabbo().GetInventoryComponent().UpdateItems(false);
-            GetTradeUser(_twoId).GetClient().GetHabbo().GetInventoryComponent().UpdateItems(false);
+            userOne.GetClient().SendMessage(serverMessage2);
+            userOne.GetClient().GetHabbo().GetInventoryComponent().UpdateItems(false);
+            userTwo.GetClient().GetHabbo().GetInventoryComponent().UpdateItems(false);
         }
 
         /// <summary>

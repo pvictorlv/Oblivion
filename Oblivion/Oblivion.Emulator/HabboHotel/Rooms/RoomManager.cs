@@ -544,7 +544,7 @@ namespace Oblivion.HabboHotel.Rooms
                             if (current.BotAi == null)
                                 continue;
 
-                            current.BotAi.Dispose();
+                            current.BotAi?.Dispose();
                         }
                         else if (current.IsBot)
                         {

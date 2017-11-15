@@ -173,15 +173,11 @@ namespace Oblivion.Security.BlackWords
         public static bool Check(string str, BlackWordType type, out BlackWord word)
         {
             word = Empty;
-
-//            if (!Replaces.TryGetValue(type, out var data))
-//                return false;
-
+            
 
             var oldStr = str;
             str = HttpUtility.HtmlDecode(str) ?? oldStr;
             str = str.Replace("&nbsp;", "").ToLower();
-//            str = Filter.Replace(data.Filter, str);
 
             if (str.Contains("s2.vc") || str.Contains("abre.ai"))
                 return true;
@@ -204,8 +200,16 @@ namespace Oblivion.Security.BlackWords
 
 //            str = Filter.Replace(data.Filter, str);
 
-            var wordFirst = Words.FirstOrDefault(wordStruct => wordStruct.Type == type && str.Contains(wordStruct.Word));
-
+            var wordFirst = new BlackWord();
+            foreach (var wordStruct in Words)
+            {
+                if (wordStruct.Type == type && str.Contains(wordStruct.Word))
+                {
+                    wordFirst = wordStruct;
+                    break;
+                }
+            }
+            
             word = wordFirst;
 
             return !string.IsNullOrEmpty(wordFirst.Word);

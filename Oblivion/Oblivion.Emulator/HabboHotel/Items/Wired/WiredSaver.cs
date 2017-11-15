@@ -27,6 +27,7 @@ namespace Oblivion.HabboHotel.Items.Wired
             switch (item.GetBaseItem().InteractionType)
             {
                 case Interaction.TriggerTimer:
+                case Interaction.ActionLeaveTeam:
                 {
                     request.GetInteger();
                     var wired = wiredHandler.GetWired(item);
@@ -265,7 +266,8 @@ namespace Oblivion.HabboHotel.Items.Wired
                     var dataToSave = string.Empty;
                     var extraStringForWi = string.Empty;
 
-                    /* TODO CHECK */ foreach (var aItem in items)
+                    /* TODO CHECK */
+                    foreach (var aItem in items)
                     {
 //                        if (aItem.GetBaseItem().InteractionType == Interaction.Dice)
 //                        {
@@ -512,7 +514,6 @@ namespace Oblivion.HabboHotel.Items.Wired
                 case Interaction.ConditionUserIsNotInTeam:
                 case Interaction.ConditionUserIsInTeam:
                 case Interaction.ActionJoinTeam:
-                case Interaction.ActionLeaveTeam:
                 {
                     request.GetInteger();
                     var team = request.GetInteger();

@@ -364,7 +364,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     session.GetHabbo().GetAvatarEffectsInventoryComponent()?.OnRoomExit();
 
                     var roomUserByHabbo = GetRoomUserByHabbo(userId);
-                    if (roomUserByHabbo == null)
+                    if (roomUserByHabbo?.GetClient() == null)
                         return;
                     if (notifyKick)
                     {
@@ -1158,6 +1158,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             // Ins't a Invalid Step.. Continuing.
             // Region Set Variables
             var pathDataCount = ((roomUsers.Path.Count - roomUsers.PathStep) - 1);
+            if (roomUsers.Path.Count < pathDataCount || pathDataCount < 0) return;
             var nextStep = roomUsers.Path[pathDataCount];
 
             // Increase Step Data...
@@ -1670,7 +1671,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             try
             {
-                if (user?.GetClient() == null || user.GetClient().GetHabbo() == null || _userRoom == null)
+                if (user?.GetClient() == null || user.GetClient().GetHabbo() == null || _userRoom?.RoomData == null)
                     return;
 
                 var client = user.GetClient();

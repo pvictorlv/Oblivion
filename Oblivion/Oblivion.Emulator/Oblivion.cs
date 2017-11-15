@@ -298,7 +298,7 @@ namespace Oblivion
                     Pooling = true,
                     AllowZeroDateTime = true,
                     ConvertZeroDateTime = true,
-                    DefaultCommandTimeout = 60,
+                    DefaultCommandTimeout = 90,
                     Logging = false,
                     ConnectionTimeout = 10
                 };

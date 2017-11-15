@@ -357,9 +357,7 @@ namespace Oblivion.HabboHotel.Rooms
                 var table = queryReactor.GetTable();
                 if (table == null)
                     return;
-                /* TODO CHECK */
-                foreach (var roomBot in from DataRow dataRow in table.Rows select BotManager.GenerateBotFromRow(dataRow)
-                )
+                foreach (var roomBot in from DataRow dataRow in table.Rows select BotManager.GenerateBotFromRow(dataRow))
                     _roomUserManager.DeployBot(roomBot, null);
             }
         }
@@ -387,7 +385,6 @@ namespace Oblivion.HabboHotel.Rooms
         internal void InitBots()
         {
             var botsForRoom = Oblivion.GetGame().GetBotManager().GetBotsForRoom(RoomId);
-            /* TODO CHECK */
             foreach (var current in botsForRoom.Where(current => !current.IsPet))
                 DeployBot(current);
         }
@@ -405,7 +402,6 @@ namespace Oblivion.HabboHotel.Rooms
                 if (table == null)
                     return;
 
-                /* TODO CHECK */
                 foreach (DataRow dataRow in table.Rows)
                 {
                     queryReactor.SetQuery($"SELECT * FROM pets_data WHERE id = '{dataRow["id"]}' LIMIT 1");
@@ -448,12 +444,9 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         internal void OnRoomKick()
         {
-            var list = _roomUserManager.UserList.Values.Where(
-                current => !current.IsBot && current.GetClient().GetHabbo().Rank < 4u).ToList();
-
+            foreach (var t in _roomUserManager.UserList.Values.ToList())
             {
-                /* TODO CHECK */
-                foreach (var t in list)
+                if (!t.IsBot && t.GetClient().GetHabbo().Rank < 4u)
                 {
                     GetRoomUserManager().RemoveUserFromRoom(t.GetClient(), true, false);
                     t.GetClient().CurrentRoomUserId = -1;
@@ -495,7 +488,6 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="shout">if set to <c>true</c> [shout].</param>
         internal void OnUserSay(RoomUser user, string message, bool shout)
         {
-            /* TODO CHECK */
             foreach (var current in _roomUserManager.Bots.Values)
             {
                 try
@@ -509,7 +501,6 @@ namespace Oblivion.HabboHotel.Rooms
                         else
                             current.BotAi.OnUserSay(user, message);
                     }
-                    // @issue #80
                     else if (!current.IsPet && !current.BotAi.GetBotData().AutomaticChat)
                     {
                         current.BotAi.OnChatTick();

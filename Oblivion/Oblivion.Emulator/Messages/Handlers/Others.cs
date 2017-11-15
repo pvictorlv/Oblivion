@@ -109,6 +109,8 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void Pong()
         {
+            if (Session == null) return;
+
             Session.TimePingedReceived = DateTime.Now;
         }
 
@@ -215,7 +217,10 @@ namespace Oblivion.Messages.Handlers
             var sso = Request.GetString();
 
             if (string.IsNullOrEmpty(sso) || string.IsNullOrWhiteSpace(sso) || sso.Length < 5 || !Session.TryLogin(sso))
-                Session.Disconnect("Invalid sso or banned");              
+            {
+                Session.Disconnect("Invalid sso or banned");
+                return;
+            }
 
             if (Session != null)
                 Session.TimePingedReceived = DateTime.Now;

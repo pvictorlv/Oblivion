@@ -31,11 +31,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             set { }
         }
 
-        public int Delay
-        {
-            get { return 0; }
-            set { }
-        }
+        public int Delay { get; set; }
 
         public string OtherString { get; set; }
 
@@ -47,17 +43,28 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool Execute(params object[] stuff)
         {
-            if (stuff[0] == null)
-                return false;
-
             var roomUser = (RoomUser) stuff[0];
-            var t = roomUser.GetClient().GetHabbo().CurrentRoom.GetTeamManagerForFreeze();
-
-            if (roomUser.Team != Team.None)
+            if (roomUser?.GetClient()?.GetHabbo() == null) return false;
+            var room = roomUser.GetRoom();
+            var delay = Delay / 500;
+            
+            while (roomUser.Team != Team.None)
             {
+                delay--;
+                if (delay >= 0) continue;
+
+                var t = room.GetTeamManagerForFreeze();
+                var t2 = room.GetTeamManagerForBanzai();
                 t.OnUserLeave(roomUser);
+                t2.OnUserLeave(roomUser);
                 roomUser.Team = Team.None;
             }
+            /*if (roomUser.Team != Team.None)
+            {
+               
+            }*/
+            roomUser.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateEffect(0);
+
 
             return true;
         }

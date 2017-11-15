@@ -10,7 +10,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinRank = -2;
             Description = "Alerts the Room.";
             Usage = ":roomalert [MESSAGE]";
-            MinParams = 1;
+            MinParams = -1;
         }
 
         public override bool Execute(GameClient session, string[] pms)

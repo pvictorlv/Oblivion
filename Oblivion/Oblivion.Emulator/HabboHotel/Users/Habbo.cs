@@ -772,6 +772,8 @@ namespace Oblivion.HabboHotel.Users
 
             client.SendMessage(serverMessage);
 
+            if (GetSubscriptionManager() == null) return;
+
             var serverMessage2 = new ServerMessage(LibraryParser.OutgoingRequest("UserClubRightsMessageComposer"));
 
             serverMessage2.AppendInteger(GetSubscriptionManager().HasSubscription ? 2 : 0);
@@ -893,7 +895,6 @@ namespace Oblivion.HabboHotel.Users
             if (Oblivion.OfflineMessages.ContainsKey(Id))
             {
                 var list = Oblivion.OfflineMessages[Id];
-                /* TODO CHECK */
                 foreach (var current in list)
                     client.SendMessage(_messenger.SerializeOfflineMessages(current));
                 Oblivion.OfflineMessages.Remove(Id);
@@ -1144,7 +1145,6 @@ namespace Oblivion.HabboHotel.Users
                 dTable = dbClient.GetTable();
             }
 
-            /* TODO CHECK */
             foreach (DataRow dRow in dTable.Rows)
                 _myGroups.Add(Convert.ToUInt32(dRow["id"]));
 
