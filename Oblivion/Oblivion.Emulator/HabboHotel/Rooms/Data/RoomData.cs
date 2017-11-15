@@ -492,5 +492,11 @@ namespace Oblivion.HabboHotel.Rooms.Data
             }
             else session.SendMessage(message);
         }
+
+        public void Dispose()
+        {
+            _model = null;
+            Event = null;
+        }
     }
 }

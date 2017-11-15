@@ -10,6 +10,7 @@ using Oblivion.HabboHotel.Events;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Navigators.Interfaces;
 using Oblivion.HabboHotel.Rooms.Data;
+using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Rooms
 {
@@ -256,7 +257,11 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         /// <param name="roomId">The room identifier.</param>
         /// <returns>Room.</returns>
-        internal Room GetRoom(uint roomId) => LoadedRooms.TryGetValue(roomId, out var result) ? result : null;
+        internal Room GetRoom(uint roomId)
+        {
+            Out.WriteLine("Getting room " + roomId);
+           return LoadedRooms.TryGetValue(roomId, out var result) ? result : null;
+        }
 
         /// <summary>
         ///     Creates the room.
@@ -579,8 +584,6 @@ namespace Oblivion.HabboHotel.Rooms
 
             LoadedRooms.TryRemove(room.RoomId, out var _);
             LoadedBallRooms.Remove(room);
-//            Out.WriteLine(string.Format("Room #{0} was unloaded, reason: " + reason, room.RoomId),
-//                "Oblivion.Room.Manager", ConsoleColor.DarkGray);
 
             room.Destroy();
             room = null;

@@ -70,6 +70,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             _room = null;
 //            _balls.Clear();
 //            lock (_ball)
+            Oblivion.GetGame().GetRoomManager().LoadedBallRooms.Remove(_room);
             _ball = null;
         }
 

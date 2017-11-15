@@ -260,5 +260,17 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                     break;
             }
         }
+
+        public void Dispose()
+        {
+            BlueTeam.Clear();
+            GreenTeam.Clear();
+            RedTeam.Clear();
+            YellowTeam.Clear();
+            BlueTeam = null;
+            GreenTeam = null;
+            RedTeam = null;
+            YellowTeam = null;
+        }
     }
 }

@@ -625,16 +625,18 @@ namespace Oblivion.HabboHotel.Rooms.User
             GetRoom().SendMessage(sleep);
         }
 
+        private bool _disposed;
         /// <summary>
         ///     Disposes this instance.
         /// </summary>
         internal void Dispose()
         {
+            if (_disposed) return;
             Statusses?.Clear();
             Path?.Clear();
 
             BotAi?.Dispose();
-
+            BotData?.Dispose();
             _mRoom = null;
             _mClient = null;
             Statusses = null;
@@ -643,7 +645,9 @@ namespace Oblivion.HabboHotel.Rooms.User
             FollowingOwner = null;
             LastPhotoPreview = null;
             BotAi = null;
+            BotData = null;
             PetData = null;
+            _disposed = true;
         }
 
         /// <summary>

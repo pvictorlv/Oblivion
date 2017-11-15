@@ -484,6 +484,13 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         public void Destroy()
         {
+            foreach (var current in _wiredItems.ToList())
+            {
+                current.Items.Clear();
+                current.Items = null;
+                current.Item = null;
+                current.Room = null;
+            }
             _room = null;
             _wiredItems.Clear();
             _wiredItems = null;

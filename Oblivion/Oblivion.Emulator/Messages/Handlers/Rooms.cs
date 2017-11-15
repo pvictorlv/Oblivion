@@ -130,7 +130,7 @@ namespace Oblivion.Messages.Handlers
                 return;
             if (!Session.GetHabbo().InRoom)
                 return;
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             room?.GetRoomUserManager().RemoveUserFromRoom(Session, true, false);
 
             var hotelView = Oblivion.GetGame().GetHotelView();
@@ -347,7 +347,7 @@ namespace Oblivion.Messages.Handlers
                 Room room;
                 if (Session.GetHabbo().InRoom)
                 {
-                    room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+                    room = Session.GetHabbo().CurrentRoom;
                     if (room?.GetRoomUserManager() != null)
                         room.GetRoomUserManager().RemoveUserFromRoom(Session, false, false);
                 }
@@ -774,7 +774,7 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session?.GetHabbo() == null)
                 return;
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CheckRights(Session, true))
                 return;
             Request.GetInteger();
@@ -929,7 +929,7 @@ namespace Oblivion.Messages.Handlers
             if (Session?.GetHabbo() == null)
                 return;
             var num = Request.GetUInteger();
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             if (room == null)
                 return;
             var roomUserByHabbo = room.GetRoomUserManager().GetRoomUserByHabbo(num);
@@ -971,7 +971,7 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session?.GetHabbo() == null)
                 return;
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CheckRights(Session, true))
                 return;
             var stringBuilder = new StringBuilder();
@@ -1012,7 +1012,7 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session?.GetHabbo() == null)
                 return;
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CheckRights(Session, true))
                 return;
 
@@ -1042,7 +1042,7 @@ namespace Oblivion.Messages.Handlers
 
         internal void KickUser()
         {
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             if (room == null)
                 return;
             if (!room.CheckRights(Session) && room.RoomData.WhoCanKick != 2
@@ -1063,7 +1063,7 @@ namespace Oblivion.Messages.Handlers
 
         internal void BanUser()
         {
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             if (room == null || room.RoomData.WhoCanBan == 0 && !room.CheckRights(Session, true) ||
                 room.RoomData.WhoCanBan == 1 && !room.CheckRights(Session))
                 return;
@@ -1230,7 +1230,7 @@ namespace Oblivion.Messages.Handlers
         internal void LookAt()
         {
             if (Session?.GetHabbo() == null) return;
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
             if (roomUserByHabbo == null)
                 return;
@@ -1256,7 +1256,7 @@ namespace Oblivion.Messages.Handlers
 
         internal void StartTyping()
         {
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
             if (roomUserByHabbo == null)
                 return;
@@ -1268,7 +1268,7 @@ namespace Oblivion.Messages.Handlers
 
         internal void StopTyping()
         {
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
             if (roomUserByHabbo == null)
                 return;
@@ -1316,7 +1316,7 @@ namespace Oblivion.Messages.Handlers
 
         internal void CanCreateRoomEvent()
         {
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CheckRights(Session, true))
                 return;
             var b = true;
@@ -1332,7 +1332,7 @@ namespace Oblivion.Messages.Handlers
 
         internal void Sign()
         {
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
             if (roomUserByHabbo == null)
                 return;
@@ -1350,7 +1350,7 @@ namespace Oblivion.Messages.Handlers
 
         internal void RateRoom()
         {
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             if (room == null || Session.GetHabbo().RatedRooms.Contains(room.RoomId) ||
                 room.CheckRights(Session, true))
                 return;
@@ -1390,7 +1390,7 @@ namespace Oblivion.Messages.Handlers
 
         internal void Dance()
         {
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
             if (roomUserByHabbo == null)
                 return;
@@ -1412,7 +1412,7 @@ namespace Oblivion.Messages.Handlers
 
         internal void AnswerDoorbell()
         {
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CheckRights(Session))
                 return;
             var userName = Request.GetString();
@@ -1449,7 +1449,7 @@ namespace Oblivion.Messages.Handlers
             var num = Request.GetUInteger();
             var flag = Request.GetBool();
             var text = Request.GetString();
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CheckRights(Session, true))
                 return;
             if (!flag)
@@ -1505,7 +1505,7 @@ namespace Oblivion.Messages.Handlers
 
         internal void ApplyRoomEffect()
         {
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CheckRights(Session, true))
                 return;
             var item = Session.GetHabbo().GetInventoryComponent().GetItem(Request.GetUInteger());
@@ -1827,7 +1827,7 @@ namespace Oblivion.Messages.Handlers
 
         internal void KickBot()
         {
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CheckRights(Session, true))
                 return;
             var roomUserByVirtualId = room.GetRoomUserManager().GetRoomUserByVirtualId(Request.GetInteger());
@@ -1839,7 +1839,7 @@ namespace Oblivion.Messages.Handlers
 
         internal void PlacePet()
         {
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
 
             if (room == null || !room.RoomData.AllowPets && !room.CheckRights(Session, true) ||
                 !room.CheckRights(Session, true))
@@ -1885,7 +1885,7 @@ namespace Oblivion.Messages.Handlers
             Request.GetInteger();
             var original = Request.GetString();
             var original2 = Request.GetString();
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CheckRights(Session, true) || room.RoomData.Event == null)
                 return;
             room.RoomData.Event.Name = original;
@@ -1899,7 +1899,7 @@ namespace Oblivion.Messages.Handlers
             var num2 = Request.GetInteger();
             var num3 = num2;
 
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             var bot = room?.GetRoomUserManager().GetBot(botId);
             if (bot == null || !bot.IsBot)
                 return;
@@ -1938,7 +1938,7 @@ namespace Oblivion.Messages.Handlers
 
         internal void ManageBotActions()
         {
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             var botId = Request.GetUInteger();
             var action = Request.GetInteger();
             var data = Oblivion.FilterInjectionChars(Request.GetString());
@@ -2107,7 +2107,7 @@ namespace Oblivion.Messages.Handlers
 
         internal void RoomUserAction()
         {
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
             if (roomUserByHabbo == null)
                 return;
@@ -2615,7 +2615,7 @@ namespace Oblivion.Messages.Handlers
 
         public void Chat()
         {
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
 
             var roomUser = room?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
 
@@ -2635,7 +2635,7 @@ namespace Oblivion.Messages.Handlers
 
         public void Shout()
         {
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
 
             var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
 

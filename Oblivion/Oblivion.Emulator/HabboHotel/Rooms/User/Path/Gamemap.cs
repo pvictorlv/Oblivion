@@ -651,18 +651,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     result = true;
                     continue;
                 }
-               /* if (CoordinatedItems.TryGetValue(current, out var value))
-                {
-                    if (!dictionary.Contains(current))
-                    {
-                        dictionary.Add(current);
-                        foreach (var current3 in value)
-                        {
-                            if (current3 == null) continue;
-                            ConstructMapForItem(current3, current);
-                        }
-                    }
-                }*/
                 SetDefaultValue(current.X, current.Y);
             }
             if (GuildGates.ContainsKey(item.Coordinate))
@@ -1246,17 +1234,22 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             _userMap.Clear();
             Model.Destroy();
             CoordinatedItems.Clear();
+            WalkableList.Clear();
+            GuildGates.Clear();
             Array.Clear(GameMap, 0, GameMap.Length);
             Array.Clear(EffectMap, 0, EffectMap.Length);
             Array.Clear(ItemHeightMap, 0, ItemHeightMap.Length);
             _userMap = null;
             GameMap = null;
             EffectMap = null;
+            GuildGates = null;
             ItemHeightMap = null;
             CoordinatedItems = null;
+            SerializedFloormap = null;
             Model = null;
             _room = null;
             StaticModel = null;
+            WalkableList = null;
         }
 
 
@@ -1333,7 +1326,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         {
             try
             {
-                if (item == null)
+                if (item == null || Model == null || ItemHeightMap == null || Model.SqFloorHeight == null)
                     return false;
 
                 if (coord.X > Model.MapSizeX - 1)
@@ -1355,7 +1348,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 }
 
 
-                if (ItemHeightMap[coord.X, coord.Y] <= item.TotalHeight)
+                if ((ItemHeightMap.GetLength(0) - 1 >= coord.X && ItemHeightMap.GetLength(1) - 1 >= coord.Y) &&
+                    ItemHeightMap[coord.X, coord.Y] <= item.TotalHeight)
                 {
                     ItemHeightMap[coord.X, coord.Y] = item.TotalHeight - Model.SqFloorHeight[item.X][item.Y];
 
@@ -1390,7 +1384,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     }
                     catch (Exception e)
                     {
-                        Writer.Writer.LogException(e.ToString());
+                        Logging.HandleException(e, "ConstructMapForItem()");
                     }
                     if (GameMap.GetLength(0) >= coord.X && GameMap.GetLength(1) >= coord.Y)
                     {

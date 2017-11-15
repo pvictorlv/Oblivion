@@ -6,8 +6,6 @@ using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
-using Oblivion.HabboHotel.Rooms.Data;
-using Oblivion.HabboHotel.Rooms.Items.Games.Teams;
 using Oblivion.HabboHotel.Rooms.Items.Games.Teams.Enums;
 using Oblivion.HabboHotel.Rooms.User;
 

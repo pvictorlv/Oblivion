@@ -165,5 +165,15 @@ namespace Oblivion.HabboHotel.Rooms
                 Writer.Writer.LogCriticalException(e.ToString());
             }
         }
+
+
+        public void Destroy()
+        {
+            Heightmap = "";
+           SqChar = null;
+            SqFloorHeight = null;
+            SqSeatRot = null;
+            SqState = null;
+        }
     }
 }

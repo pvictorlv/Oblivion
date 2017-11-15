@@ -780,6 +780,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// </summary>
         internal void Destroy()
         {
+            _mBaseItem = null;
             _mRoom = null;
             AffectedTiles.Clear();
             HighscoreData = null;

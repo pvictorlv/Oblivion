@@ -191,7 +191,7 @@ namespace Oblivion.HabboHotel.Support
                 return;
             }
 
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(clientByUserId.GetHabbo().CurrentRoomId);
+            var room = clientByUserId.GetHabbo().CurrentRoom;
 
             if (room == null)
                 return;

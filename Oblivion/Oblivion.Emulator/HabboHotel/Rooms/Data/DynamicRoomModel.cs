@@ -14,7 +14,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         /// <summary>
         ///     The _m room
         /// </summary>
-        private readonly Room _mRoom;
+        private Room _mRoom;
 
         /// <summary>
         ///     The _serialized heightmap
@@ -227,10 +227,8 @@ namespace Oblivion.HabboHotel.Rooms.Data
         /// </summary>
         internal void AddY()
         {
-            {
-                MapSizeY++;
-                RefreshArrays();
-            }
+            MapSizeY++;
+            RefreshArrays();
         }
 
         /// <summary>
@@ -253,7 +251,10 @@ namespace Oblivion.HabboHotel.Rooms.Data
             Array.Clear(SqState, 0, SqState.Length);
             Array.Clear(SqFloorHeight, 0, SqFloorHeight.Length);
             Array.Clear(SqSeatRot, 0, SqSeatRot.Length);
+            _staticModel.Destroy();
             _staticModel = null;
+            _mRoom = null;
+            _serializedHeightmap = null;
             Heightmap = null;
             SqState = null;
             SqFloorHeight = null;

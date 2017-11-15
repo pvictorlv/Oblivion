@@ -127,9 +127,14 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     Gets the room user count.
         /// </summary>
         /// <returns>System.Int32.</returns>
-        internal int GetRoomUserCount() => UserList?.Count - Bots?.Count - _pets?.Count >= 5
-            ? (UserList.Count - Bots.Count - _pets.Count) * Oblivion.Multipy
-            : 5;
+        internal int GetRoomUserCount()
+        {
+            if (UserList == null || Bots == null || _pets == null) return 0;
+
+            var sum = UserList.Count - Bots.Count - _pets.Count;
+
+            return sum >= 5 ? (sum) * Oblivion.Multipy : sum;
+        }
 
         /// <summary>
         ///     Deploys the bot.
@@ -317,6 +322,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             roomUser.InternalRoomId = num;
             session.CurrentRoomUserId = num;
             session.GetHabbo().CurrentRoomId = _userRoom.RoomId;
+            session.GetHabbo().CurrentRoom = _userRoom;
             UserList.TryAdd(num, roomUser);
             OnUserAdd(roomUser);
 
@@ -360,7 +366,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 lock (session)
                 {
                     var userId = session.GetHabbo().Id;
-
+                    session.GetHabbo().CurrentRoom = null;
                     session.GetHabbo().GetAvatarEffectsInventoryComponent()?.OnRoomExit();
 
                     var roomUserByHabbo = GetRoomUserByHabbo(userId);
@@ -1842,6 +1848,26 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         internal void Destroy()
         {
+
+            try
+            {
+                foreach (var user in UserList.Values)
+                {
+                    if (user== null) continue;
+                    var userClient = user.GetClient()?.GetHabbo();
+                    if (userClient != null && userClient.CurrentRoomId == _userRoom.RoomId)
+                    {
+                        userClient.CurrentRoomId = 0u;
+                        userClient.CurrentRoom = null;
+                        userClient.GetMessenger().DisposeRoom(_userRoom.RoomId);
+                    }
+                    user.Dispose();
+                }
+            }
+            catch (Exception e)
+            {
+                Logging.HandleException(e, "dipose roomusermanager");
+            }
             _userRoom = null;
             ToSet.Clear();
             ToSet = null;
@@ -1854,6 +1880,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             _pets = null;
             Bots = null;
             UserList = null;
+           
         }
 
 
@@ -1868,7 +1895,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (user?.GetClient() == null) return;
                 var client = user.GetClient();
                 var list = Bots.Values;
-                var list2 = new List<RoomUser>();
 
                 var userOnCurrentItem = _userRoom.GetGameMap().GetCoordinatedItems(new Point(user.X, user.Y));
                 /* TODO CHECK */

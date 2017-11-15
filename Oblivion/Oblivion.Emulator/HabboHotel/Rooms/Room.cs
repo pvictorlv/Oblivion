@@ -31,13 +31,14 @@ using Oblivion.HabboHotel.SoundMachine;
 using Oblivion.HabboHotel.SoundMachine.Songs;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
+using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Rooms
 {
     /// <summary>
     ///     Class Room.
     /// </summary>
-    public class Room
+    public class Room : IDisposable
     {
         /// <summary>
         ///     The _banzai
@@ -344,6 +345,8 @@ namespace Oblivion.HabboHotel.Rooms
         internal void StartRoomProcessing()
         {
             _processTimer = new Timer(ProcessRoom, null, 500, 500);
+            Out.WriteLine("Processtimer");
+
         }
 
         /// <summary>
@@ -357,7 +360,8 @@ namespace Oblivion.HabboHotel.Rooms
                 var table = queryReactor.GetTable();
                 if (table == null)
                     return;
-                foreach (var roomBot in from DataRow dataRow in table.Rows select BotManager.GenerateBotFromRow(dataRow))
+                foreach (var roomBot in from DataRow dataRow in table.Rows
+                    select BotManager.GenerateBotFromRow(dataRow))
                     _roomUserManager.DeployBot(roomBot, null);
             }
         }
@@ -717,8 +721,10 @@ namespace Oblivion.HabboHotel.Rooms
         {
             try
             {
-                if (_isCrashed || Disposed || Oblivion.ShutdownStarted)
+                if (_isCrashed || Disposed || Oblivion.ShutdownStarted || UserCount <= 0)
                     return;
+                Out.WriteLine("Processroom" + UserCount);
+
                 try
                 {
                     var idle = 0;
@@ -802,7 +808,7 @@ namespace Oblivion.HabboHotel.Rooms
                 foreach (var user in from user in _roomUserManager.UserList.Values
                     where user?.GetClient()?.GetConnection() != null && !user.IsBot
                     let userCoord = new Vector2D(user.X, user.Y)
-                    where userCoord.GetDistanceSquared(currentLocation) <= (RoomData.ChatMaxDistance^2)
+                    where userCoord.GetDistanceSquared(currentLocation) <= (RoomData.ChatMaxDistance ^ 2)
                     select user)
                 {
                     user.GetClient().GetConnection().SendData(data);
@@ -837,7 +843,8 @@ namespace Oblivion.HabboHotel.Rooms
                         continue;
 
                     Vector2D userCoord = new Vector2D(user.X, user.Y);
-                    if (senderCoord.GetDistanceSquared(userCoord) <= (RoomData.ChatMaxDistance * RoomData.ChatMaxDistance * 2))
+                    if (senderCoord.GetDistanceSquared(userCoord) <=
+                        (RoomData.ChatMaxDistance * RoomData.ChatMaxDistance * 2))
                     {
                         try
                         {
@@ -956,6 +963,10 @@ namespace Oblivion.HabboHotel.Rooms
             Dispose();
         }
 
+        ~Room()
+        {
+            Out.WriteLine("Hey!");
+        }
         /// <summary>
         ///     Users the is banned.
         /// </summary>
@@ -1369,8 +1380,9 @@ namespace Oblivion.HabboHotel.Rooms
         /// <summary>
         ///     Disposes this instance.
         /// </summary>
-        private void Dispose()
+        public void Dispose()
         {
+            Out.WriteLine("Disposed!!");
             _mCycleEnded = true;
             Oblivion.GetGame().GetRoomManager().QueueActiveRoomRemove(RoomData);
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -1402,31 +1414,52 @@ namespace Oblivion.HabboHotel.Rooms
                 _musicController.Destroy();
                 _musicController = null;
             }
-
+            lock (_roomKick.SyncRoot)
+            {
+                _roomKick.Clear();
+                _roomKick = null;
+            }
+            _game?.Destroy();
+            _game = null;
+            _gameItemHandler?.Destroy();
+            _gameItemHandler = null;
+            _gameMap?.Destroy();
+            _gameMap = null;
             _processTimer?.Dispose();
             _processTimer = null;
             RoomData.Tags.Clear();
             RoomData.BlockedCommands.Clear();
-            _roomUserManager.UserList.Clear();
             UsersWithRights.Clear();
             Bans.Clear();
+            Bans = null;
             LoadedGroups.Clear();
-
             RoomData.RoomChat.Clear();
-
+            MoodlightData = null;
             foreach (var current in _roomItemHandler.GetWallAndFloor)
             {
                 current.Destroy();
             }
 
             ActiveTrades.Clear();
+            ActiveTrades = null;
             _roomItemHandler.Destroy();
             _roomItemHandler = null;
             _roomUserManager.Destroy();
             _roomUserManager = null;
+            RoomData.Dispose();
             RoomData = null;
             TonerData = null;
+            MutedUsers.Clear();
+            MutedUsers = null;
+            TeamFreeze?.Dispose();
+            TeamBanzai?.Dispose();
+            TeamBanzai = null;
+            TeamFreeze = null;
+            UsersWithRights = null;
             Oblivion.GetGame().GetRoomManager().RemoveRoomData(RoomId);
+
+            _roomThread?.Dispose();
+            _roomThread = null;
         }
     }
 }

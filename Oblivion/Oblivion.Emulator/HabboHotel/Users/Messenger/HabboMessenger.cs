@@ -298,6 +298,18 @@ namespace Oblivion.HabboHotel.Users.Messenger
             GetClient().SendMessage(SerializeUpdate(messengerBuddy));
         }
 
+
+        public void DisposeRoom(uint roomId)
+        {
+            foreach (var friend in Friends.Values)
+            {
+                if (friend.CurrentRoom.RoomId == roomId)
+                {
+                    friend.CurrentRoom = null;
+                }
+            }
+        }
+
         /// <summary>
         ///     Requests the exists.
         /// </summary>

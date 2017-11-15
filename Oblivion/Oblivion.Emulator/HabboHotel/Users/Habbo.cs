@@ -558,8 +558,7 @@ namespace Oblivion.HabboHotel.Users
         ///     Gets the current room.
         /// </summary>
         /// <value>The current room.</value>
-        internal Room CurrentRoom
-            => CurrentRoomId <= 0u ? null : Oblivion.GetGame().GetRoomManager().GetRoom(CurrentRoomId);
+        internal Room CurrentRoom;
 
         /// <summary>
         ///     Gets a value indicating whether this instance is helper.
@@ -864,6 +863,7 @@ namespace Oblivion.HabboHotel.Users
                 _messenger.Destroy();
                 _messenger = null;
             }
+            CurrentRoom = null;
             GuideOtherUser = null;
             _subscriptionManager = null;
             _avatarEffectsInventoryComponent?.Dispose();

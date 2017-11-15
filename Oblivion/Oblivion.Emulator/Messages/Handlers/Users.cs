@@ -95,7 +95,7 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void GetUserTags()
         {
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Request.GetUInteger());
             if (roomUserByHabbo?.GetClient()?.GetHabbo()?.Data?.Tags == null || roomUserByHabbo.IsBot)
                 return;
@@ -121,7 +121,7 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session?.GetHabbo() == null) return;
 
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Request.GetUInteger());
             if (roomUserByHabbo != null && !roomUserByHabbo.IsBot && roomUserByHabbo.GetClient() != null &&
                 roomUserByHabbo.GetClient().GetHabbo() != null)
@@ -158,7 +158,7 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void GiveRespect()
         {
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId);
+            var room = Session.GetHabbo().CurrentRoom;
             if (room == null || Session.GetHabbo().DailyRespectPoints <= 0)
                 return;
             var roomUserByHabbo = room.GetRoomUserManager().GetRoomUserByHabbo(Request.GetUInteger());
@@ -411,7 +411,7 @@ namespace Oblivion.Messages.Handlers
 
             serverMessage.EndArray();
             if (Session.GetHabbo().InRoom &&
-                Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().CurrentRoomId) != null)
+                Session.GetHabbo().CurrentRoom != null)
             {
                 Oblivion.GetGame()
                     .GetRoomManager()

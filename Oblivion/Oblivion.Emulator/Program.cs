@@ -41,6 +41,7 @@ namespace Oblivion
             while (Oblivion.IsLive)
             {
                 Console.CursorVisible = true;
+
                 ConsoleCommandHandling.InvokeCommand(Console.ReadLine());
             }
         }

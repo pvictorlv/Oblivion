@@ -42,13 +42,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
             }
         }
 
-        internal bool HasAllRequiredFurnis(Room room)
-        {
-            if (room == null)
-                return false;
-
-            return RequiredFurnis.All(furni => room.GetRoomItemHandler().HasFurniByItemName(furni));
-        }
+        internal bool HasAllRequiredFurnis(Room room) => room != null && RequiredFurnis.All(furni => room.GetRoomItemHandler().HasFurniByItemName(furni));
 
         internal ServerMessage AppendEntrySubmitMessage(ServerMessage message, int status, Room room = null)
         {
