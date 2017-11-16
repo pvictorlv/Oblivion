@@ -17,7 +17,7 @@ namespace Oblivion.HabboHotel.RoomBots
         /// <summary>
         /// Set when bot is disposed
         /// </summary>
-        protected bool _disposed;
+        protected bool Disposed;
 
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Oblivion.HabboHotel.RoomBots
         /// </summary>
         internal void Dispose()
         {
-            _disposed = true;
+            Disposed = true;
             GetBotData()?.Dispose();
             StopTimerTick();
             _room = null;

@@ -29,7 +29,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             /* TODO CHECK */ foreach (var client in Oblivion.GetGame().GetClientManager().Clients.Values)
             {
-                if (client == null || client.GetHabbo() == null) continue;
+                if (client?.GetHabbo() == null) continue;
                 var habbo = client.GetHabbo();
                 habbo.Diamonds += amount;
                 client.GetHabbo().UpdateSeasonalCurrencyBalance();

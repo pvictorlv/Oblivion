@@ -17,7 +17,7 @@ namespace Oblivion.Security.BlackWords.Structs
         /// </summary>
         public BlackWordType Type;
 
-        public BlackWordTypeSettings TypeSettings => BlackWordsManager.GetSettings(Type);
+        public BlackWordTypeSettings? TypeSettings => BlackWordsManager.GetSettings(Type);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BlackWord"/> struct.

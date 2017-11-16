@@ -83,6 +83,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             {
                 /* TODO CHECK */ foreach (var clothe in item2.Clothes)
                     message.AppendString(item2.ItemName);
+               
                 message.SaveArray();
             }
 

@@ -1,6 +1,5 @@
 #region
 
-using System;
 using Oblivion.Database.Manager.Session_Details.Interfaces;
 
 #endregion

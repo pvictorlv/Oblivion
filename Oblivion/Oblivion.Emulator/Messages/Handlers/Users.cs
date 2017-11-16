@@ -846,18 +846,13 @@ namespace Oblivion.Messages.Handlers
                         room.RoomData.Owner = text;
                 }
                 /* TODO CHECK */
-                foreach (var current2 in Session.GetHabbo().GetMessenger().Friends.Values)
-                    if (current2.Client != null)
-                        foreach (var current3 in current2.Client.GetHabbo()
-                            .GetMessenger()
-                            .Friends.Values)
-                        {
-                            if (current3.UserName == userName)
-                            {
-                                current3.UserName = text;
-                                current3.Serialize(Response, Session);
-                            }
-                        }
+                foreach (var current3 in from current2 in Session.GetHabbo().GetMessenger().Friends.Values where current2.Client != null from current3 in current2.Client.GetHabbo()
+                    .GetMessenger()
+                    .Friends.Values where current3.UserName == userName select current3)
+                {
+                    current3.UserName = text;
+                    current3.Serialize(Response, Session);
+                }
             }
         }
 

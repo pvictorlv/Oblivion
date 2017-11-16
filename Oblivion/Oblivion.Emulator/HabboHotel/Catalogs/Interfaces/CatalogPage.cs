@@ -1,10 +1,5 @@
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
-using Oblivion.HabboHotel.Catalogs.Composers;
-using Oblivion.Messages;
-using Oblivion.Util;
-
 namespace Oblivion.HabboHotel.Catalogs.Interfaces
 {
     /// <summary>
@@ -90,15 +85,6 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
         /// <param name="minRank">The minimum rank.</param>
         /// <param name="iconImage">The icon image.</param>
         /// <param name="layout">The layout.</param>
-        /// <param name="layoutHeadline">The layout headline.</param>
-        /// <param name="layoutTeaser">The layout teaser.</param>
-        /// <param name="layoutSpecial">The layout special.</param>
-        /// <param name="text1">The text1.</param>
-        /// <param name="text2">The text2.</param>
-        /// <param name="textDetails">The text details.</param>
-        /// <param name="textTeaser">The text teaser.</param>
-        /// <param name="pageLinkTitle">The page link title.</param>
-        /// <param name="pageLink">The page link.</param>
         /// <param name="orderNum">The order number.</param>
         /// <param name="cataItems">The cata items.</param>
         internal CatalogPage(uint id, int parentId, string codeName, string caption, bool visible, bool enabled,
@@ -140,7 +126,7 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
         ///     Gets the page identifier.
         /// </summary>
         /// <value>The page identifier.</value>
-        internal uint PageId { get; private set; }
+        internal uint PageId { get; }
 
         /// <summary>
         ///     Gets the item.

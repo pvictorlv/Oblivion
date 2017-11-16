@@ -695,7 +695,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                 BlackWordsManager.Check(msg, BlackWordType.Hotel, out var word))
             {
                 var settings = word.TypeSettings;
-                if (settings.ShowMessage)
+                if (settings == null) return;
+                if (settings.Value.ShowMessage)
                 {
                     session.SendWhisper("A mensagem contém a palavra: " + word.Word +
                                         " que não é permitida, você poderá ser banido!");

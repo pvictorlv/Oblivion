@@ -77,15 +77,12 @@ namespace Oblivion.Database.Manager.Database
             catch (MySqlException ex)
             {
                 _isConnected = false;
-                throw new Exception(string.Format("Could not connect the clients to the database: {0}", ex.Message));
+                throw new Exception($"Could not connect the clients to the database: {ex.Message}");
             }
             _isConnected = true;
         }
 
-        public bool IsConnectedToDatabase()
-        {
-            return _isConnected;
-        }
+        public bool IsConnectedToDatabase() => _isConnected;
 
         public bool SetServerDetails(string host, uint port, string username, string password, string databaseName)
         {

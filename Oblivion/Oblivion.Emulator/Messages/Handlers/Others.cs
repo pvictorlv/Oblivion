@@ -138,7 +138,7 @@ namespace Oblivion.Messages.Handlers
             Response.AppendInteger(Request.GetIntegerFromString());
             SendResponse();
         }
-        
+
 
         /// <summary>
         ///     Initializes the crypto.
@@ -212,12 +212,11 @@ namespace Oblivion.Messages.Handlers
 
             if (string.IsNullOrEmpty(sso) || string.IsNullOrWhiteSpace(sso) || sso.Length < 5 || !Session.TryLogin(sso))
             {
-                Session.Disconnect("Invalid sso or banned");
+                Session?.Disconnect("Invalid sso or banned");
                 return;
             }
 
-            if (Session != null)
-                Session.TimePingedReceived = DateTime.Now;
+            Session.TimePingedReceived = DateTime.Now;
         }
 
         /// <summary>
@@ -420,7 +419,8 @@ namespace Oblivion.Messages.Handlers
             if (Session.GetHabbo().Credits < offer.CostCredits * quantity) return;
             if (Session.GetHabbo().ActivityPoints < offer.CostDuckets * quantity) return;
             if (Session.GetHabbo().Diamonds < offer.CostDiamonds * quantity) return;
-            /* TODO CHECK */ foreach (var item in offer.Products
+            /* TODO CHECK */
+            foreach (var item in offer.Products
                 .Select(product => Oblivion.GetGame().GetItemManager().GetItemByName(product))
                 .Where(item => item != null))
                 Oblivion.GetGame().GetCatalog().DeliverItems(Session, item, quantity, string.Empty, 0, 0, string.Empty);

@@ -79,9 +79,8 @@ namespace Oblivion.HabboHotel.Navigators.Interfaces
         /// <param name="parentId">The parent identifier.</param>
         /// <param name="recommand">if set to <c>true</c> [recommand].</param>
         /// <param name="typeOfData">The type of data.</param>
-        /// <param name="tags">The tags.</param>
         internal PublicItem(uint id, int type, string caption, string desc, string image, PublicImageType imageType,
-            uint roomId, int categoryId, int parentId, bool recommand, int typeOfData, string tags)
+            uint roomId, int categoryId, int parentId, bool recommand, int typeOfData)
         {
             Id = id;
             Type = type;
@@ -206,12 +205,12 @@ namespace Oblivion.HabboHotel.Navigators.Interfaces
                     }
                     case PublicItemType.Flat:
                     {
-                        RoomInfo.Serialize(message);
+                        RoomInfo?.Serialize(message);
                         break;
                     }
                     case PublicItemType.PublicFlat:
                     {
-                        RoomInfo.Serialize(message);
+                        RoomInfo?.Serialize(message);
                         break;
                     }
                 }

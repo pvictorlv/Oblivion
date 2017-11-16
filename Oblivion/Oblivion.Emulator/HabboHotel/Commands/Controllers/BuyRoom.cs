@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
-using Oblivion.HabboHotel.Rooms;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
 

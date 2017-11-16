@@ -6,7 +6,6 @@ using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Pets;
 using Oblivion.HabboHotel.Pets.Enums;
-using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.User;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
@@ -476,7 +475,7 @@ namespace Oblivion.HabboHotel.RoomBots
                         roomUser.PetData.DbState = DatabaseUpdateState.NeedsUpdate;
                     var random = new Random();
                     RemovePetStatus();
-                    var value = PetLocale.GetValue(string.Format("speech.pet{0}", roomUser.PetData.Type));
+                    var value = PetLocale.GetValue($"speech.pet{roomUser.PetData.Type}");
                     var text = value[random.Next(0, value.Length - 1)];
                     if (GetRoom() != null && !GetRoom().MutedPets) roomUser.Chat(null, text, false, 0);
                     else roomUser.Statusses.Add(text, TextHandling.GetString(roomUser.Z));
@@ -544,7 +543,7 @@ namespace Oblivion.HabboHotel.RoomBots
             {
                 RemovePetStatus();
                 var roomUser2 = GetRoomUser();
-                if (roomUser2 != null) roomUser2.PetData.PetEnergy(true);
+                roomUser2?.PetData?.PetEnergy(true);
                 _energyTimer = Oblivion.GetRandomNumber(30, 120);
                 return;
             }

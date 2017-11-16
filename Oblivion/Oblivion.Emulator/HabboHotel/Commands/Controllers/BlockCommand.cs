@@ -1,6 +1,5 @@
 ﻿using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
-using Oblivion.Security.BlackWords;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
 {

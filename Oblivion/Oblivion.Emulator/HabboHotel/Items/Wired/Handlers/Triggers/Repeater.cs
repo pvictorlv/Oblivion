@@ -38,7 +38,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
-            var avatars = Room.GetRoomUserManager().GetRoomUsers();
 
             if (conditions.Any())
                 foreach (var current in conditions)

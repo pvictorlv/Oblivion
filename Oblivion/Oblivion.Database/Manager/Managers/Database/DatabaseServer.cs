@@ -57,7 +57,7 @@ namespace Oblivion.Database.Manager.Managers.Database
 
         public override string ToString()
         {
-            return string.Format("{0}@{1}", _user, _host);
+            return $"{_user}@{_host}";
         }
     }
 }

@@ -71,7 +71,7 @@ namespace Oblivion.HabboHotel.RoomBots
             {
                 if (GetBotData() == null) return;
 
-                if (_disposed)
+                if (Disposed)
                 {
                     return;
                 }
@@ -104,7 +104,7 @@ namespace Oblivion.HabboHotel.RoomBots
         {
             if (GetBotData() == null) return;
 
-            if (_disposed)
+            if (Disposed)
             {
                 StopTimerTick();
                 return;
@@ -178,7 +178,7 @@ namespace Oblivion.HabboHotel.RoomBots
         internal override void OnUserSay(RoomUser user, string message)
         {
 
-            if (_disposed)
+            if (Disposed)
             {
                 return;
             }
@@ -396,7 +396,7 @@ namespace Oblivion.HabboHotel.RoomBots
         internal override void OnUserShout(RoomUser user, string message)
         {
 
-            if (_disposed)
+            if (Disposed)
             {
                 return;
             }
@@ -430,7 +430,7 @@ namespace Oblivion.HabboHotel.RoomBots
         {
             if (GetBotData() == null || GetRoomUser() == null || GetBotData().WasPicked ||
                 GetBotData().RandomSpeech == null ||
-                !GetBotData().RandomSpeech.Any() || _disposed)
+                !GetBotData().RandomSpeech.Any() || Disposed)
             {
                 StopTimerTick();
                 return;

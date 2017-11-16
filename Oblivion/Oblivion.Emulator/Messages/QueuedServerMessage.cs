@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Oblivion.Connection.Connection;
-using System;
 
 namespace Oblivion.Messages
 {
@@ -50,18 +49,11 @@ namespace Oblivion.Messages
         /// <param name="message">The message.</param>
         internal void AppendResponse(ServerMessage message)
         {
+            if (message == null) return;
             AppendBytes(message.GetReversedBytes());
         }
 
-        /// <summary>
-        /// Adds the bytes.
-        /// </summary>
-        /// <param name="bytes">The bytes.</param>
-        internal void AddBytes(byte[] bytes)
-        {
-            AppendBytes(bytes);
-        }
-
+        
         /// <summary>
         /// Adds the bytes.
         /// </summary>

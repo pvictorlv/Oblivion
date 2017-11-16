@@ -481,7 +481,8 @@ namespace Oblivion.HabboHotel.Users.Messenger
             if (BlackWordsManager.Check(message, BlackWordType.Hotel, out var word))
             {
                 var settings = word.TypeSettings;
-                if (settings.ShowMessage)
+                if (settings == null) return;
+                if (settings.Value.ShowMessage)
                 {
                     GetClient()
                         .SendModeratorMessage("A mensagem contém a palavra: " + word.Word +
@@ -521,8 +522,9 @@ namespace Oblivion.HabboHotel.Users.Messenger
             {
                 var settings = word.TypeSettings;
                 //GetClient().HandlePublicist(word.Word, message, "WHISPER", settings);
+                if (settings == null) return;
 
-                if (settings.ShowMessage)
+                if (settings.Value.ShowMessage)
                 {
                     GetClient()
                         .SendModeratorMessage("A mensagem contém a palavra: " + word.Word +

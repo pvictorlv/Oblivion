@@ -454,7 +454,7 @@ namespace Oblivion.Messages.Handlers
                     queryReactor.RunFastQuery("SELECT last_insert_id()");
                     var publicItemId = (uint) queryReactor.GetInteger();
                     var publicItem = new PublicItem(publicItemId, 0, string.Empty, string.Empty, string.Empty,
-                        PublicImageType.Internal, room.RoomId, 0, -2, false, 1, string.Empty);
+                        PublicImageType.Internal, room.RoomId, 0, -2, false, 1);
                     Oblivion.GetGame().GetNavigator().AddPublicItem(publicItem);
                 }
                 else // picked

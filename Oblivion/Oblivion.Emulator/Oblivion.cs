@@ -374,7 +374,7 @@ namespace Oblivion
                     "Server.AsyncSocketListener");
 
 
-                new MusSocket(int.Parse(ConfigurationData.Data["mus.tcp.port"]), ConfigurationData.Data["mus.tcp.bindip"]);
+                new MusSocket(int.Parse(ConfigurationData.Data["mus.tcp.port"]));
 
                 LibraryParser.Initialize();
                 Console.WriteLine();
@@ -574,11 +574,7 @@ namespace Oblivion
         /// </summary>
         /// <param name="theNum">The theNum.</param>
         /// <returns><c>true</c> if the specified theNum is number; otherwise, <c>false</c>.</returns>
-        internal static bool IsNum(string theNum)
-        {
-            double num;
-            return double.TryParse(theNum, out num);
-        }
+        internal static bool IsNum(string theNum) => double.TryParse(theNum, out _);
 
         /// <summary>
         ///     Get the Database Configuration Data

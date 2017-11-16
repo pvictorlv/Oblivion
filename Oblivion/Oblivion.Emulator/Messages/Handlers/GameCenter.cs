@@ -162,7 +162,7 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void GameCenterJoinQueue()
         {
-            var id = Request.GetInteger();
+            Request.GetInteger();
             ServerMessage joinQueue = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterJoinGameQueueMessageComposer"));
             joinQueue.AppendInteger(18);
             Session.SendMessage(joinQueue);

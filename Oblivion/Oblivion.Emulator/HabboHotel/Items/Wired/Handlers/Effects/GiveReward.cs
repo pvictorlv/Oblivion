@@ -55,8 +55,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (stuff[1] == null)
                 return false;
 
-            var item = (Interaction) stuff[1];
-            
 
             if (OtherExtraString2 == null)
                 return false;

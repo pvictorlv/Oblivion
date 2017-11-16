@@ -23,8 +23,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override bool Execute(GameClient session, string[] pms)
         {
-            ushort result;
-            ushort.TryParse(pms[0], out result);
+            ushort.TryParse(pms[0], out var result);
 
             if (result > 4)
             {

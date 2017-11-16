@@ -35,8 +35,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("user_is_higher_rank"));
                 return true;
             }
-            int time;
-            if (!int.TryParse(pms[1], out time))
+            if (!int.TryParse(pms[1], out _))
             {
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("enter_numbers"));
                 return true;

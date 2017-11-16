@@ -124,7 +124,7 @@ namespace Oblivion.HabboHotel.Navigators
                             row["image_type"].ToString().ToLower() == "internal"
                                 ? PublicImageType.Internal
                                 : PublicImageType.External, (uint) row["room_id"], 0, (int) row["category_parent_id"],
-                            row["recommended"].ToString() == "1", (int) row["typeofdata"], string.Empty));
+                            row["recommended"].ToString() == "1", (int) row["typeofdata"]));
                 }
             }
 

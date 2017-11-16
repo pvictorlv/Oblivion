@@ -67,8 +67,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         /// <param name="itemId">The item identifier.</param>
         internal void RemovePyramid(uint itemId)
         {
-            RoomItem e;
-            _banzaiPyramids.TryRemove(itemId, out e);
+            _banzaiPyramids.TryRemove(itemId, out _);
         }
 
         /// <summary>

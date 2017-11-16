@@ -30,25 +30,25 @@ namespace Oblivion.Encryption.Encryption.Hurlant.Crypto.Rsa
             Dmq1 = dmq1;
             Coeff = coeff;
 
-            CanEncrypt = (N != 0 && E != 0);
-            CanDecrypt = (CanEncrypt && D != 0);
+            CanEncrypt = N != 0 && E != 0;
+            CanDecrypt = CanEncrypt && D != 0;
         }
 
-        public int E { get; private set; }
+        public int E { get; }
 
-        public BigInteger N { get; private set; }
+        public BigInteger N { get; }
 
-        public BigInteger D { get; private set; }
+        public BigInteger D { get; }
 
-        public BigInteger P { get; private set; }
+        public BigInteger P { get; }
 
-        public BigInteger Q { get; private set; }
+        public BigInteger Q { get; }
 
-        public BigInteger Dmp1 { get; private set; }
+        public BigInteger Dmp1 { get; }
 
-        public BigInteger Dmq1 { get; private set; }
+        public BigInteger Dmq1 { get; }
 
-        public BigInteger Coeff { get; private set; }
+        public BigInteger Coeff { get; }
 
         public static RsaKey ParsePrivateKey(string n, string e,
             string d,
@@ -71,35 +71,17 @@ namespace Oblivion.Encryption.Encryption.Hurlant.Crypto.Rsa
                 BigInteger.Parse(coeff, NumberStyles.HexNumber));
         }
 
-        public int GetBlockSize()
-        {
-            return N.ToByteArray().Length - 1;
-        }
+        public int GetBlockSize() => N.ToByteArray().Length - 1;
 
-        public byte[] Encrypt(byte[] src)
-        {
-            return DoEncrypt(DoPublic, src, Pkcs1PadType.FullByte);
-        }
+        public byte[] Encrypt(byte[] src) => DoEncrypt(DoPublic, src, Pkcs1PadType.FullByte);
 
-        public byte[] Decrypt(byte[] src)
-        {
-            return DoDecrypt(DoPublic, src, Pkcs1PadType.FullByte);
-        }
+        public byte[] Decrypt(byte[] src) => DoDecrypt(DoPublic, src);
 
-        public byte[] Sign(byte[] src)
-        {
-            return DoEncrypt(DoPrivate, src, Pkcs1PadType.FullByte);
-        }
+        public byte[] Sign(byte[] src) => DoEncrypt(DoPrivate, src, Pkcs1PadType.FullByte);
 
-        public byte[] Verify(byte[] src)
-        {
-            return DoDecrypt(DoPrivate, src, Pkcs1PadType.FullByte);
-        }
+        public byte[] Verify(byte[] src) => DoDecrypt(DoPrivate, src);
 
-        protected BigInteger DoPublic(BigInteger m)
-        {
-            return BigInteger.ModPow(m, E, N);
-        }
+        protected BigInteger DoPublic(BigInteger m) => BigInteger.ModPow(m, E, N);
 
         protected BigInteger DoPrivate(BigInteger m)
         {
@@ -136,7 +118,7 @@ namespace Oblivion.Encryption.Encryption.Hurlant.Crypto.Rsa
             }
         }
 
-        private byte[] DoDecrypt(DoCalculateionDelegate method, byte[] src, Pkcs1PadType type)
+        private byte[] DoDecrypt(DoCalculateionDelegate method, byte[] src)
         {
             try
             {
@@ -150,7 +132,7 @@ namespace Oblivion.Encryption.Encryption.Hurlant.Crypto.Rsa
                 var data = m.ToByteArray();
                 Array.Reverse(data);
 
-                var bytes = Pkcs1Unpad(data, bl, type);
+                var bytes = Pkcs1Unpad(data, bl);
 
                 return bytes;
             }
@@ -185,13 +167,13 @@ namespace Oblivion.Encryption.Encryption.Hurlant.Crypto.Rsa
                 bytes[--n] = x;
             }
 
-            bytes[--n] = (byte)type;
+            bytes[--n] = (byte) type;
             bytes[--n] = 0;
 
             return bytes;
         }
 
-        private static byte[] Pkcs1Unpad(byte[] src, int n, Pkcs1PadType type)
+        private static byte[] Pkcs1Unpad(byte[] src, int n)
         {
             var i = 0;
             while (i < src.Length && src[i] == 0)
@@ -199,8 +181,7 @@ namespace Oblivion.Encryption.Encryption.Hurlant.Crypto.Rsa
 
             if (src.Length - i != n - 1 || src[i] > 2)
             {
-                Console.WriteLine("PKCS#1 unpad: i={0}, expected src[i]==[0,1,2], got src[i]={1}", i,
-                    src[i].ToString("X"));
+                Console.WriteLine("PKCS#1 unpad: i={0}, expected src[i]==[0,1,2], got src[i]={1:X}", i, src[i]);
                 return null;
             }
 
@@ -208,7 +189,7 @@ namespace Oblivion.Encryption.Encryption.Hurlant.Crypto.Rsa
 
             while (src[i] != 0)
                 if (++i >= src.Length)
-                    Console.WriteLine("PKCS#1 unpad: i={0}, src[i-1]!=0 (={1})", i, src[i - 1].ToString("X"));
+                    Console.WriteLine("PKCS#1 unpad: i={0}, src[i-1]!=0 (={1:X})", i, src[i - 1]);
 
             var bytes = new byte[src.Length - i - 1];
             for (var p = 0; ++i < src.Length; p++)

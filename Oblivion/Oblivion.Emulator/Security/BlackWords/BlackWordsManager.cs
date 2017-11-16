@@ -161,7 +161,12 @@ namespace Oblivion.Security.BlackWords
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns>BlackWordTypeSettings.</returns>
-        public static BlackWordTypeSettings GetSettings(BlackWordType type) => Replaces[type];
+        public static BlackWordTypeSettings? GetSettings(BlackWordType type)
+        {
+            if (Replaces.TryGetValue(type, out var replace))
+                return replace;
+            return null;
+        }
 
         /// <summary>
         /// Checks the specified string.

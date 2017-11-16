@@ -117,15 +117,11 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
 
             for (var i = 0; i < itemNames.Length; i++)
             {
-                uint amount;
-                Item item;
-
-                if (!Oblivion.GetGame().GetItemManager().GetItem(Convert.ToUInt32(itemNames[i]), out item))
+                if (!Oblivion.GetGame().GetItemManager().GetItem(Convert.ToUInt32(itemNames[i]), out var item))
                 {
-                    Console.WriteLine("heyy");
                     continue;
                 }
-                uint.TryParse(amounts[i], out amount);
+                uint.TryParse(amounts[i], out var amount);
 
                 Items.Add(item, amount);
             }

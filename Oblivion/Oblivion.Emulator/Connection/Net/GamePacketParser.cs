@@ -6,7 +6,6 @@ using Oblivion.Messages;
 using Oblivion.Messages.Factorys;
 using Oblivion.Messages.Parsers;
 using Oblivion.Util;
-using System.Collections.Generic;
 
 namespace Oblivion.Connection.Net
 {
@@ -181,9 +180,9 @@ namespace Oblivion.Connection.Net
                         if (Oblivion.DebugMode)
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.Write($"[INCOMING][AIR][REFUSED]");
+                            Console.Write("[INCOMING][AIR][REFUSED]");
                             Console.ResetColor();
-                            Console.WriteLine($"{oldHeader} => " + clientMessage.ToString());
+                            Console.WriteLine($"{oldHeader} => " + clientMessage);
                         }
                         return;
                     }

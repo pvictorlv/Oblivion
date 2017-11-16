@@ -7,34 +7,30 @@ namespace Oblivion.Connection.Net
 {
     public class MusSocket
     {
-        private static Socket Handler;
-        private static int _Port;
-        private static string _MusHost;
+        private static Socket _handler;
 
-        internal MusSocket(int Port, string musHost)
+        internal MusSocket(int port)
         {
-            _Port = Port;
-            _MusHost = musHost;
-            Handler = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            _handler = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
 
             Out.WriteLine(
                 "Starting up asynchronous sockets server for MUS connections for port " +
-                _Port, "Server.AsyncSocketMusListener");
+                port, "Server.AsyncSocketMusListener");
             try
             {
-                Handler.Bind(new IPEndPoint(IPAddress.Any, Port));
-                Handler.Listen(0);
-                Handler.BeginAccept(ConnRequest, Handler);
+                _handler.Bind(new IPEndPoint(IPAddress.Any, port));
+                _handler.Listen(0);
+                _handler.BeginAccept(ConnRequest, _handler);
             }
             catch
             {
-                Console.WriteLine("Asynchronous socket server for MUS connections running on port " + Port);
+                Console.WriteLine("Asynchronous socket server for MUS connections running on port " + port);
             }
 
             Out.WriteLine(
                 "Asynchronous sockets server for MUS connections running on port " +
-                _Port + Environment.NewLine,
+                port + Environment.NewLine,
                 "Server.AsyncSocketMusListener");
         }
 
@@ -56,7 +52,7 @@ namespace Oblivion.Connection.Net
                 Writer.Writer.LogCriticalException(e.ToString());
             }
 
-            Handler.BeginAccept(ConnRequest, Handler);
+            _handler.BeginAccept(ConnRequest, _handler);
         }
     }
 }

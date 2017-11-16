@@ -30,10 +30,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
 
             int parentIdType = (type == "NORMAL" ? -1 : -2);
 
-            if (allowedPages != null)
-                sortedPages = pages.Where(page => page.ParentId == parentIdType && page.MinRank <= rank && allowedPages.Contains(page.Layout)).OrderBy(x => x.OrderNum);
-            else
-                sortedPages = pages.Where(page => page.ParentId == parentIdType && page.MinRank <= rank).OrderBy(x => x.OrderNum);
+            sortedPages = allowedPages != null ? pages.Where(page => page.ParentId == parentIdType && page.MinRank <= rank && allowedPages.Contains(page.Layout)).OrderBy(x => x.OrderNum) : pages.Where(page => page.ParentId == parentIdType && page.MinRank <= rank).OrderBy(x => x.OrderNum);
 
             var message = new ServerMessage(LibraryParser.OutgoingRequest("CatalogueIndexMessageComposer"));
 

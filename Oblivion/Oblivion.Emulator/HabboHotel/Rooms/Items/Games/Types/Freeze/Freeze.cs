@@ -186,8 +186,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
 
         internal void RemoveFreezeTile(uint itemId)
         {
-            RoomItem junk;
-            _freezeTiles.TryRemove(itemId, out junk);
+            _freezeTiles.TryRemove(itemId, out _);
         }
 
         internal void AddFreezeBlock(RoomItem item)
@@ -197,8 +196,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
 
         internal void RemoveFreezeBlock(uint itemId)
         {
-            RoomItem junk;
-            _freezeBlocks.TryRemove(itemId, out junk);
+            _freezeBlocks.TryRemove(itemId, out _);
         }
 
         internal void Destroy()

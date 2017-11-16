@@ -2536,8 +2536,8 @@ namespace Oblivion.Messages.Handlers
             if (BlackWordsManager.Check(msg, BlackWordType.Hotel, out var word))
             {
                 var settings = word.TypeSettings;
-
-                if (settings.ShowMessage)
+                if (settings == null) return;
+                if (settings.Value.ShowMessage)
                 {
                     Session.SendWhisper("A mensagem enviada tem a palavra: " + word.Word +
                                         " Que não é permitida aqui, você poderá ser banido!");
