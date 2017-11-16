@@ -732,15 +732,10 @@ namespace Oblivion.Messages.Handlers
             var num = Request.GetInteger();
             var num2 = Request.GetInteger();
             var room = Oblivion.GetGame().GetRoomManager().LoadRoom(id);
-
+            if (room == null) return;
             if (num == 0 && num2 == 1)
             {
                 SerializeRoomInformation(room, false);
-                return;
-            }
-            if (num == 1 && num2 == 0)
-            {
-                SerializeRoomInformation(room, true);
                 return;
             }
             SerializeRoomInformation(room, true);
@@ -748,10 +743,13 @@ namespace Oblivion.Messages.Handlers
 
         internal void SerializeRoomInformation(Room room, bool show)
         {
+
+            if (room?.RoomData == null)
+                return;
+
             if (Session?.GetHabbo() == null)
                 return;
-            if (room == null)
-                return;
+
             room.RoomData.SerializeRoomData(GetResponse(), Session, true, null, show);
             SendResponse();
 
@@ -893,6 +891,7 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session?.GetHabbo() == null)
                 return;
+
             Response.Init(LibraryParser.OutgoingRequest("LoadRoomRightsListMessageComposer"));
             Response.AppendInteger(Session.GetHabbo().CurrentRoom.RoomId);
             Response.AppendInteger(Session.GetHabbo().CurrentRoom.UsersWithRights.Count);
@@ -1071,7 +1070,7 @@ namespace Oblivion.Messages.Handlers
             Request.GetUInteger();
             var text = Request.GetString();
             var roomUserByHabbo = room.GetRoomUserManager().GetRoomUserByHabbo(Convert.ToUInt32(num));
-            if (roomUserByHabbo == null || roomUserByHabbo.IsBot)
+            if (roomUserByHabbo?.GetClient()?.GetHabbo() == null || roomUserByHabbo.IsBot)
                 return;
             if (roomUserByHabbo.GetClient().GetHabbo().HasFuse("fuse_mod") ||
                 roomUserByHabbo.GetClient().GetHabbo().HasFuse("fuse_no_kick"))
@@ -1117,8 +1116,10 @@ namespace Oblivion.Messages.Handlers
             if (Session?.GetHabbo() == null || Session.GetHabbo().Data.Rooms == null)
                 return;
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(roomId);
-            if (room == null)
+
+            if (room?.RoomData == null)
                 return;
+
             if (room.RoomData.Owner != Session.GetHabbo().UserName && Session.GetHabbo().Rank <= 6u)
                 return;
             if (Session.GetHabbo().GetInventoryComponent() != null)
@@ -1147,6 +1148,7 @@ namespace Oblivion.Messages.Handlers
                 from p in Session.GetHabbo().Data.Rooms
                 where p.Id == roomId
                 select p).SingleOrDefault();
+
             if (roomData2 != null)
                 Session.GetHabbo().Data.Rooms.Remove(roomData2);
         }

@@ -1,4 +1,3 @@
-using System;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.User;
@@ -19,20 +18,14 @@ namespace Oblivion.HabboHotel.RoomBots
         /// Set when bot is disposed
         /// </summary>
         protected bool _disposed;
-        /// <summary>
-        ///     The _room identifier
-        /// </summary>
-        private uint _roomId;
+
 
         /// <summary>
         ///     The _room user
         /// </summary>
         private RoomUser _roomUser;
 
-        /// <summary>
-        ///     The _room user identifier
-        /// </summary>
-        private int _roomUserId;
+
 
         /// <summary>
         ///     The base identifier
@@ -43,15 +36,11 @@ namespace Oblivion.HabboHotel.RoomBots
         ///     Initializes the specified base identifier.
         /// </summary>
         /// <param name="baseId">The base identifier.</param>
-        /// <param name="roomUserId">The room user identifier.</param>
-        /// <param name="roomId">The room identifier.</param>
         /// <param name="user">The user.</param>
         /// <param name="room">The room.</param>
         internal void Init(uint baseId, int roomUserId, uint roomId, RoomUser user, Room room)
         {
             BaseId = baseId;
-            _roomUserId = roomUserId;
-            _roomId = roomId;
             _roomUser = user;
             _room = room;
         }
@@ -87,14 +76,10 @@ namespace Oblivion.HabboHotel.RoomBots
         internal void Dispose()
         {
             _disposed = true;
-            GetBotData().Dispose();
+            GetBotData()?.Dispose();
             StopTimerTick();
             _room = null;
             _roomUser = null;
-            _roomId = 0;
-            _roomUserId = 0;
-
-            GC.SuppressFinalize(this);
         }
 
         /// <summary>

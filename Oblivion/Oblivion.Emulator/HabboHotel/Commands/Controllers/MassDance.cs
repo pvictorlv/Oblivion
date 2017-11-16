@@ -31,7 +31,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("command_dance_wrong_syntax"));
                 return true;
             }
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(session.GetHabbo().CurrentRoomId);
+            var room = session.GetHabbo().CurrentRoom;
             var roomUsers = room.GetRoomUserManager().GetRoomUsers();
 
             /* TODO CHECK */ foreach (var roomUser in roomUsers)

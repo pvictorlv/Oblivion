@@ -1092,9 +1092,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     return 0.0;
 
                 var point = new Point(x, y);
-                if (CoordinatedItems.ContainsKey(point))
+                if (CoordinatedItems.TryGetValue(point, out var itemsOnSquare))
                 {
-                    var itemsOnSquare = CoordinatedItems[point];
                     return SqAbsoluteHeight(x, y, itemsOnSquare);
                 }
                 return Model.SqFloorHeight[x][y];
@@ -1231,14 +1230,17 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// </summary>
         internal void Destroy()
         {
-            _userMap.Clear();
-            Model.Destroy();
-            CoordinatedItems.Clear();
-            WalkableList.Clear();
-            GuildGates.Clear();
-            Array.Clear(GameMap, 0, GameMap.Length);
-            Array.Clear(EffectMap, 0, EffectMap.Length);
-            Array.Clear(ItemHeightMap, 0, ItemHeightMap.Length);
+            _userMap?.Clear();
+            CoordinatedItems?.Clear();
+            WalkableList?.Clear();
+            GuildGates?.Clear();
+            if (GameMap != null)
+                Array.Clear(GameMap, 0, GameMap.Length);
+            if (EffectMap != null)
+                Array.Clear(EffectMap, 0, EffectMap.Length);
+
+            if (ItemHeightMap != null)
+                Array.Clear(ItemHeightMap, 0, ItemHeightMap.Length);
             _userMap = null;
             GameMap = null;
             EffectMap = null;
@@ -1246,8 +1248,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             ItemHeightMap = null;
             CoordinatedItems = null;
             SerializedFloormap = null;
-            Model = null;
             _room = null;
+            Model = null;
             StaticModel = null;
             WalkableList = null;
         }

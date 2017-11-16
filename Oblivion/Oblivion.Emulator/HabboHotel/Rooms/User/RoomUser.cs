@@ -636,7 +636,6 @@ namespace Oblivion.HabboHotel.Rooms.User
             Path?.Clear();
 
             BotAi?.Dispose();
-            BotData?.Dispose();
             _mRoom = null;
             _mClient = null;
             Statusses = null;

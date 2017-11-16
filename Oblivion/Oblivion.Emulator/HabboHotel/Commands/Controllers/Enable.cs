@@ -21,10 +21,14 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override bool Execute(GameClient session, string[] pms)
         {
+
+            if (session?.GetHabbo() == null) return true;
             var user =
                 session.GetHabbo()
                     .CurrentRoom.GetRoomUserManager()
                     .GetRoomUserByHabbo(session.GetHabbo().UserName);
+
+            if (user == null) return true;
             if (user.RidingHorse) return true;
             if (user.IsLyingDown) return true;
 

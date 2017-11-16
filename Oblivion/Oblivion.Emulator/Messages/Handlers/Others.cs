@@ -138,13 +138,7 @@ namespace Oblivion.Messages.Handlers
             Response.AppendInteger(Request.GetIntegerFromString());
             SendResponse();
         }
-
-        /// <summary>
-        ///     Fuckyous this instance.
-        /// </summary>
-        internal void Fuckyou()
-        {
-        }
+        
 
         /// <summary>
         ///     Initializes the crypto.

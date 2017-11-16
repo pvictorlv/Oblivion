@@ -172,27 +172,23 @@ namespace Oblivion.Messages.Handlers
             Oblivion.GetGame()
                 .GetAchievementManager()
                 .ProgressUserAchievement(roomUserByHabbo.GetClient(), "ACH_RespectEarned", 1, true);
+            Session.GetHabbo().DailyRespectPoints--;
+            roomUserByHabbo.GetClient().GetHabbo().Respect++;
+            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                queryReactor.RunFastQuery("UPDATE users_stats SET respect = respect + 1 WHERE id = " +
+                                          roomUserByHabbo.GetClient().GetHabbo().Id +
+                                          " LIMIT 1;UPDATE users_stats SET daily_respect_points = daily_respect_points - 1 WHERE id= " +
+                                          Session.GetHabbo().Id + " LIMIT 1");
+            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("GiveRespectsMessageComposer"));
+            serverMessage.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Id);
+            serverMessage.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Respect);
+            room.SendMessage(serverMessage);
 
-            {
-                Session.GetHabbo().DailyRespectPoints--;
-                roomUserByHabbo.GetClient().GetHabbo().Respect++;
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                    queryReactor.RunFastQuery("UPDATE users_stats SET respect = respect + 1 WHERE id = " +
-                                              roomUserByHabbo.GetClient().GetHabbo().Id +
-                                              " LIMIT 1;UPDATE users_stats SET daily_respect_points = daily_respect_points - 1 WHERE id= " +
-                                              Session.GetHabbo().Id + " LIMIT 1");
-                var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("GiveRespectsMessageComposer"));
-                serverMessage.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Id);
-                serverMessage.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Respect);
-                room.SendMessage(serverMessage);
-
-                var thumbsUp = new ServerMessage();
-                thumbsUp.Init(LibraryParser.OutgoingRequest("RoomUserActionMessageComposer"));
-                thumbsUp.AppendInteger(
-                    room.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().UserName).VirtualId);
-                thumbsUp.AppendInteger(7);
-                room.SendMessage(thumbsUp);
-            }
+            var thumbsUp = new ServerMessage(LibraryParser.OutgoingRequest("RoomUserActionMessageComposer"));
+            thumbsUp.AppendInteger(
+                room.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().UserName).VirtualId);
+            thumbsUp.AppendInteger(7);
+            room.SendMessage(thumbsUp);
         }
 
         /// <summary>
@@ -795,6 +791,8 @@ namespace Oblivion.Messages.Handlers
             var text = Request.GetString();
             if (text == null) return;
             var userName = Session.GetHabbo().UserName;
+            if (Session?.GetHabbo() == null || Session.GetHabbo().CurrentRoom == null) return;
+
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery("SELECT username FROM users WHERE username=@name LIMIT 1");
@@ -850,15 +848,15 @@ namespace Oblivion.Messages.Handlers
                 /* TODO CHECK */
                 foreach (var current2 in Session.GetHabbo().GetMessenger().Friends.Values)
                     if (current2.Client != null)
-                        /* TODO CHECK */
-                        foreach (
-                            var current3 in
-                            current2.Client.GetHabbo()
-                                .GetMessenger()
-                                .Friends.Values.Where(current3 => current3.UserName == userName))
+                        foreach (var current3 in current2.Client.GetHabbo()
+                            .GetMessenger()
+                            .Friends.Values)
                         {
-                            current3.UserName = text;
-                            current3.Serialize(Response, Session);
+                            if (current3.UserName == userName)
+                            {
+                                current3.UserName = text;
+                                current3.Serialize(Response, Session);
+                            }
                         }
             }
         }

@@ -31,7 +31,6 @@ using Oblivion.HabboHotel.SoundMachine;
 using Oblivion.HabboHotel.SoundMachine.Songs;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
-using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Rooms
 {
@@ -197,8 +196,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Gets the user count.
         /// </summary>
         /// <value>The user count.</value>
-        internal int UserCount =>
-            _roomUserManager?.GetRoomUserCount() != null ? _roomUserManager.GetRoomUserCount() : 0;
+        internal int UserCount => _roomUserManager?.GetRoomUserCount() ?? 0;
 
         /// <summary>
         ///     Gets the tag count.
@@ -345,8 +343,6 @@ namespace Oblivion.HabboHotel.Rooms
         internal void StartRoomProcessing()
         {
             _processTimer = new Timer(ProcessRoom, null, 500, 500);
-            Out.WriteLine("Processtimer");
-
         }
 
         /// <summary>
@@ -723,7 +719,6 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 if (_isCrashed || Disposed || Oblivion.ShutdownStarted || UserCount <= 0)
                     return;
-                Out.WriteLine("Processroom" + UserCount);
 
                 try
                 {
@@ -963,10 +958,6 @@ namespace Oblivion.HabboHotel.Rooms
             Dispose();
         }
 
-        ~Room()
-        {
-            Out.WriteLine("Hey!");
-        }
         /// <summary>
         ///     Users the is banned.
         /// </summary>
@@ -1382,7 +1373,6 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         public void Dispose()
         {
-            Out.WriteLine("Disposed!!");
             _mCycleEnded = true;
             Oblivion.GetGame().GetRoomManager().QueueActiveRoomRemove(RoomData);
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -1423,7 +1413,12 @@ namespace Oblivion.HabboHotel.Rooms
             _game = null;
             _gameItemHandler?.Destroy();
             _gameItemHandler = null;
-            _gameMap?.Destroy();
+            if (_gameMap != null)
+            {
+                _gameMap.Model?.Destroy();
+                _gameMap.StaticModel?.Destroy();
+                _gameMap.Destroy();
+            }
             _gameMap = null;
             _processTimer?.Dispose();
             _processTimer = null;

@@ -148,8 +148,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
 
             lock (_ball)
             {
-                if (user.SetX == _ball.X && user.SetY == _ball.Y && user.GoalX == _ball.X && user.GoalY == _ball.Y &&
-                    user.HandelingBallStatus == 0) // super chute.
+                if (user.SetX == _ball.X && user.SetY == _ball.Y && user.GoalX == _ball.X && user.GoalY == _ball.Y) // super chute.
                 {
                     var userPoint = new Point(user.X, user.Y);
                     _ball.ExtraData = "55";
@@ -157,7 +156,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                     _ball.BallValue = 1;
                     MoveBall(_ball, user.GetClient(), userPoint);
                 }
-                else if (user.X == _ball.X && user.Y == _ball.Y && user.HandelingBallStatus == 0)
+                else if (user.X == _ball.X && user.Y == _ball.Y)
                 {
                     var userPoint = new Point(user.SetX, user.SetY);
                     _ball.ExtraData = "55";
@@ -193,6 +192,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
 
                         ComeDirection.GetNewCoords(comeDirection, ref newX, ref newY);
                         _ball.ExtraData = "11";
+//                        if (!_room.GetGameMap().ItemCanBePlacedHere(newX, newY))
+//                            return;
                         MoveBall(_ball, user.GetClient(), newX, newY);
                     }
                 }
@@ -221,7 +222,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             }
             else
             {
-                if (!_room.GetGameMap().HasMapCollision(newX, newY))
+                if (!_room.GetGameMap().ValidTile(newX, newY))
                     return false;
             }
             var oldRoomCoord = item.Coordinate;

@@ -464,7 +464,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         internal void SerializeRoomData(ServerMessage message, GameClient session, bool isNotReload,
             bool? sendRoom = false, bool show = true)
         {
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(session.GetHabbo().CurrentRoomId);
+            var room = session.GetHabbo().CurrentRoom;
 
             message.Init(LibraryParser.OutgoingRequest("RoomDataMessageComposer"));
             message.AppendBool(show); //flatId

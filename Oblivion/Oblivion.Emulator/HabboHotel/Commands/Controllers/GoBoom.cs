@@ -21,7 +21,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override bool Execute(GameClient session, string[] pms)
         {
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(session.GetHabbo().CurrentRoomId);
+            var room = session.GetHabbo().CurrentRoom;
             room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
             foreach (var user in room.GetRoomUserManager().GetRoomUsers()) user.ApplyEffect(108);
             return true;

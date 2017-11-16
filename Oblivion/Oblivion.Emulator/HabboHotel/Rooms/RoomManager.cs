@@ -10,7 +10,6 @@ using Oblivion.HabboHotel.Events;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Navigators.Interfaces;
 using Oblivion.HabboHotel.Rooms.Data;
-using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Rooms
 {
@@ -163,10 +162,10 @@ namespace Oblivion.HabboHotel.Rooms
         /// <returns>RoomData.</returns>
         internal RoomData GenerateRoomData(uint roomId)
         {
-            if (LoadedRoomData.ContainsKey(roomId))
+            if (LoadedRoomData.TryGetValue(roomId, out var room))
             {
-                LoadedRoomData[roomId].LastUsed = DateTime.Now;
-                return LoadedRoomData[roomId];
+                room.LastUsed = DateTime.Now;
+                return room;
             }
 
             if (IsRoomLoaded(roomId))
@@ -241,12 +240,13 @@ namespace Oblivion.HabboHotel.Rooms
         /// <returns>RoomData.</returns>
         internal RoomData FetchRoomData(uint roomId, DataRow dRow, uint user = 0u)
         {
-            if (LoadedRoomData.ContainsKey(roomId))
+            if (LoadedRoomData.TryGetValue(roomId, out var roomData))
             {
-                LoadedRoomData[roomId].LastUsed = DateTime.Now;
-                return LoadedRoomData[roomId];
+                roomData.LastUsed = DateTime.Now;
+                return roomData;
             }
-            var roomData = new RoomData();
+             roomData = new RoomData();
+
             roomData.Fill(dRow, user);
             LoadedRoomData.TryAdd(roomId, roomData);
             return roomData;
@@ -257,11 +257,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         /// <param name="roomId">The room identifier.</param>
         /// <returns>Room.</returns>
-        internal Room GetRoom(uint roomId)
-        {
-            Out.WriteLine("Getting room " + roomId);
-           return LoadedRooms.TryGetValue(roomId, out var result) ? result : null;
-        }
+        internal Room GetRoom(uint roomId) => LoadedRooms.TryGetValue(roomId, out var result) ? result : null;
 
         /// <summary>
         ///     Creates the room.
@@ -620,14 +616,10 @@ namespace Oblivion.HabboHotel.Rooms
                     if (roomData == null) continue;
                     if (roomData.UsersNow > 0)
                     {
-                        if (!_activeRooms.ContainsKey(roomData))
-                        {
-                            _activeRooms.Add(roomData, roomData.UsersNow);
-                        }
-                        else
-                        {
+                        if (_activeRooms.ContainsKey(roomData))
                             _activeRooms[roomData] = roomData.UsersNow;
-                        }
+                        else
+                            _activeRooms.Add(roomData, roomData.UsersNow);
                     }
                     else
                     {

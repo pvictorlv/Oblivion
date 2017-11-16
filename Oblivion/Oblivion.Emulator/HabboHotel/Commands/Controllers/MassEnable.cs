@@ -22,10 +22,9 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override bool Execute(GameClient session, string[] pms)
         {
-            ushort effectId;
-            if (!ushort.TryParse(pms[0], out effectId)) return true;
+            if (!ushort.TryParse(pms[0], out var effectId)) return true;
 
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(session.GetHabbo().CurrentRoomId);
+            var room = session.GetHabbo().CurrentRoom;
             room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
             /* TODO CHECK */ foreach (var user in room.GetRoomUserManager().GetRoomUsers().Where(user => !user.RidingHorse))
                 user.ApplyEffect(effectId);
