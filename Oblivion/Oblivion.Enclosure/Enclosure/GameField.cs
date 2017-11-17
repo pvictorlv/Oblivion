@@ -13,8 +13,8 @@ namespace Oblivion.Enclosure
 {
     public class GameField : IPathNode
     {
-        private readonly AStarSolver<GameField> _astarSolver;
-        private readonly Queue<GametileUpdate> _newEntries = new Queue<GametileUpdate>();
+        private AStarSolver<GameField> _astarSolver;
+        private Queue<GametileUpdate> _newEntries = new Queue<GametileUpdate>();
         private readonly bool _diagonal;
         private byte[,] _currentField;
         private GametileUpdate _currentlyChecking;
@@ -87,6 +87,10 @@ namespace Oblivion.Enclosure
 
         public void Destroy()
         {
+            _newEntries?.Clear();
+            _currentlyChecking = null;
+            _newEntries = null;
+            _astarSolver = null;
             _currentField = null;
         }
 

@@ -662,6 +662,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             bool onRoller, bool sendMessage, bool updateRoomUserStatuses, bool specialMove, double? customHeight = null)
         {
             var flag = false;
+            if (_room?.GetGameMap() == null) return false;
+
             if (!newItem) flag = _room.GetGameMap().RemoveFromMap(item);
 
             var affectedTiles = Gamemap.GetAffectedTiles(item.GetBaseItem().Length,

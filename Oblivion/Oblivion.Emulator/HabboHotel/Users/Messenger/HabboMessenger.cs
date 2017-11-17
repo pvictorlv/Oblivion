@@ -73,8 +73,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="senderId">The sender identifier.</param>
         /// <returns>MessengerRequest.</returns>
-        internal MessengerRequest GetRequest(uint senderId) =>
-            Requests.ContainsKey(senderId) ? Requests[senderId] : null;
+        internal MessengerRequest GetRequest(uint senderId) => Requests.TryGetValue(senderId, out var sender) ? sender : null;
 
         /// <summary>
         ///     Destroys this instance.

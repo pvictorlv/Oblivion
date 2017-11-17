@@ -10,6 +10,7 @@ using Oblivion.HabboHotel.Events;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Navigators.Interfaces;
 using Oblivion.HabboHotel.Rooms.Data;
+using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Rooms
 {
@@ -294,11 +295,7 @@ namespace Oblivion.HabboHotel.Rooms
             return data;
         }
 
-
-        /// <summary>
-        ///     Loads the models.
-        /// </summary>
-        /// <param name="dbClient">The database client.</param>
+        
         internal RoomModel LoadModel(string model, uint roomid)
         {
             try
@@ -580,7 +577,6 @@ namespace Oblivion.HabboHotel.Rooms
 
             LoadedRooms.TryRemove(room.RoomId, out var _);
             LoadedBallRooms.Remove(room);
-
             room.Destroy();
             room = null;
         }

@@ -791,7 +791,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         {
                             if (!user.Statusses.ContainsKey("lay"))
                                 user.Statusses.Add("lay", TextHandling.GetString(item.GetBaseItem().Height));
-                            else if (user.Statusses["lay"] != TextHandling.GetString(item.GetBaseItem().Height))
+                            else
                                 user.Statusses["lay"] = TextHandling.GetString(item.GetBaseItem().Height);
 
                             user.Z = item.Z;

@@ -717,13 +717,16 @@ namespace Oblivion.HabboHotel.Rooms
         {
             try
             {
-                if (_isCrashed || Disposed || Oblivion.ShutdownStarted || UserCount <= 0)
+                if (_isCrashed || Disposed || Oblivion.ShutdownStarted)
                     return;
 
                 try
                 {
                     var idle = 0;
-                    GetRoomItemHandler().OnCycle();
+                    if (UserCount > 0)
+                    {
+                        GetRoomItemHandler().OnCycle();
+                    }
                     GetRoomUserManager().OnCycle(ref idle);
 
                     if (idle > 0)
@@ -743,6 +746,7 @@ namespace Oblivion.HabboHotel.Rooms
                             SendMessage(serverMessage);
                     }
 
+                    if (UserCount <= 0) return;
                     _gameItemHandler?.OnCycle();
 
                     _game?.OnCycle();
@@ -1404,11 +1408,9 @@ namespace Oblivion.HabboHotel.Rooms
                 _musicController.Destroy();
                 _musicController = null;
             }
-            lock (_roomKick.SyncRoot)
-            {
-                _roomKick.Clear();
-                _roomKick = null;
-            }
+            _roomKick.Clear();
+            _roomKick = null;
+
             _game?.Destroy();
             _game = null;
             _gameItemHandler?.Destroy();
