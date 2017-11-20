@@ -40,7 +40,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 builder.Append("Online: " + Oblivion.EnumToBool(row["online"].ToString() == "1" ? "Yes" : "No") + "\r\r");
                 builder.AppendLine("------------------");
             }
-            session.SendNotif(builder.ToString());
+            session.SendNotifWithScroll(builder.ToString());
             return true;
         }
     }

@@ -215,7 +215,7 @@ namespace Oblivion.Messages.Handlers
                 Session?.Disconnect("Invalid sso or banned");
                 return;
             }
-
+            if (Session == null) return;
             Session.TimePingedReceived = DateTime.Now;
         }
 

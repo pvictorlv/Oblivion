@@ -149,6 +149,7 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("moonwalk", new MoonWalk());
             CommandsDictionary.Add("habnam", new HabNam());
             CommandsDictionary.Add("enable", new Enable());
+            CommandsDictionary.Add("pet", new Pet());
             CommandsDictionary.Add("kill", new Kill());
             CommandsDictionary.Add("matar", new Kill());
             CommandsDictionary.Add("disco", new Disco());

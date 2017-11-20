@@ -16,7 +16,7 @@ namespace Oblivion.Connection.Connection
         /// <summary>
         /// The _socket
         /// </summary>
-        public Socket _socket;
+        public Socket Socket;
 
         /// <summary>
         /// The _remote end point
@@ -69,7 +69,7 @@ namespace Oblivion.Connection.Connection
         /// <param name="channelId">The channel identifier.</param>
         public ConnectionInformation(Socket socket, IDataParser parser, uint channelId)
         {
-            _socket = socket;
+            Socket = socket;
             socket.SendBufferSize = GameSocketManagerStatics.BufferSize;
             Parser = parser;
             _buffer = new byte[GameSocketManagerStatics.BufferSize];
@@ -104,7 +104,7 @@ namespace Oblivion.Connection.Connection
         {
             try
             {
-                _socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, OnReadCompleted, _socket);
+                Socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, OnReadCompleted, Socket);
             }
             catch (Exception e)
             {
@@ -120,12 +120,12 @@ namespace Oblivion.Connection.Connection
         {
             try
             {
-                if (_socket != null && _socket.Connected)
+                if (Socket != null && Socket.Connected)
                 {
                     try
                     {
-                        _socket.Shutdown(SocketShutdown.Both);
-                        _socket.Close();
+                        Socket.Shutdown(SocketShutdown.Both);
+                        Socket.Close();
                     }
                     catch (Exception)
                     {
@@ -155,9 +155,9 @@ namespace Oblivion.Connection.Connection
         {
             try
             {
-                if (_socket != null && _socket.Connected && _connected)
+                if (Socket != null && Socket.Connected && _connected)
                 {
-                    int bytesReceived = _socket.EndReceive(async);
+                    int bytesReceived = Socket.EndReceive(async);
 
                     if (bytesReceived != 0)
                     {
@@ -179,8 +179,8 @@ namespace Oblivion.Connection.Connection
             {
                 try
                 {
-                    if (_socket != null && _socket.Connected && _connected)
-                        _socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, OnReadCompleted, _socket);
+                    if (Socket != null && Socket.Connected && _connected)
+                        Socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, OnReadCompleted, Socket);
                     else
                         Disconnect();
                 }
@@ -199,8 +199,8 @@ namespace Oblivion.Connection.Connection
         {
             try
             {
-                if (_socket != null && _socket.Connected && _connected)
-                    _socket.EndSend(async);
+                if (Socket != null && Socket.Connected && _connected)
+                    Socket.EndSend(async);
                 else
                     Disconnect();
             }
@@ -215,7 +215,7 @@ namespace Oblivion.Connection.Connection
         /// </summary>
         public void Cleanup()
         {
-            _socket = null;
+            Socket = null;
             _connected = false;
         }
 
@@ -224,7 +224,7 @@ namespace Oblivion.Connection.Connection
         /// </summary>
         public void StartPacketProcessing()
         {
-            if (_connected && _socket.Connected)
+            if (_connected && Socket.Connected)
                 ReadAsync();
             else
                 Dispose();
@@ -276,7 +276,7 @@ namespace Oblivion.Connection.Connection
         /// <param name="packet">The packet.</param>
         public void SendData(byte[] packet)
         {
-            if (_socket == null || !_socket.Connected) return;
+            if (Socket == null || !Socket.Connected) return;
             byte[] newHeader = null;
             if (IsAir)
             {
@@ -297,7 +297,7 @@ namespace Oblivion.Connection.Connection
 
             try
             {
-                _socket.BeginSend(newHeader ?? packet, 0, packet.Length, 0, OnSendCompleted, _socket);
+                Socket.BeginSend(newHeader ?? packet, 0, packet.Length, 0, OnSendCompleted, null);
             }
             catch (Exception e)
             {

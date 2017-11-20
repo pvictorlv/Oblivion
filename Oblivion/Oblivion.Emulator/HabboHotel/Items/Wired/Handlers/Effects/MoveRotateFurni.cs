@@ -33,8 +33,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OnCycle()
         {
-            if (Room?.GetRoomItemHandler() == null || Room.GetRoomItemHandler().FloorItems.Values == null || !_requested ||
-                _next < 1)
+            if (Room?.GetRoomItemHandler() == null || !_requested || _next < 1)
                 return false;
 
             var now = Oblivion.GetUnixTimeStamp();
@@ -130,9 +129,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (Room?.GetRoomItemHandler() == null)
                 return;
 
-            /* TODO CHECK */ foreach (var item in Items)
+            foreach (var item in Items)
             {
-                if (item == null || Room.GetRoomItemHandler().GetItem(item.Id) == null)
+
+                if (item == null || Room.GetRoomItemHandler().GetItem(item.Id) == null || Room.GetWiredHandler().OtherBoxHasItem(this, Item))
                 {
                     _toRemove.Enqueue(item);
                     continue;
@@ -140,9 +140,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 HandleMovement(item);
             }
 
-            RoomItem rI;
-
-            while (_toRemove.TryDequeue(out rI))
+            while (_toRemove.TryDequeue(out var rI))
                 if (Items.Contains(rI))
                     Items.Remove(rI);
         }

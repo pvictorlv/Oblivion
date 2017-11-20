@@ -90,6 +90,10 @@ namespace Oblivion.HabboHotel.Items.Wired
             return fItem;
         }
 
+
+
+        public bool OtherBoxHasItem(IWiredItem Box, RoomItem boxItem) => Box != null && (from item in GetEffects(Box) where item.Item.Id != Box.Item.Id where item.Type == Interaction.ActionMoveRotate || item.Type == Interaction.ActionMoveToDir || item.Type == Interaction.ActionChase where item.Items != null && item.Items.Count != 0 select item).Any(item => item.Items.Contains(boxItem));
+
         public static void SaveWired(IWiredItem fItem)
         {
             if (fItem == null)

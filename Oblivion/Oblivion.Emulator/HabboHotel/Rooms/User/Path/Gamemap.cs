@@ -553,20 +553,14 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             {
                 items = new List<RoomItem> {item};
 
-                if (!CoordinatedItems.ContainsKey(coord))
-                    CoordinatedItems.TryAdd(coord, items);
+                CoordinatedItems.TryAdd(coord, items);
             }
             else
             {
                 if (items == null) return;
                 items.Remove(item);
                 items.Add(item);
-
-                if (CoordinatedItems.ContainsKey(coord))
-                {
-                    CoordinatedItems.TryRemove(coord, out _);
-                }
-                CoordinatedItems.TryAdd(coord, items);
+                CoordinatedItems[coord] = items;
             }
         }
 
@@ -681,7 +675,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             }
             foreach (Point point2 in hybridDictionary.Keys)
             {
-                var list = (List<RoomItem>)hybridDictionary[point2];
+                var list = (List<RoomItem>) hybridDictionary[point2];
                 foreach (var current3 in list)
                     ConstructMapForItem(current3, point2);
             }
@@ -1360,7 +1354,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         {
             try
             {
-                if (item?.GetBaseItem() == null || Model == null || ItemHeightMap == null || Model.SqFloorHeight == null)
+                if (item?.GetBaseItem() == null || Model == null || ItemHeightMap == null ||
+                    Model.SqFloorHeight == null)
                     return false;
 
                 if (coord.X > Model.MapSizeX - 1)

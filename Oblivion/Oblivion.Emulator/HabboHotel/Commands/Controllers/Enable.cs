@@ -21,7 +21,6 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override bool Execute(GameClient session, string[] pms)
         {
-
             if (session?.GetHabbo() == null) return true;
             var user =
                 session.GetHabbo()
@@ -33,10 +32,10 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             if (user.IsLyingDown) return true;
 
             if (!ushort.TryParse(pms[0], out var effect)) return true;
-            if (effect == 102 && !session.GetHabbo().HasFuse("fuse_mod")) return true;
+            if (effect == 23 || effect == 24 || effect == 25 || effect == 26) return true;
+            if (effect == 178 || effect == 102 && !session.GetHabbo().HasFuse("fuse_mod")) return true;
             if (effect == 140 && !(session.GetHabbo().Vip || session.GetHabbo().HasFuse("fuse_vip_commands")))
                 return true;
-            if (effect == 178 && !session.GetHabbo().HasFuse("fuse_mod")) return true; // TODO: Need ambassadors
 
             session.GetHabbo()
                 .GetAvatarEffectsInventoryComponent()
