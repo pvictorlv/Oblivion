@@ -133,10 +133,6 @@ namespace Oblivion.HabboHotel.Rooms
         /// <returns>RoomModel.</returns>
         internal RoomModel GetModel(string model, uint roomId)
         {
-            if (LoadedRooms.TryGetValue(roomId, out var room))
-            {
-                return room.RoomData.Model;
-            }
             return LoadModel(model, roomId);
         }
 
@@ -696,6 +692,7 @@ namespace Oblivion.HabboHotel.Rooms
                 while (_votedRoomsRemoveQueue.Count > 0)
                 {
                     var key = (RoomData) _votedRoomsRemoveQueue.Dequeue();
+                    if (key == null) continue;
                     _votedRooms.Remove(key);
                 }
             }

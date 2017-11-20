@@ -962,6 +962,9 @@ namespace Oblivion.HabboHotel.Items.Interactions
                 case "crackable_egg":
                     return Interaction.CrackableEgg;
 
+                case "totem":
+                    return Interaction.Totem;
+
                 case "actioncallstacks":
                 case "wf_act_call_stacks":
                     return Interaction.ActionCallStacks;

@@ -21,15 +21,14 @@ namespace Oblivion.HabboHotel.Users
             Rankings.Clear();
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery("SELECT * FROM users_rankings ORDER BY score DESC");
+                queryReactor.SetQuery("SELECT id,username,look,vip_points FROM users WHERE rank < 3 ORDER BY vip_points DESC LIMIT 10");
                 var table = queryReactor.GetTable();
 
                 if (table == null)
                     return;
 
-                /* TODO CHECK */ foreach (DataRow row in table.Rows)
-                    Rankings.Add(new HallOfFameElement((uint) row["user_id"], (int) row["score"],
-                        (string) row["competition"]));
+                foreach (DataRow row in table.Rows)
+                    Rankings.Add(new HallOfFameElement((uint) row["id"], (int) row["vip_points"], row["username"].ToString(), row["look"].ToString()));
             }
         }
     }
@@ -39,15 +38,17 @@ namespace Oblivion.HabboHotel.Users
     /// </summary>
     internal class HallOfFameElement
     {
-        internal string Competition;
         internal int Score;
         internal uint UserId;
+        internal string Username;
+        internal string Look;
 
-        internal HallOfFameElement(uint userId, int score, string competition)
+        internal HallOfFameElement(uint userId, int score, string username, string look)
         {
             UserId = userId;
             Score = score;
-            Competition = competition;
+            Username = username;
+            Look = look;
         }
     }
 }

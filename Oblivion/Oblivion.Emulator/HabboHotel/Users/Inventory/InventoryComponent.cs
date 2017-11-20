@@ -573,10 +573,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <param name="placedInroom">if set to <c>true</c> [placed inroom].</param>
         internal void RemoveItem(uint id, bool placedInroom)
         {
-            if (GetClient() == null || GetClient().GetHabbo() == null ||
-                GetClient().GetHabbo().GetInventoryComponent() == null)
+            if (GetClient()?.GetHabbo()?.GetInventoryComponent() == null)
             {
-                GetClient().Disconnect("user null RemoveItem");
                 return;
             }
             _isUpdated = false;
@@ -609,6 +607,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <returns>ServerMessage.</returns>
         internal ServerMessage SerializeFloorItemInventory()
         {
+            if (_floorItems == null || _wallItems == null) return null;
             var items = _floorItems.Values.Concat(_wallItems.Values).ToList();
             var i = items.Count + SongDisks.Count;
 

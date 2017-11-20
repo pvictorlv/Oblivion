@@ -486,7 +486,8 @@ namespace Oblivion.HabboHotel.Items.Wired
         {
             foreach (var current in _wiredItems.ToList())
             {
-                current.Items.Clear();
+                if (current == null) continue;
+                current.Items?.Clear();
                 current.Items = null;
                 current.Item = null;
                 current.Room = null;
@@ -495,7 +496,7 @@ namespace Oblivion.HabboHotel.Items.Wired
             _wiredItems.Clear();
             _wiredItems = null;
         }
-
+    
         private static bool IsTrigger(Interaction type) => InteractionTypes.AreFamiliar(GlobalInteractions.WiredTrigger,
             type);
 

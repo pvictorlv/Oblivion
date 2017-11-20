@@ -1360,7 +1360,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         {
             try
             {
-                if (item == null || Model == null || ItemHeightMap == null || Model.SqFloorHeight == null)
+                if (item?.GetBaseItem() == null || Model == null || ItemHeightMap == null || Model.SqFloorHeight == null)
                     return false;
 
                 if (coord.X > Model.MapSizeX - 1)

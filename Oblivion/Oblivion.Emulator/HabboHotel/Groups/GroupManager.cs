@@ -410,7 +410,6 @@ namespace Oblivion.HabboHotel.Groups
 
             return response;
         }
-
         /// <summary>
         ///     Gets the theGroup users by string.
         /// </summary>

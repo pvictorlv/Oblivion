@@ -1243,19 +1243,16 @@ namespace Oblivion.Messages.Handlers
             string code = Request.GetString();
             GetResponse().Init(LibraryParser.OutgoingRequest("HotelViewHallOfFameMessageComposer"));
             GetResponse().AppendString(code);
-            var rankings = Oblivion.GetGame().GetHallOfFame().Rankings
-                .Where(e => e.Competition == code);
+            var rankings = Oblivion.GetGame().GetHallOfFame().Rankings;
             GetResponse().StartArray();
             int rank = 1;
             /* TODO CHECK */
             foreach (HallOfFameElement element in rankings)
             {
-                Habbo user = Oblivion.GetHabboById(element.UserId);
-                if (user == null) continue;
 
-                GetResponse().AppendInteger(user.Id);
-                GetResponse().AppendString(user.UserName);
-                GetResponse().AppendString(user.Look);
+                GetResponse().AppendInteger(element.UserId);
+                GetResponse().AppendString(element.Username);
+                GetResponse().AppendString(element.Look);
                 GetResponse().AppendInteger(rank);
                 GetResponse().AppendInteger(element.Score);
                 rank++;

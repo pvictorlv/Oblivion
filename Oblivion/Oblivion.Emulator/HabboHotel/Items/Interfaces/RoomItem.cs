@@ -737,6 +737,9 @@ namespace Oblivion.HabboHotel.Items.Interfaces
 
                     case Interaction.FloorSwitch:
                         return new InteractorWalkSwitch();
+                    case Interaction.Totem:
+                        return new InteractorTotem();
+                        
                     default:
                         return new InteractorGenericSwitch();
                 }

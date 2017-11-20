@@ -96,7 +96,7 @@ namespace Oblivion.HabboHotel.Achievements
             var daysBtwLastLogin = Oblivion.GetUnixTimeStamp() - session.GetHabbo().PreviousOnline;
 
             if (daysBtwLastLogin >= 51840 && daysBtwLastLogin <= 112320)
-                ProgressUserAchievement(session, "ACH_Login", 1, true);
+                ProgressUserAchievement(session, "ACH_Login", 1);
         }
 
         /// <summary>
@@ -206,8 +206,13 @@ namespace Oblivion.HabboHotel.Achievements
             {
                 UserData = new UserAchievement(AchievementGroup, 0, 0);
                 Session.GetHabbo().Data.Achievements.Add(AchievementGroup, UserData);
+                FromZero = true;
             }
-
+            else
+            {
+                FromZero = false;
+            }
+            
             var TotalLevels = AchievementData.Levels.Count;
 
             if (UserData.Level >= TotalLevels)

@@ -32,8 +32,8 @@ namespace Oblivion.HabboHotel.Users.Authenticator
             var activityPoints = (int)dRow["activity_points"];
             var muted = Oblivion.EnumToBool(dRow["is_muted"].ToString());
             var homeRoom = Convert.ToUInt32(dRow["home_room"]);
-
-            int respect = 0, dailyRespectPoints = 3, dailyPetRespectPoints = 3, achievementPoints = 0, dailyCompetitionVotes = 3;
+           
+            int lastTotem = 0, respect = 0, dailyRespectPoints = 3, dailyPetRespectPoints = 3, achievementPoints = 0, dailyCompetitionVotes = 3;
             uint currentQuestId = 0, favId = 0;
             try
             {
@@ -44,6 +44,8 @@ namespace Oblivion.HabboHotel.Users.Authenticator
                 achievementPoints = (int)mRow["achievement_score"];
                 favId = uint.Parse(mRow["favourite_group"].ToString());
                 dailyCompetitionVotes = (int)mRow["daily_competition_votes"];
+                lastTotem = Convert.ToInt32(dRow["last_totem"]);
+
             }
             catch (Exception)
             {
@@ -79,7 +81,7 @@ namespace Oblivion.HabboHotel.Users.Authenticator
                     hasFriendRequestsDisabled, currentQuestId, achievementPoints,
                     lastOnline, appearOffline, hideInRoom, vip, createDate, citizenship, diamonds, @group, favId,
                     lastChange, tradeLocked, tradeLockExpire, buildersExpire, buildersItemsMax,
-                    buildersItemsUsed, onDuty, navilogs, dailyCompetitionVotes, dutyLevel, disableAlert);
+                    buildersItemsUsed, onDuty, navilogs, dailyCompetitionVotes, dutyLevel, disableAlert, lastTotem);
             /* TODO CHECK */ foreach (
                 var naviLogs in
                 navilogstring.Split(';')
@@ -95,7 +97,7 @@ namespace Oblivion.HabboHotel.Users.Authenticator
                 hasFriendRequestsDisabled, currentQuestId, achievementPoints,
                 lastOnline, appearOffline, hideInRoom, vip, createDate, citizenship, diamonds, group, favId,
                 lastChange, tradeLocked, tradeLockExpire, buildersExpire, buildersItemsMax,
-                buildersItemsUsed, onDuty, navilogs, dailyCompetitionVotes, dutyLevel, disableAlert);
+                buildersItemsUsed, onDuty, navilogs, dailyCompetitionVotes, dutyLevel, disableAlert, lastTotem);
         }
     }
 }

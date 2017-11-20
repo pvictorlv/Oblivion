@@ -1033,6 +1033,7 @@
         ActionHandItem,
         ActionFxRoom,
         ActionDance,
-        WalkInternalLink
+        WalkInternalLink,
+        Totem
     }
 }

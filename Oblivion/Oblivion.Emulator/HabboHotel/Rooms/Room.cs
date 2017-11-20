@@ -603,14 +603,7 @@ namespace Oblivion.HabboHotel.Rooms
             foreach (DataRow dataRow in table.Rows)
                 Bans.Add((uint) dataRow[0], Convert.ToDouble(dataRow[1]));
         }
-
-        /// <summary>
-        ///     Checks the rights.
-        /// </summary>
-        /// <param name="session">The session.</param>
-        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool CheckRights(GameClient session) => CheckRights(session, false);
-
+        
         /// <summary>
         ///     Checks the rights.
         /// </summary>

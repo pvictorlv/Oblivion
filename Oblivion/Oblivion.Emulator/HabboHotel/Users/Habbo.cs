@@ -39,6 +39,12 @@ namespace Oblivion.HabboHotel.Users
         /// </summary>
         private BadgeComponent _badgeComponent;
 
+
+        /// <summary>
+        /// Get when the last totem effect was earned
+        /// </summary>
+        internal int LastTotem;
+
         /// <summary>
         ///     The _habboinfo saved
         /// </summary>
@@ -434,7 +440,7 @@ namespace Oblivion.HabboHotel.Users
             bool hideInRoom, bool vip, double createDate, string citizenShip, int diamonds,
             HashSet<GroupMember> groups, uint favId, int lastChange, bool tradeLocked, int tradeLockExpire,
             int buildersExpire, int buildersItemsMax, int buildersItemsUsed, bool onDuty,
-            Dictionary<int, NaviLogs> naviLogs, int dailyCompetitionVotes, uint dutyLevel, bool disableAlert)
+            Dictionary<int, NaviLogs> naviLogs, int dailyCompetitionVotes, uint dutyLevel, bool disableAlert, int lastTotem)
         {
             Id = id;
             UserName = userName;
@@ -444,7 +450,7 @@ namespace Oblivion.HabboHotel.Users
             BuildersExpire = buildersExpire;
             BuildersItemsMax = buildersItemsMax;
             BuildersItemsUsed = buildersItemsUsed;
-
+            LastTotem = lastTotem;
             if (rank < 1u)
                 rank = 1u;
 
@@ -780,6 +786,16 @@ namespace Oblivion.HabboHotel.Users
             serverMessage2.AppendBool(Rank >= Convert.ToUInt32(Oblivion.GetDbConfig().DbData["ambassador.minrank"]));
 
             client.SendMessage(serverMessage2);
+        }
+
+        public void SaveLastTotem()
+        {
+            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                var now = Oblivion.GetUnixTimeStamp();
+                LastTotem = now;
+                dbClient.RunFastQuery($"UPDATE users_stats SET last_totem = '{now}' WHERE id = {Id}");
+            }
         }
 
         /// <summary>

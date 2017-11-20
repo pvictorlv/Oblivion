@@ -182,6 +182,11 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <returns>Habbo.</returns>
         internal Habbo GetHabbo() => _habbo;
 
+
+
+        
+
+
         /// <summary>
         ///     Starts the connection.
         /// </summary>

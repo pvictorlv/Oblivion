@@ -10,9 +10,10 @@
         /// </summary>
         internal void GetInventory()
         {
+            var msg = Session.GetHabbo().GetInventoryComponent().SerializeFloorItemInventory();
+            if (msg == null) return;
             var queuedServerMessage = new QueuedServerMessage(Session.GetConnection());
-          
-            queuedServerMessage.AppendResponse(Session.GetHabbo().GetInventoryComponent().SerializeFloorItemInventory());
+            queuedServerMessage.AppendResponse(msg);
             queuedServerMessage.SendResponse();
         }
     }

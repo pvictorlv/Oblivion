@@ -1678,11 +1678,12 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             try
             {
-                if (user?.GetClient()?.GetHabbo() == null ||  _userRoom?.RoomData == null)
+                var client = user?.GetClient();
+
+                if (client?.GetHabbo() == null ||  _userRoom?.RoomData == null)
                     return;
 
                     
-                var client = user.GetClient();
 
 
                 if (client.IsAir)
@@ -1798,8 +1799,10 @@ namespace Oblivion.HabboHotel.Rooms.User
                     client.GetHabbo().GetMessenger().OnStatusChanged(true);
                 client.GetMessageHandler()?.OnRoomUserAdd();
 
-                if (client.GetHabbo().HasFuse("fuse_mod")) client.GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(102);
-                if (client.GetHabbo().Rank == Convert.ToUInt32(Oblivion.GetDbConfig().DbData["ambassador.minrank"])) client.GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(178);
+                if (client.GetHabbo().HasFuse("fuse_mod"))
+                    client.GetHabbo().GetAvatarEffectsInventoryComponent()?.ActivateCustomEffect(102);
+                if (client.GetHabbo().Rank == Convert.ToUInt32(Oblivion.GetDbConfig().DbData["ambassador.minrank"]))
+                    client.GetHabbo().GetAvatarEffectsInventoryComponent()?.ActivateCustomEffect(178);
                 
                 if (_userRoom.GotMusicController())
                     _userRoom.GetRoomMusicController().OnNewUserEnter(user);

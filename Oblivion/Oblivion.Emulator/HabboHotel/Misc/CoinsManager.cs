@@ -44,9 +44,11 @@ namespace Oblivion.HabboHotel.Misc
                     client.GetHabbo().ActivityPoints += ExtraSettings.PixelsToGive;
                     if (ExtraSettings.DiamondsLoopEnabled)
                         if (ExtraSettings.DiamondsVipOnly)
+                        {
                             if (client.GetHabbo().Vip || client.GetHabbo().Rank >= 6)
-                                client.GetHabbo().Diamonds += ExtraSettings.DiamondsToGive;
-                            else client.GetHabbo().Diamonds += ExtraSettings.DiamondsToGive;
+                                client.GetHabbo().Diamonds += (client.GetHabbo().Vip) ? ExtraSettings.DiamondsToGive * 2 : ExtraSettings.DiamondsToGive;
+                        }
+                        else client.GetHabbo().Diamonds += (client.GetHabbo().Vip) ? ExtraSettings.DiamondsToGive * 2 : ExtraSettings.DiamondsToGive;
                     client.GetHabbo().UpdateSeasonalCurrencyBalance();
                 }
             }

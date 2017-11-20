@@ -227,8 +227,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             }
             var oldRoomCoord = item.Coordinate;
             var itemIsOnGameItem = GameItemOverlaps(item);
-            double newZ = _room.GetGameMap().Model.SqFloorHeight[newX][newY];
-
+//            double  = _room.GetGameMap().Model.SqFloorHeight[newX][newY];
+            var newZ = _room.GetGameMap().SqAbsoluteHeight(newX, newY);
+            var oldZ = _room.GetGameMap().SqAbsoluteHeight(item.X, item.Y);
             var mMessage = new ServerMessage();
             mMessage.Init(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer")); // Cf
             mMessage.AppendInteger(item.Id);
@@ -250,9 +251,10 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             if (oldRoomCoord.X == newX && oldRoomCoord.Y == newY)
                 return false;
 
-            item.SetState(newX, newY, item.Z,
+//            _room.GetGameMap().SquareIsOpen();
+            item.SetState(newX, newY, newZ,
                 Gamemap.GetAffectedTiles(item.GetBaseItem().Length, item.GetBaseItem().Width, newX, newY, item.Rot));
-
+//            _room.GetGameMap().Model.SqFloorHeight[item.X][item.Y] = item.Z;
             if (itemIsOnGameItem || mover?.GetHabbo() == null)
                 return false;
             HandleFootballGameItems(new Point(newX, newY),

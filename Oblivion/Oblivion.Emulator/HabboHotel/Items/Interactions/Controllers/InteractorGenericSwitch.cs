@@ -1,4 +1,4 @@
-using System.Linq;
+using System.Drawing;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interactions.Models;
@@ -44,11 +44,11 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             var room = item.GetRoom();
 
-            /* TODO CHECK */ foreach (
-                var current in
-                room.GetRoomUserManager().UserList.Values.Where(current =>
-                    current.Statusses.ContainsKey("sit") && current.X == item.X && current.Y == item.Y))
-                room.GetRoomUserManager().UpdateUserStatus(current, true);
+            /* TODO CHECK */
+            foreach (var current in room.GetGameMap().GetRoomUsers(new Point(item.X, item.Y)))
+            {
+                if (current.Statusses.ContainsKey("sit") && current.X == item.X && current.Y == item.Y) room.GetRoomUserManager().UpdateUserStatus(current, true);
+            }
         }
 
         public override void OnWiredTrigger(RoomItem item)
@@ -81,11 +81,11 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             var room = item.GetRoom();
 
-            /* TODO CHECK */ foreach (
-                var current in
-                room.GetRoomUserManager().UserList.Values.Where(current =>
-                    current.Statusses.ContainsKey("sit") && (current.X == item.X && current.Y == item.Y)))
-                room.GetRoomUserManager().UpdateUserStatus(current, true);
+            /* TODO CHECK */
+            foreach (var current in room.GetGameMap().GetRoomUsers(new Point(item.X, item.Y)))
+            {
+                if (current.Statusses.ContainsKey("sit") && (current.X == item.X && current.Y == item.Y)) room.GetRoomUserManager().UpdateUserStatus(current, true);
+            }
         }
     }
 }

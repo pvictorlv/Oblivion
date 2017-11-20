@@ -42,6 +42,7 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("commands", new CommandList());
             CommandsDictionary.Add("disable_diagonal", new DisableDiagonal());
             CommandsDictionary.Add("disableevent", new DisableEvent());
+            CommandsDictionary.Add("eventsoff", new DisableEvent());
             CommandsDictionary.Add("viewclones", new ViewClones());
             CommandsDictionary.Add("fixroom", new FixRoom());
             CommandsDictionary.Add("follow", new FollowUser());

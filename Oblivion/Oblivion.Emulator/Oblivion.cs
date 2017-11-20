@@ -678,7 +678,8 @@ namespace Oblivion
 
                 GetConnectionManager().Destroy();
 
-                /* TODO CHECK */ foreach (Guild group in _game.GetGroupManager().Groups.Values) group.UpdateForum();
+                /* TODO CHECK */
+                foreach (Guild group in _game.GetGroupManager().Groups.Values) group.UpdateForum();
 
                 using (var queryReactor = Manager.GetQueryReactor())
                 {
