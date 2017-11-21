@@ -252,9 +252,9 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             message.AppendBool(BaseItem.AllowRecycle);
             message.AppendBool(BaseItem.AllowTrade);
             message.AppendBool(LimitedSellId <= 0 && BaseItem.AllowInventoryStack);
-            message.AppendBool(false); // sellable todo: marketplace
+            message.AppendBool(true); // sellable
             message.AppendInteger(-1); // expireTime
-            message.AppendBool(true); // hasRentPeriodStarted
+            message.AppendBool(false); // hasRentPeriodStarted
             message.AppendInteger(-1); // flatId
 
             if (BaseItem.Type != 's') return;

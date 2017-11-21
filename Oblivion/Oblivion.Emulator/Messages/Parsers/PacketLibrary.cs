@@ -1799,7 +1799,7 @@ namespace Oblivion.Messages.Parsers
         {
             handler.LoadProfile();
         }
-        
+
 
         /// <summary>
         /// Gets the balance.
@@ -2528,6 +2528,34 @@ namespace Oblivion.Messages.Parsers
         internal static void CatalogueOffersConfig(GameClientMessageHandler handler)
         {
             handler.CatalogueOfferConfig();
+        }
+
+        internal static void PurchaseOffer(GameClientMessageHandler handler)
+        {
+            handler.PurchaseOffer();
+        }
+        internal static void CancelOffer(GameClientMessageHandler handler)
+        {
+            handler.CancelOffer();
+        }
+
+        internal static void GetItemStats(GameClientMessageHandler handler)
+        {
+            handler.GetItemStats();
+        }
+
+        internal static void GetMyOffers(GameClientMessageHandler handler)
+        {
+            handler.GetMyOffers();
+        }
+
+        internal static void MakeOffer(GameClientMessageHandler handler)
+        {
+            handler.MakeOffer();
+        }
+        internal static void ReedemCredits(GameClientMessageHandler handler)
+        {
+            handler.ReedemCredits();
         }
 
         /// <summary>

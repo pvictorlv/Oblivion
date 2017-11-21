@@ -1,5 +1,6 @@
 using System;
 using Oblivion.HabboHotel.GameClients.Interfaces;
+using Oblivion.HabboHotel.Items.Handlers;
 using Oblivion.HabboHotel.Items.Interactions.Models;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Rooms.User;
@@ -28,10 +29,28 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 cracks++;
                 item.ExtraData = Convert.ToString(cracks);
                 item.UpdateState(false, true);
-                return;
-            }
 
-            roomUser.MoveTo(item.SquareInFront);
+            }
+            else
+            {
+
+                roomUser.MoveTo(item.SquareInFront);
+
+            }
+            var room = item.GetRoom();
+
+            var crackableHandler = Oblivion.GetGame().GetCrackableEggHandler();
+            var maxCracks = crackableHandler.MaxCracks(item.GetBaseItem().Name);
+            var itemData = Convert.ToInt16(item.ExtraData);
+
+            if (itemData >= maxCracks)
+            {
+                var prize = crackableHandler.GetRandomPrize(maxCracks);
+                if (prize == 0) return;
+                room.GetRoomItemHandler().DeleteRoomItem(item);
+                session.GetHabbo().GetInventoryComponent().AddNewItem(0, prize, "", 0, true, false, 0, 0);
+                session.GetHabbo().GetInventoryComponent().UpdateItems(true);
+            }
         }
     }
 }

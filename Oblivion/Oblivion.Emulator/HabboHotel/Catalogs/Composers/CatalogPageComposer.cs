@@ -285,6 +285,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
         /// <param name="message">The message.</param>
         internal static void ComposeItem(GameClient session, CatalogItem item, ServerMessage message)
         {
+            if (item?.GetFirstBaseItem() == null) return;
             message.AppendInteger(item.Id);
             message.AppendString(item.Name, true);
             message.AppendBool(false);

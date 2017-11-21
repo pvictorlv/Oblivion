@@ -48,7 +48,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             if (!int.TryParse(pms[0], out var petId))
             {
-                client.SendWhisper("Digite um número de 0 a 47");
+                client.SendWhisper("Digite um número de 0 a 47, caso queira voltar ao normal digite :pet habbo");
                 return false;
             }
             if (petId == 13 || petId > 47 || petId < 0) return false;
@@ -63,7 +63,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             serverMessage.AppendInteger(1);
             serverMessage.AppendInteger(habbo.Id);
             serverMessage.AppendString(habbo.UserName);
-            serverMessage.AppendString(habbo.Motto);
+            serverMessage.AppendString("");
             serverMessage.AppendString($"{petId} 0 {color} 2 2 -1 0 3 -1 0");
             serverMessage.AppendInteger(roomUser.VirtualId);
             serverMessage.AppendInteger(roomUser.X);
@@ -81,7 +81,6 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             serverMessage.AppendInteger(0);
             serverMessage.AppendString("");
             room.SendMessage(serverMessage);
-
             return true;
         }
     }

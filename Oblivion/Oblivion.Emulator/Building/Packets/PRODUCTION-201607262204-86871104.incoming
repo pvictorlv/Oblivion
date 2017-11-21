@@ -1,9 +1,9 @@
 [INIT]
-ReleaseVersion=4000
-InitCryptoMessageEvent=1499,1509,2395
-GenerateSecretKeyMessageEvent=460
-UniqueIDMessageEvent=2220
-SSOTicketMessageEvent=127// changed structure
+ReleaseVersion=4000/4000
+InitCryptoMessageEvent=340/1415
+GenerateSecretKeyMessageEvent=460/1767
+UniqueIDMessageEvent=2220/2278
+SSOTicketMessageEvent=127/1497
 
 [Landing]
 LandingLoadWidgetMessageEvent=3388
@@ -17,10 +17,10 @@ HotelViewRequestBadgeMessageEvent=3962
 GetHotelViewHallOfFameMessageEvent=1969
 
 [HabboBasicInfo]
-InfoRetrieveMessageEvent=2139
+InfoRetrieveMessageEvent=2139/1681
 GetCurrencyBalanceMessageEvent=1543
 GetSubscriptionDataMessageEvent=2100
-OnlineConfirmationMessageEvent=3853
+OnlineConfirmationMessageEvent=3853/3037
 RequestLatencyTestMessageEvent=1717
 UserGetVolumeSettingsMessageEvent=3065
 SaveClientSettingsMessageEvent=2268
@@ -29,15 +29,16 @@ LoadUserProfileMessageEvent=3412
 RelationshipsGetMessageEvent=1044
 SetRelationshipMessageEvent=415
 GetUserBadgesMessageEvent=1594
-GetUserTagsMessageEvent=-1//error 404
+GetUserTagsMessageEvent=1069
 OnDisconnectMessageEvent=1193
 GoToHotelViewMessageEvent=1794
-UserUpdateLookMessageEvent=1476
+UserUpdateLookMessageEvent=1476/2416
 UserUpdateMottoMessageEvent=761
-CheckUsernameMessageEvent=1060
+CheckUsernameMessageEvent=3704
 ChangeUsernameMessageEvent=1060
 WardrobeMessageEvent=277
 WardrobeUpdateMessageEvent=1377
+InitConsole=3058
 
 [Navigator]
 NavigatorGetEventsMessageEvent=1937
@@ -50,7 +51,7 @@ NavigatorGetPopularRoomsMessageEvent=81
 NavigatorGetPopularTagsMessageEvent=2664
 NavigatorGetRecentRoomsMessageEvent=114
 NavigatorSearchRoomByNameMessageEvent=2975
-NavigatorGetRecommendedRoomsMessageEvent=-1//error 404
+NavigatorGetRecommendedRoomsMessageEvent=3030
 NavigatorGetFlatCategoriesMessageEvent=2919
 NavigatorGetPopularGroupsMessageEvent=2477
 NavigatorGetRoomsWithFriendsMessageEvent=3172
@@ -61,28 +62,30 @@ NewNavigatorDeleteSavedSearchEvent=2084
 NewNavigatorResizeEvent=2907
 NewNavigatorCollapseCategoryEvent=229
 NewNavigatorUncollapseCategoryEvent=586
-CanCreateRoomMessageEvent=3488
-CreateRoomMessageEvent=1674
+CanCreateRoomMessageEvent=3488/2195
+CreateRoomMessageEvent=1674/3961
 AddFavouriteRoomMessageEvent=474
 RemoveFavouriteRoomMessageEvent=409
 SetHomeRoomMessageEvent=3753
 GoToRoomByNameMessageEvent=113
 ToggleStaffPickMessageEvent=3426
+NewNavigatorUserFlatCats=187/3281
 
 [Catalog]
-GetCatalogIndexMessageEvent=454
-GetCatalogPageMessageEvent=2961
+GetCatalogIndexMessageEvent=3048/445
+GetCatalogModeMessageEvent=454
+GetCatalogPageMessageEvent=878/3688
 GetCatalogClubPageMessageEvent=2277
 GetCatalogOfferMessageEvent=3114
-CatalogueOfferConfigMessageEvent=2570
-PurchaseFromCatalogMessageEvent=1986
+CatalogueOfferConfigMessageEvent=955
+PurchaseFromCatalogMessageEvent=1986/1850
 PurchaseFromCatalogAsGiftMessageEvent=2626
 GetSellablePetBreedsMessageEvent=1531
 ReloadRecyclerMessageEvent=1403
-GetGiftWrappingConfigurationMessageEvent=3473
-GetRecyclerRewardsMessageEvent=3048
+GetGiftWrappingConfigurationMessageEvent=2570
+GetRecyclerRewardsMessageEvent=3052
 CatalogPromotionGetRoomsMessageEvent=17
-GetCatalogClubGiftsMessageEvent=1215
+GetCatalogClubGiftsMessageEvent=1219
 ChooseClubGiftMessageEvent=2356
 PromoteRoomMessageEvent=1765
 RetrieveSongIDMessageEvent=2299
@@ -96,26 +99,36 @@ PurchaseTargetedOfferMessageEvent=2817
 [HabboInventory]
 LoadPetInventoryMessageEvent=194
 LoadBotInventoryMessageEvent=1379
-LoadBadgeInventoryMessageEvent=1486
+LoadBadgeInventoryMessageEvent=3315
 LoadItemsInventoryMessageEvent=3868
+OpenInventoryMessageEvent=696/336
 SetActivatedBadgesMessageEvent=1447
 EnableInventoryEffectMessageEvent=728
 EffectEnableMessageEvent=1417
+GetMarketplaceConfigurationEvent=95
+GetMarketplaceCanMakeOffer=2460
+GetOffersMessageEvent=1214
+MarketplacePurchaseMessageEvent=2786
+MarketplaceCancelOfferMessageEvent=3554
+MarketplaceGetItemStats=3524
+MarketplaceGetOwnOffers=3012
+MarketplaceMakeOffer=2562
+MarketplaceReedemCredits=819
 
 [Rooms]
-EnterPrivateRoomMessageEvent=3785
-RoomGetHeightmapMessageEvent=764
-RoomGetInfoMessageEvent=3933
-RoomUserActionMessageEvent=3417
+EnterPrivateRoomMessageEvent=3785/1495
+RoomGetHeightmapMessageEvent=764/1617
+RoomGetInfoMessageEvent=3933/226
+RoomUserActionMessageEvent=3417/3316
 RoomOnLoadMessageEvent=3675
 RoomDeleteMessageEvent=1054
 RoomEventUpdateMessageEvent=257
-RoomGetSettingsInfoMessageEvent=177
-RoomSaveSettingsMessageEvent=1934
+RoomGetSettingsInfoMessageEvent=177/587
+RoomSaveSettingsMessageEvent=1934/1436
 RoomSettingsMuteAllMessageEvent=2325
 RoomSettingsMuteUserMessageEvent=329
 RoomLoadByDoorbellMessageEvent=745
-DoorbellAnswerMessageEvent=1332
+DoorbellAnswerMessageEvent=1332/3767
 RoomGetFilterMessageEvent=3536
 RoomAlterFilterMessageEvent=3838
 GetRoomBannedUsersMessageEvent=2078
@@ -125,16 +138,15 @@ RoomRemoveUserRightsMessageEvent=2011
 GetFloorPlanFurnitureMessageEvent=1776
 GetFloorPlanDoorMessageEvent=2138
 SaveFloorPlanEditorMessageEvent=3736
-SaveRoomThumbnailMessageEvent=584
 SetInvitationsPreferenceMessageEvent=649
-SubmitRoomToCompetitionMessageEvent=2767
+SubmitRoomToCompetitionMessageEvent=2768
 VoteForRoomMessageEvent=2357
 
 [UserRoom]
-ChatMessageEvent=520
-ShoutMessageEvent=1134
-UserWhisperMessageEvent=753
-UserWalkMessageEvent=2935
+ChatMessageEvent=520/3404
+ShoutMessageEvent=1134/310
+UserWhisperMessageEvent=753/2783
+UserWalkMessageEvent=2935/2611
 UserDanceMessageEvent=1551
 UserSignMessageEvent=3184
 RoomBanUserMessageEvent=3441
@@ -143,34 +155,35 @@ RoomKickUserMessageEvent=3642
 RateRoomMessageEvent=3282
 DropHanditemMessageEvent=369
 GiveHanditemMessageEvent=1951
-GiveRespectMessageEvent=3177
+GiveRespectMessageEvent=3177/777
 GiveRightsMessageEvent=1014
-StartTypingMessageEvent=1022
-StopTypingMessageEvent=1096
+StartTypingMessageEvent=1022/1847
+StopTypingMessageEvent=1096/1159
 IgnoreUserMessageEvent=505
 UnignoreUserMessageEvent=1889
 LookAtUserMessageEvent=2988
-TradeAcceptMessageEvent=2937
-TradeAddItemOfferMessageEvent=2919
-TradeCancelMessageEvent=1486
-TradeConfirmMessageEvent=1215
+TradeAcceptMessageEvent=2937/1130
+TradeAddItemOfferMessageEvent=1949/3192
+TradeAddItemsOfferMessageEvent=1137
+TradeCancelMessageEvent=1486/2861
+TradeConfirmMessageEvent=1215/905
 TradeDiscardMessageEvent=3202
-TradeRemoveItemMessageEvent=2326
-TradeStartMessageEvent=3876
+TradeRemoveItemMessageEvent=2326/657
+TradeStartMessageEvent=3876/106
 TradeUnacceptMessageEvent=884
 SetChatPreferenceMessageEvent=3729
 
 [RoomItems]
 ToggleSittingMessageEvent=3941
-RoomAddFloorItemMessageEvent=1262
+RoomAddFloorItemMessageEvent=1262/2573
 PlaceBuildersWallItemMessageEvent=730
-FloorItemMoveMessageEvent=2660
-WallItemMoveMessageEvent=15
+FloorItemMoveMessageEvent=2660/685
+WallItemMoveMessageEvent=15/311
 TriggerDiceCloseMessageEvent=1857
 TriggerDiceRollMessageEvent=2595
-TriggerItemMessageEvent=2475
+TriggerItemMessageEvent=2475/1099
 TriggerMoodlightMessageEvent=3599
-TriggerWallItemMessageEvent=2681
+TriggerWallItemMessageEvent=2681/3662
 EnterOneWayDoorMessageEvent=2253
 UpdateMoodlightMessageEvent=3631
 OpenPostItMessageEvent=1920
@@ -206,13 +219,13 @@ WiredSaveMatchingMessageEvent=1327
 WiredSaveTriggerMessageEvent=3139
 
 [Bots]
-BotActionsMessageEvent=2961
+BotActionsMessageEvent=940
 BotSpeechListMessageEvent=3840
 PlaceBotMessageEvent=2303
 PlacePetMessageEvent=154
 MovePetMessageEvent=2205
 PickUpBotMessageEvent=1757
-PickUpItemMessageEvent=3821
+PickUpItemMessageEvent=3821/3848
 PickUpPetMessageEvent=3090
 HorseAddSaddleMessageEvent=1768
 HorseAllowAllRideMessageEvent=3424
@@ -232,15 +245,15 @@ ModerationToolRoomToolMessageEvent=3398
 ModerationBanUserMessageEvent=1873
 ModerationKickUserMessageEvent=1327
 ModerationMuteUserMessageEvent=3458
-ModerationLockTradeMessageEvent=3458
+ModerationLockTradeMessageEvent=760
 ModerationToolCloseIssueMessageEvent=2485
 ModerationToolGetRoomVisitsMessageEvent=634
 ModerationToolPerformRoomActionMessageEvent=3062
 ModerationToolPickIssueMessageEvent=2272
-ModerationToolReleaseIssueMessageEvent=3967// changed structure
+ModerationToolReleaseIssueMessageEvent=3967
 ModerationToolSendRoomAlertMessageEvent=2192
 ModerationToolSendUserAlertMessageEvent=2767
-ModerationToolSendUserCautionMessageEvent=2767
+ModerationToolSendUserCautionMessageEvent=3835
 ModerationToolUserChatlogMessageEvent=3574
 ModerationToolIssueChatlogMessageEvent=2836
 ModerationToolIssueChatlogRefreshMessageEvent=2486
@@ -250,7 +263,7 @@ GetUCPanelHotelMessageEvent=628
 DeleteHelpTicketMessageEvent=3124
 
 [Help]
-SubmitHelpTicketMessageEvent=1054
+SubmitHelpTicketMessageEvent=1141
 OpenBullyReportingMessageEvent=243
 SendBullyReportMessageEvent=3827
 OpenHelpToolMessageEvent=2714
@@ -275,11 +288,11 @@ CompleteSafetyQuizMessageEvent=2015
 [Friends]
 ConsoleInstantChatMessageEvent=3653
 ConsoleInviteFriendsMessageEvent=3233
-ConsoleSearchFriendsMessageEvent=1021
+ConsoleSearchFriendsMessageEvent=1021/3966
 FollowFriendMessageEvent=3906
 FriendListUpdateMessageEvent=2531
 FriendRequestListLoad=2492
-AcceptFriendMessageEvent=109
+AcceptFriendMessageEvent=109/2893
 DeclineFriendMessageEvent=3875
 DeleteFriendMessageEvent=579
 RequestFriendMessageEvent=2457
@@ -296,7 +309,7 @@ UpdateForumSettingsMessageEvent=683
 AlterForumThreadStateMessageEvent=16
 PublishForumThreadMessageEvent=3006
 ReadForumThreadMessageEvent=856
-RequestLeaveGroupMessageEvent=1768
+RequestLeaveGroupMessageEvent=499
 ConfirmLeaveGroupMessageEvent=2396
 AcceptGroupRequestMessageEvent=1115
 CreateGuildMessageEvent=575
@@ -306,7 +319,7 @@ GetGroupMembersMessageEvent=3646
 GetGroupPurchaseBoxMessageEvent=62
 GetGroupPurchasingInfoMessageEvent=3896
 GroupDeclineMembershipRequestMessageEvent=2118
-GroupMakeAdministratorMessageEvent=691
+GroupMakeAdministratorMessageEvent=729
 GroupManageMessageEvent=3934
 GroupUpdateBadgeMessageEvent=517
 GroupUpdateColoursMessageEvent=3781
@@ -315,13 +328,16 @@ GroupUpdateSettingsMessageEvent=1467
 GroupUserJoinMessageEvent=3907
 SetFavoriteGroupMessageEvent=1064
 RemoveFavouriteGroupMessageEvent=818
-RemoveGroupAdminMessageEvent=67
+RemoveGroupAdminMessageEvent=691
 DeleteGroupMessageEvent=147
 
 [Games]
-GameCenterLoadGameMessageEvent=3529
+GameCenterLoadGameMessageEvent=608
 GameCenterJoinQueueMessageEvent=776
 ClickGamesMessageEvent=2544
+
+GetGameListingMessageEvent=1242
+InitializeGameCenterMessageEvent=1011
 
 [Polls]
 AcceptPollMessageEvent=455
@@ -329,11 +345,22 @@ RefusePollMessageEvent=165
 AnswerPollQuestionMessageEvent=2815
 
 [Other]
-PongMessageEvent=2087
+PongMessageEvent=2087/3206
 RetrieveCitizenshipStatus=1502
 NuxAcceptGiftsMessageEvent=561
-NuxReceiveGiftsMessageEvent=-1//error 404
-HabboCameraMessageEvent=1160
-HabboCameraPublishPhoto=3724
+NuxReceiveGiftsMessageEvent=3031
+
+
+[Camera]
+ReportCameraPhotoMessageEvent=1555
+SaveRoomThumbnailMessageEvent=584
 GetCameraRequest=705
 GetCameraPriceMessageEvent=2983
+HabboCameraMessageEvent=1160
+HabboCameraPublishPhoto=3724
+
+[CUSTOM]
+HabboAirGetUserRooms=2805/2805
+HabboAirGetAllRooms=4003/2443
+HabboAirAddWallItem=4001/3868
+HabboAirClickUser=4002/3703

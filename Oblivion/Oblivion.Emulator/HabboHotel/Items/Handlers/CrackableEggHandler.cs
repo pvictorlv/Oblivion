@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.Messages;
@@ -10,12 +13,34 @@ namespace Oblivion.HabboHotel.Items.Handlers
     /// </summary>
     internal class CrackableEggHandler
     {
+        private Dictionary<int, string> _furnis;
+
         /// <summary>
         ///     Initializes the specified database client.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
         internal void Initialize(IQueryAdapter dbClient)
         {
+            _furnis = new Dictionary<int, string>();
+            dbClient.SetQuery("SELECT * FROM crackable_rewards");
+            var table = dbClient.GetTable();
+            foreach (DataRow row in table.Rows)
+            {
+                _furnis.Add(Convert.ToInt32(row["egg_level"]), row["items"].ToString());
+            }
+        }
+
+        internal uint GetRandomPrize(int level)
+        {
+            if (!_furnis.TryGetValue(level, out var itemsString))
+            {
+                return 0;
+            }
+            var items = itemsString.Split(',').ToList();
+
+            var rnd = new Random().Next(0, items.Count - 1);
+            var randomItem = items[rnd];
+            return Convert.ToUInt32(randomItem);
         }
 
         internal int MaxCracks(string itemName)
@@ -35,7 +60,7 @@ namespace Oblivion.HabboHotel.Items.Handlers
                     return 20000;
 
                 default:
-                    return 1;
+                    return 10;
             }
         }
 

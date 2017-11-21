@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
@@ -43,7 +44,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 adapter.AddParameter("rank", rank);
                 adapter.RunQuery();
             }
-
+            user.GetHabbo().Rank = Convert.ToUInt32(pms[1]);
             session.SendWhisper(Oblivion.GetLanguage().GetVar("user_rank_update"));
             return true;
         }

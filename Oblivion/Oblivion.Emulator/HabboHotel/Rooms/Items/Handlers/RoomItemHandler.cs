@@ -538,6 +538,26 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             RemoveRoomItem(item, wasPicked);
         }
 
+
+        internal void DeleteRoomItem(RoomItem item)
+        {
+            if (item == null) return;
+            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                dbClient.RunFastQuery($"DELETE FROM items_rooms WHERE id = '{item.Id}'");
+            }
+            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("PickUpFloorItemMessageComposer"));
+            serverMessage.AppendString(item.Id.ToString());
+            serverMessage.AppendBool(false); //expired
+            serverMessage.AppendInteger(0); //pickerId
+            serverMessage.AppendInteger(0); // delay
+            _room.SendMessage(serverMessage);
+
+            FloorItems.TryRemove(item.Id, out _);
+            _room.GetGameMap().RemoveFromMap(item);
+            _room.GetRoomUserManager().OnUserUpdateStatus(item.X, item.Y);
+        }
+
         /// <summary>
         ///     Removes the room item.
         /// </summary>
@@ -640,7 +660,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// <param name="sendMessage">if set to <c>true</c> [send message].</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool SetFloorItem(GameClient session, RoomItem item, int newX, int newY, int newRot, bool newItem,
-            bool onRoller, bool sendMessage) => SetFloorItem(session, item, newX, newY, newRot, newItem, onRoller, sendMessage, true, false);
+            bool onRoller, bool sendMessage) => SetFloorItem(session, item, newX, newY, newRot, newItem, onRoller,
+            sendMessage, true, false);
 
 
         /// <summary>

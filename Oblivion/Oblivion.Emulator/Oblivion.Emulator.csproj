@@ -504,6 +504,7 @@
     <Compile Include="Messages\Handlers\Help.cs" />
     <Compile Include="Messages\Handlers\Inventory.cs" />
     <Compile Include="Messages\Handlers\Items.cs" />
+    <Compile Include="Messages\Handlers\Marketplace.cs" />
     <Compile Include="Messages\Handlers\Messenger.cs" />
     <Compile Include="Messages\Handlers\Music.cs" />
     <Compile Include="Messages\Handlers\Navigator.cs" />

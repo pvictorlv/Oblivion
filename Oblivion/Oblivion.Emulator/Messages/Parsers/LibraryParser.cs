@@ -211,6 +211,11 @@ namespace Oblivion.Messages.Parsers
                         _registeredOutoings.Add((uint)packetId);
                 }
 
+                if (Outgoing.ContainsKey(packetName))
+                {
+                    Out.WriteLine($"{packetName} is already registered!");
+                    continue;
+                }
                 Outgoing.Add(packetName, packetId);
                 if (!OutgoingNames.ContainsKey(packetId))
                     OutgoingNames.Add(packetId, packetName);

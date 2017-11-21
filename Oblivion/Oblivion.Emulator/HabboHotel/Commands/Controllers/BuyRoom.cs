@@ -16,7 +16,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public BuyRoom()
         {
-            MinRank = 0;
+            MinRank = 1;
             Description = "Compre essa sala";
             Usage = ":buyroom";
             MinParams = 0;

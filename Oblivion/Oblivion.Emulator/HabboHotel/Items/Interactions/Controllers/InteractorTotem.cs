@@ -49,6 +49,10 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             foreach (var squareItem in items)
             {
                 if (squareItem.GetBaseItem().InteractionType != Interaction.Totem) continue;
+                if (squareItem.ExtraData == null)
+                {
+                    squareItem.ExtraData = "0";
+                }
                 var currentState = Convert.ToInt32(squareItem.ExtraData);
                 if (squareItem.GetBaseItem().Name == "totem_head")
                 {

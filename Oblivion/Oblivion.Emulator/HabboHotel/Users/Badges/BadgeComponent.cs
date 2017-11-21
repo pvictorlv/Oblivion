@@ -143,9 +143,10 @@ namespace Oblivion.HabboHotel.Users.Badges
         /// <param name="session">The session.</param>
         internal void RemoveBadge(string badge, GameClient session)
         {
-            if (!HasBadge(badge))
+            if (session == null || !HasBadge(badge))
                 return;
 
+            
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery("DELETE FROM users_badges WHERE badge_id = @badge AND user_id = " + _userId);

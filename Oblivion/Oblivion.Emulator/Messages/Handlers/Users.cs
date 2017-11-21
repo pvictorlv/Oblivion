@@ -8,6 +8,7 @@ using Oblivion.HabboHotel.Quests.Composer;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.HabboHotel.Users;
 using Oblivion.HabboHotel.Users.Badges;
+using Oblivion.HabboHotel.Users.Messenger;
 using Oblivion.HabboHotel.Users.Relationships;
 using Oblivion.Messages.Parsers;
 
@@ -723,7 +724,7 @@ namespace Oblivion.Messages.Handlers
                 queryReactor.AddParameter("name", text);
                 var @string = queryReactor.GetString();
                 var array = text.ToLower().ToCharArray();
-                const string source = "abcdefghijklmnopqrstuvwxyz1234567890.,_-;:?!@áéíóúÁÉÍÓÚñÑÜüÝý ";
+                const string source = "abcdefghijklmnopqrstuvwxyz1234567890.,_-;:?!@";
                 var array2 = array;
                 if (array2.Any(c => !source.Contains(char.ToLower(c))))
                 {
@@ -837,7 +838,7 @@ namespace Oblivion.Messages.Handlers
                     Response.AppendString(text);
                 }
                 /* TODO CHECK */
-                foreach (var current in Session.GetHabbo().Data.Rooms)
+                foreach (var current in Session.GetHabbo().Data.Rooms.ToList())
                 {
                     current.Owner = text;
                     current.SerializeRoomData(Response, Session, false, true);
@@ -846,12 +847,19 @@ namespace Oblivion.Messages.Handlers
                         room.RoomData.Owner = text;
                 }
                 /* TODO CHECK */
-                foreach (var current3 in from current2 in Session.GetHabbo().GetMessenger().Friends.Values where current2.Client != null from current3 in current2.Client.GetHabbo()
-                    .GetMessenger()
-                    .Friends.Values where current3.UserName == userName select current3)
+                foreach (MessengerBuddy current2 in Session.GetHabbo().GetMessenger().Friends.Values.ToList())
                 {
-                    current3.UserName = text;
-                    current3.Serialize(Response, Session);
+                    if (current2.Client?.GetHabbo() != null)
+                        foreach (var current3 in current2.Client.GetHabbo()
+                            .GetMessenger()
+                            .Friends.Values.ToList())
+                        {
+                            if (current3.UserName == userName)
+                            {
+                                current3.UserName = text;
+                                current3.Serialize(Response, Session);
+                            }
+                        }
                 }
             }
         }

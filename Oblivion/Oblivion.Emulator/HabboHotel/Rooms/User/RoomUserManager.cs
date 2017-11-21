@@ -368,13 +368,13 @@ namespace Oblivion.HabboHotel.Rooms.User
                     var userId = session.GetHabbo().Id;
                     session.GetHabbo().CurrentRoom = null;
                     session.GetHabbo().GetAvatarEffectsInventoryComponent()?.OnRoomExit();
+                    var room = _userRoom;
 
                     var roomUserByHabbo = GetRoomUserByHabbo(userId);
                     if (roomUserByHabbo?.GetClient() == null)
                         return;
                     if (notifyKick)
                     {
-                        var room = _userRoom;
                         var model = room.GetGameMap().Model;
                         if (model == null) return;
 
@@ -406,8 +406,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                     }
                     if (roomUserByHabbo.Team != Team.None)
                     {
-                        _userRoom.GetTeamManagerForBanzai().OnUserLeave(roomUserByHabbo);
-                        _userRoom.GetTeamManagerForFreeze().OnUserLeave(roomUserByHabbo);
+                        room.GetTeamManagerForBanzai().OnUserLeave(roomUserByHabbo);
+                        room.GetTeamManagerForFreeze().OnUserLeave(roomUserByHabbo);
                     }
                     if (roomUserByHabbo.RidingHorse)
                     {
@@ -430,8 +430,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                         if (roomUserByHabbo.CurrentItemEffect != ItemEffectType.None)
                             roomUserByHabbo.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().CurrentEffect =
                                 -1;
-                        if (_userRoom.HasActiveTrade(session.GetHabbo().Id))
-                            _userRoom.TryStopTrade(session.GetHabbo().Id);
+                        if (room.HasActiveTrade(session.GetHabbo().Id))
+                            room.TryStopTrade(session.GetHabbo().Id);
                         session.GetHabbo().CurrentRoomId = 0;
                         if (session.GetHabbo().GetMessenger() != null)
                             session.GetHabbo().GetMessenger().OnStatusChanged(true);
@@ -440,7 +440,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
                             queryreactor2.RunFastQuery(string.Concat(
                                 "UPDATE users_rooms_visits SET exit_timestamp = '", Oblivion.GetUnixTimeStamp(),
-                                "' WHERE room_id = '", _userRoom.RoomId, "' AND user_id = '", userId,
+                                "' WHERE room_id = '", room.RoomId, "' AND user_id = '", userId,
                                 "' ORDER BY exit_timestamp DESC LIMIT 1"));
                         UsersByUserName?.Remove(session.GetHabbo().UserName.ToLower());
                     }

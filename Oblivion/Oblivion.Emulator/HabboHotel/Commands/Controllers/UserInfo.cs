@@ -30,7 +30,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
                     adapter.SetQuery(
-                        "SELECT username, rank, id, credits, activity_points, diamonds FROM users WHERE username=@user LIMIT 1");
+                        "SELECT username, rank, id, credits, activity_points, diamonds, email FROM users WHERE username=@user LIMIT 1");
                     adapter.AddParameter("user", userName);
                     var row = adapter.GetRow();
 
@@ -40,27 +40,43 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                         return true;
                     }
                     session.SendNotif(string.Format((Oblivion.GetLanguage().GetVar("user_info_all")), userName, row[1],
-                        row[3], row[4], row[5]));
+                        row[3], row[4], row[5], row[6]));
                 }
                 return true;
             }
-            var habbo = clientByUserName.GetHabbo();
-            var builder = new StringBuilder();
-            if (habbo.CurrentRoom != null)
+            using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                builder.AppendFormat(" - ROOM INFORMATION [{0}] - \r", habbo.CurrentRoom.RoomId);
-                builder.AppendFormat("Owner: {0}\r", habbo.CurrentRoom.RoomData.Owner);
-                builder.AppendFormat("Room Name: {0}\r", habbo.CurrentRoom.RoomData.Name);
-                builder.Append(
-                    string.Concat("Current Users: ", habbo.CurrentRoom.UserCount, "/",
-                        habbo.CurrentRoom.RoomData.UsersMax));
-            }
-            session.SendNotif(string.Concat("User info for: ", userName, " \rUser ID: ", habbo.Id, ":\rRank: ",
-                habbo.Rank, "\rCurrentTalentLevel: ", habbo.CurrentTalentLevel, " \rCurrent Room: ", habbo.CurrentRoomId,
-                " \rCredits: ", habbo.Credits, "\rDuckets: ", habbo.ActivityPoints, "\rDiamonds: ", habbo.Diamonds,
-                "\rMuted: ", habbo.Muted.ToString(), "\r\r\r", builder.ToString()));
+                adapter.SetQuery(
+                    "SELECT email FROM users WHERE username=@user LIMIT 1");
+                adapter.AddParameter("user", userName);
+                var row = adapter.GetRow();
 
-            return true;
+                if (row == null)
+                {
+                    session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
+                    return true;
+                }
+
+                var habbo = clientByUserName.GetHabbo();
+                var builder = new StringBuilder();
+                if (habbo.CurrentRoom != null)
+                {
+                    builder.AppendFormat(" - ROOM INFORMATION [{0}] - \r", habbo.CurrentRoom.RoomId);
+                    builder.AppendFormat("Owner: {0}\r", habbo.CurrentRoom.RoomData.Owner);
+                    builder.AppendFormat("Room Name: {0}\r", habbo.CurrentRoom.RoomData.Name);
+                    builder.Append(
+                        string.Concat("Current Users: ", habbo.CurrentRoom.UserCount, "/",
+                            habbo.CurrentRoom.RoomData.UsersMax));
+                }
+                session.SendNotif(string.Concat("User info for: ", userName, " \rUser ID: ", habbo.Id, "\rEmail: ",
+                    row[0], ":\rRank: ",
+                    habbo.Rank, "\rCurrentTalentLevel: ", habbo.CurrentTalentLevel, " \rCurrent Room: ",
+                    habbo.CurrentRoomId,
+                    " \rCredits: ", habbo.Credits, "\rDuckets: ", habbo.ActivityPoints, "\rDiamonds: ", habbo.Diamonds,
+                    "\rMuted: ", habbo.Muted.ToString(), "\r\r\r", builder.ToString()));
+
+                return true;
+            }
         }
     }
 }
