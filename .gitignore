@@ -185,3 +185,5 @@ UpgradeLog*.htm
 FakesAssemblies/
 *.DotSettings
 /.vs/Oblivion/v15/Server/sqlite3
+
+*.vs/
