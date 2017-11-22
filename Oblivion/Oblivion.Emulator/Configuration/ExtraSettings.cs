@@ -72,12 +72,12 @@ namespace Oblivion.Configuration
         /// <summary>
         /// The ServerCamera from Stories
         /// </summary>
-        internal static string StoriesApiServerUrl = "";
+        internal static string BaseJumpHost = "";
 
         /// <summary>
         /// The ServerCamera from Stories
         /// </summary>
-        internal static string StoriesApiThumbnailServerUrl = "";
+        internal static string BaseJumpPort = "";
 
         /// <summary>
         /// The ServerCamera from Stories
@@ -111,7 +111,7 @@ namespace Oblivion.Configuration
         internal static bool AdminCanUseHtml = true, CryptoClientSide;
 
         internal static string WelcomeMessage = "";
-        internal static string GameCenterStoriesUrl;
+        internal static string GameCenterBaseJumpUrl;
 
         /// <summary>
         /// Runs the extra settings.
@@ -137,9 +137,22 @@ namespace Oblivion.Configuration
                         YoutubeThumbnailSuburl = theParams[1];
                         break;
 
-                    case "gamecenter.stories.url":
-                        GameCenterStoriesUrl = theParams[1];
+                    case "gamecenter.basejump.url":
+                        GameCenterBaseJumpUrl = theParams[1];
                         break;
+
+                    case "gamecenter.basejump.host":
+                        BaseJumpHost = theParams[1];
+                        break;
+
+                    case "gamecenter.basejump.port":
+                        BaseJumpPort = theParams[1];
+                        break;
+
+                    case "stories.api.host":
+                        StoriesApiHost = theParams[1];
+                        break;
+
 
                     case "currency.loop.time.in.minutes":
                         if (int.TryParse(theParams[1], out var i))
@@ -206,18 +219,7 @@ namespace Oblivion.Configuration
                         NewPageCommands = theParams[1] == "true";
                         break;
 
-                    case "stories.api.url":
-                        StoriesApiServerUrl = theParams[1];
-                        break;
-
-                    case "stories.api.thumbnail.url":
-                        StoriesApiThumbnailServerUrl = theParams[1];
-                        break;
-
-                    case "stories.api.host":
-                        StoriesApiHost = theParams[1];
-                        break;
-
+                   
                     case "rc4.client.side.enabled":
                         CryptoClientSide = theParams[1] == "true";
                         break;

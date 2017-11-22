@@ -41,10 +41,19 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             var crackableHandler = Oblivion.GetGame().GetCrackableEggHandler();
             var maxCracks = crackableHandler.MaxCracks(item.GetBaseItem().Name);
-            var itemData = Convert.ToInt16(item.ExtraData);
+            if (!short.TryParse(item.ExtraData, out var itemData))
+            {
+                return;
+            }
+
+
+            Oblivion.GetGame().GetAchievementManager()
+                .ProgressUserAchievement(session, "ACH_PinataWhacker", 1, true);
 
             if (itemData >= maxCracks)
             {
+                Oblivion.GetGame().GetAchievementManager()
+                    .ProgressUserAchievement(session, "ACH_PinataBreaker", 1, true);
                 var prize = crackableHandler.GetRandomPrize(maxCracks);
                 if (prize == 0) return;
                 room.GetRoomItemHandler().DeleteRoomItem(item);

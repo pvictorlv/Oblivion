@@ -244,17 +244,19 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
                     if (habbo.Data.Relations.ContainsKey(id))
                         habbo.Data.Relations.Remove(id);
-                    var clientRelationship = Oblivion.GetGame().GetClientManager().GetClientByUserId(friendId);
+                   
+                }
+                var clientRelationship = Oblivion.GetGame().GetClientManager().GetClientByUserId(friendId);
 
-                    if (clientRelationship?.GetHabbo().GetMessenger() != null)
-                    {
-                        clientRelationship.GetHabbo().GetMessenger().OnDestroyFriendship(_userId);
+                if (clientRelationship?.GetHabbo().GetMessenger() != null)
+                {
+                    clientRelationship.GetHabbo().GetMessenger().OnDestroyFriendship(_userId);
 
-                        if (clientRelationship.GetHabbo().Data.Relations.ContainsKey(id))
-                            clientRelationship.GetHabbo().Data.Relations.Remove(id);
-                    }
+                    if (clientRelationship.GetHabbo().Data.Relations.ContainsKey(id))
+                        clientRelationship.GetHabbo().Data.Relations.Remove(id);
                 }
             }
+
             OnDestroyFriendship(friendId);
         }
 

@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Data;
+using System.Linq;
+using System.Text;
 using Oblivion.Configuration;
 using Oblivion.Messages.Parsers;
 using Oblivion.Util;
@@ -153,7 +156,7 @@ namespace Oblivion.Messages.Handlers
             game.AppendString("basejump");
             game.AppendString("93d4f3");
             game.AppendString("");
-            game.AppendString("http://lella.la/swf/games/gamecenter_basejump/");
+            game.AppendString(ExtraSettings.GameCenterBaseJumpUrl);
             game.AppendString("");
             Session.SendMessage(game);
         }
@@ -162,16 +165,68 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void GameCenterJoinQueue()
         {
-            Request.GetInteger();
+            var gameId = Request.GetInteger();
             ServerMessage joinQueue = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterJoinGameQueueMessageComposer"));
-            joinQueue.AppendInteger(18);
+            joinQueue.AppendInteger(gameId);
             Session.SendMessage(joinQueue);
 
+            var habboId = Session.GetHabbo().Id;
+            string ssoTicket;
+            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                dbClient.SetQuery("SELECT user_id FROM user_auth_food WHERE user_id = '" + habboId + "' LIMIT 1");
+                var data = dbClient.GetRow();
+                //todo: delete when login
+                if (data == null)
+                {
+                    ssoTicket = "Fastfood-" + GenerateSso(32) + "-" + Session.GetHabbo().Id;
+                    dbClient.RunQuery("INSERT INTO user_auth_food(user_id, auth_ticket) VALUES ('" + habboId +
+                                      "', '" +
+                                      ssoTicket + "')");
+                }
+                else
+                {
+                    dbClient.SetQuery("SELECT auth_ticket FROM user_auth_food WHERE user_id = " + habboId);
+                    ssoTicket = dbClient.GetRow()["auth_ticket"].ToString();
+                }
+            }
+
+
             ServerMessage loadGame = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterLoadGameUrlMessageComposer"));
-            loadGame.AppendInteger(18);
+            loadGame.AppendInteger(gameId);
             loadGame.AppendString(Convert.ToString(Oblivion.GetUnixTimeStamp()));
-            loadGame.AppendString(ExtraSettings.GameCenterStoriesUrl);
+            loadGame.AppendString(ExtraSettings.GameCenterBaseJumpUrl + "BaseJump.swf");
+            loadGame.AppendString("best");
+            loadGame.AppendString("showAll");
+            loadGame.AppendInteger(60);
+            loadGame.AppendInteger(10);
+            loadGame.AppendInteger(8);
+            loadGame.AppendInteger(6);
+            loadGame.AppendString("assetUrl");
+            loadGame.AppendString(ExtraSettings.GameCenterBaseJumpUrl + "BasicAssets.swf");
+            loadGame.AppendString("habboHost");
+            loadGame.AppendString("http://fuseus-private-httpd-fe-1");
+            loadGame.AppendString("accessToken");
+            loadGame.AppendString(ssoTicket);
+            loadGame.AppendString("gameServerHost");
+            loadGame.AppendString(ExtraSettings.BaseJumpHost);
+            loadGame.AppendString("gameServerPort");
+            loadGame.AppendString(ExtraSettings.BaseJumpPort);
+            loadGame.AppendString("socketPolicyPort");
+            loadGame.AppendString(ExtraSettings.BaseJumpHost);
+
             Session.SendMessage(loadGame);
+        }
+
+
+        private static string GenerateSso(int length)
+        {
+            var random = new Random();
+            const string characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+            var result = new StringBuilder(length);
+            for (var i = 0; i < length; i++)
+                result.Append(characters[random.Next(characters.Length)]);
+            return result.ToString();
         }
     }
 }

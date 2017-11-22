@@ -46,7 +46,7 @@ namespace Oblivion.HabboHotel.Misc
                         if (ExtraSettings.DiamondsVipOnly)
                         {
                             if (client.GetHabbo().Vip || client.GetHabbo().Rank >= 6)
-                                client.GetHabbo().Diamonds += (client.GetHabbo().Vip) ? ExtraSettings.DiamondsToGive * 2 : ExtraSettings.DiamondsToGive;
+                                client.GetHabbo().Diamonds += ExtraSettings.DiamondsToGive * 2;
                         }
                         else client.GetHabbo().Diamonds += (client.GetHabbo().Vip) ? ExtraSettings.DiamondsToGive * 2 : ExtraSettings.DiamondsToGive;
                     client.GetHabbo().UpdateSeasonalCurrencyBalance();

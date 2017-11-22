@@ -205,7 +205,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     continue;
                 if (item.BaseItem.Name.StartsWith("DFD_"))
                 {
-
                     session.GetHabbo().Diamonds += num;
                     session.GetHabbo().UpdateSeasonalCurrencyBalance();
                 }

@@ -58,6 +58,40 @@ namespace Oblivion.Connection.Net
                 uint userId;
                 switch (header)
                 {
+                    #region FastFood
+                    case "ff_progess_achievement":
+                        {
+                            userId = Convert.ToUInt32(param[0]);
+                            string Type = param[1];
+                            int Amount = Convert.ToInt32(param[2]);
+
+                            clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
+
+                            if (clientByUserId?.GetHabbo() == null)
+                                break;
+
+                            if (Amount == 0)
+                                break;
+
+                            Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(clientByUserId, Type, Amount);
+                            break;
+                        }
+                    case "ff_takecredits":
+                        {
+                            userId = Convert.ToUInt32(param[0]);
+                            string Quantity = param[1];
+
+                            clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
+
+                            if (clientByUserId?.GetHabbo() == null)
+                                break;
+
+                            clientByUserId.GetHabbo().Credits -= int.Parse(Quantity);
+                            clientByUserId.GetHabbo().UpdateCreditsBalance();
+                            break;
+                        }
+                    #endregion
+
                     case "ha":
                         var hotelAlert =
                             new ServerMessage(LibraryParser.OutgoingRequest("BroadcastNotifMessageComposer"));

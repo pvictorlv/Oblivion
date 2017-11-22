@@ -504,7 +504,7 @@ namespace Oblivion.Messages.Handlers
                 byte[] bytes = Request.GetBytes(count);
                 //var outData = Converter.Deflate(bytes);
 
-                var url = Web.HttpPostJson(ExtraSettings.StoriesApiThumbnailServerUrl, null);
+                var url = Web.HttpPostJson(ExtraSettings.BaseJumpPort, null);
 
               
 

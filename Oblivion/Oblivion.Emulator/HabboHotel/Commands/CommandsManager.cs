@@ -144,6 +144,7 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("copy", new CopyLook());
             CommandsDictionary.Add("faceless", new FaceLess());
             CommandsDictionary.Add("pulluser", new PullUser());
+            CommandsDictionary.Add("pull", new PullUser());
             CommandsDictionary.Add("push", new PushUser());
             CommandsDictionary.Add("setmax", new SetMax());
             CommandsDictionary.Add("moonwalk", new MoonWalk());

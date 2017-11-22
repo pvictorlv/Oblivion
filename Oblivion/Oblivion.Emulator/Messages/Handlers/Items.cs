@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 using Oblivion.HabboHotel.Catalogs;
 using Oblivion.HabboHotel.Items;
 using Oblivion.HabboHotel.Items.Datas;
@@ -1258,48 +1257,28 @@ namespace Oblivion.Messages.Handlers
             }
             var item = room.GetRoomItemHandler().GetItem(Request.GetUInteger());
             if (item == null) return;
-            if (!item.GetBaseItem().Name.StartsWith("CF_") && !item.GetBaseItem().Name.StartsWith("CFC_")) return;
+            if (!item.GetBaseItem().Name.StartsWith("CF_") && !item.GetBaseItem().Name.StartsWith("CFC_") && !item.GetBaseItem().Name.StartsWith("DFD_")) return;
             var array = item.GetBaseItem().Name.Split('_');
 
-            int amount;
-            if (array[1] == "diamond")
-            {
-                int.TryParse(array[2], out amount);
+            if (!int.TryParse(array[1], out var amount)) return;
 
-                switch (amount)
-                {
-                    case 100:
-                        amount = 1;
-                        break;
-                    case 250:
-                        amount = 5;
-                        break;
-                    case 500:
-                        amount = 10;
-                        break;
-                    case 1000:
-                        amount = 20;
-                        break;
-                    case 2500:
-                        amount = 50;
-                        break;
-                }
-
-                Session.GetHabbo().Diamonds += amount;
-                Session.GetHabbo().UpdateSeasonalCurrencyBalance();
-            }
-            else
-            {
-                int.TryParse(array[1], out amount);
-
-                Session.GetHabbo().Credits += amount;
-                Session.GetHabbo().UpdateCreditsBalance();
-            }
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.RunFastQuery($"DELETE FROM items_rooms WHERE id={item.Id} LIMIT 1;");
             }
+
+            if (item.GetBaseItem().Name.StartsWith("DFD_"))
+            {
+                Session.GetHabbo().Diamonds += amount;
+                Session.GetHabbo().UpdateSeasonalCurrencyBalance();
+            }
+            else
+            {
+                Session.GetHabbo().Credits += amount;
+                Session.GetHabbo().UpdateCreditsBalance();
+            }
+
             room.GetRoomItemHandler().RemoveFurniture(null, item.Id, false);
             Session.GetHabbo().GetInventoryComponent().RemoveItem(item.Id, false);
             Response.Init(LibraryParser.OutgoingRequest("UpdateInventoryMessageComposer"));
