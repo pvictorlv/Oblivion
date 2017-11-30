@@ -483,53 +483,102 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             get
             {
+                var x = X + 1;
+                var y = 0;
+                switch (RotBody)
                 {
-                    var x = X + 1;
-                    var y = 0;
-                    switch (RotBody)
-                    {
-                        case 0:
-                            x = X;
-                            y = Y - 1;
-                            break;
+                    case 0:
+                        x = X;
+                        y = Y - 1;
+                        break;
 
-                        case 1:
-                            x = X + 1;
-                            y = Y - 1;
-                            break;
+                    case 1:
+                        x = X + 1;
+                        y = Y - 1;
+                        break;
 
-                        case 2:
-                            x = X + 1;
-                            y = Y;
-                            break;
+                    case 2:
+                        x = X + 1;
+                        y = Y;
+                        break;
 
-                        case 3:
-                            x = X + 1;
-                            y = Y + 1;
-                            break;
+                    case 3:
+                        x = X + 1;
+                        y = Y + 1;
+                        break;
 
-                        case 4:
-                            x = X;
-                            y = Y + 1;
-                            break;
+                    case 4:
+                        x = X;
+                        y = Y + 1;
+                        break;
 
-                        case 5:
-                            x = X - 1;
-                            y = Y + 1;
-                            break;
+                    case 5:
+                        x = X - 1;
+                        y = Y + 1;
+                        break;
 
-                        case 6:
-                            x = X - 1;
-                            y = Y;
-                            break;
+                    case 6:
+                        x = X - 1;
+                        y = Y;
+                        break;
 
-                        case 7:
-                            x = X - 1;
-                            y = Y - 1;
-                            break;
-                    }
-                    return new Point(x, y);
+                    case 7:
+                        x = X - 1;
+                        y = Y - 1;
+                        break;
                 }
+                return new Point(x, y);
+            }
+        }
+        internal Point SquareInFrontSet
+        {
+            get
+            {
+                var x = SetX + 1;
+                var y = 0;
+                switch (RotBody)
+                {
+                    case 0:
+                        x = SetX;
+                        y = SetY - 1;
+                        break;
+
+                    case 1:
+                        x = SetX + 1;
+                        y = SetY - 1;
+                        break;
+
+                    case 2:
+                        x = SetX + 1;
+                        y = SetY;
+                        break;
+
+                    case 3:
+                        x = SetX + 1;
+                        y = Y + 1;
+                        break;
+
+                    case 4:
+                        x = SetX;
+                        y = SetY + 1;
+                        break;
+
+                    case 5:
+                        x = SetX - 1;
+                        y = SetY + 1;
+                        break;
+
+                    case 6:
+                        x = SetX - 1;
+                        y = SetY;
+                        break;
+
+                    case 7:
+                        x = SetX - 1;
+                        y = SetY - 1;
+                        break;
+                }
+                return new Point(x, y);
             }
         }
 
@@ -810,20 +859,15 @@ namespace Oblivion.HabboHotel.Rooms.User
             GoalX = 0;
             GoalY = 0;
             SetStep = false;
-
-            try
-            {
-                GetRoom().GetRoomUserManager().ToSet.Remove(new Point(SetX, SetY));
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-
+            
             SetX = 0;
             SetY = 0;
             SetZ = 0.0;
 
+            if (Statusses == null)
+            {
+                return;
+            }
             if (!Statusses.ContainsKey("mv"))
                 return;
             Statusses.Remove("mv");

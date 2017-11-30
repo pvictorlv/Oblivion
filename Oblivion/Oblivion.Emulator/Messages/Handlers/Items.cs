@@ -1257,7 +1257,8 @@ namespace Oblivion.Messages.Handlers
             }
             var item = room.GetRoomItemHandler().GetItem(Request.GetUInteger());
             if (item == null) return;
-            if (!item.GetBaseItem().Name.StartsWith("CF_") && !item.GetBaseItem().Name.StartsWith("CFC_") && !item.GetBaseItem().Name.StartsWith("DFD_")) return;
+            if (!item.GetBaseItem().Name.StartsWith("CF_") && !item.GetBaseItem().Name.StartsWith("CFC_") &&
+                !item.GetBaseItem().Name.StartsWith("DFD_")) return;
             var array = item.GetBaseItem().Name.Split('_');
 
             if (!int.TryParse(array[1], out var amount)) return;
@@ -1991,25 +1992,21 @@ namespace Oblivion.Messages.Handlers
 
         internal void SaveWired()
         {
+            if (Session?.GetHabbo().CurrentRoom == null) return;
             var pId = Request.GetUInteger();
-            var item =
-                Oblivion.GetGame()
-                    .GetRoomManager()
-                    .GetRoom(Session.GetHabbo().CurrentRoomId)
-                    .GetRoomItemHandler()
-                    .GetItem(pId);
+            var item = Session.GetHabbo().CurrentRoom.GetRoomItemHandler().GetItem(pId);
+            if (item == null) return;
+
             WiredSaver.SaveWired(Session, item, Request);
         }
 
         internal void SaveWiredConditions()
         {
+            if (Session?.GetHabbo().CurrentRoom == null) return;
             var pId = Request.GetUInteger();
-            var item =
-                Oblivion.GetGame()
-                    .GetRoomManager()
-                    .GetRoom(Session.GetHabbo().CurrentRoomId)
-                    .GetRoomItemHandler()
-                    .GetItem(pId);
+            var item = Session.GetHabbo().CurrentRoom.GetRoomItemHandler().GetItem(pId);
+            if (item == null) return;
+
             WiredSaver.SaveWired(Session, item, Request);
         }
 

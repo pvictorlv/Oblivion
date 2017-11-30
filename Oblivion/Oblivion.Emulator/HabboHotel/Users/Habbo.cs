@@ -458,7 +458,6 @@ namespace Oblivion.HabboHotel.Users
 
             OnDuty = onDuty;
             DutyLevel = dutyLevel;
-
             Rank = rank;
             Motto = motto;
             Look = look.ToLower();
@@ -636,7 +635,6 @@ namespace Oblivion.HabboHotel.Users
             _subscriptionManager = new SubscriptionManager(Id, data);
             _badgeComponent = new BadgeComponent(Id, data);
             _inventoryComponent = new InventoryComponent(Id, client, data);
-            _inventoryComponent.SetActiveState(client);
             _avatarEffectsInventoryComponent = new AvatarEffectsInventoryComponent(Id, client, data);
             _messenger = new HabboMessenger(Id);
             _messenger.Init(data.Friends, data.Requests);
@@ -820,7 +818,8 @@ namespace Oblivion.HabboHotel.Users
             if (_inventoryComponent != null)
             {
                 _inventoryComponent.RunDbUpdate();
-                _inventoryComponent.SetIdleState();
+                _inventoryComponent.Dispose();
+                _inventoryComponent = null;
             }
 
             var navilogs = string.Empty;

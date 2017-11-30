@@ -28,32 +28,32 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <summary>
         ///     The _floor items
         /// </summary>
-        private readonly Dictionary<uint, UserItem> _floorItems;
+        private Dictionary<uint, UserItem> _floorItems;
 
         /// <summary>
         ///     The _inventory bots
         /// </summary>
-        private readonly HybridDictionary _inventoryBots;
+        private HybridDictionary _inventoryBots;
 
         /// <summary>
         ///     The _inventory pets
         /// </summary>
-        private readonly HybridDictionary _inventoryPets;
+        private HybridDictionary _inventoryPets;
 
         /// <summary>
         ///     The _m added items
         /// </summary>
-        private readonly List<uint> _mAddedItems;
+        private List<uint> _mAddedItems;
 
         /// <summary>
         ///     The _m removed items
         /// </summary>
-        private readonly List<uint> _mRemovedItems;
+        private List<uint> _mRemovedItems;
 
         /// <summary>
         ///     The _wall items
         /// </summary>
-        private readonly Dictionary<uint, UserItem> _wallItems;
+        private Dictionary<uint, UserItem> _wallItems;
 
         /// <summary>
         ///     The _is updated
@@ -64,11 +64,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         ///     The _m client
         /// </summary>
         private GameClient _mClient;
-
-        /// <summary>
-        ///     The _user attatched
-        /// </summary>
-        private bool _userAttatched;
+        
 
         /// <summary>
         ///     The user identifier
@@ -119,17 +115,12 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
         public int TotalItems => _floorItems.Count + _wallItems.Count + SongDisks.Count;
 
-        /// <summary>
-        ///     Gets a value indicating whether this instance is inactive.
-        /// </summary>
-        /// <value><c>true</c> if this instance is inactive; otherwise, <c>false</c>.</value>
-        public bool IsInactive => !_userAttatched;
-
+     
         /// <summary>
         ///     Gets a value indicating whether [needs update].
         /// </summary>
         /// <value><c>true</c> if [needs update]; otherwise, <c>false</c>.</value>
-        internal bool NeedsUpdate => !_userAttatched && !_isUpdated;
+        internal bool NeedsUpdate => !_isUpdated;
 
         /// <summary>
         ///     Gets the song disks.
@@ -188,7 +179,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
             {
                 var item = GetItem(Convert.ToUInt32(dataRow[0]));
 
-                if (item == null || (!item.BaseItem.Name.StartsWith("DFD_") && !item.BaseItem.Name.StartsWith("CF_") && !item.BaseItem.Name.StartsWith("CFC_")))
+                if (item == null || (!item.BaseItem.Name.StartsWith("DFD_") && !item.BaseItem.Name.StartsWith("CF_") &&
+                                     !item.BaseItem.Name.StartsWith("CFC_")))
                     continue;
 
                 var array = item.BaseItem.Name.Split('_');
@@ -216,24 +208,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             }
         }
 
-        /// <summary>
-        ///     Sets the state of the active.
-        /// </summary>
-        /// <param name="client">The client.</param>
-        internal void SetActiveState(GameClient client)
-        {
-            _mClient = client;
-            _userAttatched = true;
-        }
-
-        /// <summary>
-        ///     Sets the state of the idle.
-        /// </summary>
-        internal void SetIdleState()
-        {
-            _userAttatched = false;
-            _mClient = null;
-        }
+        
 
         /// <summary>
         ///     Gets the pet.
@@ -385,7 +360,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <param name="fromDatabase">if set to <c>true</c> [from database].</param>
         internal void UpdateItems(bool fromDatabase)
         {
-           
             if (fromDatabase)
             {
                 RunDbUpdate();
@@ -405,7 +379,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <returns>UserItem.</returns>
         internal UserItem GetItem(uint id)
         {
-
             _isUpdated = false;
             UserItem item;
             if (_floorItems.ContainsKey(id))
@@ -628,7 +601,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             var inc = 0;
 
-            foreach (var userItem in items) 
+            foreach (var userItem in items)
             {
                 if (inc == 3500)
                     return serverMessage;
@@ -656,7 +629,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
         internal void AddItemToItemInventory(RoomItem item, bool dbUpdate)
         {
-
             var userItem = new UserItem(item.Id, item.BaseItem, item.ExtraData, item.GroupId, item.SongCode);
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FurniListAddMessageComposer"));
@@ -718,8 +690,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
         internal void AddItemToItemInventory(UserItem userItem)
         {
-
-
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FurniListAddMessageComposer"));
             serverMessage.AppendInteger(userItem.Id);
             serverMessage.AppendString(userItem.BaseItem.Type.ToString().ToUpper());
@@ -842,7 +812,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         {
             try
             {
-                if (_mAddedItems == null || _mAddedItems == null || _inventoryPets == null) return;
+                if (_mAddedItems == null || _inventoryPets == null) return;
                 if (_mRemovedItems.Count <= 0 && _mAddedItems.Count <= 0 && _inventoryPets.Count <= 0)
                     return;
 
@@ -933,6 +903,26 @@ namespace Oblivion.HabboHotel.Users.Inventory
             serverMessage.AppendInteger(1);
             serverMessage.AppendInteger(id);
             _mClient.SendMessage(serverMessage);
+        }
+
+        internal void Dispose()
+        {
+            _wallItems?.Clear();
+            _wallItems = null;
+            _mClient = null;
+            _floorItems?.Clear();
+            _floorItems = null;
+            _inventoryBots?.Clear();
+            _inventoryBots = null;
+
+            _inventoryPets?.Clear();
+            _inventoryPets = null;
+
+            _mAddedItems?.Clear();
+            _mAddedItems = null;
+
+            _mRemovedItems?.Clear();
+            _mRemovedItems = null;
         }
 
         /// <summary>

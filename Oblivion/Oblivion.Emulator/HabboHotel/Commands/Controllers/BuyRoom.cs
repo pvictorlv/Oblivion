@@ -52,19 +52,17 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             {
                 using (var Adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    Adapter.SetQuery("UPDATE rooms SET owner = @newowner WHERE id = @roomid");
+                    Adapter.SetQuery("UPDATE rooms_data SET owner = @newowner WHERE id = @roomid");
+                    Adapter.AddParameter("newowner", user.UserName);
+                    Adapter.AddParameter("roomid", currentRoom.RoomId);
+                    Adapter.RunQuery();
+
+                    Adapter.SetQuery("UPDATE items_rooms SET user_id = @newowner WHERE room_id = @roomid");
                     Adapter.AddParameter("newowner", user.Id);
                     Adapter.AddParameter("roomid", currentRoom.RoomId);
                     Adapter.RunQuery();
 
-                    Adapter.SetQuery("UPDATE items SET user_id = @newowner WHERE room_id = @roomid");
-                    Adapter.AddParameter("newowner", user.Id);
-                    Adapter.AddParameter("roomid", currentRoom.RoomId);
-                    Adapter.RunQuery();
-
-                    Adapter.SetQuery("DELETE FROM room_rights WHERE room_id = @roomid");
-                    Adapter.AddParameter("roomid", currentRoom.RoomId);
-                    Adapter.RunQuery();
+                    Adapter.RunFastQuery($"DELETE FROM rooms_rights WHERE room_id = '{currentRoom.RoomId}'");
                     Adapter.RunFastQuery($"UPDATE bots SET room_id = '0' WHERE room_id = '{currentRoom.RoomId}'");
                 }
 
@@ -77,7 +75,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 currentRoom.RoomData.Owner = user.UserName;
 
                 //Change Item Owners
-                /* TODO CHECK */ foreach (var CurrentItem in currentRoom.GetRoomItemHandler().GetWallAndFloor)
+                /* TODO CHECK */
+                foreach (var CurrentItem in currentRoom.GetRoomItemHandler().GetWallAndFloor)
                 {
                     CurrentItem.UserId = user.Id;
                 }

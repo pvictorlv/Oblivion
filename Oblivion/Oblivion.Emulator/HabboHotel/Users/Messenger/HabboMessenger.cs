@@ -73,7 +73,8 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="senderId">The sender identifier.</param>
         /// <returns>MessengerRequest.</returns>
-        internal MessengerRequest GetRequest(uint senderId) => Requests.TryGetValue(senderId, out var sender) ? sender : null;
+        internal MessengerRequest GetRequest(uint senderId) =>
+            Requests.TryGetValue(senderId, out var sender) ? sender : null;
 
         /// <summary>
         ///     Destroys this instance.
@@ -244,7 +245,6 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
                     if (habbo.Data.Relations.ContainsKey(id))
                         habbo.Data.Relations.Remove(id);
-                   
                 }
                 var clientRelationship = Oblivion.GetGame().GetClientManager().GetClientByUserId(friendId);
 
@@ -304,7 +304,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         {
             foreach (var friend in Friends.Values)
             {
-                if (friend.CurrentRoom.RoomId == roomId)
+                if (friend?.CurrentRoom?.RoomId == roomId)
                 {
                     friend.CurrentRoom = null;
                 }
@@ -648,9 +648,12 @@ namespace Oblivion.HabboHotel.Users.Messenger
             var groups = new List<Guild>();
             foreach (var gp in Oblivion.GetGame().GetGroupManager().Groups.Values.ToList())
             {
-                if (gp != null && gp.HasChat && gp.Members.TryGetValue(client.GetHabbo().Id, out var memb) &&
-                    memb != null && memb.HasChat)
-                    groups.Add(gp);
+                if (gp == null) continue;
+                if (gp.HasChat && gp.Members.TryGetValue(client.GetHabbo().Id, out var memb))
+                {
+                    if (memb != null && memb.HasChat)
+                        groups.Add(gp);
+                }
             }
 
             serverMessage.AppendInteger(Friends.Count + groups.Count);

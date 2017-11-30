@@ -130,13 +130,16 @@ namespace Oblivion.Messages.Handlers
             if (Session == null)
                 return;
 
-            Oblivion.GetGame().GetAchievementManager()
-                .ProgressUserAchievement(Session, "ACH_AllTimeHotelPresence", 1, true);
+            lock (Session)
+            {
+                Oblivion.GetGame().GetAchievementManager()
+                    .ProgressUserAchievement(Session, "ACH_AllTimeHotelPresence", 1, true);
 
-            Session.TimePingedReceived = DateTime.Now;
-            Response.Init(LibraryParser.OutgoingRequest("LatencyTestResponseMessageComposer"));
-            Response.AppendInteger(Request.GetIntegerFromString());
-            SendResponse();
+                Session.TimePingedReceived = DateTime.Now;
+                Response.Init(LibraryParser.OutgoingRequest("LatencyTestResponseMessageComposer"));
+                Response.AppendInteger(Request.GetIntegerFromString());
+                SendResponse();
+            }
         }
 
 

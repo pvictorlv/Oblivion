@@ -477,7 +477,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                                 if (item.InteractionType == Interaction.Hopper) HopperCount++;
                                 else if (roomItem.IsWired)
                                 {
-//                                    _room.GetWiredHandler().LoadWired(_room.GetWiredHandler().GenerateNewItem(roomItem));
                                     wireds.Add(roomItem);
                                 }
                                 else if (roomItem.IsRoller)

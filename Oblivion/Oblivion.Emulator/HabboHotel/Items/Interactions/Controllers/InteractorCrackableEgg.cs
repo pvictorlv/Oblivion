@@ -1,6 +1,5 @@
 using System;
 using Oblivion.HabboHotel.GameClients.Interfaces;
-using Oblivion.HabboHotel.Items.Handlers;
 using Oblivion.HabboHotel.Items.Interactions.Models;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Rooms.User;
@@ -43,6 +42,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             var maxCracks = crackableHandler.MaxCracks(item.GetBaseItem().Name);
             if (!short.TryParse(item.ExtraData, out var itemData))
             {
+                item.ExtraData = "0";
                 return;
             }
 

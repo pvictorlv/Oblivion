@@ -397,10 +397,8 @@ namespace Oblivion.HabboHotel.Catalogs
             if (priceAmount >= 6)
                 totalPrice -= Convert.ToInt32(Math.Ceiling(Convert.ToDouble(priceAmount) / 6)) * 2 - 1;
 
-            if (!Categories.ContainsKey(pageId))
+            if (!Categories.TryGetValue(pageId, out var catalogPage))
                 return;
-
-            Categories.TryGetValue(pageId, out var catalogPage);
 
             if (catalogPage == null || !catalogPage.Enabled || !catalogPage.Visible || session?.GetHabbo() == null)
                 return;
@@ -838,8 +836,7 @@ namespace Oblivion.HabboHotel.Catalogs
                 {
                     var itemBySprite = Oblivion.GetGame().GetItemManager().GetItemBySpriteId(giftSpriteId);
 
-                    if (itemBySprite == null)
-                        return;
+                    if (itemBySprite?.InteractionType != Interaction.Gift) return;
 
                     long insertId;
 

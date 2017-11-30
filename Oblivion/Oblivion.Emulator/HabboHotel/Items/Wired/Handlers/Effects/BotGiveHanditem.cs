@@ -49,7 +49,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 return false;
 
             roomUser.CarryItem(handitem);
-            var bot = Room.GetRoomUserManager().GetBotByName(OtherString);
+            var bot = Room?.GetRoomUserManager()?.GetBotByName(OtherString);
 
             bot?.Chat(null, Oblivion.GetLanguage().GetVar("bot_give_handitem"), false, 0);
             return true;

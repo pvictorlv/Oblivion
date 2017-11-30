@@ -28,8 +28,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 return true;
             }
 
-            int amount;
-            if (!int.TryParse(pms[1], out amount))
+            if (!int.TryParse(pms[1], out var amount))
             {
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("enter_numbers"));
                 return true;
@@ -38,6 +37,10 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             client.GetHabbo().UpdateSeasonalCurrencyBalance();
             client.SendNotif(string.Format(Oblivion.GetLanguage().GetVar("staff_gives_diamonds"),
                 session.GetHabbo().UserName, amount));
+            Oblivion.GetGame()
+                .GetModerationTool()
+                .LogStaffEntry(session.GetHabbo().UserName, client.GetHabbo().UserName,
+                    "Diamonds", $"Diamonds given to user [{pms[0]}]");
             return true;
         }
     }

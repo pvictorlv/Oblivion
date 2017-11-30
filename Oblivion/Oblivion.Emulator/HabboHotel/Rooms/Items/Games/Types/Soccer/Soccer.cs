@@ -148,7 +148,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
 
             lock (_ball)
             {
-                if (user.SetX == _ball.X && user.SetY == _ball.Y && user.GoalX == _ball.X && user.GoalY == _ball.Y) // super chute.
+                if (user.SetX == _ball.X && user.SetY == _ball.Y && user.GoalX == _ball.X &&
+                    user.GoalY == _ball.Y) // super chute.
                 {
                     var userPoint = new Point(user.X, user.Y);
                     _ball.ExtraData = "55";
@@ -388,10 +389,12 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
 
         internal void RemoveBall()
         {
+            if (_room == null) return;
             var manager = Oblivion.GetGame().GetRoomManager();
             if (manager.LoadedBallRooms.Contains(_room))
                 manager.LoadedBallRooms.Remove(_room);
 
+            if (_ball == null) return;
             lock (_ball)
             {
                 _ball.BallIsMoving = false;

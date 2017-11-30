@@ -6,17 +6,17 @@ namespace Oblivion.HabboHotel.Commands.Controllers
     /// <summary>
     ///     Class GiveBadge. This class cannot be inherited.
     /// </summary>
-    internal sealed class GiveBadge : Command
+    internal sealed class GivePoints : Command
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="GiveBadge" /> class.
         /// </summary>
-        public GiveBadge()
+        public GivePoints()
         {
-            MinRank = 5;
-            Description = "Give user a badge.";
-            Usage = ":givebadge [USERNAME] [badgeCode]";
-            MinParams = 2;
+            MinRank = 6;
+            Description = "Give points for user";
+            Usage = ":epoints [username]";
+            MinParams = 1;
         }
 
         public override bool Execute(GameClient session, string[] pms)
@@ -27,12 +27,22 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 session.SendNotif(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
-            client.GetHabbo().GetBadgeComponent().GiveBadge(pms[1], true, client);
-            session.SendNotif(Oblivion.GetLanguage().GetVar("command_badge_give_done"));
+
+            client.GetHabbo().Diamonds += 10;
+            client.GetHabbo().UpdateSeasonalCurrencyBalance();
+
+            Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(client, "JU", 1, true);
+
+            client.SendNotif(string.Format(Oblivion.GetLanguage().GetVar("staff_gives_diamonds"),
+                session.GetHabbo().UserName, 20));
             Oblivion.GetGame()
                 .GetModerationTool()
                 .LogStaffEntry(session.GetHabbo().UserName, client.GetHabbo().UserName,
-                    "Badge", $"Badge given to user [{pms[1]}]");
+                    "Diamonds", $"Diamonds given to user [{pms[0]}]");
+            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                dbClient.RunFastQuery($"UPDATE users SET epoints = epoints + 1 WHERE id = {client.GetHabbo().Id}");
+            }
             return true;
         }
     }

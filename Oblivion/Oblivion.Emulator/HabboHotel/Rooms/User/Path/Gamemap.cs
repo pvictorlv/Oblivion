@@ -560,7 +560,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 if (items == null) return;
                 items.Remove(item);
                 items.Add(item);
-                CoordinatedItems[coord] = items;
+
+                CoordinatedItems.TryRemove(coord, out _);
+                CoordinatedItems.TryAdd(coord, items);
             }
         }
 
@@ -676,7 +678,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             foreach (Point point2 in hybridDictionary.Keys)
             {
                 var list = (List<RoomItem>) hybridDictionary[point2];
-                foreach (var current3 in list)
+                foreach (var current3 in list.ToList())
                     ConstructMapForItem(current3, point2);
             }
             if (GuildGates.ContainsKey(item.Coordinate))
@@ -960,18 +962,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             return true;
         }
 
-        /// <summary>
-        ///     Antis the choques.
-        /// </summary>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
-        /// <param name="user">The user.</param>
-        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool AntiChoques(int x, int y, RoomUser user)
-        {
-            _room.GetRoomUserManager().ToSet.TryGetValue(new Point(x, y), out var roomUser);
-            return (roomUser == null || roomUser == user);
-        }
+ 
 
         /// <summary>
         ///     Gets the random valid walkable square.
@@ -1147,11 +1138,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 var deductable = 0.0;
 
                 /* TODO CHECK */
-                foreach (
-                    var item in
-                    itemsOnSquare.Where(
-                        item => (item?.GetBaseItem() != null && item.TotalHeight > highestStack[0])))
+                foreach (var item in itemsOnSquare.ToList())
                 {
+                    if ((item?.GetBaseItem() == null || !(item.TotalHeight > highestStack[0]))) continue;
                     if (item.GetBaseItem().IsSeat || item.GetBaseItem().InteractionType == Interaction.Bed)
                         deductable = item.GetBaseItem().Height;
                     highestStack[0] = item.TotalHeight;

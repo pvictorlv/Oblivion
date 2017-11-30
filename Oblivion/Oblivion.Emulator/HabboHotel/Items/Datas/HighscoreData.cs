@@ -150,7 +150,8 @@ namespace Oblivion.HabboHotel.Items.Datas
                 }
 
                 LastId++;
-                Lines.Add(LastId, new HighScoreLine(username, score));
+                if (!Lines.ContainsKey(LastId))
+                    Lines.Add(LastId, new HighScoreLine(username, score));
             }
         }
     }

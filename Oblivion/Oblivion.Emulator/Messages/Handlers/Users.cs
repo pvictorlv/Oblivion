@@ -185,9 +185,10 @@ namespace Oblivion.Messages.Handlers
             serverMessage.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Respect);
             room.SendMessage(serverMessage);
 
+            var roomUser = room.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().UserName);
+            if (roomUser == null) return;
             var thumbsUp = new ServerMessage(LibraryParser.OutgoingRequest("RoomUserActionMessageComposer"));
-            thumbsUp.AppendInteger(
-                room.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().UserName).VirtualId);
+            thumbsUp.AppendInteger(roomUser.VirtualId);
             thumbsUp.AppendInteger(7);
             room.SendMessage(thumbsUp);
         }
@@ -198,12 +199,10 @@ namespace Oblivion.Messages.Handlers
         internal void ApplyEffect()
         {
             var effectId = Request.GetInteger();
-            var roomUserByHabbo =
-                Oblivion.GetGame()
-                    .GetRoomManager()
-                    .GetRoom(Session.GetHabbo().CurrentRoomId)
-                    .GetRoomUserManager()
-                    .GetRoomUserByHabbo(Session.GetHabbo().UserName);
+            if (Session?.GetHabbo()?.CurrentRoom == null) return;
+            var roomUserByHabbo = Session.GetHabbo().CurrentRoom.GetRoomUserManager()
+                .GetRoomUserByHabbo(Session.GetHabbo().UserName);
+            if (roomUserByHabbo == null) return;
             if (!roomUserByHabbo.RidingHorse)
                 Session.GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(effectId);
         }
@@ -792,7 +791,7 @@ namespace Oblivion.Messages.Handlers
             var text = Request.GetString();
             if (text == null) return;
             var userName = Session.GetHabbo().UserName;
-            if (Session?.GetHabbo() == null || Session.GetHabbo().CurrentRoom == null) return;
+            if (Session?.GetHabbo()?.CurrentRoom == null) return;
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
@@ -875,7 +874,9 @@ namespace Oblivion.Messages.Handlers
                 return;
 
             var rand = new Random();
-            var dictionary = habboForId.Data.Relations.OrderBy(x => rand.Next()).Where(pair => habboForId.GetMessenger().FriendshipExists((uint) pair.Value.UserId)).ToDictionary(pair => pair.Key, pair => pair.Value);
+            var dictionary = habboForId.Data.Relations.OrderBy(x => rand.Next())
+                .Where(pair => habboForId.GetMessenger().FriendshipExists((uint) pair.Value.UserId))
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
             habboForId.Data.Relations = dictionary;
 
             var num = habboForId.Data.Relations.Count(x => x.Value.Type == 1);
@@ -1256,7 +1257,6 @@ namespace Oblivion.Messages.Handlers
             /* TODO CHECK */
             foreach (HallOfFameElement element in rankings)
             {
-
                 GetResponse().AppendInteger(element.UserId);
                 GetResponse().AppendString(element.Username);
                 GetResponse().AppendString(element.Look);

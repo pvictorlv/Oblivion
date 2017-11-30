@@ -30,7 +30,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
                     adapter.SetQuery(
-                        "SELECT username, rank, id, credits, activity_points, diamonds, email FROM users WHERE username=@user LIMIT 1");
+                        "SELECT username, rank, id, credits, activity_points, diamonds, mail FROM users WHERE username=@user LIMIT 1");
                     adapter.AddParameter("user", userName);
                     var row = adapter.GetRow();
 
@@ -47,7 +47,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 adapter.SetQuery(
-                    "SELECT email FROM users WHERE username=@user LIMIT 1");
+                    "SELECT mail FROM users WHERE username=@user LIMIT 1");
                 adapter.AddParameter("user", userName);
                 var row = adapter.GetRow();
 

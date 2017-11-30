@@ -289,6 +289,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
 
         private void SetTile(RoomItem item, Team Team, RoomUser user)
         {
+            if (item == null || user == null || _room == null) return;
             if (item.Team == Team)
             {
                 if (item.Value < 3)
@@ -306,6 +307,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                         /* TODO CHECK */
                         foreach (var gameField in gfield)
                         {
+                            if (gameField?.GetPoints() == null) continue;
+
                             var t = (Team) gameField.ForValue;
                             /* TODO CHECK */
                             var point = gameField.GetPoints().ToList();
@@ -315,7 +318,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                                 _floorMap[p.Y, p.X] = gameField.ForValue;
                             }
                             point.Clear();
-
                         }
                         gfield.Clear();
                     }

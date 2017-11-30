@@ -38,14 +38,11 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
 
         public bool Execute(params object[] stuff)
         {
-            if (stuff[0] == null)
-                return false;
-
             var roomUser = (RoomUser) stuff[0];
 
-            int danceId;
+            if (roomUser?.GetClient() == null) return false;
 
-            if (int.TryParse(OtherString, out danceId))
+            if (int.TryParse(OtherString, out var danceId))
             {
                 if (danceId > 4)
                     danceId = 4;

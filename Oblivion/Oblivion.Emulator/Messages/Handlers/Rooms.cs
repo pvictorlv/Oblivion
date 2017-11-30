@@ -2202,6 +2202,7 @@ namespace Oblivion.Messages.Handlers
                         while (enumerator.MoveNext())
                         {
                             var current = enumerator.Current;
+                            if (current == null) continue;
                             if (Oblivion.GetHabboById(current.Id) == null)
                                 continue;
                             Response.AppendInteger(current.Id);
@@ -2227,6 +2228,7 @@ namespace Oblivion.Messages.Handlers
                 Response.AppendInteger(CurrentLoadingRoom.RoomData.OwnerId);
                 Response.AppendString(CurrentLoadingRoom.RoomData.Owner);
             }
+
             Response.AppendInteger(array.Count);
             /* TODO CHECK */
             foreach (var roomItem in array)

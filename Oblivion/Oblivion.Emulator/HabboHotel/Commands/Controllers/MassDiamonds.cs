@@ -36,6 +36,10 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 client.SendNotif(Oblivion.GetLanguage().GetVar("command_diamonds_one_give") + amount +
                                  (Oblivion.GetLanguage().GetVar("command_diamonds_two_give")));
             }
+            Oblivion.GetGame()
+                .GetModerationTool()
+                .LogStaffEntry(session.GetHabbo().UserName, "ALL ONLINES",
+                    "Diamonds", $"Diamonds given to everyone");
             return true;
         }
     }

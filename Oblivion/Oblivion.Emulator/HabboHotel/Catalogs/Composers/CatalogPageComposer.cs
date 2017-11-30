@@ -386,7 +386,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
             }
             else
             {
-                message.AppendBool(true);
+                message.AppendBool(item.HaveOffer);
             }
 
             // TODO: this is a temporary fix.
