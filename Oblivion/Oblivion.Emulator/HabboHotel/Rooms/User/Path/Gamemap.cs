@@ -558,7 +558,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             else
             {
                 if (items == null) return;
-                items.Remove(item);
+                if (items.Contains(item))
+                    items.Remove(item);
                 items.Add(item);
 
                 CoordinatedItems.TryRemove(coord, out _);

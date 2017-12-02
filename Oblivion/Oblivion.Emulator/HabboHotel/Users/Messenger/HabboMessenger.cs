@@ -501,7 +501,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             var sender = GetClient().GetHabbo();
 
             /* TODO CHECK */
-            foreach (var usr in gp.Members.Values)
+            foreach (var usr in gp.Members.Values.ToList())
             {
                 if (!usr.HasChat) continue;
                 GameClient client = Oblivion.GetGame().GetClientManager().GetClientByUserId(usr.Id);

@@ -1099,9 +1099,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
             if (!_removedItems.Contains(itemId))
                 _removedItems.Add(itemId);
-
-            var it = GetItem(itemId);
-            Rollers.Remove(it);
+            
         }
 
         /// <summary>
@@ -1111,6 +1109,10 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         {
             if (GotRollers)
             {
+                if (Rollers.Count <= 0)
+                {
+                    GotRollers = false;
+                }
                 try
                 {
                     var roller = CycleRollers();

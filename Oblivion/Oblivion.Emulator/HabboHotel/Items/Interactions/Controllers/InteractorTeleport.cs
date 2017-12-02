@@ -73,8 +73,8 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             {
                 if (user.Coordinate == item.Coordinate || user.Coordinate == item.SquareInFront)
                 {
-                    if (item.InteractingUser != 0)
-                        return;
+//                    if (item.InteractingUser != 0)
+//                        return;
 
                     item.InteractingUser = user.GetClient().GetHabbo().Id;
                 }

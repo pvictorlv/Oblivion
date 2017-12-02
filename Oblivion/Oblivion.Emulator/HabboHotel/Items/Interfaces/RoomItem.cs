@@ -627,6 +627,9 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 var interactionType = GetBaseItem().InteractionType;
                 switch (interactionType)
                 {
+                    case Interaction.Roller:
+                        return new InteractorRoller();
+                        
                     case Interaction.Gate:
                         return new InteractorGate();
 

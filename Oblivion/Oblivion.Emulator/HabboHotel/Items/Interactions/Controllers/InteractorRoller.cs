@@ -6,9 +6,13 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorRoller : FurniInteractorModel
     {
-        public override void OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override void OnRemove(GameClient session, RoomItem item)
         {
-            item.GetRoom().GetRoomItemHandler().GotRollers = true;
+            item.GetRoom().GetRoomItemHandler().Rollers.Remove(item);
+            if (item.GetRoom().GetRoomItemHandler().Rollers.Count <= 0)
+            {
+                item.GetRoom().GetRoomItemHandler().GotRollers = false;
+            }
         }
     }
 }

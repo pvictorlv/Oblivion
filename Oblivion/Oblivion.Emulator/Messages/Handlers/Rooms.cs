@@ -889,7 +889,7 @@ namespace Oblivion.Messages.Handlers
 
         internal void UsersWithRights()
         {
-            if (Session?.GetHabbo() == null)
+            if (Session?.GetHabbo()?.CurrentRoom == null)
                 return;
 
             Response.Init(LibraryParser.OutgoingRequest("LoadRoomRightsListMessageComposer"));
@@ -2532,9 +2532,7 @@ namespace Oblivion.Messages.Handlers
             var roomUserByHabbo = currentRoom.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
             var roomUserByHabbo2 = currentRoom.GetRoomUserManager().GetRoomUserByHabbo(text2);
 
-            msg = currentRoom.RoomData.WordFilter.Aggregate(msg,
-                (current1, current) => Regex.Replace(current1, Regex.Escape(current), "bobba", RegexOptions.IgnoreCase));
-
+            msg = currentRoom.RoomData.WordFilter.Aggregate(msg, (current, s) => Regex.Replace(current, Regex.Escape(s), "bobba", RegexOptions.IgnoreCase));
             if (BlackWordsManager.Check(msg, BlackWordType.Hotel, out var word))
             {
                 var settings = word.TypeSettings;

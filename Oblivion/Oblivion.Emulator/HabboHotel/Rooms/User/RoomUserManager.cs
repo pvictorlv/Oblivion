@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -660,16 +661,20 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             if (user?.Statusses == null) return;
 
-            if (user.Statusses.ContainsKey("lay"))
-            {
-                user.Statusses.Remove("lay");
-                user.UpdateNeeded = true;
-            }
-            if (user.Statusses.ContainsKey("sit"))
-            {
-                user.Statusses.Remove("sit");
-                user.UpdateNeeded = true;
-            }
+            /* if (user.Statusses.ContainsKey("lay"))
+             {
+                 user.Statusses.Remove("lay");
+                 user.UpdateNeeded = true;
+             }
+             if (user.Statusses.ContainsKey("sit"))
+             {
+                 user.Statusses.Remove("sit");
+                 user.UpdateNeeded = true;
+             }*/
+            var stackTrace = new StackTrace();
+
+            // Get calling method name
+            Out.WriteLine(stackTrace.GetFrame(1).GetMethod().Name);
 
             var isBot = user.IsBot;
             if (isBot) cycleGameItems = false;
@@ -1336,7 +1341,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     }
                     hasItemInPlace.Clear();
                     // Let's Update user Status..
-                    UpdateUserStatus(roomUsers, true);
+//                    UpdateUserStatus(roomUsers, true);
                     return false;
                 }
             }

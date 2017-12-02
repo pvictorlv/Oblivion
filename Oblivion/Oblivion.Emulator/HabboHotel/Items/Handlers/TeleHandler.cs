@@ -46,6 +46,7 @@ namespace Oblivion.HabboHotel.Items.Handlers
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery($"SELECT room_id FROM items_rooms WHERE id = {teleId} LIMIT 1");
+                queryReactor.RunQuery();
                 var row = queryReactor.GetRow();
 
                 result = row == null ? 0 : Convert.ToUInt32(row[0]);
@@ -65,11 +66,8 @@ namespace Oblivion.HabboHotel.Items.Handlers
             var linkedTele = GetLinkedTele(teleId, pRoom);
             if (linkedTele == 0u)
                 return false;
-            var item = pRoom.GetRoomItemHandler().GetItem(linkedTele);
-            return (item != null &&
-                    (item.GetBaseItem().InteractionType == Interaction.Teleport ||
-                     item.GetBaseItem().InteractionType == Interaction.QuickTeleport)) ||
-                   GetTeleRoomId(linkedTele, pRoom) != 0u;
+//            var item = pRoom.GetRoomItemHandler().GetItem(linkedTele);
+            return GetTeleRoomId(linkedTele, pRoom) != 0u;
         }
     }
 }
