@@ -59,7 +59,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
 
-            if (conditions.Any())
+            if (conditions.Count > 0)
                 /* TODO CHECK */ foreach (var current in conditions)
                 {
                     if (!current.Execute(roomUser))
@@ -67,26 +67,29 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
                     WiredHandler.OnEvent(current);
                 }
-
-            if (effects.Any(x => x.Type == Interaction.SpecialRandom))
+            if (effects != null)
             {
-                var randomBox = effects.FirstOrDefault(x => x.Type == Interaction.SpecialRandom);
-                if (randomBox != null && !randomBox.Execute())
-                    return false;
+                if (effects.TryGetValue(Interaction.SpecialRandom, out var randomBox))
+                {
+                    if (!randomBox.Execute())
+                        return false;
 
-                var selectedBox = Room.GetWiredHandler().GetRandomEffect(effects);
-                if (!selectedBox.Execute())
-                    return false;
+                    var selectedBox = Room.GetWiredHandler().GetRandomEffect(effects.Values);
+                    if (!selectedBox.Execute())
+                        return false;
 
-                WiredHandler.OnEvent(randomBox);
-                WiredHandler.OnEvent(selectedBox);
+                    WiredHandler.OnEvent(randomBox);
+                    WiredHandler.OnEvent(selectedBox);
+                }
+                else
+                {
+                    foreach (var current3 in effects.Values)
+                    {
+                        if (current3.Execute(roomUser, Type))
+                            WiredHandler.OnEvent(current3);
+                    }
+                }
             }
-            else if (effects.Any())
-            {
-                /* TODO CHECK */ foreach (var current2 in effects.Where(current2 => current2.Execute(roomUser, Type)))
-                    WiredHandler.OnEvent(current2);
-            }
-
             WiredHandler.OnEvent(this);
             return true;
         }

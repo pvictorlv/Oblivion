@@ -1052,8 +1052,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                         }
                                         else
                                         {
-                                            if (!user.IsBot && user.GetClient() != null &&
-                                                user.GetClient().GetHabbo() != null &&
+                                            if (!user.IsBot && user.GetClient()?.GetHabbo() != null &&
                                                 user.GetClient().GetMessageHandler() != null)
                                             {
                                                 user.GetClient().GetHabbo().IsTeleporting = true;

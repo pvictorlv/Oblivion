@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -77,6 +76,12 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     The users by user name
         /// </summary>
         internal Dictionary<string, RoomUser> UsersByUserName;
+
+
+        /// <summary>
+        /// Set disposed class status
+        /// </summary>
+        public bool Disposed;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="RoomUserManager" /> class.
@@ -657,25 +662,23 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         /// <param name="user">The user.</param>
         /// <param name="cycleGameItems">if set to <c>true</c> [cyclegameitems].</param>
-        internal void UpdateUserStatus(RoomUser user, bool cycleGameItems)
+        internal void UpdateUserStatus(RoomUser user, bool cycleGameItems, bool removeStatusses = true)
         {
             if (user?.Statusses == null) return;
 
-            /* if (user.Statusses.ContainsKey("lay"))
-             {
-                 user.Statusses.Remove("lay");
-                 user.UpdateNeeded = true;
-             }
-             if (user.Statusses.ContainsKey("sit"))
-             {
-                 user.Statusses.Remove("sit");
-                 user.UpdateNeeded = true;
-             }*/
-            var stackTrace = new StackTrace();
-
-            // Get calling method name
-            Out.WriteLine(stackTrace.GetFrame(1).GetMethod().Name);
-
+            if (removeStatusses)
+            {
+                if (user.Statusses.ContainsKey("lay"))
+                {
+                    user.Statusses.Remove("lay");
+                    user.UpdateNeeded = true;
+                }
+                if (user.Statusses.ContainsKey("sit"))
+                {
+                    user.Statusses.Remove("sit");
+                    user.UpdateNeeded = true;
+                }
+            }
             var isBot = user.IsBot;
             if (isBot) cycleGameItems = false;
 
@@ -697,11 +700,11 @@ namespace Oblivion.HabboHotel.Rooms.User
                 /* TODO CHECK */
                 foreach (var item in allRoomItemForSquare)
                 {
-                    if (item.GetBaseItem().InteractionType == Interaction.QuickTeleport ||
+                    /*if (item.GetBaseItem().InteractionType == Interaction.QuickTeleport ||
                         item.GetBaseItem().InteractionType == Interaction.GuildGate ||
                         item.GetBaseItem().InteractionType == Interaction.WalkInternalLink ||
                         item.GetBaseItem().InteractionType == Interaction.FloorSwitch)
-                        item.Interactor.OnUserWalk(user.GetClient(), item, user);
+                        item.Interactor.OnUserWalk(user.GetClient(), item, user);*/
 
                     if (cycleGameItems)
                     {
@@ -745,14 +748,14 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                     switch (interactionType)
                     {
-                        /*case Interaction.QuickTeleport:
+                        case Interaction.QuickTeleport:
                         case Interaction.GuildGate:
                         case Interaction.WalkInternalLink:
                         case Interaction.FloorSwitch:
                         {
                             item.Interactor.OnUserWalk(user.GetClient(), item, user);
                             break;
-                        }*/
+                        }
                         case Interaction.None:
                             break;
 
@@ -1341,7 +1344,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     }
                     hasItemInPlace.Clear();
                     // Let's Update user Status..
-//                    UpdateUserStatus(roomUsers, true);
+                    UpdateUserStatus(roomUsers, true, false);
                     return false;
                 }
             }
@@ -1761,6 +1764,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="user"></param>
         private void OnUserAdd(RoomUser user)
         {
+            if (Disposed) return;
             try
             {
                 var client = user?.GetClient();

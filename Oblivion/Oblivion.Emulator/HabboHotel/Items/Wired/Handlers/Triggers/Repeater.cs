@@ -39,7 +39,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
 
-            if (conditions.Any())
+            if (conditions.Count > 0)
                 foreach (var current in conditions)
                 {
                     if (!current.Execute(null))
@@ -47,30 +47,30 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
                     WiredHandler.OnEvent(current);
                 }
-            if (effects.Any(x => x.Type == Interaction.SpecialRandom))
-            {
-                var randomBox = effects.FirstOrDefault(x => x.Type == Interaction.SpecialRandom);
-                if (randomBox != null && !randomBox.Execute())
-                    return false;
 
-                var selectedBox = Room.GetWiredHandler().GetRandomEffect(effects);
-                if (!selectedBox.Execute())
-                    return false;
-
-                WiredHandler.OnEvent(randomBox);
-                WiredHandler.OnEvent(selectedBox);
-            }
-            else
+            if (effects != null)
             {
-                /* TODO CHECK */
-                foreach (var current2 in effects)
+                if (effects.TryGetValue(Interaction.SpecialRandom, out var randomBox))
                 {
-                    if (current2 == null) continue;
-                    if (!current2.Execute(null, Type))
-                    WiredHandler.OnEvent(current2);
+                    if (!randomBox.Execute())
+                        return false;
+
+                    var selectedBox = Room.GetWiredHandler().GetRandomEffect(effects.Values);
+                    if (!selectedBox.Execute())
+                        return false;
+
+                    WiredHandler.OnEvent(randomBox);
+                    WiredHandler.OnEvent(selectedBox);
+                }
+                else
+                {
+                    foreach (var current3 in effects.Values)
+                    {
+                        if (current3.Execute(null, Type))
+                            WiredHandler.OnEvent(current3);
+                    }
                 }
             }
-
             _mNext = Oblivion.Now() + Delay;
             return false;
         }

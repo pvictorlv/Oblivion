@@ -1370,6 +1370,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         public void Dispose()
         {
+            _roomUserManager.Disposed = true;
             _mCycleEnded = true;
             Oblivion.GetGame().GetRoomManager().QueueActiveRoomRemove(RoomData);
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())

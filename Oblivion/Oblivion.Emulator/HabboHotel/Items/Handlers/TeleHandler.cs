@@ -13,7 +13,6 @@ namespace Oblivion.HabboHotel.Items.Handlers
         ///     Gets the linked tele.
         /// </summary>
         /// <param name="teleId">The tele identifier.</param>
-        /// <param name="pRoom">The p room.</param>
         /// <returns>System.UInt32.</returns>
         internal static uint GetLinkedTele(uint teleId, Room pRoom)
         {
@@ -22,6 +21,7 @@ namespace Oblivion.HabboHotel.Items.Handlers
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery($"SELECT tele_two_id FROM items_teleports WHERE tele_one_id = {teleId}");
+                queryReactor.RunQuery();
                 var row = queryReactor.GetRow();
 
                 result = row == null ? 0 : Convert.ToUInt32(row[0]);

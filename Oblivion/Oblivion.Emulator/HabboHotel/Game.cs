@@ -500,8 +500,9 @@ namespace Oblivion.HabboHotel
         internal void StopGameLoop()
         {
             GameLoopActiveExt = false;
-           /* while (!RoomManagerCycleEnded || !ClientManagerCycleEnded)
-                Thread.Sleep(25);*/
+            RoomManagerCycleEnded = true;
+            /* while (!RoomManagerCycleEnded || !ClientManagerCycleEnded)
+                 Thread.Sleep(25);*/
         }
 
         /// <summary>
@@ -538,7 +539,6 @@ namespace Oblivion.HabboHotel
                 {
                     RoomManagerCycleEnded = false;
                     _roomManager.OnCycle();
-//                    _clientManager.OnCycle();
                 }
                 catch (Exception ex)
                 {

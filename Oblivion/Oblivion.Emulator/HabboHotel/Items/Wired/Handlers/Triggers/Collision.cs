@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
@@ -10,15 +9,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 {
     public class Collision : IWiredItem
     {
-        private readonly WiredHandler _handler;
-
-        public Collision(RoomItem item, WiredHandler handler, Room room)
+        public Collision(RoomItem item, Room room)
         {
             Item = item;
             Room = room;
             OtherString = string.Empty;
             OtherBool = false;
-            _handler = handler;
         }
 
         public Interaction Type => Interaction.TriggerCollision;
@@ -62,7 +58,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
 
-            if (conditions.Any())
+            if (conditions.Count > 0)
                 /* TODO CHECK */ foreach (var current in conditions)
                 {
                     WiredHandler.OnEvent(current);
@@ -71,27 +67,28 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                         return true;
                 }
 
-            if (!effects.Any())
-                return true;
-            if (effects.Any(x => x.Type == Interaction.SpecialRandom))
+            if (effects != null)
             {
-                var randomBox = effects.FirstOrDefault(x => x.Type == Interaction.SpecialRandom);
-                if (randomBox != null && !randomBox.Execute())
-                    return false;
+                if (effects.TryGetValue(Interaction.SpecialRandom, out var randomBox))
+                {
+                    if (!randomBox.Execute())
+                        return false;
 
-                var selectedBox = Room.GetWiredHandler().GetRandomEffect(effects);
-                if (!selectedBox.Execute())
-                    return false;
+                    var selectedBox = Room.GetWiredHandler().GetRandomEffect(effects.Values);
+                    if (!selectedBox.Execute())
+                        return false;
 
-                WiredHandler.OnEvent(randomBox);
-                WiredHandler.OnEvent(selectedBox);
-            }
-            else
-            {
-                /* TODO CHECK */ foreach (var wiredItem in effects.Where(
-                    wiredItem => wiredItem != null && wiredItem.Type != Interaction.ActionChase &&
-                                 wiredItem.Execute(roomUser, Type)))
-                    WiredHandler.OnEvent(wiredItem);
+                    WiredHandler.OnEvent(randomBox);
+                    WiredHandler.OnEvent(selectedBox);
+                }
+                else
+                {
+                    foreach (var current3 in effects.Values)
+                    {
+                        if (current3.Execute(roomUser, Type))
+                            WiredHandler.OnEvent(current3);
+                    }
+                }
             }
 
             return true;

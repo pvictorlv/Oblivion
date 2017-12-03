@@ -91,8 +91,12 @@ namespace Oblivion.HabboHotel.Items.Wired
         }
 
 
-
-        public bool OtherBoxHasItem(IWiredItem Box, RoomItem boxItem) => Box != null && (from item in GetEffects(Box) where item.Item.Id != Box.Item.Id where item.Type == Interaction.ActionMoveRotate || item.Type == Interaction.ActionMoveToDir || item.Type == Interaction.ActionChase where item.Items != null && item.Items.Count != 0 select item).Any(item => item.Items.Contains(boxItem));
+        public bool OtherBoxHasItem(IWiredItem Box, RoomItem boxItem)
+        {
+            bool any = (from item in GetEffects(Box).Values where item.Item.Id != Box.Item.Id where item.Type == Interaction.ActionMoveRotate || item.Type == Interaction.ActionMoveToDir || item.Type == Interaction.ActionChase where item.Items != null && item.Items.Count != 0 select item).Any(item => item.Items.Contains(boxItem));
+            
+            return Box != null && any;
+        }
 
         public static void SaveWired(IWiredItem fItem)
         {
@@ -288,7 +292,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     return new WalksOffFurni(item, _room);
 
                 case Interaction.TriggerCollision:
-                    return new Collision(item, this, _room);
+                    return new Collision(item, _room);
 
                 case Interaction.ActionMoveRotate:
                     return new MoveRotateFurni(item, _room);
@@ -472,9 +476,7 @@ namespace Oblivion.HabboHotel.Items.Wired
             .Where(current => current != null && IsCondition(current.Type) && current.Item.X == item.Item.X &&
                               current.Item.Y == item.Item.Y).ToList();
 
-        public List<IWiredItem> GetEffects(IWiredItem item) => _wiredItems
-            .Where(current => current != null && IsEffect(current.Type) && current.Item.X == item.Item.X &&
-                              current.Item.Y == item.Item.Y).ToList();
+        public Dictionary<Interaction, IWiredItem> GetEffects(IWiredItem item) => _wiredItems.Where(current => current != null && IsEffect(current.Type) && current.Item.X == item.Item.X && current.Item.Y == item.Item.Y).ToDictionary(current => current.Type);
 
         public IWiredItem GetWired(RoomItem item) => _wiredItems.FirstOrDefault(
             current => current != null && item.Id == current.Item.Id);
@@ -500,7 +502,7 @@ namespace Oblivion.HabboHotel.Items.Wired
             _wiredItems.Clear();
             _wiredItems = null;
         }
-    
+
         private static bool IsTrigger(Interaction type) => InteractionTypes.AreFamiliar(GlobalInteractions.WiredTrigger,
             type);
 

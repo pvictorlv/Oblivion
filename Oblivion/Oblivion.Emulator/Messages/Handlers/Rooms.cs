@@ -393,7 +393,7 @@ namespace Oblivion.Messages.Handlers
 
 
                 if (Session.GetHabbo().Id != room.RoomData.OwnerId &&
-                    !Session.GetHabbo().HasFuse("fuse_enter_any_room"))
+                    !Session.GetHabbo().HasFuse("fuse_enter_any_room") && !(Session.GetHabbo().IsTeleporting && Session.GetHabbo().TeleportingRoomId == id))
                     if (Session.GetHabbo().LastBellId == room.RoomId && room.RoomData.State == 1)
                     {
                         return;
@@ -460,12 +460,6 @@ namespace Oblivion.Messages.Handlers
                         return;
                     }
                 }
-                if (Session.GetHabbo().Id != room.RoomData.OwnerId &&
-                    !Session.GetHabbo().HasFuse("fuse_enter_any_room"))
-                    if (Session.GetHabbo().LastBellId != room.RoomId && room.RoomData.State == 1)
-                    {
-                        return;
-                    }
 
                 Response.Init(LibraryParser.OutgoingRequest("PrepareRoomMessageComposer"));
                 queuedServerMessage.AppendResponse(GetResponse());
