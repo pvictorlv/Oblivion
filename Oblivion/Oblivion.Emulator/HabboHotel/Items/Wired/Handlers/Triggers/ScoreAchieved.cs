@@ -50,8 +50,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             if (roomUser == null)
                 return false;
 
-            int scoreToGet;
-            int.TryParse(OtherString, out scoreToGet);
+            if (!int.TryParse(OtherString, out var scoreToGet)) return false;
 
             if (Room.GetGameManager().TeamPoints[(int) roomUser.Team] < scoreToGet)
                 return false;
@@ -67,14 +66,15 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
                     WiredHandler.OnEvent(current);
                 }
-            if (effects != null)
+            if (effects.Count > 0)
             {
-                if (effects.TryGetValue(Interaction.SpecialRandom, out var randomBox))
+                var randomBox = effects.FirstOrDefault(x => x.Type == Interaction.SpecialRandom);
+                if (randomBox != null)
                 {
                     if (!randomBox.Execute())
                         return false;
 
-                    var selectedBox = Room.GetWiredHandler().GetRandomEffect(effects.Values);
+                    var selectedBox = Room.GetWiredHandler().GetRandomEffect(effects);
                     if (!selectedBox.Execute())
                         return false;
 
@@ -83,7 +83,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 }
                 else
                 {
-                    foreach (var current3 in effects.Values)
+                    foreach (var current3 in effects)
                     {
                         if (current3.Execute(roomUser, Type))
                             WiredHandler.OnEvent(current3);

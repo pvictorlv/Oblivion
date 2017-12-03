@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Oblivion.HabboHotel.Items.Interactions;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -22,6 +24,7 @@ namespace Oblivion.HabboHotel.Items.Wired
         public WiredHandler(Room room)
         {
             _wiredItems = new List<IWiredItem>();
+            Effects = new ConcurrentDictionary<Point, List<IWiredItem>>();
             _room = room;
         }
 
@@ -93,8 +96,13 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         public bool OtherBoxHasItem(IWiredItem Box, RoomItem boxItem)
         {
-            bool any = (from item in GetEffects(Box).Values where item.Item.Id != Box.Item.Id where item.Type == Interaction.ActionMoveRotate || item.Type == Interaction.ActionMoveToDir || item.Type == Interaction.ActionChase where item.Items != null && item.Items.Count != 0 select item).Any(item => item.Items.Contains(boxItem));
-            
+            bool any = (from item in GetEffects(Box)
+                where item.Item.Id != Box.Item.Id
+                where item.Type == Interaction.ActionMoveRotate || item.Type == Interaction.ActionMoveToDir ||
+                      item.Type == Interaction.ActionChase
+                where item.Items != null && item.Items.Count != 0
+                select item).Any(item => item.Items.Contains(boxItem));
+
             return Box != null && any;
         }
 
@@ -202,7 +210,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
                     if (selectedItem == null)
                     {
-                        _wiredItems.Remove(item);
+                        RemoveWired(item);
                         continue;
                     }
 
@@ -230,15 +238,38 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         public void AddWired(IWiredItem item)
         {
-            if (_wiredItems.Contains(item)) _wiredItems.Remove(item);
+            if (_wiredItems.Contains(item))
+                _wiredItems.Remove(item);
             _wiredItems.Add(item);
+            if (IsEffect(item.Type))
+            {
+                var point = new Point(item.Item.X, item.Item.Y);
+                if (Effects.TryGetValue(point, out var items))
+                {
+                    items.Add(item);
+                    Effects[point] = items;
+                }
+                else
+                {
+                    items = new List<IWiredItem> {item};
+                    Effects.TryAdd(point, items);
+                }
+            }
         }
 
         public void RemoveWired(IWiredItem item)
         {
-            if (item == null) return;
             if (_wiredItems.Contains(item))
                 _wiredItems.Remove(item);
+            if (IsEffect(item.Type))
+            {
+                var point = new Point(item.Item.X, item.Item.Y);
+                if (Effects.TryGetValue(point, out var items))
+                {
+                    items.Remove(item);
+                    Effects[point] = items;
+                }
+            }
         }
 
         public void RemoveWired(RoomItem item)
@@ -251,7 +282,7 @@ namespace Oblivion.HabboHotel.Items.Wired
             current.Items = null;
             current.Item = null;
             current.Room = null;
-            _wiredItems.Remove(current);
+            RemoveWired(current);
         }
 
         public IWiredItem GenerateNewItem(RoomItem item)
@@ -476,7 +507,19 @@ namespace Oblivion.HabboHotel.Items.Wired
             .Where(current => current != null && IsCondition(current.Type) && current.Item.X == item.Item.X &&
                               current.Item.Y == item.Item.Y).ToList();
 
-        public Dictionary<Interaction, IWiredItem> GetEffects(IWiredItem item) => _wiredItems.Where(current => current != null && IsEffect(current.Type) && current.Item.X == item.Item.X && current.Item.Y == item.Item.Y).ToDictionary(current => current.Type);
+        public ConcurrentDictionary<Point, List<IWiredItem>> Effects;
+
+        public List<IWiredItem> GetEffects(IWiredItem item)
+        {
+            var coord = new Point(item.Item.X, item.Item.Y);
+
+            if (!Effects.TryGetValue(coord, out var items))
+            {
+                return new List<IWiredItem>();
+            }
+
+            return items;
+        }
 
         public IWiredItem GetWired(RoomItem item) => _wiredItems.FirstOrDefault(
             current => current != null && item.Id == current.Item.Id);
