@@ -239,6 +239,7 @@ namespace Oblivion.Configuration
                             GetGame().GetItemManager().LoadItems(adapter);
                             GetGame().GetCatalog().Initialize(adapter);
                             GetGame().ReloadItems();
+                            GetGame().GetCrackableEggHandler().Initialize(adapter);
                         }
                         var msg = new ServerMessage(LibraryParser.OutgoingRequest("PublishShopMessageComposer"));
                         msg.AppendBool(false);

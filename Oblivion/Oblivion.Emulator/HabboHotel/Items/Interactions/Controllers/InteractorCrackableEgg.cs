@@ -14,10 +14,10 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             RoomUser roomUser = null;
             if (session?.GetHabbo() != null)
                 roomUser = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
-
             if (roomUser == null)
                 return;
-
+            if (!roomUser.GetRoom().CheckRights(session, true))
+                return;
             if (Gamemap.TilesTouching(item.X, item.Y, roomUser.X, roomUser.Y))
             {
                 var cracks = 0;
@@ -28,13 +28,10 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 cracks++;
                 item.ExtraData = Convert.ToString(cracks);
                 item.UpdateState(false, true);
-
             }
             else
             {
-
                 roomUser.MoveTo(item.SquareInFront);
-
             }
             var room = item.GetRoom();
 

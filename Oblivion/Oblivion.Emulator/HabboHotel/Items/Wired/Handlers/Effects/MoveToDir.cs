@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,9 +92,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 HandleMovement(item);
             }
 
-            RoomItem rI;
-
-            while (_toRemove.TryDequeue(out rI))
+            while (_toRemove.TryDequeue(out var rI))
                 if (Items.Contains(rI))
                     Items.Remove(rI);
 

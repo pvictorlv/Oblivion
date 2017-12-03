@@ -96,12 +96,24 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         public bool OtherBoxHasItem(IWiredItem Box, RoomItem boxItem)
         {
-            bool any = (from item in GetEffects(Box)
-                where item.Item.Id != Box.Item.Id
-                where item.Type == Interaction.ActionMoveRotate || item.Type == Interaction.ActionMoveToDir ||
-                      item.Type == Interaction.ActionChase
-                where item.Items != null && item.Items.Count != 0
-                select item).Any(item => item.Items.Contains(boxItem));
+            bool any = false;
+            foreach (var item in GetEffects(Box))
+            {
+                if (item.Item.Id != Box.Item.Id)
+                {
+                    if (item.Type == Interaction.ActionMoveRotate || item.Type == Interaction.ActionMoveToDir || item.Type == Interaction.ActionChase)
+                    {
+                        if (item.Items != null && item.Items.Count != 0)
+                        {
+                            if (item.Items.Contains(boxItem))
+                            {
+                                any = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
 
             return Box != null && any;
         }
@@ -508,6 +520,24 @@ namespace Oblivion.HabboHotel.Items.Wired
                               current.Item.Y == item.Item.Y).ToList();
 
         public ConcurrentDictionary<Point, List<IWiredItem>> Effects;
+
+        public bool OnUserFurniCollision(Room Instance, RoomItem Item)
+        {
+            if (Instance == null || Item == null)
+                return false;
+
+            foreach (var User in from Point in Item.GetSides()
+                where Instance.GetGameMap().SquareHasUsers(Point.X, Point.Y)
+                select Instance.GetGameMap().GetRoomUsers(Point)
+                into Users
+                where Users != null && Users.Count > 0
+                from User in Users
+                select User)
+                ExecuteWired(Interaction.TriggerCollision, User.GetClient().GetHabbo(), Item);
+
+
+            return true;
+        }
 
         public List<IWiredItem> GetEffects(IWiredItem item)
         {

@@ -615,6 +615,58 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             }
         }
 
+
+        public Point SquareLeft
+        {
+            get
+            {
+                var Sq = new Point(X, Y);
+
+                switch (Rot)
+                {
+                    case 0:
+                        Sq.X++;
+                        break;
+                    case 2:
+                        Sq.Y--;
+                        break;
+                    case 4:
+                        Sq.X--;
+                        break;
+                    case 6:
+                        Sq.Y++;
+                        break;
+                }
+
+                return Sq;
+            }
+        }
+
+        public Point SquareRight
+        {
+            get
+            {
+                var Sq = new Point(X, Y);
+
+                switch (Rot)
+                {
+                    case 0:
+                        Sq.X--;
+                        break;
+                    case 2:
+                        Sq.Y++;
+                        break;
+                    case 4:
+                        Sq.X++;
+                        break;
+                    case 6:
+                        Sq.Y--;
+                        break;
+                }
+                return Sq;
+            }
+        }
+
         /// <summary>
         ///     Gets the interactor.
         /// </summary>
@@ -1391,6 +1443,21 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         {
             UpdateCounter = cycles;
             if (setUpdate) UpdateNeeded = true;
+        }
+
+
+        public List<Point> GetSides()
+        {
+            var toReturn = new List<Point> { SquareBehind, SquareInFront, SquareLeft, SquareRight, Coordinate };
+            return toReturn;
+        }
+
+        public void UserFurniCollision(RoomUser user)
+        {
+            if (user?.GetClient() == null || user.GetClient().GetHabbo() == null)
+                return;
+
+            GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerCollision, user.GetClient().GetHabbo(), this);
         }
 
         /// <summary>

@@ -85,6 +85,30 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <value>The model.</value>
         internal DynamicRoomModel Model { get; private set; }
 
+
+        public bool ItemCanMove(RoomItem Item, Point MoveTo)
+        {
+            if (Item.X == MoveTo.X && Item.Y == MoveTo.Y) return true;
+
+            var Points =
+                GetAffectedTiles(Item.GetBaseItem().Length, Item.GetBaseItem().Width, MoveTo.X, MoveTo.Y, Item.Rot)
+                    .Values;
+
+            if (Points.Count == 0)
+                return true;
+
+            foreach (var Coord in Points)
+            {
+                if (Coord.X >= Model.MapSizeX || Coord.Y >= Model.MapSizeY)
+                    return false;
+
+                if (!SquareIsOpen(Coord.X, Coord.Y, false))
+                    return false;
+            }
+
+            return true;
+        }
+
         /// <summary>
         ///     Gets the static model.
         /// </summary>
@@ -1139,6 +1163,11 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 var deductable = 0.0;
 
                 /* TODO CHECK */
+                if (highestStack.Length <= 0)
+                {
+                    return 0.0;
+                }
+
                 foreach (var item in itemsOnSquare.ToList())
                 {
                     if ((item?.GetBaseItem() == null || !(item.TotalHeight > highestStack[0]))) continue;
@@ -1239,7 +1268,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool SquareHasUsers(int x, int y) => MapGotUser(new Point(x, y));
+        internal bool SquareHasUsers(int x, int y) => GetRoomUsers(new Point(x, y)).Count > 0;
 
         /// <summary>
         ///     Destroys this instance.
@@ -1552,6 +1581,62 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             }
             //  serverMessage.AppendShort(this.Model.SqFloorHeight[j, i] * 256);
             return serverMessage;
+        }
+
+        public Point GetChaseMovement(RoomItem Item)
+        {
+            var Distance = 99;
+            var Coord = new Point(0, 0);
+            var iX = Item.X;
+            var iY = Item.Y;
+            var X = false;
+
+            foreach (var User in _room.GetRoomUserManager().GetRoomUsers())
+                if (User.X == Item.X || Item.Y == User.Y)
+                    if (User.X == Item.X)
+                    {
+                        var Difference = Math.Abs(User.Y - Item.Y);
+                        if (Difference >= Distance)
+                            continue;
+                        Distance = Difference;
+                        Coord = User.Coordinate;
+                        X = false;
+                    }
+                    else if (User.Y == Item.Y)
+                    {
+                        var Difference = Math.Abs(User.X - Item.X);
+                        if (Difference >= Distance)
+                            continue;
+                        Distance = Difference;
+                        Coord = User.Coordinate;
+                        X = true;
+                    }
+
+            if (Distance > 5)
+                return Item.GetSides().OrderBy(x => Guid.NewGuid()).FirstOrDefault();
+            if (X && Distance < 99)
+                if (iX > Coord.X)
+                {
+                    iX--;
+                    return new Point(iX, iY);
+                }
+                else
+                {
+                    iX++;
+                    return new Point(iX, iY);
+                }
+            if (!X && Distance < 99)
+                if (iY > Coord.Y)
+                {
+                    iY--;
+                    return new Point(iX, iY);
+                }
+                else
+                {
+                    iY++;
+                    return new Point(iX, iY);
+                }
+            return Item.Coordinate;
         }
 
         internal MovementState GetChasingMovement(int x, int y)
