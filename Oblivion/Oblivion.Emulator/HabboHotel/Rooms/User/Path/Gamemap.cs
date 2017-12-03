@@ -987,7 +987,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             return true;
         }
 
- 
 
         /// <summary>
         ///     Gets the random valid walkable square.
@@ -1592,7 +1591,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             var X = false;
 
             foreach (var User in _room.GetRoomUserManager().GetRoomUsers())
-                if (User.X == Item.X || Item.Y == User.Y)
                     if (User.X == Item.X)
                     {
                         var Difference = Math.Abs(User.Y - Item.Y);
@@ -1634,6 +1632,62 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 else
                 {
                     iY++;
+                    return new Point(iX, iY);
+                }
+            return Item.Coordinate;
+        }
+
+        public Point GetInverseChaseMovement(RoomItem Item)
+        {
+            var Distance = 99;
+            var Coord = new Point(0, 0);
+            var iX = Item.X;
+            var iY = Item.Y;
+            var X = false;
+
+            foreach (var User in _room.GetRoomUserManager().GetRoomUsers())
+                if (User.X == Item.X)
+                {
+                    var Difference = Math.Abs(User.Y - Item.Y);
+                    if (Difference >= Distance)
+                        continue;
+                    Distance = Difference;
+                    
+                    Coord = User.Coordinate ;
+                    X = false;
+                }
+                else if (User.Y == Item.Y)
+                {
+                    var Difference = Math.Abs(User.X - Item.X);
+                    if (Difference >= Distance)
+                        continue;
+                    Distance = Difference;
+                    Coord = User.Coordinate;
+                    X = true;
+                }
+
+            if (Distance > 5)
+                return Item.GetSides().OrderBy(x => Guid.NewGuid()).FirstOrDefault();
+            if (X && Distance < 99)
+                if (iX > Coord.X)
+                {
+                    iX++;
+                    return new Point(iX, iY);
+                }
+                else
+                {
+                    iX--;
+                    return new Point(iX, iY);
+                }
+            if (!X && Distance < 99)
+                if (iY > Coord.Y)
+                {
+                    iY++;
+                    return new Point(iX, iY);
+                }
+                else
+                {
+                    iY--;
                     return new Point(iX, iY);
                 }
             return Item.Coordinate;

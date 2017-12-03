@@ -1011,6 +1011,7 @@
         ActionBotTeleport,
 
         ActionChase,
+        ActionInverseChase,
 
         // New InteractionTypes by Claudio
         QuickTeleport,

@@ -102,7 +102,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <summary>
         /// The _room thread
         /// </summary>
-        private Task _roomThread;
+        private Thread _roomThread;
 
         /// <summary>
         ///     The _room user manager
@@ -1318,7 +1318,7 @@ namespace Oblivion.HabboHotel.Rooms
             }
             if (!forceLoad)
             {
-                _roomThread = new Task(StartRoomProcessing);
+                _roomThread = new Thread(StartRoomProcessing, 15000000);
                 _roomThread.Start();
             }
 
@@ -1449,7 +1449,7 @@ namespace Oblivion.HabboHotel.Rooms
             UsersWithRights = null;
             Oblivion.GetGame().GetRoomManager().RemoveRoomData(RoomId);
 
-            _roomThread?.Dispose();
+            _roomThread?.Abort();
             _roomThread = null;
         }
     }

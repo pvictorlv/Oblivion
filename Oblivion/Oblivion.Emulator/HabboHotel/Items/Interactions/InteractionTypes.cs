@@ -199,6 +199,7 @@ namespace Oblivion.HabboHotel.Items.Interactions
                             case Interaction.ActionBotTalkToAvatar:
                             case Interaction.ActionBotTeleport:
                             case Interaction.ActionChase:
+                            case Interaction.ActionInverseChase:
                             case Interaction.ActionMuteUser:
                             case Interaction.ActionKickUser:
                             case Interaction.ActionGiveReward:
@@ -940,6 +941,10 @@ namespace Oblivion.HabboHotel.Items.Interactions
                 case "actionchase":
                 case "wf_act_chase":
                     return Interaction.ActionChase;
+
+                case "actioninversechase":
+                case "wf_act_flee":
+                    return Interaction.ActionInverseChase;
 
                 case "wf_cnd_has_handitem":
                     return Interaction.ConditionUserHasHanditem;

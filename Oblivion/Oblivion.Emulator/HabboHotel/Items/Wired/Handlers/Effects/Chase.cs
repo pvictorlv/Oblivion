@@ -101,7 +101,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
                         var Point = Room.GetGameMap().GetChaseMovement(Item);
 
-                        Room.GetWiredHandler().OnUserFurniCollision(Room, Item);
+//                        Room.GetWiredHandler().OnUserFurniCollision(Room, Item);
 
                         if (!Room.GetGameMap().ItemCanMove(Item, Point))
                             continue;

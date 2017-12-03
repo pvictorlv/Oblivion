@@ -107,7 +107,7 @@
     <OutputPath>..\bin\Release\x64\</OutputPath>
     <DefineConstants>
     </DefineConstants>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <FileAlignment>4096</FileAlignment>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -299,6 +299,7 @@
     <Compile Include="HabboHotel\Items\Wired\Handlers\Conditions\UserIsNotInTeam.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Conditions\UserIsInTeam.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Addons\RegenMap.cs" />
+    <Compile Include="HabboHotel\Items\Wired\Handlers\Effects\InverseChase.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Effects\RollerSpeed.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Triggers\UserSaysCommand.cs" />
     <Compile Include="HabboHotel\Misc\AntiMutant.cs" />

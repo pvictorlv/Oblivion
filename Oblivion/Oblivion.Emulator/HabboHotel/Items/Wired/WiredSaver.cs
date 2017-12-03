@@ -90,6 +90,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 }
                 case Interaction.TriggerWalkOnFurni:
                 case Interaction.ActionChase:
+                case Interaction.ActionInverseChase:
                 case Interaction.ActionResetTimer:
                 {
                     request.GetInteger();

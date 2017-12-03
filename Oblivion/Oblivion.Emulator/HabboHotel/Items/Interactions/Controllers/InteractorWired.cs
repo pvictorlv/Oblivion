@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -153,9 +154,9 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     return;
                 }
                 //backmen
-                case Interaction.ActionJoinTeam:
                 case Interaction.ConditionUserIsInTeam:
                 case Interaction.ConditionUserIsNotInTeam:
+                case Interaction.ActionJoinTeam:
                 {
                     var serverMessage5 =
                         new ServerMessage(LibraryParser.OutgoingRequest("WiredConditionMessageComposer"));
@@ -171,6 +172,22 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     session.SendMessage(serverMessage5);
                     return;
                 }
+              /*  case Interaction.ActionJoinTeam:
+                {
+                        var serverMessage5 =
+                        new ServerMessage(LibraryParser.OutgoingRequest("WiredConditionMessageComposer"));
+                    serverMessage5.AppendBool(false);
+                    serverMessage5.AppendInteger(5);
+                    serverMessage5.AppendInteger(0);
+                    serverMessage5.AppendInteger(item.GetBaseItem().SpriteId);
+                    serverMessage5.AppendInteger(item.Id);
+                    serverMessage5.AppendInteger(Convert.ToInt32(extraInfo));
+                    serverMessage5.AppendInteger(0); //delay type
+                    serverMessage5.AppendInteger(0);
+                    serverMessage5.AppendInteger(6);
+                    session.SendMessage(serverMessage5);
+                    return;
+                }*/
                 case Interaction.TriggerOnUserSay:
                 {
                     var serverMessage6 =
@@ -676,8 +693,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 case Interaction.ConditionUserWearingEffect:
                 case Interaction.ConditionUserNotWearingEffect:
                 {
-                    int effect;
-                    int.TryParse(extraInfo, out effect);
+                    int.TryParse(extraInfo, out var effect);
                     var serverMessage21 =
                         new ServerMessage(LibraryParser.OutgoingRequest("WiredConditionMessageComposer"));
                     serverMessage21.AppendBool(false);
@@ -917,6 +933,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     return;
                 }
                 case Interaction.ActionChase:
+                case Interaction.ActionInverseChase:
                 {
                     var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                     serverMessage.AppendBool(false);

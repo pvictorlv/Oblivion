@@ -490,7 +490,7 @@ namespace Oblivion.HabboHotel
         internal void StartGameLoop()
         {
             GameLoopActiveExt = true;
-            _gameLoop = new Thread(MainGameLoop);
+            _gameLoop = new Thread(MainGameLoop, 15000000);
             _gameLoop.Start();
         }
 

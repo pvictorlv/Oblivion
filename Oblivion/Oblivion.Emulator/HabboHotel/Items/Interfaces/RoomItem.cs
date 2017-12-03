@@ -1390,6 +1390,9 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                     case Interaction.ActionRollerSpeed:
                     case Interaction.ActionTeleportTo:
                     case Interaction.ActionToggleState:
+                    case Interaction.ActionInverseChase:
+                    case Interaction.ActionJoinTeam:
+                    case Interaction.ActionLeaveTeam:
                     case Interaction.ActionChase:
                     case Interaction.ConditionFurnisHaveUsers:
                     case Interaction.ConditionStatePos:
