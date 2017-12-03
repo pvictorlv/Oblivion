@@ -56,7 +56,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     var Point = HandleMovement(Convert.ToInt32(OtherString.Split(';')[0]), new Point(Item.X, Item.Y));
                     var newRot = HandleRotation(Convert.ToInt32(OtherString.Split(';')[1]), Item.Rot);
 
-//                    Room.GetWiredHandler().OnUserFurniCollision(Room, Item);
 
                     if (!Room.GetGameMap().ItemCanMove(Item, Point))
                         continue;
@@ -106,6 +105,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 //                            Room.GetRoomItemHandler().SetFloorItem(Item, Point.X, Point.Y, NewZ);
                             Room.GetRoomItemHandler().SetFloorItem(Item, Point.X, Point.Y, NewZ);
                         }
+                        Room.GetWiredHandler().OnUserFurniCollision(Room, Item);
+
                     }
                 }
 

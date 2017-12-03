@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Oblivion.HabboHotel.Items.Interactions;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -12,6 +13,7 @@ using Oblivion.HabboHotel.Items.Wired.Handlers.Effects;
 using Oblivion.HabboHotel.Items.Wired.Handlers.Triggers;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
+using Oblivion.HabboHotel.Rooms.User;
 
 namespace Oblivion.HabboHotel.Items.Wired
 {
@@ -175,15 +177,12 @@ namespace Oblivion.HabboHotel.Items.Wired
                 if (!IsTrigger(type) || stuff == null)
                     return false;
 
-                if (type == Interaction.TriggerCollision)
-                    /* TODO CHECK */
-                    foreach (var wiredItem in _wiredItems.Where(
-                        wiredItem => wiredItem != null && wiredItem.Type == type))
-                        wiredItem.Execute(stuff);
-                else if (_wiredItems.Any(current => current != null && current.Type == type && current.Execute(stuff)))
+
+                if (_wiredItems.Any(current => current != null && current.Type == type && current.Execute(stuff)))
                 {
                     return true;
                 }
+                
             }
             catch (Exception e)
             {
@@ -545,23 +544,24 @@ namespace Oblivion.HabboHotel.Items.Wired
         public ConcurrentDictionary<Point, List<IWiredItem>> Effects;
         public ConcurrentDictionary<Point, List<IWiredItem>> Conditions;
 
-       /* public bool OnUserFurniCollision(Room Instance, RoomItem Item)
+        public bool OnUserFurniCollision(Room Instance, RoomItem Item)
         {
             if (Instance == null || Item == null)
                 return false;
 
-            foreach (var User in from Point in Item.GetSides()
-                where Instance.GetGameMap().SquareHasUsers(Point.X, Point.Y)
-                select Instance.GetGameMap().GetRoomUsers(Point)
-                into Users
-                where Users != null && Users.Count > 0
-                from User in Users
-                select User)
-                ExecuteWired(Interaction.TriggerCollision, User.GetClient().GetHabbo(), Item);
+            foreach (var point in Item.GetSides())
+            {
+                if (Instance.GetGameMap().SquareHasUsers(point.X, point.Y))
+                {
+                    List<RoomUser> users = Instance.GetGameMap().GetRoomUsers(point);
+                    foreach (RoomUser User in users)
+                        ExecuteWired(Interaction.TriggerCollision, User.GetClient().GetHabbo(), Item);
+                }
+            }
 
 
             return true;
-        }*/
+        }
 
         public List<IWiredItem> GetEffects(IWiredItem item)
         {
