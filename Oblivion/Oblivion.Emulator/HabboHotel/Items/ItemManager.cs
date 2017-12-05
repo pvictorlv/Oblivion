@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Catalogs.Wrappers;
 using Oblivion.HabboHotel.Items.Interactions;
@@ -22,6 +23,8 @@ namespace Oblivion.HabboHotel.Items
         ///     The items
         /// </summary>
         private readonly Dictionary<uint, Item> _items;
+
+        private int _itemIdCounter;
 
         private ConcurrentDictionary<uint, long> _itemsByVirtualId;
         private ConcurrentDictionary<long, uint> _itemsByRealId;
@@ -49,7 +52,7 @@ namespace Oblivion.HabboHotel.Items
             _itemsByRealId = new ConcurrentDictionary<long, uint>();
         }
 
-      
+
         public uint GetVirtualId(long realId)
         {
             if (_itemsByRealId.TryGetValue(realId, out var virtualId))
@@ -57,16 +60,22 @@ namespace Oblivion.HabboHotel.Items
                 return virtualId;
             }
 
-            var newId = (uint)_itemsByVirtualId.Count + 1u;
-            if (_itemsByVirtualId.ContainsKey(newId))
-            {
-                return GetVirtualId(realId);
-            }
-            _itemsByVirtualId.TryAdd(newId, realId);
+            Interlocked.Increment(ref _itemIdCounter);
+
+            var newId = Convert.ToUInt32(_itemIdCounter);
             _itemsByRealId.TryAdd(realId, newId);
+            _itemsByVirtualId.TryAdd(newId, realId);
+
             return newId;
         }
 
+        public void RemoveVirtualItem(long itemId)
+        {
+            var virtualId = GetVirtualId(itemId);
+            _itemsByRealId.TryRemove(itemId, out _);
+            _itemsByVirtualId.TryGetValue(virtualId, out _);
+
+        }
         public long GetRealId(uint virtualId)
         {
             if (_itemsByVirtualId.TryGetValue(virtualId, out var realId))

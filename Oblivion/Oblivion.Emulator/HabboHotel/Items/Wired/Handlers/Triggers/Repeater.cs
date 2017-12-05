@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -25,7 +26,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
         }
 
 
-        public ConcurrentQueue<RoomUser> ToWorkConcurrentQueue { get; set; }
+        public ConcurrentQueue<IWiredItem> _toRemove = new ConcurrentQueue<IWiredItem>();
 
         public double TickCount { get; set; }
 
@@ -38,6 +39,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
+          
 
             if (conditions.Count > 0)
                 foreach (var current in conditions)
@@ -126,7 +128,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
         {
             if (_mNext == 0L || _mNext <= Oblivion.Now())
                 _mNext = Oblivion.Now() + Delay;
-
+            
             return false;
         }
     }

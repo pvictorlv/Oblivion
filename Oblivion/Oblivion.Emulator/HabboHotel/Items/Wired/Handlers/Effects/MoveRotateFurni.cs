@@ -18,7 +18,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         private readonly ConcurrentQueue<RoomItem> _toRemove = new ConcurrentQueue<RoomItem>();
         private int _delay;
         private double _next;
-        private bool _requested;
         private int _rot, _dir;
 
         public MoveRotateFurni(RoomItem item, Room room)
@@ -30,7 +29,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             TickCount = 0;
             _rot = 0;
             _dir = 0;
-            _requested = false;
         }
 
 
@@ -86,6 +84,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                         {
                             Item.Rot = newRot;
                             Item.UpdateState(false, true);
+                            Item.SetState(Item.X, Item.Y, NewZ);
                         }
 
                         if (CanBePlaced && Point != Item.Coordinate)
@@ -302,27 +301,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             return NewPos;
         }
 
-        private void HandleItems()
-        {
-            if (Room?.GetRoomItemHandler() == null)
-                return;
-
-            foreach (var item in Items)
-            {
-
-                if (item == null || Room.GetRoomItemHandler().GetItem(item.Id) == null || Room.GetWiredHandler().OtherBoxHasItem(this, Item))
-                {
-                    _toRemove.Enqueue(item);
-                    continue;
-                }
-                HandleMovement(item);
-            }
-
-            while (_toRemove.TryDequeue(out var rI))
-                if (Items.Contains(rI))
-                    Items.Remove(rI);
-        }
-
+   
         private void HandleMovement(RoomItem item)
         {
             var newPoint = Movement.HandleMovement(item.Coordinate, (MovementState) _dir, item.Rot);

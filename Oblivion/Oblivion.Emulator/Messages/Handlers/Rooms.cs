@@ -1280,7 +1280,7 @@ namespace Oblivion.Messages.Handlers
                 return;
 
             var text = Request.GetString();
-            var habbo = Oblivion.GetGame().GetClientManager().GetClientByUserName(text).GetHabbo();
+            var habbo = Oblivion.GetGame().GetClientManager().GetClientByUserName(text)?.GetHabbo();
             if (habbo == null)
                 return;
             if (Session.GetHabbo().MutedUsers.Contains(habbo.Id) || habbo.Rank > 4u)

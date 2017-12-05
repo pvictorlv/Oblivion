@@ -826,7 +826,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                             dbClient.RunFastQuery(
                                 $"UPDATE items_rooms SET user_id='{UserId}', room_id='0' WHERE id='{itemId}'");
                     }
-                    _mAddedItems.Clear();
+                    _mAddedItems?.Clear();
                     added.Clear();
                 }
 

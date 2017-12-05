@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Oblivion.HabboHotel.Items.Interactions;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -26,8 +24,8 @@ namespace Oblivion.HabboHotel.Items.Wired
         public WiredHandler(Room room)
         {
             _wiredItems = new List<IWiredItem>();
-            Effects = new ConcurrentDictionary<Point, List<IWiredItem>>();
-            Conditions = new ConcurrentDictionary<Point, List<IWiredItem>>();
+            Effects = new Dictionary<Point, List<IWiredItem>>();
+            Conditions = new Dictionary<Point, List<IWiredItem>>();
             _room = room;
         }
 
@@ -252,7 +250,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 else
                 {
                     items = new List<IWiredItem> {item};
-                    Effects.TryAdd(point, items);
+                    Effects.Add(point, items);
                 }
             }
             else if (IsCondition(item.Type))
@@ -266,46 +264,65 @@ namespace Oblivion.HabboHotel.Items.Wired
                 else
                 {
                     items = new List<IWiredItem> {item};
-                    Conditions.TryAdd(point, items);
+                    Conditions.Add(point, items);
                 }
             }
         }
 
         public void RemoveWired(IWiredItem item)
         {
+
+            var point = new Point(item.Item.X, item.Item.Y);
+
+
             if (_wiredItems.Contains(item))
                 _wiredItems.Remove(item);
+
             if (IsEffect(item.Type))
             {
-                var point = new Point(item.Item.X, item.Item.Y);
                 if (Effects.TryGetValue(point, out var items))
                 {
                     items.Remove(item);
-                    Effects[point] = items;
+                    if (items.Count <= 0)
+                    {
+                        Effects.Remove(point);
+                    }
+                    else
+                    {
+                        Effects[point] = items;
+                    }
                 }
             }
             else if (IsCondition(item.Type))
             {
-                var point = new Point(item.Item.X, item.Item.Y);
                 if (Conditions.TryGetValue(point, out var items))
                 {
                     items.Remove(item);
-                    Conditions[point] = items;
+                    if (items.Count <= 0)
+                    {
+                        Conditions.Remove(point);
+                    }
+                    else
+                    {
+                        Conditions[point] = items;
+                    }
                 }
             }
+
         }
 
         public void RemoveWired(RoomItem item)
         {
-            if (item == null) return;
-            var current = _wiredItems.FirstOrDefault(x => x.Item.Id == item.Id);
+            var current = _wiredItems?.FirstOrDefault(x => x?.Item?.Id == item.Id);
             if (current == null)
                 return;
+//            _wiredItems.Remove(current);
+            RemoveWired(current);
+
             current.Items.Clear();
             current.Items = null;
             current.Item = null;
             current.Room = null;
-            RemoveWired(current);
         }
 
         public IWiredItem GenerateNewItem(RoomItem item)
@@ -541,8 +558,8 @@ namespace Oblivion.HabboHotel.Items.Wired
             return items;
         }
 
-        public ConcurrentDictionary<Point, List<IWiredItem>> Effects;
-        public ConcurrentDictionary<Point, List<IWiredItem>> Conditions;
+        public Dictionary<Point, List<IWiredItem>> Effects;
+        public Dictionary<Point, List<IWiredItem>> Conditions;
 
         public bool OnUserFurniCollision(Room Instance, RoomItem Item)
         {
@@ -555,7 +572,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 {
                     List<RoomUser> users = Instance.GetGameMap().GetRoomUsers(point);
                     foreach (RoomUser User in users)
-                        ExecuteWired(Interaction.TriggerCollision, User.GetClient().GetHabbo(), Item);
+                        ExecuteWired(Interaction.TriggerCollision, User, Item);
                 }
             }
 
@@ -575,11 +592,17 @@ namespace Oblivion.HabboHotel.Items.Wired
             return items;
         }
 
-        public IWiredItem GetWired(RoomItem item) => _wiredItems.FirstOrDefault(
-            current => current != null && item.Id == current.Item.Id);
+        public IWiredItem GetWired(RoomItem item)
+        {
+            foreach (var current in _wiredItems)
+            {
+                if (current != null && item.Id == current.Item.Id) return current;
+            }
+            return null;
+        }
 
-        public List<IWiredItem> GetWiredsByType(Interaction type) => _wiredItems
-            .Where(item => item != null && item.Type == type).ToList();
+        public List<IWiredItem> GetWiredsByType(Interaction type, Point coord) => _wiredItems
+            .Where(item => item != null && item.Type == type && item.Item.X == coord.X && item.Item.Y == coord.Y).ToList();
 
         public List<IWiredItem> GetWiredsByTypes(GlobalInteractions type) => _wiredItems
             .Where(item => item != null && InteractionTypes.AreFamiliar(type, item.Item.GetBaseItem().InteractionType))
@@ -596,6 +619,10 @@ namespace Oblivion.HabboHotel.Items.Wired
                 current.Room = null;
             }
             _room = null;
+            Effects.Clear();
+            Conditions.Clear();
+            Effects = null;
+            Conditions = null;
             _wiredItems.Clear();
             _wiredItems = null;
         }
