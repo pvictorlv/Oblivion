@@ -80,9 +80,8 @@ namespace Oblivion.HabboHotel.Items
         }
         public void RemoveVirtualItem(long itemId)
         {
-            var virtualId = GetVirtualId(itemId);
-            _itemsByRealId.TryRemove(itemId, out _);
-            _itemsByVirtualId.TryGetValue(virtualId, out _);
+            _itemsByRealId.TryRemove(itemId, out var virtualId);
+            _itemsByVirtualId.TryRemove(virtualId, out _);
         }
 
         public long GetRealId(uint virtualId)

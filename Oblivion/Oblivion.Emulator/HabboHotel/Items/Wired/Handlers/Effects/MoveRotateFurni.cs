@@ -42,79 +42,88 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             var Now = Oblivion.GetUnixTimeStamp();
             if (_next <= Now)
             {
-                foreach (var Item in Items)
+                if (Items != null && Items.Count > 0)
                 {
-                    if (Room.GetWiredHandler().OtherBoxHasItem(this, Item) || Room.GetRoomItemHandler().GetItem(Item.Id) == null)
+                    foreach (var Item in Items)
                     {
-                        _toRemove.Enqueue(Item);
-                        continue;
-                    }
-
-
-                    var Point = HandleMovement(Convert.ToInt32(OtherString.Split(';')[0]), new Point(Item.X, Item.Y));
-                    var newRot = HandleRotation(Convert.ToInt32(OtherString.Split(';')[1]), Item.Rot);
-
-
-                    if (!Room.GetGameMap().ItemCanMove(Item, Point))
-                        continue;
-
-                    if (Room.GetGameMap().CanRollItemHere(Point.X, Point.Y) && !Room.GetGameMap().SquareHasUsers(Point.X, Point.Y))
-                    {
-                        var NewZ = Room.GetGameMap().GetHeightForSquareFromData(Point);
-                        var CanBePlaced = true;
-
-                        var Items = Room.GetGameMap().GetCoordinatedItems(Point);
-                        foreach (var IItem in Items.Where(IItem => IItem != null && IItem.Id != Item.Id))
+                        if (Room.GetWiredHandler().OtherBoxHasItem(this, Item) ||
+                            Room.GetRoomItemHandler().GetItem(Item.Id) == null)
                         {
-                            if (!IItem.GetBaseItem().Walkable)
+                            _toRemove.Enqueue(Item);
+                            continue;
+                        }
+
+
+                        var Point = HandleMovement(Convert.ToInt32(OtherString.Split(';')[0]),
+                            new Point(Item.X, Item.Y));
+                        var newRot = HandleRotation(Convert.ToInt32(OtherString.Split(';')[1]), Item.Rot);
+
+
+                        if (!Room.GetGameMap().ItemCanMove(Item, Point))
+                            continue;
+
+                        if (Room.GetGameMap().CanRollItemHere(Point.X, Point.Y) &&
+                            !Room.GetGameMap().SquareHasUsers(Point.X, Point.Y))
+                        {
+                            var NewZ = Room.GetGameMap().GetHeightForSquareFromData(Point);
+                            var CanBePlaced = true;
+
+                            var Items = Room.GetGameMap().GetCoordinatedItems(Point);
+                            foreach (var IItem in Items.Where(IItem => IItem != null && IItem.Id != Item.Id))
                             {
-                                _next = 0;
-                                CanBePlaced = false;
-                                break;
+                                if (!IItem.GetBaseItem().Walkable)
+                                {
+                                    _next = 0;
+                                    CanBePlaced = false;
+                                    break;
+                                }
+
+                                if (IItem.TotalHeight > NewZ)
+                                    NewZ = IItem.TotalHeight;
+
+                                if (CanBePlaced && !IItem.GetBaseItem().Stackable)
+                                    CanBePlaced = false;
+                            }
+                            var rot = false;
+                            if (newRot != Item.Rot)
+                            {
+                                rot = true;
+                                Item.Rot = newRot;
+                                Item.UpdateState(false, true);
+                                Item.SetState(Item.X, Item.Y, NewZ);
                             }
 
-                            if (IItem.TotalHeight > NewZ)
-                                NewZ = IItem.TotalHeight;
-
-                            if (CanBePlaced && !IItem.GetBaseItem().Stackable)
-                                CanBePlaced = false;
+                            if (CanBePlaced && Point != Item.Coordinate)
+                            {
+                                var serverMessage =
+                                    new ServerMessage(LibraryParser.OutgoingRequest("ItemAnimationMessageComposer"));
+                                serverMessage.AppendInteger(Item.X);
+                                serverMessage.AppendInteger(Item.Y);
+                                serverMessage.AppendInteger(Point.X);
+                                serverMessage.AppendInteger(Point.Y);
+                                serverMessage.AppendInteger(1);
+                                serverMessage.AppendInteger(Item.VirtualId);
+                                serverMessage.AppendString(Item.Z.ToString(Oblivion.CultureInfo));
+                                serverMessage.AppendString(NewZ.ToString(Oblivion.CultureInfo));
+                                serverMessage.AppendInteger(0);
+                                Room.SendMessage(serverMessage);
+//                            
+                                if (rot)
+                                    Room.GetRoomItemHandler()
+                                        .SetFloorItem(Item, Point.X, Point.Y, NewZ, Item.Rot, true);
+                                else
+                                    Room.GetRoomItemHandler().SetFloorItem(Item, Point.X, Point.Y, NewZ);
+                            }
+                            Room.GetWiredHandler().OnUserFurniCollision(Room, Item);
                         }
-
-                        if (newRot != Item.Rot)
-                        {
-                            Item.Rot = newRot;
-                            Item.UpdateState(false, true);
-                            Item.SetState(Item.X, Item.Y, NewZ);
-                        }
-
-                        if (CanBePlaced && Point != Item.Coordinate)
-                        {
-                            var serverMessage =
-                                new ServerMessage(LibraryParser.OutgoingRequest("ItemAnimationMessageComposer"));
-                            serverMessage.AppendInteger(Item.X);
-                            serverMessage.AppendInteger(Item.Y);
-                            serverMessage.AppendInteger(Point.X);
-                            serverMessage.AppendInteger(Point.Y);
-                            serverMessage.AppendInteger(1);
-                            serverMessage.AppendInteger(Item.VirtualId);
-                            serverMessage.AppendString(Item.Z.ToString(Oblivion.CultureInfo));
-                            serverMessage.AppendString(NewZ.ToString(Oblivion.CultureInfo));
-                            serverMessage.AppendInteger(0);
-                            Room.SendMessage(serverMessage);
-//                            Room.GetRoomItemHandler().SetFloorItem(Item, Point.X, Point.Y, NewZ);
-                            Room.GetRoomItemHandler().SetFloorItem(Item, Point.X, Point.Y, NewZ);
-                        }
-                        Room.GetWiredHandler().OnUserFurniCollision(Room, Item);
-
                     }
+
+                    _next = 0;
+
+                    while (_toRemove.TryDequeue(out var rI))
+                        if (Items.Contains(rI))
+                            Items.Remove(rI);
                 }
-
-                _next = 0;
-
-                while (_toRemove.TryDequeue(out var rI))
-                    if (Items.Contains(rI))
-                        Items.Remove(rI);
-
                 return true;
             }
             return false;
@@ -177,6 +186,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         }
 
         public bool Requested;
+
         public bool Execute(params object[] Params)
         {
             if (Items.Count == 0)
@@ -198,37 +208,37 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             switch (mode)
             {
                 case 1:
+                {
+                    rotation += 2;
+                    if (rotation > 6)
+                        rotation = 0;
+                    break;
+                }
+
+                case 2:
+                {
+                    rotation -= 2;
+                    if (rotation < 0)
+                        rotation = 6;
+                    break;
+                }
+
+                case 3:
+                {
+                    if (RandomNumber.Get(0, 2) == 0)
                     {
                         rotation += 2;
                         if (rotation > 6)
                             rotation = 0;
-                        break;
                     }
-
-                case 2:
+                    else
                     {
                         rotation -= 2;
                         if (rotation < 0)
                             rotation = 6;
-                        break;
                     }
-
-                case 3:
-                    {
-                        if (RandomNumber.Get(0, 2) == 0)
-                        {
-                            rotation += 2;
-                            if (rotation > 6)
-                                rotation = 0;
-                        }
-                        else
-                        {
-                            rotation -= 2;
-                            if (rotation < 0)
-                                rotation = 6;
-                        }
-                        break;
-                    }
+                    break;
+                }
             }
             return rotation;
         }
@@ -239,97 +249,68 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             switch (Mode)
             {
                 case 0:
-                    {
-                        NewPos = Position;
-                        break;
-                    }
+                {
+                    NewPos = Position;
+                    break;
+                }
                 case 1:
+                {
+                    switch (RandomNumber.Get(1, 4))
                     {
-                        switch (RandomNumber.Get(1, 4))
-                        {
-                            case 1:
-                                NewPos = new Point(Position.X + 1, Position.Y);
-                                break;
-                            case 2:
-                                NewPos = new Point(Position.X - 1, Position.Y);
-                                break;
-                            case 3:
-                                NewPos = new Point(Position.X, Position.Y + 1);
-                                break;
-                            case 4:
-                                NewPos = new Point(Position.X, Position.Y - 1);
-                                break;
-                        }
-                        break;
+                        case 1:
+                            NewPos = new Point(Position.X + 1, Position.Y);
+                            break;
+                        case 2:
+                            NewPos = new Point(Position.X - 1, Position.Y);
+                            break;
+                        case 3:
+                            NewPos = new Point(Position.X, Position.Y + 1);
+                            break;
+                        case 4:
+                            NewPos = new Point(Position.X, Position.Y - 1);
+                            break;
                     }
+                    break;
+                }
                 case 2:
-                    {
-                        NewPos = RandomNumber.Get(0, 2) == 1
-                            ? new Point(Position.X - 1, Position.Y)
-                            : new Point(Position.X + 1, Position.Y);
-                        break;
-                    }
+                {
+                    NewPos = RandomNumber.Get(0, 2) == 1
+                        ? new Point(Position.X - 1, Position.Y)
+                        : new Point(Position.X + 1, Position.Y);
+                    break;
+                }
                 case 3:
-                    {
-                        NewPos = RandomNumber.Get(0, 2) == 1
-                            ? new Point(Position.X, Position.Y - 1)
-                            : new Point(Position.X, Position.Y + 1);
-                        break;
-                    }
+                {
+                    NewPos = RandomNumber.Get(0, 2) == 1
+                        ? new Point(Position.X, Position.Y - 1)
+                        : new Point(Position.X, Position.Y + 1);
+                    break;
+                }
                 case 4:
-                    {
-                        NewPos = new Point(Position.X, Position.Y - 1);
-                        break;
-                    }
+                {
+                    NewPos = new Point(Position.X, Position.Y - 1);
+                    break;
+                }
                 case 5:
-                    {
-                        NewPos = new Point(Position.X + 1, Position.Y);
-                        break;
-                    }
+                {
+                    NewPos = new Point(Position.X + 1, Position.Y);
+                    break;
+                }
                 case 6:
-                    {
-                        NewPos = new Point(Position.X, Position.Y + 1);
-                        break;
-                    }
+                {
+                    NewPos = new Point(Position.X, Position.Y + 1);
+                    break;
+                }
                 case 7:
-                    {
-                        NewPos = new Point(Position.X - 1, Position.Y);
-                        break;
-                    }
+                {
+                    NewPos = new Point(Position.X - 1, Position.Y);
+                    break;
+                }
             }
 
             return NewPos;
         }
 
-   
-        private void HandleMovement(RoomItem item)
-        {
-            var newPoint = Movement.HandleMovement(item.Coordinate, (MovementState) _dir, item.Rot);
-            var newRotation = Movement.HandleRotation(item.Rot, (RotationState) _rot);
 
-            if (newPoint != item.Coordinate && newRotation == item.Rot)
-            {
-                if (!Room.GetGameMap().SquareIsOpen(newPoint.X, newPoint.Y, false))
-                    return;
-
-                Room.GetRoomItemHandler().SetFloorItem(null, item, newPoint.X, newPoint.Y, newRotation, false, false,
-                    true, false, true);
-
-                return;
-            }
-
-            if (newPoint == item.Coordinate && newRotation == item.Rot)
-                return;
-
-            if (!Room.GetGameMap().SquareIsOpen(newPoint.X, newPoint.Y, false))
-                return;
-
-
-            item.Rot = newRotation;
-            item.UpdateState(false, true);
-
-            Room.GetRoomItemHandler().SetFloorItem(null, item, newPoint.X, newPoint.Y, newRotation, false, false, true,
-                false, false);
-        }
-    }
+       }
 }

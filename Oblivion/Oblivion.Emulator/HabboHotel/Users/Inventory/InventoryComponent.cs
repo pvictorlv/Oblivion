@@ -578,6 +578,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             foreach (var userItem in items)
             {
+                if (userItem == null) continue;
                 if (inc == 3500)
                     return serverMessage;
 

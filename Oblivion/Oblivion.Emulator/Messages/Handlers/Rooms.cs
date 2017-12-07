@@ -1504,7 +1504,7 @@ namespace Oblivion.Messages.Handlers
             var room = Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CheckRights(Session, true))
                 return;
-            var item = Session.GetHabbo().GetInventoryComponent().GetItem(Request.GetUInteger());
+            var item = Session.GetHabbo().GetInventoryComponent().GetItem(Oblivion.GetGame().GetItemManager().GetRealId(Request.GetUInteger()));
             if (item == null)
                 return;
             var type = "floor";

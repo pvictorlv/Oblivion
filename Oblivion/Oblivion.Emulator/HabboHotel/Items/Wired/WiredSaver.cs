@@ -535,7 +535,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
             for (var i = 0; i < itemCount; i++)
             {
-                var item = room.GetRoomItemHandler().GetItem(request.GetUInteger());
+                var item = room.GetRoomItemHandler().GetItem(Oblivion.GetGame().GetItemManager().GetRealId(request.GetUInteger()));
 
                 if (item != null)
                     list.Add(item);

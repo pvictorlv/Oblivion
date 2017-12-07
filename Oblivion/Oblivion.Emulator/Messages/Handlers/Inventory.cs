@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using Oblivion.Util;
-
+﻿
 namespace Oblivion.Messages.Handlers
 {
     /// <summary>
@@ -15,10 +12,10 @@ namespace Oblivion.Messages.Handlers
         internal void GetInventory()
         {
 
-            StackTrace stackTrace = new StackTrace();
+//            StackTrace stackTrace = new StackTrace();
 
             // Get calling method name
-            Out.WriteLine(stackTrace.GetFrame(1).GetMethod().Name);
+//            Out.WriteLine(stackTrace.GetFrame(1).GetMethod().Name);
             var msg = Session.GetHabbo().GetInventoryComponent().SerializeFloorItemInventory();
             if (msg == null) return;
             var queuedServerMessage = new QueuedServerMessage(Session.GetConnection());
