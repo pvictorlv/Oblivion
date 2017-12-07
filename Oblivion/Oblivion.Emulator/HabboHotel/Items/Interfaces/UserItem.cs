@@ -12,7 +12,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <summary>
         ///     The base item
         /// </summary>
-        internal readonly Item BaseItem;
+        internal Item BaseItem;
 
         /// <summary>
         ///     The base item identifier
@@ -32,7 +32,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <summary>
         ///     The identifier
         /// </summary>
-        internal uint Id;
+        internal long Id;
 
         /// <summary>
         ///     The is wall item
@@ -49,6 +49,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// </summary>
         internal string SongCode;
 
+        internal uint VirtualId;
         /// <summary>
         ///     Initializes a new instance of the <see cref="UserItem" /> class.
         /// </summary>
@@ -57,12 +58,13 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="extraData">The extra data.</param>
         /// <param name="group">The group.</param>
         /// <param name="songCode">The song code.</param>
-        internal UserItem(uint id, uint baseItemId, string extraData, uint group, string songCode)
+        internal UserItem(long id, uint baseItemId, string extraData, uint group, string songCode)
         {
             Id = id;
             BaseItemId = baseItemId;
             ExtraData = extraData;
             GroupId = group;
+            VirtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(id);
             BaseItem = Oblivion.GetGame().GetItemManager().GetItem(baseItemId);
 
             if (BaseItem == null)
@@ -85,6 +87,12 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             SongCode = songCode;
         }
 
+
+        public void Dispose()
+        {
+            BaseItem = null;
+            Oblivion.GetGame().GetItemManager().RemoveVirtualItem(Id);
+        }
         /// <summary>
         ///     Serializes the wall.
         /// </summary>
@@ -92,9 +100,9 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="inventory">if set to <c>true</c> [inventory].</param>
         internal void SerializeWall(ServerMessage message, bool inventory)
         {
-            message.AppendInteger(Id);
+            message.AppendInteger(VirtualId);
             message.AppendString(BaseItem.Type.ToString().ToUpper());
-            message.AppendInteger(Id);
+            message.AppendInteger(VirtualId);
             message.AppendInteger(BaseItem.SpriteId);
 
             if (BaseItem.Name.Contains("a2") || BaseItem.Name == "floor")
@@ -124,9 +132,9 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="inventory">if set to <c>true</c> [inventory].</param>
         internal void SerializeFloor(ServerMessage message, bool inventory)
         {
-            message.AppendInteger(Id);
+            message.AppendInteger(VirtualId);
             message.AppendString(BaseItem.Type.ToString(CultureInfo.InvariantCulture).ToUpper());
-            message.AppendInteger(Id);
+            message.AppendInteger(VirtualId);
             message.AppendInteger(BaseItem.SpriteId);
             var extraParam = 0;
 

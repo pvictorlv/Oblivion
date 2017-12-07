@@ -21,13 +21,13 @@ namespace Oblivion.HabboHotel.Items.Datas
         /// <summary>
         ///     The item identifier
         /// </summary>
-        internal uint ItemId;
+        internal long ItemId;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="TonerData" /> class.
         /// </summary>
         /// <param name="item">The item.</param>
-        internal TonerData(uint item)
+        internal TonerData(long item)
         {
             ItemId = item;
             DataRow row;

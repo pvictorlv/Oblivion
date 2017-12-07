@@ -94,7 +94,12 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <summary>
         ///     The identifier
         /// </summary>
-        internal uint Id;
+        internal long Id;
+
+        /// <summary>
+        /// the virtual id
+        /// </summary>
+        internal uint VirtualId;
 
         /// <summary>
         ///     The interacting ball user
@@ -224,10 +229,11 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="eGroup">The group.</param>
         /// <param name="songCode">The song code.</param>
         /// <param name="isBuilder">if set to <c>true</c> [is builder].</param>
-        internal RoomItem(uint id, uint roomId, uint baseItem, string extraData, int x, int y, double z, int rot,
+        internal RoomItem(long id, uint roomId, uint baseItem, string extraData, int x, int y, double z, int rot,
             Room pRoom, uint userid, uint eGroup, string songCode, bool isBuilder)
         {
             Id = id;
+            VirtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(id);
             RoomId = roomId;
             BaseItem = baseItem;
             ExtraData = extraData;
@@ -380,7 +386,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="userid">The userid.</param>
         /// <param name="eGroup">The group.</param>
         /// <param name="isBuilder">if set to <c>true</c> [is builder].</param>
-        internal RoomItem(uint id, uint roomId, uint baseItem, string extraData, WallCoordinate wallCoord, Room pRoom,
+        internal RoomItem(long id, uint roomId, uint baseItem, string extraData, WallCoordinate wallCoord, Room pRoom,
             uint userid, uint eGroup, bool isBuilder)
         {
             BaseItem = baseItem;
@@ -391,6 +397,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             if (_mBaseItem == null) Logging.LogException($"Unknown baseID: {baseItem}");
 
             Id = id;
+            VirtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(id);
+
             RoomId = roomId;
             ExtraData = extraData;
             GroupId = eGroup;
@@ -838,6 +846,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// </summary>
         internal void Destroy()
         {
+            Oblivion.GetGame().GetItemManager().RemoveVirtualItem(Id);
             _mBaseItem = null;
             _mRoom = null;
             AffectedTiles.Clear();
@@ -1500,7 +1509,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             if (IsFloorItem)
             {
                 serverMessage.Init(LibraryParser.OutgoingRequest("UpdateFloorItemExtraDataMessageComposer"));
-                serverMessage.AppendString(Id.ToString());
+                serverMessage.AppendString(VirtualId.ToString());
                 switch (GetBaseItem().InteractionType)
                 {
                     case Interaction.Mannequin:
@@ -1581,7 +1590,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         {
             if (IsFloorItem)
             {
-                message.AppendInteger(Id);
+                message.AppendInteger(VirtualId);
                 message.AppendInteger(GetBaseItem().SpriteId);
                 message.AppendInteger(X);
                 message.AppendInteger(Y);
@@ -1851,7 +1860,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             if (!IsWallItem)
                 return;
 
-            message.AppendString($"{Id}{string.Empty}");
+            message.AppendString($"{VirtualId}{string.Empty}");
             message.AppendInteger(GetBaseItem().SpriteId);
             message.AppendString(WallCoord?.ToString() ?? string.Empty);
 

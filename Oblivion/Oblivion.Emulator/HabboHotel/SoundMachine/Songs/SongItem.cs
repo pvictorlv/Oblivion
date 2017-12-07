@@ -22,6 +22,7 @@ namespace Oblivion.HabboHotel.SoundMachine.Songs
         /// </summary>
         internal uint ItemId;
 
+        
         /// <summary>
         ///     The song code
         /// </summary>
@@ -57,7 +58,7 @@ namespace Oblivion.HabboHotel.SoundMachine.Songs
         /// <param name="item">The item.</param>
         public SongItem(UserItem item)
         {
-            ItemId = item.Id;
+            ItemId = item.VirtualId;
             SongId = SoundMachineSongManager.GetSongId(item.SongCode);
             BaseItem = item.BaseItem;
             ExtraData = item.ExtraData;

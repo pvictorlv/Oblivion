@@ -1046,7 +1046,7 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().Diamonds += 25;
             Session.GetHabbo().UpdateSeasonalCurrencyBalance();
             if (item != null)
-                Session.GetHabbo().GetInventoryComponent().SendNewItems(item.Id);
+                Session.GetHabbo().GetInventoryComponent().SendNewItems(item.VirtualId);
 
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                 dbClient.RunFastQuery(

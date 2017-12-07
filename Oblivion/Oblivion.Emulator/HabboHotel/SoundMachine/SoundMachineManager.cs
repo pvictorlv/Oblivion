@@ -124,7 +124,7 @@ namespace Oblivion.HabboHotel.SoundMachine
         ///     Gets the linked item identifier.
         /// </summary>
         /// <value>The linked item identifier.</value>
-        public uint LinkedItemId => _mRoomOutputItem?.Id ?? 0u;
+//        public uint LinkedItemId => _mRoomOutputItem?.Id ?? 0u;
 
         /// <summary>
         ///     Gets the song queue position.

@@ -1,5 +1,4 @@
 using System;
-using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Rooms;
 
 namespace Oblivion.HabboHotel.Items.Handlers
@@ -14,7 +13,7 @@ namespace Oblivion.HabboHotel.Items.Handlers
         /// </summary>
         /// <param name="teleId">The tele identifier.</param>
         /// <returns>System.UInt32.</returns>
-        internal static uint GetLinkedTele(uint teleId, Room pRoom)
+        internal static uint GetLinkedTele(long teleId, Room pRoom)
         {
             uint result;
 
@@ -36,7 +35,7 @@ namespace Oblivion.HabboHotel.Items.Handlers
         /// <param name="teleId">The tele identifier.</param>
         /// <param name="pRoom">The p room.</param>
         /// <returns>System.UInt32.</returns>
-        internal static uint GetTeleRoomId(uint teleId, Room pRoom)
+        internal static uint GetTeleRoomId(long teleId, Room pRoom)
         {
             if (pRoom.GetRoomItemHandler().GetItem(teleId) != null)
                 return pRoom.RoomId;
@@ -61,7 +60,7 @@ namespace Oblivion.HabboHotel.Items.Handlers
         /// <param name="teleId">The tele identifier.</param>
         /// <param name="pRoom">The p room.</param>
         /// <returns><c>true</c> if [is tele linked] [the specified tele identifier]; otherwise, <c>false</c>.</returns>
-        internal static bool IsTeleLinked(uint teleId, Room pRoom)
+        internal static bool IsTeleLinked(long teleId, Room pRoom)
         {
             var linkedTele = GetLinkedTele(teleId, pRoom);
             if (linkedTele == 0u)

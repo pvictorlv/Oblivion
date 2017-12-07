@@ -1550,10 +1550,10 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 case Interaction.FreezeTile:
                     _room.GetFreeze().RemoveFreezeTile(item.Id);
                     break;
-
+/*
                 case Interaction.FootballGate:
-                    //   this.room.GetSoccer().UnRegisterGate(item);
-                    break;
+//                       _room.GetSoccer().UnRegisterGate(item);
+                    break;*/
 
                 case Interaction.Football:
                     _room.GetSoccer().RemoveBall();

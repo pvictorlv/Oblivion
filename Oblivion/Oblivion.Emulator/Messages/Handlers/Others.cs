@@ -376,7 +376,7 @@ namespace Oblivion.Messages.Handlers
                 .GetInventoryComponent()
                 .AddNewItem(0, Oblivion.GetGame().GetCameraManager().PhotoPoster.ItemId, data, 0, true, false, 0, 0);
             Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
-            Session.GetHabbo().GetInventoryComponent().SendNewItems(item.Id);
+            Session.GetHabbo().GetInventoryComponent().SendNewItems(item.VirtualId);
 
             Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_CameraPhotoCount", 1);
 
@@ -547,7 +547,7 @@ namespace Oblivion.Messages.Handlers
                     .AddNewItem(0, Oblivion.GetGame().GetCameraManager().PhotoPoster.ItemId, data, 0, true, false, 0,
                         0);
                 Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
-                Session.GetHabbo().GetInventoryComponent().SendNewItems(item.Id);
+                Session.GetHabbo().GetInventoryComponent().SendNewItems(item.VirtualId);
 
 
                 var thumb = new ServerMessage(LibraryParser.OutgoingRequest("ThumbnailSuccessMessageComposer"));

@@ -145,7 +145,7 @@ namespace Oblivion.HabboHotel.SoundMachine.Composers
                     continue;
                 }
 
-                serverMessage.AppendInteger(userItem.Id);
+                serverMessage.AppendInteger(userItem.VirtualId);
 
                 var song = SoundMachineSongManager.GetSong(userItem.SongCode);
                 serverMessage.AppendInteger(song?.Id ?? 0);

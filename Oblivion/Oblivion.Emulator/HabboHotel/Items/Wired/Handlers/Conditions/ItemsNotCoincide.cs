@@ -53,7 +53,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
             bool useExtradata, useRot, usePos;
 
-            Dictionary<uint, string[]> itemsOriginalData;
+            Dictionary<long, string[]> itemsOriginalData;
 
             try
             {
@@ -68,7 +68,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
                 usePos = booleans[2] == "true";
 
                 itemsOriginalData = OtherExtraString.Split('/').Select(data => data.Split('|'))
-                    .ToDictionary(array => uint.Parse(array[0]), array => array.Skip(1).ToArray());
+                    .ToDictionary(array => long.Parse(array[0]), array => array.Skip(1).ToArray());
             }
             catch (Exception e)
             {

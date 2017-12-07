@@ -15,15 +15,15 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
 {
     internal class Freeze
     {
-        private ConcurrentDictionary<uint, RoomItem> _freezeTiles, _freezeBlocks;
+        private ConcurrentDictionary<long, RoomItem> _freezeTiles, _freezeBlocks;
         private Random _rnd;
         private Room _room;
 
         public Freeze(Room room)
         {
             _room = room;
-            _freezeTiles = new ConcurrentDictionary<uint, RoomItem>();
-            _freezeBlocks = new ConcurrentDictionary<uint, RoomItem>();
+            _freezeTiles = new ConcurrentDictionary<long, RoomItem>();
+            _freezeBlocks = new ConcurrentDictionary<long, RoomItem>();
             ExitTeleport = null;
             _rnd = new Random();
             GameStarted = false;
@@ -184,7 +184,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
             _freezeTiles.AddOrUpdate(item.Id, item, (k, v) => item);
         }
 
-        internal void RemoveFreezeTile(uint itemId)
+        internal void RemoveFreezeTile(long itemId)
         {
             _freezeTiles.TryRemove(itemId, out _);
         }
@@ -194,7 +194,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
             _freezeBlocks.AddOrUpdate(item.Id, item, (k, v) => item);
         }
 
-        internal void RemoveFreezeBlock(uint itemId)
+        internal void RemoveFreezeBlock(long itemId)
         {
             _freezeBlocks.TryRemove(itemId, out _);
         }

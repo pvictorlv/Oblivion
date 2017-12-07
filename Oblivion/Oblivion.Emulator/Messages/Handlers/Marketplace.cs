@@ -548,7 +548,7 @@ namespace Oblivion.Messages.Handlers
         {
             var SellingPrice = Request.GetInteger();
             Request.GetInteger();
-            var ItemId = Request.GetUInteger();
+            var ItemId = Oblivion.GetGame().GetItemManager().GetRealId(Request.GetUInteger());
 
             var Item = Session.GetHabbo().GetInventoryComponent().GetItem(ItemId);
             var msg = new ServerMessage(LibraryParser.OutgoingRequest("MarketplaceMakeOfferResultMessageComposer"));

@@ -38,7 +38,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 Oblivion.GetGame()
                     .GetModerationTool()
                     .LogStaffEntry(session.GetHabbo().UserName, user.GetHabbo().UserName, "dc",
-                        string.Format("Disconnect User[{0}]", pms[1]));
+                        $"Disconnect User[{pms[1]}]");
             }
             catch
             {

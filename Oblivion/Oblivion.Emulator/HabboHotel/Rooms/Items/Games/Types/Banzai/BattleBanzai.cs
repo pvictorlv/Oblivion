@@ -226,7 +226,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             serverMessage.AppendInteger(newX);
             serverMessage.AppendInteger(newY);
             serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(item.Id);
+            serverMessage.AppendInteger(item.VirtualId);
             serverMessage.AppendString(TextHandling.GetString(item.Z));
             serverMessage.AppendString(TextHandling.GetString(newZ));
             serverMessage.AppendInteger(-1);

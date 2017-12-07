@@ -232,9 +232,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             serverMessage.AppendInteger(firstUser.OfferedItems.Count);
             /* TODO CHECK */ foreach (var current in firstUser.OfferedItems)
             {
-                serverMessage.AppendInteger(current.Id);
+                serverMessage.AppendInteger(current.VirtualId);
                 serverMessage.AppendString(current.BaseItem.Type.ToString().ToLower());
-                serverMessage.AppendInteger(current.Id);
+                serverMessage.AppendInteger(current.VirtualId);
                 serverMessage.AppendInteger(current.BaseItem.SpriteId);
                 serverMessage.AppendInteger(0);
                 serverMessage.AppendBool(true);
@@ -255,9 +255,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             serverMessage.AppendInteger(secondUser.OfferedItems.Count);
             /* TODO CHECK */ foreach (var current in secondUser.OfferedItems)
             {
-                serverMessage.AppendInteger(current.Id);
+                serverMessage.AppendInteger(current.VirtualId);
                 serverMessage.AppendString(current.BaseItem.Type.ToString().ToLower());
-                serverMessage.AppendInteger(current.Id);
+                serverMessage.AppendInteger(current.VirtualId);
                 serverMessage.AppendInteger(current.BaseItem.SpriteId);
                 serverMessage.AppendInteger(0);
                 serverMessage.AppendBool(true);
@@ -347,7 +347,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             serverMessage.AppendInteger(offeredItems.Count);
             /* TODO CHECK */ foreach (var current6 in offeredItems)
             {
-                serverMessage.AppendInteger(current6.Id);
+                serverMessage.AppendInteger(current6.VirtualId);
             }
             userTwo.GetClient().SendMessage(serverMessage);
             var serverMessage2 = new ServerMessage(LibraryParser.OutgoingRequest("NewInventoryObjectMessageComposer"));
@@ -361,7 +361,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             serverMessage2.AppendInteger(offeredItems2.Count);
             /* TODO CHECK */ foreach (var current8 in offeredItems2)
             {
-                serverMessage2.AppendInteger(current8.Id);
+                serverMessage2.AppendInteger(current8.VirtualId);
             }
             userOne.GetClient().SendMessage(serverMessage2);
             userOne.GetClient().GetHabbo().GetInventoryComponent().UpdateItems(false);

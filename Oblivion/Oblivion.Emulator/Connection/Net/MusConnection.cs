@@ -182,15 +182,15 @@ namespace Oblivion.Connection.Net
 
                     case "addtoinventory":
                         userId = Convert.ToUInt32(param[0]);
-                        var furniId = Convert.ToInt32(param[1]);
-
+                        var furniId = Convert.ToUInt32(param[1]);
+                        //todo
                         clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
                         if (clientByUserId?.GetHabbo() == null ||
                             clientByUserId.GetHabbo().GetInventoryComponent() == null)
                             return;
 
                         clientByUserId.GetHabbo().GetInventoryComponent().UpdateItems(true);
-                        clientByUserId.GetHabbo().GetInventoryComponent().SendNewItems((uint) furniId);
+                        clientByUserId.GetHabbo().GetInventoryComponent().SendNewItems(furniId);
 
                         break;
 

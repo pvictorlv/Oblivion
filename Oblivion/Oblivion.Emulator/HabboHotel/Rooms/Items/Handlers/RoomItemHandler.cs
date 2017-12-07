@@ -33,7 +33,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// <summary>
         ///     The _roller items moved
         /// </summary>
-        private readonly List<uint> _rollerItemsMoved, _rollerUsersMoved;
+        private readonly List<long> _rollerItemsMoved, _rollerUsersMoved;
 
         /// <summary>
         ///     The _roller messages
@@ -55,17 +55,17 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// </summary>
         private Queue _roomItemUpdateQueue;
 
-        private List<uint> _updatedItems, _removedItems;
+        private List<long> _updatedItems, _removedItems;
 
         /// <summary>
         ///     The breeding terrier
         /// </summary>
-        internal Dictionary<uint, RoomItem> BreedingTerrier, BreedingBear;
+        internal Dictionary<long, RoomItem> BreedingTerrier, BreedingBear;
 
         /// <summary>
         ///     The items
         /// </summary>
-        internal ConcurrentDictionary<uint, RoomItem> FloorItems, WallItems;
+        internal ConcurrentDictionary<long, RoomItem> FloorItems, WallItems;
 
         /// <summary>
         /// The rollers in room
@@ -84,20 +84,20 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         public RoomItemHandler(Room room)
         {
             _room = room;
-            _removedItems = new List<uint>();
-            _updatedItems = new List<uint>();
+            _removedItems = new List<long>();
+            _updatedItems = new List<long>();
             Rollers = new ConcurrentList<RoomItem>();
-            WallItems = new ConcurrentDictionary<uint, RoomItem>();
-            FloorItems = new ConcurrentDictionary<uint, RoomItem>();
+            WallItems = new ConcurrentDictionary<long, RoomItem>();
+            FloorItems = new ConcurrentDictionary<long, RoomItem>();
             _roomItemUpdateQueue = new Queue();
-            BreedingBear = new Dictionary<uint, RoomItem>();
-            BreedingTerrier = new Dictionary<uint, RoomItem>();
+            BreedingBear = new Dictionary<long, RoomItem>();
+            BreedingTerrier = new Dictionary<long, RoomItem>();
             GotRollers = false;
             _roolerCycle = 0;
             _rollerSpeed = 4;
             HopperCount = 0;
-            _rollerItemsMoved = new List<uint>();
-            _rollerUsersMoved = new List<uint>();
+            _rollerItemsMoved = new List<long>();
+            _rollerUsersMoved = new List<long>();
             _rollerMessages = new List<ServerMessage>();
         }
 
@@ -105,10 +105,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         {
             get
             {
-                if (WallItems == null)
-                    WallItems = new ConcurrentDictionary<uint, RoomItem>();
-                if (FloorItems == null)
-                    FloorItems = new ConcurrentDictionary<uint, RoomItem>();
+                if (WallItems == null || FloorItems == null)
+                    return 0;
+
                 return WallItems.Count + FloorItems.Count;
             }
         }
@@ -119,7 +118,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// <value><c>true</c> if [got rollers]; otherwise, <c>false</c>.</value>
         internal bool GotRollers { get; set; }
 
-        internal RoomItem GetItem(uint itemId)
+        internal RoomItem GetItem(long itemId)
         {
             if (FloorItems.TryGetValue(itemId, out var item)) return item;
             return WallItems.TryGetValue(itemId, out item) ? item : null;
@@ -134,13 +133,13 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         {
             if (!BreedingBear.Any())
                 return new Point();
-            var keys = new List<uint>(BreedingBear.Keys);
+            var keys = new List<long>(BreedingBear.Keys);
             var size = BreedingBear.Count;
             var rand = new Random();
             var randomKey = keys[rand.Next(size)];
 
             BreedingBear[randomKey].PetsList.Add(pet);
-            pet.WaitingForBreading = BreedingBear[randomKey].Id;
+            pet.WaitingForBreading = BreedingBear[randomKey].VirtualId;
             pet.BreadingTile = BreedingBear[randomKey].Coordinate;
 
             return BreedingBear[randomKey].Coordinate;
@@ -155,13 +154,13 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         {
             if (!BreedingTerrier.Any())
                 return new Point();
-            var keys = new List<uint>(BreedingTerrier.Keys);
+            var keys = new List<long>(BreedingTerrier.Keys);
             var size = BreedingTerrier.Count;
             var rand = new Random();
             var randomKey = keys[rand.Next(size)];
 
             BreedingTerrier[randomKey].PetsList.Add(pet);
-            pet.WaitingForBreading = BreedingTerrier[randomKey].Id;
+            pet.WaitingForBreading = BreedingTerrier[randomKey].VirtualId;
             pet.BreadingTile = BreedingTerrier[randomKey].Coordinate;
 
             return BreedingTerrier[randomKey].Coordinate;
@@ -285,7 +284,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 item.Interactor.OnRemove(session, item);
                 roomGamemap.RemoveSpecialItem(item);
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("PickUpFloorItemMessageComposer"));
-                serverMessage.AppendString(item.Id.ToString());
+                serverMessage.AppendString(item.VirtualId.ToString());
                 serverMessage.AppendBool(false); //expired
                 serverMessage.AppendInteger(item.UserId); //pickerId
                 serverMessage.AppendInteger(0); // delay
@@ -305,7 +304,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             {
                 item.Interactor.OnRemove(session, item);
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("PickUpWallItemMessageComposer"));
-                serverMessage.AppendString(item.Id.ToString());
+                serverMessage.AppendString(item.VirtualId.ToString());
                 serverMessage.AppendInteger(item.UserId);
                 _room.SendMessage(serverMessage);
                 if (item.IsBuilder)
@@ -385,10 +384,10 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// </summary>
         internal void LoadFurniture()
         {
-            if (FloorItems == null) FloorItems = new ConcurrentDictionary<uint, RoomItem>();
+            if (FloorItems == null) FloorItems = new ConcurrentDictionary<long, RoomItem>();
             else FloorItems.Clear();
 
-            if (WallItems == null) WallItems = new ConcurrentDictionary<uint, RoomItem>();
+            if (WallItems == null) WallItems = new ConcurrentDictionary<long, RoomItem>();
             else WallItems.Clear();
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -518,7 +517,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// <param name="session">The session.</param>
         /// <param name="id">The identifier.</param>
         /// <param name="wasPicked">if set to <c>true</c> [was picked].</param>
-        internal void RemoveFurniture(GameClient session, uint id, bool wasPicked = true)
+        internal void RemoveFurniture(GameClient session, long id, bool wasPicked = true)
         {
             var item = GetItem(id);
             if (item == null)
@@ -546,7 +545,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 dbClient.RunFastQuery($"DELETE FROM items_rooms WHERE id = '{item.Id}'");
             }
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("PickUpFloorItemMessageComposer"));
-            serverMessage.AppendString(item.Id.ToString());
+            serverMessage.AppendString(item.VirtualId.ToString());
             serverMessage.AppendBool(false); //expired
             serverMessage.AppendInteger(0); //pickerId
             serverMessage.AppendInteger(0); // delay
@@ -567,7 +566,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             if (item.IsWallItem)
             {
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("PickUpWallItemMessageComposer"));
-                serverMessage.AppendString(item.Id.ToString());
+                serverMessage.AppendString(item.VirtualId.ToString());
                 serverMessage.AppendInteger(wasPicked ? item.UserId : 0);
                 _room.SendMessage(serverMessage);
                 WallItems.TryRemove(item.Id, out _);
@@ -575,7 +574,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             else if (item.IsFloorItem)
             {
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("PickUpFloorItemMessageComposer"));
-                serverMessage.AppendString(item.Id.ToString());
+                serverMessage.AppendString(item.VirtualId.ToString());
                 serverMessage.AppendBool(false); //expired
                 serverMessage.AppendInteger(wasPicked ? item.UserId : 0); //pickerId
                 serverMessage.AppendInteger(0); // delay
@@ -606,7 +605,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             serverMessage.AppendInteger(nextCoord.X);
             serverMessage.AppendInteger(nextCoord.Y);
             serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(item.Id);
+            serverMessage.AppendInteger(item.VirtualId);
             serverMessage.AppendString(TextHandling.GetString(item.Z));
             serverMessage.AppendString(TextHandling.GetString(nextZ));
             serverMessage.AppendInteger(rolledId);
@@ -878,7 +877,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         message.AppendInteger(newX);
                         message.AppendInteger(newY);
                         message.AppendInteger(1);
-                        message.AppendInteger(item.Id);
+                        message.AppendInteger(item.VirtualId);
                         message.AppendString(TextHandling.GetString(item.Z));
                         message.AppendString(TextHandling.GetString(item.Z));
                         message.AppendInteger(-1);
@@ -1078,7 +1077,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         ///     Updates the item.
         /// </summary>
         /// <param name="itemId">The item.</param>
-        internal void AddOrUpdateItem(uint itemId)
+        internal void AddOrUpdateItem(long itemId)
         {
             if (_removedItems.Contains(itemId))
                 _removedItems.Remove(itemId);
@@ -1092,7 +1091,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         ///     Removes the item.
         /// </summary>
         /// <param name="itemId"></param>
-        internal void RemoveItem(uint itemId)
+        internal void RemoveItem(long itemId)
         {
             if (_updatedItems.Contains(itemId))
                 _updatedItems.Remove(itemId);
@@ -1231,7 +1230,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                             !(current.Z < current4.Z) ||
                             _room.GetRoomUserManager().GetUserForSquare(squareInFront.X, squareInFront.Y) != null)
                             continue;
-                        _rollerMessages.Add(UpdateItemOnRoller(current4, squareInFront, current.Id, num2 + num3));
+                        _rollerMessages.Add(UpdateItemOnRoller(current4, squareInFront, current.VirtualId, num2 + num3));
                         _rollerItemsMoved.Add(current4.Id);
                     }
                     if (userForSquare != null && !userForSquare.IsWalking && flag2 && !flag3 &&
@@ -1239,7 +1238,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         _room.GetGameMap().GetFloorStatus(squareInFront) != 0 &&
                         !_rollerUsersMoved.Contains(userForSquare.HabboId))
                     {
-                        _room.SendMessage(UpdateUserOnRoller(userForSquare, squareInFront, current.Id, nextZ));
+                        _room.SendMessage(UpdateUserOnRoller(userForSquare, squareInFront, current.VirtualId, nextZ));
                         _rollerUsersMoved.Add(userForSquare.HabboId);
                         _room.GetRoomUserManager().UpdateUserStatus(userForSquare, true);
                     }

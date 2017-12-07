@@ -24,7 +24,7 @@ namespace Oblivion.HabboHotel.Items
         /// </summary>
         private readonly Dictionary<uint, Item> _items;
 
-        private int _itemIdCounter;
+        private int _itemIdCounter = 1;
 
         private ConcurrentDictionary<uint, long> _itemsByVirtualId;
         private ConcurrentDictionary<long, uint> _itemsByRealId;
@@ -39,6 +39,7 @@ namespace Oblivion.HabboHotel.Items
         /// </summary>
         internal ItemManager() => _items = new Dictionary<uint, Item>();
 
+
         /// <summary>
         ///     Loads the items.
         /// </summary>
@@ -52,7 +53,7 @@ namespace Oblivion.HabboHotel.Items
             _itemsByRealId = new ConcurrentDictionary<long, uint>();
         }
 
-
+        
         public uint GetVirtualId(long realId)
         {
             if (_itemsByRealId.TryGetValue(realId, out var virtualId))
@@ -69,13 +70,21 @@ namespace Oblivion.HabboHotel.Items
             return newId;
         }
 
+        public void ResetVirtualIds()
+        {
+            var obj = new object();
+            lock (obj)
+            {
+                _itemIdCounter = _itemsByVirtualId.Count;
+            }
+        }
         public void RemoveVirtualItem(long itemId)
         {
             var virtualId = GetVirtualId(itemId);
             _itemsByRealId.TryRemove(itemId, out _);
             _itemsByVirtualId.TryGetValue(virtualId, out _);
-
         }
+
         public long GetRealId(uint virtualId)
         {
             if (_itemsByVirtualId.TryGetValue(virtualId, out var realId))

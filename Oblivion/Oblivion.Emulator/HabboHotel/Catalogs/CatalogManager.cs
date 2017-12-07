@@ -907,7 +907,7 @@ namespace Oblivion.HabboHotel.Catalogs
                 session.GetMessageHandler().GetResponse().AppendInteger(list.Count);
 
                 /* TODO CHECK */ foreach (var current3 in list)
-                    session.GetMessageHandler().GetResponse().AppendInteger(current3.Id);
+                    session.GetMessageHandler().GetResponse().AppendInteger(current3.VirtualId);
 
                 session.GetMessageHandler().SendResponse();
                 session.GetHabbo().GetInventoryComponent().UpdateItems(false);
@@ -935,7 +935,6 @@ namespace Oblivion.HabboHotel.Catalogs
             int limtot, string songCode)
         {
             var list = new List<UserItem>();
-            
 
             var a = item.Type;
             if (a == 'i' || a == 's')
@@ -1150,7 +1149,6 @@ namespace Oblivion.HabboHotel.Catalogs
                     session.SendMessage(session.GetHabbo().GetInventoryComponent().SerializeBotInventory());
                 }
             }
-
             return list;
         }
 

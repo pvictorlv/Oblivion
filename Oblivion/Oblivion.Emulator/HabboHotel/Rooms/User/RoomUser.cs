@@ -223,7 +223,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <summary>
         ///     The last item
         /// </summary>
-        internal uint LastItem;
+        internal long LastItem;
 
         /// <summary>
         ///     The locked tiles count

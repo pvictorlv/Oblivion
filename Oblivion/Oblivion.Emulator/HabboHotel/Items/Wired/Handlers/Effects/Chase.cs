@@ -145,7 +145,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                                     serverMessage.AppendInteger(Point.X);
                                     serverMessage.AppendInteger(Point.Y);
                                     serverMessage.AppendInteger(1);
-                                    serverMessage.AppendInteger(item.Id);
+                                    serverMessage.AppendInteger(item.VirtualId);
                                     serverMessage.AppendString(item.Z.ToString(Oblivion.CultureInfo));
                                     serverMessage.AppendString(NewZ.ToString(Oblivion.CultureInfo));
                                     serverMessage.AppendInteger(0);

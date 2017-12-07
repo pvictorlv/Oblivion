@@ -14,12 +14,12 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         /// <summary>
         ///     The _banzai pyramids
         /// </summary>
-        private ConcurrentDictionary<uint, RoomItem> _banzaiPyramids;
+        private ConcurrentDictionary<long, RoomItem> _banzaiPyramids;
 
         /// <summary>
         ///     The _banzai teleports
         /// </summary>
-        private QueuedDictionary<uint, RoomItem> _banzaiTeleports;
+        private QueuedDictionary<long, RoomItem> _banzaiTeleports;
 
         /// <summary>
         ///     The _room
@@ -33,8 +33,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         public GameItemHandler(Room room)
         {
             _room = room;
-            _banzaiPyramids = new ConcurrentDictionary<uint, RoomItem>();
-            _banzaiTeleports = new QueuedDictionary<uint, RoomItem>();
+            _banzaiPyramids = new ConcurrentDictionary<long, RoomItem>();
+            _banzaiTeleports = new QueuedDictionary<long, RoomItem>();
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         /// </summary>
         /// <param name="item">The item.</param>
         /// <param name="itemId">The item identifier.</param>
-        internal void AddPyramid(RoomItem item, uint itemId)
+        internal void AddPyramid(RoomItem item, long itemId)
         {
             if (_banzaiPyramids.ContainsKey(itemId))
             {
@@ -65,7 +65,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         ///     Removes the pyramid.
         /// </summary>
         /// <param name="itemId">The item identifier.</param>
-        internal void RemovePyramid(uint itemId)
+        internal void RemovePyramid(long itemId)
         {
             _banzaiPyramids.TryRemove(itemId, out _);
         }
@@ -75,7 +75,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         /// </summary>
         /// <param name="item">The item.</param>
         /// <param name="itemId">The item identifier.</param>
-        internal void AddTeleport(RoomItem item, uint itemId)
+        internal void AddTeleport(RoomItem item, long itemId)
         {
             if (_banzaiTeleports.ContainsKey(itemId))
             {
@@ -89,7 +89,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         ///     Removes the teleport.
         /// </summary>
         /// <param name="itemId">The item identifier.</param>
-        internal void RemoveTeleport(uint itemId)
+        internal void RemoveTeleport(long itemId)
         {
             _banzaiTeleports.Remove(itemId);
         }
@@ -106,7 +106,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
             if (!items.Any())
                 return;
 
-            var countId = Oblivion.GetRandomNumber(0, items.Count());
+            var countId = Oblivion.GetRandomNumber(0, items.Count);
             var countAmount = 0;
 
             /* TODO CHECK */ foreach (var current in items.Where(current => current != null))

@@ -97,7 +97,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 serverMessage.AppendInteger(xToSet);
                 serverMessage.AppendInteger(yToSet);
                 serverMessage.AppendInteger(1);
-                serverMessage.AppendInteger(fItem.Id);
+                serverMessage.AppendInteger(fItem.VirtualId);
                 serverMessage.AppendString(fItem.Z.ToString(Oblivion.CultureInfo));
                 serverMessage.AppendString(zToSet.ToString(Oblivion.CultureInfo));
                 serverMessage.AppendInteger(0);

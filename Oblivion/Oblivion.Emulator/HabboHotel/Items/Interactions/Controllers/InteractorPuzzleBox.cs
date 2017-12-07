@@ -74,7 +74,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 serverMessage.AppendInteger(point.X);
                 serverMessage.AppendInteger(point.Y);
                 serverMessage.AppendInteger(1);
-                serverMessage.AppendInteger(item.Id);
+                serverMessage.AppendInteger(item.VirtualId);
                 serverMessage.AppendString(item.Z.ToString(Oblivion.CultureInfo));
                 serverMessage.AppendString(num.ToString(Oblivion.CultureInfo));
                 serverMessage.AppendInteger(0);

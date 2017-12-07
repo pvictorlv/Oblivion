@@ -28,7 +28,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <summary>
         ///     The _floor items
         /// </summary>
-        private Dictionary<uint, UserItem> _floorItems;
+        private Dictionary<long, UserItem> _floorItems;
 
         /// <summary>
         ///     The _inventory bots
@@ -43,22 +43,18 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <summary>
         ///     The _m added items
         /// </summary>
-        private List<uint> _mAddedItems;
+        private List<long> _mAddedItems;
 
         /// <summary>
         ///     The _m removed items
         /// </summary>
-        private List<uint> _mRemovedItems;
+        private List<long> _mRemovedItems;
 
         /// <summary>
         ///     The _wall items
         /// </summary>
-        private Dictionary<uint, UserItem> _wallItems;
-
-        /// <summary>
-        ///     The _is updated
-        /// </summary>
-        private bool _isUpdated;
+        private Dictionary<long, UserItem> _wallItems;
+        
 
         /// <summary>
         ///     The _m client
@@ -81,8 +77,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
         {
             _mClient = client;
             UserId = userId;
-            _floorItems = new Dictionary<uint, UserItem>();
-            _wallItems = new Dictionary<uint, UserItem>();
+            _floorItems = new Dictionary<long, UserItem>();
+            _wallItems = new Dictionary<long, UserItem>();
             SongDisks = new HybridDictionary();
 
             foreach (var current in userData.Inventory)
@@ -97,9 +93,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             _inventoryPets = new HybridDictionary();
             _inventoryBots = new HybridDictionary();
-            _mAddedItems = new List<uint>();
-            _mRemovedItems = new List<uint>();
-            _isUpdated = false;
+            _mAddedItems = new List<long>();
+            _mRemovedItems = new List<long>();
 
             foreach (var bot in userData.Bots)
                 AddBot(bot.Value);
@@ -115,12 +110,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
         public int TotalItems => _floorItems.Count + _wallItems.Count + SongDisks.Count;
 
-     
-        /// <summary>
-        ///     Gets a value indicating whether [needs update].
-        /// </summary>
-        /// <value><c>true</c> if [needs update]; otherwise, <c>false</c>.</value>
-        internal bool NeedsUpdate => !_isUpdated;
+        
 
         /// <summary>
         ///     Gets the song disks.
@@ -146,7 +136,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 _wallItems.Clear();
                 SongDisks.Clear();
                 _inventoryPets.Clear();
-                _isUpdated = true;
 
                 _mClient.GetMessageHandler()
                     .GetResponse()
@@ -224,7 +213,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool RemovePet(uint petId)
         {
-            _isUpdated = false;
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("RemovePetFromInventoryComposer"));
             serverMessage.AppendInteger(petId);
             GetClient().SendMessage(serverMessage);
@@ -238,7 +226,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <param name="petId">The pet identifier.</param>
         internal void MovePetToRoom(uint petId)
         {
-            _isUpdated = false;
             RemovePet(petId);
         }
 
@@ -248,8 +235,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <param name="pet">The pet.</param>
         internal void AddPet(Pet pet)
         {
-            _isUpdated = false;
-
             if (pet == null || _inventoryPets.Contains(pet.PetId))
                 return;
 
@@ -377,9 +362,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns>UserItem.</returns>
-        internal UserItem GetItem(uint id)
+        internal UserItem GetItem(long id)
         {
-            _isUpdated = false;
             UserItem item;
             if (_floorItems.ContainsKey(id))
             {
@@ -405,8 +389,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <param name="bot">The bot.</param>
         internal void AddBot(RoomBot bot)
         {
-            _isUpdated = false;
-
             if (bot == null || _inventoryBots.Contains(bot.BotId))
                 return;
 
@@ -417,8 +399,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
         internal void AddPets(Pet bot)
         {
-            _isUpdated = false;
-
             if (bot == null || _inventoryPets.Contains(bot.PetId))
                 return;
 
@@ -441,8 +421,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool RemoveBot(uint petId)
         {
-            _isUpdated = false;
-
             if (_inventoryBots.Contains(petId))
                 _inventoryBots.Remove(petId);
 
@@ -455,7 +433,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <param name="petId">The pet identifier.</param>
         internal void MoveBotToRoom(uint petId)
         {
-            _isUpdated = false;
             RemoveBot(petId);
         }
 
@@ -472,10 +449,9 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <param name="limtot">The limtot.</param>
         /// <param name="songCode">The song code.</param>
         /// <returns>UserItem.</returns>
-        internal UserItem AddNewItem(uint id, uint baseItem, string extraData, uint thGroup, bool insert, bool fromRoom,
+        internal UserItem AddNewItem(long id, uint baseItem, string extraData, uint thGroup, bool insert, bool fromRoom,
             int limno, int limtot, string songCode = "")
         {
-            _isUpdated = false;
 
             if (insert)
             {
@@ -493,9 +469,10 @@ namespace Oblivion.HabboHotel.Users.Inventory
                             $"INSERT INTO items_rooms (base_item, user_id, group_id) VALUES ('{baseItem}', '{UserId}', '{thGroup}');");
 
                         if (id == 0)
-                            id = ((uint) queryReactor.InsertQuery());
+                            id = queryReactor.InsertQuery();
 
-                        SendNewItems(id);
+                        var virtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(id);
+                        SendNewItems(virtualId);
 
                         if (!string.IsNullOrEmpty(extraData))
                         {
@@ -551,19 +528,19 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="placedInroom">if set to <c>true</c> [placed inroom].</param>
-        internal void RemoveItem(uint id, bool placedInroom)
+        internal void RemoveItem(long id, bool placedInroom)
         {
             if (GetClient()?.GetHabbo()?.GetInventoryComponent() == null)
             {
                 return;
             }
-            _isUpdated = false;
             GetClient()
                 .GetMessageHandler()
                 .GetResponse()
                 .Init(LibraryParser.OutgoingRequest("RemoveInventoryObjectMessageComposer"));
-
-            GetClient().GetMessageHandler().GetResponse().AppendInteger(id);
+            var item = GetClient().GetHabbo().GetInventoryComponent().GetItem(id);
+            if (item == null) return;
+            GetClient().GetMessageHandler().GetResponse().AppendInteger(item.VirtualId);
             //this.GetClient().GetMessageHandler().GetResponse().AppendInt32(Convert.ToInt32(this.GetClient().GetHabbo().Id));
 
             GetClient().GetMessageHandler().SendResponse();
@@ -573,8 +550,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
             if (_mRemovedItems.Contains(id))
                 return;
 
-            var item = GetClient().GetHabbo().GetInventoryComponent().GetItem(id);
-            if (item == null) return;
             SongDisks?.Remove(id);
             _floorItems?.Remove(item.Id);
             _wallItems?.Remove(item.Id);
@@ -632,9 +607,9 @@ namespace Oblivion.HabboHotel.Users.Inventory
             var userItem = new UserItem(item.Id, item.BaseItem, item.ExtraData, item.GroupId, item.SongCode);
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FurniListAddMessageComposer"));
-            serverMessage.AppendInteger(item.Id);
+            serverMessage.AppendInteger(item.VirtualId);
             serverMessage.AppendString(item.GetBaseItem().Type.ToString().ToUpper());
-            serverMessage.AppendInteger(item.Id);
+            serverMessage.AppendInteger(item.VirtualId);
             serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
             serverMessage.AppendInteger(1);
             serverMessage.AppendInteger(0);
@@ -691,9 +666,9 @@ namespace Oblivion.HabboHotel.Users.Inventory
         internal void AddItemToItemInventory(UserItem userItem)
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FurniListAddMessageComposer"));
-            serverMessage.AppendInteger(userItem.Id);
+            serverMessage.AppendInteger(userItem.VirtualId);
             serverMessage.AppendString(userItem.BaseItem.Type.ToString().ToUpper());
-            serverMessage.AppendInteger(userItem.Id);
+            serverMessage.AppendInteger(userItem.VirtualId);
             serverMessage.AppendInteger(userItem.BaseItem.SpriteId);
             serverMessage.AppendInteger(1);
             serverMessage.AppendInteger(0);
@@ -907,6 +882,11 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
         internal void Dispose()
         {
+            foreach (var item in GetItems)
+            {
+                item.Dispose();
+            }
+
             _wallItems?.Clear();
             _wallItems = null;
             _mClient = null;
@@ -930,7 +910,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// </summary>
         /// <param name="itemId">The item identifier.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        private bool UserHoldsItem(uint itemId) => SongDisks.Contains(itemId) || _floorItems.ContainsKey(itemId) ||
+        private bool UserHoldsItem(long itemId) => SongDisks.Contains(itemId) || _floorItems.ContainsKey(itemId) ||
                                                    _wallItems.ContainsKey(itemId);
 
         /// <summary>
