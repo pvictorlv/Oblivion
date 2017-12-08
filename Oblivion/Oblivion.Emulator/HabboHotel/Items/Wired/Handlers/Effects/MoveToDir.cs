@@ -78,7 +78,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool Execute(params object[] stuff)
         {
-            if (!Items.Any())
+            if (Items == null || Items.Count <= 0)
                 return true;
 
            foreach (var item in Items)

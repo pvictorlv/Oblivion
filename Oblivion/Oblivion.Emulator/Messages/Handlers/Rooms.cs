@@ -182,7 +182,7 @@ namespace Oblivion.Messages.Handlers
             var room = Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CheckRights(Session, true)) return;
 
-            var item = room.GetRoomItemHandler().GetItem(itemId);
+            var item = room.GetRoomItemHandler().GetItem(Oblivion.GetGame().GetItemManager().GetRealId(itemId));
             if (item == null)
                 return;
 

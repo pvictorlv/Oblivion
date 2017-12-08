@@ -39,8 +39,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                         session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
                         return true;
                     }
-                    session.SendNotif(string.Format((Oblivion.GetLanguage().GetVar("user_info_all")), userName, row[1],
-                        row[3], row[4], row[5], row[6]));
+                    session.SendNotif(string.Format((Oblivion.GetLanguage().GetVar("user_info_all")), userName, row["id"],
+                        row["rank"], row["credits"], row["activity_points"], row["diamonds"], row["mail"]));
                 }
                 return true;
             }

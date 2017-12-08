@@ -176,7 +176,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             try
             {
                 if (dbClient == null) return;
-                if (!_updatedItems.Any() && !_removedItems.Any() &&
+                if (_updatedItems.Count <= 0 && _removedItems.Count <= 0 &&
                     _room.GetRoomUserManager().PetCount <= 0)
                     return;
 
@@ -1233,6 +1233,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         _rollerMessages.Add(UpdateItemOnRoller(current4, squareInFront, current.VirtualId, num2 + num3));
                         _rollerItemsMoved.Add(current4.Id);
                     }
+
                     if (userForSquare != null && !userForSquare.IsWalking && flag2 && !flag3 &&
                         _room.GetGameMap().CanRollItemHere(squareInFront.X, squareInFront.Y) &&
                         _room.GetGameMap().GetFloorStatus(squareInFront) != 0 &&

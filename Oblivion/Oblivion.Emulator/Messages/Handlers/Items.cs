@@ -9,6 +9,7 @@ using Oblivion.HabboHotel.Items.Datas;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired;
+using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Pets;
 using Oblivion.HabboHotel.Pets.Enums;
 using Oblivion.HabboHotel.Quests;
@@ -589,6 +590,12 @@ namespace Oblivion.Messages.Handlers
             var rot = Request.GetInteger();
             Request.GetInteger();
 
+            IWiredItem wired = null;
+            if (item.IsWired)
+            {
+                 wired = room.GetWiredHandler().ReloadWired(item);
+            }
+
             var flag = item.GetBaseItem().InteractionType == Interaction.Teleport ||
                        item.GetBaseItem().InteractionType == Interaction.Hopper ||
                        item.GetBaseItem().InteractionType == Interaction.QuickTeleport;
@@ -631,6 +638,13 @@ namespace Oblivion.Messages.Handlers
             var newcoords = item.GetCoords;
             room.GetRoomItemHandler().OnHeightMapUpdate(oldCoords, newcoords);
 
+
+
+
+            if (wired != null)
+            {
+                room.GetWiredHandler().AddWired(wired);
+            }
             if (!flag)
                 return;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())

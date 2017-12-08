@@ -92,7 +92,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             var time = Oblivion.GetUnixTimeStamp();
             if (_next <= time)
             {
-                if (Items?.Count > 0)
+                if (Items != null && Items.Count > 0)
                     foreach (var Item in Items)
                     {
                         if (Room.GetRoomItemHandler().FloorItems.ContainsKey(Item.Id))

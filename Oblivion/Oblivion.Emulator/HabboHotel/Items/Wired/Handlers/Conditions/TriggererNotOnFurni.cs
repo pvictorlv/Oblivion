@@ -57,7 +57,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
         public bool Execute(params object[] stuff)
         {
-            if (!Items.Any())
+            if (Items == null || Items.Count <= 0)
                 return true;
 
             var roomUser = stuff?[0] as RoomUser;

@@ -29,7 +29,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         {
             if (!_requested || _mNext < 1)
                 return false;
-            if (!Items.Any())
+            if (Item == null || Items.Count <= 0)
                 return true;
 
             var num = Oblivion.Now();
@@ -90,7 +90,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool Execute(params object[] stuff)
         {
-            if (!Items.Any())
+            
+            if (Item == null || Items.Count <= 0)
                 return false;
 
             if (!_requested)

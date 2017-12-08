@@ -240,6 +240,9 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             GroupId = eGroup;
             X = x;
             Y = y;
+
+            oldX = X;
+            oldY = Y;
             if (!double.IsInfinity(z)) Z = z;
             Rot = rot;
             UpdateNeeded = false;
@@ -440,6 +443,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <value>The x.</value>
         internal int X { get; private set; }
 
+        internal int oldX { get; private set; }
+        internal int oldY { get; private set; }
         /// <summary>
         ///     Gets the y.
         /// </summary>
@@ -834,6 +839,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         {
             X = x;
             Y = y;
+            oldX = X;
+            oldY = Y;
 
             if (!double.IsInfinity(z)) Z = z;
             AffectedTiles = tiles;

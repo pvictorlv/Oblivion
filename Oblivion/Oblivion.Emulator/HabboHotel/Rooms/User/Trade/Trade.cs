@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.Messages;
@@ -290,10 +291,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             if (userOne?.GetClient()?.GetHabbo() == null || userTwo?.GetClient()?.GetHabbo() == null) return;
             var offeredItems = userOne.OfferedItems;
             var offeredItems2 = userTwo.OfferedItems;
-            if (
-                offeredItems.Any(
-                    current =>
-                        userOne.GetClient().GetHabbo().GetInventoryComponent().GetItem(current.Id) == null))
+            if (offeredItems.Any(current => userOne.GetClient().GetHabbo().GetInventoryComponent().GetItem(current.Id) == null))
             {
                 userOne.GetClient().SendNotif("El tradeo ha fallado.");
                 userTwo.GetClient().SendNotif("El tradeo ha fallado.");
@@ -431,8 +429,11 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         {
             try
             {
-                DeliverItems();
-                CloseTradeClean();
+                Task.Factory.StartNew(() =>
+                {
+                    DeliverItems();
+                    CloseTradeClean();
+                });
             }
             catch (Exception ex)
             {

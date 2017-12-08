@@ -815,13 +815,19 @@ namespace Oblivion.HabboHotel.Users
                 return;
             Disconnected = true;
 
-            if (_inventoryComponent != null)
+            try
             {
-                _inventoryComponent.RunDbUpdate();
-                _inventoryComponent.Dispose();
-                _inventoryComponent = null;
+                if (_inventoryComponent != null)
+                {
+                    _inventoryComponent.RunDbUpdate();
+                    _inventoryComponent.Dispose();
+                    _inventoryComponent = null;
+                }
             }
-
+            catch (Exception e)
+            {
+                Logging.HandleException(e, "User Inventory Dispose (habbo.cs)");
+            }
             var navilogs = string.Empty;
 
             if (NavigatorLogs.Any())

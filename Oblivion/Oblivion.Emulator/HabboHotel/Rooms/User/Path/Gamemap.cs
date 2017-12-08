@@ -104,6 +104,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
                 if (!SquareIsOpen(Coord.X, Coord.Y, false))
                     return false;
+                if (!CanRollItemHere(Coord.X, Coord.Y))
+                    return false;
             }
 
             return true;
@@ -479,26 +481,11 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                         GameMap[k, j] = 0;
                         EffectMap[k, j] = 0;
                         if (k == Model.DoorX && j == Model.DoorY)
-                        {
                             GameMap[k, j] = 3;
-                        }
-                        else
-                        {
-                            switch (Model.SqState[k][j])
-                            {
-                                case SquareState.Open:
-                                    GameMap[k, j] = 1;
-                                    break;
-
-                                case SquareState.Seat:
-                                    GameMap[k, j] = 2;
-                                    break;
-
-                                case SquareState.Pool:
-                                    EffectMap[k, j] = 6;
-                                    break;
-                            }
-                        }
+                        else if (Model.SqState[k][j] == SquareState.Open)
+                            GameMap[k, j] = 1;
+                        else if (Model.SqState[k][j] == SquareState.Seat)
+                            GameMap[k, j] = 2;
                     }
                 }
 
@@ -517,22 +504,11 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                             {
                                 GameMap[num3, n] = 3;
                             }
-                            else
+                            else if (Model.SqState[num3][n] == SquareState.Open)
+                                GameMap[num3, n] = 1;
+                            else if (Model.SqState[num3][n] == SquareState.Seat)
                             {
-                                switch (Model.SqState[num3][n])
-                                {
-                                    case SquareState.Open:
-                                        GameMap[num3, n] = 1;
-                                        break;
-
-                                    case SquareState.Seat:
-                                        GameMap[num3, n] = 2;
-                                        break;
-
-                                    case SquareState.Pool:
-                                        EffectMap[num3, n] = 6;
-                                        break;
-                                }
+                                GameMap[num3, n] = 2;
                             }
                         }
                     }
@@ -540,11 +516,12 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
 
                 /* TODO CHECK */
+
                 foreach (var item in floorItems)
                 {
-                    if (!AddItemToMap(item))
-                        break;
+                    AddItemToMap(item);
                 }
+
                 floorItems.Clear();
                 if (!_room.RoomData.AllowWalkThrough)
                 {
@@ -792,10 +769,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             if (item.GetBaseItem().Type != 's')
                 return true;
 
-            foreach (var coord in item.GetCoords.Select(current => new Point(current.X, current.Y)))
-            {
-                AddCoordinatedItem(item, coord);
-            }
+
             if (item.X > Model.MapSizeX - 1)
             {
                 Model.AddX();
@@ -808,8 +782,20 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 GenerateMaps();
                 return false;
             }
+            var retVal = true;
 
-            return item.GetCoords.All(coord => ConstructMapForItem(item, coord));
+            foreach (var current in item.GetCoords)
+            {
+//                var coord = new Point(current.X, current.Y);
+                AddCoordinatedItem(item, current);
+                retVal = ConstructMapForItem(item, current);
+
+            }
+
+            /*foreach (var coord in item.GetCoords)
+            {
+            }*/
+            return retVal;
         }
 
         /// <summary>
@@ -1041,7 +1027,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             if (Override)
                 return true;
 
-            if (GameMap.GetLength(0) >= to.X && GameMap.GetLength(1) >= to.Y)
+            if (GameMap.GetLength(0) > to.X && GameMap.GetLength(1) > to.Y)
             {
                 if (GameMap[to.X, to.Y] == 3 && !endOfPath || GameMap[to.X, to.Y] == 0 ||
                     GameMap[to.X, to.Y] == 2 && !endOfPath)
@@ -1321,23 +1307,21 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             try
             {
                 GameMap[x, y] = 0;
+
+                ItemHeightMap[x, y] = 0.0;
+                EffectMap[x, y] = 0;
                 if (x == Model.DoorX && y == Model.DoorY)
                 {
                     GameMap[x, y] = 3;
-                    return;
                 }
-                switch (Model.SqState[x][y])
+                else if (Model.SqState[x][y] == SquareState.Open)
                 {
-                    case SquareState.Open:
-                        GameMap[x, y] = 1;
-                        return;
-
-                    case SquareState.Seat:
-                        GameMap[x, y] = 2;
-                        break;
+                    GameMap[x, y] = 1;
                 }
-                ItemHeightMap[x, y] = 0.0;
-                EffectMap[x, y] = 0;
+                else if (Model.SqState[x][y] == SquareState.Seat)
+                {
+                    GameMap[x, y] = 2;
+                }
             }
             catch (Exception e)
             {
@@ -1591,24 +1575,24 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             var X = false;
 
             foreach (var User in _room.GetRoomUserManager().GetRoomUsers())
-                    if (User.X == Item.X)
-                    {
-                        var Difference = Math.Abs(User.Y - Item.Y);
-                        if (Difference >= Distance)
-                            continue;
-                        Distance = Difference;
-                        Coord = User.Coordinate;
-                        X = false;
-                    }
-                    else if (User.Y == Item.Y)
-                    {
-                        var Difference = Math.Abs(User.X - Item.X);
-                        if (Difference >= Distance)
-                            continue;
-                        Distance = Difference;
-                        Coord = User.Coordinate;
-                        X = true;
-                    }
+                if (User.X == Item.X)
+                {
+                    var Difference = Math.Abs(User.Y - Item.Y);
+                    if (Difference >= Distance)
+                        continue;
+                    Distance = Difference;
+                    Coord = User.Coordinate;
+                    X = false;
+                }
+                else if (User.Y == Item.Y)
+                {
+                    var Difference = Math.Abs(User.X - Item.X);
+                    if (Difference >= Distance)
+                        continue;
+                    Distance = Difference;
+                    Coord = User.Coordinate;
+                    X = true;
+                }
 
             if (Distance > 5)
                 return Item.GetSides().OrderBy(x => Guid.NewGuid()).FirstOrDefault();
@@ -1652,8 +1636,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     if (Difference >= Distance)
                         continue;
                     Distance = Difference;
-                    
-                    Coord = User.Coordinate ;
+
+                    Coord = User.Coordinate;
                     X = false;
                 }
                 else if (User.Y == Item.Y)

@@ -23,7 +23,7 @@ namespace Oblivion.HabboHotel.Rooms.Chat.Enums
         /// <summary>
         ///     The pool
         /// </summary>
-        Pool,
+//        Pool,
 
         /// <summary>
         ///     The vip

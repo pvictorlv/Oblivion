@@ -124,7 +124,7 @@ namespace Oblivion.HabboHotel.SoundMachine.Composers
         /// </summary>
         /// <param name="songs">The songs.</param>
         /// <returns>ServerMessage.</returns>
-        internal static ServerMessage SerializeSongInventory(HybridDictionary songs)
+        internal static ServerMessage SerializeSongInventory(Dictionary<long, UserItem> songs)
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SongsLibraryMessageComposer"));
 
@@ -137,7 +137,7 @@ namespace Oblivion.HabboHotel.SoundMachine.Composers
 
             serverMessage.StartArray();
 
-            foreach (UserItem userItem in songs.Values)
+            foreach (var userItem in songs.Values)
             {
                 if (userItem == null)
                 {

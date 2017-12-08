@@ -103,28 +103,32 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         {
             var items = _banzaiTeleports.Inner.Values.Where(p => p.Id != item.Id).ToList();
 
-            if (!items.Any())
+            if (items.Count <= 0)
                 return;
 
             var countId = Oblivion.GetRandomNumber(0, items.Count);
             var countAmount = 0;
 
-            /* TODO CHECK */ foreach (var current in items.Where(current => current != null))
+            /* TODO CHECK */
+            foreach (var current in items)
             {
-                if (countAmount != countId)
+                if (current != null)
                 {
-                    countAmount++;
-                    continue;
-                }
-                current.ExtraData = "1";
-                current.UpdateNeeded = true;
-                _room.GetGameMap().TeleportToItem(user, current);
-                item.ExtraData = "1";
-                item.UpdateNeeded = true;
-                current.UpdateState();
-                item.UpdateState();
+                    if (countAmount != countId)
+                    {
+                        countAmount++;
+                        continue;
+                    }
+                    current.ExtraData = "1";
+                    current.UpdateNeeded = true;
+                    _room.GetGameMap().TeleportToItem(user, current);
+                    item.ExtraData = "1";
+                    item.UpdateNeeded = true;
+                    current.UpdateState();
+                    item.UpdateState();
 
-                break;
+                    break;
+                }
             }
         }
 
