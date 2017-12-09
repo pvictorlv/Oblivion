@@ -330,10 +330,7 @@ namespace Oblivion.HabboHotel.Items.Wired
             {
                 if (Effects.TryGetValue(point, out var items))
                 {
-                    if (items.Remove(current))
-                    {
-                        Out.WriteLine("removed!");
-                    }
+                    items.Remove(current);
                     if (items.Count <= 0)
                     {
                         Effects.Remove(point);

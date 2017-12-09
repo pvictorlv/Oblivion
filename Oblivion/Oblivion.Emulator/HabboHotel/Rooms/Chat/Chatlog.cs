@@ -54,15 +54,20 @@ namespace Oblivion.HabboHotel.Rooms.Chat
         /// </summary>
         /// <param name="queryChunk"></param>
         /// <param name="id">Auto increment</param>
-        internal void Save(QueryChunk queryChunk, uint id)
+        internal void Save(uint roomId)
         {
             if (IsSaved)
                 return;
+            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
 
-            queryChunk.AddQuery("INSERT INTO users_chatlogs (user_id, room_id, timestamp, message) VALUES (@user" + id + ", @room, @time" + id + ", @message" + id + ")");
-            queryChunk.AddParameter("user" + id, UserId);
-            queryChunk.AddParameter("time" + id, Oblivion.DateTimeToUnix(TimeStamp));
-            queryChunk.AddParameter("message" + id, Message);
+                dbClient.SetQuery("INSERT INTO users_chatlogs (user_id, room_id, timestamp, message) VALUES (@user, @room, @time, @message)");
+                dbClient.AddParameter("user", UserId);
+                dbClient.AddParameter("room", roomId);
+                dbClient.AddParameter("time", Oblivion.DateTimeToUnix(TimeStamp));
+                dbClient.AddParameter("message", Message);
+                dbClient.RunQuery();
+            }
         }
 
         internal void Serialize(ref ServerMessage message)

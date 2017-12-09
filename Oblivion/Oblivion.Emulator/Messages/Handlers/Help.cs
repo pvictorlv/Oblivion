@@ -61,10 +61,11 @@ namespace Oblivion.Messages.Handlers
                 chats.Add(Request.GetString());
             }
 
-            Response.Init(LibraryParser.OutgoingRequest("TicketUserAlert"));
 
             if (Oblivion.GetGame().GetModerationTool().UsersHasPendingTicket(Session.GetHabbo().Id))
             {
+                Response.Init(LibraryParser.OutgoingRequest("TicketUserAlert"));
+
                 SupportTicket ticket = Oblivion.GetGame().GetModerationTool().GetPendingTicketForUser(Session.GetHabbo().Id);
                 Response.AppendInteger(1);
                 Response.AppendString(ticket.TicketId.ToString());
@@ -77,16 +78,18 @@ namespace Oblivion.Messages.Handlers
 
             if (Oblivion.GetGame().GetModerationTool().UsersHasAbusiveCooldown(Session.GetHabbo().Id)) // the previous issue of the user was abusive
             {
+                Response.Init(LibraryParser.OutgoingRequest("TicketUserAlert"));
+
                 Response.AppendInteger(2);
                 SendResponse();
 
                 return;
             }
 
-            Response.AppendInteger(0); // It's okay, the user may send an new issue
+//            Response.AppendInteger(0); // It's okay, the user may send an new issue
             Oblivion.GetGame().GetModerationTool().SendNewTicket(Session, category, 7, reportedUser, message, chats);
 
-            SendResponse();
+//            SendResponse();
         }
 
         /// <summary>

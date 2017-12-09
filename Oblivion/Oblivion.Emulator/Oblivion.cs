@@ -395,7 +395,7 @@ namespace Oblivion
                         DebugMode = true;
 
                 Out.WriteLine("Oblivion Emulator ready. Status: idle", "Oblivion.Boot");
-
+                Console.Beep();
                 IsLive = true;
             }
             catch (Exception e)

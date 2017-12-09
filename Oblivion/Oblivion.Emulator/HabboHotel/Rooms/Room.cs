@@ -1293,14 +1293,6 @@ namespace Oblivion.HabboHotel.Rooms
             InitUserBots();
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery(
-                    $"SELECT user_id, message, timestamp FROM users_chatlogs WHERE room_id = {id} ORDER BY timestamp ASC LIMIT 150");
-                var table = queryReactor.GetTable();
-
-                /* TODO CHECK */
-                foreach (DataRow dataRow in table.Rows)
-                    roomData.RoomChat.Push(new Chatlog((uint) dataRow[0], (string) dataRow[1],
-                        Oblivion.UnixToDateTime(int.Parse(dataRow[2].ToString())), false));
 
                 queryReactor.SetQuery($"SELECT word FROM rooms_wordfilter WHERE room_id = {id}");
                 var tableFilter = queryReactor.GetTable();
@@ -1402,9 +1394,16 @@ namespace Oblivion.HabboHotel.Rooms
                 _musicController.Destroy();
                 _musicController = null;
             }
+            var i = 0;
+
+            foreach (var chat in RoomData.RoomChat.TakeWhile(chat => i < 50))
+            {
+                chat.Save(RoomId);
+                i++;
+            }
             _roomKick.Clear();
             _roomKick = null;
-
+            
             _game?.Destroy();
             _game = null;
             _gameItemHandler?.Destroy();
@@ -1430,7 +1429,6 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 current.Destroy();
             }
-
             ActiveTrades.Clear();
             ActiveTrades = null;
             _roomItemHandler.Destroy();
