@@ -216,8 +216,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (Items?.Count == 0)
                 return false;
 
-//            if (_next < 1 || _next < Oblivion.GetUnixTimeStamp())
-//                _next = Oblivion.GetUnixTimeStamp() + Delay;
 
             if (!Requested)
             {

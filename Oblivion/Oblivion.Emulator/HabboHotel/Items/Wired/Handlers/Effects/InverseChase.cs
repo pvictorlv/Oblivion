@@ -9,7 +9,7 @@ using Oblivion.Messages.Parsers;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
-    internal class InverseChase : IWiredItem, IWiredCycler
+    internal class InverseChase : IWiredItem
     {
         public InverseChase(RoomItem item, Room room)
         {
@@ -65,58 +65,59 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             }
         }
 
-        public bool Execute(params object[] stuff)
+        public bool Execute(params object[] Params)
         {
-            if (Room == null) return false;
+            if (Items?.Count == 0)
+                return false;
 
-            if (_next < 1 || _next < Oblivion.GetUnixTimeStamp())
-                _next = Oblivion.GetUnixTimeStamp() + Delay;
 
             if (!Requested)
             {
                 TickCount = Delay;
                 Requested = true;
             }
-
+            OnCycle();
             return true;
         }
 
         private double _next;
 
         public bool Requested;
+        private readonly Queue<RoomItem> _toRemove = new Queue<RoomItem>();
 
         public bool OnCycle()
         {
-            if (!Requested || _next < 1)
-                return false;
             var time = Oblivion.GetUnixTimeStamp();
-            if (_next <= time)
-            {
+            if (time < _next)
                 if (Items != null && Items.Count > 0)
-                    foreach (var Item in Items)
+                {
+                    foreach (var item in Items)
                     {
-                        if (Room.GetRoomItemHandler().FloorItems.ContainsKey(Item.Id))
+                        if (Room.GetRoomItemHandler().FloorItems.ContainsKey(item.Id))
                         {
-                            if (Room.GetWiredHandler().OtherBoxHasItem(this, Item))
-                                Items.Remove(Item);
+                            if (Room.GetWiredHandler().OtherBoxHasItem(this, item))
+                            {
+                                _toRemove.Enqueue(item);
+                                continue;
+                            }
 
-                            var Point = Room.GetGameMap().GetInverseChaseMovement(Item);
+                            var Point = Room.GetGameMap().GetInverseChaseMovement(item);
 
-                            if (!Room.GetGameMap().ItemCanMove(Item, Point))
+
+                            if (!Room.GetGameMap().ItemCanMove(item, Point))
                                 continue;
 
                             if (Room.GetGameMap().CanRollItemHere(Point.X, Point.Y) &&
                                 !Room.GetGameMap().SquareHasUsers(Point.X, Point.Y))
                             {
-                                var NewZ = Item.Z;
+                                var NewZ = item.Z;
                                 var CanBePlaced = true;
 
                                 var Items = Room.GetGameMap().GetCoordinatedItems(Point);
-                                foreach (var IItem in Items.Where(IItem => IItem != null && IItem.Id != Item.Id))
+                                foreach (var IItem in Items.Where(IItem => IItem != null && IItem.Id != item.Id))
                                 {
                                     if (!IItem.GetBaseItem().Walkable)
                                     {
-                                        _next = 0;
                                         CanBePlaced = false;
                                         break;
                                     }
@@ -128,31 +129,39 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                                         CanBePlaced = false;
                                 }
 
-                                if (CanBePlaced && Point != Item.Coordinate)
+                                if (CanBePlaced && Point != item.Coordinate)
                                 {
                                     var serverMessage =
                                         new ServerMessage(
                                             LibraryParser.OutgoingRequest("ItemAnimationMessageComposer"));
-                                    serverMessage.AppendInteger(Item.X);
-                                    serverMessage.AppendInteger(Item.Y);
+                                    serverMessage.AppendInteger(item.X);
+                                    serverMessage.AppendInteger(item.Y);
                                     serverMessage.AppendInteger(Point.X);
                                     serverMessage.AppendInteger(Point.Y);
                                     serverMessage.AppendInteger(1);
-                                    serverMessage.AppendInteger(Item.VirtualId);
-                                    serverMessage.AppendString(Item.Z.ToString(Oblivion.CultureInfo));
+                                    serverMessage.AppendInteger(item.VirtualId);
+                                    serverMessage.AppendString(item.Z.ToString(Oblivion.CultureInfo));
                                     serverMessage.AppendString(NewZ.ToString(Oblivion.CultureInfo));
                                     serverMessage.AppendInteger(0);
                                     Room.SendMessage(serverMessage);
-                                    Room.GetRoomItemHandler().SetFloorItem(Item, Point.X, Point.Y, NewZ);
+                                    Room.GetRoomItemHandler().SetFloorItem(item, Point.X, Point.Y, NewZ);
                                 }
                             }
+                            Room.GetWiredHandler().OnUserFurniCollision(Room, item);
+
                         }
                     }
+                    while (_toRemove.Count > 0)
+                    {
+                        var rI = _toRemove.Dequeue();
+                        if (Items.Contains(rI))
+                            Items.Remove(rI);
+                    }
+                }
 
-                _next = 0;
-                return true;
-            }
-            return false;
+            _next = Oblivion.GetUnixTimeStamp() + (Delay / 1000);
+
+            return true;
         }
     }
 }

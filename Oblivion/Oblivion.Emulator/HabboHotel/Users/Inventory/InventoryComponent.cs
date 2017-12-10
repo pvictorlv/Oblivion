@@ -54,13 +54,13 @@ namespace Oblivion.HabboHotel.Users.Inventory
         ///     The _wall items
         /// </summary>
         private Dictionary<long, UserItem> _wallItems;
-        
+
 
         /// <summary>
         ///     The _m client
         /// </summary>
         private GameClient _mClient;
-        
+
 
         /// <summary>
         ///     The user identifier
@@ -110,7 +110,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
         public int TotalItems => _floorItems.Count + _wallItems.Count + SongDisks.Count;
 
-        
 
         /// <summary>
         ///     Gets the song disks.
@@ -197,7 +196,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
             }
         }
 
-        
 
         /// <summary>
         ///     Gets the pet.
@@ -452,7 +450,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
         internal UserItem AddNewItem(long id, uint baseItem, string extraData, uint thGroup, bool insert, bool fromRoom,
             int limno, int limtot, string songCode = "")
         {
-
             if (insert)
             {
                 if (fromRoom)
@@ -782,23 +779,26 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 if (_mRemovedItems.Count <= 0 && _mAddedItems.Count <= 0 && _inventoryPets.Count <= 0)
                     return;
 
-
-                var added = _mAddedItems.ToList();
-                if (added.Count > 0)
+                if (_mAddedItems.Count > 0)
                 {
-                    using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    var added = _mAddedItems.ToList();
+                    if (added.Count > 0)
                     {
-                        foreach (var itemId in added)
-                            dbClient.RunFastQuery(
-                                $"UPDATE items_rooms SET user_id='{UserId}', room_id='0' WHERE id='{itemId}'");
+                        using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        {
+                            foreach (var itemId in added)
+                                dbClient.RunFastQuery(
+                                    $"UPDATE items_rooms SET user_id='{UserId}', room_id='0' WHERE id='{itemId}'");
+                        }
+                        _mAddedItems?.Clear();
+                        added.Clear();
                     }
-                    _mAddedItems?.Clear();
-                    added.Clear();
                 }
 
-                var removed = _mRemovedItems.ToList();
-                if (removed.Count > 0)
+                if (_mRemovedItems.Count > 0)
                 {
+                    var removed = _mRemovedItems.ToList();
+
                     try
                     {
                         using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -873,24 +873,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
         internal void Dispose()
         {
-            try
-            {
-                foreach (var item in _floorItems.Values.ToList().Concat(_wallItems.Values.ToList())
-                    .Concat(SongDisks.Values.ToList()))
-                {
-                    item.Dispose();
-                }
-            }
-            catch (Exception e)
-            {
-                Logging.HandleException(e, "inventory dispose");
-            }
-
-            _wallItems?.Clear();
-            _wallItems = null;
             _mClient = null;
-            _floorItems?.Clear();
-            _floorItems = null;
             _inventoryBots?.Clear();
             _inventoryBots = null;
 
@@ -902,6 +885,23 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             _mRemovedItems?.Clear();
             _mRemovedItems = null;
+
+            try
+            {
+                foreach (var item in _floorItems.Values.ToList().Concat(_wallItems.Values.ToList()))
+                {
+                    item?.Dispose();
+                }
+            }
+            catch (Exception e)
+            {
+                Logging.HandleException(e, "inventory dispose");
+            }
+            SongDisks.Clear();
+            _floorItems?.Clear();
+            _floorItems = null;
+            _wallItems?.Clear();
+            _wallItems = null;
         }
 
         /// <summary>

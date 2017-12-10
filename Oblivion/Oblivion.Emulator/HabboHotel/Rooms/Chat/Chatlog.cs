@@ -1,6 +1,6 @@
 using System;
+using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.Messages;
-using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Rooms.Chat
 {
@@ -54,11 +54,12 @@ namespace Oblivion.HabboHotel.Rooms.Chat
         /// </summary>
         /// <param name="queryChunk"></param>
         /// <param name="id">Auto increment</param>
-        internal void Save(uint roomId)
+        internal void Save(uint roomId, IQueryAdapter dbClient)
         {
             if (IsSaved)
                 return;
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+
+//            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
 
                 dbClient.SetQuery("INSERT INTO users_chatlogs (user_id, room_id, timestamp, message) VALUES (@user, @room, @time, @message)");
@@ -68,6 +69,7 @@ namespace Oblivion.HabboHotel.Rooms.Chat
                 dbClient.AddParameter("message", Message);
                 dbClient.RunQuery();
             }
+            IsSaved = true;
         }
 
         internal void Serialize(ref ServerMessage message)

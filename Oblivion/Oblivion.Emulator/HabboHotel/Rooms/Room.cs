@@ -1396,10 +1396,13 @@ namespace Oblivion.HabboHotel.Rooms
             }
             var i = 0;
 
-            foreach (var chat in RoomData.RoomChat.TakeWhile(chat => i < 50))
+            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                chat.Save(RoomId);
-                i++;
+                foreach (var chat in RoomData.RoomChat.TakeWhile(chat => i < 50))
+                {
+                    chat.Save(RoomId, dbClient);
+                    i++;
+                }
             }
             _roomKick.Clear();
             _roomKick = null;

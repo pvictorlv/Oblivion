@@ -318,9 +318,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
                     .AddNewItem(current3.Id, current3.BaseItemId, current3.ExtraData, current3.GroupId, false, false, 0,
                         0,
                         current3.SongCode);
-                userOne.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
-                userTwo.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
             }
+
            foreach (var current4 in offeredItems2)
             {
                 userTwo.GetClient().GetHabbo().GetInventoryComponent().RemoveItem(current4.Id, false);
@@ -331,9 +330,10 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
                     .AddNewItem(current4.Id, current4.BaseItemId, current4.ExtraData, current4.GroupId, false, false, 0,
                         0,
                         current4.SongCode);
-                userTwo.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
-                userOne.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
             }
+
+            userOne.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
+            userTwo.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("NewInventoryObjectMessageComposer"));
             serverMessage.AppendInteger(1);
             var i = 1;
@@ -432,8 +432,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
                 Task.Factory.StartNew(() =>
                 {
                     DeliverItems();
-                    CloseTradeClean();
                 });
+                CloseTradeClean();
+
             }
             catch (Exception ex)
             {
