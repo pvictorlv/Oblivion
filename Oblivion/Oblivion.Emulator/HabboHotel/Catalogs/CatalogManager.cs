@@ -388,6 +388,11 @@ namespace Oblivion.HabboHotel.Catalogs
             bool isGift, string giftUser, string giftMessage, int giftSpriteId, int giftLazo, int giftColor, bool undef,
             uint theGroup)
         {
+            if (session.GetHabbo().GetInventoryComponent().GetItems.Count() >= 4500)
+            {
+                session.SendNotif("Você chegou ao limite de mobis, retire alguns antes de continuar!");
+                return;
+            }
             priceAmount = (priceAmount < 1 || priceAmount > 100) ? 1 : priceAmount;
 
             var totalPrice = priceAmount;

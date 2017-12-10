@@ -122,6 +122,12 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         /// </summary>
         internal List<string> BlockedCommands;
 
+
+        /// <summary>
+        /// Opened gifts (xmas calendar)
+        /// </summary>
+        public List<int> OpenedGifts;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="UserData" /> class.
         /// </summary>
@@ -151,7 +157,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             Dictionary<uint, MessengerBuddy> friends, Dictionary<uint, MessengerRequest> requests,
             List<RoomData> rooms, Dictionary<uint, Pet> pets, Dictionary<uint, int> quests, Habbo user,
             Dictionary<uint, RoomBot> bots, Dictionary<int, Relationship> relations, HashSet<uint> suggestedPolls,
-            uint miniMailCount, List<string> blockedCommands)
+            uint miniMailCount, List<string> blockedCommands, List<int> openedGifts)
         {
             UserId = userId;
             Achievements = achievements;
@@ -174,6 +180,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             SuggestedPolls = suggestedPolls;
             MiniMailCount = miniMailCount;
             BlockedCommands = blockedCommands;
+            OpenedGifts = openedGifts;
         }
 
         public void Dispose()
@@ -215,6 +222,8 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             Talents = null;
             Achievements.Clear();
             Achievements = null;
+            OpenedGifts.Clear();
+            OpenedGifts = null;
         }
     }
 }

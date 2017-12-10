@@ -815,19 +815,6 @@ namespace Oblivion.HabboHotel.Users
                 return;
             Disconnected = true;
 
-            try
-            {
-                if (_inventoryComponent != null)
-                {
-                    _inventoryComponent.RunDbUpdate();
-                    _inventoryComponent.Dispose();
-                    _inventoryComponent = null;
-                }
-            }
-            catch (Exception e)
-            {
-                Logging.HandleException(e, "User Inventory Dispose (habbo.cs)");
-            }
             var navilogs = string.Empty;
 
             if (NavigatorLogs.Any())
@@ -895,6 +882,23 @@ namespace Oblivion.HabboHotel.Users
             Data?.Dispose();
             Data = null;
             _mClient = null;
+
+            try
+            {
+                if (_inventoryComponent != null)
+                {
+                    _inventoryComponent.RunDbUpdate();
+                    _inventoryComponent.Dispose();
+                    _inventoryComponent = null;
+                }
+            }
+            catch (Exception e)
+            {
+                _inventoryComponent?.Dispose();
+                _inventoryComponent = null;
+
+                Logging.HandleException(e, "User Inventory Dispose (habbo.cs)");
+            }
         }
 
         internal uint LastBellId;

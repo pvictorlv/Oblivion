@@ -1,38 +1,53 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.Messages;
 
 namespace Oblivion.HabboHotel.Items.Handlers
 {
-    /// <summary>
-    ///     Class CrackableEggHandler.
-    /// </summary>
-    internal class CrackableEggHandler
+    public class RandomRewardFurniHandler
     {
-        private Dictionary<int, string> _furnis;
+        private Dictionary<int, Dictionary<int, string>> _furnis;
 
-        /// <summary>
-        ///     Initializes the specified database client.
-        /// </summary>
-        /// <param name="dbClient">The database client.</param>
-        internal void Initialize(IQueryAdapter dbClient)
+        public RandomRewardFurniHandler()
         {
-            _furnis = new Dictionary<int, string>();
-            dbClient.SetQuery("SELECT * FROM crackable_rewards");
-            var table = dbClient.GetTable();
+            _furnis = new Dictionary<int, Dictionary<int, string>>();
+
+            DataTable table;
+            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                dbClient.SetQuery("SELECT * FROM crackable_rewards");
+                table = dbClient.GetTable();
+            }
+            if (table == null) return;
             foreach (DataRow row in table.Rows)
             {
-                _furnis.Add(Convert.ToInt32(row["egg_level"]), row["items"].ToString());
+                var campaing = Convert.ToInt32(row["campaing"]);
+                var level = Convert.ToInt32(row["egg_level"]);
+
+                if (_furnis.TryGetValue(campaing, out var items))
+                {
+                    items.Add(level, row["items"].ToString());
+                    _furnis[campaing] = items;
+                    continue;
+                }
+
+                items = new Dictionary<int, string> {{level, row["items"].ToString()}};
+                _furnis.Add(campaing, items);
             }
         }
 
-        internal uint GetRandomPrize(int level)
+
+        internal uint GetRandomPrize(int campaing, int level)
         {
-            if (!_furnis.TryGetValue(level, out var itemsString))
+            if (!_furnis.TryGetValue(campaing, out var furnis))
+            {
+                return 0;
+            }
+            //
+            if (!furnis.TryGetValue(level, out var itemsString))
             {
                 return 0;
             }
@@ -43,8 +58,12 @@ namespace Oblivion.HabboHotel.Items.Handlers
             return Convert.ToUInt32(randomItem);
         }
 
+
+        #region Crackable Items
+
         internal int MaxCracks(string itemName)
         {
+            //todo: piñatas
             switch (itemName)
             {
                 case "easter13_egg_0":
@@ -64,7 +83,7 @@ namespace Oblivion.HabboHotel.Items.Handlers
             }
         }
 
-        internal ServerMessage GetServerMessage(ServerMessage message, RoomItem item)
+        internal ServerMessage GetEggServerMessage(ServerMessage message, RoomItem item)
         {
             var cracks = 0;
             var cracksMax = MaxCracks(item.GetBaseItem().Name);
@@ -96,5 +115,7 @@ namespace Oblivion.HabboHotel.Items.Handlers
 
             return message;
         }
+
+        #endregion
     }
 }

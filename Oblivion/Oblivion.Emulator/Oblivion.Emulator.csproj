@@ -107,7 +107,7 @@
     <OutputPath>..\bin\Release\x64\</OutputPath>
     <DefineConstants>
     </DefineConstants>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <FileAlignment>4096</FileAlignment>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -241,6 +241,7 @@
     <Compile Include="HabboHotel\Commands\Controllers\WhisperHotel.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\WhisperRoom.cs" />
     <Compile Include="HabboHotel\Items\Datas\HighscoreData.cs" />
+    <Compile Include="HabboHotel\Items\Handlers\RandomRewardFurniHandler.cs" />
     <Compile Include="HabboHotel\Items\Interactions\Controllers\InteractorTotem.cs" />
     <Compile Include="HabboHotel\Items\Interactions\Controllers\InteractorWalkSwitch.cs" />
     <Compile Include="HabboHotel\Items\Interactions\Enums\GlobalInteractions.cs" />
@@ -291,7 +292,6 @@
     <Compile Include="HabboHotel\Items\Interfaces\MoodlightPreset.cs" />
     <Compile Include="HabboHotel\Items\OnItemTrigger.cs" />
     <Compile Include="HabboHotel\Items\ClothingManager.cs" />
-    <Compile Include="HabboHotel\Items\Handlers\CrackableEggHandler.cs" />
     <Compile Include="HabboHotel\Items\Handlers\PinataHandler.cs" />
     <Compile Include="HabboHotel\Items\Interfaces\ClothingItem.cs" />
     <Compile Include="HabboHotel\Items\Interfaces\PinataItem.cs" />

@@ -326,6 +326,50 @@ namespace Oblivion.Messages.Handlers
             }
         }
 
+
+        internal void OpenXmasCalendar()
+        {
+            var eventName = Request.GetString();
+            var giftDay = Request.GetInteger();
+
+
+            var currentDay = DateTime.Now.Day - 1;
+
+            var data = Session.GetHabbo().Data;
+
+
+            if (data.OpenedGifts.Contains(giftDay) || giftDay < (currentDay - 2) ||
+                giftDay > currentDay || eventName != "xmas16")
+            {
+                return;
+            }
+
+            var itemId = Oblivion.GetGame().GetRandomRewardFurniHandler().GetRandomPrize(1, 1);
+            var newItem = Oblivion.GetGame().GetItemManager().GetItem(itemId);
+            if (newItem == null) return;
+
+            data.OpenedGifts.Add(giftDay);
+
+
+            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                dbClient.SetQuery("UPDATE `user_stats` SET `calendar_gifts` = @giftData WHERE `id` = @habboId LIMIT 1");
+                dbClient.AddParameter("giftData", string.Join(",", data.OpenedGifts));
+                dbClient.AddParameter("habboId", Session.GetHabbo().Id);
+                dbClient.RunQuery();
+            }
+
+
+            Session.GetHabbo().GetInventoryComponent().AddNewItem(0, itemId, "", 0, true, false, 0, 0);
+            Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
+
+            var message = new ServerMessage(LibraryParser.OutgoingRequest("CampaignCalendarGiftMessageComposer"));
+            message.AppendBool(true);
+            message.AppendString(newItem.Name);
+            message.AppendString("");
+            message.AppendString(newItem.Name);
+        }
+
         /// <summary>
         ///     Habboes the camera.
         /// </summary>

@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using Oblivion.Configuration;
 using Oblivion.Connection.Connection;
 using Oblivion.Connection.Net;
@@ -183,10 +185,6 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         internal Habbo GetHabbo() => _habbo;
 
 
-
-        
-
-
         /// <summary>
         ///     Starts the connection.
         /// </summary>
@@ -227,7 +225,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 var ip = GetConnection().GetIp();
                 if (ip == null) return false;
                 var userData = UserDataFactory.GetUserData(authTicket, out var errorCode);
-            
+
                 if (errorCode == 1 || errorCode == 2 || userData?.User == null)
                     return false;
 
@@ -316,6 +314,35 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                     serverMessage.AppendBool(false);
                     serverMessage.AppendBool(true);
                     queuedServerMessage.AppendResponse(serverMessage);
+
+                    var xmasGift =
+                        new ServerMessage(LibraryParser.OutgoingRequest("CampaignCalendarDataMessageComposer"));
+
+                    xmasGift.AppendString("xmas16"); //eventTrigger
+//                    xmasGift.AppendString(""); //idk? same as habbo ;P
+                    xmasGift.AppendBool(false);
+                    xmasGift.AppendBool(false);
+                    xmasGift.AppendInteger(DateTime.Now.Day - 1); //currentDate
+                    xmasGift.AppendInteger(25); //totalAmountOfDays
+
+                    xmasGift.AppendInteger(_habbo.Data.OpenedGifts.Count); //countOpenGifts
+
+                    foreach (var opened in _habbo.Data.OpenedGifts)
+                    {
+                        xmasGift.AppendInteger(opened);
+                    }
+
+
+                    var MissedGifts = Enumerable.Range(0, DateTime.Now.Day - 3)
+                        .Where(Day => !_habbo.Data.OpenedGifts.Contains(Day)).ToList();
+
+
+                    xmasGift.AppendInteger(MissedGifts.Count);
+                    foreach (int Missed in MissedGifts)
+                    {
+                        xmasGift.AppendInteger(Missed); //giftDay
+                    }
+                    queuedServerMessage.AppendResponse(xmasGift);
 
 
                     serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("CfhTopicsInitMessageComposer"));
@@ -446,6 +473,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                     Oblivion.GetGame().GetAchievementManager().TryProgressHabboClubAchievements(this);
                     Oblivion.GetGame().GetAchievementManager().TryProgressRegistrationAchievements(this);
                     Oblivion.GetGame().GetAchievementManager().TryProgressLoginAchievements(this);
+
 
                     return true;
                 }
@@ -605,8 +633,6 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 Logging.HandleException(e, "user disconnect");
             }
         }
-
-        
 
 
         /// <summary>

@@ -330,9 +330,18 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             var myRooms = (from DataRow row in myRoomsTable.Rows let roomId = Convert.ToUInt32(row["id"].ToString()) select Oblivion.GetGame().GetRoomManager().FetchRoomData(roomId, row, userId)).ToList();
 
+            var openedGifts = new List<int>();
+
+            var opened = statsTable["opened_gifts"].ToString();
+            if (!string.IsNullOrEmpty(opened))
+            {
+                openedGifts = opened.Split(',').Select(int.Parse).ToList();
+            }
+
+
             return new UserData(userId, achievements, talents, favorites, ignoreUsers, tags, subscriptions, badges,
                 items, effects, friends, friendsRequests, myRooms, pets, quests, user, inventoryBots, relationShips,
-                pollSuggested, miniMailCount, blockedCommands);
+                pollSuggested, miniMailCount, blockedCommands, openedGifts);
         }
 
         /// <summary>
@@ -399,7 +408,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             var user = HabboFactory.GenerateHabbo(dataRow, row, group);
 
             return new UserData(num, achievements, talents, favouritedRooms, ignores, tags, null, badges, inventory,
-                effects, friends, requests, rooms, pets, quests, user, bots, dictionary, pollData, 0, new List<string>());
+                effects, friends, requests, rooms, pets, quests, user, bots, dictionary, pollData, 0, new List<string>(), new List<int>());
         }
     }
 }

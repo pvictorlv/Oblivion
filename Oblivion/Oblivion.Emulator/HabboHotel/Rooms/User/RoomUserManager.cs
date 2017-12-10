@@ -1892,8 +1892,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                         client.GetHabbo().GetMessenger().OnStatusChanged(true);
                     client.GetMessageHandler()?.OnRoomUserAdd();
 
-                    if (client.GetHabbo().HasFuse("fuse_mod"))
-                        client.GetHabbo().GetAvatarEffectsInventoryComponent()?.ActivateCustomEffect(102);
+//                    if (client.GetHabbo().HasFuse("fuse_mod"))
+//                        client.GetHabbo().GetAvatarEffectsInventoryComponent()?.ActivateCustomEffect(102);
                     if (client.GetHabbo().Rank == Convert.ToUInt32(Oblivion.GetDbConfig().DbData["ambassador.minrank"]))
                         client.GetHabbo().GetAvatarEffectsInventoryComponent()?.ActivateCustomEffect(178);
 

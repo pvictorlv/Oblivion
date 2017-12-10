@@ -359,6 +359,9 @@ GetCameraPriceMessageEvent=2983
 HabboCameraMessageEvent=1160
 HabboCameraPublishPhoto=3724
 
+[XmasCalendar]
+OpenCalendarBoxMessageEvent=3214
+
 [CUSTOM]
 HabboAirGetUserRooms=2805/2805
 HabboAirGetAllRooms=4003/2443

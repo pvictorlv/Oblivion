@@ -71,11 +71,8 @@ namespace Oblivion.HabboHotel
         /// </summary>
         private readonly ClothingManager _clothingManager;
 
-        /// <summary>
-        ///     The _clothing manager
-        /// </summary>
-        private readonly CrackableEggHandler _crackableEggHandler;
-
+        
+        private readonly RandomRewardFurniHandler _randomRewardHandler;
         /// <summary>
         ///     The _events
         /// </summary>
@@ -253,9 +250,12 @@ namespace Oblivion.HabboHotel
                 _pinataHandler = new PinataHandler();
                 _pinataHandler.Initialize(queryReactor);
 
-                Progress(bar, wait, end, "Loading Crackable Eggs...");
-                _crackableEggHandler = new CrackableEggHandler();
-                _crackableEggHandler.Initialize(queryReactor);
+//                Progress(bar, wait, end, "Loading Crackable Eggs...");
+//                _crackableEggHandler = new CrackableEggHandler();
+//                _crackableEggHandler.Initialize(queryReactor);
+
+                Progress(bar, wait, end, "Loading Random Rewards...");
+                _randomRewardHandler = new RandomRewardFurniHandler();
 
                 Progress(bar, wait, end, "Loading Polls...");
                 _pollManager = new PollManager();
@@ -450,7 +450,7 @@ namespace Oblivion.HabboHotel
         /// <returns>PinataHandler.</returns>
         internal PinataHandler GetPinataHandler() => _pinataHandler;
 
-        internal CrackableEggHandler GetCrackableEggHandler() => _crackableEggHandler;
+        internal RandomRewardFurniHandler GetRandomRewardFurniHandler() => _randomRewardHandler;
 
         /// <summary>
         ///     Gets the poll manager.

@@ -1200,6 +1200,14 @@ namespace Oblivion.Messages.Parsers
         {
             handler.HabboCamera();
         }
+        /// <summary>
+        /// Open xmas calendar
+        /// </summary>
+        /// <param name="handler">The handler.</param>
+        internal static void OpenXmasCalendar(GameClientMessageHandler handler)
+        {
+            handler.OpenXmasCalendar();
+        }
 
         /// <summary>
         /// Called when [click].

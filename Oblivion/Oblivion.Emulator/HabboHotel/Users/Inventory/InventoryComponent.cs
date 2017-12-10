@@ -257,7 +257,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery(
-                    "SELECT id,base_item,extra_data,group_id,songcode FROM items_rooms WHERE user_id=@userid AND room_id='0' LIMIT 8000;");
+                    "SELECT id,base_item,extra_data,group_id,songcode FROM items_rooms WHERE user_id=@userid AND room_id='0' LIMIT 4500;");
                 queryReactor.AddParameter("userid", ((int) UserId));
 
                 table = queryReactor.GetTable();
@@ -563,20 +563,20 @@ namespace Oblivion.HabboHotel.Users.Inventory
             var items = _floorItems.Values.Concat(_wallItems.Values).ToList();
             var i = items.Count;
 
-            if (i > 3500)
+            if (i > 4500)
                 _mClient.SendMessage(StaticMessage.AdviceMaxItems);
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("LoadInventoryMessageComposer"));
             serverMessage.AppendInteger(1);
             serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(i > 3500 ? 3500 : i);
+            serverMessage.AppendInteger(i > 4500 ? 4500 : i);
 
             var inc = 0;
 
             foreach (var userItem in items)
             {
                 if (userItem == null) continue;
-                if (inc == 3500)
+                if (inc == 4500)
                     return serverMessage;
 
                 inc++;
@@ -888,16 +888,17 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             try
             {
-                foreach (var item in _floorItems.Values.ToList().Concat(_wallItems.Values.ToList()))
-                {
-                    item?.Dispose();
-                }
+                if (_floorItems != null && _wallItems != null)
+                    foreach (var item in _floorItems.Values.ToList().Concat(_wallItems.Values.ToList()))
+                    {
+                        item?.Dispose();
+                    }
             }
             catch (Exception e)
             {
                 Logging.HandleException(e, "inventory dispose");
             }
-            SongDisks.Clear();
+            SongDisks?.Clear();
             _floorItems?.Clear();
             _floorItems = null;
             _wallItems?.Clear();

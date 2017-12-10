@@ -320,7 +320,7 @@ GameCenterProductsMessageComposer=1384
 GameCenterAllAchievementsMessageComposer=3856
 GameCenterEnterInGameMessageComposer=2626
 GameCenterJoinGameQueueMessageComposer=2621
-GameCenterLoadGameUrlMessageComposer=755
+GameCenterLoadGameUrlMessageComposer=56
 
 [Polls]
 PollQuestionsMessageComposer=2326
@@ -343,5 +343,8 @@ CameraPurchaseOk=1000
 ThumbnailSuccessMessageComposer=988
 
 
+[XmasGifts]
+CampaignCalendarDataMessageComposer=487
+CampaignCalendarGiftMessageComposer=3969
 [CUSTOM]
 HabboAirGetRoomUsersComposer=4001/2818

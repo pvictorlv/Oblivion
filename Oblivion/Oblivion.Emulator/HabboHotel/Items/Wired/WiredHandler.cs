@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -25,8 +26,8 @@ namespace Oblivion.HabboHotel.Items.Wired
         public WiredHandler(Room room)
         {
             _wiredItems = new List<IWiredItem>();
-            Effects = new Dictionary<int, List<IWiredItem>>();
-            Conditions = new Dictionary<int, List<IWiredItem>>();
+            Effects = new ConcurrentDictionary<int, List<IWiredItem>>();
+            Conditions = new ConcurrentDictionary<int, List<IWiredItem>>();
             _room = room;
         }
 
@@ -251,7 +252,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 else
                 {
                     items = new List<IWiredItem> {item};
-                    Effects.Add(point, items);
+                    Effects.TryAdd(point, items);
                 }
             }
             else if (IsCondition(item.Type))
@@ -264,7 +265,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 else
                 {
                     items = new List<IWiredItem> { item };
-                    Conditions.Add(point, items);
+                    Conditions.TryAdd(point, items);
                 }
             }
         }
@@ -285,7 +286,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     items.Remove(item);
                     if (items.Count <= 0)
                     {
-                        Effects.Remove(point);
+                        Effects.TryRemove(point, out _);
                     }
                     else
                     {
@@ -300,7 +301,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     items.Remove(item);
                     if (items.Count <= 0)
                     {
-                        Conditions.Remove(point);
+                        Conditions.TryRemove(point, out _);
                     }
                     else
                     {
@@ -333,7 +334,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     items.Remove(current);
                     if (items.Count <= 0)
                     {
-                        Effects.Remove(point);
+                        Effects.TryRemove(point, out _);
                     }
                     else
                     {
@@ -348,7 +349,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     items.Remove(current);
                     if (items.Count <= 0)
                     {
-                        Conditions.Remove(point);
+                        Conditions.TryRemove(point, out _);
                     }
                     else
                     {
@@ -606,8 +607,8 @@ namespace Oblivion.HabboHotel.Items.Wired
             return items;
         }
 
-        public Dictionary<int, List<IWiredItem>> Effects;
-        public Dictionary<int, List<IWiredItem>> Conditions;
+        public ConcurrentDictionary<int, List<IWiredItem>> Effects;
+        public ConcurrentDictionary<int, List<IWiredItem>> Conditions;
 
         public bool OnUserFurniCollision(Room Instance, RoomItem Item)
         {
@@ -664,13 +665,14 @@ namespace Oblivion.HabboHotel.Items.Wired
                 current.Item = null;
                 current.Room = null;
             }
+
+            _wiredItems.Clear();
+            _wiredItems = null;
             _room = null;
             Effects.Clear();
             Conditions.Clear();
             Effects = null;
             Conditions = null;
-            _wiredItems.Clear();
-            _wiredItems = null;
         }
 
         private static bool IsTrigger(Interaction type) => InteractionTypes.AreFamiliar(GlobalInteractions.WiredTrigger,

@@ -1565,7 +1565,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                         break;
 
                     case Interaction.CrackableEgg:
-                        Oblivion.GetGame().GetCrackableEggHandler().GetServerMessage(serverMessage, this);
+                        Oblivion.GetGame().GetRandomRewardFurniHandler().GetEggServerMessage(serverMessage, this);
                         break;
 
                     case Interaction.YoutubeTv:
@@ -1827,7 +1827,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
 
                     case Interaction.CrackableEgg:
                         message.AppendInteger(0);
-                        Oblivion.GetGame().GetCrackableEggHandler().GetServerMessage(message, this);
+                        Oblivion.GetGame().GetRandomRewardFurniHandler().GetEggServerMessage(message, this);
                         break;
 
                     default:

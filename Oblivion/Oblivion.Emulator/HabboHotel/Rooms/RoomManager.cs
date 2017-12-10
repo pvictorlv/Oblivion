@@ -10,7 +10,6 @@ using Oblivion.HabboHotel.Events;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Navigators.Interfaces;
 using Oblivion.HabboHotel.Rooms.Data;
-using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Rooms
 {
