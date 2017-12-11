@@ -160,18 +160,21 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             RoomItem roomItem = null;
 
-            /* TODO CHECK */ foreach (var current in Items.Where(current => current != null &&
-                                                           Room.GetRoomItemHandler().FloorItems.Values.Contains(current)))
-                roomItem = current;
+            /* TODO CHECK */
+            foreach (var current in Items)
+            {
+                if (current != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(current)) roomItem = current;
+            }
 
             if (roomItem == null)
             {
                 user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(0);
                 return false;
             }
-
+            int oldX = user.X, oldY = user.Y;
             Room.GetGameMap().TeleportToItem(user, roomItem);
-            Room.GetRoomUserManager().OnUserUpdateStatus();
+            Room.GetRoomUserManager().OnUserUpdateStatus(oldX, oldY);
+            Room.GetRoomUserManager().OnUserUpdateStatus(roomItem.X, roomItem.Y);
             user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(0);
 
             return true;

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.User;
 using Oblivion.HabboHotel.Rooms.User.Path;
 

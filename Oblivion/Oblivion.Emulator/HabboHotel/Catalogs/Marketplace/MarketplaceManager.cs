@@ -11,17 +11,18 @@ namespace Oblivion.HabboHotel.Catalogs.Marketplace
     {
         public Dictionary<int, int> MarketAverages = new Dictionary<int, int>();
         public Dictionary<int, int> MarketCounts = new Dictionary<int, int>();
-        public List<int> MarketItemKeys = new List<int>();
+        public HashSet<int> MarketItemKeys = new HashSet<int>();
         public List<MarketOffer> MarketItems = new List<MarketOffer>();
 
         public int AvgPriceForSprite(int spriteId)
         {
             int num;
             int num2;
-            if (MarketAverages.ContainsKey(spriteId) && MarketCounts.ContainsKey(spriteId))
+            if (MarketAverages.ContainsKey(spriteId))
             {
-                if (MarketCounts[spriteId] > 0)
-                    return MarketAverages[spriteId] / MarketCounts[spriteId];
+                if (MarketCounts.ContainsKey(spriteId))
+                    if (MarketCounts[spriteId] > 0)
+                        return MarketAverages[spriteId] / MarketCounts[spriteId];
                 return 0;
             }
 
@@ -36,10 +37,11 @@ namespace Oblivion.HabboHotel.Catalogs.Marketplace
                 num2 = dbClient.GetInteger();
             }
 
+
             MarketAverages.Add(spriteId, num);
             MarketCounts.Add(spriteId, num2);
 
-            return num2 > 0 ? Convert.ToInt32(Math.Ceiling((double)(num / num2))) : 0;
+            return num2 > 0 ? Convert.ToInt32(Math.Ceiling((double) (num / num2))) : 0;
         }
 
         public string FormatTimestampString() => FormatTimestamp().ToString().Split(',')[0];
@@ -50,7 +52,8 @@ namespace Oblivion.HabboHotel.Catalogs.Marketplace
         {
             var dictionary = new Dictionary<int, MarketOffer>();
             var dictionary2 = new Dictionary<int, int>();
-            /* TODO CHECK */ foreach (var item in MarketItems)
+            /* TODO CHECK */
+            foreach (var item in MarketItems)
                 if (dictionary.ContainsKey(item.SpriteId))
                 {
                     if (dictionary[item.SpriteId].TotalPrice > item.TotalPrice)

@@ -395,7 +395,6 @@
     <Compile Include="HabboHotel\Pets\Structs\PetCommand.cs" />
     <Compile Include="HabboHotel\Polls\Enums\PollAnswerType.cs" />
     <Compile Include="HabboHotel\Polls\Enums\PollType.cs" />
-    <Compile Include="HabboHotel\Rooms\Items\ByteToItemEffectEnum.cs" />
     <Compile Include="HabboHotel\Rooms\Chat\Chatlog.cs" />
     <Compile Include="HabboHotel\Rooms\Data\DynamicRoomModel.cs" />
     <Compile Include="HabboHotel\Rooms\Items\Games\Handlers\GameItemHandler.cs" />

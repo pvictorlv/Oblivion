@@ -127,7 +127,8 @@ namespace Oblivion.HabboHotel.Items
                     uint.TryParse(dataRow["interaction_modes_count"].ToString(), out var modes);
                     var vendingIds = (string) dataRow["vending_ids"];
                     var sub = Oblivion.EnumToBool(dataRow["subscriber"].ToString());
-                    var effect = (int) dataRow["effectid"];
+                    var effectF = (int) dataRow["effectF"];
+                    var effectM = (int) dataRow["effectM"];
                     var stackable = Convert.ToInt32(dataRow["can_stack"]) == 1;
                     var allowRecycle = Convert.ToInt32(dataRow["allow_recycle"]) == 1;
                     var allowTrade = Convert.ToInt32(dataRow["allow_trade"]) == 1;
@@ -173,8 +174,8 @@ namespace Oblivion.HabboHotel.Items
                     // Add Item
                     var value = new Item(id, sprite, publicName, name, type, x, y, stackHeight, stackable, canWalk,
                         canSit, allowRecycle, allowTrade, allowMarketplaceSell, allowGift, allowInventoryStack,
-                        typeFromString, modes, vendingIds, sub, effect, stackMultiple,
-                        heights?.ToArray(), flatId, isRare);
+                        typeFromString, modes, vendingIds, sub, stackMultiple,
+                        heights?.ToArray(), flatId, isRare, effectF, effectM);
 
                     _items.Add(id, value);
                 }

@@ -39,16 +39,8 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     .ExecuteWired(Interaction.TriggerStateChanged,
                         item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id), item);
 
-            if (!item.GetBaseItem().StackMultipler)
-                return;
-
-            var room = item.GetRoom();
-
-            /* TODO CHECK */
-            foreach (var current in room.GetGameMap().GetRoomUsers(new Point(item.X, item.Y)))
-            {
-                if (current.Statusses.ContainsKey("sit") && current.X == item.X && current.Y == item.Y) room.GetRoomUserManager().UpdateUserStatus(current, true);
-            }
+           
+            
         }
 
         public override void OnWiredTrigger(RoomItem item)
@@ -84,7 +76,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             /* TODO CHECK */
             foreach (var current in room.GetGameMap().GetRoomUsers(new Point(item.X, item.Y)))
             {
-                if (current.Statusses.ContainsKey("sit") && (current.X == item.X && current.Y == item.Y)) room.GetRoomUserManager().UpdateUserStatus(current, true);
+                room.GetRoomUserManager().UpdateUserStatus(current, true);
             }
         }
     }

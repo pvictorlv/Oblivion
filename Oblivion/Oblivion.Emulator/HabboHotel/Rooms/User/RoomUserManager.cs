@@ -16,8 +16,6 @@ using Oblivion.HabboHotel.Pets;
 using Oblivion.HabboHotel.Pets.Enums;
 using Oblivion.HabboHotel.Quests;
 using Oblivion.HabboHotel.RoomBots;
-using Oblivion.HabboHotel.Rooms.Items;
-using Oblivion.HabboHotel.Rooms.Items.Enums;
 using Oblivion.HabboHotel.Rooms.Items.Games.Teams.Enums;
 using Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze;
 using Oblivion.Messages;
@@ -428,7 +426,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     RemoveRoomUser(roomUserByHabbo);
                     if (!roomUserByHabbo.IsSpectator)
                     {
-                        if (roomUserByHabbo.CurrentItemEffect != ItemEffectType.None)
+                        if (roomUserByHabbo.CurrentItemEffect != 0)
                             roomUserByHabbo.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().CurrentEffect =
                                 -1;
                         if (room.HasActiveTrade(session.GetHabbo().Id))
@@ -1693,66 +1691,27 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
             try
             {
-                var b = _userRoom.GetGameMap().EffectMap[x, y];
+                var item = _userRoom.GetGameMap().GetRoomItemForSquare(x, y).FirstOrDefault()?.GetBaseItem();
+                if (item == null) return;
+                var b = user.GetClient().GetHabbo().Gender == "M" ? item.EffectM : item.EffectF;
                 if (b > 0)
                 {
                     if (user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().CurrentEffect == 0)
-                        user.CurrentItemEffect = ItemEffectType.None;
-                    var itemEffectType = ByteToItemEffectEnum.Parse(b);
-                    if (itemEffectType == user.CurrentItemEffect)
+                        user.CurrentItemEffect = 0;
+                    
+                    if (b == user.CurrentItemEffect)
                         return;
-                    switch (itemEffectType)
-                    {
-                        case ItemEffectType.None:
-                            user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(-1);
-                            user.CurrentItemEffect = itemEffectType;
-                            break;
 
-                        case ItemEffectType.Swim:
-                            user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(28);
-                            user.CurrentItemEffect = itemEffectType;
-                            break;
-
-                        case ItemEffectType.SwimLow:
-                            user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(30);
-                            user.CurrentItemEffect = itemEffectType;
-                            break;
-
-                        case ItemEffectType.SwimHalloween:
-                            user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(37);
-                            user.CurrentItemEffect = itemEffectType;
-                            break;
-
-                        case ItemEffectType.Iceskates:
-                            user.GetClient()
-                                .GetHabbo()
-                                .GetAvatarEffectsInventoryComponent()
-                                .ActivateCustomEffect(user.GetClient().GetHabbo().Gender.ToUpper() == "M" ? 38 : 39);
-                            user.CurrentItemEffect = ItemEffectType.Iceskates;
-                            break;
-
-                        case ItemEffectType.Normalskates:
-                            user.GetClient()
-                                .GetHabbo()
-                                .GetAvatarEffectsInventoryComponent()
-                                .ActivateCustomEffect(user.GetClient().GetHabbo().Gender.ToUpper() == "M" ? 55 : 56);
-                            user.CurrentItemEffect = itemEffectType;
-                            break;
-
-                        case ItemEffectType.SnowBoard:
-                        {
-                            user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(97);
-                            user.CurrentItemEffect = itemEffectType;
-                        }
-                            break;
-                    }
+                    user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(b);
+                    user.CurrentItemEffect = b;
+                    
                 }
                 else
                 {
-                    if (user.CurrentItemEffect == ItemEffectType.None || b != 0)
+                    if (user.CurrentItemEffect == 0 || b != 0)
                         return;
                     user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(-1);
-                    user.CurrentItemEffect = ItemEffectType.None;
+                    user.CurrentItemEffect = 0;
                 }
             }
             catch
@@ -1821,7 +1780,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             session.SendMessage(msg);
                         }
 
-                        user.CurrentItemEffect = ItemEffectType.None;
+                        user.CurrentItemEffect = 0;
 
                         if (!user.IsBot && client.GetHabbo().IsTeleporting)
                         {
@@ -2013,7 +1972,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         public void OnUserUpdateStatus(int x, int y)
         {
-            foreach (var current in UserList.Values.Where(current => current.X == x && current.Y == y))
+            foreach (var current in _userRoom.GetGameMap().GetRoomUsers(new Point(x, y)))
                 UpdateUserStatus(current, false);
         }
 

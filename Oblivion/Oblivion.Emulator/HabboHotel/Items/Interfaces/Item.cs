@@ -32,11 +32,12 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         ///     The allow trade
         /// </summary>
         internal bool AllowTrade;
+        
 
         /// <summary>
-        ///     The effect identifier
+        /// The effects who is activated when user walk on furni
         /// </summary>
-        internal int EffectId;
+        internal int EffectM, EffectF;
 
         /// <summary>
         ///     The flat identifier
@@ -132,6 +133,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// check if item is rare or not
         /// </summary>
         internal bool IsRare;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="Item" /> class.
         /// </summary>
@@ -155,17 +157,18 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="modes">The modes.</param>
         /// <param name="vendingIds">The vending ids.</param>
         /// <param name="sub">if set to <c>true</c> [sub].</param>
-        /// <param name="effect">The effect.</param>
         /// <param name="stackMultiple">if set to <c>true</c> [stack multiple].</param>
         /// <param name="toggle">The toggle.</param>
         /// <param name="flatId">The flat identifier.</param>
         /// <param name="isRare">Item is rare or not</param>
+        /// <param name="effectF">Female furni effect</param>
+        /// <param name="effectM">Male furni effect</param>
         internal Item(uint id, int sprite, string publicName, string name, char type, int width, int length,
             double height, bool stackable, bool walkable, bool isSeat, bool allowRecycle, bool allowTrade,
             bool allowMarketplaceSell, bool allowGift, bool allowInventoryStack,
             Interaction interactionType,
-            uint modes, string vendingIds, bool sub, int effect, bool stackMultiple, double[] toggle,
-            int flatId, bool isRare)
+            uint modes, string vendingIds, bool sub, bool stackMultiple, double[] toggle,
+            int flatId, bool isRare, int effectF, int effectM)
         {
             IsRare = isRare;
             ItemId = id;
@@ -188,7 +191,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             Modes = modes;
             VendingIds = new List<int>();
             SubscriberOnly = sub;
-            EffectId = effect;
+            EffectM = effectM;
+            EffectF = effectF;
             StackMultipler = stackMultiple;
             ToggleHeight = toggle;
             FlatId = flatId;

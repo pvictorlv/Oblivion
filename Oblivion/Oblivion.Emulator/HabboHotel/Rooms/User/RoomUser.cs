@@ -11,7 +11,6 @@ using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.PathFinding;
 using Oblivion.HabboHotel.Pets;
 using Oblivion.HabboHotel.RoomBots;
-using Oblivion.HabboHotel.Rooms.Items.Enums;
 using Oblivion.HabboHotel.Rooms.Items.Games.Teams.Enums;
 using Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze.Enum;
 using Oblivion.HabboHotel.Users;
@@ -84,7 +83,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <summary>
         ///     The current item effect
         /// </summary>
-        internal ItemEffectType CurrentItemEffect;
+        internal int CurrentItemEffect;
 
         /// <summary>
         ///     The dance identifier
@@ -407,7 +406,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             IsSpectator = isSpectator;
             SqState = 3;
             InternalRoomId = 0;
-            CurrentItemEffect = ItemEffectType.None;
+            CurrentItemEffect = 0;
             FreezeLives = 0;
             InteractingGate = false;
             GateId = 0u;

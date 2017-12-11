@@ -34,7 +34,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <summary>
         ///     The _user map
         /// </summary>
-        private HybridDictionary _userMap;
+        private Dictionary<int, List<RoomUser>> _userMap;
 
         /// <summary>
         ///     The diagonal enabled
@@ -74,7 +74,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             CoordinatedItems = new ConcurrentDictionary<Point, List<RoomItem>>();
             GameMap = new byte[Model.MapSizeX, Model.MapSizeY];
             ItemHeightMap = new double[Model.MapSizeX, Model.MapSizeY];
-            _userMap = new HybridDictionary();
+            _userMap = new Dictionary<int, List<RoomUser>>();
             WalkableList = GetWalkablePoints();
             GuildGates = new Dictionary<Point, RoomItem>();
         }
@@ -121,7 +121,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         ///     Gets the effect map.
         /// </summary>
         /// <value>The effect map.</value>
-        internal byte[,] EffectMap { get; private set; }
+//        internal byte[,] EffectMap { get; private set; }
 
         /// <summary>
         ///     Gets the coordinated items.
@@ -246,11 +246,10 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         internal void AddUserToMap(RoomUser user, Point coord)
         {
             var coordKey = Formatter.PointToInt(coord);
-            var users = (List<RoomUser>) _userMap[coordKey];
-
-            if (users != null)
+            if (_userMap.TryGetValue(coordKey, out var users))
             {
                 users.Add(user);
+                _userMap[coordKey] = users;
             }
             else
             {
@@ -303,10 +302,16 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         internal void RemoveUserFromMap(RoomUser user, Point coord)
         {
             var coordKey = Formatter.PointToInt(coord);
-            var users = (List<RoomUser>) _userMap[coordKey];
-            if (users != null && users.Contains(user))
+            if (_userMap.TryGetValue(coordKey, out var users))
             {
-                users.Remove(user);
+                if (users.Contains(user))
+                    users.Remove(user);
+                if (users.Count <= 0)
+                {
+                    _userMap.Remove(coordKey);
+                    return;
+                }
+                _userMap[coordKey] = users;
             }
         }
 
@@ -325,8 +330,11 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         internal List<RoomUser> GetRoomUsers(Point coord)
         {
             var coordKey = Formatter.PointToInt(coord);
-            var users = (List<RoomUser>) _userMap[coordKey];
-            return users ?? new List<RoomUser>();
+            if (_userMap.TryGetValue(coordKey, out var users))
+            {
+                return users;
+            }
+            return new List<RoomUser>();
         }
 
         /// <summary>
@@ -346,10 +354,10 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <returns>Point.</returns>
         internal Point GetRandomWalkableSquare()
         {
-            if (!WalkableList.Any())
+            if (WalkableList.Count <= 0)
                 return new Point(0, 0);
 
-            var randomNumber = new Random().Next(0, WalkableList.Count);
+            var randomNumber = Oblivion.GetRandomNumber(0, WalkableList.Count);
             var num = 0;
             /* TODO CHECK */
             foreach (var current in WalkableList)
@@ -400,16 +408,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     stringBuilder5.AppendFormat("[{0}]", Model.SqFloorHeight[num2][num]);
                 stringBuilder.AppendLine(stringBuilder5.ToString());
             }
-            stringBuilder.AppendLine();
-            stringBuilder.AppendLine("Pool map:");
-            for (var num3 = 0; num3 < Model.MapSizeY; num3++)
-            {
-                var stringBuilder6 = new StringBuilder();
-                for (var num4 = 0; num4 < Model.MapSizeX; num4++)
-                    stringBuilder6.AppendFormat("[{0}]", EffectMap[num4, num3]);
-                stringBuilder.AppendLine(stringBuilder6.ToString());
-            }
-            stringBuilder.AppendLine();
+            
             return stringBuilder.ToString();
         }
 
@@ -472,14 +471,12 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
                 if (xMap != StaticModel.MapSizeX || yMap != StaticModel.MapSizeY)
                 {
-                    EffectMap = new byte[Model.MapSizeX, Model.MapSizeY];
                     GameMap = new byte[Model.MapSizeX, Model.MapSizeY];
                     ItemHeightMap = new double[Model.MapSizeX, Model.MapSizeY];
                     for (var j = 0; j < Model.MapSizeY; j++)
                     for (var k = 0; k < Model.MapSizeX; k++)
                     {
                         GameMap[k, j] = 0;
-                        EffectMap[k, j] = 0;
                         if (k == Model.DoorX && j == Model.DoorY)
                             GameMap[k, j] = 3;
                         else if (Model.SqState[k][j] == SquareState.Open)
@@ -491,7 +488,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
                 else
                 {
-                    EffectMap = new byte[Model.MapSizeX, Model.MapSizeY];
                     GameMap = new byte[Model.MapSizeX, Model.MapSizeY];
                     ItemHeightMap = new double[Model.MapSizeX, Model.MapSizeY];
                     for (var n = 0; n < Model.MapSizeY; n++)
@@ -499,7 +495,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                         for (var num3 = 0; num3 < Model.MapSizeX; num3++)
                         {
                             GameMap[num3, n] = 0;
-                            EffectMap[num3, n] = 0;
                             if (num3 == Model.DoorX && n == Model.DoorY)
                             {
                                 GameMap[num3, n] = 3;
@@ -789,7 +784,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 //                var coord = new Point(current.X, current.Y);
                 AddCoordinatedItem(item, current);
                 retVal = ConstructMapForItem(item, current);
-
             }
 
             /*foreach (var coord in item.GetCoords)
@@ -1266,14 +1260,11 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             GuildGates?.Clear();
             if (GameMap != null)
                 Array.Clear(GameMap, 0, GameMap.Length);
-            if (EffectMap != null)
-                Array.Clear(EffectMap, 0, EffectMap.Length);
-
+           
             if (ItemHeightMap != null)
                 Array.Clear(ItemHeightMap, 0, ItemHeightMap.Length);
             _userMap = null;
             GameMap = null;
-            EffectMap = null;
             GuildGates = null;
             ItemHeightMap = null;
             CoordinatedItems = null;
@@ -1309,7 +1300,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 GameMap[x, y] = 0;
 
                 ItemHeightMap[x, y] = 0.0;
-                EffectMap[x, y] = 0;
                 if (x == Model.DoorX && y == Model.DoorY)
                 {
                     GameMap[x, y] = 3;
@@ -1383,40 +1373,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     ItemHeightMap[coord.X, coord.Y] <= item.TotalHeight)
                 {
                     ItemHeightMap[coord.X, coord.Y] = item.TotalHeight - Model.SqFloorHeight[item.X][item.Y];
-
-                    try
-                    {
-                        EffectMap[coord.X, coord.Y] = 0;
-                        var interactionType = item.GetBaseItem().InteractionType;
-                        if (interactionType != Interaction.Pool)
-                            switch (interactionType)
-                            {
-                                case Interaction.IceSkates:
-                                    EffectMap[coord.X, coord.Y] = 3;
-                                    break;
-
-                                case Interaction.Normslaskates:
-                                    EffectMap[coord.X, coord.Y] = 2;
-                                    break;
-
-                                case Interaction.LowPool:
-                                    EffectMap[coord.X, coord.Y] = 4;
-                                    break;
-
-                                case Interaction.HaloweenPool:
-                                    EffectMap[coord.X, coord.Y] = 5;
-                                    break;
-
-                                case Interaction.SnowBoardSlope:
-                                    EffectMap[coord.X, coord.Y] = 7;
-                                    break;
-                            }
-                        else EffectMap[coord.X, coord.Y] = 1;
-                    }
-                    catch (Exception e)
-                    {
-                        Logging.HandleException(e, "ConstructMapForItem()");
-                    }
+                    
                     if (GameMap.GetLength(0) >= coord.X && GameMap.GetLength(1) >= coord.Y)
                     {
                         if (item.GetBaseItem().Walkable)
