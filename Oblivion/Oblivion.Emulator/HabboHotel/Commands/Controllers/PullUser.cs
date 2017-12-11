@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Linq;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.PathFinding;
 
@@ -16,8 +17,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         {
             MinRank = 1;
             Description = "Pull User.";
-            Usage = ":pulluser [USERNAME]";
-            MinParams = 1;
+            Usage = ":pulluser";
+            MinParams = 0;
         }
 
         public override bool Execute(GameClient session, string[] pms)
@@ -25,12 +26,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var room = session.GetHabbo().CurrentRoom;
             var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
             if (user == null) return true;
-
-            if (!room.CheckRights(session) && room.CheckRights(user.GetClient(), true))
-            {
-                session.SendWhisper("hey, não puxe o dono!");
-                return false;
-            }
+            
 
             if (room.RoomData.DisablePull)
             {
@@ -38,19 +34,15 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 return true;
             }
 
-            var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
-            if (client == null)
-            {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
-                return true;
-            }
-            if (client.GetHabbo().Id == session.GetHabbo().Id)
-            {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("command_pull_error_own"));
-                return true;
-            }
-            var user2 = room.GetRoomUserManager().GetRoomUserByHabbo(client.GetHabbo().Id);
+            var users = room.GetGameMap().GetRoomUsers(user.SquaresInFront(2));
+
+            var user2 = users?.FirstOrDefault();
             if (user2 == null) return true;
+            if (user2.TeleportEnabled)
+            {
+                session.SendWhisper(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
+                return true;
+            }
             if (user2.TeleportEnabled)
             {
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));

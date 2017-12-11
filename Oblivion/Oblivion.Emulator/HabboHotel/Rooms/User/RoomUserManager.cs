@@ -985,6 +985,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 sleepEffectMessage.AppendInteger(roomUsers.VirtualId);
                 sleepEffectMessage.AppendBool(true);
                 _userRoom.SendMessage(sleepEffectMessage);
+                roomUsers.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateEffect(517);
             }
 
             if ((!roomUsers.IsOwner()) && (roomUsers.IdleTime >= 300) && (!roomUsers.IsBot) && (!roomUsers.IsPet))

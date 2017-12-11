@@ -51,9 +51,9 @@ namespace Oblivion.HabboHotel.Items.Handlers
             {
                 return 0;
             }
-            var items = itemsString.Split(',').ToList();
+            var items = itemsString.Split(',');
 
-            var rnd = new Random().Next(0, items.Count - 1);
+            var rnd = Oblivion.GetRandomNumber(0, items.Length - 1);
             var randomItem = items[rnd];
             return Convert.ToUInt32(randomItem);
         }

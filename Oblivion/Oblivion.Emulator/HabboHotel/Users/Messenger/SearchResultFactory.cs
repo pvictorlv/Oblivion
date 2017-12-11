@@ -37,7 +37,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             {
                 queryReactor.SetQuery(
                     "SELECT id,username,motto,look,last_online FROM users WHERE username LIKE @query LIMIT 50");
-                queryReactor.AddParameter("query", $"{query}%");
+                queryReactor.AddParameter("query", $"%{query}%");
                 table = queryReactor.GetTable();
             }
 

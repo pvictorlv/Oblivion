@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using Oblivion.Configuration;
 using Oblivion.Connection.Connection;
 using Oblivion.Connection.Net;
@@ -315,7 +313,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                     serverMessage.AppendBool(true);
                     queuedServerMessage.AppendResponse(serverMessage);
 
-                    var xmasGift =
+                   /* var xmasGift =
                         new ServerMessage(LibraryParser.OutgoingRequest("CampaignCalendarDataMessageComposer"));
 
                     xmasGift.AppendString("xmas16"); //eventTrigger
@@ -342,7 +340,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                     {
                         xmasGift.AppendInteger(Missed); //giftDay
                     }
-                    queuedServerMessage.AppendResponse(xmasGift);
+                    queuedServerMessage.AppendResponse(xmasGift);*/
 
 
                     serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("CfhTopicsInitMessageComposer"));

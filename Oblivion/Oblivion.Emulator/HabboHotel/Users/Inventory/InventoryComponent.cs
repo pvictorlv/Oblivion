@@ -500,6 +500,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
             if (UserHoldsItem(id))
                 RemoveItem(id, false);
 
+            if (userItem.BaseItem == null) return null; 
+
             if (userItem.BaseItem.InteractionType == Interaction.MusicDisc)
             {
                 if (!SongDisks.ContainsKey(userItem.Id))

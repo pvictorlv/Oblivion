@@ -530,6 +530,60 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return new Point(x, y);
             }
         }
+        /// <summary>
+        ///     Gets the square in front.
+        /// </summary>
+        /// <value>The square in front.</value>
+        internal Point SquaresInFront(int count)
+        {
+            
+                var x = X + count;
+                var y = 0;
+            switch (RotBody)
+            {
+                case 0:
+                    x = X;
+                    y = Y - count;
+                    break;
+
+                case 1:
+                    x = X + count;
+                    y = Y - count;
+                    break;
+
+                case 2:
+                    x = X + count;
+                    y = Y;
+                    break;
+
+                case 3:
+                    x = X + count;
+                    y = Y + count;
+                    break;
+
+                case 4:
+                    x = X;
+                    y = Y + count;
+                    break;
+
+                case 5:
+                    x = X - count;
+                    y = Y + count;
+                    break;
+
+                case 6:
+                    x = X - count;
+                    y = Y;
+                    break;
+
+                case 7:
+                    x = X - count;
+                    y = Y - count;
+                    break;
+            }
+            return new Point(x, y);
+            
+        }
         internal Point SquareInFrontSet
         {
             get
@@ -615,7 +669,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <value><c>true</c> if [needs autokick]; otherwise, <c>false</c>.</value>
         internal bool NeedsAutokick => !IsBot &&
                                        (GetClient() == null || GetClient().GetHabbo() == null ||
-                                        (GetClient().GetHabbo().Rank <= 6u && IdleTime >= 1800));
+                                        GetClient().GetHabbo().Rank <= 6u && IdleTime >= 1800);
 
         /// <summary>
         ///     Gets a value indicating whether this instance is trading.
@@ -787,16 +841,15 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (rank < 4)
                 {
                     var span = DateTime.Now - habbo.SpamFloodTime;
-                    if ((span.TotalSeconds > habbo.SpamProtectionTime) && habbo.SpamProtectionBol)
+                    if (span.TotalSeconds > habbo.SpamProtectionTime && habbo.SpamProtectionBol)
                     {
                         _floodCount = 0;
                         habbo.SpamProtectionBol = false;
                         habbo.SpamProtectionAbuse = 0;
-                    }
-                    else if (span.TotalSeconds > 4.0)
+                    } else if (span.TotalSeconds > 4.0)
                         _floodCount = 0;
                     ServerMessage message;
-                    if ((span.TotalSeconds < habbo.SpamProtectionTime) && habbo.SpamProtectionBol)
+                    if (span.TotalSeconds < habbo.SpamProtectionTime && habbo.SpamProtectionBol)
                     {
                         message = new ServerMessage(LibraryParser.OutgoingRequest("FloodFilterMessageComposer"));
                         var i = habbo.SpamProtectionTime - span.Seconds;
@@ -806,11 +859,11 @@ namespace Oblivion.HabboHotel.Rooms.User
                         GetClient().SendMessage(message);
                         return;
                     }
-                    if (((span.TotalSeconds < 4.0) && (_floodCount > 5)) && (rank < 5))
+                    if (span.TotalSeconds < 4.0 && _floodCount > 5 * (_mRoom.RoomData.ChatFloodProtection + 1) && rank < 5)
                     {
                         message = new ServerMessage(LibraryParser.OutgoingRequest("FloodFilterMessageComposer"));
                         habbo.SpamProtectionCount++;
-                        if ((habbo.SpamProtectionCount % 2) == 0)
+                        if (habbo.SpamProtectionCount % 2 == 0)
                             habbo.SpamProtectionTime = 10 * habbo.SpamProtectionCount;
                         else
                             habbo.SpamProtectionTime = 10 * (habbo.SpamProtectionCount - 1);
@@ -909,18 +962,17 @@ namespace Oblivion.HabboHotel.Rooms.User
 
             var coord = new Point(x, y);
             var allRoomItemForSquare = GetRoom().GetGameMap().GetCoordinatedHeighestItems(coord);
-            if ((RidingHorse && !IsBot && allRoomItemForSquare.Any()) || (IsPet && allRoomItemForSquare.Any()))
+            if (RidingHorse && !IsBot && allRoomItemForSquare.Any() || IsPet && allRoomItemForSquare.Any())
                 if (
                     allRoomItemForSquare.Any(
                         current =>
-                            (current.GetBaseItem().IsSeat ||
-                             current.GetBaseItem().InteractionType == Interaction.LowPool ||
-                             current.GetBaseItem().InteractionType == Interaction.Pool ||
-                             current.GetBaseItem().InteractionType == Interaction.HaloweenPool ||
-                             current.GetBaseItem().InteractionType == Interaction.Bed ||
-                             current.GetBaseItem().InteractionType == Interaction.PressurePadBed ||
-                             current.GetBaseItem().InteractionType == Interaction.Guillotine
-                            )))
+                            current.GetBaseItem().IsSeat ||
+                            current.GetBaseItem().InteractionType == Interaction.LowPool ||
+                            current.GetBaseItem().InteractionType == Interaction.Pool ||
+                            current.GetBaseItem().InteractionType == Interaction.HaloweenPool ||
+                            current.GetBaseItem().InteractionType == Interaction.Bed ||
+                            current.GetBaseItem().InteractionType == Interaction.PressurePadBed ||
+                            current.GetBaseItem().InteractionType == Interaction.Guillotine))
                     return;
 
             UnIdle();
@@ -1146,18 +1198,18 @@ namespace Oblivion.HabboHotel.Rooms.User
             message.AppendInteger(Y);
             message.AppendString(TextHandling.GetString(Z));
             message.AppendInteger(0);
-            message.AppendInteger((BotData.AiType == AiType.Generic) ? 4 : 2);
+            message.AppendInteger(BotData.AiType == AiType.Generic ? 4 : 2);
             if (BotData.AiType == AiType.Pet)
             {
                 message.AppendInteger(PetData.Type);
                 message.AppendInteger(PetData.OwnerId);
                 message.AppendString(PetData.OwnerName);
-                message.AppendInteger((PetData.Type == 16u) ? 0 : 1);
+                message.AppendInteger(PetData.Type == 16u ? 0 : 1);
                 message.AppendBool(PetData.HaveSaddle);
                 message.AppendBool(RidingHorse);
                 message.AppendInteger(0);
-                message.AppendInteger((PetData.Type == 16u) ? 1 : 0);
-                message.AppendString((PetData.Type == 16u) ? PetData.MoplaBreed.GrowStatus : "");
+                message.AppendInteger(PetData.Type == 16u ? 1 : 0);
+                message.AppendString(PetData.Type == 16u ? PetData.MoplaBreed.GrowStatus : "");
                 return;
             }
             message.AppendString(BotData.Gender.ToLower());
@@ -1187,7 +1239,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             var stringBuilder = new StringBuilder();
             stringBuilder.Append("/");
             if (IsPet && PetData.Type == 16u)
-                stringBuilder.AppendFormat("/{0}{1}", PetData.MoplaBreed.GrowStatus, (Statusses.Count >= 1) ? "/" : "");
+                stringBuilder.AppendFormat("/{0}{1}", PetData.MoplaBreed.GrowStatus, Statusses.Count >= 1 ? "/" : "");
 
             foreach (var current in Statusses.ToList())
             {

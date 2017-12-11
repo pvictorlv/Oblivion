@@ -96,11 +96,6 @@ namespace Oblivion.HabboHotel.Rooms.Data
         internal int FloorThickness;
 
         /// <summary>
-        ///     The game identifier
-        /// </summary>
-        internal int GameId;
-
-        /// <summary>
         ///     The group
         /// </summary>
         internal Guild Group;
@@ -274,7 +269,6 @@ namespace Oblivion.HabboHotel.Rooms.Data
             Group = null;
             AllowRightsOverride = false;
             Event = null;
-            GameId = 0;
             WhoCanBan = 0;
             WhoCanKick = 0;
             WhoCanMute = 0;
@@ -350,7 +344,6 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 int.TryParse(row["floorthick"].ToString(), out FloorThickness);
                 int.TryParse(row["wallthick"].ToString(), out WallThickness);
                 int.TryParse(row["chat_type"].ToString(), out ChatType);
-                int.TryParse(row["game_id"].ToString(), out GameId);
                 int.TryParse(row["mute_settings"].ToString(), out WhoCanMute);
                 int.TryParse(row["kick_settings"].ToString(), out WhoCanKick);
                 int.TryParse(row["ban_settings"].ToString(), out WhoCanBan);

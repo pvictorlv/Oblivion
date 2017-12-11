@@ -130,10 +130,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="model">The model.</param>
         /// <param name="roomId">The room identifier.</param>
         /// <returns>RoomModel.</returns>
-        internal RoomModel GetModel(string model, uint roomId)
-        {
-            return LoadModel(model, roomId);
-        }
+        internal RoomModel GetModel(string model, uint roomId) => LoadModel(model, roomId);
 
         /// <summary>
         ///     Generates the nullable room data.

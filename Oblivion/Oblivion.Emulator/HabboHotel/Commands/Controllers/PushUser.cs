@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Linq;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.PathFinding;
 
@@ -15,40 +16,28 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         public PushUser()
         {
             MinRank = 1;
-            Description = "Push User.";
-            Usage = ":push [USERNAME]";
-            MinParams = 1;
+            Description = "Empurre o usuário na sua frente.";
+            Usage = ":push";
+            MinParams = 0;
         }
 
         public override bool Execute(GameClient session, string[] pms)
         {
             var room = session.GetHabbo().CurrentRoom;
+
             var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
             if (user == null) return true;
 
-            if (!room.CheckRights(session) && room.CheckRights(user.GetClient(), true))
-            {
-                session.SendWhisper("hey, não empurre o dono!");
-                return false;
-            }
             if (room.RoomData.DisablePush)
             {
                 session.SendWhisper("Realizar Push Foi Desativado pelo Dono do Quarto");
                 return true;
             }
 
-            var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
-            if (client == null)
-            {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
-                return true;
-            }
-            if (client.GetHabbo().Id == session.GetHabbo().Id)
-            {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("command_pull_error_own"));
-                return true;
-            }
-            var user2 = room.GetRoomUserManager().GetRoomUserByHabbo(client.GetHabbo().Id);
+
+            var users = room.GetGameMap().GetRoomUsers(user.SquareInFront);
+           
+            var user2 = users?.FirstOrDefault();
             if (user2 == null) return true;
             if (user2.TeleportEnabled)
             {

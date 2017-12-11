@@ -52,7 +52,6 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             DataTable friendsRequestsTable;
 
             DataTable relationShipsTable;
-            DataTable botsTable;
             DataTable questsTable;
             DataTable petsTable;
             DataTable dBlockedCommands;
@@ -102,7 +101,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 queryReactor.SetQuery($"SELECT ignore_id FROM users_ignores WHERE user_id = {userId}");
                 ignoresTable = queryReactor.GetTable();
 
-                queryReactor.SetQuery($"SELECT tag FROM users_tags WHERE user_id = {userId}");
+                queryReactor.SetQuery($"SELECT tag FROM users_tags WHERE user_id = {userId} LIMIT 15");
                 tagsTable = queryReactor.GetTable();
 
                 queryReactor.SetQuery(
@@ -141,16 +140,13 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 myRoomsTable = queryReactor.GetTable();
 
                 queryReactor.SetQuery(
-                    $"SELECT * FROM bots WHERE user_id = {userId} AND room_id = 0 AND ai_type='pet'");
+                    $"SELECT * FROM bots WHERE user_id = {userId} AND room_id = 0");
                 petsTable = queryReactor.GetTable();
 
                 queryReactor.SetQuery(
                     $"SELECT quest_id, progress FROM users_quests_data WHERE user_id = {userId}");
                 questsTable = queryReactor.GetTable();
-
-                queryReactor.SetQuery(
-                    $"SELECT * FROM bots WHERE user_id = {userId} AND room_id=0 AND ai_type='generic'");
-                botsTable = queryReactor.GetTable();
+                
 
                 queryReactor.SetQuery(
                     $"SELECT group_id, rank, date_join, has_chat FROM groups_members WHERE user_id = {userId}");
@@ -196,9 +192,8 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             var ignoreUsers = (from DataRow row in ignoresTable.Rows select (uint) row["ignore_id"]).ToList();
             var tags = (from DataRow row in tagsTable.Rows select row["tag"].ToString().Replace(" ", "")).ToList();
 
-            var inventoryBots =
-                (botsTable.Rows.Cast<DataRow>().Select(BotManager.GenerateBotFromRow)).ToDictionary(
-                    roomBot => roomBot.BotId);
+
+          
             var badges =
                 (badgesTable.Rows.Cast<DataRow>()
                     .Select(dataRow8 => new Badge((string) dataRow8["badge_id"], (int) dataRow8["badge_slot"]))).ToList();
@@ -283,11 +278,20 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 }
             }
 
+                
+
 
             var pets = new Dictionary<uint, Pet>();
+            var inventoryBots = new Dictionary<uint, RoomBot>();
 
-            /* TODO CHECK */ foreach (DataRow row in petsTable.Rows)
+            foreach (DataRow row in petsTable.Rows)
             {
+                if (row["ai_type"].ToString() == "generic")
+                {
+                    var bot = BotManager.GenerateBotFromRow(row);
+                    inventoryBots.Add(bot.BotId, bot);
+                    continue;
+                }
                 using (var queryreactor3 = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
                     queryreactor3.SetQuery($"SELECT * FROM pets_data WHERE id={row[0]} LIMIT 1");

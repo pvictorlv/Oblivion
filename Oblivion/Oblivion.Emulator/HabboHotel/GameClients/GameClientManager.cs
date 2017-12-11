@@ -312,14 +312,23 @@ namespace Oblivion.HabboHotel.GameClients
             var flag = false;
 
             Out.WriteLine("Saving Inventary Content....", "Oblivion.Boot", ConsoleColor.DarkCyan);
+            
+                foreach (var current2 in Clients.Values.Where(current2 => current2.GetHabbo() != null))
+                {
+                    try
+                    {
+                    current2.GetHabbo().GetInventoryComponent().RunDbUpdate();
+                    current2.GetHabbo().RunDbUpdate(Oblivion.GetDatabaseManager().GetQueryReactor());
+                    stringBuilder.Append(current2.GetHabbo().GetQueryString);
+                    flag = true;
+                    Console.ForegroundColor = ConsoleColor.DarkMagenta;
 
-            foreach (var current2 in Clients.Values.Where(current2 => current2.GetHabbo() != null))
-            {
-                current2.GetHabbo().GetInventoryComponent().RunDbUpdate();
-                current2.GetHabbo().RunDbUpdate(Oblivion.GetDatabaseManager().GetQueryReactor());
-                stringBuilder.Append(current2.GetHabbo().GetQueryString);
-                flag = true;
-                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                    }
+                    catch
+                    {
+                        Out.WriteLine("error disponsig inventory");
+
+                }
             }
 
             Out.WriteLine("Inventary Content Saved!", "Oblivion.Boot", ConsoleColor.DarkCyan);
@@ -338,11 +347,18 @@ namespace Oblivion.HabboHotel.GameClients
 
                 foreach (var current3 in Clients.Values.Where(current3 => current3.GetConnection() != null))
                 {
-                    current3.GetConnection().Disconnect();
+                    try
+                    {
+                        current3.GetConnection().Disconnect();
 
-                    Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                        Console.ForegroundColor = ConsoleColor.DarkMagenta;
 
-                    Out.WriteLine("Connection Manager Closed!", "Oblivion.Boot", ConsoleColor.DarkMagenta);
+                        Out.WriteLine("Connection Manager Closed!", "Oblivion.Boot", ConsoleColor.DarkMagenta);
+                    }
+                    catch
+                    {
+                        Out.WriteLine("error disponsig connection");
+                    }
                 }
             }
             catch (Exception ex)

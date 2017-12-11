@@ -21,8 +21,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override bool Execute(GameClient session, string[] pms)
         {
-            var type = pms[0];
-            if (type == "room")
+            var name = pms[0];
+            if (name == "room")
             {
                 var cmd = pms[1];
 
@@ -45,8 +45,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 session.SendWhisper("Comando incorreto, digite :block room [comando] para bloquear um comando.");
                 return false;
             }
-            var name = pms[1];
-            var word = pms[2];
+            var word = pms[1];
 
             if (!CommandsManager.CommandsDictionary.ContainsKey(word))
             {

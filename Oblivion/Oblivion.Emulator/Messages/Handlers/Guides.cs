@@ -46,14 +46,20 @@ namespace Oblivion.Messages.Handlers
             onGuideSessionAttached.AppendInteger(30);
             Session.SendMessage(onGuideSessionAttached);
 
-            var onGuideSessionAttached2 = new ServerMessage(LibraryParser.OutgoingRequest("OnGuideSessionAttachedMessageComposer"));
-            onGuideSessionAttached2.AppendBool(true);
-            onGuideSessionAttached2.AppendInteger(userId);
-            onGuideSessionAttached2.AppendString(message);
-            onGuideSessionAttached2.AppendInteger(15);
-            guide.SendMessage(onGuideSessionAttached2);
-            guide.GetHabbo().GuideOtherUser = Session;
-            Session.GetHabbo().GuideOtherUser = guide;
+            lock (guide)
+            {
+
+
+                var onGuideSessionAttached2 =
+                    new ServerMessage(LibraryParser.OutgoingRequest("OnGuideSessionAttachedMessageComposer"));
+                onGuideSessionAttached2.AppendBool(true);
+                onGuideSessionAttached2.AppendInteger(userId);
+                onGuideSessionAttached2.AppendString(message);
+                onGuideSessionAttached2.AppendInteger(15);
+                guide.SendMessage(onGuideSessionAttached2);
+                guide.GetHabbo().GuideOtherUser = Session;
+                Session.GetHabbo().GuideOtherUser = guide;
+            }
         }
 
         /// <summary>
@@ -204,14 +210,13 @@ namespace Oblivion.Messages.Handlers
 
             // Request.GetBool();
 
-            //var requester = Session.GetHabbo().GuideOtherUser;
+//            var requester = Session.GetHabbo().GuideOtherUser;
 
             /* user - cancell session */
             var message = new ServerMessage(LibraryParser.OutgoingRequest("OnGuideSessionDetachedMessageComposer"));
             message.AppendInteger(2);
             Session.SendMessage(message);
 
-            Console.WriteLine("The Cancell was Called");
         }
 
         /// <summary>
