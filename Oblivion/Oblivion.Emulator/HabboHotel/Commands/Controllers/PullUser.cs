@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
-using Oblivion.HabboHotel.PathFinding;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
 {
@@ -48,29 +47,42 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
                 return true;
             }
-
-            if (PathFinder.GetDistance(user.X, user.Y, user2.X, user2.Y) > 2)
-            {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("command_pull_error_far_away"));
-                return true;
-            }
-            if ((user.RotBody % 2) != 0) user.RotBody--;
+            
+//            if ((user.RotBody % 2) != 0) user.RotBody--;
             switch (user.RotBody)
             {
                 case 0:
                     user2.MoveTo(user.X, user.Y - 1);
+                    break;
+                case 1:
+                    user2.MoveTo(user2.X - 1, user2.Y + 1);
                     break;
 
                 case 2:
                     user2.MoveTo(user.X + 1, user.Y);
                     break;
 
+
+                case 3:
+                    user2.MoveTo(user2.X - 1, user2.Y - 1);
+                    break;
+
                 case 4:
                     user2.MoveTo(user.X, user.Y + 1);
                     break;
+                    
+
+                case 5:
+                    user2.MoveTo(user2.X + 1, user2.Y - 1);
+                    break;
+                    
 
                 case 6:
                     user2.MoveTo(user.X - 1, user.Y);
+                    break;
+
+                case 7:
+                    user2.MoveTo(user2.X + 1, user2.Y + 1);
                     break;
             }
             return true;

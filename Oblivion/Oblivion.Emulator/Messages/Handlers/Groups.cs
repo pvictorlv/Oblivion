@@ -208,7 +208,7 @@ namespace Oblivion.Messages.Handlers
         internal void SerializeGroupMembers()
         {
             uint groupId = Request.GetUInteger();
-            int page = Request.GetInteger() - 1;
+            int page = Request.GetInteger();
             string searchVal = Request.GetString();
             uint reqType = Request.GetUInteger();
 

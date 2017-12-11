@@ -313,29 +313,28 @@ namespace Oblivion.HabboHotel.Groups
         {
             if (theGroup == null || session == null)
                 return null;
-
+/*
             if (page <= 1)
-                page = 0;
+                page = 0;*/
             response.AppendInteger(theGroup.Id);
             response.AppendString(theGroup.Name);
             response.AppendInteger(theGroup.RoomId);
             response.AppendString(theGroup.Badge);
 
-            var list = Split(GetGroupUsersByString(theGroup, searchVal, reqType));
-            if (page > list.Count)
-            {
-                page = list.Count;
-            }
-
+            var list = (GetGroupUsersByString(theGroup, searchVal, reqType));
+           
+            int startIndex = (page -1) * 14 + 14;
+            int finishIndex = list.Count;
+            var members = list.Skip(startIndex).Take(finishIndex - startIndex).ToList();
             if (reqType == 0)
             {
                 response.AppendInteger(list.Count);
 
-                if (theGroup.Members.Count > 0 && list.Count - 1 >= page)
+                if (theGroup.Members.Count > 0)
                 {
-                    response.AppendInteger(list[page].Count);
+                    response.AppendInteger(members.Count);
 
-                    using (var enumerator = list[page].GetEnumerator())
+                    using (var enumerator = members.GetEnumerator())
                     {
                         while (enumerator.MoveNext())
                         {
@@ -352,13 +351,13 @@ namespace Oblivion.HabboHotel.Groups
             {
                 response.AppendInteger(theGroup.Admins.Count);
 
-                var paging = (page <= list.Count - 1) ? list[page] : null;
+                var paging = (page <= list.Count - 1) ? members : null;
 
                 if ((theGroup.Admins.Count > 0) && (list.Count - 1 >= page) && paging != null)
                 {
-                    response.AppendInteger(list[page].Count);
+                    response.AppendInteger(members.Count);
 
-                    using (var enumerator = list[page].GetEnumerator())
+                    using (var enumerator = members.GetEnumerator())
                     {
                         while (enumerator.MoveNext())
                         {
@@ -375,11 +374,11 @@ namespace Oblivion.HabboHotel.Groups
             {
                 response.AppendInteger(theGroup.Requests.Count);
 
-                if (theGroup.Requests.Count > 0 && list.Count - 1 >= page && list[page] != null)
+                if (theGroup.Requests.Count > 0 && list.Count - 1 >= page && members != null)
                 {
-                    response.AppendInteger(list[page].Count);
+                    response.AppendInteger(members.Count);
 
-                    using (var enumerator = list[page].GetEnumerator())
+                    using (var enumerator = members.GetEnumerator())
                     {
                         while (enumerator.MoveNext())
                         {

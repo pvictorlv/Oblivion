@@ -58,8 +58,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     break;
 
                 case 1:
-                    user2.MoveTo(user2.X + 1, user2.Y);
-                    user2.MoveTo(user2.X, user2.Y - 1);
+                    user2.MoveTo(user2.X + 1, user2.Y - 1);
                     break;
 
                 case 2:
@@ -67,8 +66,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     break;
 
                 case 3:
-                    user2.MoveTo(user2.X + 1, user2.Y);
-                    user2.MoveTo(user2.X, user2.Y + 1);
+                    user2.MoveTo(user2.X + 1, user2.Y + 1);
                     break;
 
                 case 4:
@@ -76,8 +74,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     break;
 
                 case 5:
-                    user2.MoveTo(user2.X - 1, user2.Y);
-                    user2.MoveTo(user2.X, user2.Y + 1);
+                    user2.MoveTo(user2.X - 1, user2.Y + 1);
                     break;
 
                 case 6:
@@ -85,8 +82,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     break;
 
                 case 7:
-                    user2.MoveTo(user2.X - 1, user2.Y);
-                    user2.MoveTo(user2.X, user2.Y - 1);
+                    user2.MoveTo(user2.X- 1, user2.Y - 1);
                     break;
             }
 
