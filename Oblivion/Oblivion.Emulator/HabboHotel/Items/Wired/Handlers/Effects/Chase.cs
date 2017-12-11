@@ -89,7 +89,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         public bool OnCycle()
         {
             var time = Oblivion.GetUnixTimeStamp();
+
             if (time < _next)
+                return false;
+
             if (Items != null && Items.Count > 0)
             {
                 foreach (var item in Items)

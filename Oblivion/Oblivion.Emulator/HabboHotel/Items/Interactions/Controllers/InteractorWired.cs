@@ -524,7 +524,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage15.AppendInteger(0);
                     serverMessage15.AppendInteger(0);
                     serverMessage15.AppendInteger(7);
-                    serverMessage15.AppendInteger(0);
+                    serverMessage15.AppendInteger(delay);
                     serverMessage15.AppendInteger(0);
                     serverMessage15.AppendInteger(0);
                     session.SendMessage(serverMessage15);
@@ -622,11 +622,9 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     return;
                 }
 
-                case Interaction.ConditionFurnisHaveUsers:
                 case Interaction.ConditionStatePos:
                 case Interaction.ConditionTriggerOnFurni:
                 case Interaction.ConditionFurniTypeMatches:
-                case Interaction.ConditionFurnisHaveNotUsers:
                 case Interaction.ConditionFurniTypeDontMatch:
                 case Interaction.ConditionTriggererNotOnFurni:
                 {
@@ -646,6 +644,10 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     session.SendMessage(serverMessage19);
                     return;
                 }
+
+                case Interaction.ConditionFurnisHaveNotUsers:
+                case Interaction.ConditionFurnisHaveUsers:
+
                 case Interaction.ConditionFurniHasNotFurni:
                 case Interaction.ConditionFurniHasFurni:
                 {

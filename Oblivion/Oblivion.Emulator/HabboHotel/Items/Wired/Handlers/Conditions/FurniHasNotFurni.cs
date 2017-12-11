@@ -58,18 +58,41 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             return OtherBool ? AllItemsHaveNotFurni() : AnyItemHaveNotFurni();
         }
 
-        public bool AllItemsHaveNotFurni() => Items
-            .Where(item => item != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(item)).All(current => !current
-                .AffectedTiles.Values.Where(square => Room.GetGameMap().SquareHasFurni(square.X, square.Y)).Any(
-                    square => Room.GetGameMap().GetRoomItemForSquare(square.X, square.Y)
-                        .Any(squareItem => squareItem.Id != current.Id &&
-                                           squareItem.Z + squareItem.Height >= current.Z + current.Height)));
+        public bool AnyItemHaveNotFurni()
+        {
 
-        public bool AnyItemHaveNotFurni() => Items
-            .Where(item => item != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(item)).Any(current => current
-                .AffectedTiles.Values.Where(square => Room.GetGameMap().SquareHasFurni(square.X, square.Y)).Any(
-                    square => !Room.GetGameMap().GetRoomItemForSquare(square.X, square.Y)
-                        .Any(squareItem => squareItem.Id != current.Id &&
-                                           squareItem.Z + squareItem.Height >= current.Z + current.Height)));
+            foreach (RoomItem current in Items)
+            {
+                bool any = false;
+
+                if (current != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(current))
+                {
+                    if (current.AffectedTiles.Values.Select(affectedTile => Room.GetGameMap()
+                        .GetAllRoomItemForSquare(affectedTile.X, affectedTile.Y)
+                        .Any(squareItem => squareItem.Id != current.Id && squareItem.Z + squareItem.Height >= current.Z + current.Height)).Any(any1 => !any1))
+                    {
+                        any = true;
+                    }
+                    return any;
+                }
+
+            }
+            return true;
+        }
+
+        public bool AllItemsHaveNotFurni()
+        {
+            bool all = true;
+            foreach (RoomItem current in Items)
+            {
+                if (current != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(current))
+                    foreach (var affectedTile in current.AffectedTiles.Values)
+                    {
+                        all = Room.GetGameMap().GetRoomItemForSquare(affectedTile.X, affectedTile.Y).Any(squareItem => squareItem.Id != current.Id && squareItem.Z + squareItem.Height >= current.Z + current.Height);
+                    }
+            }
+            return !all;
+        }
+        
     }
 }

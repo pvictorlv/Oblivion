@@ -239,8 +239,8 @@ namespace Oblivion.Messages.Handlers
             var num2 = Request.GetUInteger();
             var currentRoom = Session.GetHabbo().CurrentRoom;
             if (currentRoom == null ||
-                (currentRoom.RoomData.WhoCanBan == 0 && !currentRoom.CheckRights(Session, true)) ||
-                (currentRoom.RoomData.WhoCanBan == 1 && !currentRoom.CheckRights(Session)) || Session.GetHabbo().Rank <
+                (currentRoom.RoomData.WhoCanBan == 0 && !currentRoom.CheckRights(Session, true) ||
+                currentRoom.RoomData.WhoCanBan == 1 && !currentRoom.CheckRights(Session)) && Session.GetHabbo().Rank <
                 Convert.ToUInt32(Oblivion.GetDbConfig().DbData["ambassador.minrank"]))
                 return;
             var roomUserByHabbo = currentRoom.GetRoomUserManager()
@@ -249,9 +249,9 @@ namespace Oblivion.Messages.Handlers
                 return;
             if (roomUserByHabbo.GetClient().GetHabbo().Rank >= Session.GetHabbo().Rank)
                 return;
-            if (currentRoom.MutedUsers.ContainsKey(num))
+            if (currentRoom.MutedUsers.TryGetValue(num, out var muted))
             {
-                if (currentRoom.MutedUsers[num] >= (ulong) Oblivion.GetUnixTimeStamp())
+                if (muted >= (ulong) Oblivion.GetUnixTimeStamp())
                     return;
                 currentRoom.MutedUsers.Remove(num);
             }

@@ -138,7 +138,10 @@ namespace Oblivion.HabboHotel.Items.Wired
                 {
                     request.GetInteger();
                     var otherString3 = request.GetString();
+                     request.GetInteger();
+                    var delay = request.GetInteger();
                     var wired8 = wiredHandler.GetWired(item);
+                    wired8.Delay = delay;
                     wired8.OtherString = otherString3;
                     wiredHandler.ReloadWired(wired8);
                     break;
@@ -368,10 +371,8 @@ namespace Oblivion.HabboHotel.Items.Wired
                     break;
                 }
 
-                case Interaction.ConditionFurnisHaveUsers:
                 case Interaction.ConditionTriggerOnFurni:
                 case Interaction.ConditionFurniTypeMatches:
-                case Interaction.ConditionFurnisHaveNotUsers:
                 case Interaction.ConditionTriggererNotOnFurni:
                 case Interaction.ConditionFurniTypeDontMatch:
                 {
@@ -383,7 +384,10 @@ namespace Oblivion.HabboHotel.Items.Wired
                     wired12.Items = furniItems;
                     wiredHandler.ReloadWired(wired12);
                     break;
-                }
+
+            }
+                case Interaction.ConditionFurnisHaveUsers:
+                case Interaction.ConditionFurnisHaveNotUsers:
                 case Interaction.ConditionFurniHasFurni:
                 case Interaction.ConditionFurniHasNotFurni:
                 {
@@ -535,7 +539,8 @@ namespace Oblivion.HabboHotel.Items.Wired
 
             for (var i = 0; i < itemCount; i++)
             {
-                var item = room.GetRoomItemHandler().GetItem(Oblivion.GetGame().GetItemManager().GetRealId(request.GetUInteger()));
+                var item = room.GetRoomItemHandler()
+                    .GetItem(Oblivion.GetGame().GetItemManager().GetRealId(request.GetUInteger()));
 
                 if (item != null)
                     list.Add(item);

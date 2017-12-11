@@ -1,6 +1,5 @@
-using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Timers;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
@@ -9,18 +8,18 @@ using Oblivion.HabboHotel.Rooms.User;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
-    public class KickUser : IWiredItem
+    public class KickUser : IWiredItem, IWiredCycler
     {
         private readonly List<Interaction> _mBanned;
-        private readonly List<RoomUser> _mUsers;
-        private Timer _mTimer;
+        private readonly Queue _toKick;
 
         public KickUser(RoomItem item, Room room)
         {
             Item = item;
             Room = room;
+            TickCount = Delay / 2;
             OtherString = string.Empty;
-            _mUsers = new List<RoomUser>();
+            _toKick = new Queue();
             _mBanned = new List<Interaction>
             {
                 Interaction.TriggerRepeater,
@@ -42,8 +41,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public int Delay
         {
-            get { return 0; }
-            set { }
+            get => (int) (TickCount * 2);
+            set => TickCount = value / 2;
         }
 
         public string OtherString { get; set; }
@@ -74,49 +73,55 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             var roomUser = (RoomUser) stuff[0];
             var item = (Interaction) stuff[1];
 
+            if (roomUser == null)
+                return false;
             if (_mBanned.Contains(item))
                 return false;
+            if (TickCount <= 0)
+                TickCount = 3;
 
-            if (roomUser?.GetClient() != null && roomUser.GetClient().GetHabbo() != null &&
-                !string.IsNullOrWhiteSpace(OtherString))
+            lock (_toKick.SyncRoot)
             {
-                if (roomUser.GetClient().GetHabbo().HasFuse("fuse_mod") ||
-                    Room.RoomData.Owner == roomUser.GetUserName())
-                    return false;
-
-                roomUser.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(4, false);
-                roomUser.GetClient().SendWhisper(OtherString);
-                _mUsers.Add(roomUser);
-            }
-
-            if (_mTimer == null)
-                _mTimer = new Timer(2000);
-
-            _mTimer.Elapsed += ExecuteKick;
-            _mTimer.Enabled = true;
-
-            return true;
-        }
-
-        private void ExecuteKick(object source, ElapsedEventArgs eea)
-        {
-            try
-            {
-                _mTimer?.Stop();
-
-                lock (_mUsers)
+                if (!_toKick.Contains(roomUser))
                 {
-                    /* TODO CHECK */ foreach (var user in _mUsers)
-                        Room.GetRoomUserManager().RemoveUserFromRoom(user.GetClient(), true, false);
-                }
 
-                _mUsers.Clear();
-                _mTimer = null;
+                    if (roomUser.GetClient().GetHabbo().HasFuse("mod_tool") ||roomUser.IsOwner())
+                    {
+                        roomUser.GetClient().SendWhisper("Você não pode ser kikado!");
+                        return false;
+                    }
+
+                    _toKick.Enqueue(roomUser);
+                    roomUser.GetClient().SendWhisper(OtherString);
+                }
             }
-            catch (Exception)
+            return true;
+
+        }
+        
+        public double TickCount { get; set; }
+
+        public bool OnCycle()
+        {
+            if (Room == null)
+                return false;
+
+            if (_toKick.Count == 0)
             {
-                // ignored
+                TickCount = 3;
+                return true;
             }
+
+            lock (_toKick.SyncRoot)
+            {
+                while (_toKick.Count > 0)
+                {
+                    var Player = (RoomUser)_toKick.Dequeue();
+                    Room.GetRoomUserManager().RemoveUserFromRoom(Player.GetClient(), true, false);
+                }
+            }
+            TickCount = 3;
+            return true;
         }
     }
 }

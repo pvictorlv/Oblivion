@@ -49,33 +49,24 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             get { return 0; }
             set { }
         }
+        
+        
+
+        public bool AnyItemHaveFurni() => (from current in Items where current != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(current) from affectedTile in current.AffectedTiles.Values from item in Room.GetGameMap().GetAllRoomItemForSquare(affectedTile.X, affectedTile.Y) where current.Id != item.Id && item.Z >= affectedTile.Z select current).Any();
+        public bool AllItemHaveFurni() => (from current in Items
+                                           where current != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(current)
+                                           from affectedTile in current.AffectedTiles.Values
+                                           select Room.GetGameMap()
+                                               .GetAllRoomItemForSquare(affectedTile.X, affectedTile.Y)
+                                               .Any(item => current.Id != item.Id && item.Z >= affectedTile.Z)).All(all => all);
 
         public bool Execute(params object[] stuff)
         {
             if (Items == null || Items.Count <= 0)
                 return true;
 
-            /* TODO CHECK */ foreach (var current in Items.Where(current => current != null &&
-                                                           Room.GetRoomItemHandler().FloorItems.Values.Contains(current)))
-            {
-                var toContinue = false;
+            return OtherBool ? AllItemHaveFurni() : AnyItemHaveFurni();
 
-                /* TODO CHECK */ foreach (var current2 in current.AffectedTiles.Values.Where(current2 => Room.GetGameMap()
-                    .SquareHasFurni(current2.X, current2.Y)))
-                    toContinue = Room.GetGameMap().GetRoomItemForSquare(current2.X, current2.Y)
-                        .Any(current3 => current3.Id != current.Id && current3.Z >= current2.Z);
-
-                if (toContinue)
-                    continue;
-
-                if (Room.GetGameMap().GetRoomItemForSquare(current.X, current.Y)
-                    .Any(current4 => current4.Id != current.Id && current4.Z >= current.Z))
-                    continue;
-
-                return false;
-            }
-
-            return true;
         }
     }
 }
