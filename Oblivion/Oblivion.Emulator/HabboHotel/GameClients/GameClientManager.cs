@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using Oblivion.Configuration;
@@ -30,7 +29,7 @@ namespace Oblivion.HabboHotel.GameClients
         /// <summary>
         ///     The _user identifier register
         /// </summary>
-        private readonly HybridDictionary _userIdRegister;
+        private readonly ConcurrentDictionary<uint, GameClient> _userIdRegister;
 
         /// <summary>
         ///     The _user name identifier register
@@ -39,7 +38,7 @@ namespace Oblivion.HabboHotel.GameClients
         /// <summary>
         ///     The _user name register
         /// </summary>
-        private readonly HybridDictionary _userNameRegister;
+        private readonly ConcurrentDictionary<string, GameClient> _userNameRegister;
 
         /// <summary>
         ///     The clients
@@ -52,14 +51,8 @@ namespace Oblivion.HabboHotel.GameClients
         internal GameClientManager()
         {
             Clients = new ConcurrentDictionary<uint, GameClient>();
-//            _clientsAddQueue = new ConcurrentQueue<GameClient>();
-//            _clientsToRemove = new ConcurrentQueue<GameClient>();
-//            _badgeQueue = new Queue();
-//            _broadcastQueue = new ConcurrentQueue<byte[]>();
-            _userNameRegister = new HybridDictionary();
-            _userIdRegister = new HybridDictionary();
-//            _userNameIdRegister = new HybridDictionary();
-//            _idUserNameRegister = new HybridDictionary();
+            _userNameRegister = new ConcurrentDictionary<string, GameClient>();
+            _userIdRegister = new ConcurrentDictionary<uint, GameClient>();
         }
 
         /// <summary>
@@ -74,23 +67,21 @@ namespace Oblivion.HabboHotel.GameClients
         /// <param name="userId">The user identifier.</param>
         /// <returns>GameClient.</returns>
         internal GameClient GetClientByUserId(uint userId) =>
-            _userIdRegister.Contains(userId) ? (GameClient) _userIdRegister[userId] : null;
+            _userIdRegister.TryGetValue(userId, out var client) ? client : null;
 
         /// <summary>
         ///     Gets the name of the client by user.
         /// </summary>
         /// <param name="userName">Name of the user.</param>
         /// <returns>GameClient.</returns>
-        internal GameClient GetClientByUserName(string userName) => _userNameRegister.Contains(userName.ToLower())
-            ? (GameClient) _userNameRegister[userName.ToLower()]
-            : null;
+        internal GameClient GetClientByUserName(string userName) => _userNameRegister.TryGetValue(userName, out var client) ? client : null;
 
         /// <summary>
         ///     Gets the client.
         /// </summary>
         /// <param name="clientId">The client identifier.</param>
         /// <returns>GameClient.</returns>
-        internal GameClient GetClient(uint clientId) => Clients.ContainsKey(clientId) ? Clients[clientId] : null;
+        internal GameClient GetClient(uint clientId) => Clients.TryGetValue(clientId, out var client) ? client : null;
 
         /// <summary>
         ///     Gets the name by identifier.
@@ -250,8 +241,9 @@ namespace Oblivion.HabboHotel.GameClients
             var bytes = Packet.GetReversedBytes();
 
 
-            foreach (var Client in Clients.Values.Where(Client => Client?.GetHabbo() != null))
+            foreach (var Client in Clients.Values)
             {
+                if (Client?.GetHabbo() == null) continue;
                 if (!string.IsNullOrEmpty(fuse))
                     if (!Client.GetHabbo().HasFuse(fuse))
                         continue;
@@ -278,15 +270,14 @@ namespace Oblivion.HabboHotel.GameClients
         /// <param name="userName">Name of the user.</param>
         internal void RegisterClient(GameClient client, uint userId, string userName)
         {
-            if (_userNameRegister.Contains(userName.ToLower()))
+            if (_userNameRegister.ContainsKey(userName.ToLower()))
                 _userNameRegister[userName.ToLower()] = client;
             else
-                _userNameRegister.Add(userName.ToLower(), client);
-            if (_userIdRegister.Contains(userId))
+                _userNameRegister.TryAdd(userName.ToLower(), client);
+            if (_userIdRegister.ContainsKey(userId))
                 _userIdRegister[userId] = client;
             else
-                _userIdRegister.Add(userId, client);
-
+                _userIdRegister.TryAdd(userId, client);
         }
 
         /// <summary>
@@ -296,8 +287,8 @@ namespace Oblivion.HabboHotel.GameClients
         /// <param name="userName">The username.</param>
         internal void UnregisterClient(uint userid, string userName)
         {
-            _userIdRegister.Remove(userid);
-            _userNameRegister.Remove(userName.ToLower());
+            _userIdRegister.TryRemove(userid, out _);
+            _userNameRegister.TryRemove(userName.ToLower(), out _);
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.SetQuery($"UPDATE users SET online='0' WHERE id={userid} LIMIT 1");
@@ -312,22 +303,20 @@ namespace Oblivion.HabboHotel.GameClients
             var flag = false;
 
             Out.WriteLine("Saving Inventary Content....", "Oblivion.Boot", ConsoleColor.DarkCyan);
-            
-                foreach (var current2 in Clients.Values.Where(current2 => current2.GetHabbo() != null))
+
+            foreach (var current2 in Clients.Values.Where(current2 => current2.GetHabbo() != null))
+            {
+                try
                 {
-                    try
-                    {
                     current2.GetHabbo().GetInventoryComponent().RunDbUpdate();
                     current2.GetHabbo().RunDbUpdate(Oblivion.GetDatabaseManager().GetQueryReactor());
                     stringBuilder.Append(current2.GetHabbo().GetQueryString);
                     flag = true;
                     Console.ForegroundColor = ConsoleColor.DarkMagenta;
-
-                    }
-                    catch
-                    {
-                        Out.WriteLine("error disponsig inventory");
-
+                }
+                catch
+                {
+                    Out.WriteLine("error disponsig inventory");
                 }
             }
 
@@ -377,12 +366,11 @@ namespace Oblivion.HabboHotel.GameClients
         /// <param name="newName">The new name.</param>
         internal void UpdateClient(string oldName, string newName)
         {
-            if (!_userNameRegister.Contains(oldName.ToLower()))
+            if (!_userNameRegister.TryGetValue(oldName.ToLower(), out var old))
                 return;
 
-            var old = (GameClient) _userNameRegister[oldName.ToLower()];
-            _userNameRegister.Remove(oldName.ToLower());
-            _userNameRegister.Add(newName.ToLower(), old);
+            _userNameRegister.TryRemove(oldName.ToLower(), out _);
+            _userNameRegister.TryAdd(newName.ToLower(), old);
         }
     }
 }

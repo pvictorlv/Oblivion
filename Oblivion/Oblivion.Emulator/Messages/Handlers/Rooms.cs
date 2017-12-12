@@ -393,7 +393,8 @@ namespace Oblivion.Messages.Handlers
 
 
                 if (Session.GetHabbo().Id != room.RoomData.OwnerId &&
-                    !Session.GetHabbo().HasFuse("fuse_enter_any_room") && !(Session.GetHabbo().IsTeleporting && Session.GetHabbo().TeleportingRoomId == id))
+                    !Session.GetHabbo().HasFuse("fuse_enter_any_room") &&
+                    !(Session.GetHabbo().IsTeleporting && Session.GetHabbo().TeleportingRoomId == id))
                     if (Session.GetHabbo().LastBellId == room.RoomId && room.RoomData.State == 1)
                     {
                         return;
@@ -737,7 +738,6 @@ namespace Oblivion.Messages.Handlers
 
         internal void SerializeRoomInformation(Room room, bool show)
         {
-
             if (room?.RoomData == null)
                 return;
 
@@ -1504,7 +1504,8 @@ namespace Oblivion.Messages.Handlers
             var room = Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CheckRights(Session, true))
                 return;
-            var item = Session.GetHabbo().GetInventoryComponent().GetItem(Oblivion.GetGame().GetItemManager().GetRealId(Request.GetUInteger()));
+            var item = Session.GetHabbo().GetInventoryComponent()
+                .GetItem(Oblivion.GetGame().GetItemManager().GetRealId(Request.GetUInteger()));
             if (item == null)
                 return;
             var type = "floor";
@@ -1767,15 +1768,13 @@ namespace Oblivion.Messages.Handlers
 
                     queryReactor.RunFastQuery(
                         $"UPDATE rooms_data SET model_name = 'custom', wallthick = '{wallThickness}', floorthick = '{floorThickness}', walls_height = '{wallHeight}' WHERE id = {room.RoomId};");
-//                    var roomModel = new RoomModel(doorX, doorY, doorZ, doorOrientation, heightMap, "", false, "");
-//                    Oblivion.GetGame().GetRoomManager().UpdateCustomModel(room.RoomId, roomModel);
-                    room.ResetGameMap("custom", wallHeight, wallThickness, floorThickness);
-                    Oblivion.GetGame().GetRoomManager().UnloadRoom(room, "Reload floor");
-
-                    var forwardToRoom = new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
-                    forwardToRoom.AppendInteger(room.RoomId);
-                    Session.SendMessage(forwardToRoom);
                 }
+                room.ResetGameMap("custom", wallHeight, wallThickness, floorThickness);
+                Oblivion.GetGame().GetRoomManager().UnloadRoom(room, "Reload floor");
+
+                var forwardToRoom = new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
+                forwardToRoom.AppendInteger(room.RoomId);
+                Session?.SendMessage(forwardToRoom);
             }
         }
 
@@ -1940,7 +1939,7 @@ namespace Oblivion.Messages.Handlers
             var data = Oblivion.FilterInjectionChars(Request.GetString());
             var bot = room.GetRoomUserManager().GetBot(botId);
             if (bot.BotData == null) return;
-            
+
             var flag = false;
             switch (action)
             {
@@ -2526,7 +2525,8 @@ namespace Oblivion.Messages.Handlers
             var roomUserByHabbo = currentRoom.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
             var roomUserByHabbo2 = currentRoom.GetRoomUserManager().GetRoomUserByHabbo(text2);
 
-            msg = currentRoom.RoomData.WordFilter.Aggregate(msg, (current, s) => Regex.Replace(current, Regex.Escape(s), "bobba", RegexOptions.IgnoreCase));
+            msg = currentRoom.RoomData.WordFilter.Aggregate(msg,
+                (current, s) => Regex.Replace(current, Regex.Escape(s), "bobba", RegexOptions.IgnoreCase));
             if (BlackWordsManager.Check(msg, BlackWordType.Hotel, out var word))
             {
                 var settings = word.TypeSettings;

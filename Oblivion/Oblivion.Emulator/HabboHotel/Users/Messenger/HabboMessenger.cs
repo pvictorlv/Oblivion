@@ -645,10 +645,11 @@ namespace Oblivion.HabboHotel.Users.Messenger
             serverMessage.AppendInteger(0);
 
             var client = GetClient();
+            if (client?.GetHabbo() == null) return null;
             var groups = new List<Guild>();
             foreach (var gp in Oblivion.GetGame().GetGroupManager().Groups.Values.ToList())
             {
-                if (gp == null) continue;
+                if (gp?.Members == null) continue;
                 if (gp.HasChat && gp.Members.TryGetValue(client.GetHabbo().Id, out var memb))
                 {
                     if (memb != null && memb.HasChat)

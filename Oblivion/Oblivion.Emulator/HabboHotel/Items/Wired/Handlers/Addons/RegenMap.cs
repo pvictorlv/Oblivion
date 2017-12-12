@@ -36,12 +36,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
 
         public bool Execute(params object[] stuff)
         {
-            var roomUser = (RoomUser) stuff[0];
-            if (roomUser == null)
-                return false;
+            var type = (Interaction) stuff[1];
 
-            roomUser.GetRoom().GetGameMap().GenerateMaps();
-            roomUser.GetClient().SendWhisper("O mapa foi restaurado!");
+            if (type == Interaction.TriggerRepeater) return false;
+
+            Room.GetGameMap().GenerateMaps();
+//            roomUser.GetClient().SendWhisper("O mapa foi restaurado!");
             return true;
         }
     }

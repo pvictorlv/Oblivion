@@ -76,15 +76,15 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (!Requested)
             {
                 TickCount = Delay;
-                Requested = true;
             }
             OnCycle();
             return true;
         }
-
+        
         private double _next;
 
         public bool Requested;
+
 
         public bool OnCycle()
         {

@@ -156,7 +156,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="width">The width.</param>
         /// <param name="posX">The position x.</param>
         /// <param name="posY">The position y.</param>
-        /// <param name="rotation">The rotation.</param>
+        /// <param name="rotation">The rotation.</param>g
         /// <returns>Dictionary&lt;System.Int32, ThreeDCoord&gt;.</returns>
         internal static Dictionary<int, ThreeDCoord> GetAffectedTiles(int length, int width,
             int posX, int posY, int rotation)
@@ -439,96 +439,102 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         {
             try
             {
-                var xMap = 0;
-                var yMap = 0;
-
-                CoordinatedItems.Clear();
-                var floorItems = _room.GetRoomItemHandler().FloorItems.Values.ToList();
-                if (checkLines)
+                while (true)
                 {
-                    /* TODO CHECK */
-                    foreach (var roomItems in floorItems)
+
+
+                    var xMap = 0;
+                    var yMap = 0;
+
+                    CoordinatedItems.Clear();
+                    var floorItems = _room.GetRoomItemHandler().FloorItems.Values.ToList();
+                    if (checkLines)
                     {
-                        if (roomItems.X > Model.MapSizeX && roomItems.X > xMap)
-                            xMap = roomItems.X;
-                        if (roomItems.Y > Model.MapSizeY && roomItems.Y > yMap)
-                            yMap = roomItems.Y;
-                    }
-                }
-
-                if (yMap > Model.MapSizeY - 1 || xMap > Model.MapSizeX - 1)
-                {
-                    if (xMap < Model.MapSizeX)
-                        xMap = Model.MapSizeX;
-                    if (yMap < Model.MapSizeY)
-                        yMap = Model.MapSizeY;
-                    Model.SetMapsize(xMap + 7, yMap + 7);
-
-                    GenerateMaps(false);
-
-                    return;
-                }
-
-                if (xMap != StaticModel.MapSizeX || yMap != StaticModel.MapSizeY)
-                {
-                    GameMap = new byte[Model.MapSizeX, Model.MapSizeY];
-                    ItemHeightMap = new double[Model.MapSizeX, Model.MapSizeY];
-                    for (var j = 0; j < Model.MapSizeY; j++)
-                    for (var k = 0; k < Model.MapSizeX; k++)
-                    {
-                        GameMap[k, j] = 0;
-                        if (k == Model.DoorX && j == Model.DoorY)
-                            GameMap[k, j] = 3;
-                        else if (Model.SqState[k][j] == SquareState.Open)
-                            GameMap[k, j] = 1;
-                        else if (Model.SqState[k][j] == SquareState.Seat)
-                            GameMap[k, j] = 2;
-                    }
-                }
-
-                else
-                {
-                    GameMap = new byte[Model.MapSizeX, Model.MapSizeY];
-                    ItemHeightMap = new double[Model.MapSizeX, Model.MapSizeY];
-                    for (var n = 0; n < Model.MapSizeY; n++)
-                    {
-                        for (var num3 = 0; num3 < Model.MapSizeX; num3++)
+                        /* TODO CHECK */
+                        foreach (var roomItems in floorItems)
                         {
-                            GameMap[num3, n] = 0;
-                            if (num3 == Model.DoorX && n == Model.DoorY)
+                            if (roomItems.X > Model.MapSizeX && roomItems.X > xMap)
+                                xMap = roomItems.X;
+                            if (roomItems.Y > Model.MapSizeY && roomItems.Y > yMap)
+                                yMap = roomItems.Y;
+                        }
+                    }
+
+                    if (yMap > Model.MapSizeY - 1 || xMap > Model.MapSizeX - 1)
+                    {
+                        if (xMap < Model.MapSizeX)
+                            xMap = Model.MapSizeX;
+                        if (yMap < Model.MapSizeY)
+                            yMap = Model.MapSizeY;
+                        Model.SetMapsize(xMap + 7, yMap + 7);
+
+                        checkLines = false;
+
+                        continue;
+                    }
+
+                    if (xMap != StaticModel.MapSizeX || yMap != StaticModel.MapSizeY)
+                    {
+                        GameMap = new byte[Model.MapSizeX, Model.MapSizeY];
+                        ItemHeightMap = new double[Model.MapSizeX, Model.MapSizeY];
+                        for (var j = 0; j < Model.MapSizeY; j++)
+                        for (var k = 0; k < Model.MapSizeX; k++)
+                        {
+                            GameMap[k, j] = 0;
+                            if (k == Model.DoorX && j == Model.DoorY)
+                                GameMap[k, j] = 3;
+                            else if (Model.SqState[k][j] == SquareState.Open)
+                                GameMap[k, j] = 1;
+                            else if (Model.SqState[k][j] == SquareState.Seat)
+                                GameMap[k, j] = 2;
+                        }
+                    }
+
+                    else
+                    {
+                        GameMap = new byte[Model.MapSizeX, Model.MapSizeY];
+                        ItemHeightMap = new double[Model.MapSizeX, Model.MapSizeY];
+                        for (var n = 0; n < Model.MapSizeY; n++)
+                        {
+                            for (var num3 = 0; num3 < Model.MapSizeX; num3++)
                             {
-                                GameMap[num3, n] = 3;
-                            }
-                            else if (Model.SqState[num3][n] == SquareState.Open)
-                                GameMap[num3, n] = 1;
-                            else if (Model.SqState[num3][n] == SquareState.Seat)
-                            {
-                                GameMap[num3, n] = 2;
+                                GameMap[num3, n] = 0;
+                                if (num3 == Model.DoorX && n == Model.DoorY)
+                                {
+                                    GameMap[num3, n] = 3;
+                                }
+                                else if (Model.SqState[num3][n] == SquareState.Open)
+                                    GameMap[num3, n] = 1;
+                                else if (Model.SqState[num3][n] == SquareState.Seat)
+                                {
+                                    GameMap[num3, n] = 2;
+                                }
                             }
                         }
                     }
-                }
 
 
-                /* TODO CHECK */
-
-                foreach (var item in floorItems)
-                {
-                    AddItemToMap(item);
-                }
-
-                floorItems.Clear();
-                if (!_room.RoomData.AllowWalkThrough)
-                {
                     /* TODO CHECK */
-                    foreach (var current in _room.GetRoomUserManager().UserList.Values)
-                    {
-                        current.SqState = GameMap[current.X, current.Y];
-                        GameMap[current.X, current.Y] = 0;
-                    }
-                }
 
-                GameMap[Model.DoorX, Model.DoorY] = 3;
+                    foreach (var item in floorItems)
+                    {
+                        AddItemToMap(item);
+                    }
+
+                    floorItems.Clear();
+                    if (!_room.RoomData.AllowWalkThrough)
+                    {
+                        /* TODO CHECK */
+                        foreach (var current in _room.GetRoomUserManager().UserList.Values)
+                        {
+                            current.SqState = GameMap[current.X, current.Y];
+                            GameMap[current.X, current.Y] = 0;
+                        }
+                    }
+
+                    GameMap[Model.DoorX, Model.DoorY] = 3;
+                    break;
+                }
             }
             catch (Exception ex)
             {
