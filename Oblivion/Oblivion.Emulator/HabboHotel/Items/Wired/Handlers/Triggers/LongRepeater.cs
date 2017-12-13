@@ -10,6 +10,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
     internal class LongRepeater : IWiredItem, IWiredCycler
     {
         private int _delay;
+        public bool Requested { get; set; }
 
         public LongRepeater(RoomItem item, Room room)
         {

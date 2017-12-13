@@ -345,9 +345,9 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
                     serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("CfhTopicsInitMessageComposer"));
                     serverMessage.AppendInteger(6);
-                    serverMessage.AppendString("sex_and_pii_meeting_irl");
+                    serverMessage.AppendString("sexual_content");
                     serverMessage.AppendInteger(8);
-                    serverMessage.AppendString("sexual_webcam_images");
+                    serverMessage.AppendString("pii_meeting_irl");
                     serverMessage.AppendInteger(1);
                     serverMessage.AppendString("mods");
                     serverMessage.AppendString("sexual_webcam_images_auto");
@@ -382,7 +382,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                     serverMessage.AppendString("selling_buying_accounts_or_furni");
                     serverMessage.AppendInteger(11);
                     serverMessage.AppendString("mods");
-                    serverMessage.AppendString("trolling");
+                    serverMessage.AppendString("trolling_bad_behavior");
                     serverMessage.AppendInteger(11);
                     serverMessage.AppendString("hate_speech");
                     serverMessage.AppendInteger(12);
@@ -417,7 +417,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                     serverMessage.AppendString("bullying");
                     serverMessage.AppendInteger(22);
                     serverMessage.AppendString("guardians");
-                    serverMessage.AppendString("interruption");
+                    serverMessage.AppendString("game_interruption");
                     serverMessage.AppendInteger(2);
                     serverMessage.AppendString("flooding");
                     serverMessage.AppendInteger(23);

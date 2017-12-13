@@ -16,6 +16,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             Room = room;
             OtherString = string.Empty;
             OtherBool = false;
+            banned[0] = Interaction.ActionChase;
+            banned[1] = Interaction.ActionInverseChase;
+            banned[2] = Interaction.ActionMoveRotate;
         }
 
         public Interaction Type => Interaction.TriggerCollision;
@@ -50,6 +53,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             set { }
         }
 
+        private Interaction[] banned;
         public bool OtherBool { get; set; }
 
         public bool Execute(params object[] stuff)
@@ -60,7 +64,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             var effects = Room.GetWiredHandler().GetEffects(this);
 
             if (conditions.Count > 0)
-                /* TODO CHECK */ foreach (var current in conditions)
+                /* TODO CHECK */
+                foreach (var current in conditions)
                 {
                     WiredHandler.OnEvent(current);
 
@@ -70,7 +75,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
             if (effects.Count > 0)
             {
-                var randomBox = effects.FirstOrDefault(x => x.Type == Interaction.SpecialRandom);
+                IWiredItem randomBox = effects
+                    .Where(x => x.Type != Interaction.ActionChase && x.Type != Interaction.ActionInverseChase &&
+                                x.Type != Interaction.ActionMoveRotate)
+                    .FirstOrDefault(x => x.Type == Interaction.SpecialRandom);
                 if (randomBox != null)
                 {
                     if (!randomBox.Execute())
@@ -87,6 +95,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 {
                     foreach (var current3 in effects)
                     {
+                        if (current3.Type == Interaction.ActionMoveRotate || current3.Type == Interaction.ActionChase ||
+                            current3.Type ==
+                            Interaction.ActionInverseChase) continue;
+
                         if (current3.Execute(roomUser, Type))
                             WiredHandler.OnEvent(current3);
                     }

@@ -24,6 +24,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             Oblivion.GetGame().GetHallOfFame().RefreshHallOfFame();
             Oblivion.GetGame().GetRoomManager().GetCompetitionManager().RefreshCompetitions();
             Oblivion.GetGame().GetTargetedOfferManager().LoadOffer();
+            Oblivion.GetGame().GetRandomRewardFurniHandler().Init();
             return true;
         }
     }

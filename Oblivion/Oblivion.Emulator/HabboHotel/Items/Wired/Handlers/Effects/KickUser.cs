@@ -12,6 +12,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
     {
         private readonly List<Interaction> _mBanned;
         private readonly Queue _toKick;
+        public bool Requested { get; set; }
 
         public KickUser(RoomItem item, Room room)
         {

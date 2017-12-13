@@ -159,7 +159,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 }
             }
 
-            _next = Oblivion.GetUnixTimeStamp() + (Delay / 1000);
+            _next = Oblivion.GetUnixTimeStamp() + (Delay);
 
             return true;
         }

@@ -11,7 +11,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
     {
         private int _delay;
         private long _mNext;
-        private bool _requested;
 
         public ToggleFurniState(RoomItem item, Room room)
         {
@@ -27,7 +26,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OnCycle()
         {
-            if (!_requested || _mNext < 1)
+            if (!Requested || _mNext < 1)
                 return false;
             if (Item == null || Items.Count <= 0)
                 return true;
@@ -45,6 +44,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             _mNext = 0L;
             return true;
         }
+        public bool Requested { get; set; }
 
         public Interaction Type => Interaction.ActionToggleState;
 
@@ -94,8 +94,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (Item == null || Items.Count <= 0)
                 return false;
 
-            if (!_requested)
-                _requested = true;
+            if (!Requested)
+                Requested = true;
 
             if (_mNext == 0L || _mNext < Oblivion.Now())
                 _mNext = Oblivion.Now() + Delay;

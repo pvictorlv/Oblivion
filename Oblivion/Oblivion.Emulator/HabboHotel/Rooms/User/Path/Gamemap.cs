@@ -90,8 +90,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         {
             if (Item.X == MoveTo.X && Item.Y == MoveTo.Y) return true;
 
-            var Points =
-                GetAffectedTiles(Item.GetBaseItem().Length, Item.GetBaseItem().Width, MoveTo.X, MoveTo.Y, Item.Rot)
+            var Points = GetAffectedTiles(Item.GetBaseItem().Length, Item.GetBaseItem().Width, MoveTo.X, MoveTo.Y, Item.Rot)
                     .Values;
 
             if (Points.Count == 0)

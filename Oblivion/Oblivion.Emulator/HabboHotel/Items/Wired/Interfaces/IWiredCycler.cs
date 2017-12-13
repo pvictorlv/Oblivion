@@ -4,5 +4,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Interfaces
     {
         double TickCount { get; set; }
         bool OnCycle();
+
     }
 }

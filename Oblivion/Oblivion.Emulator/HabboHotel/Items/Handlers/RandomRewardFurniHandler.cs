@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.Messages;
 
@@ -14,7 +13,12 @@ namespace Oblivion.HabboHotel.Items.Handlers
         public RandomRewardFurniHandler()
         {
             _furnis = new Dictionary<int, Dictionary<int, string>>();
+            Init();
+        }
 
+        public void Init()
+        {
+            _furnis.Clear();
             DataTable table;
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
@@ -38,7 +42,6 @@ namespace Oblivion.HabboHotel.Items.Handlers
                 _furnis.Add(campaing, items);
             }
         }
-
 
         internal uint GetRandomPrize(int campaing, int level)
         {

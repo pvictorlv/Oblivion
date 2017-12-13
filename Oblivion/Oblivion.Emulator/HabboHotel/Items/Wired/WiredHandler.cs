@@ -25,6 +25,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         public WiredHandler(Room room)
         {
+            //todo: change _wiredItems to triggers only
             _wiredItems = new List<IWiredItem>();
             Effects = new ConcurrentDictionary<int, List<IWiredItem>>();
             Conditions = new ConcurrentDictionary<int, List<IWiredItem>>();
@@ -106,7 +107,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 where item.Items != null && item.Items.Count != 0
                 select item).Any(item => item.Items.Contains(boxItem));
 
-            return Box != null && any;
+            return any;
         }
 
         public static void SaveWired(IWiredItem fItem)
@@ -178,10 +179,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     return false;
 
 
-                if (_wiredItems.Any(current => current != null && current.Type == type && current.Execute(stuff)))
-                {
-                    return true;
-                }
+                return _wiredItems.Any(current => current != null && current.Type == type && current.Execute(stuff));
             }
             catch (Exception e)
             {
@@ -320,7 +318,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 AddWired(wired);
                 return null;
             }
-
+            
             var coord = new Point(current.Item.X, current.Item.Y);
             var point = Formatter.PointToInt(coord);
 
@@ -357,6 +355,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     }
                 }
             }
+
             return current;
         }
 

@@ -147,7 +147,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                         }
                     }
 
-                    _next = Oblivion.GetUnixTimeStamp() + (Delay / 1000);
+                    _next = Oblivion.GetUnixTimeStamp();
 
                     while (_toRemove.TryDequeue(out var rI))
                         if (Items.Contains(rI))
@@ -226,6 +226,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 TickCount = Delay;
                 Requested = true;
             }
+
+            var Now = Oblivion.GetUnixTimeStamp();
+
+            if (Now < _next)
+                return false;
+
             OnCycle();
             return true;
         }

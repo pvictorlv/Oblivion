@@ -16,6 +16,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         private int _delay;
 
         private long _mNext;
+        public bool Requested { get; set; }
 
         public TeleportToFurni(RoomItem item, Room room)
         {

@@ -74,7 +74,7 @@ namespace Oblivion.HabboHotel.GameClients
         /// </summary>
         /// <param name="userName">Name of the user.</param>
         /// <returns>GameClient.</returns>
-        internal GameClient GetClientByUserName(string userName) => _userNameRegister.TryGetValue(userName, out var client) ? client : null;
+        internal GameClient GetClientByUserName(string userName) => _userNameRegister.TryGetValue(userName.ToLower(), out var client) ? client : null;
 
         /// <summary>
         ///     Gets the client.

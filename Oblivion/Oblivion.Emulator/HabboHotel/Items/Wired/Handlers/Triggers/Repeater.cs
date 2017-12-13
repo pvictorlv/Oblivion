@@ -29,6 +29,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
         public ConcurrentQueue<IWiredItem> _toRemove = new ConcurrentQueue<IWiredItem>();
 
         public double TickCount { get; set; }
+        public bool Requested { get; set; }
 
         public bool OnCycle()
         {
