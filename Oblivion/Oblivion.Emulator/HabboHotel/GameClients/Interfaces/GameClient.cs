@@ -229,10 +229,9 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
                 Oblivion.GetGame().GetClientManager().RegisterClient(this, userData.UserId, userData.User.UserName);
 
-                _habbo = userData.User;
-
-                lock (_habbo)
+                lock (_object)
                 {
+                    _habbo = userData.User;
                     _habbo.LoadData(userData);
 
                     if (string.IsNullOrEmpty(_habbo.UserName) ||
@@ -598,13 +597,17 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
             if (GetHabbo() != null)
                 GetHabbo().OnDisconnect("disconnect");
-
-            CurrentRoomUserId = -1;
-            _messageHandler = null;
-            _habbo = null;
-            _connection = null;
+            lock (_object)
+            {
+                CurrentRoomUserId = -1;
+                _messageHandler = null;
+                _habbo = null;
+                _connection = null;
+            }
+            _object = null;
         }
 
+        private object _object = new object();
         /// <summary>
         ///     Disconnects the specified reason.
         /// </summary>

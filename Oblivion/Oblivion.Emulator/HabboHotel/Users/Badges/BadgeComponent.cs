@@ -1,12 +1,9 @@
-using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Users.UserDataManagement;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
-using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Users.Badges
 {
@@ -27,10 +24,13 @@ namespace Oblivion.HabboHotel.Users.Badges
         /// <param name="data">The data.</param>
         internal BadgeComponent(uint userId, UserData data)
         {
-            BadgeList = new HybridDictionary();
+            BadgeList = new ConcurrentDictionary<string, Badge>();
 
-            /* TODO CHECK */ foreach (var current in data.Badges.Where(current => !BadgeList.Contains(current.Code)))
-                BadgeList.Add(current.Code, current);
+            /* TODO CHECK */
+            foreach (var current in data.Badges)
+            {
+                if (!BadgeList.ContainsKey(current.Code)) BadgeList.TryAdd(current.Code, current);
+            }
 
             _userId = userId;
         }
@@ -45,27 +45,21 @@ namespace Oblivion.HabboHotel.Users.Badges
         ///     Gets or sets the badge list.
         /// </summary>
         /// <value>The badge list.</value>
-        internal HybridDictionary BadgeList { get; set; }
+        internal ConcurrentDictionary<string, Badge> BadgeList { get; set; }
 
         /// <summary>
         ///     Gets the badge.
         /// </summary>
         /// <param name="badge">The badge.</param>
         /// <returns>Badge.</returns>
-        internal Badge GetBadge(string badge)
-        {
-            return BadgeList.Contains(badge) ? (Badge) BadgeList[badge] : null;
-        }
+        internal Badge GetBadge(string badge) => BadgeList.TryGetValue(badge, out var theBadge) ? theBadge : null;
 
         /// <summary>
         ///     Determines whether the specified badge has badge.
         /// </summary>
         /// <param name="badge">The badge.</param>
         /// <returns><c>true</c> if the specified badge has badge; otherwise, <c>false</c>.</returns>
-        internal bool HasBadge(string badge)
-        {
-            return BadgeList.Contains(badge);
-        }
+        internal bool HasBadge(string badge) => BadgeList.ContainsKey(badge);
 
         /// <summary>
         ///     Gives the badge.
@@ -94,7 +88,7 @@ namespace Oblivion.HabboHotel.Users.Badges
                 }
             }
 
-            BadgeList.Add(badge, new Badge(badge, 0));
+            BadgeList.TryAdd(badge, new Badge(badge, 0));
 
             session.SendMessage(SerializeBadge(badge));
             session.SendMessage(Update(badge));
@@ -154,7 +148,7 @@ namespace Oblivion.HabboHotel.Users.Badges
                 queryReactor.RunQuery();
             }
 
-            BadgeList.Remove(GetBadge(badge));
+            BadgeList.TryRemove(badge, out _);
             session.SendMessage(Serialize());
         }
 

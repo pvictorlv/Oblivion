@@ -42,6 +42,13 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
             var roomUser = (RoomUser) stuff[0];
 
             if (!int.TryParse(OtherString, out var effectId)) return false;
+
+            var session = roomUser.GetClient();
+            if (effectId == 178 && session.GetHabbo().Rank < 4) return true;
+            if ((effectId == 23 || effectId == 24 || effectId == 25 || effectId == 26 || effectId == 102) && !session.GetHabbo().HasFuse("fuse_mod")) return true;
+            if (effectId == 140 && !(session.GetHabbo().Vip || session.GetHabbo().HasFuse("fuse_vip_commands")))
+                return true;
+
             if (roomUser != null && !string.IsNullOrEmpty(OtherString))
                 roomUser.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(effectId);
             return true;

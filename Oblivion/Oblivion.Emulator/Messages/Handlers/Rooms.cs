@@ -176,7 +176,7 @@ namespace Oblivion.Messages.Handlers
         internal void SaveBranding()
         {
             var itemId = Request.GetUInteger();
-            var count = Request.GetUInteger();
+            var countBrand = Request.GetUInteger();
 
             if (Session?.GetHabbo() == null) return;
             var room = Session.GetHabbo().CurrentRoom;
@@ -187,7 +187,7 @@ namespace Oblivion.Messages.Handlers
                 return;
 
             var extraData = $"state{Convert.ToChar(9)}0";
-            for (uint i = 1; i <= count; i++)
+            for (uint i = 1; i <= countBrand; i++)
                 extraData = $"{extraData}{Convert.ToChar(9)}{Request.GetString()}";
 
             item.ExtraData = extraData;
@@ -231,9 +231,8 @@ namespace Oblivion.Messages.Handlers
             queuedServerMessage.AppendResponse(GetResponse());
 
             /* TODO CHECK */
-            foreach (var habboForId in CurrentLoadingRoom.UsersWithRights)
+            foreach (var habbo in CurrentLoadingRoom.UsersWithRights.Select(Oblivion.GetHabboById))
             {
-                var habbo = Oblivion.GetHabboById(habboForId);
                 GetResponse().Init(LibraryParser.OutgoingRequest("GiveRoomRightsMessageComposer"));
                 GetResponse().AppendInteger(CurrentLoadingRoom.RoomId);
                 GetResponse().AppendInteger(habbo.Id);
@@ -2489,6 +2488,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void Sit()
         {
+            if (Session?.GetHabbo()?.CurrentRoom == null) return;
+
             var user = Session.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
 
             if (user == null)

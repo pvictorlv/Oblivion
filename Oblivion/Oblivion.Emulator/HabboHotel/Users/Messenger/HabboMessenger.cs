@@ -105,7 +105,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             if (Friends == null)
                 return;
 
-            var clientsById = Oblivion.GetGame().GetClientManager().GetClientsById(Friends.Keys).ToList();
+            var clientsById = Oblivion.GetGame().GetClientManager().GetClientsById(Friends.Keys);
 
             foreach (var current in clientsById)
             {
@@ -707,13 +707,16 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <returns>ServerMessage.</returns>
         internal ServerMessage SerializeUpdate(MessengerBuddy friend)
         {
+            var client = GetClient();
+            if (client == null) return null;
+
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FriendUpdateMessageComposer"));
             serverMessage.AppendInteger(1);
             serverMessage.AppendInteger(1);
             serverMessage.AppendString("Grupos");
             serverMessage.AppendInteger(1);
             serverMessage.AppendInteger(0);
-            friend.Serialize(serverMessage, GetClient());
+            friend.Serialize(serverMessage, client);
 //            serverMessage.AppendBool(false);
             return serverMessage;
         }

@@ -178,8 +178,13 @@ namespace Oblivion.HabboHotel.Items.Wired
                 if (!IsTrigger(type) || stuff == null)
                     return false;
 
-
-                return _wiredItems.Any(current => current != null && current.Type == type && current.Execute(stuff));
+                var b = false;
+                foreach (var current in _wiredItems)
+                {
+                    if (current != null && current.Type == type && current.Execute(stuff))
+                        b = true;
+                }
+                return b;
             }
             catch (Exception e)
             {

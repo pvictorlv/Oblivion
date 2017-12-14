@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -22,7 +21,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         {
             Item = item;
             Room = room;
-            ToWorkConcurrentQueue = new ConcurrentQueue<RoomUser>();
+            ToWorkConcurrentQueue = new Queue<RoomUser>();
             Items = new List<RoomItem>();
             _delay = 0;
             _mNext = 0L;
@@ -34,48 +33,37 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         }
 
 
-        public ConcurrentQueue<RoomUser> ToWorkConcurrentQueue { get; set; }
+        public Queue<RoomUser> ToWorkConcurrentQueue { get; set; }
 
         public double TickCount { get; set; }
 
         public bool OnCycle()
         {
-            if (!ToWorkConcurrentQueue.Any())
-                return true;
-
-            
-
-            var num = Oblivion.Now();
-            var toAdd = new List<RoomUser>();
-
-            while (ToWorkConcurrentQueue.TryDequeue(out var roomUser))
+            if (ToWorkConcurrentQueue.Count <= 0)
             {
-                if (roomUser?.GetClient()?.GetHabbo() == null)
-                    continue;
-
-                if (_mNext <= num)
-                {
-                    if (Teleport(roomUser))
-                        continue;
-
-                    return false;
-                }
-
-                if (_mNext - num < 500L)
-                    roomUser.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent()?.ActivateCustomEffect(4);
-
-                toAdd.Add(roomUser);
+                ToWorkConcurrentQueue.Clear();
+                TickCount = Delay / 1000;
+                return false;
             }
 
-            /* TODO CHECK */ foreach (var roomUserToAdd in toAdd.Where(roomUserToAdd => !ToWorkConcurrentQueue.Contains(roomUserToAdd)))
-                ToWorkConcurrentQueue.Enqueue(roomUserToAdd);
 
-            toAdd.Clear();
+            var num = Oblivion.Now();
+
 
             if (_mNext >= num)
                 return false;
 
-            _mNext = 0L;
+            while (ToWorkConcurrentQueue.Count > 0)
+            {
+                var roomUser = ToWorkConcurrentQueue.Dequeue();
+                if (roomUser?.GetClient()?.GetHabbo() == null)
+                    continue;
+
+
+                Teleport(roomUser);
+            }
+
+            _mNext = Oblivion.Now() + Delay;
             return true;
         }
 
@@ -117,7 +105,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             set
             {
                 _delay = value;
-                TickCount = value / 1000;
+                TickCount = value / 500;
             }
         }
 
@@ -133,16 +121,11 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (Items?.Count < 0)
                 return false;
 
+            roomUser.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent()?.ActivateCustomEffect(4);
+
             if (!ToWorkConcurrentQueue.Contains(roomUser))
                 ToWorkConcurrentQueue.Enqueue(roomUser);
-
-            if (Delay < 500)
-                Delay = 500;
-
-
-            if (_mNext == 0L || _mNext < Oblivion.Now())
-                _mNext = Oblivion.Now() + Delay;
-
+           
 
             return true;
         }
@@ -164,7 +147,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             /* TODO CHECK */
             foreach (var current in Items)
             {
-                if (current != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(current)) roomItem = current;
+                if (current != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(current))
+                    roomItem = current;
             }
 
             if (roomItem == null)

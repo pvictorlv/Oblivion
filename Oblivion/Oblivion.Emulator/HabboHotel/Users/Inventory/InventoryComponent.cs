@@ -43,12 +43,12 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <summary>
         ///     The _m added items
         /// </summary>
-        private List<long> _mAddedItems;
+        private HashSet<long> _mAddedItems;
 
         /// <summary>
         ///     The _m removed items
         /// </summary>
-        private List<long> _mRemovedItems;
+        private HashSet<long> _mRemovedItems;
 
         /// <summary>
         ///     The _wall items
@@ -93,8 +93,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             _inventoryPets = new HybridDictionary();
             _inventoryBots = new HybridDictionary();
-            _mAddedItems = new List<long>();
-            _mRemovedItems = new List<long>();
+            _mAddedItems = new HashSet<long>();
+            _mRemovedItems = new HashSet<long>();
 
             foreach (var bot in userData.Bots)
                 AddBot(bot.Value);
@@ -572,7 +572,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             serverMessage.AppendInteger(1);
             serverMessage.AppendInteger(0);
             serverMessage.AppendInteger(i > 4500 ? 4500 : i);
-
+            
             var inc = 0;
 
             foreach (var userItem in items)
@@ -778,10 +778,9 @@ namespace Oblivion.HabboHotel.Users.Inventory
             try
             {
                 if (_mAddedItems == null || _inventoryPets == null) return;
-                if (_mRemovedItems.Count <= 0 && _mAddedItems.Count <= 0 && _inventoryPets.Count <= 0)
-                    return;
+               
 
-                if (_mAddedItems.Count > 0)
+                if (_mAddedItems?.Count > 0)
                 {
                     var added = _mAddedItems.ToList();
                     if (added.Count > 0)
@@ -797,7 +796,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     }
                 }
 
-                if (_mRemovedItems.Count > 0)
+                if (_mRemovedItems?.Count > 0)
                 {
                     var removed = _mRemovedItems.ToList();
 
@@ -822,34 +821,38 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     _mRemovedItems.Clear();
                 }
 
-                var queryChunk = new QueryChunk();
-
-                foreach (Pet current in _inventoryPets.Values)
+                if (_inventoryPets?.Count > 0)
                 {
-                    if (current.DbState == DatabaseUpdateState.NeedsUpdate)
+                    var queryChunk = new QueryChunk();
+
+                    foreach (Pet current in _inventoryPets.Values)
                     {
-                        queryChunk.AddParameter($"{current.PetId}name", current.Name);
-                        queryChunk.AddParameter($"{current.PetId}race", current.Race);
-                        queryChunk.AddParameter($"{current.PetId}color", current.Color);
+                        if (current.DbState == DatabaseUpdateState.NeedsUpdate)
+                        {
+                            queryChunk.AddParameter($"{current.PetId}name", current.Name);
+                            queryChunk.AddParameter($"{current.PetId}race", current.Race);
+                            queryChunk.AddParameter($"{current.PetId}color", current.Color);
 
-                        queryChunk.AddQuery(string.Concat("UPDATE bots SET room_id = ", current.RoomId, ", name = @",
-                            current.PetId, "name, x = ", current.X, ", Y = ", current.Y, ", Z = ", current.Z,
-                            " WHERE id = ", current.PetId));
+                            queryChunk.AddQuery(string.Concat("UPDATE bots SET room_id = ", current.RoomId,
+                                ", name = @",
+                                current.PetId, "name, x = ", current.X, ", Y = ", current.Y, ", Z = ", current.Z,
+                                " WHERE id = ", current.PetId));
 
-                        queryChunk.AddQuery(string.Concat("UPDATE pets_data SET race = @", current.PetId,
-                            "race, color = @", current.PetId, "color, type = ", current.Type, ", experience = ",
-                            current.Experience, ", energy = ", current.Energy, ", nutrition = ", current.Nutrition,
-                            ", respect = ", current.Respect, ", createstamp = '", current.CreationStamp,
-                            "', lasthealth_stamp = ", Oblivion.DateTimeToUnix(current.LastHealth),
-                            ", untilgrown_stamp = ", Oblivion.DateTimeToUnix(current.UntilGrown), " WHERE id = ",
-                            current.PetId));
+                            queryChunk.AddQuery(string.Concat("UPDATE pets_data SET race = @", current.PetId,
+                                "race, color = @", current.PetId, "color, type = ", current.Type, ", experience = ",
+                                current.Experience, ", energy = ", current.Energy, ", nutrition = ", current.Nutrition,
+                                ", respect = ", current.Respect, ", createstamp = '", current.CreationStamp,
+                                "', lasthealth_stamp = ", Oblivion.DateTimeToUnix(current.LastHealth),
+                                ", untilgrown_stamp = ", Oblivion.DateTimeToUnix(current.UntilGrown), " WHERE id = ",
+                                current.PetId));
+                        }
+
+                        current.DbState = DatabaseUpdateState.Updated;
                     }
 
-                    current.DbState = DatabaseUpdateState.Updated;
+                    using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        queryChunk.Execute(queryreactor2);
                 }
-
-                using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                    queryChunk.Execute(queryreactor2);
             }
             catch (Exception ex)
             {
