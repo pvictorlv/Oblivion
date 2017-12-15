@@ -3,11 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Oblivion.HabboHotel.Achievements.Interfaces;
-using Oblivion.HabboHotel.Catalogs;
 using Oblivion.HabboHotel.Groups.Interfaces;
-using Oblivion.HabboHotel.Items.Interfaces;
-using Oblivion.HabboHotel.Pets;
-using Oblivion.HabboHotel.RoomBots;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.HabboHotel.Users.Authenticator;
 using Oblivion.HabboHotel.Users.Badges;
@@ -45,7 +41,6 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             DataTable tagsTable;
             DataRow subscriptionsRow;
             DataTable badgesTable;
-            DataTable itemsTable;
             DataTable effectsTable;
             DataTable pollsTable;
             DataTable friendsTable;
@@ -53,7 +48,6 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             DataTable relationShipsTable;
             DataTable questsTable;
-            DataTable petsTable;
             DataTable dBlockedCommands;
 
             DataTable myRoomsTable;
@@ -111,9 +105,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 queryReactor.SetQuery($"SELECT badge_id,badge_slot FROM users_badges WHERE user_id = {userId}");
                 badgesTable = queryReactor.GetTable();
 
-                queryReactor.SetQuery(
-                    $"SELECT id,base_item,group_id,extra_data,songcode FROM `items_rooms` WHERE room_id='0' AND user_id={userId} LIMIT 5000");
-                itemsTable = queryReactor.GetTable();
+                
 
                 queryReactor.SetQuery($"SELECT effect_id,total_duration,is_activated,activated_stamp,type FROM users_effects WHERE user_id = {userId}");
                 effectsTable = queryReactor.GetTable();
@@ -139,9 +131,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 queryReactor.AddParameter("name", userName);
                 myRoomsTable = queryReactor.GetTable();
 
-                queryReactor.SetQuery(
-                    $"SELECT * FROM bots WHERE user_id = {userId} AND room_id = 0");
-                petsTable = queryReactor.GetTable();
+               
 
                 queryReactor.SetQuery(
                     $"SELECT quest_id, progress FROM users_quests_data WHERE user_id = {userId}");
@@ -205,14 +195,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                     (int) subscriptionsRow["timestamp_activated"], (int) subscriptionsRow["timestamp_expire"],
                     (int) subscriptionsRow["timestamp_lastgift"]);
 
-            var items = (from DataRow row in itemsTable.Rows
-                let id = Convert.ToUInt32(row["id"])
-                let itemId = Convert.ToUInt32(row["base_item"])
-                where Oblivion.GetGame().GetItemManager().ContainsItem(itemId)
-                let extraData = !DBNull.Value.Equals(row["extra_data"]) ? (string) row["extra_data"] : string.Empty
-                let @group = Convert.ToUInt32(row["group_id"])
-                let songCode = (string) row["songcode"]
-                select new UserItem(id, itemId, extraData, @group, songCode)).ToList();
+           
 
             var effects = (from DataRow row in effectsTable.Rows
                 let effectId = (int) row["effect_id"]
@@ -281,27 +264,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 
 
 
-            var pets = new Dictionary<uint, Pet>();
-            var inventoryBots = new Dictionary<uint, RoomBot>();
-
-            foreach (DataRow row in petsTable.Rows)
-            {
-                if (row["ai_type"].ToString() == "generic")
-                {
-                    var bot = BotManager.GenerateBotFromRow(row);
-                    inventoryBots.Add(bot.BotId, bot);
-                    continue;
-                }
-                using (var queryreactor3 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                {
-                    queryreactor3.SetQuery($"SELECT * FROM pets_data WHERE id={row[0]} LIMIT 1");
-                    var row3 = queryreactor3.GetRow();
-                    if (row3 == null)
-                        continue;
-                    var pet = CatalogManager.GeneratePetFromRow(row, row3);
-                    pets.Add(pet.PetId, pet);
-                }
-            }
+          
 
             var quests = new Dictionary<uint, int>();
             /* TODO CHECK */ foreach (DataRow row in questsTable.Rows)
@@ -344,7 +307,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
 
             return new UserData(userId, achievements, talents, favorites, ignoreUsers, tags, subscriptions, badges,
-                items, effects, friends, friendsRequests, myRooms, pets, quests, user, inventoryBots, relationShips,
+                 effects, friends, friendsRequests, myRooms , quests, user , relationShips,
                 pollSuggested, miniMailCount, blockedCommands, openedGifts);
         }
 
@@ -394,14 +357,11 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             var ignores = new List<uint>();
             var tags = new List<string>();
             var badges = new List<Badge>();
-            var inventory = new List<UserItem>();
             var effects = new List<AvatarEffect>();
             var friends = new Dictionary<uint, MessengerBuddy>();
             var requests = new Dictionary<uint, MessengerRequest>();
             var rooms = new List<RoomData>();
-            var pets = new Dictionary<uint, Pet>();
             var quests = new Dictionary<uint, int>();
-            var bots = new Dictionary<uint, RoomBot>();
             var group = new HashSet<GroupMember>();
             var pollData = new HashSet<uint>();
 
@@ -411,8 +371,9 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                         new Relationship((int) dataRow2[0], (int) dataRow2[2], Convert.ToInt32(dataRow2[3].ToString())));
             var user = HabboFactory.GenerateHabbo(dataRow, row, group);
 
-            return new UserData(num, achievements, talents, favouritedRooms, ignores, tags, null, badges, inventory,
-                effects, friends, requests, rooms, pets, quests, user, bots, dictionary, pollData, 0, new List<string>(), new List<int>());
+
+            return new UserData(num, achievements, talents, favouritedRooms, ignores, tags, null, badges,
+                effects, friends, requests, rooms, quests, user, dictionary, pollData, 0, new List<string>(), new List<int>());
         }
     }
 }

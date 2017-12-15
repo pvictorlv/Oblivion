@@ -50,6 +50,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         internal string SongCode;
 
         internal uint VirtualId;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="UserItem" /> class.
         /// </summary>
@@ -58,30 +59,24 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="extraData">The extra data.</param>
         /// <param name="group">The group.</param>
         /// <param name="songCode">The song code.</param>
-        internal UserItem(long id, uint baseItemId, string extraData, uint group, string songCode)
+        internal UserItem(long id, uint baseItemId, string extraData, uint group, string songCode, int limitedSell,
+            int limitedStack)
         {
             Id = id;
             BaseItemId = baseItemId;
             ExtraData = extraData;
             GroupId = group;
+
             VirtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(id);
+
             BaseItem = Oblivion.GetGame().GetItemManager().GetItem(baseItemId);
+
+
+            LimitedSellId = (uint) limitedSell;
+            LimitedStack = (uint) limitedStack;
 
             if (BaseItem == null)
                 return;
-
-            if (BaseItem.IsRare)
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                {
-                    queryReactor.SetQuery($"SELECT * FROM items_limited WHERE item_id={id} LIMIT 1");
-                    var row = queryReactor.GetRow();
-
-                    if (row != null)
-                    {
-                        uint.TryParse(row[1].ToString(), out LimitedSellId);
-                        uint.TryParse(row[2].ToString(), out LimitedStack);
-                    }
-                }
 
             IsWallItem = (BaseItem.Type == 'i');
             SongCode = songCode;
@@ -93,6 +88,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             BaseItem = null;
             Oblivion.GetGame().GetItemManager().RemoveVirtualItem(Id);
         }
+
         /// <summary>
         ///     Serializes the wall.
         /// </summary>

@@ -182,7 +182,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
 
                 var list = _removedItems.ToList();
-
                 foreach (var itemId in list)
                 {
                     dbClient.RunFastQuery(
@@ -352,7 +351,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
                 var client = Oblivion.GetGame().GetClientManager().GetClientByUserId(item.UserId);
 
-                if ((item.GetBaseItem().InteractionType != Interaction.PostIt))
+                if (item.GetBaseItem().InteractionType != Interaction.PostIt)
                 {
                     if (client?.GetHabbo() == null)
                     {
@@ -419,6 +418,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         var rot = Convert.ToSByte(dataRow["rot"]);
                         var ownerId = Convert.ToUInt32(dataRow["user_id"]);
                         var baseItemId = Convert.ToUInt32(dataRow["base_item"]);
+                        var limited = dataRow["limited"].ToString().Split(';');
+
                         var item = Oblivion.GetGame().GetItemManager().GetItem(baseItemId);
                         if (item == null) continue;
 
@@ -444,7 +445,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                             var wallCoord = new WallCoordinate(':' + locationData.Split(':')[1]);
                             var value = new RoomItem(id, _room.RoomId, baseItemId, extraData, wallCoord, _room, ownerId,
                                 groupId,
-                                Oblivion.EnumToBool((string) dataRow["builders"]));
+                                Oblivion.EnumToBool((string) dataRow["builders"]), 0);
 
                             WallItems.TryAdd(value.Id, value);
                         }
@@ -453,7 +454,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                             var roomItem = new RoomItem(id, _room.RoomId, baseItemId, extraData, x, y, z, rot, _room,
                                 ownerId,
                                 groupId, songCode,
-                                Oblivion.EnumToBool((string) dataRow["builders"]));
+                                Oblivion.EnumToBool((string) dataRow["builders"]), Convert.ToInt32(limited[0]), Convert.ToInt32(limited[1]));
 
                             if (!_room.GetGameMap().ValidTile(x, y))
                             {

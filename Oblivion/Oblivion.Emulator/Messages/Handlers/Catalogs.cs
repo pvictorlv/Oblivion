@@ -194,7 +194,7 @@ Request.GetString()
             if (Session?.GetHabbo() == null)
                 return;
 
-            if (Session.GetHabbo().GetInventoryComponent().TotalItems >= 2799)
+            if (Session.GetHabbo().GetInventoryComponent().TotalItems >= 3500)
             {
                 Session.SendMessage(CatalogPageComposer.PurchaseOk(0, string.Empty, 0));
                 Session.SendMessage(StaticMessage.AdvicePurchaseMaxItems);

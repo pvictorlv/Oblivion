@@ -666,7 +666,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 _room.GetSoccer().OnGateRemove(item);
             var result = false;
             var hybridDictionary = new HybridDictionary();
-            foreach (var current2 in item.GetCoords.ToList())
+            foreach (var current2 in item.GetCoords())
             {
                 if (RemoveCoordinatedItem(item, current2)) result = true;
 
@@ -784,7 +784,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             }
             var retVal = true;
 
-            foreach (var current in item.GetCoords)
+            foreach (var current in item.GetCoords())
             {
 //                var coord = new Point(current.X, current.Y);
                 AddCoordinatedItem(item, current);

@@ -213,6 +213,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// </summary>
         internal WallCoordinate WallCoord;
 
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="RoomItem" /> class.
         /// </summary>
@@ -230,9 +231,10 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="songCode">The song code.</param>
         /// <param name="isBuilder">if set to <c>true</c> [is builder].</param>
         internal RoomItem(long id, uint roomId, uint baseItem, string extraData, int x, int y, double z, int rot,
-            Room pRoom, uint userid, uint eGroup, string songCode, bool isBuilder)
+            Room pRoom, uint userid, uint eGroup, string songCode, bool isBuilder, int limNo, int limStack)
         {
             Id = id;
+
             VirtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(id);
             RoomId = roomId;
             BaseItem = baseItem;
@@ -240,9 +242,6 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             GroupId = eGroup;
             X = x;
             Y = y;
-
-            oldX = X;
-            oldY = Y;
             if (!double.IsInfinity(z)) Z = z;
             Rot = rot;
             UpdateNeeded = false;
@@ -262,23 +261,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
 
             if (_mBaseItem == null) return;
 
-            if (_mBaseItem.IsRare)
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                {
-                    queryReactor.SetQuery($"SELECT * FROM items_limited WHERE item_id='{id}' LIMIT 1");
-                    var row = queryReactor.GetRow();
-                    if (row != null)
-                    {
-                        LimitedNo = int.Parse(row[1].ToString());
-                        LimitedTot = int.Parse(row[2].ToString());
-                    }
-                    else
-                    {
-                        LimitedNo = 0;
-                        LimitedTot = 0;
-                    }
-                }
-
+            LimitedNo = limNo;
+            LimitedTot = limStack;
             if (_mBaseItem.Name.ContainsAny("guild_", "grp", "gld_"))
             {
                 GroupData = extraData;
@@ -286,7 +270,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 if (GroupData.Contains(";;"))
                 {
                     GroupData = GroupData.Replace(";;", ";");
-                    _mRoom.GetRoomItemHandler().AddOrUpdateItem(Id);
+                    _mRoom.GetRoomItemHandler().AddOrUpdateItem(id);
                 }
             }
 
@@ -390,7 +374,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="eGroup">The group.</param>
         /// <param name="isBuilder">if set to <c>true</c> [is builder].</param>
         internal RoomItem(long id, uint roomId, uint baseItem, string extraData, WallCoordinate wallCoord, Room pRoom,
-            uint userid, uint eGroup, bool isBuilder)
+            uint userid, uint eGroup, bool isBuilder, uint addedVirtual)
         {
             BaseItem = baseItem;
 
@@ -400,7 +384,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             if (_mBaseItem == null) Logging.LogException($"Unknown baseID: {baseItem}");
 
             Id = id;
-            VirtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(id);
+
+            VirtualId = addedVirtual <= 0 ? Oblivion.GetGame().GetItemManager().GetVirtualId(id) : addedVirtual;
 
             RoomId = roomId;
             ExtraData = extraData;
@@ -442,9 +427,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// </summary>
         /// <value>The x.</value>
         internal int X { get; private set; }
+        
 
-        internal int oldX { get; private set; }
-        internal int oldY { get; private set; }
         /// <summary>
         ///     Gets the y.
         /// </summary>
@@ -487,14 +471,13 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         ///     Gets the get coords.
         /// </summary>
         /// <value>The get coords.</value>
-        internal List<Point> GetCoords
+        internal List<Point> GetCoords()
         {
-            get
-            {
+            
                 var list = new List<Point> {Coordinate};
                 list.AddRange(AffectedTiles.Values.Select(current => new Point(current.X, current.Y)));
                 return list;
-            }
+            
         }
 
         internal double Height
@@ -694,7 +677,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 {
                     case Interaction.Roller:
                         return new InteractorRoller();
-                        
+
                     case Interaction.Gate:
                         return new InteractorGate();
 
@@ -807,7 +790,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                         return new InteractorWalkSwitch();
                     case Interaction.Totem:
                         return new InteractorTotem();
-                        
+
                     default:
                         return new InteractorGenericSwitch();
                 }
@@ -839,13 +822,10 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         {
             X = x;
             Y = y;
-            oldX = X;
-            oldY = Y;
 
             if (!double.IsInfinity(z)) Z = z;
             AffectedTiles = tiles;
         }
-
 
 
         /// <summary>
@@ -1346,7 +1326,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             {
                                 var array = clientByUserId.GetHabbo().Look.Split('.');
                                 var array2 = array;
-                                /* TODO CHECK */ foreach (var text2 in array2)
+                                /* TODO CHECK */
+                                foreach (var text2 in array2)
                                 {
                                     var str = text2;
                                     if (text2.Contains("ha")) str = "ha-1006-1326";
@@ -1467,7 +1448,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
 
         public List<Point> GetSides()
         {
-            var toReturn = new List<Point> { SquareBehind, SquareInFront, SquareLeft, SquareRight, Coordinate };
+            var toReturn = new List<Point> {SquareBehind, SquareInFront, SquareLeft, SquareRight, Coordinate};
             return toReturn;
         }
 
@@ -1494,6 +1475,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="inRoom">if set to <c>true</c> [in room].</param>
         internal void UpdateState(bool inDb, bool inRoom)
         {
+            //todo: recode to new inventory system :)
             if (GetRoom() == null) return;
             var s = ExtraData;
             if (GetBaseItem().InteractionType == Interaction.MysteryBox)
@@ -1510,7 +1492,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                     s = (3 * num - num2).ToString();
                 }
             }
-            if (inDb) GetRoom().GetRoomItemHandler().AddOrUpdateItem(Id);
+            if (inDb)
+                GetRoom().GetRoomItemHandler().AddOrUpdateItem(Id);
             if (!inRoom) return;
             var serverMessage = new ServerMessage(0);
             if (IsFloorItem)
@@ -1774,7 +1757,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                         message.AppendInteger(0);
                         message.AppendInteger(2);
                         message.AppendInteger(data.Length);
-                        /* TODO CHECK */ foreach (var datak in data) message.AppendString(datak);
+                        /* TODO CHECK */
+                        foreach (var datak in data) message.AppendString(datak);
                         break;
 
                     case Interaction.Moplaseed:
@@ -1798,7 +1782,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                         {
                             var arrayData = ExtraData.Split((char) 9);
                             message.AppendInteger(arrayData.Length / 2);
-                            /* TODO CHECK */ foreach (var dataStr in arrayData) message.AppendString(dataStr);
+                            /* TODO CHECK */
+                            foreach (var dataStr in arrayData) message.AppendString(dataStr);
                         }
                         else message.AppendInteger(0);
                         break;

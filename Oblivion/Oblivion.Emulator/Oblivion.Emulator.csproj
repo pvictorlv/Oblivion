@@ -107,7 +107,7 @@
     <OutputPath>..\bin\Release\x64\</OutputPath>
     <DefineConstants>
     </DefineConstants>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <FileAlignment>4096</FileAlignment>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -173,6 +173,7 @@
     <Reference Include="System.Numerics" />
     <Reference Include="System.Reflection" />
     <Reference Include="System.Runtime" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />

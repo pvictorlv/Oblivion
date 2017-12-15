@@ -125,7 +125,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     var roomItem = new RoomItem(insertId, user.RoomId, item.GetBaseItem().ItemId, item.ExtraData,
                         user.LastSelectedX, user.LastSelectedY, item.Z, item.Rot, session.GetHabbo().CurrentRoom,
                         user.UserId, item.GroupId, item.SongCode,
-                        item.IsBuilder);
+                        item.IsBuilder, item.LimitedNo, item.LimitedTot);
                     room.GetRoomItemHandler().DeveloperSetFloorItem(session, roomItem);
                 }
             }

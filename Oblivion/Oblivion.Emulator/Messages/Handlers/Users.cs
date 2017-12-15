@@ -874,9 +874,7 @@ namespace Oblivion.Messages.Handlers
                 return;
 
             var rand = new Random();
-            var dictionary = habboForId.Data.Relations.OrderBy(x => rand.Next())
-                .Where(pair => habboForId.GetMessenger().FriendshipExists((uint) pair.Value.UserId))
-                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            var dictionary = habboForId.Data.Relations.OrderBy(x => rand.Next()).Where(pair => habboForId.GetMessenger().FriendshipExists((uint) pair.Value.UserId)).ToDictionary(pair => pair.Key, pair => pair.Value);
             habboForId.Data.Relations = dictionary;
 
             var num = habboForId.Data.Relations.Count(x => x.Value.Type == 1);

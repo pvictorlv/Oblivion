@@ -5,6 +5,7 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using Oblivion.Collections;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Catalogs.Wrappers;
 using Oblivion.HabboHotel.Items.Interactions;
@@ -28,6 +29,7 @@ namespace Oblivion.HabboHotel.Items
 
         private ConcurrentDictionary<uint, long> _itemsByVirtualId;
         private ConcurrentDictionary<long, uint> _itemsByRealId;
+//        private ConcurrentList<uint> _virtualAddedItems;
 
         /// <summary>
         ///     The photo identifier
@@ -40,6 +42,7 @@ namespace Oblivion.HabboHotel.Items
         internal ItemManager() => _items = new Dictionary<uint, Item>();
 
 
+        
         /// <summary>
         ///     Loads the items.
         /// </summary>
@@ -51,8 +54,19 @@ namespace Oblivion.HabboHotel.Items
             itemLoaded = (uint) _items.Count;
             _itemsByVirtualId = new ConcurrentDictionary<uint, long>();
             _itemsByRealId = new ConcurrentDictionary<long, uint>();
+//            _virtualAddedItems = new ConcurrentList<uint>();
         }
 
+        public uint GenerateVirtualId()
+        {
+            Interlocked.Increment(ref _itemIdCounter);
+
+            var newId = Convert.ToUInt32(_itemIdCounter);
+
+//            _virtualAddedItems.Add(newId);
+
+            return newId;
+        }
         
         public uint GetVirtualId(long realId)
         {
@@ -90,6 +104,8 @@ namespace Oblivion.HabboHotel.Items
             {
                 return realId;
             }
+            
+
             return 0;
         }
 

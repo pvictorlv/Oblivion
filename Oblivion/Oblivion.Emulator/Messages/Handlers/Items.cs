@@ -269,7 +269,7 @@ namespace Oblivion.Messages.Handlers
             {
                 var wallCoord = new WallCoordinate(":" + locationData.Split(':')[1]);
                 var item2 = new RoomItem(item.Id, room.RoomId, item.BaseItemId, item.ExtraData, wallCoord, room,
-                    Session.GetHabbo().Id, item.GroupId, false);
+                    Session.GetHabbo().Id, item.GroupId, false, item.VirtualId);
                 if (room.GetRoomItemHandler().SetWallItem(Session, item2))
                     Session.GetHabbo().GetInventoryComponent().RemoveItem(id, true);
             }
@@ -357,7 +357,7 @@ namespace Oblivion.Messages.Handlers
                             case Interaction.BreedingBear:
                             {
                                 var roomItemBreed = new RoomItem(item.Id, room.RoomId, item.BaseItemId, item.ExtraData,
-                                    x, y, z, rot, room, Session.GetHabbo().Id, 0, string.Empty, false);
+                                    x, y, z, rot, room, Session.GetHabbo().Id, 0, string.Empty, false, (int)item.LimitedSellId, (int)item.LimitedStack);
 
                                 if (item.BaseItem.InteractionType == Interaction.BreedingTerrier)
                                     if (!room.GetRoomItemHandler().BreedingTerrier.ContainsKey(roomItemBreed.Id))
@@ -423,7 +423,7 @@ namespace Oblivion.Messages.Handlers
                 PlaceWall:
                 var coordinate = new WallCoordinate(":" + placementData.Split(':')[1]);
                 var roomItemWall = new RoomItem(item.Id, room.RoomId, item.BaseItemId, item.ExtraData,
-                    coordinate, room, Session.GetHabbo().Id, item.GroupId, false);
+                    coordinate, room, Session.GetHabbo().Id, item.GroupId, false, item.VirtualId);
                 if (room.GetRoomItemHandler().SetWallItem(Session, roomItemWall))
                     Session.GetHabbo().GetInventoryComponent().RemoveItem(realId, true);
                 Oblivion.GetGame().GetAchievementManager()
@@ -434,7 +434,7 @@ namespace Oblivion.Messages.Handlers
                     Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.FurniPlace);
 
                 var roomItem = new RoomItem(item.Id, room.RoomId, item.BaseItemId, item.ExtraData, x, y, z, rot,
-                    room, Session.GetHabbo().Id, item.GroupId, item.SongCode, false);
+                    room, Session.GetHabbo().Id, item.GroupId, item.SongCode, false, (int) item.LimitedSellId, (int) item.LimitedStack);
 
                 if (room.GetRoomItemHandler().SetFloorItem(Session, roomItem, x, y, rot, true, false, true))
                 {
@@ -604,7 +604,7 @@ namespace Oblivion.Messages.Handlers
                 Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.FurniMove);
             if (rot != item.Rot)
                 Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.FurniRotate);
-            var oldCoords = item.GetCoords;
+            var oldCoords = item.GetCoords();
 
             if (!room.GetRoomItemHandler().SetFloorItem(Session, item, x, y, rot, false, false, true, true, false))
             {
@@ -636,7 +636,7 @@ namespace Oblivion.Messages.Handlers
             if (item.Z >= 0.1)
                 Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.FurniStack);
 
-            var newcoords = item.GetCoords;
+            var newcoords = item.GetCoords();
             room.GetRoomItemHandler().OnHeightMapUpdate(oldCoords, newcoords);
 
 
@@ -660,11 +660,14 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CheckRights(Session))
                 return;
-            var id = Oblivion.GetGame().GetItemManager().GetRealId(Request.GetUInteger());
+            var virtualId = Request.GetUInteger();
+            var id = Oblivion.GetGame().GetItemManager().GetRealId(virtualId);
             var locationData = Request.GetString();
             var item = room.GetRoomItemHandler().GetItem(id);
             if (item == null)
-                return;
+            {
+                 return;
+            }
             try
             {
                 var wallCoord = new WallCoordinate(":" + locationData.Split(':')[1]);
@@ -1427,7 +1430,7 @@ namespace Oblivion.Messages.Handlers
                 dbClient.AddParameter("zed", z);
                 var itemId = (uint) dbClient.InsertQuery();
                 var roomItem = new RoomItem(itemId, room.RoomId, compostItem.ItemId, "0", x, y, z, 0, room,
-                    Session.GetHabbo().Id, 0, "", false);
+                    Session.GetHabbo().Id, 0, "", false, 0, 0);
                 if (!room.GetRoomItemHandler().SetFloorItem(Session, roomItem, x, y, 0, true, false, true))
                 {
                     Session.GetHabbo().GetInventoryComponent().AddItem(roomItem);
@@ -2190,9 +2193,10 @@ namespace Oblivion.Messages.Handlers
                 var insertId = (uint) adapter.InsertQuery();
                 var newItem = new RoomItem(insertId, actualRoom.RoomId, item.BaseId, extradata, x, y, z, dir,
                     actualRoom,
-                    Session.GetHabbo().Id, 0, "", true);
+                    Session.GetHabbo().Id, 0, "", true, 0, 0);
                 Session.GetHabbo().BuildersItemsUsed++;
 
+                //todo: here?
                 actualRoom.GetRoomItemHandler().FloorItems.TryAdd(newItem.Id, newItem);
 
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("AddFloorItemMessageComposer"));
@@ -2228,7 +2232,9 @@ namespace Oblivion.Messages.Handlers
                 var insertId = (uint) adapter.InsertQuery();
                 var newItem = new RoomItem(insertId, actualRoom.RoomId, item.BaseId, extradata,
                     new WallCoordinate(wallcoords), actualRoom, Session.GetHabbo().Id, 0,
-                    true);
+                    true, 0);
+
+                //todo: here too?
                 actualRoom.GetRoomItemHandler().WallItems.TryAdd(newItem.Id, newItem);
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("AddWallItemMessageComposer"));
                 newItem.Serialize(message);

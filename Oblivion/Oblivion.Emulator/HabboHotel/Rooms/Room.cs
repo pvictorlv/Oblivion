@@ -1116,7 +1116,7 @@ namespace Oblivion.HabboHotel.Rooms
                                 return false;
                         }
                         /* TODO CHECK */
-                        foreach (var casella in furno.GetCoords)
+                        foreach (var casella in furno.GetCoords())
                         {
                             if (casella.X == goalX && casella.Y == goalY)
                             {

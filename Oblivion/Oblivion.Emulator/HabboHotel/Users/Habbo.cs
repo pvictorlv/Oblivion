@@ -615,7 +615,7 @@ namespace Oblivion.HabboHotel.Users
         /// <param name="data">The data.</param>
         internal void InitInformation(UserData data)
         {
-            _subscriptionManager = new SubscriptionManager(Id, data);
+//            _subscriptionManager = new SubscriptionManager(Id, data);
             _badgeComponent = new BadgeComponent(Id, data);
             _messenger = new HabboMessenger(Id);
             _messenger.Init(data.Friends, data.Requests);
@@ -634,7 +634,7 @@ namespace Oblivion.HabboHotel.Users
             _mClient = client;
             _subscriptionManager = new SubscriptionManager(Id, data);
             _badgeComponent = new BadgeComponent(Id, data);
-            _inventoryComponent = new InventoryComponent(Id, client, data);
+            _inventoryComponent = new InventoryComponent(Id, client);
             _avatarEffectsInventoryComponent = new AvatarEffectsInventoryComponent(Id, client, data);
             _messenger = new HabboMessenger(Id);
             _messenger.Init(data.Friends, data.Requests);
