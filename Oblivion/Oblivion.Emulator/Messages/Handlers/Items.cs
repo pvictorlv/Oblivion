@@ -269,7 +269,7 @@ namespace Oblivion.Messages.Handlers
             {
                 var wallCoord = new WallCoordinate(":" + locationData.Split(':')[1]);
                 var item2 = new RoomItem(item.Id, room.RoomId, item.BaseItemId, item.ExtraData, wallCoord, room,
-                    Session.GetHabbo().Id, item.GroupId, false, item.VirtualId);
+                    Session.GetHabbo().Id, item.GroupId, false);
                 if (room.GetRoomItemHandler().SetWallItem(Session, item2))
                     Session.GetHabbo().GetInventoryComponent().RemoveItem(id, true);
             }
@@ -423,7 +423,7 @@ namespace Oblivion.Messages.Handlers
                 PlaceWall:
                 var coordinate = new WallCoordinate(":" + placementData.Split(':')[1]);
                 var roomItemWall = new RoomItem(item.Id, room.RoomId, item.BaseItemId, item.ExtraData,
-                    coordinate, room, Session.GetHabbo().Id, item.GroupId, false, item.VirtualId);
+                    coordinate, room, Session.GetHabbo().Id, item.GroupId, false);
                 if (room.GetRoomItemHandler().SetWallItem(Session, roomItemWall))
                     Session.GetHabbo().GetInventoryComponent().RemoveItem(realId, true);
                 Oblivion.GetGame().GetAchievementManager()
@@ -2232,7 +2232,7 @@ namespace Oblivion.Messages.Handlers
                 var insertId = (uint) adapter.InsertQuery();
                 var newItem = new RoomItem(insertId, actualRoom.RoomId, item.BaseId, extradata,
                     new WallCoordinate(wallcoords), actualRoom, Session.GetHabbo().Id, 0,
-                    true, 0);
+                    true);
 
                 //todo: here too?
                 actualRoom.GetRoomItemHandler().WallItems.TryAdd(newItem.Id, newItem);

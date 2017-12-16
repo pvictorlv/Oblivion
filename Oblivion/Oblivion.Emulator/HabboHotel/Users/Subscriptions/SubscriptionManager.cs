@@ -99,6 +99,11 @@ namespace Oblivion.HabboHotel.Users.Subscriptions
                     : new Subscription((int) row[1], (int) row[2], (int) row[3], (int) row[4]);
             }
         }
-        
+
+
+        public void Dispose()
+        {
+            _subscription = null;
+        }
     }
 }

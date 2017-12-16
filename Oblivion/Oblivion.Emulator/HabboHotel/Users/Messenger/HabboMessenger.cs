@@ -82,12 +82,12 @@ namespace Oblivion.HabboHotel.Users.Messenger
         internal void Destroy()
         {
             var clientsById = Oblivion.GetGame().GetClientManager().GetClientsById(Friends.Keys);
+            if (clientsById == null) return;
 
             /* TODO CHECK */
             foreach (var current in clientsById)
             {
-                if (current.GetHabbo() != null && current.GetHabbo().GetMessenger() != null)
-                    current.GetHabbo().GetMessenger().UpdateFriend(_userId, null, true);
+                current?.GetHabbo()?.GetMessenger()?.UpdateFriend(_userId, null, true);
             }
 
             Friends.Clear();
@@ -106,7 +106,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 return;
 
             var clientsById = Oblivion.GetGame().GetClientManager().GetClientsById(Friends.Keys);
-
+            if (clientsById == null) return;
             foreach (var current in clientsById)
             {
                 var user = current?.GetHabbo();

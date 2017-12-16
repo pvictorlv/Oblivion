@@ -375,7 +375,7 @@ namespace Oblivion.HabboHotel.Users
         /// <summary>
         ///     The user groups
         /// </summary>
-        internal HashSet<GroupMember> UserGroups;
+        internal List<GroupMember> UserGroups;
 
         /// <summary>
         ///     The user name
@@ -438,7 +438,7 @@ namespace Oblivion.HabboHotel.Users
             int dailyRespectPoints, int dailyPetRespectPoints, bool hasFriendRequestsDisabled, uint currentQuestId,
             int achievementPoints, int lastOnline, bool appearOffline,
             bool hideInRoom, bool vip, double createDate, string citizenShip, int diamonds,
-            HashSet<GroupMember> groups, uint favId, int lastChange, bool tradeLocked, int tradeLockExpire,
+            List<GroupMember> groups, uint favId, int lastChange, bool tradeLocked, int tradeLockExpire,
             int buildersExpire, int buildersItemsMax, int buildersItemsUsed, bool onDuty,
             Dictionary<int, NaviLogs> naviLogs, int dailyCompetitionVotes, uint dutyLevel, bool disableAlert, int lastTotem)
         {
@@ -616,7 +616,7 @@ namespace Oblivion.HabboHotel.Users
         internal void InitInformation(UserData data)
         {
 //            _subscriptionManager = new SubscriptionManager(Id, data);
-            _badgeComponent = new BadgeComponent(Id, data);
+            _badgeComponent = new BadgeComponent(Id);
             _messenger = new HabboMessenger(Id);
             _messenger.Init(data.Friends, data.Requests);
             SpectatorMode = false;
@@ -633,9 +633,9 @@ namespace Oblivion.HabboHotel.Users
         {
             _mClient = client;
             _subscriptionManager = new SubscriptionManager(Id, data);
-            _badgeComponent = new BadgeComponent(Id, data);
+            _badgeComponent = new BadgeComponent(Id);
             _inventoryComponent = new InventoryComponent(Id, client);
-            _avatarEffectsInventoryComponent = new AvatarEffectsInventoryComponent(Id, client, data);
+            _avatarEffectsInventoryComponent = new AvatarEffectsInventoryComponent(Id, client);
             _messenger = new HabboMessenger(Id);
             _messenger.Init(data.Friends, data.Requests);
             FriendCount = Convert.ToUInt32(data.Friends.Count);
@@ -873,6 +873,7 @@ namespace Oblivion.HabboHotel.Users
             }
             CurrentRoom = null;
             GuideOtherUser = null;
+            _subscriptionManager?.Dispose();
             _subscriptionManager = null;
             _avatarEffectsInventoryComponent?.Dispose();
             _avatarEffectsInventoryComponent = null;

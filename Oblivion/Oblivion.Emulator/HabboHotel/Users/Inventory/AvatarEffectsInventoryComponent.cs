@@ -1,8 +1,9 @@
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Rooms;
-using Oblivion.HabboHotel.Users.UserDataManagement;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
 
@@ -38,20 +39,28 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <param name="client">The client.</param>
-        /// <param name="data">The data.</param>
-        internal AvatarEffectsInventoryComponent(uint userId, GameClient client, UserData data)
+        internal AvatarEffectsInventoryComponent(uint userId, GameClient client)
         {
             _userId = userId;
             _session = client;
             _effects = new List<AvatarEffect>();
-            /* TODO CHECK */
-            foreach (var current in data.Effects)
-                if (!current.HasExpired)
-                    _effects.Add(current);
-                else
-                    using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                        queryReactor.RunFastQuery("DELETE FROM users_effects WHERE user_id = " + userId +
-                                                  " AND effect_id = " + current.EffectId + "; ");
+
+            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                dbClient.SetQuery(
+                    $"SELECT effect_id,total_duration,is_activated,activated_stamp,type FROM users_effects WHERE user_id = {userId}");
+                var effectsTable = dbClient.GetTable();
+
+
+                foreach (var current in from DataRow row in effectsTable.Rows let effectId = (int) row["effect_id"] let totalDuration = (int) row["total_duration"] let activated = Oblivion.EnumToBool((string) row["is_activated"]) let activateTimestamp = (double) row["activated_stamp"] let type = Convert.ToInt16(row["type"]) select new AvatarEffect(effectId, totalDuration, activated, activateTimestamp, type))
+                {
+                    if (!current.HasExpired)
+                        _effects.Add(current);
+                    else
+                        dbClient.RunFastQuery("DELETE FROM users_effects WHERE user_id = " + userId +
+                                              " AND effect_id = " + current.EffectId + "; ");
+                }
+            }
         }
 
         /// <summary>

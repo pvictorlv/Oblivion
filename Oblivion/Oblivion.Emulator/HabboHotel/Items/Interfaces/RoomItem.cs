@@ -270,7 +270,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 if (GroupData.Contains(";;"))
                 {
                     GroupData = GroupData.Replace(";;", ";");
-                    _mRoom.GetRoomItemHandler().AddOrUpdateItem(id);
+                    _mRoom.GetRoomItemHandler().AddOrUpdateItem(Id);
                 }
             }
 
@@ -374,7 +374,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="eGroup">The group.</param>
         /// <param name="isBuilder">if set to <c>true</c> [is builder].</param>
         internal RoomItem(long id, uint roomId, uint baseItem, string extraData, WallCoordinate wallCoord, Room pRoom,
-            uint userid, uint eGroup, bool isBuilder, uint addedVirtual)
+            uint userid, uint eGroup, bool isBuilder)
         {
             BaseItem = baseItem;
 
@@ -385,7 +385,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
 
             Id = id;
 
-            VirtualId = addedVirtual <= 0 ? Oblivion.GetGame().GetItemManager().GetVirtualId(id) : addedVirtual;
+            VirtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(id);
 
             RoomId = roomId;
             ExtraData = extraData;
@@ -473,11 +473,13 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <value>The get coords.</value>
         internal List<Point> GetCoords()
         {
-            
+//            get 
+//                {
                 var list = new List<Point> {Coordinate};
                 list.AddRange(AffectedTiles.Values.Select(current => new Point(current.X, current.Y)));
                 return list;
-            
+//            }
+
         }
 
         internal double Height

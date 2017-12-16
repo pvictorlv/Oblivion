@@ -604,10 +604,9 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 _habbo = null;
                 _connection = null;
             }
-            _object = null;
         }
 
-        private object _object = new object();
+        private readonly object _object = new object();
         /// <summary>
         ///     Disconnects the specified reason.
         /// </summary>

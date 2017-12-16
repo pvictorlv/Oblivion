@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data;
 using Oblivion.HabboHotel.GameClients.Interfaces;
-using Oblivion.HabboHotel.Users.UserDataManagement;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
 
@@ -21,15 +21,21 @@ namespace Oblivion.HabboHotel.Users.Badges
         ///     Initializes a new instance of the <see cref="BadgeComponent" /> class.
         /// </summary>
         /// <param name="userId">The user identifier.</param>
-        /// <param name="data">The data.</param>
-        internal BadgeComponent(uint userId, UserData data)
+        internal BadgeComponent(uint userId)
         {
             BadgeList = new ConcurrentDictionary<string, Badge>();
 
-            /* TODO CHECK */
-            foreach (var current in data.Badges)
+            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                if (!BadgeList.ContainsKey(current.Code)) BadgeList.TryAdd(current.Code, current);
+                dbClient.SetQuery($"SELECT badge_id,badge_slot FROM users_badges WHERE user_id = {userId}");
+                var badgesTable = dbClient.GetTable();
+
+                foreach (DataRow dataRow8 in badgesTable.Rows)
+                {
+                    var badge = new Badge((string) dataRow8["badge_id"], (int) dataRow8["badge_slot"]);
+                    if (!BadgeList.ContainsKey(badge.Code))
+                        BadgeList.TryAdd(badge.Code, badge);
+                }
             }
 
             _userId = userId;

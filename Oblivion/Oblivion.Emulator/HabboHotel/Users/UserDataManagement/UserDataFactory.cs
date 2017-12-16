@@ -6,8 +6,6 @@ using Oblivion.HabboHotel.Achievements.Interfaces;
 using Oblivion.HabboHotel.Groups.Interfaces;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.HabboHotel.Users.Authenticator;
-using Oblivion.HabboHotel.Users.Badges;
-using Oblivion.HabboHotel.Users.Inventory;
 using Oblivion.HabboHotel.Users.Messenger;
 using Oblivion.HabboHotel.Users.Relationships;
 using Oblivion.HabboHotel.Users.Subscriptions;
@@ -40,8 +38,6 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             DataTable ignoresTable;
             DataTable tagsTable;
             DataRow subscriptionsRow;
-            DataTable badgesTable;
-            DataTable effectsTable;
             DataTable pollsTable;
             DataTable friendsTable;
             DataTable friendsRequestsTable;
@@ -102,13 +98,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                     $"SELECT subscription_id, timestamp_activated, timestamp_expire, timestamp_lastgift FROM users_subscriptions WHERE user_id = {userId} AND timestamp_expire > UNIX_TIMESTAMP() ORDER BY subscription_id DESC LIMIT 1");
                 subscriptionsRow = queryReactor.GetRow();
 
-                queryReactor.SetQuery($"SELECT badge_id,badge_slot FROM users_badges WHERE user_id = {userId}");
-                badgesTable = queryReactor.GetTable();
 
-                
-
-                queryReactor.SetQuery($"SELECT effect_id,total_duration,is_activated,activated_stamp,type FROM users_effects WHERE user_id = {userId}");
-                effectsTable = queryReactor.GetTable();
 
                 queryReactor.SetQuery(
                     $"SELECT poll_id FROM users_polls WHERE user_id = {userId} GROUP BY poll_id;");
@@ -184,9 +174,6 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
 
           
-            var badges =
-                (badgesTable.Rows.Cast<DataRow>()
-                    .Select(dataRow8 => new Badge((string) dataRow8["badge_id"], (int) dataRow8["badge_slot"]))).ToList();
 
             Subscription subscriptions = null;
 
@@ -194,16 +181,6 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 subscriptions = new Subscription((int) subscriptionsRow["subscription_id"],
                     (int) subscriptionsRow["timestamp_activated"], (int) subscriptionsRow["timestamp_expire"],
                     (int) subscriptionsRow["timestamp_lastgift"]);
-
-           
-
-            var effects = (from DataRow row in effectsTable.Rows
-                let effectId = (int) row["effect_id"]
-                let totalDuration = (int) row["total_duration"]
-                let activated = Oblivion.EnumToBool((string) row["is_activated"])
-                let activateTimestamp = (double) row["activated_stamp"]
-                let type = Convert.ToInt16(row["type"])
-                select new AvatarEffect(effectId, totalDuration, activated, activateTimestamp, type)).ToList();
 
             var pollSuggested = new HashSet<uint>();
 
@@ -278,11 +255,9 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 quests.Add(key, value3);
             }
 
-            var groups = new HashSet<GroupMember>();
+            var groups = (from DataRow row in groupsTable.Rows select new GroupMember(userId, userName, look, (uint) row["group_id"], Convert.ToInt16(row["rank"]), (int) row["date_join"], Oblivion.EnumToBool(row["has_chat"].ToString()))).ToList();
 
-            /* TODO CHECK */ foreach (DataRow row in groupsTable.Rows)
-                groups.Add(new GroupMember(userId, userName, look, (uint) row["group_id"], Convert.ToInt16(row["rank"]),
-                    (int) row["date_join"], Oblivion.EnumToBool(row["has_chat"].ToString())));
+            /* TODO CHECK */
 
             var relationShips = relationShipsTable.Rows.Cast<DataRow>()
                 .ToDictionary(row => (int) row[0],
@@ -306,8 +281,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             }
 
 
-            return new UserData(userId, achievements, talents, favorites, ignoreUsers, tags, subscriptions, badges,
-                 effects, friends, friendsRequests, myRooms , quests, user , relationShips,
+            return new UserData(userId, achievements, talents, favorites, ignoreUsers, tags, subscriptions, friends, friendsRequests, myRooms , quests, user , relationShips,
                 pollSuggested, miniMailCount, blockedCommands, openedGifts);
         }
 
@@ -356,13 +330,11 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             var favouritedRooms = new List<uint>();
             var ignores = new List<uint>();
             var tags = new List<string>();
-            var badges = new List<Badge>();
-            var effects = new List<AvatarEffect>();
             var friends = new Dictionary<uint, MessengerBuddy>();
             var requests = new Dictionary<uint, MessengerRequest>();
             var rooms = new List<RoomData>();
             var quests = new Dictionary<uint, int>();
-            var group = new HashSet<GroupMember>();
+            var group = new List<GroupMember>();
             var pollData = new HashSet<uint>();
 
             var dictionary = table.Rows.Cast<DataRow>()
@@ -372,8 +344,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             var user = HabboFactory.GenerateHabbo(dataRow, row, group);
 
 
-            return new UserData(num, achievements, talents, favouritedRooms, ignores, tags, null, badges,
-                effects, friends, requests, rooms, quests, user, dictionary, pollData, 0, new List<string>(), new List<int>());
+            return new UserData(num, achievements, talents, favouritedRooms, ignores, tags, null, friends, requests, rooms, quests, user, dictionary, pollData, 0, new List<string>(), new List<int>());
         }
     }
 }

@@ -130,13 +130,13 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             return true;
         }
 
-        private bool Teleport(RoomUser user)
+        private void Teleport(RoomUser user)
         {
             if (Items?.Count < 0)
-                return true;
+                return;
 
             if (user?.GetClient()?.GetHabbo() == null)
-                return true;
+                return;
 
             var rnd = new Random();
 
@@ -154,7 +154,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (roomItem == null)
             {
                 user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(0);
-                return false;
+                return;
             }
             int oldX = user.X, oldY = user.Y;
             Room.GetGameMap().TeleportToItem(user, roomItem);
@@ -162,7 +162,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             Room.GetRoomUserManager().OnUserUpdateStatus(roomItem.X, roomItem.Y);
             user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(0);
 
-            return true;
+            return;
         }
     }
 }

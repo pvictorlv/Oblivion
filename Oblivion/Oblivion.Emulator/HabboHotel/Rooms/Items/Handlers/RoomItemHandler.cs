@@ -392,7 +392,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.RunFastQuery(
-                    "SELECT i.id, i.x, i.y, i.z, i.rot, i.user_id, i.base_item,i.wall_pos,i.extra_data,i.songcode,i.builders,i.group_id FROM items_rooms AS i WHERE i.room_id = " +
+                    "SELECT i.id, i.x, i.y, i.z, i.rot, i.user_id, i.base_item,i.wall_pos,i.extra_data,i.songcode,i.builders,i.group_id,i.limited FROM items_rooms AS i WHERE i.room_id = " +
                     _room.RoomId + " LIMIT 5000");
 
                 var table = queryReactor.GetTable();
@@ -445,7 +445,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                             var wallCoord = new WallCoordinate(':' + locationData.Split(':')[1]);
                             var value = new RoomItem(id, _room.RoomId, baseItemId, extraData, wallCoord, _room, ownerId,
                                 groupId,
-                                Oblivion.EnumToBool((string) dataRow["builders"]), 0);
+                                Oblivion.EnumToBool((string) dataRow["builders"]));
 
                             WallItems.TryAdd(value.Id, value);
                         }

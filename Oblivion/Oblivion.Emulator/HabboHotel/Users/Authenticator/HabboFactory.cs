@@ -19,7 +19,7 @@ namespace Oblivion.HabboHotel.Users.Authenticator
         /// <param name="mRow">The m row.</param>
         /// <param name="group">The group.</param>
         /// <returns>Habbo.</returns>
-        internal static Habbo GenerateHabbo(DataRow dRow, DataRow mRow, HashSet<GroupMember> group)
+        internal static Habbo GenerateHabbo(DataRow dRow, DataRow mRow, List<GroupMember> group)
         {
             var id = uint.Parse(dRow["id"].ToString());
             var userName = (string)dRow["username"];
@@ -79,7 +79,7 @@ namespace Oblivion.HabboHotel.Users.Authenticator
                 return new Habbo(id, userName, ras, motto, look, gender, credits, activityPoints, muted, homeRoom,
                     respect, dailyRespectPoints, dailyPetRespectPoints,
                     hasFriendRequestsDisabled, currentQuestId, achievementPoints,
-                    lastOnline, appearOffline, hideInRoom, vip, createDate, citizenship, diamonds, @group, favId,
+                    lastOnline, appearOffline, hideInRoom, vip, createDate, citizenship, diamonds, group, favId,
                     lastChange, tradeLocked, tradeLockExpire, buildersExpire, buildersItemsMax,
                     buildersItemsUsed, onDuty, navilogs, dailyCompetitionVotes, dutyLevel, disableAlert, lastTotem);
             /* TODO CHECK */ foreach (

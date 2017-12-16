@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using Oblivion.HabboHotel.Achievements.Interfaces;
 using Oblivion.HabboHotel.Rooms.Data;
-using Oblivion.HabboHotel.Users.Badges;
-using Oblivion.HabboHotel.Users.Inventory;
 using Oblivion.HabboHotel.Users.Messenger;
 using Oblivion.HabboHotel.Users.Relationships;
 using Oblivion.HabboHotel.Users.Subscriptions;
@@ -19,16 +17,13 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         /// </summary>
         internal Dictionary<string, UserAchievement> Achievements;
 
-        /// <summary>
-        ///     The badges
-        /// </summary>
-        internal List<Badge> Badges;
+      
         
 
         /// <summary>
         ///     The effects
         /// </summary>
-        internal List<AvatarEffect> Effects;
+//        internal List<AvatarEffect> Effects;
 
         /// <summary>
         ///     The favourited rooms
@@ -123,8 +118,6 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         /// <param name="ignores">The ignores.</param>
         /// <param name="tags">The tags.</param>
         /// <param name="sub">The sub.</param>
-        /// <param name="badges">The badges.</param>
-        /// <param name="effects">The effects.</param>
         /// <param name="friends">The friends.</param>
         /// <param name="requests">The requests.</param>
         /// <param name="rooms">The rooms.</param>
@@ -135,7 +128,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         /// <param name="miniMailCount">The mini mail count.</param>
         public UserData(uint userId, Dictionary<string, UserAchievement> achievements,
             Dictionary<int, UserTalent> talents, List<uint> favouritedRooms, List<uint> ignores, List<string> tags,
-            Subscription sub, List<Badge> badges, List<AvatarEffect> effects,
+            Subscription sub,
             Dictionary<uint, MessengerBuddy> friends, Dictionary<uint, MessengerRequest> requests,
             List<RoomData> rooms, Dictionary<uint, int> quests, Habbo user,
             Dictionary<int, Relationship> relations, HashSet<uint> suggestedPolls,
@@ -148,8 +141,6 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             Ignores = ignores;
             Tags = tags;
             Subscriptions = sub;
-            Badges = badges;
-            Effects = effects;
             Friends = friends;
             Requests = requests;
             Rooms = rooms;
@@ -183,10 +174,6 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             Tags.Clear();
             Tags = null;
             Subscriptions = null;
-            Badges.Clear();
-            Badges = null;
-            Effects.Clear();
-            Effects = null;
             Friends.Clear();
             Friends = null;
             Requests.Clear();
