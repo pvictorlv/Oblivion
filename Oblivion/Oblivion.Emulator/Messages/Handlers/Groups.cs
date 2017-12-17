@@ -622,12 +622,10 @@ namespace Oblivion.Messages.Handlers
             {
                 if (threadId != 0)
                 {
-                    dbClient.SetQuery($"SELECT * FROM groups_forums_posts WHERE id = {threadId}");
+                    dbClient.SetQuery($"SELECT locked,hidden FROM groups_forums_posts WHERE id = {threadId}");
 
                     DataRow row = dbClient.GetRow();
-                    var post = new GroupForumPost(row);
-
-                    if (post.Locked || post.Hidden)
+                    if (row["locked"].ToString() == "1" || row["hidden"].ToString() == "1")
                     {
                         Session.SendNotif(Oblivion.GetLanguage().GetVar("forums_cancel"));
                         return;

@@ -39,8 +39,6 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             DataTable tagsTable;
             DataRow subscriptionsRow;
             DataTable pollsTable;
-            DataTable friendsTable;
-            DataTable friendsRequestsTable;
 
             DataTable relationShipsTable;
             DataTable questsTable;
@@ -104,18 +102,11 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                     $"SELECT poll_id FROM users_polls WHERE user_id = {userId} GROUP BY poll_id;");
                 pollsTable = queryReactor.GetTable();
 
-                queryReactor.SetQuery(
-                    string.Format(
-                        "SELECT users.id,users.username,users.motto,users.look,users.last_online,users.hide_inroom,users.hide_online FROM users JOIN messenger_friendships ON users.id = messenger_friendships.user_one_id WHERE messenger_friendships.user_two_id = {0} UNION ALL SELECT users.id,users.username,users.motto,users.look,users.last_online,users.hide_inroom,users.hide_online FROM users JOIN messenger_friendships ON users.id = messenger_friendships.user_two_id WHERE messenger_friendships.user_one_id = {0}",
-                        userId));
-                friendsTable = queryReactor.GetTable();
 
                 queryReactor.SetQuery($"SELECT * FROM users_stats WHERE id = {userId}");
                 statsTable = queryReactor.GetRow();
 
-                queryReactor.SetQuery(
-                    $"SELECT messenger_requests.from_id,messenger_requests.to_id,users.Username, users.Look FROM users JOIN messenger_requests ON users.id = messenger_requests.from_id WHERE messenger_requests.to_id = {userId}");
-                friendsRequestsTable = queryReactor.GetTable();
+               
 
                 queryReactor.SetQuery("SELECT * FROM rooms_data WHERE owner = @name LIMIT 150");
                 queryReactor.AddParameter("name", userName);
@@ -187,56 +178,8 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             /* TODO CHECK */ foreach (var pId in from DataRow row in pollsTable.Rows select (uint) row["poll_id"])
                 pollSuggested.Add(pId);
 
-            var friends = new Dictionary<uint, MessengerBuddy>();
-            var limit = (friendsTable.Rows.Count - 700);
 
-            if (limit > 0)
-            {
-                using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                {
-                    queryreactor2.RunFastQuery(string.Concat("DELETE FROM messenger_friendships WHERE user_one_id=",
-                        userId, " OR user_two_id=", userId, " LIMIT ", limit));
-                    queryreactor2.SetQuery(
-                        string.Concat(
-                            "SELECT users.id,users.username,users.motto,users.look,users.last_online,users.hide_inroom,users.hide_online FROM users JOIN messenger_friendships ON users.id = messenger_friendships.user_one_id WHERE messenger_friendships.user_two_id = ",
-                            userId,
-                            " UNION ALL SELECT users.id,users.username,users.motto,users.look,users.last_online,users.hide_inroom,users.hide_online FROM users JOIN messenger_friendships ON users.id = messenger_friendships.user_two_id WHERE messenger_friendships.user_one_id = ",
-                            userId));
-                    friendsTable = queryreactor2.GetTable();
-                }
-            }
 
-            /* TODO CHECK */ foreach (DataRow row in friendsTable.Rows)
-            {
-                var num4 = Convert.ToUInt32(row["id"]);
-                var pUsername = (string) row["username"];
-                var pLook = (string) row["look"];
-                var pMotto = (string) row["motto"];
-                var pAppearOffline = Oblivion.EnumToBool(row["hide_online"].ToString());
-                var pHideInroom = Oblivion.EnumToBool(row["hide_inroom"].ToString());
-
-                if (num4 != userId && !friends.ContainsKey(num4))
-                    friends.Add(num4,
-                        new MessengerBuddy(num4, pUsername, pLook, pMotto, pAppearOffline, pHideInroom));
-            }
-
-            var friendsRequests = new Dictionary<uint, MessengerRequest>();
-
-            /* TODO CHECK */ foreach (DataRow row in friendsRequestsTable.Rows)
-            {
-                var num5 = Convert.ToUInt32(row["from_id"]);
-                var num6 = Convert.ToUInt32(row["to_id"]);
-                var pUsername2 = row["username"].ToString();
-                var pLook = row["look"].ToString();
-
-                if (num5 != userId)
-                {
-                    if (!friendsRequests.ContainsKey(num5))
-                        friendsRequests.Add(num5, new MessengerRequest(userId, num5, pUsername2, pLook));
-                    else if (!friendsRequests.ContainsKey(num6))
-                        friendsRequests.Add(num6, new MessengerRequest(userId, num6, pUsername2, pLook));
-                }
-            }
 
                 
 
@@ -281,7 +224,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             }
 
 
-            return new UserData(userId, achievements, talents, favorites, ignoreUsers, tags, subscriptions, friends, friendsRequests, myRooms , quests, user , relationShips,
+            return new UserData(userId, achievements, talents, favorites, ignoreUsers, tags, subscriptions, myRooms , quests, user , relationShips,
                 pollSuggested, miniMailCount, blockedCommands, openedGifts);
         }
 
@@ -330,8 +273,6 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             var favouritedRooms = new List<uint>();
             var ignores = new List<uint>();
             var tags = new List<string>();
-            var friends = new Dictionary<uint, MessengerBuddy>();
-            var requests = new Dictionary<uint, MessengerRequest>();
             var rooms = new List<RoomData>();
             var quests = new Dictionary<uint, int>();
             var group = new List<GroupMember>();
@@ -344,7 +285,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             var user = HabboFactory.GenerateHabbo(dataRow, row, group);
 
 
-            return new UserData(num, achievements, talents, favouritedRooms, ignores, tags, null, friends, requests, rooms, quests, user, dictionary, pollData, 0, new List<string>(), new List<int>());
+            return new UserData(num, achievements, talents, favouritedRooms, ignores, tags, null, rooms, quests, user, dictionary, pollData, 0, new List<string>(), new List<int>());
         }
     }
 }

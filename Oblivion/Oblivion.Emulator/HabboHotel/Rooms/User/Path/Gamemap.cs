@@ -90,8 +90,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         {
             if (Item.X == MoveTo.X && Item.Y == MoveTo.Y) return true;
 
-            var Points = GetAffectedTiles(Item.GetBaseItem().Length, Item.GetBaseItem().Width, MoveTo.X, MoveTo.Y, Item.Rot)
-                    .Values;
+            var Points = GetAffectedTiles(Item.GetBaseItem().Length, Item.GetBaseItem().Width, MoveTo.X, MoveTo.Y,
+                    Item.Rot)
+                .Values;
 
             if (Points.Count == 0)
                 return true;
@@ -121,7 +122,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// </summary>
         /// <value>The effect map.</value>
 //        internal byte[,] EffectMap { get; private set; }
-
         /// <summary>
         ///     Gets the coordinated items.
         /// </summary>
@@ -407,7 +407,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     stringBuilder5.AppendFormat("[{0}]", Model.SqFloorHeight[num2][num]);
                 stringBuilder.AppendLine(stringBuilder5.ToString());
             }
-            
+
             return stringBuilder.ToString();
         }
 
@@ -440,8 +440,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             {
                 while (true)
                 {
-
-
                     var xMap = 0;
                     var yMap = 0;
 
@@ -558,9 +556,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             }
             else
             {
-                if (items == null) return;
                 if (items.Contains(item))
-                    items.Remove(item);
+                    return;
+
                 items.Add(item);
 
                 CoordinatedItems.TryRemove(coord, out _);
@@ -1265,7 +1263,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             GuildGates?.Clear();
             if (GameMap != null)
                 Array.Clear(GameMap, 0, GameMap.Length);
-           
+
             if (ItemHeightMap != null)
                 Array.Clear(ItemHeightMap, 0, ItemHeightMap.Length);
             _userMap = null;
@@ -1378,7 +1376,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     ItemHeightMap[coord.X, coord.Y] <= item.TotalHeight)
                 {
                     ItemHeightMap[coord.X, coord.Y] = item.TotalHeight - Model.SqFloorHeight[item.X][item.Y];
-                    
+
                     if (GameMap.GetLength(0) >= coord.X && GameMap.GetLength(1) >= coord.Y)
                     {
                         if (item.GetBaseItem().Walkable)

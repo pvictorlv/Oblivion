@@ -1169,7 +1169,10 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (!_userRoom.GetGameMap().CanWalk(nextStep.X, nextStep.Y, roomUsers.AllowOverride) &&
                 !roomUsers.GetRoom().RoomData.AllowWalkThrough)
             {
-                roomUsers.PathRecalcNeeded = true;
+                roomUsers.IsWalking = false;
+                roomUsers.ClearMovement();
+                roomUsers.SetStep = false;
+                UpdateUserStatus(roomUsers, false);
                 return;
             }
 

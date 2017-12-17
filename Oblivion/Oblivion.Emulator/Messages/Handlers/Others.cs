@@ -243,7 +243,7 @@ namespace Oblivion.Messages.Handlers
             Response.AppendInteger(habbo.DailyPetRespectPoints);
             Response.AppendBool(true);
             Response.AppendString(habbo.LastOnline.ToString(CultureInfo.InvariantCulture));
-            Response.AppendBool(habbo.CanChangeName);
+            Response.AppendBool(habbo.CanChangeName());
             Response.AppendBool(false);
             SendResponse();
             Response.Init(LibraryParser.OutgoingRequest("BuildersClubMembershipMessageComposer"));

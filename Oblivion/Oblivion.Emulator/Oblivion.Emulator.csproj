@@ -202,6 +202,7 @@
     <Compile Include="HabboHotel\Commands\Controllers\DisableGroupChat.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\DisableGroupMessage.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\FixRoom.cs" />
+    <Compile Include="HabboHotel\Commands\Controllers\FlagUser.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\GivePoints.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\Multiply.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\Pet.cs" />

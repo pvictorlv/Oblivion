@@ -107,11 +107,7 @@ namespace Oblivion.HabboHotel.Users
         ///     The builders items used
         /// </summary>
         internal int BuildersItemsUsed;
-
-        /// <summary>
-        ///     The _clothing manager
-        /// </summary>
-//        internal UserClothing ClothingManager;
+        
         /// <summary>
         ///     The create date
         /// </summary>
@@ -301,11 +297,7 @@ namespace Oblivion.HabboHotel.Users
         ///     The recently visited rooms
         /// </summary>
         internal LinkedList<uint> RecentlyVisitedRooms;
-
-        /// <summary>
-        ///     The release name
-        /// </summary>
-        internal string ReleaseName;
+        
 
         /// <summary>
         ///     The respect
@@ -331,11 +323,6 @@ namespace Oblivion.HabboHotel.Users
         ///     The spectator mode
         /// </summary>
         internal bool SpectatorMode;
-
-        /// <summary>
-        ///     The talents
-        /// </summary>
-        internal Dictionary<int, UserTalent> Talents;
 
         /// <summary>
         ///     The talent status
@@ -440,7 +427,8 @@ namespace Oblivion.HabboHotel.Users
             bool hideInRoom, bool vip, double createDate, string citizenShip, int diamonds,
             List<GroupMember> groups, uint favId, int lastChange, bool tradeLocked, int tradeLockExpire,
             int buildersExpire, int buildersItemsMax, int buildersItemsUsed, bool onDuty,
-            Dictionary<int, NaviLogs> naviLogs, int dailyCompetitionVotes, uint dutyLevel, bool disableAlert, int lastTotem)
+            Dictionary<int, NaviLogs> naviLogs, int dailyCompetitionVotes, uint dutyLevel, bool disableAlert,
+            int lastTotem)
         {
             Id = id;
             UserName = userName;
@@ -454,7 +442,6 @@ namespace Oblivion.HabboHotel.Users
             if (rank < 1u)
                 rank = 1u;
 
-            ReleaseName = string.Empty;
 
             OnDuty = onDuty;
             DutyLevel = dutyLevel;
@@ -483,7 +470,6 @@ namespace Oblivion.HabboHotel.Users
             AppearOffline = appearOffline;
             FavoriteRooms = new List<uint>();
             MutedUsers = new List<uint>();
-            Talents = new Dictionary<int, UserTalent>();
             RatedRooms = new HashSet<uint>();
             Respect = respect;
             DailyRespectPoints = dailyRespectPoints;
@@ -521,37 +507,11 @@ namespace Oblivion.HabboHotel.Users
         ///     Gets a value indicating whether this instance can change name.
         /// </summary>
         /// <value><c>true</c> if this instance can change name; otherwise, <c>false</c>.</value>
-        public bool CanChangeName => (ExtraSettings.ChangeNameStaff && HasFuse("fuse_can_change_name")) ||
+        public bool CanChangeName() => (ExtraSettings.ChangeNameStaff && HasFuse("fuse_can_change_name")) ||
                                      (ExtraSettings.ChangeNameVip && Vip) ||
                                      (ExtraSettings.ChangeNameEveryone &&
                                       Oblivion.GetUnixTimeStamp() > (LastChange + 604800));
 
-        /// <summary>
-        ///     Gets the head part.
-        /// </summary>
-        /// <value>The head part.</value>
-        internal string HeadPart
-        {
-            get
-            {
-                var strtmp = Look.Split('.');
-                var tmp2 = strtmp.FirstOrDefault(x => x.Contains("hd-"));
-                var lookToReturn = tmp2 ?? string.Empty;
-
-                if (Look.Contains("ha-"))
-                    lookToReturn += $".{strtmp.FirstOrDefault(x => x.Contains("ha-"))}";
-                if (Look.Contains("ea-"))
-                    lookToReturn += $".{strtmp.FirstOrDefault(x => x.Contains("ea-"))}";
-                if (Look.Contains("hr-"))
-                    lookToReturn += $".{strtmp.FirstOrDefault(x => x.Contains("hr-"))}";
-                if (Look.Contains("he-"))
-                    lookToReturn += $".{strtmp.FirstOrDefault(x => x.Contains("he-"))}";
-                if (Look.Contains("fa-"))
-                    lookToReturn += $".{strtmp.FirstOrDefault(x => x.Contains("fa-"))}";
-
-                return lookToReturn;
-            }
-        }
 
         /// <summary>
         ///     Gets a value indicating whether [in room].
@@ -565,32 +525,19 @@ namespace Oblivion.HabboHotel.Users
         /// <value>The current room.</value>
         internal Room CurrentRoom;
 
-        /// <summary>
-        ///     Gets a value indicating whether this instance is helper.
-        /// </summary>
-        /// <value><c>true</c> if this instance is helper; otherwise, <c>false</c>.</value>
-        internal bool IsHelper => TalentStatus == "helper" || Rank >= 4;
-
-        /// <summary>
-        ///     Gets a value indicating whether this instance is citizen.
-        /// </summary>
-        /// <value><c>true</c> if this instance is citizen; otherwise, <c>false</c>.</value>
-        internal bool IsCitizen => CurrentTalentLevel > 4;
-
+    
+        
         /// <summary>
         ///     Gets the get query string.
         /// </summary>
         /// <value>The get query string.</value>
-        internal string GetQueryString
+        internal string GetQueryString()
         {
-            get
-            {
-                _habboinfoSaved = true;
-                return string.Concat("UPDATE users SET online='0', last_online = '", Oblivion.GetUnixTimeStamp(),
-                    "', activity_points = '", ActivityPoints, "', diamonds = '", Diamonds, "', credits = '", Credits,
-                    "' WHERE id = '", Id, "'; UPDATE users_stats SET achievement_score = ", AchievementPoints,
-                    " WHERE id=", Id, " LIMIT 1; ");
-            }
+            _habboinfoSaved = true;
+            return string.Concat("UPDATE users SET online='0', last_online = '", Oblivion.GetUnixTimeStamp(),
+                "', activity_points = '", ActivityPoints, "', diamonds = '", Diamonds, "', credits = '", Credits,
+                "' WHERE id = '", Id, "'; UPDATE users_stats SET achievement_score = ", AchievementPoints,
+                " WHERE id=", Id, " LIMIT 1; ");
         }
 
         /// <summary>
@@ -618,7 +565,7 @@ namespace Oblivion.HabboHotel.Users
 //            _subscriptionManager = new SubscriptionManager(Id, data);
             _badgeComponent = new BadgeComponent(Id);
             _messenger = new HabboMessenger(Id);
-            _messenger.Init(data.Friends, data.Requests);
+            _messenger.Init();
             SpectatorMode = false;
             Disconnected = false;
             Data = data;
@@ -637,8 +584,8 @@ namespace Oblivion.HabboHotel.Users
             _inventoryComponent = new InventoryComponent(Id, client);
             _avatarEffectsInventoryComponent = new AvatarEffectsInventoryComponent(Id, client);
             _messenger = new HabboMessenger(Id);
-            _messenger.Init(data.Friends, data.Requests);
-            FriendCount = Convert.ToUInt32(data.Friends.Count);
+            _messenger.Init();
+            FriendCount = Convert.ToUInt32(_messenger.Friends.Count);
             SpectatorMode = false;
             Disconnected = false;
             MinimailUnreadMessages = data.MiniMailCount;
@@ -674,7 +621,6 @@ namespace Oblivion.HabboHotel.Users
         /// <param name="data">The data.</param>
         internal void LoadData(UserData data)
         {
-            LoadTalents(data.Talents);
             LoadFavorites(data.FavouritedRooms);
             LoadMutedUsers(data.Ignores);
             Data = data;
@@ -795,15 +741,7 @@ namespace Oblivion.HabboHotel.Users
                 dbClient.RunFastQuery($"UPDATE users_stats SET last_totem = '{now}' WHERE id = {Id}");
             }
         }
-
-        /// <summary>
-        ///     Loads the talents.
-        /// </summary>
-        /// <param name="talents">The talents.</param>
-        internal void LoadTalents(Dictionary<int, UserTalent> talents)
-        {
-            Talents = talents;
-        }
+        
 
         /// <summary>
         ///     Called when [disconnect].
@@ -825,10 +763,7 @@ namespace Oblivion.HabboHotel.Users
             }
 
             Oblivion.GetGame().GetClientManager().UnregisterClient(Id, UserName);
-
-//            Out.WriteLine(UserName + " disconnected from game. Reason: " + reason, "Oblivion.Users",
-//                ConsoleColor.DarkYellow);
-
+            
             var getOnlineSeconds = DateTime.Now - TimeLoggedOn;
             var secondsToGive = getOnlineSeconds.Seconds;
 
@@ -1142,7 +1077,7 @@ namespace Oblivion.HabboHotel.Users
         /// <returns>UserTalent.</returns>
         internal UserTalent GetTalentData(int t)
         {
-            Talents.TryGetValue(t, out var result);
+            Data.Talents.TryGetValue(t, out var result);
             return result;
         }
 
@@ -1152,8 +1087,9 @@ namespace Oblivion.HabboHotel.Users
         /// <returns>System.Int32.</returns>
         internal int GetCurrentTalentLevel()
         {
+            if (Data?.Talents == null) return 0;
             return
-                Talents.Values
+                Data.Talents.Values
                     .Select(current => Oblivion.GetGame().GetTalentManager().GetTalent(current.TalentId).Level)
                     .Concat(new[] {1})
                     .Max();

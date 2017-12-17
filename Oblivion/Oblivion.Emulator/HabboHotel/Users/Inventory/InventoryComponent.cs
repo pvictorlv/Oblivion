@@ -430,8 +430,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
                         queryReactor.SetQuery(
-                            $"INSERT INTO items_rooms (base_item, user_id, group_id, extra_data, songcode, limited) VALUES ('{baseItem}', '{UserId}', '{thGroup}', '{extraData}', '{songCode}', '{limno};{limtot}');");
-
+                            $"INSERT INTO items_rooms (base_item, user_id, group_id, extra_data, songcode, limited) VALUES ('{baseItem}', '{UserId}', '{thGroup}', @edata, '{songCode}', '{limno};{limtot}');");
+                        queryReactor.AddParameter("edata", extraData);
                         if (id == 0)
                             id = queryReactor.InsertQuery();
                         var virtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(id);

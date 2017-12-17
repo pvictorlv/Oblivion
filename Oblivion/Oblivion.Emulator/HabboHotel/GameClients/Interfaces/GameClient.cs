@@ -615,12 +615,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         {
             try
             {
-                if (GetHabbo() != null)
-                {
-                    using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                        queryReactor.RunFastQuery(GetHabbo().GetQueryString);
-                    GetHabbo().OnDisconnect(reason);
-                }
+                _habbo?.OnDisconnect(reason);
 
                 if (_disconnected)
                     return;

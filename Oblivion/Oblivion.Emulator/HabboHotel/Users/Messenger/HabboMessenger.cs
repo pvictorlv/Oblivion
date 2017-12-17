@@ -48,16 +48,63 @@ namespace Oblivion.HabboHotel.Users.Messenger
             Friends = new Dictionary<uint, MessengerBuddy>();
             _userId = userId;
         }
-
-        /// <summary>
-        ///     Initializes the specified friends.
-        /// </summary>
-        /// <param name="friends">The friends.</param>
-        /// <param name="requests">The requests.</param>
-        internal void Init(Dictionary<uint, MessengerBuddy> friends, Dictionary<uint, MessengerRequest> requests)
+        
+        internal void Init()
         {
-            Requests = new Dictionary<uint, MessengerRequest>(requests);
-            Friends = new Dictionary<uint, MessengerBuddy>(friends);
+           
+
+            DataTable friendsTable;
+            DataTable friendsRequestsTable;
+
+            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+
+                queryReactor.SetQuery(
+                    string.Format(
+                        "SELECT users.id,users.username,users.motto,users.look,users.last_online,users.hide_inroom,users.hide_online FROM users JOIN messenger_friendships ON users.id = messenger_friendships.user_one_id WHERE messenger_friendships.user_two_id = {0} UNION ALL SELECT users.id,users.username,users.motto,users.look,users.last_online,users.hide_inroom,users.hide_online FROM users JOIN messenger_friendships ON users.id = messenger_friendships.user_two_id WHERE messenger_friendships.user_one_id = {0} LIMIT 1100",
+                        _userId));
+                friendsTable = queryReactor.GetTable();
+
+                queryReactor.SetQuery(
+                    $"SELECT messenger_requests.from_id,messenger_requests.to_id,users.Username, users.Look FROM users JOIN messenger_requests ON users.id = messenger_requests.from_id WHERE messenger_requests.to_id = {_userId}");
+                friendsRequestsTable = queryReactor.GetTable();
+            }
+           
+
+
+
+            foreach (DataRow row in friendsTable.Rows)
+            {
+                var num4 = Convert.ToUInt32(row["id"]);
+                var pUsername = (string)row["username"];
+                var pLook = (string)row["look"];
+                var pMotto = (string)row["motto"];
+                var pAppearOffline = Oblivion.EnumToBool(row["hide_online"].ToString());
+                var pHideInroom = Oblivion.EnumToBool(row["hide_inroom"].ToString());
+
+                if (num4 != _userId && !Friends.ContainsKey(num4))
+                    Friends.Add(num4,
+                        new MessengerBuddy(num4, pUsername, pLook, pMotto, pAppearOffline, pHideInroom));
+            }
+
+
+            foreach (DataRow row in friendsRequestsTable.Rows)
+            {
+                var num5 = Convert.ToUInt32(row["from_id"]);
+                var num6 = Convert.ToUInt32(row["to_id"]);
+                var pUsername2 = row["username"].ToString();
+                var pLook = row["look"].ToString();
+
+                if (num5 != _userId)
+                {
+                    if (!Requests.ContainsKey(num5))
+                        Requests.Add(num5, new MessengerRequest(_userId, num5, pUsername2, pLook));
+                    else if (!Requests.ContainsKey(num6))
+                        Requests.Add(num6, new MessengerRequest(_userId, num6, pUsername2, pLook));
+                }
+            }
+
+            
         }
 
         /// <summary>

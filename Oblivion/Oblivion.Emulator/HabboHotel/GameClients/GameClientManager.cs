@@ -306,13 +306,13 @@ namespace Oblivion.HabboHotel.GameClients
 
             Out.WriteLine("Saving Inventary Content....", "Oblivion.Boot", ConsoleColor.DarkCyan);
 
-            foreach (var current2 in Clients.Values.Where(current2 => current2.GetHabbo() != null))
+            foreach (var current2 in Clients.Values.Where(current2 => current2?.GetHabbo() != null))
             {
                 try
                 {
                     current2.GetHabbo().GetInventoryComponent().RunDbUpdate();
                     current2.GetHabbo().RunDbUpdate(Oblivion.GetDatabaseManager().GetQueryReactor());
-                    stringBuilder.Append(current2.GetHabbo().GetQueryString);
+                    stringBuilder.Append(current2.GetHabbo().GetQueryString());
                     flag = true;
                     Console.ForegroundColor = ConsoleColor.DarkMagenta;
                 }

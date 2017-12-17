@@ -68,7 +68,7 @@ namespace Oblivion.HabboHotel.Achievements
         /// <param name="talent">The talent.</param>
         internal void CompleteUserTalent(GameClient session, Talent talent)
         {
-            if (session?.GetHabbo() == null || session.GetHabbo().CurrentTalentLevel < talent.Level || session.GetHabbo().Talents.ContainsKey(talent.Id))
+            if (session?.GetHabbo() == null || session.GetHabbo().CurrentTalentLevel < talent.Level || session.GetHabbo().Data.Talents.ContainsKey(talent.Id))
                 return;
 
             if (!LevelIsCompleted(session, talent.Type, talent.Level))
@@ -77,7 +77,7 @@ namespace Oblivion.HabboHotel.Achievements
             if (!string.IsNullOrEmpty(talent.Prize) && talent.PrizeBaseItem > 0u)
                 Oblivion.GetGame().GetCatalog().DeliverItems(session, Oblivion.GetGame().GetItemManager().GetItem(talent.PrizeBaseItem), 1, string.Empty, 0, 0, string.Empty);
 
-            session.GetHabbo().Talents.Add(talent.Id, new UserTalent(talent.Id, 1));
+            session.GetHabbo().Data.Talents.Add(talent.Id, new UserTalent(talent.Id, 1));
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.RunFastQuery($"REPLACE INTO users_talents VALUES ('{session.GetHabbo().Id}', '{talent.Id}', '1');");

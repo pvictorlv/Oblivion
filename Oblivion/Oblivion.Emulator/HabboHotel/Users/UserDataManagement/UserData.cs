@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Oblivion.HabboHotel.Achievements.Interfaces;
 using Oblivion.HabboHotel.Rooms.Data;
-using Oblivion.HabboHotel.Users.Messenger;
 using Oblivion.HabboHotel.Users.Relationships;
 using Oblivion.HabboHotel.Users.Subscriptions;
 
@@ -33,7 +32,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         /// <summary>
         ///     The friends
         /// </summary>
-        internal Dictionary<uint, MessengerBuddy> Friends;
+//        internal Dictionary<uint, MessengerBuddy> Friends;
 
         /// <summary>
         ///     The ignores
@@ -60,7 +59,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         /// <summary>
         ///     The requests
         /// </summary>
-        internal Dictionary<uint, MessengerRequest> Requests;
+//        internal Dictionary<uint, MessengerRequest> Requests;
 
         /// <summary>
         ///     The rooms
@@ -118,8 +117,6 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         /// <param name="ignores">The ignores.</param>
         /// <param name="tags">The tags.</param>
         /// <param name="sub">The sub.</param>
-        /// <param name="friends">The friends.</param>
-        /// <param name="requests">The requests.</param>
         /// <param name="rooms">The rooms.</param>
         /// <param name="quests">The quests.</param>
         /// <param name="user">The user.</param>
@@ -129,7 +126,6 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         public UserData(uint userId, Dictionary<string, UserAchievement> achievements,
             Dictionary<int, UserTalent> talents, List<uint> favouritedRooms, List<uint> ignores, List<string> tags,
             Subscription sub,
-            Dictionary<uint, MessengerBuddy> friends, Dictionary<uint, MessengerRequest> requests,
             List<RoomData> rooms, Dictionary<uint, int> quests, Habbo user,
             Dictionary<int, Relationship> relations, HashSet<uint> suggestedPolls,
             uint miniMailCount, List<string> blockedCommands, List<int> openedGifts)
@@ -141,8 +137,8 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             Ignores = ignores;
             Tags = tags;
             Subscriptions = sub;
-            Friends = friends;
-            Requests = requests;
+//            Friends = friends;
+//            Requests = requests;
             Rooms = rooms;
             Quests = quests;
             User = user;
@@ -174,10 +170,10 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             Tags.Clear();
             Tags = null;
             Subscriptions = null;
-            Friends.Clear();
-            Friends = null;
-            Requests.Clear();
-            Requests = null;
+//            Friends.Clear();
+//            Friends = null;
+//            Requests.Clear();
+//            Requests = null;
             Talents.Clear();
             Talents = null;
             Achievements.Clear();

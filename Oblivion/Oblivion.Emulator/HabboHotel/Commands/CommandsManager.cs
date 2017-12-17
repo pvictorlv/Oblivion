@@ -111,6 +111,7 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("givebadge", new GiveBadge());
             CommandsDictionary.Add("massbadge", new MassBadge());
             CommandsDictionary.Add("ban", new BanUser());
+            CommandsDictionary.Add("flaguser", new FlagUser());
             CommandsDictionary.Add("unban", new UnBanUser());
             CommandsDictionary.Add("superban", new SuperBan());
             CommandsDictionary.Add("fastwalk", new FastWalk());
