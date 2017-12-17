@@ -774,7 +774,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
                 foreach (var current5 in list2)
                 {
-                    if (current5.Id == item.Id || current5?.GetBaseItem() == null) continue;
+                    if (current5?.GetBaseItem() == null || current5.Id == item.Id) continue;
 
                     if (current5.TotalHeight > height) height = current5.TotalHeight;
 
@@ -1129,7 +1129,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             }
             if (_roomItemUpdateQueue.Count > 0)
             {
-                var addItems = new List<RoomItem>();
+                var addItems = new ConcurrentList<RoomItem>();
                 lock (_roomItemUpdateQueue.SyncRoot)
                 {
                     while (_roomItemUpdateQueue.Count > 0)

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Oblivion.Collections;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -319,7 +320,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
                     var ei = $"{minimum},{maximum}";
                     var wired12 = wiredHandler.GetWired(item);
-                    wired12.Items = new List<RoomItem>();
+                    wired12.Items = new ConcurrentList<RoomItem>();
                     wired12.OtherString = ei;
                     wiredHandler.ReloadWired(wired12);
                     break;
@@ -331,7 +332,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     request.GetInteger();
                     var effect = request.GetInteger();
                     var wired12 = wiredHandler.GetWired(item);
-                    wired12.Items = new List<RoomItem>();
+                    wired12.Items = new ConcurrentList<RoomItem>();
                     wired12.OtherString = effect.ToString();
                     wiredHandler.ReloadWired(wired12);
                     break;
@@ -344,7 +345,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     request.GetInteger();
                     var badge = request.GetString();
                     var wired12 = wiredHandler.GetWired(item);
-                    wired12.Items = new List<RoomItem>();
+                    wired12.Items = new ConcurrentList<RoomItem>();
                     wired12.OtherString = badge;
                     wiredHandler.ReloadWired(wired12);
                     break;
@@ -358,7 +359,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     var endDate = request.GetInteger();
 
                     var wired12 = wiredHandler.GetWired(item);
-                    wired12.Items = new List<RoomItem>();
+                    wired12.Items = new ConcurrentList<RoomItem>();
                     wired12.OtherString = $"{startDate},{endDate}";
 
                     if (startDate == 0)
@@ -532,9 +533,9 @@ namespace Oblivion.HabboHotel.Items.Wired
             session.SendMessage(new ServerMessage(LibraryParser.OutgoingRequest("SaveWiredMessageComposer")));
         }
 
-        private static List<RoomItem> GetFurniItems(ClientMessage request, Room room)
+        private static ConcurrentList<RoomItem> GetFurniItems(ClientMessage request, Room room)
         {
-            var list = new List<RoomItem>();
+            var list = new ConcurrentList<RoomItem>();
             var itemCount = request.GetInteger();
 
             for (var i = 0; i < itemCount; i++)

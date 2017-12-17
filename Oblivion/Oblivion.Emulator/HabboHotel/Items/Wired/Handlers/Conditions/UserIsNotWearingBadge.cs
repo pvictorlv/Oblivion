@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
@@ -16,7 +17,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
         {
             Item = item;
             Room = room;
-            Items = new List<RoomItem>();
+            Items = new ConcurrentList<RoomItem>();
             OtherString = string.Empty;
         }
 
@@ -26,7 +27,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
         public Room Room { get; set; }
 
-        public List<RoomItem> Items { get; set; }
+        public ConcurrentList<RoomItem> Items { get; set; }
 
         public string OtherString { get; set; }
 

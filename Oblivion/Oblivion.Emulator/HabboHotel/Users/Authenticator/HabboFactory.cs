@@ -44,7 +44,7 @@ namespace Oblivion.HabboHotel.Users.Authenticator
                 achievementPoints = (int)mRow["achievement_score"];
                 favId = uint.Parse(mRow["favourite_group"].ToString());
                 dailyCompetitionVotes = (int)mRow["daily_competition_votes"];
-                lastTotem = Convert.ToInt32(dRow["last_totem"]);
+                lastTotem = Convert.ToInt32(mRow["last_totem"]);
 
             }
             catch (Exception)

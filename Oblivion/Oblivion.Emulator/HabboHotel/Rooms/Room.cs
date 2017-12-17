@@ -345,6 +345,24 @@ namespace Oblivion.HabboHotel.Rooms
             _processTimer = new Timer(ProcessRoom, null, 500, 500);
         }
 
+        private bool _processingWireds;
+
+        internal async void StartWiredProcessing()
+        {
+            if (_processingWireds) return;
+
+            _processingWireds = true;
+
+            new Task(async () =>
+            {
+                while (GotWireds() && !Disposed)
+                {
+                    _wiredHandler.OnCycle();
+                    await Task.Delay(500);
+                }
+            }, TaskCreationOptions.LongRunning).Start();
+        }
+
         /// <summary>
         ///     Initializes the user bots.
         /// </summary>
@@ -603,7 +621,7 @@ namespace Oblivion.HabboHotel.Rooms
             foreach (DataRow dataRow in table.Rows)
                 Bans.Add((uint) dataRow[0], Convert.ToDouble(dataRow[1]));
         }
-        
+
         /// <summary>
         ///     Checks the rights.
         /// </summary>
@@ -749,8 +767,8 @@ namespace Oblivion.HabboHotel.Rooms
                         GetRoomMusicController().Update(this);
                     }
                     if (GotWireds())
-                    {
-                        Task.Run(() => { GetWiredHandler().OnCycle(); });
+                    { 
+                        StartWiredProcessing();
                     }
                     WorkRoomKickQueue();
                 }
@@ -1293,7 +1311,6 @@ namespace Oblivion.HabboHotel.Rooms
             InitUserBots();
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-
                 queryReactor.SetQuery($"SELECT word FROM rooms_wordfilter WHERE room_id = {id}");
                 var tableFilter = queryReactor.GetTable();
 
@@ -1407,7 +1424,7 @@ namespace Oblivion.HabboHotel.Rooms
             }
             _roomKick.Clear();
             _roomKick = null;
-            
+
             _game?.Destroy();
             _game = null;
             _gameItemHandler?.Destroy();

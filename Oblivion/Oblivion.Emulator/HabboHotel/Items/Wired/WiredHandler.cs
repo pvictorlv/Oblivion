@@ -229,6 +229,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 }
                 catch (Exception e)
                 {
+
                     Writer.Writer.HandleException(e, "WiredHandler.cs:OnCycle, ROOM ID: " + _room.RoomId);
                     if (item != null)
                         _wiredItems?.Remove(item);

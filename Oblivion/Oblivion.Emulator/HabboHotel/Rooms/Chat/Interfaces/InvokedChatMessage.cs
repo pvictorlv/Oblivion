@@ -1,3 +1,4 @@
+using System;
 using Oblivion.HabboHotel.Rooms.User;
 
 namespace Oblivion.HabboHotel.Rooms.Chat.Interfaces
@@ -5,7 +6,7 @@ namespace Oblivion.HabboHotel.Rooms.Chat.Interfaces
     /// <summary>
     ///     Struct InvokedChatMessage
     /// </summary>
-    internal struct InvokedChatMessage
+    internal struct InvokedChatMessage : IDisposable
     {
         /// <summary>
         ///     The user
@@ -52,7 +53,7 @@ namespace Oblivion.HabboHotel.Rooms.Chat.Interfaces
         /// <summary>
         ///     Disposes this instance.
         /// </summary>
-        internal void Dispose()
+        public void Dispose()
         {
             User = null;
             Message = null;

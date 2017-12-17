@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
@@ -12,7 +12,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         public BotMove(RoomItem item, Room room)
         {
             Item = item;
-            Items = new List<RoomItem>();
+            Items = new ConcurrentList<RoomItem>();
             Room = room;
             OtherString = string.Empty;
             OtherExtraString = string.Empty;
@@ -25,7 +25,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public Room Room { get; set; }
 
-        public List<RoomItem> Items { get; set; }
+        public ConcurrentList<RoomItem> Items { get; set; }
 
         public int Delay
         {

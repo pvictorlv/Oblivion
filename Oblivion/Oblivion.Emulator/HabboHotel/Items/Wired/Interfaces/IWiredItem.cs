@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Rooms;
@@ -13,7 +14,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Interfaces
 
         Room Room { get; set; }
 
-        List<RoomItem> Items { get; set; }
+        ConcurrentList<RoomItem> Items { get; set; }
 
         string OtherString { get; set; }
 

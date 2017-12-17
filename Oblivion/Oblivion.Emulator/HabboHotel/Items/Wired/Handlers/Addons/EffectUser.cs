@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
@@ -13,7 +14,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
         {
             Item = item;
             Room = room;
-            Items = new List<RoomItem>();
+            Items = new ConcurrentList<RoomItem>();
         }
 
         public Interaction Type => Interaction.ActionEffectUser;
@@ -22,7 +23,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
 
         public Room Room { get; set; }
 
-        public List<RoomItem> Items { get; set; }
+        public ConcurrentList<RoomItem> Items { get; set; }
 
         public int Delay { get; set; }
 

@@ -1108,22 +1108,32 @@ namespace Oblivion.Messages.Handlers
             var array2 = array;
 
             /* TODO CHECK */
+
             foreach (var text in array2)
             {
-                Response.AppendInteger((text.Length >= 6)
-                    ? uint.Parse(text.Substring(0, 3))
-                    : uint.Parse(text.Substring(0, 2)));
-                Response.AppendInteger((text.Length >= 6)
-                    ? uint.Parse(text.Substring(3, 2))
-                    : uint.Parse(text.Substring(2, 2)));
+                try
+                {
+                    Response.AppendInteger(text.Length >= 6
+                        ? uint.Parse(text.Substring(0, 3))
+                        : uint.Parse(text.Substring(0, 2)));
 
-                if (text.Length < 5)
-                    Response.AppendInteger(0);
-                else if (text.Length >= 6)
-                    Response.AppendInteger(uint.Parse(text.Substring(5, 1)));
-                else
-                    Response.AppendInteger(uint.Parse(text.Substring(4, 1)));
+                    Response.AppendInteger((text.Length >= 6)
+                        ? uint.Parse(text.Substring(3, 2))
+                        : uint.Parse(text.Substring(2, 2)));
+
+                    if (text.Length < 5)
+                        Response.AppendInteger(0);
+                    else if (text.Length >= 6)
+                        Response.AppendInteger(uint.Parse(text.Substring(5, 1)));
+                    else
+                        Response.AppendInteger(uint.Parse(text.Substring(4, 1)));
+                }
+                catch
+                {
+                    //ignored
+                }
             }
+
 
             while (num2 != num)
             {
@@ -1449,6 +1459,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void UpdateForumSettings()
         {
+            if (Session?.GetHabbo() == null) return;
+
             uint guild = Request.GetUInteger();
             int whoCanRead = Request.GetInteger();
             int whoCanPost = Request.GetInteger();

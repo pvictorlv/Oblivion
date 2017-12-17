@@ -150,7 +150,7 @@ namespace Oblivion.HabboHotel.Items
                     var allowTrade = Convert.ToInt32(dataRow["allow_trade"]) == 1;
                     var allowMarketplaceSell = Convert.ToInt32(dataRow["allow_marketplace_sell"]) == 1;
                     var allowGift = Convert.ToInt32(dataRow["allow_gift"]) == 1;
-                    var allowInventoryStack = Convert.ToInt32(dataRow["allow_inventory_stack"]) == 1;
+                    var allowInventoryStack = dataRow["allow_inventory_stack"].ToString() == "1";
                     var typeFromString = InteractionTypes.GetTypeFromString((string) dataRow["interaction_type"]);
 
                     var sprite = Convert.ToInt32(dataRow["sprite_id"]);
