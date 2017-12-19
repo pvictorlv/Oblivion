@@ -160,6 +160,7 @@ namespace Oblivion.HabboHotel.Items.Interactions
                             case Interaction.TriggerRepeater:
                             case Interaction.TriggerLongRepeater:
                             case Interaction.TriggerOnUserSay:
+                            case Interaction.TriggerOnUserSayCommand:
                             case Interaction.TriggerScoreAchieved:
                             case Interaction.TriggerStateChanged:
                             case Interaction.TriggerWalkOnFurni:
@@ -564,6 +565,9 @@ namespace Oblivion.HabboHotel.Items.Interactions
 
                 case "triggeronusersay":
                     return Interaction.TriggerOnUserSay;
+
+                case "triggeronusersaycommand":
+                    return Interaction.TriggerOnUserSayCommand;
 
                 case "triggerscoreachieved":
                 case "wf_trg_score_achieved":

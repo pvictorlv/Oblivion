@@ -192,8 +192,9 @@ namespace Oblivion.HabboHotel.Achievements
                 ProgressUserAchievement(session, "ACH_BasicClub", 1);
             }
         }
+
         public bool ProgressUserAchievement(GameClient Session, string AchievementGroup, int ProgressAmount,
-       bool FromZero = false)
+            bool FromZero = false, bool talentComplete = false)
         {
             if (Session?.GetHabbo() == null) return false;
 
@@ -286,7 +287,7 @@ namespace Oblivion.HabboHotel.Achievements
                 //                Session.SendMessage(new AchievementProgressedComposer(AchievementData, NewTarget, NewLevelData,
                 //                    TotalLevels, Session.GetHabbo().GetAchievementData(AchievementGroup)));
 
-                if (Oblivion.GetGame().GetTalentManager().TryGetTalent(AchievementGroup, out var talent))
+                if (!talentComplete && Oblivion.GetGame().GetTalentManager().TryGetTalent(AchievementGroup, out var talent))
                     Oblivion.GetGame().GetTalentManager().CompleteUserTalent(Session, talent);
                 return true;
             }

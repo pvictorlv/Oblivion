@@ -156,7 +156,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             var winners = _room.GetGameManager().GetWinningTeam();
             _room.GetGameManager().UnlockGates();
             /* TODO CHECK */
-            foreach (var tile in _banzaiTiles)
+            foreach (var tile in _banzaiTiles.ToList())
                 if (tile.Team == winners)
                 {
                     tile.InteractionCount = 0;

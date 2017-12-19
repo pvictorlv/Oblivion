@@ -176,72 +176,75 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             try
             {
                 if (dbClient == null) return;
-                if (_updatedItems.Count <= 0 && _removedItems.Count <= 0 &&
-                    _room.GetRoomUserManager().PetCount <= 0)
-                    return;
+              
+            
 
-
-                var list = _removedItems.ToList();
-                foreach (var itemId in list)
+                if (_removedItems.Count > 0)
                 {
-                    dbClient.RunFastQuery(
-                        "UPDATE items_rooms SET room_id='0', x='0', y='0', z='0', rot='0' WHERE id = " +
-                        itemId);
+                    var list = _removedItems.ToList();
+                    foreach (var itemId in list)
+                    {
+                        dbClient.RunFastQuery(
+                            "UPDATE items_rooms SET room_id='0', x='0', y='0', z='0', rot='0' WHERE id = " +
+                            itemId);
+                    }
+                    list.Clear();
                 }
-                list.Clear();
 
-
-                foreach (var it in _updatedItems.ToList())
+                if (_updatedItems.Count > 0)
                 {
-                    var roomItem = GetItem(it);
-                    if (roomItem == null) continue;
-                    if (roomItem.GetBaseItem() != null && roomItem.GetBaseItem().IsGroupItem)
+                    foreach (var it in _updatedItems.ToList())
                     {
-                        try
+                        var roomItem = GetItem(it);
+                        if (roomItem == null) continue;
+                        if (roomItem.GetBaseItem() != null && roomItem.GetBaseItem().IsGroupItem)
                         {
-                            var gD = roomItem.GroupData.Split(';');
-                            roomItem.ExtraData = roomItem.ExtraData + ";" + gD[1] + ";" + gD[2] + ";" + gD[3];
+                            try
+                            {
+                                var gD = roomItem.GroupData.Split(';');
+                                roomItem.ExtraData = roomItem.ExtraData + ";" + gD[1] + ";" + gD[2] + ";" + gD[3];
+                            }
+                            catch
+                            {
+                                roomItem.ExtraData = string.Empty;
+                            }
                         }
-                        catch
+
+                        if (roomItem.RoomId == 0) continue;
+
+                        if (roomItem.GetBaseItem().Name.Contains("wallpaper_single") ||
+                            roomItem.GetBaseItem().Name.Contains("floor_single") ||
+                            roomItem.GetBaseItem().Name.Contains("landscape_single"))
                         {
-                            roomItem.ExtraData = string.Empty;
+                            dbClient.RunFastQuery("DELETE FROM items_rooms WHERE id = " + roomItem.Id + " LIMIT 1");
+                            continue;
                         }
-                    }
 
-                    if (roomItem.RoomId == 0) continue;
+                        var query = "UPDATE items_rooms SET room_id = " + roomItem.RoomId;
+                        if (!string.IsNullOrEmpty(roomItem.ExtraData))
+                        {
+                            query += ", extra_data = @extraData";
+                            dbClient.AddParameter("extraData", roomItem.ExtraData);
+                        }
 
-                    if (roomItem.GetBaseItem().Name.Contains("wallpaper_single") ||
-                        roomItem.GetBaseItem().Name.Contains("floor_single") ||
-                        roomItem.GetBaseItem().Name.Contains("landscape_single"))
-                    {
-                        dbClient.RunFastQuery("DELETE FROM items_rooms WHERE id = " + roomItem.Id + " LIMIT 1");
-                        continue;
-                    }
+                        if (roomItem.IsFloorItem)
+                        {
+                            query +=
+                                $", x={roomItem.X}, y={roomItem.Y}, z='{roomItem.Z.ToString(CultureInfo.InvariantCulture).Replace(',', '.')}', rot={roomItem.Rot}";
+                        }
+                        else
+                        {
+                            query += ", wall_pos = @wallPos";
+                            dbClient.AddParameter("wallPos", roomItem.WallCoord);
+                        }
 
-                    var query = "UPDATE items_rooms SET room_id = " + roomItem.RoomId;
-                    if (!string.IsNullOrEmpty(roomItem.ExtraData))
-                    {
-                        query += ", extra_data = @extraData";
-                        dbClient.AddParameter("extraData", roomItem.ExtraData);
+                        query += " WHERE id = " + roomItem.Id;
+                        dbClient.RunQuery(query);
                     }
-
-                    if (roomItem.IsFloorItem)
-                    {
-                        query +=
-                            $", x={roomItem.X}, y={roomItem.Y}, z='{roomItem.Z.ToString(CultureInfo.InvariantCulture).Replace(',', '.')}', rot={roomItem.Rot}";
-                    }
-                    else
-                    {
-                        query += ", wall_pos = @wallPos";
-                        dbClient.AddParameter("wallPos", roomItem.WallCoord);
-                    }
-
-                    query += " WHERE id = " + roomItem.Id;
-                    dbClient.RunQuery(query);
                 }
                 _room.GetRoomUserManager().AppendPetsUpdateString(dbClient);
 
-                session?.GetHabbo()?.GetInventoryComponent().RunDbUpdate();
+                session?.GetHabbo()?.GetInventoryComponent().RunDbUpdate(true);
 
                 _updatedItems.Clear();
                 _removedItems.Clear();
@@ -1200,8 +1203,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     var userForSquare = _room.GetRoomUserManager().GetUserForSquare(current.X, current.Y);
                     if ((roomItemForSquare == null || !roomItemForSquare.Any()) && userForSquare == null)
                         continue;
-                    var coordinatedItems = _room.GetGameMap().GetCoordinatedItems(squareInFront)
-                        .Where(current2 => current2.IsRoller).ToList();
+                    var coordinatedItems = _room.GetGameMap().GetCoordinatedItems(squareInFront).Where(current2 => current2.IsRoller).ToList();
                     var flag = false;
                     var num2 = 0.0;
                     var flag2 = true;

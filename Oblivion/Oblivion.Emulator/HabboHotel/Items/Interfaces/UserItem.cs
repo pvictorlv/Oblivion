@@ -51,6 +51,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
 
         internal uint VirtualId;
 
+        internal uint RoomId;
         /// <summary>
         ///     Initializes a new instance of the <see cref="UserItem" /> class.
         /// </summary>

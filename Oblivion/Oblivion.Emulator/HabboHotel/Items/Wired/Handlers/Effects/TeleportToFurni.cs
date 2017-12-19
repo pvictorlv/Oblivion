@@ -133,7 +133,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         private void Teleport(RoomUser user)
         {
-            if (Items?.Count < 0)
+            if (Items == null || Items.Count < 0)
                 return;
 
             if (user?.GetClient()?.GetHabbo() == null)
@@ -141,21 +141,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             var rnd = new Random();
 
-            Items = new ConcurrentList<RoomItem>();
-            var query = (from x in Items orderby rnd.Next() select x);
-            foreach (var q in query)
-            {
-                Items.Add(q);
-            }
 
-            RoomItem roomItem = null;
+            var roomItem = Items.OrderBy(x => rnd.Next()).FirstOrDefault(current => current != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(current));
 
             /* TODO CHECK */
-            foreach (var current in Items)
-            {
-                if (current != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(current))
-                    roomItem = current;
-            }
 
             if (roomItem == null)
             {

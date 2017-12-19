@@ -137,8 +137,8 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 current?.GetHabbo()?.GetMessenger()?.UpdateFriend(_userId, null, true);
             }
 
-            Friends.Clear();
-            Requests.Clear();
+            Friends?.Clear();
+            Requests?.Clear();
             Friends = null;
             Requests = null;
         }

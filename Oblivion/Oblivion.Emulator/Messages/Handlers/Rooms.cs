@@ -1557,7 +1557,7 @@ namespace Oblivion.Messages.Handlers
                 queryReactor.RunQuery();
                 queryReactor.RunFastQuery($"DELETE FROM items_rooms WHERE id={item.Id} LIMIT 1");
             }
-            Session.GetHabbo().GetInventoryComponent().RemoveItem(item.Id, false);
+            Session.GetHabbo().GetInventoryComponent().RemoveItem(item.Id, false, 0);
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("RoomSpacesMessageComposer"));
             serverMessage.AppendString(type);
             serverMessage.AppendString(item.ExtraData);

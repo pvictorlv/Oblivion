@@ -60,13 +60,14 @@ namespace Oblivion.HabboHotel.Items.Wired
                 case Interaction.TriggerRepeater:
                 {
                     request.GetInteger();
-                    var delay = request.GetInteger() / 2 * 500;
+                    var delay = (request.GetInteger()/2) * 1000;
                     var wired2 = wiredHandler.GetWired(item);
                     wired2.Delay = delay;
                     wiredHandler.ReloadWired(wired2);
                     break;
                 }
                 case Interaction.TriggerOnUserSay:
+                case Interaction.TriggerOnUserSayCommand:
                 {
                     request.GetInteger();
                     var num = request.GetInteger();

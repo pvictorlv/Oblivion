@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Drawing;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -13,7 +12,7 @@ using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
-    internal class MoveRotateFurni : IWiredItem
+    internal class MoveRotateFurni : IWiredItem, IWiredCycler
     {
         private readonly ConcurrentQueue<RoomItem> _toRemove = new ConcurrentQueue<RoomItem>();
         private int _delay;
@@ -38,17 +37,17 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         {
             if (Room == null)
                 return false;
-
-            var Now = Oblivion.GetUnixTimeStamp();
-
-            if (Now < _next)
+            if (!Requested)
                 return false;
+            var now = Oblivion.Now();
+
+            if (_next > now)
+                return false;
+
             if (Items != null && Items.Count > 0)
             {
                 lock (Items)
                 {
-
-
                     foreach (var Item in Items)
                     {
                         if (Room.GetWiredHandler().OtherBoxHasItem(this, Item) ||
@@ -80,28 +79,15 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
                         if (!Room.GetGameMap().ItemCanMove(Item, Point))
                             continue;
-                        /* var canRool = true;
-                            foreach (var dCoord in Item.AffectedTiles.Values)
-                            {
-                                var coord = new Point(dCoord.X, dCoord.Y);
-                                if (!Room.GetGameMap().CanRollItemHere(coord.X, coord.Y))
-                                {
-                                    canRool = false;
-                                    break;
-                                }
-                            }*/
-
                         if (Room.GetGameMap().SquareIsOpen(Point.X, Point.Y, false) &&
                             !Room.GetGameMap().SquareHasUsers(Point.X, Point.Y))
                         {
                             var CanBePlaced = true;
-//                        var rot = false;
                             if (newRot != Item.Rot)
                             {
                                 Item.Rot = newRot;
                                 Item.UpdateState(false, true);
                                 Item.SetState(Item.X, Item.Y, newZ);
-//                            rot = true;
                                 Room.GetRoomItemHandler()
                                     .SetFloorItem(Item, Item.X, Item.Y, newZ, Item.Rot, true);
                             }
@@ -113,7 +99,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                                 {
                                     if (!IItem.GetBaseItem().Walkable)
                                     {
-//                                    _next = 0;
                                         CanBePlaced = false;
                                         break;
                                     }
@@ -140,21 +125,21 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                                 serverMessage.AppendString(newZ.ToString(Oblivion.CultureInfo));
                                 serverMessage.AppendInteger(0);
                                 Room.SendMessage(serverMessage);
-//                            
 
                                 Room.GetRoomItemHandler().SetFloorItem(Item, Point.X, Point.Y, newZ);
                             }
                             Room.GetWiredHandler().OnUserFurniCollision(Room, Item);
                         }
                     }
-
-                    _next = Oblivion.GetUnixTimeStamp();
-
                     while (_toRemove.TryDequeue(out var rI))
                         if (Items.Contains(rI))
                             Items.Remove(rI);
                 }
             }
+
+            _next = Oblivion.Now() + (Delay / 2);
+            Requested = false;
+
             return true;
         }
 
@@ -210,7 +195,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             set
             {
                 _delay = value;
-                TickCount = value / 1000 + 1;
+                TickCount = value / 1000;
             }
         }
 
@@ -218,22 +203,20 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool Execute(params object[] Params)
         {
+
+            if (Room == null)
+                return false;
+
+
             if (Items?.Count == 0)
                 return false;
 
 
             if (!Requested)
             {
-                TickCount = Delay;
                 Requested = true;
             }
 
-            var Now = Oblivion.GetUnixTimeStamp();
-
-            if (Now < _next)
-                return false;
-
-            OnCycle();
             return true;
         }
 

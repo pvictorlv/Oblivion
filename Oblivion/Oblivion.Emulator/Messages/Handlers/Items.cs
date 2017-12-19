@@ -271,7 +271,7 @@ namespace Oblivion.Messages.Handlers
                 var item2 = new RoomItem(item.Id, room.RoomId, item.BaseItemId, item.ExtraData, wallCoord, room,
                     Session.GetHabbo().Id, item.GroupId, false);
                 if (room.GetRoomItemHandler().SetWallItem(Session, item2))
-                    Session.GetHabbo().GetInventoryComponent().RemoveItem(id, true);
+                    Session.GetHabbo().GetInventoryComponent().RemoveItem(id, true, room.RoomId);
             }
             catch
             {
@@ -425,7 +425,7 @@ namespace Oblivion.Messages.Handlers
                 var roomItemWall = new RoomItem(item.Id, room.RoomId, item.BaseItemId, item.ExtraData,
                     coordinate, room, Session.GetHabbo().Id, item.GroupId, false);
                 if (room.GetRoomItemHandler().SetWallItem(Session, roomItemWall))
-                    Session.GetHabbo().GetInventoryComponent().RemoveItem(realId, true);
+                    Session.GetHabbo().GetInventoryComponent().RemoveItem(realId, true, room.RoomId);
                 Oblivion.GetGame().GetAchievementManager()
                     .ProgressUserAchievement(Session, "ACH_RoomDecoFurniCount", 1);
                 return;
@@ -438,7 +438,7 @@ namespace Oblivion.Messages.Handlers
 
                 if (room.GetRoomItemHandler().SetFloorItem(Session, roomItem, x, y, rot, true, false, true))
                 {
-                    Session.GetHabbo().GetInventoryComponent().RemoveItem(realId, true);
+                    Session.GetHabbo().GetInventoryComponent().RemoveItem(realId, true, room.RoomId);
                     Oblivion.GetGame().GetAchievementManager()
                         .ProgressUserAchievement(Session, "ACH_RoomDecoFurniCount", 1);
                     if (roomItem.IsWired)
@@ -1234,7 +1234,7 @@ namespace Oblivion.Messages.Handlers
                     .GetItem(Oblivion.GetGame().GetItemManager().GetRealId(Request.GetUInteger()));
                 if (item == null || !item.BaseItem.AllowRecycle)
                     return;
-                Session.GetHabbo().GetInventoryComponent().RemoveItem(item.Id, false);
+                Session.GetHabbo().GetInventoryComponent().RemoveItem(item.Id, false, 0);
                 using (
                     var queryReactor =
                         Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -1307,7 +1307,7 @@ namespace Oblivion.Messages.Handlers
             }
 
             room.GetRoomItemHandler().RemoveFurniture(null, item.Id, false);
-            Session.GetHabbo().GetInventoryComponent().RemoveItem(item.Id, false);
+            Session.GetHabbo().GetInventoryComponent().RemoveItem(item.Id, false, 0);
             Response.Init(LibraryParser.OutgoingRequest("UpdateInventoryMessageComposer"));
             SendResponse();
         }

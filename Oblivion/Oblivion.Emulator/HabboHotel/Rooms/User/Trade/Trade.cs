@@ -310,7 +310,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             userOne.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
             /* TODO CHECK */ foreach (var current3 in offeredItems)
             {
-                userOne.GetClient().GetHabbo().GetInventoryComponent().RemoveItem(current3.Id, false);
+                userOne.GetClient().GetHabbo().GetInventoryComponent().RemoveItem(current3.Id, false, 0);
                 userTwo
                     .GetClient()
                     .GetHabbo()
@@ -322,7 +322,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
 
            foreach (var current4 in offeredItems2)
             {
-                userTwo.GetClient().GetHabbo().GetInventoryComponent().RemoveItem(current4.Id, false);
+                userTwo.GetClient().GetHabbo().GetInventoryComponent().RemoveItem(current4.Id, false, 0);
                 userOne
                     .GetClient()
                     .GetHabbo()

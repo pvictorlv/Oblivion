@@ -1,5 +1,4 @@
-﻿using System;
-using Oblivion.Collections;
+﻿using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
@@ -7,7 +6,7 @@ using Oblivion.HabboHotel.Rooms;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
-    public class ResetTimers : IWiredItem
+    public class ResetTimers : IWiredItem, IWiredCycler
     {
         public ResetTimers(RoomItem item, Room room)
         {
@@ -30,7 +29,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             set { }
         }
 
-        public int Delay { get; set; }
 
         public string OtherString { get; set; }
 
@@ -40,9 +38,47 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
+        private bool _requested;
+
+        public double TickCount { get; set; }
+
+        private int _delay;
+
+
+        public int Delay
+        {
+            get => _delay;
+            set
+            {
+                _delay = value;
+                TickCount = value / 2;
+            }
+        }
+
+        public bool OnCycle()
+        {
+            if (!_requested) return false;
+
+            var num = Oblivion.Now();
+
+            if (_mNext > num)
+                return false;
+
+
+            _mNext = Oblivion.Now() + Delay;
+
+            _requested = false;
+            return true;
+        }
+        private long _mNext;
+
         public bool Execute(params object[] stuff)
         {
-            Room.LastTimerReset = DateTime.Now;
+            if (_mNext == 0L || _mNext <= Oblivion.Now())
+                _mNext = Oblivion.Now() + Delay;
+
+            _requested = true;
+
             return true;
         }
     }

@@ -750,6 +750,7 @@
         ///     The trigger on user say
         /// </summary>
         TriggerOnUserSay,
+        TriggerOnUserSayCommand,
 
         /// <summary>
         ///     The trigger score achieved

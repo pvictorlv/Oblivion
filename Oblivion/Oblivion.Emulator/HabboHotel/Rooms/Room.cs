@@ -347,7 +347,7 @@ namespace Oblivion.HabboHotel.Rooms
 
         private bool _processingWireds;
 
-        internal async void StartWiredProcessing()
+        internal void StartWiredProcessing()
         {
             if (_processingWireds) return;
 

@@ -591,7 +591,7 @@ namespace Oblivion.Messages.Handlers
                                   Session.GetHabbo().Id + "' LIMIT 1");
             }
 
-            Session.GetHabbo().GetInventoryComponent().RemoveItem(ItemId, false);
+            Session.GetHabbo().GetInventoryComponent().RemoveItem(ItemId, false, 0);
 
             msg.AppendInteger(1);
             Session.SendMessage(msg);

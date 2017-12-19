@@ -106,7 +106,7 @@ namespace Oblivion.HabboHotel.Achievements
             session.SendMessage(serverMessage);
 
             if (talent.Type == "citizenship" && talent.Level == 3)
-                Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(session, "ACH_Citizenship", 1);
+                Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(session, "ACH_Citizenship", 1, false, true);
             else if (talent.Type == "citizenship" && talent.Level == 4)
             {
                 session.GetHabbo().GetSubscriptionManager().AddSubscription(7);

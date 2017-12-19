@@ -22,7 +22,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             OtherExtraString2 = string.Empty;
         }
 
-        public Interaction Type => Interaction.TriggerRoomEnter;
+        public Interaction Type => Interaction.TriggerOnUserSayCommand;
 
         public RoomItem Item { get; set; }
 

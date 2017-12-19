@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.Catalogs;
@@ -48,7 +47,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <summary>
         ///     The _m removed items
         /// </summary>
-        private HashSet<long> _mRemovedItems;
+        private HashSet<UserItem> _mRemovedItems;
 
 
         /// <summary>
@@ -78,7 +77,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             _inventoryPets = new HybridDictionary();
             _inventoryBots = new HybridDictionary();
             _mAddedItems = new HashSet<long>();
-            _mRemovedItems = new HashSet<long>();
+            _mRemovedItems = new HashSet<UserItem>();
 
 
             LoadInventory();
@@ -162,7 +161,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 currentRoom.GetRoomItemHandler().RemoveItem(item.Id);
 
 
-                RemoveItem(item.Id, false);
+                RemoveItem(item.Id, false, 0);
 
                 if (num <= 0)
                     continue;
@@ -448,7 +447,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
 
             if (UserHoldsItem(id))
-                RemoveItem(id, false);
+                RemoveItem(id, false, 0);
 
             if (userItem.BaseItem == null) return null;
 
@@ -461,8 +460,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             _items.Add(userItem.Id, userItem);
 
-            if (_mRemovedItems.Contains(id))
-                _mRemovedItems.Remove(id);
+            if (_mRemovedItems.Contains(userItem))
+                _mRemovedItems.Remove(userItem);
 
             if (!_mAddedItems.Contains(id))
                 _mAddedItems.Add(id);
@@ -476,31 +475,32 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="placedInroom">if set to <c>true</c> [placed inroom].</param>
-        internal void RemoveItem(long id, bool placedInroom)
+        internal void RemoveItem(long id, bool placedInroom, uint roomId)
         {
-            if (GetClient()?.GetHabbo()?.GetInventoryComponent() == null)
-            {
-                return;
-            }
             GetClient()
                 .GetMessageHandler()
                 .GetResponse()
                 .Init(LibraryParser.OutgoingRequest("RemoveInventoryObjectMessageComposer"));
-            var item = GetClient().GetHabbo().GetInventoryComponent().GetItem(id);
+
+            var item = GetItem(id);
             if (item == null) return;
+
             GetClient().GetMessageHandler().GetResponse().AppendInteger(item.VirtualId);
-            //this.GetClient().GetMessageHandler().GetResponse().AppendInt32(Convert.ToInt32(this.GetClient().GetHabbo().Id));
 
             GetClient().GetMessageHandler().SendResponse();
             if (_mAddedItems.Contains(id))
                 _mAddedItems.Remove(id);
 
-            if (_mRemovedItems.Contains(id))
+            if (placedInroom)
+            {
+                item.RoomId = roomId;
+            }
+            if (_mRemovedItems.Contains(item))
                 return;
-
+            
             SongDisks?.Remove(id);
             _items?.Remove(item.Id);
-            _mRemovedItems?.Add(id);
+            _mRemovedItems?.Add(item);
         }
 
         /// <summary>
@@ -579,7 +579,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             }
             var id = item.Id;
             if (UserHoldsItem(id))
-                RemoveItem(id, false);
+                RemoveItem(id, false, 0);
 
             if (userItem.BaseItem.InteractionType == Interaction.MusicDisc)
             {
@@ -590,8 +590,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             _items.Add(userItem.Id, userItem);
 
-            if (_mRemovedItems.Contains(id))
-                _mRemovedItems.Remove(id);
+            if (_mRemovedItems.Contains(userItem))
+                _mRemovedItems.Remove(userItem);
 
             if (!_mAddedItems.Contains(id))
                 _mAddedItems.Add(id);
@@ -635,7 +635,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             }
             var id = userItem.Id;
             if (UserHoldsItem(id))
-                RemoveItem(id, false);
+                RemoveItem(id, false, 0);
 
             if (userItem.BaseItem.InteractionType == Interaction.MusicDisc)
             {
@@ -646,8 +646,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             _items.Add(userItem.Id, userItem);
 
-            if (_mRemovedItems.Contains(id))
-                _mRemovedItems.Remove(id);
+            if (_mRemovedItems.Contains(userItem))
+                _mRemovedItems.Remove(userItem);
 
             if (!_mAddedItems.Contains(id))
                 _mAddedItems.Add(id);
@@ -716,11 +716,10 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <summary>
         ///     Runs the database update.
         /// </summary>
-        internal void RunDbUpdate()
+        internal void RunDbUpdate(bool fromRoom = false)
         {
             try
             {
-              
                 if (_mAddedItems?.Count > 0)
                 {
                     var added = _mAddedItems.ToList();
@@ -745,12 +744,18 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     {
                         using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                         {
-                            foreach (var itemId in removed)
+                            foreach (var item in removed)
                             {
-                                GetClient()?.GetHabbo()?.CurrentRoom?.GetRoomItemHandler().SaveFurniture(queryReactor);
+                                if (item.RoomId <= 0) continue;
 
-                                if (SongDisks.ContainsKey(itemId))
-                                    SongDisks.Remove(itemId);
+                                if (!fromRoom)
+                                {
+                                    var room = Oblivion.GetGame().GetRoomManager().GetRoom(item.RoomId);
+                                    room?.GetRoomItemHandler().SaveFurniture(queryReactor);
+                                }
+
+                                if (SongDisks.ContainsKey(item.Id))
+                                    SongDisks.Remove(item.Id);
                             }
                         }
                     }
@@ -819,7 +824,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
         internal void Dispose()
         {
-           
             _mClient = null;
             _inventoryBots?.Clear();
             _inventoryBots = null;

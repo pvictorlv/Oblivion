@@ -200,7 +200,6 @@ namespace Oblivion.HabboHotel.Items.Wired
                 return;
 
             var wireds = _wiredItems.ToList();
-            /* TODO CHECK */
             foreach (var item in wireds)
             {
                 try
@@ -219,7 +218,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
                     var cycle = item as IWiredCycler;
                     if (cycle == null) continue;
-
+                    //todo: queue
                     if (cycle.TickCount <= 0)
                     {
                         cycle.OnCycle();
@@ -241,8 +240,10 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         public void AddWired(IWiredItem item)
         {
+            if (item == null) return;
+
             if (_wiredItems.Contains(item))
-                _wiredItems.Remove(item);
+                return;
             _wiredItems.Add(item);
             var coord = new Point(item.Item.X, item.Item.Y);
             var point = Formatter.PointToInt(coord);
@@ -403,7 +404,8 @@ namespace Oblivion.HabboHotel.Items.Wired
 
                 case Interaction.TriggerOnUserSay:
                     return new SaysKeyword(item, _room);
-
+                case Interaction.TriggerOnUserSayCommand:
+                    return new UserSaysCommand(item, _room);
                 case Interaction.TriggerScoreAchieved:
                     return new ScoreAchieved(item, _room);
 

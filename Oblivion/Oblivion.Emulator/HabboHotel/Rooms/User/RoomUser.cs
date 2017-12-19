@@ -819,7 +819,12 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (!IsPet && !IsBot)
             {
                 if (msg.StartsWith(":") && CommandsManager.TryExecute(msg.Substring(1), session))
+                {
+                    if (GetRoom().GotWireds())
+                        GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSayCommand, this, msg);
+
                     return;
+                }
 
                 var habbo = GetClient().GetHabbo();
 

@@ -144,7 +144,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage5.AppendInteger(item.VirtualId);
                     serverMessage5.AppendString(extraInfo);
                     serverMessage5.AppendInteger(1);
-                    serverMessage5.AppendInteger(delay * 2);
+                    serverMessage5.AppendInteger(delay);
                     serverMessage5.AppendInteger(0);
                     serverMessage5.AppendInteger(6);
                     serverMessage5.AppendInteger(0);
@@ -188,6 +188,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     return;
                 }*/
                 case Interaction.TriggerOnUserSay:
+                case Interaction.TriggerOnUserSayCommand:
                 {
                     var serverMessage6 =
                         new ServerMessage(LibraryParser.OutgoingRequest("WiredTriggerMessageComposer"));

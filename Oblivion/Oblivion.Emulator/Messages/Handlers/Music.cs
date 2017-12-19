@@ -90,7 +90,7 @@ namespace Oblivion.Messages.Handlers
 
             songItem.SaveToDatabase(currentRoom.RoomId);
 
-            Session.GetHabbo().GetInventoryComponent().RemoveItem(num, true);
+            Session.GetHabbo().GetInventoryComponent().RemoveItem(num, true, currentRoom.RoomId);
 
             using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.RunFastQuery($"UPDATE items_rooms SET user_id='0' WHERE id={num} LIMIT 1");

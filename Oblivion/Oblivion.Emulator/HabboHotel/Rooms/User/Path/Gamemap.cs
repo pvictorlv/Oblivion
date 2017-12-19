@@ -1186,12 +1186,11 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         {
             var point = new Point(x, y);
             var list = new List<RoomItem>();
-            if (!CoordinatedItems.ContainsKey(point))
+            if (!CoordinatedItems.TryGetValue(point, out var list2))
                 return list;
 
-            var list2 = CoordinatedItems[point].ToList();
             list.AddRange(list2.Where(current => current.Coordinate.X == x && current.Coordinate.Y == y));
-            list2.Clear();
+
             return list;
         }
 
