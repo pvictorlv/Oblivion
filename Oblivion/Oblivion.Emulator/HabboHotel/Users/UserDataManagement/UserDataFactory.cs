@@ -53,7 +53,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 
-                queryReactor.SetQuery("SELECT id,username,look,rank,builders_expire,navilogs,disabled_alert,DutyLevel,OnDuty,builders_items_max,builders_items_used,motto,gender,last_online,credits,activity_points,is_muted,home_room,hide_online,hide_inroom,block_newfriends,vip,account_created,talent_status,diamonds,last_name_change,trade_lock,trade_lock_expire FROM users WHERE auth_ticket = @ticket");
+                queryReactor.SetQuery("SELECT id,username,look,rank,builders_expire,navilogs,disabled_alert,DutyLevel,OnDuty,builders_items_max,builders_items_used,motto,gender,last_online,credits,activity_points,is_muted,home_room,hide_online,hide_inroom,block_newfriends,vip,account_created,talent_status,diamonds,last_name_change,trade_lock,trade_lock_expire,vip_points FROM users WHERE auth_ticket = @ticket");
                 queryReactor.AddParameter("ticket", sessionTicket);
                 dataRow = queryReactor.GetRow();
                 if (dataRow == null)
@@ -243,7 +243,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery($"SELECT id,username,block_newfriends,navilogs,disabled_alert,DutyLevel,OnDuty,builders_items_max,builders_items_used,builders_expire,look,rank,motto,gender,last_online,credits,activity_points,is_muted,home_room,hide_online,hide_inroom,vip,account_created,talent_status,diamonds,last_name_change,trade_lock,trade_lock_expire FROM users WHERE id = '{userId}'");
+                queryReactor.SetQuery($"SELECT id,username,block_newfriends,navilogs,disabled_alert,DutyLevel,OnDuty,builders_items_max,builders_items_used,builders_expire,look,rank,motto,gender,last_online,credits,activity_points,is_muted,home_room,hide_online,hide_inroom,vip,account_created,talent_status,diamonds,last_name_change,trade_lock,trade_lock_expire,vip_points FROM users WHERE id = '{userId}'");
 
                 dataRow = queryReactor.GetRow();
 

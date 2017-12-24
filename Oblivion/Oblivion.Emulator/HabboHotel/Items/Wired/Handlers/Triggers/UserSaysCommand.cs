@@ -46,21 +46,20 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public bool Execute(params object[] stuff)
         {
-            var roomUser = (RoomUser)stuff[0];
-            var text = (string)stuff[1];
+            var roomUser = (RoomUser) stuff[0];
+            var text = (string) stuff[1];
 
             if (string.IsNullOrEmpty(OtherString))
                 return false;
-            
 
-            if (!string.Equals(text, OtherString, StringComparison.CurrentCultureIgnoreCase))
+            if (!OtherString.StartsWith(text, StringComparison.CurrentCultureIgnoreCase))
                 return false;
 
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
 
             if (conditions.Count > 0)
-                /* TODO CHECK */ foreach (var current in conditions)
+                foreach (var current in conditions)
                 {
                     if (!current.Execute(roomUser))
                         return false;

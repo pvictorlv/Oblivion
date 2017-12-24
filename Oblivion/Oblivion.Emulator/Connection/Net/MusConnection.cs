@@ -59,37 +59,40 @@ namespace Oblivion.Connection.Net
                 switch (header)
                 {
                     #region FastFood
+
                     case "ff_progess_achievement":
-                        {
-                            userId = Convert.ToUInt32(param[0]);
-                            string Type = param[1];
-                            int Amount = Convert.ToInt32(param[2]);
+                    {
+                        userId = Convert.ToUInt32(param[0]);
+                        string Type = param[1];
+                        int Amount = Convert.ToInt32(param[2]);
 
-                            clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
+                        clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
 
-                            if (clientByUserId?.GetHabbo() == null)
-                                break;
-
-                            if (Amount == 0)
-                                break;
-
-                            Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(clientByUserId, Type, Amount);
+                        if (clientByUserId?.GetHabbo() == null)
                             break;
-                        }
+
+                        if (Amount == 0)
+                            break;
+
+                        Oblivion.GetGame().GetAchievementManager()
+                            .ProgressUserAchievement(clientByUserId, Type, Amount);
+                        break;
+                    }
                     case "ff_takecredits":
-                        {
-                            userId = Convert.ToUInt32(param[0]);
-                            string Quantity = param[1];
+                    {
+                        userId = Convert.ToUInt32(param[0]);
+                        string Quantity = param[1];
 
-                            clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
+                        clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
 
-                            if (clientByUserId?.GetHabbo() == null)
-                                break;
-
-                            clientByUserId.GetHabbo().Credits -= int.Parse(Quantity);
-                            clientByUserId.GetHabbo().UpdateCreditsBalance();
+                        if (clientByUserId?.GetHabbo() == null)
                             break;
-                        }
+
+                        clientByUserId.GetHabbo().Credits -= int.Parse(Quantity);
+                        clientByUserId.GetHabbo().UpdateCreditsBalance();
+                        break;
+                    }
+
                     #endregion
 
                     case "ha":
@@ -130,6 +133,7 @@ namespace Oblivion.Connection.Net
                     }
 
                     case "updatediamonds":
+                    {
                         var UserId = uint.Parse(param[0]);
                         clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(UserId);
 
@@ -147,6 +151,31 @@ namespace Oblivion.Connection.Net
                         clientByUserId.GetHabbo().Diamonds = diamonds;
                         clientByUserId.GetHabbo().UpdateActivityPointsBalance();
                         break;
+                    }
+
+                    case "giveemeralds":
+                    {
+                        var dUserId = uint.Parse(param[0]);
+                        var amount = int.Parse(param[1]);
+                        clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(dUserId);
+
+                        if (clientByUserId == null) return;
+
+                        int emeralds;
+                        using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        {
+                            dbClient.RunFastQuery($"UPDATE users SET vip_points = vip_points + {amount}");
+                            dbClient.SetQuery("SELECT vip_points FROM users WHERE id = " + dUserId);
+                            var row = dbClient.GetRow();
+                            if (row == null) return;
+
+                            emeralds = Convert.ToInt32(row["vip_points"]);
+                        }
+
+                        clientByUserId.GetHabbo().Emeralds = emeralds;
+                        clientByUserId.GetHabbo().UpdateActivityPointsBalance();
+                        break;
+                    }
 
                     case "updatemotto":
                         var UserID = uint.Parse(param[0]);

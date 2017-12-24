@@ -171,13 +171,12 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// </summary>
         /// <param name="dbClient">The database client.</param>
         /// <param name="session">The session.</param>
-        public void SaveFurniture(IQueryAdapter dbClient, GameClient session = null)
+        public void SaveFurniture(IQueryAdapter dbClient, GameClient session = null, bool fromInv = false)
         {
             try
             {
                 if (dbClient == null) return;
-              
-            
+
 
                 if (_removedItems.Count > 0)
                 {
@@ -189,6 +188,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                             itemId);
                     }
                     list.Clear();
+                    _removedItems.Clear();
+
                 }
 
                 if (_updatedItems.Count > 0)
@@ -241,13 +242,16 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         query += " WHERE id = " + roomItem.Id;
                         dbClient.RunQuery(query);
                     }
+                    _updatedItems.Clear();
+
                 }
-                _room.GetRoomUserManager().AppendPetsUpdateString(dbClient);
+                if (_room.GetRoomUserManager().PetCount > 0)
+                {
+                    _room.GetRoomUserManager().AppendPetsUpdateString(dbClient);
+                }
+                if (!fromInv)
+                    session?.GetHabbo()?.GetInventoryComponent().RunDbUpdate(true);
 
-                session?.GetHabbo()?.GetInventoryComponent().RunDbUpdate(true);
-
-                _updatedItems.Clear();
-                _removedItems.Clear();
             }
             catch (Exception ex)
             {
@@ -457,7 +461,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                             var roomItem = new RoomItem(id, _room.RoomId, baseItemId, extraData, x, y, z, rot, _room,
                                 ownerId,
                                 groupId, songCode,
-                                Oblivion.EnumToBool((string) dataRow["builders"]), Convert.ToInt32(limited[0]), Convert.ToInt32(limited[1]));
+                                Oblivion.EnumToBool((string) dataRow["builders"]), Convert.ToInt32(limited[0]),
+                                Convert.ToInt32(limited[1]));
 
                             if (!_room.GetGameMap().ValidTile(x, y))
                             {
@@ -1103,7 +1108,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
             if (!_removedItems.Contains(itemId))
                 _removedItems.Add(itemId);
-            
         }
 
         /// <summary>
@@ -1203,7 +1207,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     var userForSquare = _room.GetRoomUserManager().GetUserForSquare(current.X, current.Y);
                     if ((roomItemForSquare == null || !roomItemForSquare.Any()) && userForSquare == null)
                         continue;
-                    var coordinatedItems = _room.GetGameMap().GetCoordinatedItems(squareInFront).Where(current2 => current2.IsRoller).ToList();
+                    var coordinatedItems = _room.GetGameMap().GetCoordinatedItems(squareInFront)
+                        .Where(current2 => current2.IsRoller).ToList();
                     var flag = false;
                     var num2 = 0.0;
                     var flag2 = true;
@@ -1234,7 +1239,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                             !(current.Z < current4.Z) ||
                             _room.GetRoomUserManager().GetUserForSquare(squareInFront.X, squareInFront.Y) != null)
                             continue;
-                        _rollerMessages.Add(UpdateItemOnRoller(current4, squareInFront, current.VirtualId, num2 + num3));
+                        _rollerMessages.Add(UpdateItemOnRoller(current4, squareInFront, current.VirtualId,
+                            num2 + num3));
                         _rollerItemsMoved.Add(current4.Id);
                     }
 

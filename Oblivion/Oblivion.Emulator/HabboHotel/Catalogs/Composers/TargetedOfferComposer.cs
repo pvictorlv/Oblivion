@@ -18,7 +18,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
             if (offer.CostDiamonds > 0)
             {
                 message.AppendInteger(offer.CostDiamonds);
-                message.AppendInteger(105);
+                message.AppendInteger(5);
             }
             else
             {

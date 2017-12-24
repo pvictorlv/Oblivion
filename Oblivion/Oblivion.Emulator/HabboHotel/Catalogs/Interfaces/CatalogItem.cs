@@ -25,6 +25,7 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
         ///     The diamonds cost
         /// </summary>
         internal readonly uint DiamondsCost;
+        internal readonly int EmeraldsCost;
 
         /// <summary>
         ///     The duckets cost
@@ -132,6 +133,7 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
 
             uint.TryParse(row["cost_credits"].ToString(), out CreditsCost);
             uint.TryParse(row["cost_diamonds"].ToString(), out DiamondsCost);
+            int.TryParse(row["cost_emeralds"].ToString(), out EmeraldsCost);
             uint.TryParse(row["cost_duckets"].ToString(), out DucketsCost);
 
             LimitedSelled = (int)row["limited_sells"];

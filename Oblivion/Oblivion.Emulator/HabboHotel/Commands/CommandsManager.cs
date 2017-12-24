@@ -51,6 +51,7 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("credits", new GiveCredits());
             CommandsDictionary.Add("epoints", new GivePoints());
             CommandsDictionary.Add("duckets", new GiveDuckets());
+            CommandsDictionary.Add("emeralds", new GiveEmeralds());
             CommandsDictionary.Add("diamonds", new GiveDiamonds());
             CommandsDictionary.Add("massdiamonds", new MassDiamonds());
             CommandsDictionary.Add("masscredits", new MassCredits());

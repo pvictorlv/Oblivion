@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Oblivion.Configuration;
 using Oblivion.Connection.Connection;
@@ -312,7 +313,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                     serverMessage.AppendBool(true);
                     queuedServerMessage.AppendResponse(serverMessage);
 
-                   /* var xmasGift =
+                    var xmasGift =
                         new ServerMessage(LibraryParser.OutgoingRequest("CampaignCalendarDataMessageComposer"));
 
                     xmasGift.AppendString("xmas16"); //eventTrigger
@@ -330,19 +331,24 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                     }
 
 
-                    var MissedGifts = Enumerable.Range(0, DateTime.Now.Day - 3)
-                        .Where(Day => !_habbo.Data.OpenedGifts.Contains(Day)).ToList();
+                    var MissedGifts = new List<int>();
+                    foreach (var day in Enumerable.Range(0, DateTime.Now.Day - 3))
+                    {
+                        if (!_habbo.Data.OpenedGifts.Contains(day))
+                            MissedGifts.Add(day);
+                    }
 
 
                     xmasGift.AppendInteger(MissedGifts.Count);
                     foreach (int Missed in MissedGifts)
                     {
                         xmasGift.AppendInteger(Missed); //giftDay
+
+                        queuedServerMessage.AppendResponse(xmasGift);
                     }
-                    queuedServerMessage.AppendResponse(xmasGift);*/
 
-
-                    serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("CfhTopicsInitMessageComposer"));
+                    serverMessage =
+                        new ServerMessage(LibraryParser.OutgoingRequest("CfhTopicsInitMessageComposer"));
                     serverMessage.AppendInteger(6);
                     serverMessage.AppendString("sexual_content");
                     serverMessage.AppendInteger(8);
@@ -441,17 +447,23 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
                     _habbo.UpdateCreditsBalance();
 
-                    serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ActivityPointsMessageComposer"));
+                    serverMessage =
+                        new ServerMessage(LibraryParser.OutgoingRequest("ActivityPointsMessageComposer"));
                     serverMessage.AppendInteger(2);
                     serverMessage.AppendInteger(0);
                     serverMessage.AppendInteger(_habbo.ActivityPoints);
                     serverMessage.AppendInteger(5);
                     serverMessage.AppendInteger(_habbo.Diamonds);
+
+                    serverMessage.AppendInteger(102);
+                    serverMessage.AppendInteger(_habbo.Emeralds);
+
                     queuedServerMessage.AppendResponse(serverMessage);
 
 
                     if (_habbo.HasFuse("fuse_mod"))
-                        queuedServerMessage.AppendResponse(Oblivion.GetGame().GetModerationTool().SerializeTool(this));
+                        queuedServerMessage.AppendResponse(Oblivion.GetGame().GetModerationTool()
+                            .SerializeTool(this));
 
                     queuedServerMessage.AppendResponse(Oblivion.GetGame().GetAchievementManager()
                         .AchievementDataCached);
@@ -607,6 +619,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         }
 
         private readonly object _object = new object();
+
         /// <summary>
         ///     Disconnects the specified reason.
         /// </summary>

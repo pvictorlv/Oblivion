@@ -113,9 +113,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         public bool Execute(params object[] stuff)
         {
             var roomUser = (RoomUser) stuff[0];
-            if (roomUser == null) return false;
+            if (roomUser?.GetClient()?.GetHabbo() == null) return false;
             var item = (Interaction) stuff[1];
-
+            
             if (_mBanned.Contains(item))
                 return false;
 
@@ -157,7 +157,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             Room.GetRoomUserManager().OnUserUpdateStatus(roomItem.X, roomItem.Y);
             user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(0);
 
-            return;
         }
     }
 }

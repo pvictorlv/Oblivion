@@ -497,7 +497,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             }
             if (_mRemovedItems.Contains(item))
                 return;
-            
+
             SongDisks?.Remove(id);
             _items?.Remove(item.Id);
             _mRemovedItems?.Add(item);
@@ -723,17 +723,15 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 if (_mAddedItems?.Count > 0)
                 {
                     var added = _mAddedItems.ToList();
-                    if (added.Count > 0)
+
+                    using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
-                        {
-                            foreach (var itemId in added)
-                                dbClient.RunFastQuery(
-                                    $"UPDATE items_rooms SET user_id='{UserId}', room_id='0' WHERE id='{itemId}'");
-                        }
-                        _mAddedItems?.Clear();
-                        added.Clear();
+                        foreach (var itemId in added)
+                            dbClient.RunFastQuery(
+                                $"UPDATE items_rooms SET user_id='{UserId}', room_id='0' WHERE id='{itemId}'");
                     }
+                    _mAddedItems.Clear();
+                    added.Clear();
                 }
 
                 if (_mRemovedItems?.Count > 0)
@@ -751,7 +749,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                                 if (!fromRoom)
                                 {
                                     var room = Oblivion.GetGame().GetRoomManager().GetRoom(item.RoomId);
-                                    room?.GetRoomItemHandler().SaveFurniture(queryReactor);
+                                    room?.GetRoomItemHandler().SaveFurniture(queryReactor, null, true);
                                 }
 
                                 if (SongDisks.ContainsKey(item.Id))

@@ -428,7 +428,7 @@ namespace Oblivion.HabboHotel.Users
             List<GroupMember> groups, uint favId, int lastChange, bool tradeLocked, int tradeLockExpire,
             int buildersExpire, int buildersItemsMax, int buildersItemsUsed, bool onDuty,
             Dictionary<int, NaviLogs> naviLogs, int dailyCompetitionVotes, uint dutyLevel, bool disableAlert,
-            int lastTotem)
+            int lastTotem, int vipPoints)
         {
             Id = id;
             UserName = userName;
@@ -457,6 +457,8 @@ namespace Oblivion.HabboHotel.Users
             Credits = credits;
             ActivityPoints = activityPoints;
             Diamonds = diamonds;
+            Emeralds = vipPoints;
+
             AchievementPoints = achievementPoints;
             Muted = muted;
             LoadingRoom = 0u;
@@ -503,6 +505,9 @@ namespace Oblivion.HabboHotel.Users
 
         internal int Diamonds { get; set; }
 
+        internal int Emeralds { get; set; }
+
+
         /// <summary>
         ///     Gets a value indicating whether this instance can change name.
         /// </summary>
@@ -535,7 +540,7 @@ namespace Oblivion.HabboHotel.Users
         {
             _habboinfoSaved = true;
             return string.Concat("UPDATE users SET online='0', last_online = '", Oblivion.GetUnixTimeStamp(),
-                "', activity_points = '", ActivityPoints, "', diamonds = '", Diamonds, "', credits = '", Credits,
+                "', activity_points = '", ActivityPoints, "', vip_points = '", Emeralds, "', diamonds = '", Diamonds, "', credits = '", Credits,
                 "' WHERE id = '", Id, "'; UPDATE users_stats SET achievement_score = ", AchievementPoints,
                 " WHERE id=", Id, " LIMIT 1; ");
         }
@@ -775,16 +780,16 @@ namespace Oblivion.HabboHotel.Users
                     queryReactor.SetQuery("UPDATE users SET activity_points = '" + ActivityPoints +
                                           "', disabled_alert = '" + Oblivion.BoolToEnum(DisableEventAlert) +
                                           "', credits = '" +
-                                          Credits + "', diamonds = '" + Diamonds + "', online='0', last_online = '" +
+                                          Credits + "', diamonds = '" + Diamonds + "', online='0', vip_points = '" + Emeralds + "', last_online = '" +
                                           Oblivion.GetUnixTimeStamp() + "', builders_items_used = '" +
                                           BuildersItemsUsed +
                                           "', navilogs = @navilogs  WHERE id = '" + Id +
                                           "' LIMIT 1;UPDATE users_stats SET achievement_score=" + AchievementPoints +
-                                          " WHERE id=" + Id + " LIMIT 1;");
+                                          ", online_seconds = online_seconds + " +
+                                          secondsToGive + "  WHERE id=" + Id + " LIMIT 1;");
                     queryReactor.AddParameter("navilogs", navilogs);
                     queryReactor.RunQuery();
-                    queryReactor.RunFastQuery("UPDATE users_stats SET online_seconds = online_seconds + " +
-                                              secondsToGive + " WHERE id = " + Id);
+                
 
                     if (Rank >= 4)
                         queryReactor.RunFastQuery(
@@ -898,8 +903,8 @@ namespace Oblivion.HabboHotel.Users
             _mClient.GetMessageHandler().GetResponse().AppendInteger(ActivityPoints);
             _mClient.GetMessageHandler().GetResponse().AppendInteger(5);
             _mClient.GetMessageHandler().GetResponse().AppendInteger(Diamonds);
-            _mClient.GetMessageHandler().GetResponse().AppendInteger(105);
-            _mClient.GetMessageHandler().GetResponse().AppendInteger(Diamonds);
+            _mClient.GetMessageHandler().GetResponse().AppendInteger(102);
+            _mClient.GetMessageHandler().GetResponse().AppendInteger(Emeralds);
             _mClient.GetMessageHandler().SendResponse();
         }
 
@@ -919,8 +924,8 @@ namespace Oblivion.HabboHotel.Users
             _mClient.GetMessageHandler().GetResponse().AppendInteger(ActivityPoints);
             _mClient.GetMessageHandler().GetResponse().AppendInteger(5);
             _mClient.GetMessageHandler().GetResponse().AppendInteger(Diamonds);
-            _mClient.GetMessageHandler().GetResponse().AppendInteger(105);
-            _mClient.GetMessageHandler().GetResponse().AppendInteger(Diamonds);
+            _mClient.GetMessageHandler().GetResponse().AppendInteger(102);
+            _mClient.GetMessageHandler().GetResponse().AppendInteger(Emeralds);
             _mClient.GetMessageHandler().SendResponse();
         }
 
@@ -1048,7 +1053,7 @@ namespace Oblivion.HabboHotel.Users
         {
             dbClient.RunFastQuery(string.Concat("UPDATE users SET last_online = '", Oblivion.GetUnixTimeStamp(),
                 "', activity_points = '", ActivityPoints, "', credits = '", Credits, "', diamonds = '", Diamonds,
-                "' WHERE id = '", Id, "' LIMIT 1; "));
+                "', vip_points = '", Emeralds, "' WHERE id = '", Id, "' LIMIT 1; "));
         }
 
         /// <summary>

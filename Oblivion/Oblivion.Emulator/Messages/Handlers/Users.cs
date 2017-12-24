@@ -11,6 +11,8 @@ using Oblivion.HabboHotel.Users.Badges;
 using Oblivion.HabboHotel.Users.Messenger;
 using Oblivion.HabboHotel.Users.Relationships;
 using Oblivion.Messages.Parsers;
+using Oblivion.Security.BlackWords;
+using Oblivion.Security.BlackWords.Enums;
 
 namespace Oblivion.Messages.Handlers
 {
@@ -587,13 +589,21 @@ namespace Oblivion.Messages.Handlers
             var text = Request.GetString();
             if (text == Session.GetHabbo().Motto)
                 return;
+            
+
+            if (BlackWordsManager.Check(text, BlackWordType.Hotel, out _))
+            {
+                return;
+            }
             Session.GetHabbo().Motto = text;
+
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery($"UPDATE users SET motto = @motto WHERE id = '{Session.GetHabbo().Id}'");
                 queryReactor.AddParameter("motto", text);
                 queryReactor.RunQuery();
             }
+
             Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.ProfileChangeMotto);
             if (Session.GetHabbo().InRoom)
             {

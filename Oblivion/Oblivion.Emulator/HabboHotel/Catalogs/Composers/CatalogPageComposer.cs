@@ -179,7 +179,12 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                 if (item.DiamondsCost > 0)
                 {
                     message.AppendInteger(item.DiamondsCost);
-                    message.AppendInteger(105);
+                    message.AppendInteger(5);
+                }
+                else if (item.EmeraldsCost > 0)
+                {
+                    message.AppendInteger(item.EmeraldsCost);
+                    message.AppendInteger(102);
                 }
                 else
                 {
@@ -294,7 +299,12 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
             if (item.DiamondsCost > 0)
             {
                 message.AppendInteger(item.DiamondsCost);
-                message.AppendInteger(105);
+                message.AppendInteger(5);
+            }
+            else if (item.EmeraldsCost > 0)
+            {
+                message.AppendInteger(item.EmeraldsCost);
+                message.AppendInteger(102);
             }
             else
             {
