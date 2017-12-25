@@ -1,4 +1,5 @@
 using System;
+using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Rooms;
 
 namespace Oblivion.HabboHotel.Items.Handlers
@@ -13,9 +14,9 @@ namespace Oblivion.HabboHotel.Items.Handlers
         /// </summary>
         /// <param name="teleId">The tele identifier.</param>
         /// <returns>System.UInt32.</returns>
-        internal static uint GetLinkedTele(long teleId, Room pRoom)
+        internal static long GetLinkedTele(long teleId, Room pRoom)
         {
-            uint result;
+            long result;
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
@@ -23,7 +24,7 @@ namespace Oblivion.HabboHotel.Items.Handlers
                 queryReactor.RunQuery();
                 var row = queryReactor.GetRow();
 
-                result = row == null ? 0 : Convert.ToUInt32(row[0]);
+                result = row == null ? 0 : Convert.ToInt64(row[0]);
             }
 
             return result;
@@ -60,13 +61,10 @@ namespace Oblivion.HabboHotel.Items.Handlers
         /// <param name="teleId">The tele identifier.</param>
         /// <param name="pRoom">The p room.</param>
         /// <returns><c>true</c> if [is tele linked] [the specified tele identifier]; otherwise, <c>false</c>.</returns>
-        internal static bool IsTeleLinked(long teleId, Room pRoom)
+        internal static bool IsTeleLinked(long teleId, Room pRoom, RoomItem item)
         {
-            var linkedTele = GetLinkedTele(teleId, pRoom);
-            if (linkedTele == 0u)
-                return false;
-//            var item = pRoom.GetRoomItemHandler().GetItem(linkedTele);
-            return GetTeleRoomId(linkedTele, pRoom) != 0u;
+            if (item.TeleporterId == 0) return false;
+            return GetTeleRoomId(item.TeleporterId, pRoom) != 0u;
         }
     }
 }

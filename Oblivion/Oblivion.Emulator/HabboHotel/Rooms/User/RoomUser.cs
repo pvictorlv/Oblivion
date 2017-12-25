@@ -153,6 +153,17 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         internal int HandelingBallStatus = 0;
 
+        /// <summary>
+        /// This is the last time who ACH_RoomDecoHosting was progressed
+        /// </summary>
+        internal long LastHostingDate;
+
+
+        /// <summary>
+        /// This is the last time who ACH_RbTagB
+        /// </summary>
+        internal long LastRollerDate;
+
 
         /// <summary>
         ///     The horse identifier

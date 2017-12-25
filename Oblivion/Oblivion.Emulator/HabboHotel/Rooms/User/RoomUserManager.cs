@@ -81,6 +81,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         public bool Disposed;
 
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="RoomUserManager" /> class.
         /// </summary>
@@ -289,7 +290,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <returns>RoomUser.</returns>
         internal RoomUser GetUserForSquare(int x, int y) => _userRoom.GetGameMap().GetRoomUsers(new Point(x, y))
             .FirstOrDefault();
-        
+
 
         /// <summary>
         ///     Adds the user to room.
@@ -1126,11 +1127,9 @@ namespace Oblivion.HabboHotel.Rooms.User
 
         internal void UserGoToTile(RoomUser roomUsers, bool invalidStep)
         {
-           
             if (((invalidStep) || (roomUsers.PathStep >= roomUsers.Path.Count) ||
                  ((roomUsers.GoalX == roomUsers.X) && (roomUsers.GoalY == roomUsers.Y))))
             {
-               
                 // Erase all Movement Data..
                 roomUsers.IsWalking = false;
                 roomUsers.ClearMovement();
@@ -1386,6 +1385,28 @@ namespace Oblivion.HabboHotel.Rooms.User
                         roomItem.UserWalksOffFurni(roomUsers);
                         switch (roomItem.GetBaseItem().InteractionType)
                         {
+                            case Interaction.Normslaskates:
+                                if (roomUsers.LastRollerDate + 60 < Oblivion.GetUnixTimeStamp())
+                                {
+
+                                    Oblivion.GetGame().GetAchievementManager()
+                                        .ProgressUserAchievement(roomUsers.GetClient(), "ACH_RbTagC", 1);
+                                }
+
+                                Oblivion.GetGame().GetAchievementManager()
+                                    .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagB", 1);
+
+                                break;
+                            case Interaction.IceSkates:
+                                if (roomUsers.LastRollerDate + 60 < Oblivion.GetUnixTimeStamp())
+                                {
+                                    Oblivion.GetGame().GetAchievementManager()
+                                        .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagC", 1);
+                                }
+
+                                Oblivion.GetGame().GetAchievementManager()
+                                    .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagB", 1);
+                                break;
                             case Interaction.QuickTeleport:
                             case Interaction.GuildGate:
                             case Interaction.WalkInternalLink:
@@ -1454,6 +1475,17 @@ namespace Oblivion.HabboHotel.Rooms.User
 
             lock (roomUsers)
             {
+                if (!roomUsers.IsOwner() && roomUsers.LastHostingDate + 60 < Oblivion.GetUnixTimeStamp())
+                {
+                    var roomOwner = (uint) roomUsers.GetRoom().RoomData.OwnerId;
+                    var ownerClient = Oblivion.GetGame().GetClientManager().GetClientByUserId(roomOwner);
+                    if (ownerClient != null)
+                    {
+                        Oblivion.GetGame().GetAchievementManager()
+                            .ProgressUserAchievement(ownerClient, "ACH_RoomDecoHosting", 1, true);
+                    }
+                    roomUsers.LastHostingDate = Oblivion.GetUnixTimeStamp();
+                }
                 // Region Check User Remove Unlocking
                 lock (_removeUsers)
                 {
@@ -1537,7 +1569,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                     roomUsers.SetStep = false;
                     UpdateUserStatus(roomUsers, false);
                 }
-
 
 
                 // Check if Proably the Pathfinder is with Some Errors..
@@ -1701,13 +1732,12 @@ namespace Oblivion.HabboHotel.Rooms.User
                 {
                     if (user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().CurrentEffect == 0)
                         user.CurrentItemEffect = 0;
-                    
+
                     if (b == user.CurrentItemEffect)
                         return;
 
                     user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(b);
                     user.CurrentItemEffect = b;
-                    
                 }
                 else
                 {

@@ -35,7 +35,7 @@ namespace Oblivion.HabboHotel.Achievements
         {
             Achievements = new Dictionary<string, Achievement>();
             LoadAchievements(dbClient);
-            loadedAchs = (uint)Achievements.Count;
+            loadedAchs = (uint) Achievements.Count;
         }
 
         /// <summary>
@@ -48,10 +48,12 @@ namespace Oblivion.HabboHotel.Achievements
 
             AchievementLevelFactory.GetAchievementLevels(out Achievements, dbClient);
 
-            AchievementDataCached = new ServerMessage(LibraryParser.OutgoingRequest("SendAchievementsRequirementsMessageComposer"));
+            AchievementDataCached =
+                new ServerMessage(LibraryParser.OutgoingRequest("SendAchievementsRequirementsMessageComposer"));
             AchievementDataCached.AppendInteger(Achievements.Count);
 
-            /* TODO CHECK */ foreach (var ach in Achievements.Values)
+            /* TODO CHECK */
+            foreach (var ach in Achievements.Values)
             {
                 AchievementDataCached.AppendString(ach.GroupName.Replace("ACH_", string.Empty));
                 AchievementDataCached.AppendInteger(ach.Levels.Count);
@@ -119,7 +121,7 @@ namespace Oblivion.HabboHotel.Achievements
             if (regAch.Level == 5)
                 return;
 
-            double sinceMember = Oblivion.GetUnixTimeStamp() - (int)session.GetHabbo().CreateDate;
+            double sinceMember = Oblivion.GetUnixTimeStamp() - (int) session.GetHabbo().CreateDate;
 
             var daysSinceMember = Convert.ToInt32(Math.Round(sinceMember / 86400));
 
@@ -213,7 +215,7 @@ namespace Oblivion.HabboHotel.Achievements
             {
                 FromZero = false;
             }
-            
+
             var TotalLevels = AchievementData.Levels.Count;
 
             if (UserData.Level >= TotalLevels)
@@ -262,12 +264,23 @@ namespace Oblivion.HabboHotel.Achievements
                 Session.SendMessage(AchievementUnlockedComposer.Compose(AchievementData, TargetLevel,
                     TargetLevelData.RewardPoints, TargetLevelData.RewardPixels));
 
-                using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                /*using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
                     dbClient.SetQuery("REPLACE INTO `users_achievements` VALUES ('" + Session.GetHabbo().Id +
                                       "', @group, '" + NewLevel + "', '" + NewProgress + "')");
                     dbClient.AddParameter("group", AchievementGroup);
                     dbClient.RunQuery();
+                }
+*/
+                var levels = new KeyValuePair<int, int>(NewLevel, NewProgress);
+
+                if (Session.GetHabbo().AchievementsToUpdate.ContainsKey(AchievementGroup))
+                {
+                    Session.GetHabbo().AchievementsToUpdate[AchievementGroup] = levels;
+                }
+                else
+                {
+                    Session.GetHabbo().AchievementsToUpdate.TryAdd(AchievementGroup, levels);
                 }
 
                 UserData.Level = NewLevel;
@@ -282,29 +295,41 @@ namespace Oblivion.HabboHotel.Achievements
                 var NewLevelData = AchievementData.Levels[NewTarget];
 //                if (NewLevelData != null)
 //                {
-                    Session.SendMessage(AchievementProgressComposer.Compose(AchievementData, NewTarget, NewLevelData, TotalLevels, Session.GetHabbo().GetAchievementData(AchievementGroup)));
+                Session.SendMessage(AchievementProgressComposer.Compose(AchievementData, NewTarget, NewLevelData,
+                    TotalLevels, Session.GetHabbo().GetAchievementData(AchievementGroup)));
                 //                }
                 //                Session.SendMessage(new AchievementProgressedComposer(AchievementData, NewTarget, NewLevelData,
                 //                    TotalLevels, Session.GetHabbo().GetAchievementData(AchievementGroup)));
 
-                if (!talentComplete && Oblivion.GetGame().GetTalentManager().TryGetTalent(AchievementGroup, out var talent))
+                if (!talentComplete &&
+                    Oblivion.GetGame().GetTalentManager().TryGetTalent(AchievementGroup, out var talent))
                     Oblivion.GetGame().GetTalentManager().CompleteUserTalent(Session, talent);
                 return true;
             }
             UserData.Level = NewLevel;
             UserData.Progress = NewProgress;
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+           /* using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 dbClient.SetQuery("REPLACE INTO `users_achievements` VALUES ('" + Session.GetHabbo().Id +
                                   "', @group, '" +
                                   NewLevel + "', '" + NewProgress + "')");
                 dbClient.AddParameter("group", AchievementGroup);
                 dbClient.RunQuery();
-            }
+            }*/
+            var levelsN = new KeyValuePair<int, int>(NewLevel, NewProgress);
 
+            if (Session.GetHabbo().AchievementsToUpdate.ContainsKey(AchievementGroup))
+            {
+                Session.GetHabbo().AchievementsToUpdate[AchievementGroup] = levelsN;
+            }
+            else
+            {
+                Session.GetHabbo().AchievementsToUpdate.TryAdd(AchievementGroup, levelsN);
+            }
 //            UserAchievement? achievementData = user.GetAchievementData(achievementGroup);
 
-                Session.SendMessage(AchievementProgressComposer.Compose(AchievementData, TargetLevel, TargetLevelData, TotalLevels, Session.GetHabbo().GetAchievementData(AchievementGroup)));
+            Session.SendMessage(AchievementProgressComposer.Compose(AchievementData, TargetLevel, TargetLevelData,
+                TotalLevels, Session.GetHabbo().GetAchievementData(AchievementGroup)));
 
 //            Session.SendMessage(new AchievementProgressedComposer(AchievementData, TargetLevel, TargetLevelData,
 //                TotalLevels, Session.GetHabbo().GetAchievementData(AchievementGroup)));
@@ -317,6 +342,8 @@ namespace Oblivion.HabboHotel.Achievements
         /// </summary>
         /// <param name="achievementGroup">The achievement group.</param>
         /// <returns>Achievement.</returns>
-        internal Achievement GetAchievement(string achievementGroup) => Achievements.ContainsKey(achievementGroup) ? Achievements[achievementGroup] : new Achievement();
+        internal Achievement GetAchievement(string achievementGroup) => Achievements.ContainsKey(achievementGroup)
+            ? Achievements[achievementGroup]
+            : new Achievement();
     }
 }

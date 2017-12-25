@@ -174,6 +174,11 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         internal uint RoomId;
 
         /// <summary>
+        /// The tele link
+        /// </summary>
+        internal long TeleporterId;
+
+        /// <summary>
         ///     The rot
         /// </summary>
         internal int Rot;
@@ -288,6 +293,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
 
                 case Interaction.Teleport:
                 case Interaction.QuickTeleport:
+                    TeleporterId = TeleHandler.GetLinkedTele(id, pRoom);
                     IsTrans = true;
                     ReqUpdate(0, true);
                     break;
@@ -427,7 +433,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// </summary>
         /// <value>The x.</value>
         internal int X { get; private set; }
-        
+
 
         /// <summary>
         ///     Gets the y.
@@ -475,11 +481,10 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         {
 //            get 
 //                {
-                var list = new List<Point> {Coordinate};
-                list.AddRange(AffectedTiles.Values.Select(current => new Point(current.X, current.Y)));
-                return list;
+            var list = new List<Point> {Coordinate};
+            list.AddRange(AffectedTiles.Values.Select(current => new Point(current.X, current.Y)));
+            return list;
 //            }
-
         }
 
         internal double Height
@@ -1079,14 +1084,14 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                 {
                                     user.AllowOverride = false;
 
-                                    if (TeleHandler.IsTeleLinked(Id, _mRoom))
+                                    if (TeleHandler.IsTeleLinked(Id, _mRoom, this))
                                     {
                                         showTeleEffect = true;
-                                        var linkedTele = TeleHandler.GetLinkedTele(Id, _mRoom);
-                                        var teleRoomId = TeleHandler.GetTeleRoomId(linkedTele, _mRoom);
+//                                        var linkedTele = TeleHandler.GetLinkedTele(Id, _mRoom);
+                                        var teleRoomId = TeleHandler.GetTeleRoomId(TeleporterId, _mRoom);
                                         if (teleRoomId == RoomId)
                                         {
-                                            var item = GetRoom().GetRoomItemHandler().GetItem(linkedTele);
+                                            var item = GetRoom().GetRoomItemHandler().GetItem(TeleporterId);
                                             if (item == null)
                                             {
                                                 user.UnlockWalking();
@@ -1107,7 +1112,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                             {
                                                 user.GetClient().GetHabbo().IsTeleporting = true;
                                                 user.GetClient().GetHabbo().TeleportingRoomId = teleRoomId;
-                                                user.GetClient().GetHabbo().TeleporterId = linkedTele;
+                                                user.GetClient().GetHabbo().TeleporterId = TeleporterId;
                                                 user.GetClient()
                                                     .GetMessageHandler()
                                                     .PrepareRoomForUser(teleRoomId, string.Empty);
@@ -1136,6 +1141,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                 {
                                     InteractingUser = 0;
                                 }
+
                             }
                             else
                             {
@@ -1176,6 +1182,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                         }
                         ReqUpdate(1, false);
                     }
+
                         break;
 
                     case Interaction.BanzaiFloor:

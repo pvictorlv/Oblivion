@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 using Oblivion.Configuration;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Achievements.Interfaces;
@@ -107,7 +109,7 @@ namespace Oblivion.HabboHotel.Users
         ///     The builders items used
         /// </summary>
         internal int BuildersItemsUsed;
-        
+
         /// <summary>
         ///     The create date
         /// </summary>
@@ -297,7 +299,7 @@ namespace Oblivion.HabboHotel.Users
         ///     The recently visited rooms
         /// </summary>
         internal LinkedList<uint> RecentlyVisitedRooms;
-        
+
 
         /// <summary>
         ///     The respect
@@ -332,7 +334,7 @@ namespace Oblivion.HabboHotel.Users
         /// <summary>
         ///     The teleporter identifier
         /// </summary>
-        internal uint TeleporterId;
+        internal long TeleporterId;
 
         /// <summary>
         ///     The teleporting room identifier
@@ -380,6 +382,7 @@ namespace Oblivion.HabboHotel.Users
         /// </summary>
         internal bool Vip;
 
+        internal ConcurrentDictionary<string, KeyValuePair<int, int>> AchievementsToUpdate;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Habbo" /> class.
@@ -501,6 +504,7 @@ namespace Oblivion.HabboHotel.Users
             CurrentTalentLevel = GetCurrentTalentLevel();
             DailyCompetitionVotes = dailyCompetitionVotes;
             DisableEventAlert = disableAlert;
+            AchievementsToUpdate = new ConcurrentDictionary<string, KeyValuePair<int, int>>();
         }
 
         internal int Diamonds { get; set; }
@@ -513,9 +517,9 @@ namespace Oblivion.HabboHotel.Users
         /// </summary>
         /// <value><c>true</c> if this instance can change name; otherwise, <c>false</c>.</value>
         public bool CanChangeName() => (ExtraSettings.ChangeNameStaff && HasFuse("fuse_can_change_name")) ||
-                                     (ExtraSettings.ChangeNameVip && Vip) ||
-                                     (ExtraSettings.ChangeNameEveryone &&
-                                      Oblivion.GetUnixTimeStamp() > (LastChange + 604800));
+                                       (ExtraSettings.ChangeNameVip && Vip) ||
+                                       (ExtraSettings.ChangeNameEveryone &&
+                                        Oblivion.GetUnixTimeStamp() > (LastChange + 604800));
 
 
         /// <summary>
@@ -530,8 +534,7 @@ namespace Oblivion.HabboHotel.Users
         /// <value>The current room.</value>
         internal Room CurrentRoom;
 
-    
-        
+
         /// <summary>
         ///     Gets the get query string.
         /// </summary>
@@ -540,7 +543,8 @@ namespace Oblivion.HabboHotel.Users
         {
             _habboinfoSaved = true;
             return string.Concat("UPDATE users SET online='0', last_online = '", Oblivion.GetUnixTimeStamp(),
-                "', activity_points = '", ActivityPoints, "', vip_points = '", Emeralds, "', diamonds = '", Diamonds, "', credits = '", Credits,
+                "', activity_points = '", ActivityPoints, "', vip_points = '", Emeralds, "', diamonds = '", Diamonds,
+                "', credits = '", Credits,
                 "' WHERE id = '", Id, "'; UPDATE users_stats SET achievement_score = ", AchievementPoints,
                 " WHERE id=", Id, " LIMIT 1; ");
         }
@@ -746,7 +750,7 @@ namespace Oblivion.HabboHotel.Users
                 dbClient.RunFastQuery($"UPDATE users_stats SET last_totem = '{now}' WHERE id = {Id}");
             }
         }
-        
+
 
         /// <summary>
         ///     Called when [disconnect].
@@ -756,6 +760,28 @@ namespace Oblivion.HabboHotel.Users
         {
             if (Disconnected)
                 return;
+
+            var queryBuilder = new StringBuilder();
+            queryBuilder.Append("REPLACE INTO `users_achievements` VALUES ");
+            var i = 0;
+            var count = AchievementsToUpdate.Count;
+            foreach (var achievements in AchievementsToUpdate)
+            {
+                i++;
+
+                var group = achievements.Key;
+                var level = achievements.Value.Key;
+                var progress = achievements.Value.Value;
+                queryBuilder.Append(i >= count
+                    ? $"('{Id}', '{group}', '{level}', '{progress}');"
+                    : $"('{Id}', '{group}', '{level}', '{progress}'),");
+            }
+
+            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                dbClient.RunFastQuery(queryBuilder.ToString());
+            }
+
             Disconnected = true;
 
             var navilogs = string.Empty;
@@ -768,7 +794,7 @@ namespace Oblivion.HabboHotel.Users
             }
 
             Oblivion.GetGame().GetClientManager().UnregisterClient(Id, UserName);
-            
+
             var getOnlineSeconds = DateTime.Now - TimeLoggedOn;
             var secondsToGive = getOnlineSeconds.Seconds;
 
@@ -780,7 +806,8 @@ namespace Oblivion.HabboHotel.Users
                     queryReactor.SetQuery("UPDATE users SET activity_points = '" + ActivityPoints +
                                           "', disabled_alert = '" + Oblivion.BoolToEnum(DisableEventAlert) +
                                           "', credits = '" +
-                                          Credits + "', diamonds = '" + Diamonds + "', online='0', vip_points = '" + Emeralds + "', last_online = '" +
+                                          Credits + "', diamonds = '" + Diamonds + "', online='0', vip_points = '" +
+                                          Emeralds + "', last_online = '" +
                                           Oblivion.GetUnixTimeStamp() + "', builders_items_used = '" +
                                           BuildersItemsUsed +
                                           "', navilogs = @navilogs  WHERE id = '" + Id +
@@ -789,7 +816,7 @@ namespace Oblivion.HabboHotel.Users
                                           secondsToGive + "  WHERE id=" + Id + " LIMIT 1;");
                     queryReactor.AddParameter("navilogs", navilogs);
                     queryReactor.RunQuery();
-                
+
 
                     if (Rank >= 4)
                         queryReactor.RunFastQuery(
