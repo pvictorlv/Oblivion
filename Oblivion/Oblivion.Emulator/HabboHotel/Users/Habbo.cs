@@ -761,25 +761,28 @@ namespace Oblivion.HabboHotel.Users
             if (Disconnected)
                 return;
 
-            var queryBuilder = new StringBuilder();
-            queryBuilder.Append("REPLACE INTO `users_achievements` VALUES ");
-            var i = 0;
-            var count = AchievementsToUpdate.Count;
-            foreach (var achievements in AchievementsToUpdate)
+            if (AchievementsToUpdate.Count > 0)
             {
-                i++;
+                var queryBuilder = new StringBuilder();
+                queryBuilder.Append("REPLACE INTO `users_achievements` VALUES ");
+                var i = 0;
+                var count = AchievementsToUpdate.Count;
+                foreach (var achievements in AchievementsToUpdate)
+                {
+                    i++;
 
-                var group = achievements.Key;
-                var level = achievements.Value.Key;
-                var progress = achievements.Value.Value;
-                queryBuilder.Append(i >= count
-                    ? $"('{Id}', '{group}', '{level}', '{progress}');"
-                    : $"('{Id}', '{group}', '{level}', '{progress}'),");
-            }
+                    var group = achievements.Key;
+                    var level = achievements.Value.Key;
+                    var progress = achievements.Value.Value;
+                    queryBuilder.Append(i >= count
+                        ? $"('{Id}', '{group}', '{level}', '{progress}');"
+                        : $"('{Id}', '{group}', '{level}', '{progress}'),");
+                }
 
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
-            {
-                dbClient.RunFastQuery(queryBuilder.ToString());
+                using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                {
+                    dbClient.RunFastQuery(queryBuilder.ToString());
+                }
             }
 
             Disconnected = true;

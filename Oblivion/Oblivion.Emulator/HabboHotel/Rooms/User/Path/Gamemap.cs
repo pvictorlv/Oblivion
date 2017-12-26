@@ -1152,15 +1152,16 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 {
                     return 0.0;
                 }
-
-                foreach (var item in itemsOnSquare.ToList())
+                if (itemsOnSquare?.Count > 0)
                 {
-                    if ((item?.GetBaseItem() == null || !(item.TotalHeight > highestStack[0]))) continue;
-                    if (item.GetBaseItem().IsSeat || item.GetBaseItem().InteractionType == Interaction.Bed)
-                        deductable = item.GetBaseItem().Height;
-                    highestStack[0] = item.TotalHeight;
+                    foreach (var item in itemsOnSquare)
+                    {
+                        if ((item?.GetBaseItem() == null || !(item.TotalHeight > highestStack[0]))) continue;
+                        if (item.GetBaseItem().IsSeat || item.GetBaseItem().InteractionType == Interaction.Bed)
+                            deductable = item.GetBaseItem().Height;
+                        highestStack[0] = item.TotalHeight;
+                    }
                 }
-
                 highestStack[0] -= deductable;
                 return highestStack[0] < 0 ? 0 : highestStack[0];
             }
@@ -1192,7 +1193,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             if (!CoordinatedItems.TryGetValue(point, out var list2))
                 return list;
 
-            list.AddRange(list2.Where(current => current.Coordinate.X == x && current.Coordinate.Y == y));
+            list.AddRange(list2.ToList().Where(roomItem => roomItem.Coordinate.X == x && roomItem.Coordinate.Y == y));
 
             return list;
         }

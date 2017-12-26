@@ -762,7 +762,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                         // ignored
                     }
                     removed.Clear();
-                    _mRemovedItems.Clear();
+                    _mRemovedItems?.Clear();
                 }
 
                 if (_inventoryPets?.Count > 0)
