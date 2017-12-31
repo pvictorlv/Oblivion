@@ -78,9 +78,9 @@ namespace Oblivion.Connection.Connection
         /// <param name="ip">The ip.</param>
         internal static void FreeConnection(string ip)
         {
-            for (int i = 0; i < _mConnectionStorage.Length; i++)
-                if (_mConnectionStorage[i] == ip)
-                    _mConnectionStorage[i] = null;
+    //        for (int i = 0; i < _mConnectionStorage.Length; i++)
+      //          if (_mConnectionStorage[i] == ip)
+        //            _mConnectionStorage[i] = null;
         }
 
         private static int GetConnectionAmount(string ip) => _mConnectionStorage.Count(t => t == ip);

@@ -793,10 +793,12 @@ namespace Oblivion.HabboHotel.Rooms
             try
             {
                 if (_roomUserManager?.UserList != null)
-                    foreach (var user in _roomUserManager.UserList.Values.Where(user =>
-                        user?.GetClient()?.GetConnection() != null && !user.IsBot))
+                    foreach (var user in _roomUserManager.UserList.Values)
                     {
-                        user.GetClient().GetConnection().SendData(message);
+                        if (user?.GetClient()?.GetConnection() != null && !user.IsBot)
+                        {
+                            user.GetClient().GetConnection().SendData(message);
+                        }
                     }
             }
             catch (Exception e)

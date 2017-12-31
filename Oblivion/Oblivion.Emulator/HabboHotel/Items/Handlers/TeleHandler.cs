@@ -41,6 +41,7 @@ namespace Oblivion.HabboHotel.Items.Handlers
             if (pRoom.GetRoomItemHandler().GetItem(teleId) != null)
                 return pRoom.RoomId;
 
+
             uint result;
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())

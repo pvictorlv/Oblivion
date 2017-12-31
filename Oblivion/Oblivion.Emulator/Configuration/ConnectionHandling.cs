@@ -40,7 +40,7 @@ namespace Oblivion.Configuration
         {
             try
             {
-                Oblivion.GetGame().GetClientManager().CreateAndStartClient(connection.GetConnectionId(), connection);
+                Oblivion.GetGame().GetClientManager().CreateAndStartClient((uint)connection.GetConnectionId(), connection);
             }
             catch (Exception ex)
             {
@@ -56,7 +56,7 @@ namespace Oblivion.Configuration
         {
             try
             {
-                Oblivion.GetGame().GetClientManager().DisposeConnection(connection.GetConnectionId());
+                Oblivion.GetGame().GetClientManager().DisposeConnection((uint)connection.GetConnectionId());
             }
             catch (Exception ex)
             {

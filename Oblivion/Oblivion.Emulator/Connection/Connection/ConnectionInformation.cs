@@ -16,12 +16,12 @@ namespace Oblivion.Connection.Connection
         /// <summary>
         /// The _socket
         /// </summary>
-        public Socket Socket;
+        public Socket Socket { get; set; }
 
         /// <summary>
         /// The _remote end point
         /// </summary>
-        private readonly EndPoint _remoteEndPoint;
+        private EndPoint _remoteEndPoint;
 
         /// <summary>
         /// Delegate OnClientDisconnectedEvent
@@ -40,17 +40,13 @@ namespace Oblivion.Connection.Connection
         /// </summary>
         /// <value>The channel identifier.</value>
         /// <remarks>Must be unique within a server.</remarks>
-        public uint ChannelId { get; }
+        public int ChannelId { get; }
 
         /// <summary>
         /// The _is connected
         /// </summary>
         private bool _connected;
-
-        /// <summary>
-        /// The _buffer
-        /// </summary>
-        private readonly byte[] _buffer;
+        
 
         /// <summary>
         /// Gets or sets the parser.
@@ -61,19 +57,26 @@ namespace Oblivion.Connection.Connection
 
         public bool IsAir { get; set; }
 
+        public SocketAsyncEventArgs Args { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ConnectionInformation" /> class.
         /// </summary>
         /// <param name="socket">The socket.</param>
         /// <param name="parser">The parser.</param>
         /// <param name="channelId">The channel identifier.</param>
-        public ConnectionInformation(Socket socket, IDataParser parser, uint channelId)
+        public ConnectionInformation(Socket sock, SocketAsyncEventArgs e, IDataParser parser, int channelId)
         {
-            Socket = socket;
-            socket.SendBufferSize = GameSocketManagerStatics.BufferSize;
+            Args = e;
+            var socket = sock;
+            if (socket != null)
+            {
+                Socket = socket;
+                socket.SendBufferSize = GameSocketManagerStatics.BufferSize;
+                _remoteEndPoint = socket.RemoteEndPoint;
+            }
+
             Parser = parser;
-            _buffer = new byte[GameSocketManagerStatics.BufferSize];
-            _remoteEndPoint = socket.RemoteEndPoint;
             _connected = true;
             ChannelId = channelId;
         }
@@ -97,6 +100,8 @@ namespace Oblivion.Connection.Connection
 
         internal ARC4 Arc4ServerSide;
 
+        public bool Initialized;
+
         /// <summary>
         /// Reads the asynchronous.
         /// </summary>
@@ -104,7 +109,10 @@ namespace Oblivion.Connection.Connection
         {
             try
             {
-                Socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, OnReadCompleted, Socket);
+                //todo?
+                //                Socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, OnReadCompleted, Socket);
+//                ProcessReceive(Args);
+//                Oblivion.GetConnectionManager().Manager.HandleReceive(Args);
             }
             catch (Exception e)
             {
@@ -116,14 +124,15 @@ namespace Oblivion.Connection.Connection
         /// Handles the disconnect.
         /// </summary>
         /// <param name="exception">The exception.</param>
-        private void HandleDisconnect(Exception exception)
+        private void HandleDisconnect(Exception exception, bool socks = true)
         {
             try
             {
-                if (Socket != null && Socket.Connected)
+                if (Socket != null && Socket.Connected && socks)
                 {
                     try
                     {
+                       
                         Socket.Shutdown(SocketShutdown.Both);
                         Socket.Close();
                     }
@@ -139,6 +148,7 @@ namespace Oblivion.Connection.Connection
                 SocketConnectionCheck.FreeConnection(GetIp());
 
                 DisconnectAction(this, exception);
+                Cleanup();
             }
             catch (Exception ex)
             {
@@ -146,69 +156,7 @@ namespace Oblivion.Connection.Connection
                 Logging.HandleException(ex, "Oblivion.Connection.Connection.ConnectionInformation");
             }
         }
-
-        /// <summary>
-        /// Called when [read completed].
-        /// </summary>
-        /// <param name="async">The asynchronous.</param>
-        private void OnReadCompleted(IAsyncResult async)
-        {
-            try
-            {
-                if (Socket != null && Socket.Connected && _connected)
-                {
-                    int bytesReceived = Socket.EndReceive(async);
-
-                    if (bytesReceived != 0)
-                    {
-                        byte[] array = new byte[bytesReceived];
-
-                        Array.Copy(_buffer, array, bytesReceived);
-
-                        HandlePacketData(array, bytesReceived);
-                    }
-                    else
-                        Disconnect();
-                }
-            }
-            catch (Exception exception)
-            {
-                HandleDisconnect(exception);
-            }
-            finally
-            {
-                try
-                {
-                    if (Socket != null && Socket.Connected && _connected)
-                        Socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, OnReadCompleted, Socket);
-                    else
-                        Disconnect();
-                }
-                catch (Exception exception)
-                {
-                    HandleDisconnect(exception);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Called when [send completed].
-        /// </summary>
-        /// <param name="async">The asynchronous.</param>
-        private void OnSendCompleted(IAsyncResult async)
-        {
-            try
-            {
-                if (Socket != null && Socket.Connected && _connected)
-                    Socket.EndSend(async);
-                else
-                    Disconnect();
-            }
-            catch (Exception exception)
-            {
-                HandleDisconnect(exception);
-            }
-        }
+   
 
         /// <summary>
         /// Cleanup everything so that the channel can be reused.
@@ -216,6 +164,11 @@ namespace Oblivion.Connection.Connection
         public void Cleanup()
         {
             Socket = null;
+            _remoteEndPoint = null;
+            Args?.Dispose();
+            Args = null;
+            Parser?.Dispose();
+            Parser = null;
             _connected = false;
         }
 
@@ -230,6 +183,10 @@ namespace Oblivion.Connection.Connection
                 Dispose();
         }
 
+        public int receivedPrefixBytesDoneCount;
+    
+  
+
         /// <summary>
         /// Gets the ip.
         /// </summary>
@@ -240,7 +197,7 @@ namespace Oblivion.Connection.Connection
         /// Gets the connection identifier.
         /// </summary>
         /// <returns>System.UInt32.</returns>
-        public uint GetConnectionId() => ChannelId;
+        public int GetConnectionId() => ChannelId;
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -253,10 +210,10 @@ namespace Oblivion.Connection.Connection
         /// <summary>
         /// Disconnects this instance.
         /// </summary>
-        internal void Disconnect()
+        internal void Disconnect(bool socks = true)
         {
             if (_connected)
-                HandleDisconnect(new SocketException((int) SocketError.ConnectionReset));
+                HandleDisconnect(new SocketException((int) SocketError.ConnectionReset), socks);
         }
 
         /// <summary>
@@ -264,11 +221,12 @@ namespace Oblivion.Connection.Connection
         /// </summary>
         /// <param name="packet">The packet.</param>
         /// <param name="bytesReceived"></param>
-        private void HandlePacketData(byte[] packet, int bytesReceived)
+        public void HandlePacketData(byte[] packet, int bytesReceived)
         {
             Arc4ServerSide?.Parse(ref packet);
             Parser?.HandlePacketData(packet, bytesReceived);
         }
+        
 
         /// <summary>
         /// Sends the data.
@@ -297,7 +255,17 @@ namespace Oblivion.Connection.Connection
 
             try
             {
-                Socket.BeginSend(newHeader ?? packet, 0, packet.Length, 0, OnSendCompleted, null);
+//                Args.SetBuffer(packet, 0, packet.Length);
+
+//                Args.SetBuffer(packet, 0, packet.Length);
+                Socket.Send(newHeader ?? packet);
+        
+
+                //                if (!willRaiseEvent)
+                //                {
+                //                    ProcessSend(Args);
+                //                }
+                //                                Socket.BeginSend(newHeader ?? packet, 0, packet.Length, 0, OnSendCompleted, null);
             }
             catch (Exception e)
             {
