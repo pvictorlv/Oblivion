@@ -22,7 +22,7 @@ namespace Oblivion.Connection.Connection
         /// </summary>
         public delegate void OnClientDisconnectedEvent(ConnectionInformation connection, Exception exception);
 
-        private const int opsToPreAlloc = 2; // read, write (don't alloc buffer space for accepts)
+        private const int opsToPreAlloc = 4; // read, write (don't alloc buffer space for accepts)
 
         /// <summary>
         ///     The _parser
@@ -311,13 +311,15 @@ namespace Oblivion.Connection.Connection
                         OnClientConnected(Token.Session);
                         Token.Session.Initialized = true;
                     }
-                    Token.Session.Args = Args;
+                    //                    Token.Session.Args = Args;
                     Token.Session.HandlePacketData(Received, Args.BytesTransferred);
+
                     var willRaiseEvent = Token.Socket.ReceiveAsync(Args);
                     if (!willRaiseEvent)
                     {
-                        Token.Session?.Disconnect(false);
-                        CloseClientSocket(Args);
+
+                        //                        Token.Session?.Disconnect(false);
+                        //                        CloseClientSocket(Args);
                     }
                 }
                 else
@@ -336,7 +338,7 @@ namespace Oblivion.Connection.Connection
         }
 
 
-        private static void HandleSend(SocketAsyncEventArgs Args)
+        private  void HandleSend(SocketAsyncEventArgs Args)
         {
             if (Args.SocketError != SocketError.Success)
                 CloseClientSocket(Args);

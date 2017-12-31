@@ -368,6 +368,8 @@ namespace Oblivion
 
                 Console.WriteLine();
 
+                CrossDomainSettings.Set();
+
                 Out.WriteLine(
                     "Asynchronous sockets server for game connections running on port " +
                     int.Parse(ConfigurationData.Data["game.tcp.port"]) + Environment.NewLine,

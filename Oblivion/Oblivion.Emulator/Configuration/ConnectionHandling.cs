@@ -24,12 +24,16 @@ namespace Oblivion.Configuration
         /// <param name="enabeNagles">if set to <c>true</c> [enabe nagles].</param>
         public ConnectionHandling(int port, int maxConnections, int connectionsPerIp, bool antiDdoS, bool enabeNagles)
         {
-            Manager = new SocketManager();
+            ConnectionManager.DataParser = new GamePacketParser();
+
+            ConnectionManager.Start();
+            ConnectionSecurity.Init();
+            /*Manager = new SocketManager();
 
             Manager.OnClientConnected += OnClientConnected;
             Manager.OnClientDisconnected += OnClientDisconnected;
 
-            Manager.Init(port, maxConnections, connectionsPerIp, antiDdoS, new InitialPacketParser(), !enabeNagles);
+            Manager.Init(port, maxConnections, connectionsPerIp, antiDdoS, new InitialPacketParser(), !enabeNagles);*/
         }
 
         /// <summary>
@@ -40,7 +44,7 @@ namespace Oblivion.Configuration
         {
             try
             {
-                Oblivion.GetGame().GetClientManager().CreateAndStartClient((uint)connection.GetConnectionId(), connection);
+//                Oblivion.GetGame().GetClientManager().CreateAndStartClient(connection.GetConnectionId(), connection);
             }
             catch (Exception ex)
             {
@@ -56,7 +60,7 @@ namespace Oblivion.Configuration
         {
             try
             {
-                Oblivion.GetGame().GetClientManager().DisposeConnection((uint)connection.GetConnectionId());
+//                Oblivion.GetGame().GetClientManager().DisposeConnection((uint)connection.GetConnectionId());
             }
             catch (Exception ex)
             {

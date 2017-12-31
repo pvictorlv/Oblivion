@@ -61,7 +61,7 @@ namespace Oblivion.Connection.Net
         /// </summary>
         /// <param name="con">The con.</param>
         /// <param name="me">Me.</param>
-        public void SetConnection(ConnectionInformation con, GameClient me)
+        public void SetConnection(ConnectionActor con, GameClient me)
         {
             _currentClient = me;
         }
