@@ -211,8 +211,8 @@ namespace Oblivion.HabboHotel.Rooms
 
 //                Out.WriteLine($"Room #{id} was loaded", "Oblivion.Room.Manager", ConsoleColor.DarkCyan);
 
-                room.InitBots();
-                room.InitPets();
+//                room.InitBots();
+//                room.InitPets();
                 return room;
             }
             catch (Exception e)

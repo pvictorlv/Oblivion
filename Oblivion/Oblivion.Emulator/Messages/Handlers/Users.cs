@@ -470,12 +470,18 @@ namespace Oblivion.Messages.Handlers
                            !Session.GetHabbo().GetMessenger().FriendshipExists(habbo.Id) &&
                            Session.GetHabbo().GetMessenger().RequestExists(habbo.Id));
             msg.AppendBool(Oblivion.GetGame().GetClientManager().GetClientByUserId(habbo.Id) != null);
+            if (!habbo.LoadedGroups)
+            {
+                habbo.LoadGroups();
+            }
+
             var groups = habbo.UserGroups;
             msg.AppendInteger(groups.Count);
-            /* TODO CHECK */
-            foreach (var group in groups.Select(groupUs => Oblivion.GetGame().GetGroupManager()
-                .GetGroup(groupUs.GroupId))
-            )
+            
+            foreach (var groupUs in groups)
+            {
+                var group = Oblivion.GetGame().GetGroupManager().GetGroup(groupUs.GroupId);
+
                 if (group != null)
                 {
                     msg.AppendInteger(group.Id);
@@ -498,6 +504,7 @@ namespace Oblivion.Messages.Handlers
                     msg.AppendInteger(-1);
                     msg.AppendBool(false);
                 }
+            }
             if (habbo.PreviousOnline == 0)
                 msg.AppendInteger(-1);
             else if (Oblivion.GetGame().GetClientManager().GetClientByUserId(habbo.Id) == null)
@@ -880,8 +887,15 @@ namespace Oblivion.Messages.Handlers
         {
             var userId = Request.GetUInteger();
             var habboForId = Oblivion.GetHabboById(userId);
-            if (habboForId?.Data?.Relations == null)
+
+            if (habboForId?.Data == null)
                 return;
+
+            if (!habboForId.Data.LoadedRelations)
+            {
+                habboForId.Data.LoadRelations();
+            }
+            if (habboForId.Data.Relations.Count <= 0) return;
 
             var rand = new Random();
             var dictionary = habboForId.Data.Relations.OrderBy(x => rand.Next()).Where(pair => habboForId.GetMessenger().FriendshipExists((uint) pair.Value.UserId)).ToDictionary(pair => pair.Key, pair => pair.Value);

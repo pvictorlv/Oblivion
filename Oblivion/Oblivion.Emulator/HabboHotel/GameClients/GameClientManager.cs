@@ -311,7 +311,7 @@ namespace Oblivion.HabboHotel.GameClients
                 try
                 {
                     current2.GetHabbo().GetInventoryComponent().RunDbUpdate();
-                    current2.GetHabbo().RunDbUpdate(Oblivion.GetDatabaseManager().GetQueryReactor());
+                    current2.GetHabbo().RunDbUpdate();
                     stringBuilder.Append(current2.GetHabbo().GetQueryString());
                     flag = true;
                     Console.ForegroundColor = ConsoleColor.DarkMagenta;

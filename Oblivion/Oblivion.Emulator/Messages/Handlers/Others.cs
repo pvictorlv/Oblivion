@@ -444,10 +444,16 @@ namespace Oblivion.Messages.Handlers
         private static int GetFriendsCount(uint userId)
         {
             int result;
+            var client = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
+            if (client != null)
+            {
+               return client.GetHabbo().GetMessenger().Friends.Count;
+            }
+
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery(
-                    "SELECT COUNT(0) FROM messenger_friendships WHERE user_one_id = @id OR user_two_id = @id;");
+                    "SELECT COUNT(user_one_id) FROM messenger_friendships WHERE user_one_id = @id OR user_two_id = @id;");
                 queryReactor.AddParameter("id", userId);
                 result = queryReactor.GetInteger();
             }
@@ -475,8 +481,8 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().Credits -= offer.CostCredits * quantity;
             Session.GetHabbo().ActivityPoints -= offer.CostDuckets * quantity;
             Session.GetHabbo().Diamonds -= offer.CostDiamonds * quantity;
-            Session.GetHabbo().UpdateCreditsBalance();
-            Session.GetHabbo().UpdateSeasonalCurrencyBalance();
+            Session.GetHabbo().UpdateCreditsBalance(true);
+            Session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
             Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
         }
 

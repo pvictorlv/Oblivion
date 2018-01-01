@@ -56,7 +56,7 @@ namespace Oblivion.Messages.Handlers
                 return;
             var num = Request.GetUInteger();
             var roomData = Oblivion.GetGame().GetRoomManager().GenerateRoomData(num);
-            Session.GetHabbo().GetInventoryComponent().RunDbUpdate();
+            //            Session.GetHabbo().GetInventoryComponent().RunDbUpdate();
             if (roomData == null || roomData.Id == Session.GetHabbo().CurrentRoomId)
                 return;
             roomData.SerializeRoomData(Response, Session, !Session.GetHabbo().InRoom);
@@ -1596,19 +1596,19 @@ namespace Oblivion.Messages.Handlers
             {
                 if (catalogItem.CreditsCost > Session.GetHabbo().Credits) return;
                 Session.GetHabbo().Credits -= (int) catalogItem.CreditsCost;
-                Session.GetHabbo().UpdateCreditsBalance();
+                Session.GetHabbo().UpdateCreditsBalance(true);
             }
             if (catalogItem.DucketsCost > 0)
             {
                 if (catalogItem.DucketsCost > Session.GetHabbo().ActivityPoints) return;
                 Session.GetHabbo().ActivityPoints -= (int) catalogItem.DucketsCost;
-                Session.GetHabbo().UpdateActivityPointsBalance();
+                Session.GetHabbo().UpdateActivityPointsBalance(true);
             }
             if (catalogItem.DiamondsCost > 0)
             {
                 if (catalogItem.DiamondsCost > Session.GetHabbo().Diamonds) return;
                 Session.GetHabbo().Diamonds -= (int) catalogItem.DiamondsCost;
-                Session.GetHabbo().UpdateSeasonalCurrencyBalance();
+                Session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
             }
             Session.SendMessage(CatalogPageComposer.PurchaseOk(catalogItem, catalogItem.Items));
 
@@ -2613,7 +2613,6 @@ namespace Oblivion.Messages.Handlers
         public void Chat()
         {
             var room = Session.GetHabbo().CurrentRoom;
-
             var roomUser = room?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
 
             if (roomUser == null)
@@ -2624,7 +2623,7 @@ namespace Oblivion.Messages.Handlers
             var count = Request.GetInteger();
 
             if (!roomUser.IsBot)
-                if (bubble == 2 || bubble == 23 && !Session.GetHabbo().HasFuse("fuse_mod") || bubble < 0 || bubble > 29)
+                if (bubble == 2 || bubble >= 23 && !Session.GetHabbo().HasFuse("fuse_mod") || bubble < 0)
                     bubble = roomUser.LastBubble;
 
             roomUser.Chat(Session, message, false, count, bubble);

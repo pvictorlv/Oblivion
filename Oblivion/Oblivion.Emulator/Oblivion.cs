@@ -200,6 +200,10 @@ namespace Oblivion
         /// Table: users.id
         internal static Habbo GetHabboById(uint userId)
         {
+            if (userId <= 0)
+            {
+                return null;
+            }
             try
             {
                 var clientByUserId = GetGame().GetClientManager().GetClientByUserId(userId);

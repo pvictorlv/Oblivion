@@ -58,7 +58,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             reply.AppendInteger(UserId);
             reply.AppendString(UserName);
             reply.AppendString(Motto);
-            reply.AppendBool(Oblivion.GetGame().GetClientManager().GetClient(UserId) != null);
+            reply.AppendBool(Oblivion.GetGame().GetClientManager().GetClientByUserId(UserId) != null);
             reply.AppendBool(false);
             reply.AppendString(string.Empty);
             reply.AppendInteger(0);

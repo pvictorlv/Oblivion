@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using Oblivion.Collections;
 using Oblivion.Configuration;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
@@ -171,7 +172,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// </summary>
         /// <param name="dbClient">The database client.</param>
         /// <param name="session">The session.</param>
-        public void SaveFurniture(IQueryAdapter dbClient, GameClient session = null, bool fromInv = false)
+        public void SaveFurniture(IQueryAdapter dbClient, GameClient session = null)
         {
             try
             {
@@ -181,12 +182,18 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 if (_removedItems.Count > 0)
                 {
                     var list = _removedItems.ToList();
+                    var builder = new StringBuilder();
+                    builder.Append("UPDATE items_rooms SET room_id='0', x='0', y='0', z='0', rot='0' WHERE id IN (");
+                    var i = 0;
+                    var count = list.Count;
                     foreach (var itemId in list)
                     {
-                        dbClient.RunFastQuery(
-                            "UPDATE items_rooms SET room_id='0', x='0', y='0', z='0', rot='0' WHERE id = " +
-                            itemId);
+                        i++;
+                        builder.Append(i >= count ? $"{itemId}" : $"{itemId},");
                     }
+                    builder.Append(");");
+
+                    dbClient.RunFastQuery(builder.ToString());
                     list.Clear();
                     _removedItems.Clear();
 
@@ -249,8 +256,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 {
                     _room.GetRoomUserManager().AppendPetsUpdateString(dbClient);
                 }
-                if (!fromInv)
-                    session?.GetHabbo()?.GetInventoryComponent().RunDbUpdate(true);
+                    session?.GetHabbo()?.GetInventoryComponent().RunDbUpdate();
 
             }
             catch (Exception ex)

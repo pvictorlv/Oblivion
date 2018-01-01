@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using Oblivion.HabboHotel.Achievements.Interfaces;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.HabboHotel.Users.Relationships;
@@ -16,14 +19,11 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         /// </summary>
         internal Dictionary<string, UserAchievement> Achievements;
 
-      
-        
 
         /// <summary>
         ///     The effects
         /// </summary>
 //        internal List<AvatarEffect> Effects;
-
         /// <summary>
         ///     The favourited rooms
         /// </summary>
@@ -33,18 +33,17 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         ///     The friends
         /// </summary>
 //        internal Dictionary<uint, MessengerBuddy> Friends;
-
         /// <summary>
         ///     The ignores
         /// </summary>
         internal List<uint> Ignores;
-        
+
 
         /// <summary>
         ///     The mini mail count
         /// </summary>
         internal uint MiniMailCount;
-        
+
 
         /// <summary>
         ///     The quests
@@ -60,7 +59,6 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         ///     The requests
         /// </summary>
 //        internal Dictionary<uint, MessengerRequest> Requests;
-
         /// <summary>
         ///     The rooms
         /// </summary>
@@ -107,6 +105,9 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         /// </summary>
         public List<int> OpenedGifts;
 
+        public bool LoadedRelations;
+
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="UserData" /> class.
         /// </summary>
@@ -147,6 +148,23 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             MiniMailCount = miniMailCount;
             BlockedCommands = blockedCommands;
             OpenedGifts = openedGifts;
+        }
+
+        public void LoadRelations()
+        {
+            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                queryReactor.SetQuery("SELECT * FROM users_relationships WHERE user_id=@id");
+                queryReactor.AddParameter("id", UserId);
+                var table = queryReactor.GetTable();
+                if (table != null)
+                {
+                    Relations = table.Rows.Cast<DataRow>()
+                        .ToDictionary(row => (int) row[0],
+                            row => new Relationship((int) row[0], (int) row[2], Convert.ToInt32(row[3].ToString())));
+                }
+            }
+            LoadedRelations = true;
         }
 
         public void Dispose()

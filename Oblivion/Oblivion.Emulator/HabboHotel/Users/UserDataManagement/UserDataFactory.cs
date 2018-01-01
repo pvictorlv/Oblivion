@@ -180,12 +180,6 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
 
 
-
-                
-
-
-          
-
             var quests = new Dictionary<uint, int>();
             /* TODO CHECK */ foreach (DataRow row in questsTable.Rows)
             {
@@ -223,9 +217,11 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 openedGifts = opened.Split(',').Select(int.Parse).ToList();
             }
 
+            var data = new UserData(userId, achievements, talents, favorites, ignoreUsers, tags, subscriptions, myRooms,
+                quests, user, relationShips,
+                pollSuggested, miniMailCount, blockedCommands, openedGifts) {LoadedRelations = true};
 
-            return new UserData(userId, achievements, talents, favorites, ignoreUsers, tags, subscriptions, myRooms , quests, user , relationShips,
-                pollSuggested, miniMailCount, blockedCommands, openedGifts);
+            return data;
         }
 
         /// <summary>
@@ -238,12 +234,12 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             //todo: improve it
             DataRow dataRow;
             uint num;
-            DataRow row;
-            DataTable table;
+//            DataRow row;
+//            DataTable table;
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery($"SELECT id,username,block_newfriends,navilogs,disabled_alert,DutyLevel,OnDuty,builders_items_max,builders_items_used,builders_expire,look,rank,motto,gender,last_online,credits,activity_points,is_muted,home_room,hide_online,hide_inroom,vip,account_created,talent_status,diamonds,last_name_change,trade_lock,trade_lock_expire,vip_points FROM users WHERE id = '{userId}'");
+                queryReactor.SetQuery($"SELECT u.id,s.favourite_group,s.achievement_score,username,block_newfriends,look,motto,gender,last_online,account_created FROM users AS u, users_stats AS s WHERE u.id = '{userId}' AND u.id = s.id");
 
                 dataRow = queryReactor.GetRow();
 
@@ -257,15 +253,13 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
                 if (Oblivion.GetGame().GetClientManager().GetClientByUserId(num) != null)
                     return null;
+                
+//                queryReactor.SetQuery($"SELECT * FROM users_stats WHERE id={num} LIMIT 1");
+//                row = queryReactor.GetRow();
 
-                queryReactor.SetQuery($"SELECT group_id,rank,date_join FROM groups_members WHERE user_id={userId}");
-                queryReactor.GetTable();
-                queryReactor.SetQuery($"SELECT * FROM users_stats WHERE id={num} LIMIT 1");
-                row = queryReactor.GetRow();
-
-                queryReactor.SetQuery("SELECT * FROM users_relationships WHERE user_id=@id");
-                queryReactor.AddParameter("id", num);
-                table = queryReactor.GetTable();
+//                queryReactor.SetQuery("SELECT * FROM users_relationships WHERE user_id=@id");
+//                queryReactor.AddParameter("id", num);
+//                table = queryReactor.GetTable();
             }
 
             var achievements = new Dictionary<string, UserAchievement>();
@@ -278,14 +272,9 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             var group = new List<GroupMember>();
             var pollData = new HashSet<uint>();
 
-            var dictionary = table.Rows.Cast<DataRow>()
-                .ToDictionary(dataRow2 => (int) dataRow2[0],
-                    dataRow2 =>
-                        new Relationship((int) dataRow2[0], (int) dataRow2[2], Convert.ToInt32(dataRow2[3].ToString())));
-            var user = HabboFactory.GenerateHabbo(dataRow, row, group);
+            var user = HabboFactory.GenerateCachedHabbo(dataRow, group);
 
-
-            return new UserData(num, achievements, talents, favouritedRooms, ignores, tags, null, rooms, quests, user, dictionary, pollData, 0, new List<string>(), new List<int>());
+            return new UserData(num, achievements, talents, favouritedRooms, ignores, tags, null, rooms, quests, user, new Dictionary<int, Relationship>(), pollData, 0, new List<string>(), new List<int>());
         }
     }
 }

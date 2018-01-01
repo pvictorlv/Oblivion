@@ -126,7 +126,7 @@ namespace Oblivion.Messages.Handlers
             using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.RunFastQuery($"UPDATE items_rooms SET user_id='{Session.GetHabbo().Id}' WHERE id='{songItem.ItemId}' LIMIT 1;");
 
-            Session.SendMessage(SoundMachineComposer.SerializeSongInventory(Session.GetHabbo().GetInventoryComponent().SongDisks));
+            Session.SendMessage(SoundMachineComposer.SerializeSongInventory(Session.GetHabbo().GetInventoryComponent().GetDisks()));
             Session.SendMessage(SoundMachineComposer.Compose(roomMusicController.PlaylistCapacity, roomMusicController.Playlist.Values.ToList()));
         }
 
@@ -138,10 +138,11 @@ namespace Oblivion.Messages.Handlers
             if (Session?.GetHabbo() == null || Session.GetHabbo().GetInventoryComponent() == null)
                 return;
 
-            if (Session.GetHabbo().GetInventoryComponent().SongDisks.Count == 0)
+            var disks = Session.GetHabbo().GetInventoryComponent().GetDisks();
+            if (disks.Count == 0)
                 return;
 
-            Session.SendMessage(SoundMachineComposer.SerializeSongInventory(Session.GetHabbo().GetInventoryComponent().SongDisks));
+            Session.SendMessage(SoundMachineComposer.SerializeSongInventory(disks));
         }
 
         /// <summary>

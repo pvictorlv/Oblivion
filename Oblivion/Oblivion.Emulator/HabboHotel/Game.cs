@@ -50,11 +50,7 @@ namespace Oblivion.HabboHotel
         ///     The _ban manager
         /// </summary>
         private readonly ModerationBanManager _banManager;
-
-        /// <summary>
-        ///     The _bot manager
-        /// </summary>
-        private readonly BotManager _botManager;
+        
 
         /// <summary>
         ///     The _catalog
@@ -229,9 +225,7 @@ namespace Oblivion.HabboHotel
                 _moderationTool = new ModerationTool();
                 _moderationTool.LoadMessagePresets(queryReactor);
                 _moderationTool.LoadPendingTickets(queryReactor);
-
-                Progress(bar, wait, end, "Loading Bots...");
-                _botManager = new BotManager();
+                
 
                 Progress(bar, wait, end, "Loading Quests...");
                 _questManager = new QuestManager();
@@ -419,13 +413,7 @@ namespace Oblivion.HabboHotel
         /// </summary>
         /// <returns>ModerationTool.</returns>
         internal ModerationTool GetModerationTool() => _moderationTool;
-
-        /// <summary>
-        ///     Gets the bot manager.
-        /// </summary>
-        /// <returns>BotManager.</returns>
-        internal BotManager GetBotManager() => _botManager;
-
+        
         /// <summary>
         ///     Gets the quest manager.
         /// </summary>

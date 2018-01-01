@@ -370,13 +370,32 @@ namespace Oblivion.HabboHotel.Rooms
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery($"SELECT * FROM bots WHERE room_id = {RoomId} AND ai_type = 'generic'");
+                queryReactor.SetQuery($"SELECT * FROM bots WHERE room_id = {RoomId}");
                 var table = queryReactor.GetTable();
                 if (table == null)
                     return;
-                foreach (var roomBot in from DataRow dataRow in table.Rows
-                    select BotManager.GenerateBotFromRow(dataRow))
+                foreach (DataRow dataRow in table.Rows)
+                {
+                    if (dataRow["ai_type"].ToString() == "pet")
+                    {
+                        queryReactor.SetQuery($"SELECT * FROM pets_data WHERE id = '{dataRow["id"]}' LIMIT 1");
+                        var row = queryReactor.GetRow();
+
+                        if (row == null)
+                            continue;
+
+                        var pet = CatalogManager.GeneratePetFromRow(dataRow, row);
+
+                        var bot = new RoomBot(pet.PetId, Convert.ToUInt32(RoomData.OwnerId), AiType.Pet, false);
+                        bot.Update(RoomId, "freeroam", pet.Name, "", pet.Look, pet.X, pet.Y, ((int)pet.Z), 4, 0, 0, 0, 0,
+                            null, null, "", 0, 0, false, false);
+                        _roomUserManager.DeployBot(bot, pet);
+
+                        continue;
+                    }
+                    var roomBot = BotManager.GenerateBotFromRow(dataRow);
                     _roomUserManager.DeployBot(roomBot, null);
+                }
             }
         }
 
@@ -397,47 +416,8 @@ namespace Oblivion.HabboHotel.Rooms
             RoomData.Tags.AddRange(tags);
         }
 
-        /// <summary>
-        ///     Initializes the bots.
-        /// </summary>
-        internal void InitBots()
-        {
-            var botsForRoom = Oblivion.GetGame().GetBotManager().GetBotsForRoom(RoomId);
-            foreach (var current in botsForRoom.Where(current => !current.IsPet))
-                DeployBot(current);
-        }
-
-        /// <summary>
-        ///     Initializes the pets.
-        /// </summary>
-        internal void InitPets()
-        {
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-            {
-                queryReactor.SetQuery($"SELECT * FROM bots WHERE room_id = '{RoomId}' AND ai_type='pet'");
-                var table = queryReactor.GetTable();
-
-                if (table == null)
-                    return;
-
-                foreach (DataRow dataRow in table.Rows)
-                {
-                    queryReactor.SetQuery($"SELECT * FROM pets_data WHERE id = '{dataRow["id"]}' LIMIT 1");
-                    var row = queryReactor.GetRow();
-
-                    if (row == null)
-                        continue;
-
-                    var pet = CatalogManager.GeneratePetFromRow(dataRow, row);
-
-                    var bot = new RoomBot(pet.PetId, Convert.ToUInt32(RoomData.OwnerId), AiType.Pet, false);
-                    bot.Update(RoomId, "freeroam", pet.Name, "", pet.Look, pet.X, pet.Y, ((int) pet.Z), 4, 0, 0, 0, 0,
-                        null, null, "", 0, 0, false, false);
-                    _roomUserManager.DeployBot(bot, pet);
-                }
-            }
-        }
-
+     
+        
         /// <summary>
         ///     Deploys the bot.
         /// </summary>

@@ -79,7 +79,7 @@ namespace Oblivion.HabboHotel.SoundMachine.Composers
             serverMessage.AppendInteger(playlistCapacity);
             serverMessage.AppendInteger(playlist.Count);
 
-             foreach (SongInstance current in playlist)
+            foreach (SongInstance current in playlist)
             {
                 serverMessage.AppendInteger(current.DiskItem.ItemId);
                 serverMessage.AppendInteger(current.SongData.Id);
@@ -124,11 +124,11 @@ namespace Oblivion.HabboHotel.SoundMachine.Composers
         /// </summary>
         /// <param name="songs">The songs.</param>
         /// <returns>ServerMessage.</returns>
-        internal static ServerMessage SerializeSongInventory(Dictionary<long, UserItem> songs)
+        internal static ServerMessage SerializeSongInventory(List<UserItem> songs)
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SongsLibraryMessageComposer"));
 
-            if (songs == null)
+            if (songs.Count <= 0)
             {
                 serverMessage.AppendInteger(0);
 
@@ -137,7 +137,7 @@ namespace Oblivion.HabboHotel.SoundMachine.Composers
 
             serverMessage.StartArray();
 
-            foreach (var userItem in songs.Values)
+            foreach (var userItem in songs)
             {
                 if (userItem == null)
                 {

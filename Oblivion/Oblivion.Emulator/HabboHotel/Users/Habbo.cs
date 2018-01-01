@@ -382,6 +382,8 @@ namespace Oblivion.HabboHotel.Users
         /// </summary>
         internal bool Vip;
 
+        public bool LoadedGroups;
+
         internal ConcurrentDictionary<string, KeyValuePair<int, int>> AchievementsToUpdate;
 
         /// <summary>
@@ -512,6 +514,19 @@ namespace Oblivion.HabboHotel.Users
         internal int Emeralds { get; set; }
 
 
+        public void LoadGroups()
+        {
+
+            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                dbClient.SetQuery(
+                    $"SELECT group_id, rank, date_join, has_chat FROM groups_members WHERE user_id = {Id}");
+                var groupsTable = dbClient.GetTable();
+                UserGroups = (from DataRow row in groupsTable.Rows select new GroupMember(Id, UserName, Look, (uint)row["group_id"], Convert.ToInt16(row["rank"]), (int)row["date_join"], Oblivion.EnumToBool(row["has_chat"].ToString()))).ToList();
+
+            }
+            LoadedGroups = true;
+        }
         /// <summary>
         ///     Gets a value indicating whether this instance can change name.
         /// </summary>
@@ -905,7 +920,7 @@ namespace Oblivion.HabboHotel.Users
         /// <summary>
         ///     Updates the credits balance.
         /// </summary>
-        internal void UpdateCreditsBalance()
+        internal void UpdateCreditsBalance(bool inDb = false)
         {
             if (_mClient?.GetMessageHandler() == null || _mClient.GetMessageHandler().GetResponse() == null)
                 return;
@@ -915,12 +930,17 @@ namespace Oblivion.HabboHotel.Users
                 .Init(LibraryParser.OutgoingRequest("CreditsBalanceMessageComposer"));
             _mClient.GetMessageHandler().GetResponse().AppendString($"{Credits}.0");
             _mClient.GetMessageHandler().SendResponse();
+
+            if (inDb)
+            {
+                RunDbUpdate();
+            }
         }
 
         /// <summary>
         ///     Updates the activity points balance.
         /// </summary>
-        internal void UpdateActivityPointsBalance()
+        internal void UpdateActivityPointsBalance(bool inDb = false)
         {
             if (_mClient?.GetMessageHandler() == null || _mClient.GetMessageHandler().GetResponse() == null)
                 return;
@@ -936,12 +956,17 @@ namespace Oblivion.HabboHotel.Users
             _mClient.GetMessageHandler().GetResponse().AppendInteger(102);
             _mClient.GetMessageHandler().GetResponse().AppendInteger(Emeralds);
             _mClient.GetMessageHandler().SendResponse();
+
+            if (inDb)
+            {
+                RunDbUpdate();
+            }
         }
 
         /// <summary>
         ///     Updates the seasonal currency balance.
         /// </summary>
-        internal void UpdateSeasonalCurrencyBalance()
+        internal void UpdateSeasonalCurrencyBalance(bool inDb = false)
         {
             if (_mClient?.GetMessageHandler() == null || _mClient.GetMessageHandler().GetResponse() == null)
                 return;
@@ -957,6 +982,12 @@ namespace Oblivion.HabboHotel.Users
             _mClient.GetMessageHandler().GetResponse().AppendInteger(102);
             _mClient.GetMessageHandler().GetResponse().AppendInteger(Emeralds);
             _mClient.GetMessageHandler().SendResponse();
+
+
+            if (inDb)
+            {
+                RunDbUpdate();
+            }
         }
 
         /// <summary>
@@ -1079,11 +1110,16 @@ namespace Oblivion.HabboHotel.Users
         ///     Runs the database update.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal void RunDbUpdate(IQueryAdapter dbClient)
+        internal void RunDbUpdate()
         {
-            dbClient.RunFastQuery(string.Concat("UPDATE users SET last_online = '", Oblivion.GetUnixTimeStamp(),
-                "', activity_points = '", ActivityPoints, "', credits = '", Credits, "', diamonds = '", Diamonds,
-                "', vip_points = '", Emeralds, "' WHERE id = '", Id, "' LIMIT 1; "));
+            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+
+
+                dbClient.RunFastQuery(string.Concat("UPDATE users SET last_online = '", Oblivion.GetUnixTimeStamp(),
+                    "', activity_points = '", ActivityPoints, "', credits = '", Credits, "', diamonds = '", Diamonds,
+                    "', vip_points = '", Emeralds, "' WHERE id = '", Id, "' LIMIT 1; "));
+            }
         }
 
         /// <summary>

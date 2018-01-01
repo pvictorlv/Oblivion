@@ -10,19 +10,8 @@ namespace Oblivion.HabboHotel.RoomBots
     /// </summary>
     internal class BotManager
     {
-        /// <summary>
-        ///     The _bots
-        /// </summary>
-        private readonly List<RoomBot> _bots;
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="BotManager" /> class.
-        /// </summary>
-        internal BotManager()
-        {
-            _bots = new List<RoomBot>();
-        }
-
+        //todo pet manager?
         /// <summary>
         ///     Generates the bot from row.
         /// </summary>
@@ -52,30 +41,6 @@ namespace Oblivion.HabboHotel.RoomBots
             return bot;
         }
 
-        /// <summary>
-        ///     Gets the bots for room.
-        /// </summary>
-        /// <param name="roomId">The room identifier.</param>
-        /// <returns>List&lt;RoomBot&gt;.</returns>
-        internal List<RoomBot> GetBotsForRoom(uint roomId)
-        {
-            return new List<RoomBot>(
-                from p in _bots
-                where p.RoomId == roomId
-                select p);
-        }
-
-        /// <summary>
-        ///     Gets the bot.
-        /// </summary>
-        /// <param name="botId">The bot identifier.</param>
-        /// <returns>RoomBot.</returns>
-        internal RoomBot GetBot(uint botId)
-        {
-            return (
-                from p in _bots
-                where p.BotId == botId
-                select p).FirstOrDefault();
-        }
+       
     }
 }

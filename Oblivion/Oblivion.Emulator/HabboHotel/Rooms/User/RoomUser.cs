@@ -837,6 +837,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                     return;
                 }
 
+                if (GetRoom().Disposed) return;
+
                 var habbo = GetClient().GetHabbo();
 
                 if (GetRoom().GotWireds())

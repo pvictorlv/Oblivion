@@ -446,22 +446,22 @@ namespace Oblivion.HabboHotel.Catalogs
                 if (item.CreditsCost > 0)
                 {
                     session.GetHabbo().Credits -= (int) item.CreditsCost * totalPrice;
-                    session.GetHabbo().UpdateCreditsBalance();
+                    session.GetHabbo().UpdateCreditsBalance(true);
                 }
                 if (item.DucketsCost > 0)
                 {
                     session.GetHabbo().ActivityPoints -= (int) item.DucketsCost * totalPrice;
-                    session.GetHabbo().UpdateActivityPointsBalance();
+                    session.GetHabbo().UpdateActivityPointsBalance(true);
                 }
                 if (item.DiamondsCost > 0)
                 {
                     session.GetHabbo().Diamonds -= (int) item.DiamondsCost * totalPrice;
-                    session.GetHabbo().UpdateSeasonalCurrencyBalance();
+                    session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
                 }
                 if (item.EmeraldsCost > 0)
                 {
                     session.GetHabbo().Emeralds -= (int)item.EmeraldsCost * totalPrice;
-                    session.GetHabbo().UpdateSeasonalCurrencyBalance();
+                    session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
                 }
                 return;
             }
@@ -527,22 +527,22 @@ namespace Oblivion.HabboHotel.Catalogs
             if (item.CreditsCost > 0 && !isGift)
             {
                 session.GetHabbo().Credits -= (int) item.CreditsCost * totalPrice;
-                session.GetHabbo().UpdateCreditsBalance();
+                session.GetHabbo().UpdateCreditsBalance(true);
             }
             if (item.DucketsCost > 0 && !isGift)
             {
                 session.GetHabbo().ActivityPoints -= (int) item.DucketsCost * totalPrice;
-                session.GetHabbo().UpdateActivityPointsBalance();
+                session.GetHabbo().UpdateActivityPointsBalance(true);
             }
             if (item.DiamondsCost > 0 && !isGift)
             {
                 session.GetHabbo().Diamonds -= (int) item.DiamondsCost * totalPrice;
-                session.GetHabbo().UpdateSeasonalCurrencyBalance();
+                session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
             }
             if (item.EmeraldsCost > 0 && !isGift)
             {
                 session.GetHabbo().Emeralds -= item.EmeraldsCost * totalPrice;
-                session.GetHabbo().UpdateSeasonalCurrencyBalance();
+                session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
             }
 
             /* TODO CHECK */ foreach (var baseItem in item.Items.Keys)
@@ -592,22 +592,22 @@ namespace Oblivion.HabboHotel.Catalogs
                     if (item.CreditsCost > 0 && isGift)
                     {
                         session.GetHabbo().Credits -= (int) item.CreditsCost * totalPrice;
-                        session.GetHabbo().UpdateCreditsBalance();
+                        session.GetHabbo().UpdateCreditsBalance(true);
                     }
                     if (item.DucketsCost > 0 && isGift)
                     {
                         session.GetHabbo().ActivityPoints -= (int) item.DucketsCost * totalPrice;
-                        session.GetHabbo().UpdateActivityPointsBalance();
+                        session.GetHabbo().UpdateActivityPointsBalance(true);
                     }
                     if (item.DiamondsCost > 0 && isGift)
                     {
                         session.GetHabbo().Diamonds -= (int) item.DiamondsCost * totalPrice;
-                        session.GetHabbo().UpdateSeasonalCurrencyBalance();
+                        session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
                     }
                     if (item.EmeraldsCost > 0 && isGift)
                     {
                         session.GetHabbo().Emeralds -= (int) item.EmeraldsCost * totalPrice;
-                        session.GetHabbo().UpdateSeasonalCurrencyBalance();
+                        session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
                     }
 
                 }

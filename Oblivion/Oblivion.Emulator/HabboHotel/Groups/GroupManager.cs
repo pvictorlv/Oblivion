@@ -495,9 +495,10 @@ namespace Oblivion.HabboHotel.Groups
             response.AppendString($"{dateTime2.Day:00}-{dateTime2.Month:00}-{dateTime2.Year}");
             response.AppendBool(group.CreatorId == session.GetHabbo().Id);
             response.AppendBool(group.Admins.ContainsKey(session.GetHabbo().Id));
-            response.AppendString((Oblivion.GetHabboById(group.CreatorId) == null)
+            var habbo = Oblivion.GetHabboById(group.CreatorId);
+            response.AppendString((habbo == null)
                 ? string.Empty
-                : Oblivion.GetHabboById(group.CreatorId).UserName);
+                : habbo.UserName);
             response.AppendBool(newWindow);
             response.AppendBool(group.AdminOnlyDeco == 0u);
             response.AppendInteger(group.Requests.Count);
