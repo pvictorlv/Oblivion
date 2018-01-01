@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -156,6 +155,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 //backmen
                 case Interaction.ConditionUserIsInTeam:
                 case Interaction.ConditionUserIsNotInTeam:
+                case Interaction.ActionJoinTeam:
                 {
                     var serverMessage5 =
                         new ServerMessage(LibraryParser.OutgoingRequest("WiredConditionMessageComposer"));
@@ -171,31 +171,22 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     session.SendMessage(serverMessage5);
                     return;
                 }
-               case Interaction.ActionJoinTeam:
+              /*  case Interaction.ActionJoinTeam:
                 {
-                    if (string.IsNullOrEmpty(wired.OtherString))
-                    {
-                        wired.OtherString = "0";
-                    }
                         var serverMessage5 =
-                        new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
+                        new ServerMessage(LibraryParser.OutgoingRequest("WiredConditionMessageComposer"));
                     serverMessage5.AppendBool(false);
-                    serverMessage5.AppendInteger(15);
+                    serverMessage5.AppendInteger(5);
                     serverMessage5.AppendInteger(0);
-//                    serverMessage5.AppendString(string.Empty);
                     serverMessage5.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage5.AppendInteger(item.VirtualId);
-                    serverMessage5.AppendString(extraInfo);
-
-//                    serverMessage5.AppendInteger(9);
-                    serverMessage5.AppendInteger(0); 
-                    serverMessage5.AppendInteger(0); 
-                    serverMessage5.AppendInteger(9); 
+                    serverMessage5.AppendInteger(Convert.ToInt32(extraInfo));
+                    serverMessage5.AppendInteger(0); //delay type
                     serverMessage5.AppendInteger(0);
-                    serverMessage5.AppendInteger(0);
+                    serverMessage5.AppendInteger(6);
                     session.SendMessage(serverMessage5);
                     return;
-                }
+                }*/
                 case Interaction.TriggerOnUserSay:
                 case Interaction.TriggerOnUserSayCommand:
                 {

@@ -793,12 +793,10 @@ namespace Oblivion.HabboHotel.Rooms
             try
             {
                 if (_roomUserManager?.UserList != null)
-                    foreach (var user in _roomUserManager.UserList.Values)
+                    foreach (var user in _roomUserManager.UserList.Values.Where(user =>
+                        user?.GetClient()?.GetConnection() != null && !user.IsBot))
                     {
-                        if (user?.GetClient() != null && !user.IsBot)
-                        {
-                            user.GetClient().SendMessage(message);
-                        }
+                        user.GetClient().GetConnection().SendData(message);
                     }
             }
             catch (Exception e)
@@ -818,12 +816,12 @@ namespace Oblivion.HabboHotel.Rooms
                 var data = message.GetReversedBytes();
                 if (_roomUserManager?.UserList == null) return;
                 foreach (var user in from user in _roomUserManager.UserList.Values
-                    where user?.GetClient() != null && !user.IsBot
+                    where user?.GetClient()?.GetConnection() != null && !user.IsBot
                     let userCoord = new Vector2D(user.X, user.Y)
                     where userCoord.GetDistanceSquared(currentLocation) <= (RoomData.ChatMaxDistance ^ 2)
                     select user)
                 {
-                    user.GetClient().SendMessage(data);
+                    user.GetClient().GetConnection().SendData(data);
                 }
             }
             catch (Exception e)
@@ -957,7 +955,7 @@ namespace Oblivion.HabboHotel.Rooms
                     if (!CheckRights(usersClient))
                         continue;
 
-                    usersClient.SendMessage(messagebytes);
+                    usersClient.GetConnection().SendData(messagebytes);
                 }
             }
             catch (Exception e)

@@ -7,6 +7,7 @@ using Oblivion.HabboHotel.Quests.Composer;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.Messages.Parsers;
 using Oblivion.Encryption.Encryption;
+using Oblivion.Encryption.Encryption.Hurlant.Crypto.Prng;
 
 namespace Oblivion.Messages.Handlers
 {
@@ -81,7 +82,7 @@ namespace Oblivion.Messages.Handlers
         internal void SendResponse()
         {
             if (Response != null && Response.Id > 0 && Session?.GetConnection() != null)
-                Session.SendMessage(Response.GetReversedBytes());
+                Session.GetConnection().SendData(Response.GetReversedBytes());
         }
 
         /// <summary>
@@ -162,7 +163,7 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void SecretKey()
         {
-           /* var cipherKey = Request.GetString();
+            var cipherKey = Request.GetString();
             var sharedKey = Handler.CalculateDiffieHellmanSharedKey(cipherKey);
 
             if (Session.IsAir)
@@ -180,7 +181,7 @@ namespace Oblivion.Messages.Handlers
                 Array.Reverse(data, 0, data.Length);
 
                 Session.GetConnection().Arc4ServerSide = new ARC4(data);
-            }*/
+            }
         }
 
         internal void InitConsole()

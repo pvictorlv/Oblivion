@@ -54,7 +54,7 @@ namespace Oblivion.Manager
                     return;
                 }
 
-                if (Oblivion.GetGame().GetClientManager()._userIdRegister.ContainsKey(user.Key))
+                if (Oblivion.GetGame().GetClientManager().Clients.ContainsKey(user.Key))
                     continue;
 
                 if ((DateTime.Now - user.Value.LastUsed).TotalMilliseconds < 1800000)

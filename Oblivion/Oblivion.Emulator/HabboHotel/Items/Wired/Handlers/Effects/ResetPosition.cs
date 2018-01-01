@@ -131,7 +131,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     fItem.ExtraData = extraDataToSet;
                     fItem.UpdateState();
                 }
-//                Room.GetGameMap().GenerateMaps();
+                Room.GetGameMap().GenerateMaps();
             }
             _mNext = Oblivion.Now() + (Delay);
             _requested = false;

@@ -29,7 +29,7 @@ namespace Oblivion.HabboHotel.GameClients
         /// <summary>
         ///     The _user identifier register
         /// </summary>
-        public readonly ConcurrentDictionary<uint, GameClient> _userIdRegister;
+        private readonly ConcurrentDictionary<uint, GameClient> _userIdRegister;
 
         /// <summary>
         ///     The _user name identifier register
@@ -40,22 +40,19 @@ namespace Oblivion.HabboHotel.GameClients
         /// </summary>
         private readonly ConcurrentDictionary<string, GameClient> _userNameRegister;
 
-        private readonly ConcurrentDictionary<string, GameClient> _addressRegiser;
-
         /// <summary>
         ///     The clients
         /// </summary>
-        internal ConcurrentDictionary<string, GameClient> Clients;
+        internal ConcurrentDictionary<uint, GameClient> Clients;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="GameClientManager" /> class.
         /// </summary>
         internal GameClientManager()
         {
-            Clients = new ConcurrentDictionary<string, GameClient>();
+            Clients = new ConcurrentDictionary<uint, GameClient>();
             _userNameRegister = new ConcurrentDictionary<string, GameClient>();
             _userIdRegister = new ConcurrentDictionary<uint, GameClient>();
-            _addressRegiser = new ConcurrentDictionary<string, GameClient>();
         }
 
         /// <summary>
@@ -77,15 +74,14 @@ namespace Oblivion.HabboHotel.GameClients
         /// </summary>
         /// <param name="userName">Name of the user.</param>
         /// <returns>GameClient.</returns>
-        internal GameClient GetClientByUserName(string userName) =>
-            _userNameRegister.TryGetValue(userName.ToLower(), out var client) ? client : null;
+        internal GameClient GetClientByUserName(string userName) => _userNameRegister.TryGetValue(userName.ToLower(), out var client) ? client : null;
 
         /// <summary>
         ///     Gets the client.
         /// </summary>
         /// <param name="clientId">The client identifier.</param>
         /// <returns>GameClient.</returns>
-        internal GameClient GetClient(string clientId) => Clients.TryGetValue(clientId, out var client) ? client : null;
+        internal GameClient GetClient(uint clientId) => Clients.TryGetValue(clientId, out var client) ? client : null;
 
         /// <summary>
         ///     Gets the name by identifier.
@@ -198,26 +194,37 @@ namespace Oblivion.HabboHotel.GameClients
                 current.SendMessage(message);
         }
 
+        /// <summary>
+        ///     Mods the alert.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        internal void ModAlert(ServerMessage message)
+        {
+            var bytes = message.GetReversedBytes();
 
-     
+            foreach (var current in Clients.Values.Where(current => current?.GetHabbo() != null).Where(current =>
+                (current.GetHabbo().Rank == 4u || current.GetHabbo().Rank == 5u) || current.GetHabbo().Rank == 6u))
+                current.GetConnection().SendData(bytes);
+        }
+
         /// <summary>
         ///     Creates the and start client.
         /// </summary>
         /// <param name="clientId">The client identifier.</param>
         /// <param name="connection">The connection.</param>
-        internal void CreateAndStartClient(string clientId, ConnectionActor connection)
+        internal void CreateAndStartClient(uint clientId, ConnectionInformation connection)
         {
             var gameClient = new GameClient(clientId, connection);
 
             Clients.AddOrUpdate(clientId, gameClient, (key, value) => gameClient);
-//            gameClient.StartConnection();
+            gameClient.StartConnection();
         }
 
         /// <summary>
         ///     Disposes the connection.
         /// </summary>
         /// <param name="clientId">The client identifier.</param>
-        internal void DisposeConnection(string clientId)
+        internal void DisposeConnection(uint clientId)
         {
             var client = GetClient(clientId);
             if (client == null) return;
@@ -243,19 +250,10 @@ namespace Oblivion.HabboHotel.GameClients
                     if (!Client.GetHabbo().HasFuse(fuse))
                         continue;
 
-                Client.SendMessage(bytes);
+                Client.GetConnection().SendData(bytes);
             }
         }
 
-        /// <summary>
-        ///     Logs the clones out.
-        /// </summary>
-        /// <param name="userId">The user identifier.</param>
-        internal void LogClonesOut(string userId)
-        {
-            var clientByUserId = GetClient(userId);
-            clientByUserId?.Disconnect("user null LogClonesOut");
-        }
         /// <summary>
         ///     Logs the clones out.
         /// </summary>
@@ -296,31 +294,6 @@ namespace Oblivion.HabboHotel.GameClients
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.SetQuery($"UPDATE users SET online='0' WHERE id={userid} LIMIT 1");
-        }
-
-        /// <summary>
-        ///     Unregisters the client.
-        /// </summary>
-        /// <param name="userid">The userid.</param>
-        /// <param name="userName">The username.</param>
-        internal void UnregisterClient(string connId)
-        {
-            if (!Clients.TryRemove(connId, out var client))
-            {
-                return;
-            }
-            if (client?.GetHabbo() == null) return;
-            var name = client.GetHabbo().UserName;
-
-            _userNameRegister.TryRemove(name.ToLower(), out _);
-
-
-            var id = client.GetHabbo().Id;
-            _userIdRegister.TryRemove(id, out _);
-
-
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.SetQuery($"UPDATE users SET online='0' WHERE id={id} LIMIT 1");
         }
 
         /// <summary>
@@ -367,7 +340,7 @@ namespace Oblivion.HabboHotel.GameClients
                 {
                     try
                     {
-                        current3.GetConnection().Close();
+                        current3.GetConnection().Disconnect();
 
                         Console.ForegroundColor = ConsoleColor.DarkMagenta;
 

@@ -772,7 +772,6 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="textColor">Color of the text.</param>
         internal void Chat(GameClient session, string msg, bool shout, int count, int textColor = 0)
         {
-            if (_mRoom.Disposed) return;
             if (IsPet || IsBot)
             {
                 if (!IsPet)
@@ -832,7 +831,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 if (msg.StartsWith(":") && CommandsManager.TryExecute(msg.Substring(1), session))
                 {
-                    if (_mRoom != null && _mRoom.GotWireds())
+                    if (GetRoom().GotWireds())
                         GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSayCommand, this, msg);
 
                     return;

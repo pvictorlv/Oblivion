@@ -16,13 +16,13 @@ namespace Oblivion.Messages
         /// <summary>
         /// The _user connection
         /// </summary>
-        private ConnectionActor _userConnection;
+        private ConnectionInformation _userConnection;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QueuedServerMessage"/> class.
         /// </summary>
         /// <param name="connection">The connection.</param>
-        public QueuedServerMessage(ConnectionActor connection)
+        public QueuedServerMessage(ConnectionInformation connection)
         {
             _userConnection = connection;
             _packets = new List<byte[]>();
@@ -70,7 +70,7 @@ namespace Oblivion.Messages
         internal void SendResponse()
         {
             foreach (var packet in _packets)
-                _userConnection?.ConnectionChannel.WriteAsync(packet);
+                _userConnection?.SendData(packet);
 
             Dispose();
         }

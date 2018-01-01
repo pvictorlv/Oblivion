@@ -1725,7 +1725,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
             try
             {
-                var item = _userRoom.GetGameMap().GetAllRoomItemForSquare(x, y).FirstOrDefault()?.GetBaseItem();
+                var item = _userRoom.GetGameMap().GetRoomItemForSquare(x, y).FirstOrDefault()?.GetBaseItem();
                 if (item == null) return;
                 var b = user.GetClient().GetHabbo().Gender == "M" ? item.EffectM : item.EffectF;
                 if (b > 0)
