@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Net;
 using System.Threading.Tasks;
+using DotNetty.Buffers;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
@@ -40,34 +41,44 @@ namespace Oblivion.Connection.Connection
 
         public static async Task RunServer()
         {
-            MainServerWorkers = new MultithreadEventLoopGroup();
-
-            ChildServerWorkers = new MultithreadEventLoopGroup();
+            MainServerWorkers = new MultithreadEventLoopGroup(8);
+            
+            ChildServerWorkers = new MultithreadEventLoopGroup(8);
 
             ClientConnections = new ConcurrentDictionary<string, ConnectionActor>();
 
             try
             {
                 ServerBootstrap server = new ServerBootstrap();
-
+                
                 server
                     .Group(MainServerWorkers, ChildServerWorkers)
                     .Channel<TcpServerSocketChannel>()
-                    .Option(ChannelOption.AutoRead, true)
-                    .Option(ChannelOption.SoBacklog, 100)
+                    .Option(ChannelOption.SoBacklog, 1000)
                     .Option(ChannelOption.SoKeepalive, true)
-                    .Option(ChannelOption.ConnectTimeout, TimeSpan.MaxValue)
+                    .Option(ChannelOption.Allocator, PooledByteBufferAllocator.Default)
                     .Option(ChannelOption.TcpNodelay, true)
+                    .Option(ChannelOption.AutoRead, true)
+                    .Option(ChannelOption.WriteBufferHighWaterMark, 64 * 1024)
+                    .Option(ChannelOption.WriteBufferLowWaterMark, 32 * 1024)
                     .Option(ChannelOption.SoRcvbuf, GameSocketManagerStatics.BufferSize)
+                    .ChildOption(ChannelOption.WriteBufferHighWaterMark, 64 * 1024)
+                    .ChildOption(ChannelOption.WriteBufferLowWaterMark, 32 * 1024)
+                    .ChildOption(ChannelOption.Allocator, PooledByteBufferAllocator.Default)
+                    .ChildOption(ChannelOption.TcpNodelay, true)
+                    
                     .ChildHandler(new ActionChannelInitializer<ISocketChannel>(channel =>
                     {
                         string clientAddress = (channel.RemoteAddress as IPEndPoint)?.Address.ToString();
 
                         if (ConnectionSecurity.CheckAvailability(clientAddress))
                         {
+
                             channel.Pipeline.AddLast(new ConnectionHandler());
 
-                            ConnectionActor connectionActor = new ConnectionActor(DataParser.Clone() as GamePacketParser, channel);
+                            var parser = new GamePacketParser();
+
+                            ConnectionActor connectionActor = new ConnectionActor(parser, channel);
 
                             if (ClientConnections.ContainsKey(connectionActor.IpAddress))
                                 connectionActor.HandShakePartialCompleted = true;
@@ -75,8 +86,9 @@ namespace Oblivion.Connection.Connection
                             ClientConnections.AddOrUpdate(connectionActor.IpAddress, connectionActor, (key, value) => connectionActor);
                         }
                     }));
-
-                ServerChannel = await server.BindAsync(IPAddress.Any, Convert.ToInt32(ConfigurationData.Data["game.tcp.port"]));
+                var task = server.BindAsync(IPAddress.Any, Convert.ToInt32(ConfigurationData.Data["game.tcp.port"]));
+                task.Wait();
+                ServerChannel = task.Result;
             }
             catch
             {

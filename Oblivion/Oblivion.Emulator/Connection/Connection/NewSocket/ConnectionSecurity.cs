@@ -78,7 +78,7 @@ namespace Oblivion.Connection.Connection
                 return true;
             }
 
-            if (GetClientCount(clientAddress) >= 100)
+            if (GetClientCount(clientAddress) >= 300)
             {
                 if (!BlockedClientConnectionsByAddress.Contains(clientAddress))
                 {

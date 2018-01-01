@@ -321,6 +321,7 @@ namespace Oblivion.HabboHotel.GameClients
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.SetQuery($"UPDATE users SET online='0' WHERE id={id} LIMIT 1");
+            DisposeConnection(connId);
         }
 
         /// <summary>

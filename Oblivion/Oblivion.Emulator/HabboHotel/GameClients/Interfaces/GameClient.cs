@@ -23,7 +23,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <summary>
         ///     The _connection
         /// </summary>
-        private ConnectionActor _connection;
+        public ConnectionActor _connection;
 
         /// <summary>
         ///     The _disconnected
@@ -77,10 +77,13 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <param name="connection">The connection.</param>
         internal GameClient(string clientId, ConnectionActor connection)
         {
+            if (connection == null) return;
             ConnectionId = clientId;
             _connection = connection;
             CurrentRoomUserId = -1;
             PacketParser = new GamePacketParser();
+            _connection.DataParser.SetConnection(_connection, this);
+
         }
 
         /// <summary>
@@ -213,7 +216,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         internal void InitHandler()
         {
             _messageHandler = new GameClientMessageHandler(this);
-            _connection.DataParser.SetConnection(_connection, this);
+//            _connection.DataParser.SetConnection(_connection, this);
 
             _connection.HandShakeCompleted = true;
 
@@ -670,7 +673,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
             var bytes = message.GetReversedBytes();
 
-            GetConnection().ConnectionChannel.WriteAsync(bytes);
+            GetConnection().ConnectionChannel.WriteAndFlushAsync(bytes);
         }
 
         /// <summary>
@@ -684,7 +687,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 return;
 
 
-            GetConnection().ConnectionChannel.WriteAsync(bytes);
+            GetConnection().ConnectionChannel.WriteAndFlushAsync(bytes);
         }
 
         /// <summary>
@@ -696,7 +699,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             if (GetConnection() == null)
                 return;
 
-            GetConnection().ConnectionChannel.WriteAsync(StaticMessagesManager.Get(type));
+            GetConnection().ConnectionChannel.WriteAndFlushAsync(StaticMessagesManager.Get(type));
         }
 
         /// <summary>

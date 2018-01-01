@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using System.Linq;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -22,9 +21,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             if (_mNext == 0L || _mNext < Oblivion.Now())
                 _mNext = Oblivion.Now() + Delay;
         }
-
-
-        public ConcurrentQueue<IWiredItem> _toRemove = new ConcurrentQueue<IWiredItem>();
 
         public double TickCount { get; set; }
         public bool Requested { get; set; }
