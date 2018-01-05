@@ -247,7 +247,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                     return null;
                 
                 num = Convert.ToUInt32(dataRow["id"]);
-                Oblivion.GetGame().GetClientManager().LogClonesOut(num);
+//                Oblivion.GetGame().GetClientManager().LogClonesOut(num);
 
 
 

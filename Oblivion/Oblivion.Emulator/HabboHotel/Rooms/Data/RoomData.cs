@@ -490,6 +490,13 @@ namespace Oblivion.HabboHotel.Rooms.Data
         {
             _model = null;
             Event = null;
+            BlockedCommands?.Clear();
+            BlockedCommands = null;
+            Group = null;
+            RoomChat?.Clear();
+            RoomChat = null;
+            WordFilter?.Clear();
+            WordFilter = null;
         }
     }
 }

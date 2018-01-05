@@ -840,7 +840,7 @@ namespace Oblivion.HabboHotel.Rooms
                         {
                             if (user.OnCampingTent || !roomUser.OnCampingTent)
                             {
-                                if (!usersClient.GetHabbo().MutedUsers.Contains(p))
+                                if (!usersClient.GetHabbo().Data.Ignores.Contains(p))
                                     usersClient.SendMessage(packetData);
                             }
                         }

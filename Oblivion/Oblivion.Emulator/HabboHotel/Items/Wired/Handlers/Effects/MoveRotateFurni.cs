@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Drawing;
+using System.Linq;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -46,95 +47,94 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             if (Items != null && Items.Count > 0)
             {
-                lock (Items)
+                foreach (var Item in Items.ToList())
                 {
-                    foreach (var Item in Items)
+                    if (Item == null) continue;
+
+                    if (Room.GetWiredHandler().OtherBoxHasItem(this, Item) ||
+                        Room.GetRoomItemHandler().GetItem(Item.Id) == null)
                     {
-                        if (Room.GetWiredHandler().OtherBoxHasItem(this, Item) ||
-                            Room.GetRoomItemHandler().GetItem(Item.Id) == null)
-                        {
-                            _toRemove.Enqueue(Item);
-                            continue;
-                        }
-
-
-                        var Point = HandleMovement(Convert.ToInt32(OtherString.Split(';')[0]),
-                            new Point(Item.X, Item.Y));
-                        var newRot = HandleRotation(Convert.ToInt32(OtherString.Split(';')[1]), Item.Rot);
-                        var newZ = Room.GetGameMap().GetHeightForSquareFromData(Point);
-
-                        bool sameTile = (Point.X == Item.X && Point.Y == Item.Y);
-                        if (sameTile)
-                        {
-                            if (newRot != Item.Rot)
-                            {
-                                Item.Rot = newRot;
-                                Item.UpdateState(false, true);
-                                Item.SetState(Item.X, Item.Y, newZ);
-                                Room.GetRoomItemHandler()
-                                    .SetFloorItem(Item, Item.X, Item.Y, newZ, Item.Rot, true);
-                            }
-                            continue;
-                        }
-
-                        if (!Room.GetGameMap().ItemCanMove(Item, Point))
-                            continue;
-                        if (Room.GetGameMap().SquareIsOpen(Point.X, Point.Y, false) &&
-                            !Room.GetGameMap().SquareHasUsers(Point.X, Point.Y))
-                        {
-                            var CanBePlaced = true;
-                            if (newRot != Item.Rot)
-                            {
-                                Item.Rot = newRot;
-                                Item.UpdateState(false, true);
-                                Item.SetState(Item.X, Item.Y, newZ);
-                                Room.GetRoomItemHandler()
-                                    .SetFloorItem(Item, Item.X, Item.Y, newZ, Item.Rot, true);
-                            }
-
-                            var Items = Room.GetGameMap().GetCoordinatedItems(Point);
-                            foreach (var IItem in Items)
-                            {
-                                if (IItem != null && IItem.Id != Item.Id)
-                                {
-                                    if (!IItem.GetBaseItem().Walkable)
-                                    {
-                                        CanBePlaced = false;
-                                        break;
-                                    }
-
-                                    if (IItem.TotalHeight > newZ)
-                                        newZ = IItem.TotalHeight;
-
-                                    if (CanBePlaced && !IItem.GetBaseItem().Stackable)
-                                        CanBePlaced = false;
-                                }
-                            }
-
-                            if (CanBePlaced && Point != Item.Coordinate)
-                            {
-                                var serverMessage =
-                                    new ServerMessage(LibraryParser.OutgoingRequest("ItemAnimationMessageComposer"));
-                                serverMessage.AppendInteger(Item.X);
-                                serverMessage.AppendInteger(Item.Y);
-                                serverMessage.AppendInteger(Point.X);
-                                serverMessage.AppendInteger(Point.Y);
-                                serverMessage.AppendInteger(1);
-                                serverMessage.AppendInteger(Item.VirtualId);
-                                serverMessage.AppendString(Item.Z.ToString(Oblivion.CultureInfo));
-                                serverMessage.AppendString(newZ.ToString(Oblivion.CultureInfo));
-                                serverMessage.AppendInteger(0);
-                                Room.SendMessage(serverMessage);
-
-                                Room.GetRoomItemHandler().SetFloorItem(Item, Point.X, Point.Y, newZ);
-                            }
-                            Room.GetWiredHandler().OnUserFurniCollision(Room, Item);
-                        }
+                        _toRemove.Enqueue(Item);
+                        continue;
                     }
-                    while (_toRemove.TryDequeue(out var rI))
-                        if (Items.Contains(rI))
-                            Items.Remove(rI);
+
+
+                    var Point = HandleMovement(Convert.ToInt32(OtherString.Split(';')[0]),
+                        new Point(Item.X, Item.Y));
+                    var newRot = HandleRotation(Convert.ToInt32(OtherString.Split(';')[1]), Item.Rot);
+                    var newZ = Room.GetGameMap().GetHeightForSquareFromData(Point);
+
+                    bool sameTile = (Point.X == Item.X && Point.Y == Item.Y);
+                    if (sameTile)
+                    {
+                        if (newRot != Item.Rot)
+                        {
+                            Item.Rot = newRot;
+                            Item.UpdateState(false, true);
+                            Item.SetState(Item.X, Item.Y, newZ);
+                            Room.GetRoomItemHandler()
+                                .SetFloorItem(Item, Item.X, Item.Y, newZ, Item.Rot, true);
+                        }
+                        continue;
+                    }
+
+                    if (!Room.GetGameMap().ItemCanMove(Item, Point))
+                        continue;
+                    if (Room.GetGameMap().SquareIsOpen(Point.X, Point.Y, false) &&
+                        !Room.GetGameMap().SquareHasUsers(Point.X, Point.Y))
+                    {
+                        var CanBePlaced = true;
+                        if (newRot != Item.Rot)
+                        {
+                            Item.Rot = newRot;
+                            Item.UpdateState(false, true);
+                            Item.SetState(Item.X, Item.Y, newZ);
+                            Room.GetRoomItemHandler()
+                                .SetFloorItem(Item, Item.X, Item.Y, newZ, Item.Rot, true);
+                        }
+
+                        var Items = Room.GetGameMap().GetCoordinatedItems(Point);
+                        foreach (var IItem in Items)
+                        {
+                            if (IItem != null && IItem.Id != Item.Id)
+                            {
+                                if (!IItem.GetBaseItem().Walkable)
+                                {
+                                    CanBePlaced = false;
+                                    break;
+                                }
+
+                                if (IItem.TotalHeight > newZ)
+                                    newZ = IItem.TotalHeight;
+
+                                if (CanBePlaced && !IItem.GetBaseItem().Stackable)
+                                    CanBePlaced = false;
+                            }
+                        }
+
+                        if (CanBePlaced && Point != Item.Coordinate)
+                        {
+                            var serverMessage =
+                                new ServerMessage(LibraryParser.OutgoingRequest("ItemAnimationMessageComposer"));
+                            serverMessage.AppendInteger(Item.X);
+                            serverMessage.AppendInteger(Item.Y);
+                            serverMessage.AppendInteger(Point.X);
+                            serverMessage.AppendInteger(Point.Y);
+                            serverMessage.AppendInteger(1);
+                            serverMessage.AppendInteger(Item.VirtualId);
+                            serverMessage.AppendString(Item.Z.ToString(Oblivion.CultureInfo));
+                            serverMessage.AppendString(newZ.ToString(Oblivion.CultureInfo));
+                            serverMessage.AppendInteger(0);
+                            Room.SendMessage(serverMessage);
+
+                            Room.GetRoomItemHandler().SetFloorItem(Item, Point.X, Point.Y, newZ);
+                        }
+                        Room.GetWiredHandler().OnUserFurniCollision(Room, Item);
+                    }
                 }
+                while (_toRemove.TryDequeue(out var rI))
+                    if (Items.Contains(rI))
+                        Items.Remove(rI);
             }
 
             _next = Oblivion.Now() + (Delay / 2);
@@ -203,7 +203,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool Execute(params object[] Params)
         {
-
             if (Room == null)
                 return false;
 

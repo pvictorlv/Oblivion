@@ -635,25 +635,30 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <returns>ServerMessage.</returns>
         internal ServerMessage SerializeStatusUpdates(bool all)
         {
-            var list = new List<RoomUser>();
+            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
+            var i = 0;
+            serverMessage.StartArray();
             foreach (var current in UserList.Values)
             {
+
                 if (!all)
                 {
                     if (!current.UpdateNeeded)
                         continue;
                     current.UpdateNeeded = false;
                 }
-                if (!list.Contains(current))
-                    list.Add(current);
+                current.SerializeStatus(serverMessage);
+                serverMessage.SaveArray();
+                i ++;
             }
-            if (!list.Any())
+            serverMessage.EndArray();
+            if (i <= 0)
+            {
+                serverMessage.Clear();
                 return null;
-
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
-            serverMessage.AppendInteger(list.Count);
-            foreach (var current2 in list)
-                current2.SerializeStatus(serverMessage);
+            }
+            
+            
             return serverMessage;
         }
 
@@ -1125,7 +1130,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
         }
 
-        internal void UserGoToTile(RoomUser roomUsers, bool invalidStep)
+        internal bool UserGoToTile(RoomUser roomUsers, bool invalidStep)
         {
             if (((invalidStep) || (roomUsers.PathStep >= roomUsers.Path.Count) ||
                  ((roomUsers.GoalX == roomUsers.X) && (roomUsers.GoalY == roomUsers.Y))))
@@ -1156,13 +1161,13 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                 // Finally Update User Status
                 UpdateUserStatus(roomUsers, false);
-                return;
+                return false;
             }
 
 
             // Region Set Variables
             var pathDataCount = ((roomUsers.Path.Count - roomUsers.PathStep) - 1);
-            if (roomUsers.Path.Count < pathDataCount || pathDataCount < 0) return;
+            if (roomUsers.Path.Count < pathDataCount || pathDataCount < 0) return false;
             var nextStep = roomUsers.Path[pathDataCount];
 
             if (!_userRoom.GetGameMap().CanWalk(nextStep.X, nextStep.Y, roomUsers.AllowOverride) &&
@@ -1172,7 +1177,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 roomUsers.ClearMovement();
                 roomUsers.SetStep = false;
                 UpdateUserStatus(roomUsers, false);
-                return;
+                return false;
             }
 
             // Increase Step Data...
@@ -1271,7 +1276,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (_userRoom.GotSoccer())
                     _userRoom.GetSoccer().OnUserWalk(roomUsers);
 
-                return;
+                return true;
             }
 
             // Isn't a Valid Step! And he Can Go? Erase Imediatile Effect
@@ -1281,6 +1286,8 @@ namespace Oblivion.HabboHotel.Rooms.User
             // If user isn't pet and Bot, we have serious Problems. Let Recalculate Path!
             if ((!roomUsers.IsPet) && (!roomUsers.IsBot))
                 roomUsers.PathRecalcNeeded = true;
+
+            return true;
         }
 
         internal bool UserCanWalkInTile(RoomUser roomUsers)
@@ -1603,10 +1610,12 @@ namespace Oblivion.HabboHotel.Rooms.User
                     // If he Want's to Walk.. Let's Continue!..
 
                     // Let's go to The Tile! And Walk :D
-                    UserGoToTile(roomUsers, invalidStep);
-                    // If User isn't Riding, Must Update Statusses...
-                    if (!roomUsers.RidingHorse)
-                        roomUsers.UpdateNeeded = true;
+                    if (UserGoToTile(roomUsers, invalidStep))
+                    {
+                        // If User isn't Riding, Must Update Statusses...
+                        if (!roomUsers.RidingHorse)
+                            roomUsers.UpdateNeeded = true;
+                    }
                 }
 
                 // If is a Bot.. Let's Tick the Time Count of Bot..
@@ -1620,8 +1629,9 @@ namespace Oblivion.HabboHotel.Rooms.User
                     {
                         Logging.HandleException(e, "RoomUsers - BotAi - OnTimerTick");
                     }
+                    return;
                 }
-                UpdateUserEffect(roomUsers, roomUsers.X, roomUsers.Y);
+//                UpdateUserEffect(roomUsers, roomUsers.X, roomUsers.Y);
             }
         }
 
@@ -1725,7 +1735,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
             try
             {
-                var item = _userRoom.GetGameMap().GetRoomItemForSquare(x, y).FirstOrDefault()?.GetBaseItem();
+                var item = _userRoom.GetGameMap().GetAllRoomItemForSquare(x, y).FirstOrDefault()?.GetBaseItem();
                 if (item == null) return;
                 var b = user.GetClient().GetHabbo().Gender == "M" ? item.EffectM : item.EffectF;
                 if (b > 0)

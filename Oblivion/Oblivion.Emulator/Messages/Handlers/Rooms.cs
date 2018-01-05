@@ -75,7 +75,7 @@ namespace Oblivion.Messages.Handlers
             GetResponse().AppendBool(true);
             SendResponse();
 
-            Session.GetHabbo().FavoriteRooms.Add(roomId);
+            Session.GetHabbo().Data.FavouritedRooms.Add(roomId);
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.RunFastQuery("INSERT INTO users_favorites (user_id,room_id) VALUES (" +
@@ -88,7 +88,7 @@ namespace Oblivion.Messages.Handlers
             if (Session.GetHabbo() == null)
                 return;
             var roomId = Request.GetUInteger();
-            Session.GetHabbo().FavoriteRooms.Remove(roomId);
+            Session.GetHabbo().Data.FavouritedRooms.Remove(roomId);
 
             GetResponse().Init(LibraryParser.OutgoingRequest("FavouriteRoomsUpdateMessageComposer"));
             GetResponse().AppendInteger(roomId);
@@ -1282,9 +1282,9 @@ namespace Oblivion.Messages.Handlers
             var habbo = Oblivion.GetGame().GetClientManager().GetClientByUserName(text)?.GetHabbo();
             if (habbo == null)
                 return;
-            if (Session.GetHabbo().MutedUsers.Contains(habbo.Id) || habbo.Rank > 4u)
+            if (Session.GetHabbo().Data.Ignores.Contains(habbo.Id) || habbo.Rank > 4u)
                 return;
-            Session.GetHabbo().MutedUsers.Add(habbo.Id);
+            Session.GetHabbo().Data.Ignores.Add(habbo.Id);
             Response.Init(LibraryParser.OutgoingRequest("UpdateIgnoreStatusMessageComposer"));
             Response.AppendInteger(1);
             Response.AppendString(text);
@@ -1300,9 +1300,9 @@ namespace Oblivion.Messages.Handlers
             var habbo = Oblivion.GetGame().GetClientManager().GetClientByUserName(text).GetHabbo();
             if (habbo == null)
                 return;
-            if (!Session.GetHabbo().MutedUsers.Contains(habbo.Id))
+            if (!Session.GetHabbo().Data.Ignores.Contains(habbo.Id))
                 return;
-            Session.GetHabbo().MutedUsers.Remove(habbo.Id);
+            Session.GetHabbo().Data.Ignores.Remove(habbo.Id);
             Response.Init(LibraryParser.OutgoingRequest("UpdateIgnoreStatusMessageComposer"));
             Response.AppendInteger(3);
             Response.AppendString(text);
@@ -2086,7 +2086,7 @@ namespace Oblivion.Messages.Handlers
             if (Session.GetHabbo() == null)
                 return;
             var num = Request.GetUInteger();
-            Session.GetHabbo().FavoriteRooms.Remove(num);
+            Session.GetHabbo().Data.FavouritedRooms.Remove(num);
             Response.Init(LibraryParser.OutgoingRequest("FavouriteRoomsUpdateMessageComposer"));
             Response.AppendInteger(num);
             Response.AppendBool(false);
@@ -2584,7 +2584,7 @@ namespace Oblivion.Messages.Handlers
             roomUserByHabbo.GetClient().SendMessage(whisp);
 
             if (!roomUserByHabbo2.IsBot && roomUserByHabbo2.UserId != roomUserByHabbo.UserId && !roomUserByHabbo2
-                    .GetClient().GetHabbo().MutedUsers.Contains(Session.GetHabbo().Id))
+                    .GetClient().GetHabbo().Data.Ignores.Contains(Session.GetHabbo().Id))
                 roomUserByHabbo2.GetClient().SendMessage(whisp);
 
             var roomUserByRank = currentRoom.GetRoomUserManager().GetRoomUserByRank(4);

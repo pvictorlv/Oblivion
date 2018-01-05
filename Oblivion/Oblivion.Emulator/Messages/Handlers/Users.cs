@@ -7,7 +7,6 @@ using Oblivion.HabboHotel.Quests;
 using Oblivion.HabboHotel.Quests.Composer;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.HabboHotel.Users;
-using Oblivion.HabboHotel.Users.Badges;
 using Oblivion.HabboHotel.Users.Messenger;
 using Oblivion.HabboHotel.Users.Relationships;
 using Oblivion.Messages.Parsers;
@@ -141,7 +140,7 @@ namespace Oblivion.Messages.Handlers
                     roomUserByHabbo.GetClient()
                         .GetHabbo()
                         .GetBadgeComponent()
-                        .BadgeList.Values.Cast<Badge>()
+                        .BadgeList.Values
                         .Where(badge => badge.Slot > 0).Take(5))
                 {
                     msg.AppendInteger(badge.Slot);
@@ -398,7 +397,7 @@ namespace Oblivion.Messages.Handlers
                 var badge in
                 Session.GetHabbo()
                     .GetBadgeComponent()
-                    .BadgeList.Values.Cast<Badge>()
+                    .BadgeList.Values
                     .Where(badge => badge.Slot > 0))
             {
                 serverMessage.AppendInteger(badge.Slot);
@@ -519,16 +518,16 @@ namespace Oblivion.Messages.Handlers
 
             var msg2 = new ServerMessage(LibraryParser.OutgoingRequest("UserBadgesMessageComposer"));
             msg2.AppendInteger(habbo.Id);
-
-            var badges = habbo.GetBadgeComponent().BadgeList.Values.Cast<Badge>().Where(badge => badge.Slot > 0)
-                .ToList();
-            msg2.AppendInteger(badges.Count);
-            foreach (
-                var badge in badges)
+            
+            msg2.StartArray();
+            foreach (var badge in habbo.GetBadgeComponent().BadgeList.Values.Where(badge => badge.Slot > 0))
             {
                 msg2.AppendInteger(badge.Slot);
                 msg2.AppendString(badge.Code);
+                msg2.SaveArray();
             }
+            msg2.EndArray();
+            
             Session.SendMessage(msg2);
         }
 
@@ -898,18 +897,33 @@ namespace Oblivion.Messages.Handlers
             if (habboForId.Data.Relations.Count <= 0) return;
 
             var rand = new Random();
-            var dictionary = habboForId.Data.Relations.OrderBy(x => rand.Next()).Where(pair => habboForId.GetMessenger().FriendshipExists((uint) pair.Value.UserId)).ToDictionary(pair => pair.Key, pair => pair.Value);
-            habboForId.Data.Relations = dictionary;
 
-            var num = habboForId.Data.Relations.Count(x => x.Value.Type == 1);
-            var num2 = habboForId.Data.Relations.Count(x => x.Value.Type == 2);
-            var num3 = habboForId.Data.Relations.Count(x => x.Value.Type == 3);
+
+            var num = 0;
+            var num2 = 0;
+            var num3 = 0;
+            foreach (var x in habboForId.Data.Relations)
+            {
+                if (!habboForId.GetMessenger().FriendshipExists((uint)x.Value.UserId))
+                    continue;
+
+                if (x.Value.Type == 1) num++;
+                else if (x.Value.Type == 2) num2++;
+                else if (x.Value.Type == 3) num3++;
+
+            }
+            
             Response.Init(LibraryParser.OutgoingRequest("RelationshipMessageComposer"));
             Response.AppendInteger(habboForId.Id);
-            Response.AppendInteger(habboForId.Data.Relations.Count);
-            /* TODO CHECK */
-            foreach (var current in habboForId.Data.Relations.Values)
+
+            Response.StartArray();
+//            Response.AppendInteger(habboForId.Data.Relations.Count);
+           
+            foreach (var current in habboForId.Data.Relations.Values.OrderBy(x => rand.Next()))
             {
+                if (!habboForId.GetMessenger().FriendshipExists((uint)current.UserId))
+                    continue;
+
                 var habboForId2 = Oblivion.GetHabboById(Convert.ToUInt32(current.UserId));
                 if (habboForId2 == null)
                 {
@@ -927,7 +941,9 @@ namespace Oblivion.Messages.Handlers
                     Response.AppendString(habboForId2.UserName);
                     Response.AppendString(habboForId2.Look);
                 }
+                Response.SaveArray();
             }
+            Response.EndArray();
             SendResponse();
         }
 

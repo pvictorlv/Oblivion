@@ -5,7 +5,6 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using Oblivion.Configuration;
-using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Achievements.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Groups.Interfaces;
@@ -144,10 +143,6 @@ namespace Oblivion.HabboHotel.Users
 
         internal uint DutyLevel;
 
-        /// <summary>
-        ///     The favorite rooms
-        /// </summary>
-        internal List<uint> FavoriteRooms;
 
         /// <summary>
         ///     The favourite group
@@ -258,10 +253,6 @@ namespace Oblivion.HabboHotel.Users
         /// </summary>
         internal bool Muted;
 
-        /// <summary>
-        ///     The muted users
-        /// </summary>
-        internal List<uint> MutedUsers;
 
         /// <summary>
         ///     The navigator logs
@@ -475,8 +466,6 @@ namespace Oblivion.HabboHotel.Users
             HomeRoom = homeRoom;
             HideInRoom = hideInRoom;
             AppearOffline = appearOffline;
-            FavoriteRooms = new List<uint>();
-            MutedUsers = new List<uint>();
             RatedRooms = new HashSet<uint>();
             Respect = respect;
             DailyRespectPoints = dailyRespectPoints;
@@ -516,17 +505,18 @@ namespace Oblivion.HabboHotel.Users
 
         public void LoadGroups()
         {
-
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 dbClient.SetQuery(
                     $"SELECT group_id, rank, date_join, has_chat FROM groups_members WHERE user_id = {Id}");
                 var groupsTable = dbClient.GetTable();
-                UserGroups = (from DataRow row in groupsTable.Rows select new GroupMember(Id, UserName, Look, (uint)row["group_id"], Convert.ToInt16(row["rank"]), (int)row["date_join"], Oblivion.EnumToBool(row["has_chat"].ToString()))).ToList();
-
+                UserGroups = (from DataRow row in groupsTable.Rows
+                    select new GroupMember(Id, UserName, Look, (uint) row["group_id"], Convert.ToInt16(row["rank"]),
+                        (int) row["date_join"], Oblivion.EnumToBool(row["has_chat"].ToString()))).ToList();
             }
             LoadedGroups = true;
         }
+
         /// <summary>
         ///     Gets a value indicating whether this instance can change name.
         /// </summary>
@@ -587,9 +577,10 @@ namespace Oblivion.HabboHotel.Users
         internal void InitInformation(UserData data)
         {
 //            _subscriptionManager = new SubscriptionManager(Id, data);
-            _badgeComponent = new BadgeComponent(Id);
             _messenger = new HabboMessenger(Id);
             _messenger.Init();
+
+            _badgeComponent = new BadgeComponent(Id);
             SpectatorMode = false;
             Disconnected = false;
             Data = data;
@@ -645,8 +636,6 @@ namespace Oblivion.HabboHotel.Users
         /// <param name="data">The data.</param>
         internal void LoadData(UserData data)
         {
-            LoadFavorites(data.FavouritedRooms);
-            LoadMutedUsers(data.Ignores);
             Data = data;
         }
 
@@ -678,23 +667,6 @@ namespace Oblivion.HabboHotel.Users
                                                    .HasVip(GetSubscriptionManager().GetSubscription().SubscriptionId,
                                                        fuse));
 
-        /// <summary>
-        ///     Loads the favorites.
-        /// </summary>
-        /// <param name="roomId">The room identifier.</param>
-        internal void LoadFavorites(List<uint> roomId)
-        {
-            FavoriteRooms = roomId;
-        }
-
-        /// <summary>
-        ///     Loads the muted users.
-        /// </summary>
-        /// <param name="usersMuted">The users muted.</param>
-        internal void LoadMutedUsers(List<uint> usersMuted)
-        {
-            MutedUsers = usersMuted;
-        }
 
         /// <summary>
         ///     Serializes the club.
@@ -767,6 +739,19 @@ namespace Oblivion.HabboHotel.Users
         }
 
 
+        internal void RemoveCached()
+        {
+            _myGroups?.Clear();
+            _myGroups = null;
+            Data?.Dispose();
+            Data = null;
+            _badgeComponent.BadgeList.Clear();
+            _badgeComponent = null;
+            AchievementsToUpdate = null;
+            RatedRooms = null;
+            RecentlyVisitedRooms = null;
+        }
+
         /// <summary>
         ///     Called when [disconnect].
         /// </summary>
@@ -776,7 +761,7 @@ namespace Oblivion.HabboHotel.Users
             if (Disconnected)
                 return;
 
-            if (AchievementsToUpdate.Count > 0)
+            if (AchievementsToUpdate?.Count > 0)
             {
                 var queryBuilder = new StringBuilder();
                 queryBuilder.Append("REPLACE INTO `users_achievements` VALUES ");
@@ -800,11 +785,13 @@ namespace Oblivion.HabboHotel.Users
                 }
             }
 
+            AchievementsToUpdate?.Clear();
+            AchievementsToUpdate = null;
             Disconnected = true;
 
             var navilogs = string.Empty;
 
-            if (NavigatorLogs.Any())
+            if (NavigatorLogs?.Count > 0)
             {
                 navilogs = NavigatorLogs.Values.Aggregate(navilogs,
                     (current, navi) => current + $"{navi.Id},{navi.Value1},{navi.Value2};");
@@ -1114,8 +1101,6 @@ namespace Oblivion.HabboHotel.Users
         {
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-
-
                 dbClient.RunFastQuery(string.Concat("UPDATE users SET last_online = '", Oblivion.GetUnixTimeStamp(),
                     "', activity_points = '", ActivityPoints, "', credits = '", Credits, "', diamonds = '", Diamonds,
                     "', vip_points = '", Emeralds, "' WHERE id = '", Id, "' LIMIT 1; "));

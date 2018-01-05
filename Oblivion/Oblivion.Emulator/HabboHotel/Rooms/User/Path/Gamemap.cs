@@ -561,8 +561,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
                 items.Add(item);
 
-                CoordinatedItems.TryRemove(coord, out _);
-                CoordinatedItems.TryAdd(coord, items);
+                //                CoordinatedItems.TryRemove(coord, out _);
+                //                CoordinatedItems.TryAdd(coord, items);
+                CoordinatedItems[coord] = items;
             }
         }
 
@@ -805,7 +806,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <returns><c>true</c> if this instance can walk the specified x; otherwise, <c>false</c>.</returns>
         internal bool CanWalk(int x, int y, bool Override, uint horseId = 0u) =>
             _room.RoomData.AllowWalkThrough || Override ||
-            _room.GetRoomUserManager().GetUserForSquare(x, y) == null;
+            GetRoomUsers(new Point(x, y)).Count <= 0;
 
         /// <summary>
         ///     Gets the floor status.

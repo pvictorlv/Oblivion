@@ -154,21 +154,21 @@ namespace Oblivion.HabboHotel.Navigators
                     }
                 case "favorites":
                     {
-                        if (session.GetHabbo().FavoriteRooms == null)
+                        if (session.GetHabbo().Data.FavouritedRooms == null)
                         {
                             message.AppendInteger(0);
                             return;
                         }
 
                         var i = 0;
-                        message.AppendInteger(session.GetHabbo().FavoriteRooms.Count > (direct ? 40 : 8)
+                        message.AppendInteger(session.GetHabbo().Data.FavouritedRooms.Count > (direct ? 40 : 8)
                             ? (direct ? 40 : 8)
-                            : session.GetHabbo().FavoriteRooms.Count);
+                            : session.GetHabbo().Data.FavouritedRooms.Count);
                         /* TODO CHECK */
                         foreach (
            var data in
                session.GetHabbo()
-                   .FavoriteRooms.Select(
+                   .Data.FavouritedRooms.Select(
                        dataId => Oblivion.GetGame().GetRoomManager().GenerateRoomData(dataId))
                    .Where(data => data != null))
                         {

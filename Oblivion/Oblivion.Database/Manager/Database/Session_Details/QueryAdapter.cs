@@ -181,7 +181,7 @@ namespace Oblivion.Database.Manager.Database.Session_Details
 
             try
             {
-//                Writer.Writer.WriteLine(CommandMySql?.CommandText);
+//                Writer.Writer.WriteLine(CommandMySql.CommandText);
                 CommandMySql.ExecuteNonQuery();
             }
             catch (Exception exception)
@@ -208,7 +208,7 @@ namespace Oblivion.Database.Manager.Database.Session_Details
         {
             try
             {
-//                Writer.Writer.WriteLine(query);
+                Writer.Writer.WriteLine(query);
 //                CommandMySql.Parameters.Clear();
                 CommandMySql.CommandText = query;
                 CommandMySql.ExecuteNonQuery();

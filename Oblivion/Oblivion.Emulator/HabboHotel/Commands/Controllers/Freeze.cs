@@ -13,7 +13,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public Freeze()
         {
-            MinRank = 7;
+            MinRank = -1;
             Description = "Makes the user can't walk. To let user can walk again, execute this command again.";
             Usage = ":freeze [USERNAME]";
             MinParams = 1;

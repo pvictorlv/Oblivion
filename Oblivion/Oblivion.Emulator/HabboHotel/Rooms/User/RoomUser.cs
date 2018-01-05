@@ -831,7 +831,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 if (msg.StartsWith(":") && CommandsManager.TryExecute(msg.Substring(1), session))
                 {
-                    if (GetRoom().GotWireds())
+                    if (!GetRoom().Disposed && GetRoom().GotWireds())
                         GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSayCommand, this, msg);
 
                     return;
@@ -912,7 +912,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             chatMsg.AppendString(msg);
             chatMsg.AppendInteger(ChatEmotions.GetEmotionsForText(msg));
             chatMsg.AppendInteger(textColor);
-            chatMsg.AppendInteger(0); // links count (/* TODO CHECK */ foreach string string bool)
+            chatMsg.AppendInteger(0);
             chatMsg.AppendInteger(count);
             GetRoom().BroadcastChatMessageWithRange(chatMsg, this, session.GetHabbo().Id);
 
@@ -1126,6 +1126,14 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (Statusses.ContainsKey(key))
                 Statusses.Remove(key);
         }
+        /// <summary>
+        ///     Removes the status.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        internal void RemoveStatusNoCheck(string key)
+        {
+                Statusses.Remove(key);
+        }
 
         /// <summary>
         ///     Applies the effect.
@@ -1258,7 +1266,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (IsPet && PetData.Type == 16u)
                 stringBuilder.AppendFormat("/{0}{1}", PetData.MoplaBreed.GrowStatus, Statusses.Count >= 1 ? "/" : "");
 
-            foreach (var current in Statusses.ToList())
+            foreach (var current in Statusses)
             {
                 stringBuilder.Append(current.Key);
                 if (!string.IsNullOrEmpty(current.Value))
@@ -1271,9 +1279,8 @@ namespace Oblivion.HabboHotel.Rooms.User
             stringBuilder.Append("/");
             message.AppendString(stringBuilder.ToString());
 
-            if (!Statusses.ContainsKey("sign"))
-                return;
-            RemoveStatus("sign");
+            if (!Statusses.ContainsKey("sign")) return;
+            RemoveStatusNoCheck("sign");
             UpdateNeeded = true;
         }
 

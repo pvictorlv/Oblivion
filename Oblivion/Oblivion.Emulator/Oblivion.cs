@@ -223,9 +223,7 @@ namespace Oblivion
                         return user;
 
                     var userData = UserDataFactory.GetUserData((int) userId);
-
-                    if (UsersCached.ContainsKey(userId))
-                        return UsersCached[userId];
+                    
 
                     if (userData?.User == null)
                         return null;

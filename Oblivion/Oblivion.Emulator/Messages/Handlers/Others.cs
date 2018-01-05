@@ -443,21 +443,12 @@ namespace Oblivion.Messages.Handlers
         /// <returns>System.Int32.</returns>
         private static int GetFriendsCount(uint userId)
         {
-            int result;
-            var client = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
+            var client = Oblivion.GetHabboById(userId);
             if (client != null)
             {
-               return client.GetHabbo().GetMessenger().Friends.Count;
+               return client.GetMessenger().Friends.Count;
             }
-
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-            {
-                queryReactor.SetQuery(
-                    "SELECT COUNT(user_one_id) FROM messenger_friendships WHERE user_one_id = @id OR user_two_id = @id;");
-                queryReactor.AddParameter("id", userId);
-                result = queryReactor.GetInteger();
-            }
-            return result;
+            return 0;
         }
 
         /// <summary>

@@ -50,18 +50,27 @@ namespace Oblivion.Manager
             {
                 if (user.Value == null)
                 {
-                    Oblivion.UsersCached.TryRemove(user.Key, out _);
-                    return;
+                    RemoveUser(user.Key);
+                    continue;
                 }
 
                 if (Oblivion.GetGame().GetClientManager().Clients.ContainsKey(user.Key))
+                {
+                    RemoveUser(user.Key);
                     continue;
+                }
 
                 if ((DateTime.Now - user.Value.LastUsed).TotalMilliseconds < 1800000)
                     continue;
 
-                Oblivion.UsersCached.TryRemove(user.Key, out _);
+                RemoveUser(user.Key);
             }
+        }
+
+        private static void RemoveUser(uint user)
+        {
+            Oblivion.UsersCached.TryRemove(user, out var removedUser);
+            removedUser.RemoveCached();
         }
 
         private static void ClearRoomsCache()
@@ -74,7 +83,10 @@ namespace Oblivion.Manager
                 if (roomData != null && roomData.UsersNow <= 0)
                 {
                     if (((DateTime.Now - roomData.LastUsed).TotalMilliseconds >= 1800000))
-                        Oblivion.GetGame().GetRoomManager().LoadedRoomData.TryRemove(roomData.Id, out _);
+                    {
+                        Oblivion.GetGame().GetRoomManager().LoadedRoomData.TryRemove(roomData.Id, out var unloadedRoom);
+                        unloadedRoom.Dispose();
+                    }
                 }
             }
             

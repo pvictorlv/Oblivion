@@ -13,7 +13,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public TelePort()
         {
-            MinRank = 7;
+            MinRank = 2;
             Description = "Teleport around the room, like a kingorooo.";
             Usage = ":teleport";
             MinParams = 0;
@@ -22,6 +22,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         public override bool Execute(GameClient session, string[] pms)
         {
             var room = session.GetHabbo().CurrentRoom;
+
+            if (!room.CheckRights(session, false))
+            {
+                return false;
+            }
+
             var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
             if (user == null) return true;
             if (!user.RidingHorse)

@@ -284,14 +284,14 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
                     serverMessage.AppendInteger(30);
 
-                    if (_habbo.FavoriteRooms == null || !_habbo.FavoriteRooms.Any())
+                    if (_habbo.Data.FavouritedRooms == null || _habbo.Data.FavouritedRooms.Count <= 0)
                         serverMessage.AppendInteger(0);
                     else
                     {
-                        serverMessage.AppendInteger(_habbo.FavoriteRooms.Count);
+                        serverMessage.AppendInteger(_habbo.Data.FavouritedRooms.Count);
 
                         /* TODO CHECK */
-                        foreach (var i in _habbo.FavoriteRooms)
+                        foreach (var i in _habbo.Data.FavouritedRooms)
                             serverMessage.AppendInteger(i);
                     }
 

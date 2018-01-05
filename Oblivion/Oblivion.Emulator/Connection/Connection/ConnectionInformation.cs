@@ -21,7 +21,7 @@ namespace Oblivion.Connection.Connection
         /// <summary>
         /// The _remote end point
         /// </summary>
-        private readonly EndPoint _remoteEndPoint;
+        private EndPoint _remoteEndPoint;
 
         /// <summary>
         /// Delegate OnClientDisconnectedEvent
@@ -126,6 +126,7 @@ namespace Oblivion.Connection.Connection
                     {
                         Socket.Shutdown(SocketShutdown.Both);
                         Socket.Close();
+                        Socket.Dispose();
                     }
                     catch (Exception)
                     {
@@ -217,6 +218,9 @@ namespace Oblivion.Connection.Connection
         {
             Socket = null;
             _connected = false;
+            _remoteEndPoint = null;
+            Parser?.Dispose();
+            Parser = null;
         }
 
         /// <summary>

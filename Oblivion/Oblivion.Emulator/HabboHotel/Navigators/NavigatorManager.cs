@@ -171,26 +171,26 @@ namespace Oblivion.HabboHotel.Navigators
         public void SerializeNavigatorPopularRoomsNews(ref ServerMessage reply, KeyValuePair<RoomData, uint>[] rooms,
             int category, bool direct)
         {
-            if (rooms == null || !rooms.Any())
+            if (rooms == null || rooms.Length <= 0)
             {
                 reply.AppendInteger(0);
                 return;
             }
 
-            var roomsCategory = new List<RoomData>();
 
-            /* TODO CHECK */ foreach (var pair in rooms.Where(pair => pair.Key.Category.Equals(category)))
+            /* TODO CHECK */
+            var i = 0;
+            reply.StartArray();
+            foreach (var pair in rooms.Where(pair => pair.Key.Category.Equals(category)))
             {
-                roomsCategory.Add(pair.Key);
-
-                if (roomsCategory.Count == (direct ? 40 : 8))
+                pair.Key.Serialize(reply);
+                reply.SaveArray();
+                i++;
+                if (i >= (direct ? 40 : 10))
                     break;
             }
-
-            reply.AppendInteger(roomsCategory.Count);
-
-            /* TODO CHECK */ foreach (var data in roomsCategory)
-                data.Serialize(reply);
+            reply.EndArray();
+            
         }
 
         /// <summary>
@@ -518,9 +518,9 @@ namespace Oblivion.HabboHotel.Navigators
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("NavigatorListingsMessageComposer"));
             serverMessage.AppendInteger(6);
             serverMessage.AppendString(string.Empty);
-            serverMessage.AppendInteger(session.GetHabbo().FavoriteRooms.Count);
+            serverMessage.AppendInteger(session.GetHabbo().Data.FavouritedRooms.Count);
 
-            var array = session.GetHabbo().FavoriteRooms.ToArray();
+            var array = session.GetHabbo().Data.FavouritedRooms.ToList();
 
             /* TODO CHECK */ foreach (var roomData in array
                 .Select(roomId => Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId))

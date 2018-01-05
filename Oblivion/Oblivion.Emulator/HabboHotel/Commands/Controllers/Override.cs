@@ -21,7 +21,10 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override bool Execute(GameClient session, string[] pms)
         {
+
             var currentRoom = session.GetHabbo().CurrentRoom;
+
+            if (!currentRoom.CheckRights(session, false, true)) return false;
 
             var roomUserByHabbo = currentRoom.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
             if (roomUserByHabbo == null) return true;
