@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
@@ -34,8 +33,10 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
 
             var users = room.GetGameMap().GetRoomUsers(user.SquaresInFront(2));
+            if (users.Count <= 0) return true;
 
-            var user2 = users?.FirstOrDefault();
+            var user2 = users[0];
+
             if (user2 == null) return true;
             if (user2.TeleportEnabled)
             {

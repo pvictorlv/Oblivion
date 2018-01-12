@@ -79,9 +79,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
             if (effects.Count > 0)
             {
-                var randomBox = effects.FirstOrDefault(x => x.Type == Interaction.SpecialRandom);
-                if (randomBox != null)
+                if (effects.ContainsValue(Interaction.SpecialRandom))
                 {
+                    var randomBox = effects.FirstOrDefault(x => x.Value == Interaction.SpecialRandom).Key;
+
                     if (!randomBox.Execute())
                         return false;
 
@@ -94,7 +95,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 }
                 else
                 {
-                    foreach (var current3 in effects)
+                    foreach (var current3 in effects.Keys)
                     {
                         if (current3.Execute(roomUser, Type))
                             WiredHandler.OnEvent(current3);

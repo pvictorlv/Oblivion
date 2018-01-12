@@ -1108,6 +1108,7 @@ namespace Oblivion.Messages.Handlers
             var roomId = Request.GetUInteger();
             if (Session?.GetHabbo() == null || Session.GetHabbo().Data.Rooms == null)
                 return;
+
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(roomId);
 
             if (room?.RoomData == null)

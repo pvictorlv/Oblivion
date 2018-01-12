@@ -27,7 +27,7 @@ namespace Oblivion.HabboHotel.Items.Wired
         {
             //todo: change _wiredItems to triggers only
             _wiredItems = new List<IWiredItem>();
-            Effects = new ConcurrentDictionary<int, List<IWiredItem>>();
+            Effects = new ConcurrentDictionary<int, Dictionary<IWiredItem, Interaction>>();
             Conditions = new ConcurrentDictionary<int, List<IWiredItem>>();
             _room = room;
         }
@@ -42,8 +42,10 @@ namespace Oblivion.HabboHotel.Items.Wired
             item.Item.ReqUpdate(1, true);
         }
 
-        public IWiredItem GetRandomEffect(ICollection<IWiredItem> EffectList)
-            => EffectList.OrderBy(x => Guid.NewGuid()).FirstOrDefault();
+        public IWiredItem GetRandomEffect(Dictionary<IWiredItem, Interaction> EffectList)
+        {
+            return EffectList.Keys.OrderBy(x => Guid.NewGuid()).FirstOrDefault();
+        }
 
 
         public IWiredItem LoadWired(IWiredItem fItem)
@@ -100,7 +102,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         public bool OtherBoxHasItem(IWiredItem Box, RoomItem boxItem)
         {
-            bool any = (from item in GetEffects(Box)
+            bool any = (from item in GetEffects(Box).Keys
                 where item.Item.Id != Box.Item.Id
                 where item.Type == Interaction.ActionMoveRotate || item.Type == Interaction.ActionMoveToDir ||
                       item.Type == Interaction.ActionChase || item.Type == Interaction.ActionInverseChase
@@ -228,9 +230,9 @@ namespace Oblivion.HabboHotel.Items.Wired
                 }
                 catch (Exception e)
                 {
-
-                    Writer.Writer.HandleException(e, "WiredHandler.cs:OnCycle, ROOM ID: " + _room.RoomId);
-                    if (item != null)
+                    if (_room != null)
+                        Writer.Writer.HandleException(e, "WiredHandler.cs:OnCycle, ROOM ID: " + _room.RoomId);
+                    if (_wiredItems != null && item != null)
                         _wiredItems?.Remove(item);
                 }
             }
@@ -251,12 +253,12 @@ namespace Oblivion.HabboHotel.Items.Wired
             {
                 if (Effects.TryGetValue(point, out var items))
                 {
-                    items.Add(item);
+                    items.Add(item, item.Item.GetBaseItem().InteractionType);
                     Effects[point] = items;
                 }
                 else
                 {
-                    items = new List<IWiredItem> {item};
+                    items = new Dictionary<IWiredItem, Interaction> {{item, item.Item.GetBaseItem().InteractionType}};
                     Effects.TryAdd(point, items);
                 }
             }
@@ -269,7 +271,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 }
                 else
                 {
-                    items = new List<IWiredItem> { item };
+                    items = new List<IWiredItem> {item};
                     Conditions.TryAdd(point, items);
                 }
             }
@@ -325,7 +327,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 AddWired(wired);
                 return null;
             }
-            
+
             var coord = new Point(current.Item.X, current.Item.Y);
             var point = Formatter.PointToInt(coord);
 
@@ -614,7 +616,7 @@ namespace Oblivion.HabboHotel.Items.Wired
             return items;
         }
 
-        public ConcurrentDictionary<int, List<IWiredItem>> Effects;
+        public ConcurrentDictionary<int, Dictionary<IWiredItem, Interaction>> Effects;
         public ConcurrentDictionary<int, List<IWiredItem>> Conditions;
 
         public bool OnUserFurniCollision(Room Instance, RoomItem Item)
@@ -636,14 +638,14 @@ namespace Oblivion.HabboHotel.Items.Wired
             return true;
         }
 
-        public List<IWiredItem> GetEffects(IWiredItem item)
+        public Dictionary<IWiredItem, Interaction> GetEffects(IWiredItem item)
         {
             var point = new Point(item.Item.X, item.Item.Y);
             var coord = Formatter.PointToInt(point);
 
             if (!Effects.TryGetValue(coord, out var items))
             {
-                return new List<IWiredItem>();
+                return new Dictionary<IWiredItem, Interaction>();
             }
 
             return items;

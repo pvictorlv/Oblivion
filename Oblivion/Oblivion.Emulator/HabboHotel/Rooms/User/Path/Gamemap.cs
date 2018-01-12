@@ -1559,7 +1559,11 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 }
 
             if (Distance > 5)
-                return Item.GetSides().OrderBy(x => Guid.NewGuid()).FirstOrDefault();
+            {
+                var sides = Item.GetSides();
+                if (sides.Count <= 0) return Coord;
+                return sides[Oblivion.GetRandomNumber(0, sides.Count - 1)];
+            }
             if (X && Distance < 99)
                 if (iX > Coord.X)
                 {
@@ -1615,7 +1619,11 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 }
 
             if (Distance > 5)
-                return Item.GetSides().OrderBy(x => Guid.NewGuid()).FirstOrDefault();
+            {
+                var sides = Item.GetSides();
+                if (sides.Count <= 0) return Coord;
+                return sides[Oblivion.GetRandomNumber(0, sides.Count - 1)];
+            }
             if (X && Distance < 99)
                 if (iX > Coord.X)
                 {

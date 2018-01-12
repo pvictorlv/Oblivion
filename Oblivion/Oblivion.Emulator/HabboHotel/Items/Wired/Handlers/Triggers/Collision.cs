@@ -71,17 +71,14 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
             if (effects.Count > 0)
             {
-                IWiredItem randomBox = effects.FirstOrDefault(x => x.Type == Interaction.SpecialRandom);
-                if (randomBox != null)
+                if (effects.ContainsValue(Interaction.SpecialRandom))
                 {
+                    var randomBox = effects.FirstOrDefault(x => x.Value == Interaction.SpecialRandom).Key;
+
                     if (!randomBox.Execute())
                         return false;
 
-                    var selectedBox = Room.GetWiredHandler().GetRandomEffect(effects
-                        .Where(current3 =>
-                            current3.Type != Interaction.ActionMoveRotate && current3.Type != Interaction.ActionChase &&
-                            current3.Type != Interaction.ActionInverseChase)
-                        .Where(current3 => current3.Execute(roomUser, Type)).ToList());
+                    var selectedBox = Room.GetWiredHandler().GetRandomEffect(effects);
                     if (!selectedBox.Execute())
                         return false;
 
@@ -90,7 +87,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 }
                 else
                 {
-                    foreach (var current3 in effects)
+                    foreach (var current3 in effects.Keys)
                     {
                         if (current3.Type != Interaction.ActionMoveRotate && current3.Type != Interaction.ActionChase &&
                             current3.Type != Interaction.ActionInverseChase)

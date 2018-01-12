@@ -611,7 +611,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="groupMembers"></param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool CheckRights(GameClient session, bool requireOwnerShip = false, bool checkForGroups = false,
-            bool groupMembers = false)
+            bool groupMembers = false, bool adminOnly = false)
         {
             try
             {
@@ -634,12 +634,15 @@ namespace Oblivion.HabboHotel.Rooms
 
                 if (groupMembers)
                 {
+
                     if (RoomData.Group.Admins.ContainsKey(session.GetHabbo().Id)) return true;
+                    if (adminOnly) return false;
                     if (RoomData.Group.Members.ContainsKey(session.GetHabbo().Id)) return true;
                 }
                 else if (checkForGroups)
                 {
                     if (RoomData.Group.Admins.ContainsKey(session.GetHabbo().Id)) return true;
+                    if (adminOnly) return false;
                     if (RoomData.Group.AdminOnlyDeco == 0u && RoomData.Group.Members.ContainsKey(session.GetHabbo().Id))
                         return true;
                 }
@@ -1045,8 +1048,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <returns>Trade.</returns>
         internal Trade GetUserTrade(uint userId)
         {
-            var array = ActiveTrades.ToArray();
-            return array.Cast<Trade>().FirstOrDefault(trade => trade.ContainsUser(userId));
+            return ActiveTrades.Cast<Trade>().FirstOrDefault(trade => trade.ContainsUser(userId));
         }
 
         /// <summary>

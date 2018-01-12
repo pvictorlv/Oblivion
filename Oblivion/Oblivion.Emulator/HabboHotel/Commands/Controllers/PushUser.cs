@@ -36,8 +36,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
 
             var users = room.GetGameMap().GetRoomUsers(user.SquareInFront);
-           
-            var user2 = users?.FirstOrDefault();
+            if (users.Count <= 0)
+            {
+                return false;
+                
+            }
+            var user2 = users[0];
             if (user2 == null) return true;
             if (user2.TeleportEnabled)
             {

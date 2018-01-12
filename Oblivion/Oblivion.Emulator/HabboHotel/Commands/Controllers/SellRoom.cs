@@ -32,8 +32,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             var actualInput = pms[0];
             var roomCostType = actualInput.Substring(actualInput.Length - 1);
-            int roomCost;
-            if (!int.TryParse(actualInput.Substring(0, actualInput.Length - 1), out roomCost))
+            if (!int.TryParse(actualInput.Substring(0, actualInput.Length - 1), out var roomCost))
             {
                 client.SendWhisper("Valor inválido");
                 return false;

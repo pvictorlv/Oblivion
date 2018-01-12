@@ -587,7 +587,7 @@ namespace Oblivion.HabboHotel.Navigators
             IEnumerable<KeyValuePair<uint, PublicItem>> keyValuePairs =
                 search as KeyValuePair<uint, PublicItem>[] ?? search.ToArray();
 
-            if (!keyValuePairs.Any() || keyValuePairs.FirstOrDefault().Value == null)
+            if (!keyValuePairs.Any())
                 return null;
 
             return keyValuePairs.FirstOrDefault().Value;

@@ -750,6 +750,8 @@ namespace Oblivion.HabboHotel.Users
             AchievementsToUpdate = null;
             RatedRooms = null;
             RecentlyVisitedRooms = null;
+            _messenger?.Destroy();
+            _messenger = null;
         }
 
         /// <summary>

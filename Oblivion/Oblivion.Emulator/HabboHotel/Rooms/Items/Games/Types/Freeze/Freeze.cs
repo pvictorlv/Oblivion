@@ -355,7 +355,14 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
 
         private void HandleUserFreeze(Point point)
         {
-            var user = _room.GetGameMap().GetRoomUsers(point).FirstOrDefault();
+            var users = _room.GetGameMap().GetRoomUsers(point);
+            if (users.Count <= 0)
+            {
+                return;
+                
+            }
+
+            var user = users[0];
 
             if (user == null || user.IsWalking && user.SetX != point.X && user.SetY != point.Y)
                 return;
@@ -552,9 +559,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
             return list;
         }
 
-        private List<RoomItem> GetItemsForSquare(Point point)
-        {
-            return _room.GetGameMap().GetCoordinatedItems(point);
-        }
+        private List<RoomItem> GetItemsForSquare(Point point) => _room.GetGameMap().GetCoordinatedItems(point);
     }
 }

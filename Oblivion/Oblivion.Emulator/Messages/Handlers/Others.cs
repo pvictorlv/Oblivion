@@ -444,11 +444,11 @@ namespace Oblivion.Messages.Handlers
         private static int GetFriendsCount(uint userId)
         {
             var client = Oblivion.GetHabboById(userId);
-            if (client != null)
+            if (client?.GetMessenger()?.Friends == null)
             {
-               return client.GetMessenger().Friends.Count;
+                return 0;
             }
-            return 0;
+            return client.GetMessenger().Friends.Count; ;
         }
 
         /// <summary>

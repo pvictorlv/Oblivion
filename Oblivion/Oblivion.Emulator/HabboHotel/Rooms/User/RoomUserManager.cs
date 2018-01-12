@@ -288,8 +288,15 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
         /// <returns>RoomUser.</returns>
-        internal RoomUser GetUserForSquare(int x, int y) => _userRoom.GetGameMap().GetRoomUsers(new Point(x, y))
-            .FirstOrDefault();
+        internal RoomUser GetUserForSquare(int x, int y)
+        {
+            var users = _userRoom.GetGameMap().GetRoomUsers(new Point(x, y));
+            if (users.Count > 0)
+            {
+                return users[0];
+            }
+            return null;
+        }
 
 
         /// <summary>
@@ -640,7 +647,6 @@ namespace Oblivion.HabboHotel.Rooms.User
             serverMessage.StartArray();
             foreach (var current in UserList.Values)
             {
-
                 if (!all)
                 {
                     if (!current.UpdateNeeded)
@@ -649,7 +655,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 }
                 current.SerializeStatus(serverMessage);
                 serverMessage.SaveArray();
-                i ++;
+                i++;
             }
             serverMessage.EndArray();
             if (i <= 0)
@@ -657,8 +663,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                 serverMessage.Clear();
                 return null;
             }
-            
-            
+
+
             return serverMessage;
         }
 
@@ -1395,7 +1401,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                             case Interaction.Normslaskates:
                                 if (roomUsers.LastRollerDate + 60 < Oblivion.GetUnixTimeStamp())
                                 {
-
                                     Oblivion.GetGame().GetAchievementManager()
                                         .ProgressUserAchievement(roomUsers.GetClient(), "ACH_RbTagC", 1);
                                 }
@@ -1735,7 +1740,10 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
             try
             {
-                var item = _userRoom.GetGameMap().GetAllRoomItemForSquare(x, y).FirstOrDefault()?.GetBaseItem();
+                var items = _userRoom.GetGameMap().GetAllRoomItemForSquare(x, y);
+                if (items.Count <= 0) return;
+
+                var item = items[0]?.GetBaseItem();
                 if (item == null) return;
                 var b = user.GetClient().GetHabbo().Gender == "M" ? item.EffectM : item.EffectF;
                 if (b > 0)

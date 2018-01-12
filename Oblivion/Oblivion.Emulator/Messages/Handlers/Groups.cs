@@ -1461,6 +1461,7 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session?.GetHabbo() == null) return;
 
+
             uint guild = Request.GetUInteger();
             int whoCanRead = Request.GetInteger();
             int whoCanPost = Request.GetInteger();
@@ -1468,8 +1469,13 @@ namespace Oblivion.Messages.Handlers
             int whoCanMod = Request.GetInteger();
 
             Guild group = Oblivion.GetGame().GetGroupManager().GetGroup(guild);
-
+            
             if (group == null)
+                return;
+
+            var room = Oblivion.GetGame().GetRoomManager().GetRoom(group.RoomId);
+
+            if (!room.CheckRights(Session, false, true, true))
                 return;
 
             group.WhoCanRead = whoCanRead;
@@ -1511,6 +1517,9 @@ namespace Oblivion.Messages.Handlers
             var group = Oblivion.GetGame().GetGroupManager().GetGroup(groupId);
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(group.RoomId);
 
+            if (!room.CheckRights(Session, true))
+                return;
+
             if (room?.RoomData?.Group == null)
                 Session.SendNotif(Oblivion.GetLanguage().GetVar("command_group_has_no_room"));
             else
@@ -1549,7 +1558,6 @@ namespace Oblivion.Messages.Handlers
 
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    queryReactor.RunFastQuery($"DELETE FROM rooms_data WHERE id = {roomId}");
                     queryReactor.RunFastQuery($"DELETE FROM users_favorites WHERE room_id = {roomId}");
                     queryReactor.RunFastQuery($"DELETE FROM items_rooms WHERE room_id = {roomId}");
                     queryReactor.RunFastQuery($"DELETE FROM rooms_rights WHERE room_id = {roomId}");
