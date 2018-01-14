@@ -42,7 +42,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
                     var message = pms.Length < 3 ? string.Empty : string.Join(" ", pms.Skip(2));
                     if (string.IsNullOrWhiteSpace(message))
-                        message = Oblivion.GetLanguage().GetVar("command_ban_user_no_reason");
+                        message = Oblivion.GetLanguage().GetVar("command_ban_user_no_reason") + " (Nothing)";
 
                     ModerationTool.BanUser(session, user.GetHabbo().Id, length, message);
                     Oblivion.GetGame()

@@ -448,7 +448,7 @@ namespace Oblivion.Messages.Handlers
             Request.GetBool();
 
             var habbo = Oblivion.GetHabboById(userId);
-            if (habbo == null)
+            if (habbo?.GetMessenger() == null)
             {
                 Session.SendNotif(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return;
@@ -462,13 +462,14 @@ namespace Oblivion.Messages.Handlers
             msg.AppendString(habbo.Motto);
             msg.AppendString(createTime.ToString("dd/MM/yyyy"));
             msg.AppendInteger(habbo.AchievementPoints);
-            msg.AppendInteger(GetFriendsCount(userId));
+            msg.AppendInteger(habbo.GetMessenger().Friends.Count);
             msg.AppendBool(habbo.Id != Session.GetHabbo().Id &&
                            Session.GetHabbo().GetMessenger().FriendshipExists(habbo.Id));
             msg.AppendBool(habbo.Id != Session.GetHabbo().Id &&
                            !Session.GetHabbo().GetMessenger().FriendshipExists(habbo.Id) &&
                            Session.GetHabbo().GetMessenger().RequestExists(habbo.Id));
             msg.AppendBool(Oblivion.GetGame().GetClientManager().GetClientByUserId(habbo.Id) != null);
+
             if (!habbo.LoadedGroups)
             {
                 habbo.LoadGroups();
@@ -477,10 +478,8 @@ namespace Oblivion.Messages.Handlers
             var groups = habbo.UserGroups;
             msg.AppendInteger(groups.Count);
             
-            foreach (var groupUs in groups)
+            foreach (var group in groups.Select(groupUs => Oblivion.GetGame().GetGroupManager().GetGroup(groupUs.GroupId)))
             {
-                var group = Oblivion.GetGame().GetGroupManager().GetGroup(groupUs.GroupId);
-
                 if (group != null)
                 {
                     msg.AppendInteger(group.Id);
@@ -504,6 +503,7 @@ namespace Oblivion.Messages.Handlers
                     msg.AppendBool(false);
                 }
             }
+
             if (habbo.PreviousOnline == 0)
                 msg.AppendInteger(-1);
             else if (Oblivion.GetGame().GetClientManager().GetClientByUserId(habbo.Id) == null)
@@ -894,11 +894,8 @@ namespace Oblivion.Messages.Handlers
             {
                 habboForId.Data.LoadRelations();
             }
-            if (habboForId.Data.Relations.Count <= 0) return;
 
             var rand = new Random();
-
-
             var num = 0;
             var num2 = 0;
             var num3 = 0;

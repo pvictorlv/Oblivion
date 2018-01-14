@@ -963,6 +963,16 @@ namespace Oblivion.HabboHotel.Rooms.User
                     user.LastItem = item.Id;
                 }
 
+                if (user.Frozen)
+                {
+                    user.FrozenTick--;
+                    if (user.FrozenTick <= 0)
+                    {
+                        user.Frozen = false;
+                        user.GetClient().SendWhisper("Você foi descongelado!!");
+                    }
+
+                }
                 if (user.IsSitting && user.TeleportEnabled)
                 {
                     user.Z -= 0.35;
@@ -1740,28 +1750,46 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
             try
             {
+
+                var inv = user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent();
+                if (inv == null) return;
                 var items = _userRoom.GetGameMap().GetAllRoomItemForSquare(x, y);
-                if (items.Count <= 0) return;
+                if (items.Count <= 0)
+                {
+
+                    if (user.CurrentItemEffect != 0)
+                    {
+                        inv.ActivateCustomEffect(0);
+                        user.CurrentItemEffect = 0;
+                    }
+                    return;
+                }
 
                 var item = items[0]?.GetBaseItem();
-                if (item == null) return;
-                var b = user.GetClient().GetHabbo().Gender == "M" ? item.EffectM : item.EffectF;
+                if (item == null)
+                {
+                    return;
+                }
+
+                var b = user.GetClient().GetHabbo().Gender == "m" ? item.EffectM : item.EffectF;
                 if (b > 0)
                 {
-                    if (user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().CurrentEffect == 0)
+                    if (inv.CurrentEffect == 0)
+                    {
                         user.CurrentItemEffect = 0;
-
+                        
+                    }
                     if (b == user.CurrentItemEffect)
                         return;
 
-                    user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(b);
+                    inv.ActivateCustomEffect(b);
                     user.CurrentItemEffect = b;
                 }
                 else
                 {
                     if (user.CurrentItemEffect == 0 || b != 0)
                         return;
-                    user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(-1);
+                    inv.ActivateCustomEffect(-1);
                     user.CurrentItemEffect = 0;
                 }
             }

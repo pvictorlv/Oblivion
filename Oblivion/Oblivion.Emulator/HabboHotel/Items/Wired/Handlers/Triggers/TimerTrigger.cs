@@ -1,5 +1,4 @@
-using System.Collections.Concurrent;
-using System.Linq;
+﻿using System.Linq;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -8,28 +7,69 @@ using Oblivion.HabboHotel.Rooms;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 {
-    internal class Repeater : IWiredItem, IWiredCycler
+    internal class TimerTrigger : IWiredItem, IWiredCycler
     {
-        private int _delay;
-        private long _mNext;
-
-        public Repeater(RoomItem item, Room room)
+        public TimerTrigger(RoomItem item, Room room)
         {
             Item = item;
             Room = room;
-            Delay = 500;
-            _mNext = 0;
-            
+            Items = new ConcurrentList<RoomItem>();
         }
 
+        public Interaction Type => Interaction.TriggerTimer;
 
-        public ConcurrentQueue<IWiredItem> _toRemove = new ConcurrentQueue<IWiredItem>();
+        public RoomItem Item { get; set; }
+
+        public Room Room { get; set; }
+
+        public ConcurrentList<RoomItem> Items { get; set; }
+
+        public string OtherString
+        {
+            get { return ""; }
+            set { }
+        }
+
+        public string OtherExtraString
+        {
+            get { return ""; }
+            set { }
+        }
+
+        public string OtherExtraString2
+        {
+            get { return ""; }
+            set { }
+        }
+
+        public bool OtherBool
+        {
+            get { return true; }
+            set { }
+        }
+
+        private bool _requested;
 
         public double TickCount { get; set; }
-        public bool Requested { get; set; }
+
+        private int _delay;
+        private long _mNext;
+
+
+        public int Delay
+        {
+            get => _delay;
+            set
+            {
+                _delay = value;
+                TickCount = value / 2;
+            }
+        }
 
         public bool OnCycle()
         {
+            if (!_requested) return false;
+
             var num = Oblivion.Now();
 
             if (_mNext > num)
@@ -37,7 +77,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
-          
+
 
             if (conditions.Count > 0)
                 foreach (var current in conditions)
@@ -68,67 +108,28 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 {
                     foreach (var current3 in effects.Keys)
                     {
+                        if (current3.Type == Interaction.ActionResetTimer) continue;
+
                         if (current3.Execute(null, Type))
                             WiredHandler.OnEvent(current3);
                     }
                 }
             }
+
             _mNext = Oblivion.Now() + Delay;
-            return false;
-        }
 
-        public Interaction Type => Interaction.TriggerRepeater;
-
-        public RoomItem Item { get; set; }
-
-        public Room Room { get; set; }
-
-        public ConcurrentList<RoomItem> Items
-        {
-            get { return new ConcurrentList<RoomItem>(); }
-            set { }
-        }
-
-        public int Delay
-        {
-            get => _delay;
-            set
-            {
-                _delay = value;
-                TickCount = value / 1000;
-            }
-        }
-
-        public string OtherString
-        {
-            get { return ""; }
-            set { }
-        }
-
-        public string OtherExtraString
-        {
-            get { return ""; }
-            set { }
-        }
-
-        public string OtherExtraString2
-        {
-            get { return ""; }
-            set { }
-        }
-
-        public bool OtherBool
-        {
-            get { return true; }
-            set { }
+            _requested = false;
+            return true;
         }
 
         public bool Execute(params object[] stuff)
         {
             if (_mNext == 0L || _mNext <= Oblivion.Now())
                 _mNext = Oblivion.Now() + Delay;
-            
-            return false;
+
+            _requested = true;
+
+            return true;
         }
     }
 }

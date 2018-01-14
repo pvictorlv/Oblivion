@@ -58,7 +58,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (!_requested)
                 return false;
 
-            var num = Oblivion.Now();
+            var num = Oblivion.GetUnixTimeStamp();
 
             if (_mNext > num)
                 return false;
@@ -133,7 +133,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 }
 //                Room.GetGameMap().GenerateMaps();
             }
-            _mNext = Oblivion.Now() + (Delay);
+            _mNext = Oblivion.GetUnixTimeStamp() + (Delay / 500);
             _requested = false;
 
             return true;

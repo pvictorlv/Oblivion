@@ -125,6 +125,8 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         internal bool Frozen; //por comando
 
+        internal int FrozenTick;
+
         /// <summary>
         ///     The gate identifier
         /// </summary>
@@ -831,7 +833,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 if (msg.StartsWith(":") && CommandsManager.TryExecute(msg.Substring(1), session))
                 {
-                    if (!GetRoom().Disposed && GetRoom().GotWireds())
+                    if (GetRoom() != null && GetRoom().GotWireds())
                         GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSayCommand, this, msg);
 
                     return;
@@ -975,7 +977,10 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
             }
             if (GetRoom().GetGameMap().SquareHasUsers(x, y) && !pOverride) return;
-            if (Frozen) return;
+            if (Frozen)
+            {
+                return;
+            }
 
             var coord = new Point(x, y);
             var allRoomItemForSquare = GetRoom().GetGameMap().GetCoordinatedHeighestItems(coord);

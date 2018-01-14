@@ -448,7 +448,7 @@ namespace Oblivion.Messages.Handlers
             {
                 return 0;
             }
-            return client.GetMessenger().Friends.Count; ;
+            return client.GetMessenger().Friends.Count;
         }
 
         /// <summary>

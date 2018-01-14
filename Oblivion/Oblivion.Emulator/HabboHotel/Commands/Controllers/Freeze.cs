@@ -24,8 +24,21 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var user = session.GetHabbo()
                 .CurrentRoom.GetRoomUserManager()
                 .GetRoomUserByHabbo(pms[0]);
-            if (user == null) session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
-            else user.Frozen = !user.Frozen;
+            if (user == null)
+            {
+                session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
+                return true;
+            }
+
+            if (user.Frozen)
+            {
+                user.Frozen = false;
+            }
+            else
+            {
+                user.Frozen = true;
+                user.FrozenTick = 60;
+            }
 
             return true;
         }

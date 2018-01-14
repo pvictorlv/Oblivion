@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Oblivion.Collections;
+﻿using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
@@ -46,10 +45,13 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
             if (roomUser.Frozen)
             {
                 roomUser.ApplyEffect(12);
+                roomUser.FrozenTick = 60;
                 roomUser.GetClient().SendWhisper("Você foi congelado");
             }
             else
             {
+                roomUser.ApplyEffect(0);
+                roomUser.FrozenTick = 0;
                 roomUser.GetClient().SendWhisper("Você foi descongelado");
             }
             return true;

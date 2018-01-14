@@ -673,7 +673,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("LoadFriendsCategories"));
             serverMessage.AppendInteger(1100);
-            serverMessage.AppendInteger(300);
+            serverMessage.AppendInteger(600);
             serverMessage.AppendInteger(800);
             serverMessage.AppendInteger(1);
             serverMessage.AppendInteger(1);

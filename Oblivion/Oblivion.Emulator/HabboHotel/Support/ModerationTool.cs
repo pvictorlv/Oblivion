@@ -273,6 +273,7 @@ namespace Oblivion.HabboHotel.Support
                 ModActionResult(modSession.GetHabbo().Id, false);
                 return;
             }
+            
 
             Oblivion.GetGame()
                 .GetBanManager()

@@ -34,6 +34,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// </summary>
         internal int CurrentEffect;
 
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="AvatarEffectsInventoryComponent" /> class.
         /// </summary>

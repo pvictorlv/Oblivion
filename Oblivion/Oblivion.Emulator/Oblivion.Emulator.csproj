@@ -107,7 +107,7 @@
     <OutputPath>..\bin\Release\x64\</OutputPath>
     <DefineConstants>
     </DefineConstants>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <FileAlignment>4096</FileAlignment>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -303,7 +303,7 @@
     <Compile Include="HabboHotel\Items\Wired\Handlers\Addons\EnableDance.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Addons\FreezeUser.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Addons\SpecialRandom.cs" />
-    <Compile Include="HabboHotel\Items\Wired\Handlers\Conditions\TimerTrigger.cs" />
+    <Compile Include="HabboHotel\Items\Wired\Handlers\Triggers\TimerTrigger.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Addons\GiveHandItem.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Conditions\UserIsNotInTeam.cs" />
     <Compile Include="HabboHotel\Items\Wired\Handlers\Conditions\UserIsInTeam.cs" />
