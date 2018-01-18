@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+/*using System.Collections.Generic;
 using Oblivion.Connection.Connection;
 
 namespace Oblivion.Messages
@@ -84,4 +84,4 @@ namespace Oblivion.Messages
             _packets.Add(bytes);
         }
     }
-}
+}*/

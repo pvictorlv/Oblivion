@@ -14,7 +14,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public Shutdown()
         {
-            MinRank = 9;
+            MinRank = 11;
             Description = "Shutdown the Server.";
             Usage = ":shutdown";
             MinParams = 0;

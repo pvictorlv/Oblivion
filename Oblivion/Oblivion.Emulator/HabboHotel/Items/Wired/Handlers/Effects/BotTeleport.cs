@@ -62,9 +62,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         {
             if (Items == null || Items.Count < 0)
                 return;
-
-            if (user?.GetClient()?.GetHabbo() == null)
-                return;
+            
 
             var rnd = new Random();
 
@@ -72,17 +70,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             var roomItem = Items.OrderBy(x => rnd.Next()).FirstOrDefault(current => current != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(current));
 
             /* TODO CHECK */
+            if (roomItem == null) return;
 
-            if (roomItem == null)
-            {
-                user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(0);
-                return;
-            }
             int oldX = user.X, oldY = user.Y;
             Room.GetGameMap().TeleportToItem(user, roomItem);
             Room.GetRoomUserManager().OnUserUpdateStatus(oldX, oldY);
             Room.GetRoomUserManager().OnUserUpdateStatus(roomItem.X, roomItem.Y);
-            user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(0);
 
         }
 

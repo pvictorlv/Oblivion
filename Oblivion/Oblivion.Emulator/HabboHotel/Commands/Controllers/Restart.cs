@@ -14,7 +14,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public Restart()
         {
-            MinRank = 10;
+            MinRank = 11;
             Description = "Restart the Server.";
             Usage = ":restart";
             MinParams = 0;

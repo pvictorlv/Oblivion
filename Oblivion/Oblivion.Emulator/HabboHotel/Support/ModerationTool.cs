@@ -787,11 +787,11 @@ namespace Oblivion.HabboHotel.Support
         /// </summary>
         /// <param name="serverMessages">The server messages.</param>
         /// <param name="userId">The user identifier.</param>
-        internal void SerializeOpenTickets(ref QueuedServerMessage serverMessages, uint userId)
+   /*     internal void SerializeOpenTickets(ref QueuedServerMessage serverMessages, uint userId)
         {
             var message = new ServerMessage(LibraryParser.OutgoingRequest("ModerationToolIssueMessageComposer"));
 
-            /* TODO CHECK */
+            /* TODO CHECK #1#
             foreach (
                 var current in
                 Tickets.Where(
@@ -804,7 +804,7 @@ namespace Oblivion.HabboHotel.Support
                 serverMessages.AppendResponse(message);
             }
         }
-
+*/
         /// <summary>
         ///     Gets the ticket.
         /// </summary>

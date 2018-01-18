@@ -18,9 +18,10 @@ namespace Oblivion.Messages.Handlers
 //            Out.WriteLine(stackTrace.GetFrame(1).GetMethod().Name);
             var msg = Session.GetHabbo().GetInventoryComponent().SerializeFloorItemInventory();
             if (msg == null) return;
-            var queuedServerMessage = new QueuedServerMessage(Session.GetConnection());
-            queuedServerMessage.AppendResponse(msg);
-            queuedServerMessage.SendResponse();
+            Session.SendMessage(msg);
+//            var queuedServerMessage = new QueuedServerMessage(Session.GetConnection());
+//            queuedServerMessage.AppendResponse(msg);
+//            queuedServerMessage.SendResponse();
         }
     }
 }

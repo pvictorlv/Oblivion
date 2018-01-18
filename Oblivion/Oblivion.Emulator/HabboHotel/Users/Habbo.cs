@@ -639,15 +639,7 @@ namespace Oblivion.HabboHotel.Users
             Data = data;
         }
 
-        /// <summary>
-        ///     Serializes the quests.
-        /// </summary>
-        /// <param name="response">The response.</param>
-        internal void SerializeQuests(ref QueuedServerMessage response)
-        {
-            Oblivion.GetGame().GetQuestManager().GetList(_mClient, null);
-        }
-
+       
         /// <summary>
         ///     Gots the command.
         /// </summary>

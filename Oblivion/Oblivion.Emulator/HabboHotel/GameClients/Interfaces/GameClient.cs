@@ -268,16 +268,16 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
                     _habbo.Init(this, userData);
 
-                    var queuedServerMessage = new QueuedServerMessage(_connection);
+//                    var queuedServerMessage = new QueuedServerMessage(_connection);
 
-                    queuedServerMessage.AppendResponse(
-                        new ServerMessage(LibraryParser.OutgoingRequest("AuthenticationOKMessageComposer")));
-
+                    var msg =
+                        new ServerMessage(LibraryParser.OutgoingRequest("AuthenticationOKMessageComposer"));
+                    SendMessage(msg);
                     var serverMessage2 = new ServerMessage(LibraryParser.OutgoingRequest("HomeRoomMessageComposer"));
 
                     serverMessage2.AppendInteger(_habbo.HomeRoom);
                     serverMessage2.AppendInteger(_habbo.HomeRoom);
-                    queuedServerMessage.AppendResponse(serverMessage2);
+                    SendMessage(serverMessage2);
 
                     var serverMessage =
                         new ServerMessage(LibraryParser.OutgoingRequest("FavouriteRoomsMessageComposer"));
@@ -295,7 +295,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                             serverMessage.AppendInteger(i);
                     }
 
-                    queuedServerMessage.AppendResponse(serverMessage);
+                    SendMessage(serverMessage);
 
                     var rightsMessage =
                         new ServerMessage(LibraryParser.OutgoingRequest("UserClubRightsMessageComposer"));
@@ -303,7 +303,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                     rightsMessage.AppendInteger(_habbo.GetSubscriptionManager().HasSubscription ? 2 : 0);
                     rightsMessage.AppendInteger(_habbo.Rank);
                     rightsMessage.AppendInteger(0);
-                    queuedServerMessage.AppendResponse(rightsMessage);
+                    SendMessage(rightsMessage);
 
 
                     serverMessage =
@@ -311,7 +311,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                     serverMessage.AppendBool(true);
                     serverMessage.AppendBool(false);
                     serverMessage.AppendBool(true);
-                    queuedServerMessage.AppendResponse(serverMessage);
+                    SendMessage(serverMessage);
 
                     /*var xmasGift =
                         new ServerMessage(LibraryParser.OutgoingRequest("CampaignCalendarDataMessageComposer"));
@@ -443,7 +443,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                     serverMessage.AppendString("help_payments");
                     serverMessage.AppendInteger(27);
                     serverMessage.AppendString("auto_reply");
-                    queuedServerMessage.AppendResponse(serverMessage);
+                    SendMessage(serverMessage);
 
                     _habbo.UpdateCreditsBalance();
 
@@ -458,22 +458,22 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                     serverMessage.AppendInteger(102);
                     serverMessage.AppendInteger(_habbo.Emeralds);
 
-                    queuedServerMessage.AppendResponse(serverMessage);
+                    SendMessage(serverMessage);
 
 
                     if (_habbo.HasFuse("fuse_mod"))
-                        queuedServerMessage.AppendResponse(Oblivion.GetGame().GetModerationTool()
+                        SendMessage(Oblivion.GetGame().GetModerationTool()
                             .SerializeTool(this));
 
-                    queuedServerMessage.AppendResponse(Oblivion.GetGame().GetAchievementManager()
+                    SendMessage(Oblivion.GetGame().GetAchievementManager()
                         .AchievementDataCached);
 
                     if (!GetHabbo().Vip && ExtraSettings.NewUsersGiftsEnabled)
-                        queuedServerMessage.AppendResponse(
+                        SendMessage(
                             new ServerMessage(LibraryParser.OutgoingRequest("NuxSuggestFreeGiftsMessageComposer")));
 
-                    queuedServerMessage.AppendResponse(GetHabbo().GetAvatarEffectsInventoryComponent().GetPacket());
-                    queuedServerMessage.SendResponse();
+                    SendMessage(GetHabbo().GetAvatarEffectsInventoryComponent().GetPacket());
+//                    queuedServerMessage.SendResponse();
 
                     if (GetHabbo().GetMessenger() != null)
                         GetHabbo().GetMessenger().OnStatusChanged(true);

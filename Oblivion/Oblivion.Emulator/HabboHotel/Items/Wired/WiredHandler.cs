@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -21,12 +22,12 @@ namespace Oblivion.HabboHotel.Items.Wired
     {
         private Room _room;
 
-        private List<IWiredItem> _wiredItems;
+        private ConcurrentDictionary<long, IWiredItem> _wiredItems;
 
         public WiredHandler(Room room)
         {
             //todo: change _wiredItems to triggers only
-            _wiredItems = new List<IWiredItem>();
+            _wiredItems = new ConcurrentDictionary<long, IWiredItem>();
             Effects = new ConcurrentDictionary<int, Dictionary<IWiredItem, Interaction>>();
             Conditions = new ConcurrentDictionary<int, List<IWiredItem>>();
             _room = room;
@@ -52,8 +53,6 @@ namespace Oblivion.HabboHotel.Items.Wired
         {
             if (fItem?.Item == null)
             {
-                if (_wiredItems.Contains(fItem))
-                    _wiredItems.Remove(fItem);
                 return null;
             }
 
@@ -168,7 +167,7 @@ namespace Oblivion.HabboHotel.Items.Wired
             lock (_wiredItems)
             {
                 /* TODO CHECK */
-                foreach (var current in _wiredItems.Where(current => current != null && current.Type == type))
+                foreach (var current in _wiredItems.Values.Where(current => current != null && current.Type == type))
                     current.OtherExtraString = "0";
             }
         }
@@ -181,7 +180,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     return false;
 
                 var b = false;
-                foreach (var current in _wiredItems)
+                foreach (var current in _wiredItems.Values)
                 {
                     if (current != null && current.Type == type && current.Execute(stuff))
                         b = true;
@@ -201,7 +200,7 @@ namespace Oblivion.HabboHotel.Items.Wired
             if (_wiredItems == null || _room == null || _wiredItems.Count <= 0)
                 return;
 
-            var wireds = _wiredItems.ToList();
+            var wireds = _wiredItems.Values.ToList();
             foreach (var item in wireds)
             {
                 try
@@ -232,8 +231,8 @@ namespace Oblivion.HabboHotel.Items.Wired
                 {
                     if (_room != null)
                         Writer.Writer.HandleException(e, "WiredHandler.cs:OnCycle, ROOM ID: " + _room.RoomId);
-                    if (_wiredItems != null && item != null)
-                        _wiredItems?.Remove(item);
+                    if (_wiredItems != null && item?.Item != null)
+                        _wiredItems?.TryRemove(item.Item.Id, out _);
                 }
             }
             wireds.Clear();
@@ -244,9 +243,9 @@ namespace Oblivion.HabboHotel.Items.Wired
         {
             if (item == null) return;
 
-            if (_wiredItems.Contains(item))
+            if (_wiredItems.ContainsKey(item.Item.Id))
                 return;
-            _wiredItems.Add(item);
+            _wiredItems.TryAdd(item.Item.Id, item);
             var coord = new Point(item.Item.X, item.Item.Y);
             var point = Formatter.PointToInt(coord);
             if (IsEffect(item.Type))
@@ -283,8 +282,8 @@ namespace Oblivion.HabboHotel.Items.Wired
             var coord = new Point(item.Item.X, item.Item.Y);
             var point = Formatter.PointToInt(coord);
 
-            if (_wiredItems.Contains(item))
-                _wiredItems.Remove(item);
+            if (_wiredItems.ContainsKey(item.Item.Id))
+                _wiredItems.TryRemove(item.Item.Id, out _);
 
             if (IsEffect(item.Type))
             {
@@ -320,7 +319,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         public IWiredItem ReloadWired(RoomItem item)
         {
-            IWiredItem current = _wiredItems?.FirstOrDefault(x => x?.Item?.Id == item.Id);
+            IWiredItem current = _wiredItems?.Values.FirstOrDefault(x => x?.Item?.Id == item.Id);
             if (current == null)
             {
                 var wired = GenerateNewItem(item);
@@ -331,8 +330,8 @@ namespace Oblivion.HabboHotel.Items.Wired
             var coord = new Point(current.Item.X, current.Item.Y);
             var point = Formatter.PointToInt(coord);
 
-            if (_wiredItems.Contains(current))
-                _wiredItems.Remove(current);
+            if (_wiredItems.ContainsKey(current.Item.Id))
+                _wiredItems.TryRemove(current.Item.Id, out _);
 
             if (IsEffect(current.Type))
             {
@@ -370,7 +369,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         public void RemoveWired(RoomItem item)
         {
-            var current = _wiredItems?.FirstOrDefault(x => x?.Item?.Id == item.Id);
+            var current = _wiredItems?.Values.FirstOrDefault(x => x?.Item?.Id == item.Id);
             if (current == null)
                 return;
 //            _wiredItems.Remove(current);
@@ -653,20 +652,20 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         public IWiredItem GetWired(RoomItem item)
         {
-            return _wiredItems.FirstOrDefault(current => current != null && item.Id == current.Item.Id);
+            return _wiredItems.Values.FirstOrDefault(current => current != null && item.Id == current.Item.Id);
         }
 
         public List<IWiredItem> GetWiredsByType(Interaction type, Point coord) => _wiredItems
-            .Where(item => item != null && item.Type == type && item.Item.X == coord.X && item.Item.Y == coord.Y)
+            .Values.Where(item => item != null && item.Type == type && item.Item.X == coord.X && item.Item.Y == coord.Y)
             .ToList();
 
         public List<IWiredItem> GetWiredsByTypes(GlobalInteractions type) => _wiredItems
-            .Where(item => item != null && InteractionTypes.AreFamiliar(type, item.Item.GetBaseItem().InteractionType))
+            .Values.Where(item => item != null && InteractionTypes.AreFamiliar(type, item.Item.GetBaseItem().InteractionType))
             .ToList();
 
         public void Destroy()
         {
-            foreach (var current in _wiredItems.ToList())
+            foreach (var current in _wiredItems.Values.ToList())
             {
                 if (current == null) continue;
                 current.Items?.Clear();
