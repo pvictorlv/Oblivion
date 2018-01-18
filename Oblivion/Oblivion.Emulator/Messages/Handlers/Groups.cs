@@ -1515,15 +1515,20 @@ namespace Oblivion.Messages.Handlers
         {
             uint groupId = Request.GetUInteger();
             var group = Oblivion.GetGame().GetGroupManager().GetGroup(groupId);
+            if (group == null) return;
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(group.RoomId);
 
-            if (!room.CheckRights(Session, true))
-                return;
+            if (Session == null) return;
 
             if (room?.RoomData?.Group == null)
+            {
                 Session.SendNotif(Oblivion.GetLanguage().GetVar("command_group_has_no_room"));
+            }
             else
             {
+                if (!room.CheckRights(Session, true))
+                    return;
+
                 /* TODO CHECK */
                 foreach (var user in group.Members.Values)
                 {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.Catalogs;
@@ -704,12 +705,21 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 {
                     var added = _mAddedItems.ToList();
 
+                    var builder = new StringBuilder();
+                    builder.Append("UPDATE items_rooms SET user_id='{UserId}', room_id='0' WHERE id IN (");
+                    var i = 0;
+                    var count = added.Count;
+                    foreach (var itemId in added)
+                    {
+                        i++;
+                        builder.Append(i >= count ? $"{itemId}" : $"{itemId},");
+                    }
+
                     using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        foreach (var itemId in added)
-                            dbClient.RunFastQuery(
-                                $"UPDATE items_rooms SET user_id='{UserId}', room_id='0' WHERE id='{itemId}'");
+                        dbClient.RunFastQuery(builder.ToString());
                     }
+
                     _mAddedItems.Clear();
                     added.Clear();
                 }

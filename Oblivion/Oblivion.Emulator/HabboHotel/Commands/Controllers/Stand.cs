@@ -27,13 +27,13 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             if (user.IsSitting)
             {
-                user.Statusses.Remove("sit");
+                user.Statusses.TryRemove("sit", out _);
                 user.IsSitting = false;
                 user.UpdateNeeded = true;
             }
             else if (user.IsLyingDown)
             {
-                user.Statusses.Remove("lay");
+                user.Statusses.TryRemove("lay", out _);
                 user.IsLyingDown = false;
                 user.UpdateNeeded = true;
             }

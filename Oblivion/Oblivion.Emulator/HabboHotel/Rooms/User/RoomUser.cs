@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -335,7 +336,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <summary>
         ///     The statusses
         /// </summary>
-        internal Dictionary<string, string> Statusses;
+        internal ConcurrentDictionary<string, string> Statusses;
 
         /// <summary>
         ///     The team
@@ -411,7 +412,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             RotHead = 0;
             RotBody = 0;
             UpdateNeeded = true;
-            Statusses = new Dictionary<string, string>();
+            Statusses = new ConcurrentDictionary<string, string>();
             TeleDelay = -1;
             _mRoom = room;
             AllowOverride = false;
@@ -942,7 +943,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
             if (!Statusses.ContainsKey("mv"))
                 return;
-            Statusses.Remove("mv");
+            Statusses.TryRemove("mv", out _);
             UpdateNeeded = true;
         }
 
@@ -1128,16 +1129,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="key">The key.</param>
         internal void RemoveStatus(string key)
         {
-            if (Statusses.ContainsKey(key))
-                Statusses.Remove(key);
-        }
-        /// <summary>
-        ///     Removes the status.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        internal void RemoveStatusNoCheck(string key)
-        {
-                Statusses.Remove(key);
+            Statusses.TryRemove(key, out _);
         }
 
         /// <summary>
@@ -1285,7 +1277,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             message.AppendString(stringBuilder.ToString());
 
             if (!Statusses.ContainsKey("sign")) return;
-            RemoveStatusNoCheck("sign");
+            RemoveStatus("sign");
             UpdateNeeded = true;
         }
 

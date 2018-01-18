@@ -31,7 +31,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 return true;
 
             if (roomUserByHabbo.RotBody % 2 != 0) roomUserByHabbo.RotBody--;
-            roomUserByHabbo.Statusses.Add("lay", "0.55");
+            roomUserByHabbo.Statusses.TryAdd("lay", "0.55");
             roomUserByHabbo.IsLyingDown = true;
             roomUserByHabbo.UpdateNeeded = true;
             return true;

@@ -682,12 +682,12 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 if (user.Statusses.ContainsKey("lay"))
                 {
-                    user.Statusses.Remove("lay");
+                    user.Statusses.TryRemove("lay", out _);
                     user.UpdateNeeded = true;
                 }
                 if (user.Statusses.ContainsKey("sit"))
                 {
-                    user.Statusses.Remove("sit");
+                    user.Statusses.TryRemove("sit", out _);
                     user.UpdateNeeded = true;
                 }
             }
@@ -731,18 +731,18 @@ namespace Oblivion.HabboHotel.Rooms.User
                                 if (item.ExtraData != "0")
                                 {
                                     var num2 = Convert.ToInt32(item.ExtraData);
-                                    user.Statusses.Add("sit",
+                                    user.Statusses.TryAdd("sit",
                                         item.GetBaseItem().ToggleHeight[num2].ToString(CultureInfo.InvariantCulture)
                                             .Replace(',', '.'));
                                 }
                                 else
                                 {
-                                    user.Statusses.Add("sit",
+                                    user.Statusses.TryAdd("sit",
                                         Convert.ToString(item.GetBaseItem().Height, CultureInfo.InvariantCulture));
                                 }
                             else
                             {
-                                user.Statusses.Add("sit",
+                                user.Statusses.TryAdd("sit",
                                     Convert.ToString(item.GetBaseItem().Height, CultureInfo.InvariantCulture));
                             }
                         }
@@ -776,7 +776,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         {
                             if (!user.Statusses.ContainsKey("lay"))
                             {
-                                user.Statusses.Add("lay", TextHandling.GetString(item.GetBaseItem().Height));
+                                user.Statusses.TryAdd("lay", TextHandling.GetString(item.GetBaseItem().Height));
                             }
                             else
                             {
@@ -799,7 +799,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         case Interaction.Guillotine:
                         {
                             if (!user.Statusses.ContainsKey("lay"))
-                                user.Statusses.Add("lay", TextHandling.GetString(item.GetBaseItem().Height));
+                                user.Statusses.TryAdd("lay", TextHandling.GetString(item.GetBaseItem().Height));
                             else
                                 user.Statusses["lay"] = TextHandling.GetString(item.GetBaseItem().Height);
 
@@ -1132,7 +1132,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             // User is Laying Down..
             if (roomUsers.Statusses.ContainsKey("lay") || roomUsers.IsLyingDown)
             {
-                roomUsers.Statusses.Remove("lay");
+                roomUsers.Statusses.TryRemove("lay", out _);
                 roomUsers.IsLyingDown = false;
                 roomUsers.UpdateNeeded = true;
             }
@@ -1140,7 +1140,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             // User is Sitting Down..
             if ((roomUsers.Statusses.ContainsKey("sit") || roomUsers.IsSitting) && (!roomUsers.RidingHorse))
             {
-                roomUsers.Statusses.Remove("sit");
+                roomUsers.Statusses.TryRemove("sit", out _);
                 roomUsers.IsSitting = false;
                 roomUsers.UpdateNeeded = true;
             }

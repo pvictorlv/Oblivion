@@ -455,7 +455,7 @@ namespace Oblivion.HabboHotel.RoomBots
                         if (!user.Statusses.ContainsKey("sit"))
                         {
                             user.UpdateNeeded = true;
-                            user.Statusses.Add("sit", "0.55");
+                            user.Statusses.TryAdd("sit", "0.55");
                         }
                         user.IsSitting = true;
                         return;
@@ -466,13 +466,13 @@ namespace Oblivion.HabboHotel.RoomBots
 
                         if (user.IsSitting)
                         {
-                            user.Statusses.Remove("sit");
+                            user.Statusses.TryRemove("sit", out _);
                             user.IsSitting = false;
                             user.UpdateNeeded = true;
                         }
                         else if (user.IsLyingDown)
                         {
-                            user.Statusses.Remove("lay");
+                            user.Statusses.TryRemove("lay", out _);
                             user.IsLyingDown = false;
                             user.UpdateNeeded = true;
                         }

@@ -150,8 +150,8 @@ namespace Oblivion.HabboHotel.RoomBots
                         }
                         RemovePetStatus();
                         roomUser.PetData.AddExperience(10);
-                        roomUser.Statusses.Add("sit", "");
-                        roomUser.Statusses.Add("gst", "joy");
+                        roomUser.Statusses.TryAdd("sit", "");
+                        roomUser.Statusses.TryAdd("gst", "joy");
                         roomUser.UpdateNeeded = true;
                         _actionTimer = 25;
                         _energyTimer = 10;
@@ -172,8 +172,8 @@ namespace Oblivion.HabboHotel.RoomBots
                         }
                         RemovePetStatus();
                         roomUser.PetData.AddExperience(10);
-                        roomUser.Statusses.Add("lay", "");
-                        roomUser.Statusses.Add("gst", "sml");
+                        roomUser.Statusses.TryAdd("lay", "");
+                        roomUser.Statusses.TryAdd("gst", "sml");
                         roomUser.UpdateNeeded = true;
                         _actionTimer = 25;
                         _energyTimer = 10;
@@ -200,7 +200,7 @@ namespace Oblivion.HabboHotel.RoomBots
                         RemovePetStatus();
                         roomUser.PetData.AddExperience(11);
                         roomUser.MoveTo(user.SquareInFront);
-                        roomUser.Statusses.Add("gst", "sml");
+                        roomUser.Statusses.TryAdd("gst", "sml");
                         roomUser.UpdateNeeded = true;
 
                         _actionTimer = 25;
@@ -221,7 +221,7 @@ namespace Oblivion.HabboHotel.RoomBots
                         }
                         RemovePetStatus();
                         roomUser.PetData.AddExperience(25);
-                        roomUser.Statusses.Add("std", "");
+                        roomUser.Statusses.TryAdd("std", "");
                         roomUser.UpdateNeeded = true;
 
                         _actionTimer = 25;
@@ -247,8 +247,8 @@ namespace Oblivion.HabboHotel.RoomBots
                         }
                         RemovePetStatus();
                         roomUser.PetData.AddExperience(35);
-                        roomUser.Statusses.Add("jmp", "");
-                        roomUser.Statusses.Add("gst", "joy");
+                        roomUser.Statusses.TryAdd("jmp", "");
+                        roomUser.Statusses.TryAdd("gst", "joy");
                         roomUser.UpdateNeeded = true;
 
                         _actionTimer = 45;
@@ -305,7 +305,7 @@ namespace Oblivion.HabboHotel.RoomBots
                                 break;
                         }
                         roomUser.PetData.AddExperience(35);
-                        roomUser.Statusses.Add("gst", "sml");
+                        roomUser.Statusses.TryAdd("gst", "sml");
                         roomUser.UpdateNeeded = true;
                         break;
 
@@ -322,8 +322,8 @@ namespace Oblivion.HabboHotel.RoomBots
                         }
                         RemovePetStatus();
                         roomUser.PetData.AddExperience(11);
-                        roomUser.Statusses.Add("beg", "");
-                        roomUser.Statusses.Add("gst", "sml");
+                        roomUser.Statusses.TryAdd("beg", "");
+                        roomUser.Statusses.TryAdd("gst", "sml");
                         roomUser.UpdateNeeded = true;
 
                         _actionTimer = 25;
@@ -344,7 +344,7 @@ namespace Oblivion.HabboHotel.RoomBots
                         }
                         _actionTimer = 1;
                         _energyTimer = 10;
-                        roomUser.Statusses.Add("gst", "sml");
+                        roomUser.Statusses.TryAdd("gst", "sml");
                         roomUser.UpdateNeeded = true;
                         roomUser.PetData.AddExperience(35);
                         SubtractAttributes();
@@ -478,7 +478,7 @@ namespace Oblivion.HabboHotel.RoomBots
                     var value = PetLocale.GetValue($"speech.pet{roomUser.PetData.Type}");
                     var text = value[random.Next(0, value.Length - 1)];
                     if (GetRoom() != null && !GetRoom().MutedPets) roomUser.Chat(null, text, false, 0);
-                    else roomUser.Statusses.Add(text, TextHandling.GetString(roomUser.Z));
+                    else roomUser.Statusses.TryAdd(text, TextHandling.GetString(roomUser.Z));
                 }
                 _speechTimer = Oblivion.GetRandomNumber(20, 120);
             }

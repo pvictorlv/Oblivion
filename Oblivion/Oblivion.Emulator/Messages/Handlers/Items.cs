@@ -1938,12 +1938,12 @@ namespace Oblivion.Messages.Handlers
                 }
                 else if (!roomUserByHabbo.RidingHorse)
                 {
-                    pet.Statusses.Remove("sit");
-                    pet.Statusses.Remove("lay");
-                    pet.Statusses.Remove("snf");
-                    pet.Statusses.Remove("eat");
-                    pet.Statusses.Remove("ded");
-                    pet.Statusses.Remove("jmp");
+                    pet.Statusses.TryRemove("sit", out _);
+                    pet.Statusses.TryRemove("lay", out _);
+                    pet.Statusses.TryRemove("snf", out _);
+                    pet.Statusses.TryRemove("eat", out _);
+                    pet.Statusses.TryRemove("ded", out _);
+                    pet.Statusses.TryRemove("jmp", out _);
 
                     int x = roomUserByHabbo.X, y = roomUserByHabbo.Y;
 
@@ -1966,12 +1966,12 @@ namespace Oblivion.Messages.Handlers
             }
             else if (roomUserByHabbo.VirtualId == pet.HorseId)
             {
-                pet.Statusses.Remove("sit");
-                pet.Statusses.Remove("lay");
-                pet.Statusses.Remove("snf");
-                pet.Statusses.Remove("eat");
-                pet.Statusses.Remove("ded");
-                pet.Statusses.Remove("jmp");
+                pet.Statusses.TryRemove("sit", out _);
+                pet.Statusses.TryRemove("lay", out _);
+                pet.Statusses.TryRemove("snf", out _);
+                pet.Statusses.TryRemove("eat", out _);
+                pet.Statusses.TryRemove("ded", out _);
+                pet.Statusses.TryRemove("jmp", out _);
                 roomUserByHabbo.RidingHorse = false;
                 roomUserByHabbo.HorseId = 0u;
                 pet.RidingHorse = false;

@@ -52,7 +52,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             {
                 if (!user2.Statusses.ContainsKey("lay"))
                 {
-                    user2.Statusses.Add("lay", "0.55");
+                    user2.Statusses.TryAdd("lay", "0.55");
                     user2.IsLyingDown = true;
                     user2.UpdateNeeded = true;
                 }

@@ -798,11 +798,7 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 var data = message.GetReversedBytes();
                 if (_roomUserManager?.UserList == null) return;
-                foreach (var user in from user in _roomUserManager.UserList.Values
-                    where user?.GetClient()?.GetConnection() != null && !user.IsBot
-                    let userCoord = new Vector2D(user.X, user.Y)
-                    where userCoord.GetDistanceSquared(currentLocation) <= (RoomData.ChatMaxDistance ^ 2)
-                    select user)
+                foreach (var user in from user in _roomUserManager.UserList.Values where user?.GetClient()?.GetConnection() != null && !user.IsBot let userCoord = new Vector2D(user.X, user.Y) where userCoord.GetDistanceSquared(userCoord) <= RoomData.ChatMaxDistance * RoomData.ChatMaxDistance * 2 select user)
                 {
                     user.GetClient().GetConnection().SendData(data);
                 }
@@ -1211,9 +1207,9 @@ namespace Oblivion.HabboHotel.Rooms
         {
             if (RoomMuted || session.GetHabbo().Muted)
                 return true;
-            if (!MutedUsers.ContainsKey(session.GetHabbo().Id))
+            if (!MutedUsers.TryGetValue(session.GetHabbo().Id, out var user))
                 return false;
-            if (MutedUsers[session.GetHabbo().Id] >= Oblivion.GetUnixTimeStamp())
+            if (user >= Oblivion.GetUnixTimeStamp())
                 return true;
             MutedUsers.Remove(session.GetHabbo().Id);
             return false;
@@ -1396,12 +1392,15 @@ namespace Oblivion.HabboHotel.Rooms
             }
             var i = 0;
 
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            if (RoomData.RoomChat != null)
             {
-                foreach (var chat in RoomData.RoomChat.TakeWhile(chat => i < 50))
+                using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    chat.Save(RoomId, dbClient);
-                    i++;
+                    foreach (var chat in RoomData.RoomChat.TakeWhile(chat => chat != null && i < 50))
+                    {
+                        chat.Save(RoomId, dbClient);
+                        i++;
+                    }
                 }
             }
             _roomKick.Clear();

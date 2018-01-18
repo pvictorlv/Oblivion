@@ -221,7 +221,7 @@ namespace Oblivion.Messages.Handlers
                 }
             Response.EndArray();
             SendResponse();
-            Response.AppendServerMessage(RoomFloorAndWallComposer(CurrentLoadingRoom));
+            Session.SendMessage(RoomFloorAndWallComposer(CurrentLoadingRoom));
             SendResponse();
 
             Response.Init(LibraryParser.OutgoingRequest("RoomOwnershipMessageComposer"));
@@ -242,7 +242,7 @@ namespace Oblivion.Messages.Handlers
 
             var serverMessage = CurrentLoadingRoom.GetRoomUserManager().SerializeStatusUpdates(true);
             if (serverMessage != null)
-                Response.AppendServerMessage(serverMessage);
+                Session.SendMessage(serverMessage);
 
             if (CurrentLoadingRoom.RoomData.Event != null)
                 Oblivion.GetGame().GetRoomEvents().SerializeEventInfo(CurrentLoadingRoom.RoomId);
@@ -337,10 +337,7 @@ namespace Oblivion.Messages.Handlers
                     Session.SendNotif(Oblivion.GetLanguage().GetVar("server_shutdown"));
                     return;
                 }
-
-
                 Session.GetHabbo().LoadingRoom = id;
-//                var queuedServerMessage = new QueuedServerMessage(Session.GetConnection());
 
                 Room room;
                 if (Session.GetHabbo().InRoom)
@@ -389,14 +386,14 @@ namespace Oblivion.Messages.Handlers
 
                 CurrentLoadingRoom = room;
 
-
+/*
                 if (Session.GetHabbo().Id != room.RoomData.OwnerId &&
                     !Session.GetHabbo().HasFuse("fuse_enter_any_room") &&
                     !(Session.GetHabbo().IsTeleporting && Session.GetHabbo().TeleportingRoomId == id))
                     if (Session.GetHabbo().LastBellId == room.RoomId && room.RoomData.State == 1)
                     {
                         return;
-                    }
+                    }*/
 
                 if (!Session.GetHabbo().HasFuse("fuse_enter_any_room") && room.UserIsBanned(Session.GetHabbo().Id))
                 {
@@ -2411,7 +2408,7 @@ namespace Oblivion.Messages.Handlers
             if (!user.Statusses.ContainsKey("sit"))
             {
                 user.UpdateNeeded = true;
-                user.Statusses.Add("sit", "0.55");
+                user.Statusses.TryAdd("sit", "0.55");
             }
 
             user.IsSitting = true;
