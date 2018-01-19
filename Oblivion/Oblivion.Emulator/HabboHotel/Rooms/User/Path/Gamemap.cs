@@ -146,7 +146,11 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="pState">State of the p.</param>
         /// <param name="pOverride">if set to <c>true</c> [p override].</param>
         /// <returns><c>true</c> if this instance can walk the specified p state; otherwise, <c>false</c>.</returns>
-        internal static bool CanWalk(byte pState, bool pOverride) => pOverride || pState == 3 || pState == 1;
+        internal static bool CanWalk(byte pState, bool pOverride)
+        {
+            
+           return pOverride || pState == 3 || pState == 1;
+        }
 
         /// <summary>
         ///     Gets the affected tiles.
@@ -477,14 +481,16 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                         for (var j = 0; j < Model.MapSizeY; j++)
                         for (var k = 0; k < Model.MapSizeX; k++)
                         {
-                            GameMap[k, j] = 0;
                             if (k == Model.DoorX && j == Model.DoorY)
                                 GameMap[k, j] = 3;
                             else if (Model.SqState[k][j] == SquareState.Open)
                                 GameMap[k, j] = 1;
                             else if (Model.SqState[k][j] == SquareState.Seat)
                                 GameMap[k, j] = 2;
-                        }
+                            else
+                                GameMap[k, j] = 0;
+
+                            }
                     }
 
                     else
@@ -495,7 +501,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                         {
                             for (var num3 = 0; num3 < Model.MapSizeX; num3++)
                             {
-                                GameMap[num3, n] = 0;
                                 if (num3 == Model.DoorX && n == Model.DoorY)
                                 {
                                     GameMap[num3, n] = 3;
@@ -505,7 +510,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                                 else if (Model.SqState[num3][n] == SquareState.Seat)
                                 {
                                     GameMap[num3, n] = 2;
-                                }
+                                }else
+                                    GameMap[num3, n] = 0;
+
                             }
                         }
                     }
@@ -516,6 +523,11 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     foreach (var item in floorItems)
                     {
                         AddItemToMap(item);
+                    }
+                    var doors = floorItems.Where(x => x.GetBaseItem().InteractionType == Interaction.Gate && x.ExtraData == "0");
+                    foreach (var door in doors)
+                    {
+                        GameMap[door.X, door.Y] = 0;
                     }
 
                     floorItems.Clear();
@@ -789,10 +801,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 AddCoordinatedItem(item, current);
                 retVal = ConstructMapForItem(item, current);
             }
-
-            /*foreach (var coord in item.GetCoords)
-            {
-            }*/
+            
             return retVal;
         }
 

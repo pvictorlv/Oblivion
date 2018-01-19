@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using Oblivion.Configuration;
+using Oblivion.Connection.Connection.SocketAsync;
 using Oblivion.Messages.Parsers;
 
 namespace Oblivion.Connection.Connection
@@ -92,6 +93,7 @@ namespace Oblivion.Connection.Connection
             PrepareConnectionDetails();
         }
 
+        public SocketSystem<SessionBase> _socketSystem;
         /// <summary>
         /// Prepares the connection details.
         /// </summary>
@@ -100,6 +102,7 @@ namespace Oblivion.Connection.Connection
         {
             try
             {
+//                _socketSystem = new SocketSystem<SessionBase>("0.0.0.0", _portInformation, 150, 30000, _parser);
                 SocketConnectionCheck.SetupTcpAuthorization(20000);
                 _listener = new TcpListener(IPAddress.Any, _portInformation);
                 _listener.Start();

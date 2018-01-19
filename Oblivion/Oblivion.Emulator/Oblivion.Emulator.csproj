@@ -107,7 +107,7 @@
     <OutputPath>..\bin\Release\x64\</OutputPath>
     <DefineConstants>
     </DefineConstants>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <FileAlignment>4096</FileAlignment>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -153,11 +153,29 @@
     <StartupObject>Oblivion.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MySql.Data">
       <HintPath>..\..\..\..\Documents\GitHub\Oblivion - Copy\Oblivion\bin\Release\x64\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.Common, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SuperSocket.1.6.6.1\lib\net45\SuperSocket.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.Facility, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SuperSocket.1.6.6.1\lib\net45\SuperSocket.Facility.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.SocketBase, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SuperSocket.1.6.6.1\lib\net45\SuperSocket.SocketBase.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.SocketEngine, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SuperSocket.Engine.1.6.6.1\lib\net45\SuperSocket.SocketEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.SocketService, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SuperSocket.Engine.1.6.6.1\lib\net45\SuperSocket.SocketService.exe</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel" />
@@ -182,11 +200,16 @@
     <Compile Include="Configuration\Languages.cs" />
     <Compile Include="Connection\Connection\ConnectionInformation.cs" />
     <Compile Include="Connection\Connection\GameSocketManagerStatics.cs" />
+    <Compile Include="Connection\Connection\SocketAsync\BufferPool.cs" />
+    <Compile Include="Connection\Connection\SocketAsync\Pool.cs" />
+    <Compile Include="Connection\Connection\SocketAsync\SessionBase.cs" />
+    <Compile Include="Connection\Connection\SocketAsync\SocketReceivedEventArgs.cs" />
+    <Compile Include="Connection\Connection\SocketAsync\SocketSentEventArgs.cs" />
+    <Compile Include="Connection\Connection\SocketAsync\SocketSystem.cs" />
     <Compile Include="Connection\Connection\SocketConnectionCheck.cs" />
     <Compile Include="Connection\Connection\SocketManager.cs" />
     <Compile Include="Connection\Net\MusConnection.cs" />
     <Compile Include="Connection\Net\MusSocket.cs" />
-    <Compile Include="Connection\Web.cs" />
     <Compile Include="HabboHotel\Camera\CameraPhotoManager.cs" />
     <Compile Include="HabboHotel\Camera\CameraPhotoPreview.cs" />
     <Compile Include="HabboHotel\Catalogs\Composers\TargetedOfferComposer.cs" />
@@ -682,9 +705,13 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Config\log4net.config" />
+    <None Include="Config\log4net.unix.config" />
     <None Include="packages.config" />
     <None Include="Properties\app.config" />
     <None Include="Properties\app.manifest" />
+    <None Include="supersocket.cmd" />
+    <None Include="supersocket.sh" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="docs\MySqlCommand.xml" />

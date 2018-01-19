@@ -238,7 +238,15 @@ namespace Oblivion.Connection.Connection
         /// Gets the ip.
         /// </summary>
         /// <returns>System.String.</returns>
-        public string GetIp() => _remoteEndPoint.ToString().Split(':')[0];
+        public string GetIp()
+        {
+            var arr = _remoteEndPoint?.ToString().Split(':');
+            if (arr?.Length > 0)
+            {
+                return arr[0];
+            }
+            return "";
+        }
 
         /// <summary>
         /// Gets the connection identifier.

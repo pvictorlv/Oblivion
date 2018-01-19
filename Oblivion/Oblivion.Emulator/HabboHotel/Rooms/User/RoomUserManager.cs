@@ -1186,7 +1186,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (roomUsers.Path.Count < pathDataCount || pathDataCount < 0) return false;
             var nextStep = roomUsers.Path[pathDataCount];
 
-            if (!_userRoom.GetGameMap().CanWalk(nextStep.X, nextStep.Y, roomUsers.AllowOverride) &&
+            if (!_userRoom.GetGameMap().SquareIsOpen(nextStep.X, nextStep.Y, roomUsers.AllowOverride) &&
                 !roomUsers.GetRoom().RoomData.AllowWalkThrough)
             {
                 roomUsers.IsWalking = false;
@@ -1311,7 +1311,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             try
             {
                 // Check if User CanWalk...
-                if ((_userRoom.GetGameMap().CanWalk(roomUsers.SetX, roomUsers.SetY, roomUsers.AllowOverride)) ||
+                if ((_userRoom.GetGameMap().SquareIsOpen(roomUsers.SetX, roomUsers.SetY, roomUsers.AllowOverride)) ||
                     (roomUsers.RidingHorse))
                 {
                     // Let's Update his Movement...
@@ -1386,7 +1386,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             try
             {
                 // Check if User CanWalk...
-                if ((_userRoom.GetGameMap().CanWalk(roomUsers.SetX, roomUsers.SetY, roomUsers.AllowOverride)) ||
+                if ((_userRoom.GetGameMap().SquareIsOpen(roomUsers.SetX, roomUsers.SetY, roomUsers.AllowOverride)) ||
                     (roomUsers.RidingHorse))
                 {
                     // Let's Update his Movement...

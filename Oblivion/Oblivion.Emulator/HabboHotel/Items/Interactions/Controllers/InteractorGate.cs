@@ -34,17 +34,29 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             else
                 newMode = currentMode + 1;
 
-            if (newMode == 0 && !item.GetRoom().GetGameMap().ItemCanBePlacedHere(item.X, item.Y))
+            if (newMode == 0 && item.GetRoom().GetGameMap().SquareHasUsers(item.X, item.Y))
                 return;
+
+            if (newMode == 0)
+            {
+                item.GetRoom().GetGameMap().GameMap[item.X, item.Y] = 0;
+            }
+            else
+            {
+                item.GetRoom().GetGameMap().GameMap[item.X, item.Y] = 1;
+
+            }
 
             item.ExtraData = newMode.ToString();
             item.UpdateState();
-            item.GetRoom().GetGameMap().UpdateMapForItem(item);
+           
             if (item.GetRoom().GotWireds())
                 item.GetRoom()
                     .GetWiredHandler()
                     .ExecuteWired(Interaction.TriggerStateChanged,
                         item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id), item);
+//            item.GetRoom().GetGameMap().UpdateMapForItem(item);
+
         }
 
         public override void OnWiredTrigger(RoomItem item)
@@ -72,12 +84,22 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     num3 = num2 + 1;
             }
 
-            if (num3 == 0 && !item.GetRoom().GetGameMap().ItemCanBePlacedHere(item.X, item.Y))
+            if (num3 == 0 && item.GetRoom().GetGameMap().SquareHasUsers(item.X, item.Y))
                 return;
+
+            if (num3 == 0)
+            {
+                item.GetRoom().GetGameMap().GameMap[item.X, item.Y] = 0;
+            }
+            else
+            {
+                item.GetRoom().GetGameMap().GameMap[item.X, item.Y] = 1;
+
+            }
 
             item.ExtraData = num3.ToString();
             item.UpdateState();
-            item.GetRoom().GetGameMap().UpdateMapForItem(item);
+//            item.GetRoom().GetGameMap().UpdateMapForItem(item);
         }
     }
 }

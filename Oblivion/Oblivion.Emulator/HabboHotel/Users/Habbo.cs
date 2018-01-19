@@ -1117,8 +1117,11 @@ namespace Oblivion.HabboHotel.Users
         /// </summary>
         /// <param name="p">The p.</param>
         /// <returns>UserAchievement.</returns>
-        internal UserAchievement GetAchievementData(string p) =>
-            Data.Achievements.TryGetValue(p, out var result) ? result : null;
+        internal UserAchievement GetAchievementData(string p)
+        {
+            if (Data?.Achievements == null) return null;
+            return Data.Achievements.TryGetValue(p, out var result) ? result : null;
+        }
 
         /// <summary>
         ///     Gets the talent data.

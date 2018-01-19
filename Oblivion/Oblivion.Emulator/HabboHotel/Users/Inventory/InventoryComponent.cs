@@ -706,7 +706,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     var added = _mAddedItems.ToList();
 
                     var builder = new StringBuilder();
-                    builder.Append("UPDATE items_rooms SET user_id='{UserId}', room_id='0' WHERE id IN (");
+                    builder.Append($"UPDATE items_rooms SET user_id='{UserId}', room_id='0' WHERE id IN (");
                     var i = 0;
                     var count = added.Count;
                     foreach (var itemId in added)
@@ -714,6 +714,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                         i++;
                         builder.Append(i >= count ? $"{itemId}" : $"{itemId},");
                     }
+                    builder.Append(");");
 
                     using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {

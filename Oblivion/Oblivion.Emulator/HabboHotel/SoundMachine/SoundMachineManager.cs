@@ -198,9 +198,10 @@ namespace Oblivion.HabboHotel.SoundMachine
         /// <param name="instance">The instance.</param>
         public void Update(Room instance)
         {
+            if (_mRoomOutputItem == null) return;
             if (IsPlaying && (CurrentSong == null || TimePlaying >= CurrentSong.SongData.LengthSeconds + 1.0))
             {
-                if (!_mPlaylist.Any())
+                if (_mPlaylist.Count <= 0)
                 {
                     Stop();
                     _mRoomOutputItem.ExtraData = "0";
