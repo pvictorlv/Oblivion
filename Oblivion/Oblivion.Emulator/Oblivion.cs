@@ -260,7 +260,7 @@ namespace Oblivion
             Console.Clear();
             Console.WriteLine();
 
-            Out.WriteLine($"Console Cleared in: {DateTime.Now} Next Time on: {ConsoleTimer} Seconds ", "Oblivion.Boot",
+            Out.WriteLine($"Console Cleared in: {DateTime.Now} Next Time on: {ConsoleTimer} MS ", "Oblivion.Boot",
                 ConsoleColor.DarkGreen);
 
             Console.WriteLine();

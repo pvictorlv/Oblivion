@@ -137,45 +137,44 @@ namespace Oblivion.HabboHotel.Users.Inventory
             if (currentRoom == null)
                 return;
 
-            DataTable table;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery(
+                queryreactor2.SetQuery(
                     $"SELECT id FROM items_rooms WHERE user_id={session.GetHabbo().Id} AND room_id='0'");
-                table = queryReactor.GetTable();
-            }
+                var table = queryreactor2.GetTable();
+            
+                foreach (DataRow dataRow in table.Rows)
+                {
+                    var item = GetItem(Convert.ToUInt32(dataRow[0]));
 
-            foreach (DataRow dataRow in table.Rows)
-            {
-                var item = GetItem(Convert.ToUInt32(dataRow[0]));
+                    if (item == null || (!item.BaseItem.Name.StartsWith("DFD_") &&
+                                         !item.BaseItem.Name.StartsWith("CF_") &&
+                                         !item.BaseItem.Name.StartsWith("CFC_")))
+                        continue;
 
-                if (item == null || (!item.BaseItem.Name.StartsWith("DFD_") && !item.BaseItem.Name.StartsWith("CF_") &&
-                                     !item.BaseItem.Name.StartsWith("CFC_")))
-                    continue;
+                    var array = item.BaseItem.Name.Split('_');
+                    var num = int.Parse(array[1]);
 
-                var array = item.BaseItem.Name.Split('_');
-                var num = int.Parse(array[1]);
-
-                using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
                     queryreactor2.RunFastQuery($"DELETE FROM items_rooms WHERE id={item.Id} LIMIT 1");
 
 
-                currentRoom.GetRoomItemHandler().RemoveItem(item.Id);
+                    currentRoom.GetRoomItemHandler().RemoveItem(item.Id);
 
 
-                RemoveItem(item.Id, false, 0);
+                    RemoveItem(item.Id, false, 0);
 
-                if (num <= 0)
-                    continue;
-                if (item.BaseItem.Name.StartsWith("DFD_"))
-                {
-                    session.GetHabbo().Diamonds += num;
-                    session.GetHabbo().UpdateSeasonalCurrencyBalance();
-                }
-                else
-                {
-                    session.GetHabbo().Credits += num;
-                    session.GetHabbo().UpdateCreditsBalance();
+                    if (num <= 0)
+                        continue;
+                    if (item.BaseItem.Name.StartsWith("DFD_"))
+                    {
+                        session.GetHabbo().Diamonds += num;
+                        session.GetHabbo().UpdateSeasonalCurrencyBalance();
+                    }
+                    else
+                    {
+                        session.GetHabbo().Credits += num;
+                        session.GetHabbo().UpdateCreditsBalance();
+                    }
                 }
             }
         }

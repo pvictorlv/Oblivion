@@ -198,16 +198,15 @@
   <ItemGroup>
     <Compile Include="Configuration\FurniData.cs" />
     <Compile Include="Configuration\Languages.cs" />
+    <Compile Include="Connection\Connection\BufferManager.cs" />
     <Compile Include="Connection\Connection\ConnectionInformation.cs" />
+    <Compile Include="Connection\Connection\ConnectionInformationBkp.cs" />
     <Compile Include="Connection\Connection\GameSocketManagerStatics.cs" />
-    <Compile Include="Connection\Connection\SocketAsync\BufferPool.cs" />
-    <Compile Include="Connection\Connection\SocketAsync\Pool.cs" />
-    <Compile Include="Connection\Connection\SocketAsync\SessionBase.cs" />
-    <Compile Include="Connection\Connection\SocketAsync\SocketReceivedEventArgs.cs" />
-    <Compile Include="Connection\Connection\SocketAsync\SocketSentEventArgs.cs" />
-    <Compile Include="Connection\Connection\SocketAsync\SocketSystem.cs" />
+    <Compile Include="Connection\Connection\SocketAsync\AsyncUserToken.cs" />
+    <Compile Include="Connection\Connection\SocketAsync\SocketAsyncEventArgsPool.cs" />
     <Compile Include="Connection\Connection\SocketConnectionCheck.cs" />
     <Compile Include="Connection\Connection\SocketManager.cs" />
+    <Compile Include="Connection\Connection\SocketManagerOld.cs" />
     <Compile Include="Connection\Net\MusConnection.cs" />
     <Compile Include="Connection\Net\MusSocket.cs" />
     <Compile Include="HabboHotel\Camera\CameraPhotoManager.cs" />

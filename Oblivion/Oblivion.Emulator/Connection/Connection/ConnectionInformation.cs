@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Sockets;
 using Oblivion.Configuration;
@@ -244,6 +244,8 @@ namespace Oblivion.Connection.Connection
             if (arr?.Length > 0)
             {
                 return arr[0];
+
+
             }
             return "";
         }
@@ -268,7 +270,7 @@ namespace Oblivion.Connection.Connection
         internal void Disconnect()
         {
             if (_connected)
-                HandleDisconnect(new SocketException((int) SocketError.ConnectionReset));
+                HandleDisconnect(new SocketException((int)SocketError.ConnectionReset));
         }
 
         /// <summary>
@@ -313,7 +315,7 @@ namespace Oblivion.Connection.Connection
             }
             catch (Exception e)
             {
-//                Logging.HandleException(e, "SendData - ConnectionInformation.cs");
+                //                Logging.HandleException(e, "SendData - ConnectionInformation.cs");
                 HandleDisconnect(e);
             }
         }

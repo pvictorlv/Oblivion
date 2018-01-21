@@ -2,13 +2,12 @@
 using System.Net;
 using System.Net.Sockets;
 using Oblivion.Configuration;
-using Oblivion.Connection.Connection.SocketAsync;
 using Oblivion.Messages.Parsers;
 
 namespace Oblivion.Connection.Connection
 {
     /// <summary>
-    /// Class SocketManager.
+    ///     Class SocketManager.
     /// </summary>
     public class SocketManager
     {
@@ -25,7 +24,7 @@ namespace Oblivion.Connection.Connection
         /// <summary>
         /// The _connection listener
         /// </summary>
-        private TcpListener _listener;
+        private Socket _listener;
 
         /// <summary>
         /// The _disableNagleAlgorithm in connectios
@@ -93,7 +92,6 @@ namespace Oblivion.Connection.Connection
             PrepareConnectionDetails();
         }
 
-        public SocketSystem<SessionBase> _socketSystem;
         /// <summary>
         /// Prepares the connection details.
         /// </summary>
@@ -102,11 +100,18 @@ namespace Oblivion.Connection.Connection
         {
             try
             {
-//                _socketSystem = new SocketSystem<SessionBase>("0.0.0.0", _portInformation, 150, 30000, _parser);
+                //                _socketSystem = new SocketSystem<SessionBase>("0.0.0.0", _portInformation, 150, 30000, _parser);
+
                 SocketConnectionCheck.SetupTcpAuthorization(20000);
-                _listener = new TcpListener(IPAddress.Any, _portInformation);
-                _listener.Start();
-                _listener.BeginAcceptSocket(OnAcceptSocket, _listener);
+                IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, _portInformation);
+
+                _listener = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                _listener.Bind(endPoint);
+                _listener.Listen(150);
+
+                //                _listener = new TcpListener(IPAddress.Any, _portInformation);
+                //                _listener.Start();
+                _listener.BeginAccept(OnAcceptSocket, _listener);
             }
             catch (SocketException ex)
             {
@@ -120,13 +125,13 @@ namespace Oblivion.Connection.Connection
             OnClientDisconnected(connection, exception);
             connection.Cleanup();
         }
-        
+
         private void OnAcceptSocket(IAsyncResult ar)
         {
             if (ar == null || _listener == null) return;
             try
             {
-                var socket = _listener.EndAcceptSocket(ar);
+                var socket = _listener.EndAccept(ar);
 
                 if (socket.Connected)
                 {
@@ -148,7 +153,7 @@ namespace Oblivion.Connection.Connection
                 Logging.HandleException(e, "OnAccept");
             }
 
-            _listener.BeginAcceptSocket(OnAcceptSocket, _listener);
+            _listener.BeginAccept(OnAcceptSocket, _listener);
         }
 
         /// <summary>

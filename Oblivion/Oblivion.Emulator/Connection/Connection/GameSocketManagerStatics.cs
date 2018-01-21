@@ -5,14 +5,13 @@ namespace Oblivion.Connection.Connection
     /// </summary>
     public class GameSocketManagerStatics
     {
-        /// <summary>
-        /// The buffer size
-        /// </summary>
         public static readonly int BufferSize = 8192; // habbo buffer size (JSON support - camera)
 
-        /// <summary>
-        /// The maximum packet size
-        /// </summary>
+        public static readonly int OpsToPreAllocate = 2;
+        public static int MaxConnections = 5000;
+        public static readonly int MaxAcceptOps = 500;
+        public static readonly int NumberOfSaeaForRecSend = MaxConnections + 1;
+        
         public static readonly int MaxPacketSize = (BufferSize - 4);
     }
 }

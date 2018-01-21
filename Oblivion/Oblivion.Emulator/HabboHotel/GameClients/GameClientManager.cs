@@ -218,6 +218,7 @@ namespace Oblivion.HabboHotel.GameClients
 
             Clients.AddOrUpdate(clientId, gameClient, (key, value) => gameClient);
             gameClient.StartConnection();
+
         }
 
         /// <summary>

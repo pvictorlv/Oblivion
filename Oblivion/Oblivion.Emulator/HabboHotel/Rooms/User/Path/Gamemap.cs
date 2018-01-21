@@ -524,7 +524,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     {
                         AddItemToMap(item);
                     }
-                    var doors = floorItems.Where(x => x.GetBaseItem().InteractionType == Interaction.Gate && x.ExtraData == "0");
+                    var doors = floorItems.Where(x => (x.GetBaseItem().InteractionType == Interaction.Gate && x.ExtraData == "0") || x.GetBaseItem().InteractionType == Interaction.GuildGate);
                     foreach (var door in doors)
                     {
                         GameMap[door.X, door.Y] = 0;
