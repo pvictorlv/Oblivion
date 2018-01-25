@@ -54,6 +54,14 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             set { }
         }
 
+
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
+
         public bool Execute(params object[] stuff)
         {
             var roomUser = (RoomUser) stuff[0];
@@ -85,7 +93,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             if (conditions.Count > 0)
                 /* TODO CHECK */ foreach (var current in conditions)
                 {
-                    if (!current.Execute(roomUser))
+                    if (!current.Execute(roomUser, roomItem))
                         return false;
 
                     WiredHandler.OnEvent(current);

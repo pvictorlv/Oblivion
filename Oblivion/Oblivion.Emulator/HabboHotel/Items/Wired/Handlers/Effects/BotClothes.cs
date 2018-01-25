@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using Oblivion.Collections;
+﻿using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
+using Oblivion.HabboHotel.Rooms.User;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
 
@@ -46,17 +46,30 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
+
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
+
+        private RoomUser _bot;
         public bool Execute(params object[] stuff)
         {
-            var bot = Room.GetRoomUserManager().GetBotByName(OtherString);
+            if (_bot?.BotData == null || _bot.BotData.Name != OtherString)
+            {
+                _bot = Room.GetRoomUserManager().GetBotByName(OtherString);
 
-            if (bot == null || OtherExtraString == "null")
+            }
+
+            if (_bot == null || OtherExtraString == "null")
                 return false;
 
-            bot.BotData.Look = OtherExtraString;
+            _bot.BotData.Look = OtherExtraString;
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer"));
             serverMessage.AppendInteger(1);
-            bot.Serialize(serverMessage);
+            _bot.Serialize(serverMessage);
             Room.SendMessage(serverMessage);
 
             return true;

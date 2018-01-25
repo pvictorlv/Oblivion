@@ -50,24 +50,24 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             get { return 0; }
             set { }
         }
-        
-        
 
-        public bool AnyItemHaveFurni() => (from current in Items where current != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(current) from affectedTile in current.AffectedTiles.Values from item in Room.GetGameMap().GetAllRoomItemForSquare(affectedTile.X, affectedTile.Y) where current.Id != item.Id && item.Z >= affectedTile.Z select current).Any();
-        public bool AllItemHaveFurni() => (from current in Items
-                                           where current != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(current)
-                                           from affectedTile in current.AffectedTiles.Values
-                                           select Room.GetGameMap()
-                                               .GetAllRoomItemForSquare(affectedTile.X, affectedTile.Y)
-                                               .Any(item => current.Id != item.Id && item.Z >= affectedTile.Z)).All(all => all);
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
 
         public bool Execute(params object[] stuff)
         {
             if (Items == null || Items.Count <= 0)
                 return true;
 
-            return OtherBool ? AllItemHaveFurni() : AnyItemHaveFurni();
-
+            return OtherBool
+                ? Items.All(item =>
+                    item.GetRoom().GetGameMap().GetRoomItemForMinZ(item.X, item.Y, item.TotalHeight).Count > 0)
+                : Items.Any(item =>
+                    item.GetRoom().GetGameMap().GetRoomItemForMinZ(item.X, item.Y, item.TotalHeight).Count > 0);
         }
     }
 }

@@ -22,6 +22,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             OtherExtraString2 = string.Empty;
         }
 
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
         public Interaction Type => Interaction.TriggerScoreAchieved;
 
         public RoomItem Item { get; set; }

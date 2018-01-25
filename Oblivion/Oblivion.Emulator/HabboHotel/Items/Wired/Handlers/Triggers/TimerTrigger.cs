@@ -122,6 +122,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             return true;
         }
 
+
         public bool Execute(params object[] stuff)
         {
             if (_mNext == 0L || _mNext <= Oblivion.Now())
@@ -131,5 +132,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
             return true;
         }
+
+        public void Dispose()
+        {
+            
+        }
+
+        public bool Disposed { get; set; }
     }
 }

@@ -39,6 +39,13 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             set { }
         }
 
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
+
         public string OtherString { get; set; }
 
         public string OtherExtraString { get; set; }

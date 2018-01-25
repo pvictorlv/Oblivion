@@ -21,6 +21,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             OtherExtraString2 = string.Empty;
         }
 
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
         public Interaction Type => Interaction.ActionBotTeleport;
 
         public RoomItem Item { get; set; }

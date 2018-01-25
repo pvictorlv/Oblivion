@@ -19,6 +19,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             OtherString = "1";
         }
 
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
         public Interaction Type => Interaction.ConditionUserIsInTeam;
 
         public RoomItem Item { get; set; }

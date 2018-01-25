@@ -11,7 +11,7 @@ using Oblivion.Messages.Parsers;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
-    internal class Chase : IWiredItem
+    internal class Chase : IWiredItem, IWiredCycler
     {
         public Chase(RoomItem item, Room room)
         {
@@ -29,7 +29,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public ConcurrentList<RoomItem> Items { get; set; }
 
-        private readonly ConcurrentQueue<RoomItem> _toRemove = new ConcurrentQueue<RoomItem>();
+        private Queue<RoomItem> _toRemove = new Queue<RoomItem>();
         public string OtherString
         {
             get { return string.Empty; }
@@ -77,11 +77,20 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (!Requested)
             {
                 TickCount = Delay;
+                Requested = true;
             }
-            OnCycle();
+
             return true;
         }
-        
+
+        public void Dispose()
+        {
+            _toRemove.Clear();
+            _toRemove = null;
+        }
+
+        public bool Disposed { get; set; }
+
         private double _next;
 
         public bool Requested;
@@ -89,6 +98,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OnCycle()
         {
+            if (!Requested) return false;
+
             var time = Oblivion.GetUnixTimeStamp();
 
             if (time < _next)
@@ -158,13 +169,16 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
                     }
                 }
-                while (_toRemove.TryDequeue(out var rI))
+                while (_toRemove.Count > 0)
+                {
+                    var rI = _toRemove.Dequeue();
                     if (Items.Contains(rI))
                         Items.Remove(rI);
+                }
             }
 
             _next = Oblivion.GetUnixTimeStamp() + Delay;
-
+            Requested = false;
             return true;
         }
     }

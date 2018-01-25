@@ -46,6 +46,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
         public bool Execute(params object[] stuff)
         {
             if (stuff[0] == null)

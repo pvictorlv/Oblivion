@@ -32,6 +32,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         }
 
 
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
         public double TickCount { get; set; }
 
         public bool OnCycle()

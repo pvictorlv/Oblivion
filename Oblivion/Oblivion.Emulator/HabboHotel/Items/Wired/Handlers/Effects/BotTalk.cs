@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using Oblivion.Collections;
+﻿using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
+using Oblivion.HabboHotel.Rooms.User;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
@@ -46,13 +46,26 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool Execute(params object[] stuff)
         {
-            var bot = Room.GetRoomUserManager().GetBotByName(OtherString);
+            if (string.IsNullOrEmpty(OtherString)) return false;
 
-            if (bot == null)
+            if (_bot?.BotData == null || _bot.BotData.Name != OtherString)
+            {
+                _bot = Room.GetRoomUserManager().GetBotByName(OtherString);
+            }
+
+            if (_bot == null)
                 return false;
 
-            bot.Chat(null, OtherExtraString, OtherBool, 0);
+            _bot.Chat(null, OtherExtraString, OtherBool, 0);
             return true;
         }
+
+        private RoomUser _bot;
+        public void Dispose()
+        {
+            _bot = null;
+        }
+
+        public bool Disposed { get; set; }
     }
 }

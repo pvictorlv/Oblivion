@@ -10,7 +10,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
     public class ShowMessage : IWiredItem
     {
-        private readonly List<Interaction> _mBanned;
+        private List<Interaction> _mBanned;
 
         public ShowMessage(RoomItem item, Room room)
         {
@@ -24,6 +24,13 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             };
         }
 
+        public void Dispose()
+        {
+            _mBanned.Clear();
+            _mBanned = null;
+        }
+
+        public bool Disposed { get; set; }
         public Interaction Type => Interaction.ActionShowMessage;
 
         public RoomItem Item { get; set; }

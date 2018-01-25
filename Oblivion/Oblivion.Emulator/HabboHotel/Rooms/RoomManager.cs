@@ -340,7 +340,7 @@ namespace Oblivion.HabboHotel.Rooms
             if (LoadedBallRooms.Count > 0)
             {
                 var sinceBallLastTime = DateTime.Now - _cycleBallLastExecution;
-                if (sinceBallLastTime.TotalMilliseconds >= 180)
+                if (sinceBallLastTime.TotalMilliseconds >= 145)
                 {
                     _cycleBallLastExecution = DateTime.Now;
                     /* TODO CHECK */ foreach (var Room in LoadedBallRooms.ToList())
@@ -461,6 +461,7 @@ namespace Oblivion.HabboHotel.Rooms
 
             room.Disposed = true;
 
+            if (Oblivion.GetGame().GetNavigator().PrivateCategories.Contains(room.RoomData.Category))
             if (Oblivion.GetGame().GetNavigator().PrivateCategories.Contains(room.RoomData.Category))
             {
                 ((FlatCat) Oblivion.GetGame().GetNavigator().PrivateCategories[room.RoomData.Category]).UsersNow -=

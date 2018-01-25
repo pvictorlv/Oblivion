@@ -31,6 +31,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             set { }
         }
 
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
         public string OtherExtraString
         {
             get { return ""; }
@@ -60,18 +66,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             if (Items == null || Items.Count <= 0)
                 return true;
 
-            /* TODO CHECK */ foreach (var current in Items.Where(current => current != null &&
-                                                           Room.GetRoomItemHandler().FloorItems.Values.Contains(current)))
-            {
-                if (current.AffectedTiles.Values.Any(
-                    current2 => Room.GetGameMap().SquareHasUsers(current2.X, current2.Y)))
-                    return false;
-
-                if (Room.GetGameMap().SquareHasUsers(current.X, current.Y))
-                    return false;
-            }
-
-            return true;
+            /* TODO CHECK */
+            return Items.All(current => !current.AffectedTiles.Values.Any(current2 => Room.GetGameMap().SquareHasUsers(current2.X, current2.Y)));
         }
     }
 }

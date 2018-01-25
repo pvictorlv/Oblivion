@@ -36,25 +36,31 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
 
         public bool Execute(params object[] stuff)
         {
-            if (stuff[0] == null)
-                return false;
-
             var roomUser = (RoomUser) stuff[0];
+            if (roomUser == null) return false;
 
-            roomUser.Frozen = !roomUser.Frozen;
-            if (roomUser.Frozen)
+            if (!roomUser.Frozen)
             {
+                roomUser.Frozen = true;
                 roomUser.ApplyEffect(12);
                 roomUser.FrozenTick = 60;
                 roomUser.GetClient().SendWhisper("Você foi congelado");
             }
             else
             {
+                roomUser.Frozen = false;
                 roomUser.ApplyEffect(0);
                 roomUser.FrozenTick = 0;
                 roomUser.GetClient().SendWhisper("Você foi descongelado");
             }
             return true;
         }
+
+        public void Dispose()
+        {
+            //todo
+        }
+
+        public bool Disposed { get; set; }
     }
 }

@@ -84,8 +84,15 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         private double _next;
 
         public bool Requested;
-        private readonly Queue<RoomItem> _toRemove = new Queue<RoomItem>();
+        private Queue<RoomItem> _toRemove = new Queue<RoomItem>();
 
+        public void Dispose()
+        {
+            _toRemove.Clear();
+            _toRemove = null;
+        }
+
+        public bool Disposed { get; set; }
         public bool OnCycle()
         {
             var time = Oblivion.GetUnixTimeStamp();

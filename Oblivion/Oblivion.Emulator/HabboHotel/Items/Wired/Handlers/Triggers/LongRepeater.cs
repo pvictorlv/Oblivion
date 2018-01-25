@@ -13,6 +13,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
         private int _delay;
         public bool Requested { get; set; }
 
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
         public LongRepeater(RoomItem item, Room room)
         {
             Item = item;

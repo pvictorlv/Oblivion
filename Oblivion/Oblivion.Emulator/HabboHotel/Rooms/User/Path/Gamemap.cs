@@ -857,6 +857,20 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <returns><c>true</c> if this instance [can roll item here] the specified x; otherwise, <c>false</c>.</returns>
         internal bool CanRollItemHere(int x, int y) => ValidTile(x, y) && Model.SqState[x][y] != SquareState.Blocked;
 
+
+        internal bool CanRollItemHere(int x, int y, double z, bool isUser)
+        {
+            if (!ValidTile(x, y))
+                return false;
+            if (Model.SqState[x][y] == SquareState.Blocked || GameMap[x, y] == 0)
+                return false;
+            if (SquareHasUsers(x, y) && !_room.RoomData.AllowWalkThrough)
+                return false;
+            if (isUser ? (ItemHeightMap[x, y] - z > 1.5) : ItemHeightMap[x, y] > z)
+                return false;
+
+            return true;
+        }
         /// <summary>
         ///     Squares the is open.
         /// </summary>
@@ -1206,6 +1220,17 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             list.AddRange(list2.ToList().Where(roomItem => roomItem.Coordinate.X == x && roomItem.Coordinate.Y == y));
 
             return list;
+        }
+
+        public List<RoomItem> GetRoomItemForMinZ(int pX, int pY, double pZ)
+        {
+            var coord = new Point(pX, pY);
+            if (CoordinatedItems.TryGetValue(coord, out var itemsFromSquare))
+            {
+                return itemsFromSquare.Where(item => pZ <= item.Z).ToList();
+            }
+
+            return null;
         }
 
         /// <summary>

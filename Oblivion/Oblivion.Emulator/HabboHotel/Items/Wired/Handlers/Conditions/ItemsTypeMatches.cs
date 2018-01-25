@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -17,6 +16,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             Items = new ConcurrentList<RoomItem>();
         }
 
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
         public Interaction Type => Interaction.ConditionFurniTypeMatches;
 
         public RoomItem Item { get; set; }
@@ -62,7 +67,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
             RoomItem lastitem = null;
 
-            /* TODO CHECK */ foreach (var current in Items)
+            if (stuff.Length > 1)
+                lastitem = (RoomItem)stuff[1];
+
+            foreach (var current in Items)
             {
                 if (lastitem == null)
                 {

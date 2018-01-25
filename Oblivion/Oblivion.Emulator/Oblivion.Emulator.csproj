@@ -107,7 +107,7 @@
     <OutputPath>..\bin\Release\x64\</OutputPath>
     <DefineConstants>
     </DefineConstants>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <FileAlignment>4096</FileAlignment>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -198,15 +198,10 @@
   <ItemGroup>
     <Compile Include="Configuration\FurniData.cs" />
     <Compile Include="Configuration\Languages.cs" />
-    <Compile Include="Connection\Connection\BufferManager.cs" />
     <Compile Include="Connection\Connection\ConnectionInformation.cs" />
-    <Compile Include="Connection\Connection\ConnectionInformationBkp.cs" />
     <Compile Include="Connection\Connection\GameSocketManagerStatics.cs" />
-    <Compile Include="Connection\Connection\SocketAsync\AsyncUserToken.cs" />
-    <Compile Include="Connection\Connection\SocketAsync\SocketAsyncEventArgsPool.cs" />
     <Compile Include="Connection\Connection\SocketConnectionCheck.cs" />
     <Compile Include="Connection\Connection\SocketManager.cs" />
-    <Compile Include="Connection\Connection\SocketManagerOld.cs" />
     <Compile Include="Connection\Net\MusConnection.cs" />
     <Compile Include="Connection\Net\MusSocket.cs" />
     <Compile Include="HabboHotel\Camera\CameraPhotoManager.cs" />

@@ -16,6 +16,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
             Items = new ConcurrentList<RoomItem>();
         }
 
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
         public Interaction Type => Interaction.SpecialRandom;
 
         public RoomItem Item { get; set; }

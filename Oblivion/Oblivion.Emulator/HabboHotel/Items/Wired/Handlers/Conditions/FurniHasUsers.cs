@@ -17,6 +17,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             Items = new ConcurrentList<RoomItem>();
         }
 
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
         public Interaction Type => Interaction.ConditionFurnisHaveUsers;
 
         public RoomItem Item { get; set; }
@@ -59,23 +65,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
         {
             if (Items == null || Items.Count <= 0)
                 return false;
-            bool all = true;
-            foreach (var current in Items)
-            {
-                if (current == null || !Room.GetRoomItemHandler()
-                        .FloorItems.ContainsKey(current.Id)) continue;
-                if (!current.AffectedTiles.Values.Any(current2 => Room.GetGameMap()
-                    .SquareHasUsers(current2.X, current2.Y)))
-                {
-                    if (!Room.GetGameMap()
-                        .SquareHasUsers(current.X, current.Y))
-                    {
-                        all = false;
-                        break;
-                    }
-                }
-            }
-            return all;
+            
+
+            return Items.All(item => item.GetRoom().GetGameMap().GetRoomUsers(item.Coordinate).Count > 0);
         }
     }
 }

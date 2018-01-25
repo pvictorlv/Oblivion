@@ -27,5 +27,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Interfaces
         int Delay { get; set; }
 
         bool Execute(params object[] stuff);
+
+        void Dispose();
+
+        bool Disposed { get; set; }
+
     }
 }

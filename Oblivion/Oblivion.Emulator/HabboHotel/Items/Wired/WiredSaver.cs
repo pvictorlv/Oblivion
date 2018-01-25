@@ -58,7 +58,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 case Interaction.TriggerRepeater:
                 {
                     request.GetInteger();
-                    var delay = (request.GetInteger()/2) * 1000;
+                    var delay = (request.GetInteger() / 2) * 1000;
                     wired.Delay = delay;
                     wiredHandler.ReloadWired(wired);
                     break;
@@ -132,7 +132,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 {
                     request.GetInteger();
                     var otherString3 = request.GetString();
-                     request.GetInteger();
+                    request.GetInteger();
                     var delay = request.GetInteger();
                     wired.Delay = delay;
                     wired.OtherString = otherString3;
@@ -189,6 +189,17 @@ namespace Oblivion.HabboHotel.Items.Wired
                     wired.Items = furniItems6;
                     wired.Delay = num9 * 500;
                     wiredHandler.ReloadWired(wired);
+                    break;
+                }
+
+                case Interaction.ActionBotFollowAvatar:
+                {
+                    request.GetInteger();
+                    wired.OtherBool = request.GetInteger() == 1;
+                    wired.OtherString = request.GetString();
+                    request.GetInteger();
+                    wired.Delay = request.GetInteger();
+                   
                     break;
                 }
                 case Interaction.ActionGiveReward:
@@ -363,8 +374,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     wired.Items = furniItems;
                     wiredHandler.ReloadWired(wired);
                     break;
-
-            }
+                }
                 case Interaction.ConditionFurnisHaveUsers:
                 case Interaction.ConditionFurnisHaveNotUsers:
                 case Interaction.ConditionFurniHasFurni:
@@ -375,7 +385,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     request.GetString();
 
                     var furniItems = GetFurniItems(request, room);
-                    
+
 
                     wired.OtherBool = allItems;
                     wired.Items = furniItems;
@@ -401,7 +411,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     request.GetInteger();
                     var type = request.GetIntegerAsBool();
                     var data = request.GetString().Split((char) 9);
-                    
+
                     wired.OtherBool = type;
                     wired.OtherString = data[0];
                     wired.OtherExtraString = data[1];
@@ -412,7 +422,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 {
                     request.GetInteger();
                     var data = request.GetString().Split((char) 9);
-                    
+
                     wired.OtherString = data[0];
                     wired.OtherExtraString = data[1];
                     wiredHandler.ReloadWired(wired);
@@ -423,7 +433,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     request.GetInteger();
                     var botName = request.GetString();
                     var furniItems = GetFurniItems(request, room);
-                    
+
                     wired.Items = furniItems;
                     wired.OtherString = botName;
                     wiredHandler.ReloadWired(wired);
@@ -434,7 +444,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     request.GetInteger();
                     var handitem = request.GetInteger();
                     var botName = request.GetString();
-                    
+
                     wired.OtherString = botName;
                     wired.Delay = handitem * 500;
                     wiredHandler.ReloadWired(wired);
@@ -445,7 +455,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     request.GetInteger();
                     var botName = request.GetString();
                     var furniItems = GetFurniItems(request, room);
-                    
+
                     wired.Items = furniItems;
                     wired.OtherString = botName;
                     wiredHandler.ReloadWired(wired);
@@ -456,7 +466,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     request.GetInteger();
                     request.GetString();
                     var furniItems = GetFurniItems(request, room);
-                    
+
                     var num = request.GetInteger();
                     wired.Items = furniItems;
                     wired.Delay = num * 500;
@@ -468,7 +478,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     request.GetInteger();
                     var type = request.GetIntegerAsBool();
                     var data = request.GetString().Split((char) 9);
-                    
+
                     wired.OtherBool = type;
                     wired.OtherString = data[0];
                     wired.OtherExtraString = data[1];

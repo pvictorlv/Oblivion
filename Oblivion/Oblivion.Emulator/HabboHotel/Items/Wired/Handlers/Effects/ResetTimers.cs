@@ -19,6 +19,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public Interaction Type => Interaction.ActionResetTimer;
 
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
         public RoomItem Item { get; set; }
 
         public Room Room { get; set; }

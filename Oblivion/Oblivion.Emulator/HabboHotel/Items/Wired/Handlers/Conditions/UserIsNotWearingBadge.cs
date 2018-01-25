@@ -21,6 +21,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             OtherString = string.Empty;
         }
 
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
         public Interaction Type => Interaction.ConditionUserNotWearingBadge;
 
         public RoomItem Item { get; set; }

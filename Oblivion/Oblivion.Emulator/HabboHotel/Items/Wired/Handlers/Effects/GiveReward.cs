@@ -14,6 +14,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
     public class GiveReward : IWiredItem
     {
 
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
         public GiveReward(RoomItem item, Room room)
         {
             Item = item;

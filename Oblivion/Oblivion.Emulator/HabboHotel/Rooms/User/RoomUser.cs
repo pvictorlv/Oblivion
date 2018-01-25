@@ -363,6 +363,8 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         internal bool UpdateNeeded;
 
+        internal int UpdateNeededCounter;
+
         /// <summary>
         ///     The user identifier
         /// </summary>

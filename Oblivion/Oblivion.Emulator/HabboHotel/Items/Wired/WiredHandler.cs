@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -379,6 +378,7 @@ namespace Oblivion.HabboHotel.Items.Wired
             current.Items = null;
             current.Item = null;
             current.Room = null;
+            current.Dispose();
         }
 
         public IWiredItem GenerateNewItem(RoomItem item)
@@ -650,6 +650,19 @@ namespace Oblivion.HabboHotel.Items.Wired
             return items;
         }
 
+        public Dictionary<IWiredItem, Interaction> GetSpecial(IWiredItem item)
+        {
+            var point = new Point(item.Item.X, item.Item.Y);
+            var coord = Formatter.PointToInt(point);
+            //todo
+            if (!Effects.TryGetValue(coord, out var items))
+            {
+                return new Dictionary<IWiredItem, Interaction>();
+            }
+
+            return items;
+        }
+
         public IWiredItem GetWired(RoomItem item)
         {
             return _wiredItems.Values.FirstOrDefault(current => current != null && item.Id == current.Item.Id);
@@ -665,22 +678,29 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         public void Destroy()
         {
+            CleanUp();
+            _wiredItems = null;
+            _room = null;
+            Effects = null;
+            Conditions = null;
+        }
+
+        public void CleanUp()
+        {
             foreach (var current in _wiredItems.Values.ToList())
             {
-                if (current == null) continue;
+                if (current == null || current.Disposed) continue;
                 current.Items?.Clear();
                 current.Items = null;
                 current.Item = null;
                 current.Room = null;
+                current.Dispose();
             }
-
             _wiredItems.Clear();
-            _wiredItems = null;
-            _room = null;
+
             Effects.Clear();
             Conditions.Clear();
-            Effects = null;
-            Conditions = null;
+
         }
 
         private static bool IsTrigger(Interaction type) => InteractionTypes.AreFamiliar(GlobalInteractions.WiredTrigger,

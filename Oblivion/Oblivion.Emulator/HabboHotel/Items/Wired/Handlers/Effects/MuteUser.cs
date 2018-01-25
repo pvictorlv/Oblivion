@@ -21,6 +21,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             Delay = 0;
         }
 
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
         public Interaction Type => Interaction.ActionMuteUser;
 
         public RoomItem Item { get; set; }

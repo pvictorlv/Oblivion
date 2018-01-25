@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using System.Linq;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -23,7 +22,13 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
         }
 
 
-        public ConcurrentQueue<IWiredItem> _toRemove = new ConcurrentQueue<IWiredItem>();
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
+
 
         public double TickCount { get; set; }
         public bool Requested { get; set; }

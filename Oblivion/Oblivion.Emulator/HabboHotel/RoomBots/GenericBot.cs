@@ -13,11 +13,6 @@ namespace Oblivion.HabboHotel.RoomBots
     /// </summary>
     internal class GenericBot : BotAi
     {
-        /// <summary>
-        ///     The random
-        /// </summary>
-        private static readonly Random Random = new Random();
-
 
         /// <summary>
         ///     The _is bartender
@@ -59,7 +54,7 @@ namespace Oblivion.HabboHotel.RoomBots
 
             if (roomBot != null && roomBot.AutomaticChat && roomBot.RandomSpeech != null && roomBot.RandomSpeech.Any())
                 _chatTimer = new Timer(ChatTimerTick, null, _speechInterval, _speechInterval);
-            _actionCount = Random.Next(10, 30 + virtualId);
+            _actionCount = Oblivion.GetRandomNumber(10, 30 + virtualId);
         }
 
         /// <summary>
@@ -110,12 +105,17 @@ namespace Oblivion.HabboHotel.RoomBots
                 return;
             }
 
+            if (GetBotData().RoomUser.FollowingOwner != null)
+            {
+                return;
+            }
+
             if (_actionCount > 0)
             {
                 _actionCount--;
                 return;
             }
-            _actionCount = Random.Next(5, 45);
+            _actionCount = Oblivion.GetRandomNumber(4, 45);
 
             switch (GetBotData().WalkingMode.ToLower())
             {
@@ -217,7 +217,7 @@ namespace Oblivion.HabboHotel.RoomBots
                     {
                         /* TODO CHECK */
                         foreach (var current in GetRoom().GetRoomUserManager().GetRoomUsers())
-                            current.CarryItem(Random.Next(1, 38));
+                            current.CarryItem(Oblivion.GetRandomNumber(1, 38));
                         GetRoomUser().Chat(null, "Worth. Agora você tem algo para devorar todos.", false, 0);
                         return;
                     }
@@ -232,7 +232,7 @@ namespace Oblivion.HabboHotel.RoomBots
                 case "water":
                 case "zumo":
                     GetRoomUser().Chat(null, "Aqui você vai.", false, 0);
-                    user.CarryItem(Random.Next(1, 3));
+                    user.CarryItem(Oblivion.GetRandomNumber(1, 3));
                     return;
 
                 case "helado":
@@ -247,7 +247,7 @@ namespace Oblivion.HabboHotel.RoomBots
                 case "rose":
                 case "rosa":
                     GetRoomUser().Chat(null, "Aqui você vai ... você faz bem em sua nomeação.", false, 0);
-                    user.CarryItem(Random.Next(1000, 1002));
+                    user.CarryItem(Oblivion.GetRandomNumber(1000, 1002));
                     return;
 
                 case "girasol":
@@ -260,12 +260,12 @@ namespace Oblivion.HabboHotel.RoomBots
                 case "flor":
                 case "flower":
                     GetRoomUser().Chat(null, "Aqui estão algumas muito agradável da natureza.", false, 0);
-                    if (Random.Next(1, 3) == 2)
+                    if (Oblivion.GetRandomNumber(1, 3) == 2)
                     {
-                        user.CarryItem(Random.Next(1019, 1024));
+                        user.CarryItem(Oblivion.GetRandomNumber(1019, 1024));
                         return;
                     }
-                    user.CarryItem(Random.Next(1006, 1010));
+                    user.CarryItem(Oblivion.GetRandomNumber(1006, 1010));
                     return;
 
                 case "zanahoria":
@@ -285,13 +285,13 @@ namespace Oblivion.HabboHotel.RoomBots
                 case "espresso":
                 case "expreso":
                     GetRoomUser().Chat(null, "Aqui está o seu café. É espumante!", false, 0);
-                    user.CarryItem(Random.Next(11, 18));
+                    user.CarryItem(Oblivion.GetRandomNumber(11, 18));
                     return;
 
                 case "fruta":
                 case "fruit":
                     GetRoomUser().Chat(null, "Aqui está um pouco saudável, fresco e natural. Aproveite!", false, 0);
-                    user.CarryItem(Random.Next(36, 40));
+                    user.CarryItem(Oblivion.GetRandomNumber(36, 40));
                     return;
 
                 case "naranja":

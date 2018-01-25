@@ -15,6 +15,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         private MovementDirection _startDirection;
         private WhenMovementBlock _whenMoveIsBlocked;
 
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
         public MoveToDir(RoomItem item, Room room)
         {
             Item = item;

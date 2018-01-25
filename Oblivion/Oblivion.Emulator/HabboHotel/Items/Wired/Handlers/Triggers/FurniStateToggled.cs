@@ -22,6 +22,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
         }
 
 
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
         public Interaction Type => Interaction.TriggerStateChanged;
 
         public RoomItem Item { get; set; }
@@ -80,7 +86,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 /* TODO CHECK */
                 foreach (var current2 in conditions)
                 {
-                    if (!current2.Execute(roomUser)) return false;
+                    if (!current2.Execute(roomUser, roomItem)) return false;
                     WiredHandler.OnEvent(current2);
                 }
 

@@ -17,6 +17,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             Items = new ConcurrentList<RoomItem>();
         }
 
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
         public Interaction Type => Interaction.ConditionFurniTypeDontMatch;
 
         public RoomItem Item { get; set; }
@@ -61,6 +67,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
                 return true;
 
             RoomItem lastitem = null;
+
+            if (stuff.Length > 1)
+                lastitem = (RoomItem) stuff[1];
+           
 
             /* TODO CHECK */ foreach (var current in Items)
             {

@@ -18,6 +18,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             OtherString = "0";
         }
 
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
         public Interaction Type => Interaction.ConditionUserWearingEffect;
 
         public RoomItem Item { get; set; }

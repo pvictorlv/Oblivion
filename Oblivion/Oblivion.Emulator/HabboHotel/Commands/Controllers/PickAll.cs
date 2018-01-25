@@ -30,9 +30,11 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 {
                     return true;
                 }
+                room.GetWiredHandler().CleanUp();
                 room.GetRoomItemHandler().RemoveItemsByOwner(ref roomItemList, ref session);
                 return true;
             });
+
             return true;
         }
     }

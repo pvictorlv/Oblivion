@@ -12,12 +12,20 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
     internal class TeleportToFurni : IWiredItem, IWiredCycler
     {
-        private readonly List<Interaction> _mBanned;
+        private List<Interaction> _mBanned;
         private int _delay;
 
         private long _mNext;
         public bool Requested { get; set; }
 
+
+        public void Dispose()
+        {
+            _mBanned.Clear();
+            _mBanned = null;
+        }
+
+        public bool Disposed { get; set; }
         public TeleportToFurni(RoomItem item, Room room)
         {
             Item = item;

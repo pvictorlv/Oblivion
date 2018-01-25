@@ -47,6 +47,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             set { }
         }
 
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
         public bool Execute(params object[] stuff)
         {
             if (Items == null || Items.Count <= 0)

@@ -651,6 +651,13 @@ namespace Oblivion.HabboHotel.Rooms.User
                 {
                     if (!current.UpdateNeeded)
                         continue;
+
+                    if (current.UpdateNeededCounter > 0)
+                    {
+                        current.UpdateNeededCounter--;
+                        continue;
+                    }
+
                     current.UpdateNeeded = false;
                 }
                 current.SerializeStatus(serverMessage);

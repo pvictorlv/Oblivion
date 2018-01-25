@@ -24,6 +24,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public Room Room { get; set; }
 
+        public void Dispose()
+        {
+
+        }
+
+        public bool Disposed { get; set; }
         public ConcurrentList<RoomItem> Items
         {
             get { return new ConcurrentList<RoomItem>(); }
