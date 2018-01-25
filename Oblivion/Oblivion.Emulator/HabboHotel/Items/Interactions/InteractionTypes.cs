@@ -17,6 +17,7 @@ namespace Oblivion.HabboHotel.Items.Interactions
         {
             switch (type)
             {
+
                 case GlobalInteractions.Wired:
                     return AreFamiliar(GlobalInteractions.WiredCondition, subType) ||
                            AreFamiliar(GlobalInteractions.WiredEffect, subType) ||
@@ -172,7 +173,7 @@ namespace Oblivion.HabboHotel.Items.Interactions
                         }
                     }
                     break;
-
+                    
                 case GlobalInteractions.WiredEffect:
                     {
                         switch (subType)
@@ -205,8 +206,8 @@ namespace Oblivion.HabboHotel.Items.Interactions
                             case Interaction.ActionKickUser:
                             case Interaction.ActionGiveReward:
                             case Interaction.ActionRollerSpeed:
-                            case Interaction.SpecialUnseen:
-                            case Interaction.SpecialRandom:
+//                            case Interaction.SpecialUnseen:
+//                            case Interaction.SpecialRandom:
                             case Interaction.ActionCallStacks:
                                 return true;
                         }

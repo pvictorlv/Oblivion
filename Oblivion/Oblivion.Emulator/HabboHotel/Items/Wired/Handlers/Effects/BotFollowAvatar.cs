@@ -18,6 +18,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             OtherExtraString = string.Empty;
             OtherExtraString2 = string.Empty;
             _toWorkQueue = new Queue<RoomUser>();
+            Items = new ConcurrentList<RoomItem>();
         }
 
         public Interaction Type => Interaction.ActionBotFollowAvatar;
@@ -72,10 +73,16 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                         _bot.FollowingOwner = user;
                         if (user != null && !user.IsBot)
                         {
-                            if (Room.GetGameMap().ValidTile(user.SquareInFront.X, user.SquareInFront.Y))
+                            if (Room.GetGameMap().SquareIsOpen(user.SquareInFront.X, user.SquareInFront.Y, false))
+                            {
                                 _bot.MoveTo(user.SquareInFront);
+                                Room.GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedAvatar, user);
+                            }
                             else
+                            {
                                 _bot.MoveTo(user.SquareBehind);
+                                Room.GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedAvatar, user);
+                            }
                         }
                     }
                 }

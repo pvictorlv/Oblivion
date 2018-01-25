@@ -10,7 +10,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 {
     internal class FurniHasNotFurni : IWiredItem
     {
-        private IWiredItem _wiredItemImplementation;
 
         public FurniHasNotFurni(RoomItem item, Room room)
         {

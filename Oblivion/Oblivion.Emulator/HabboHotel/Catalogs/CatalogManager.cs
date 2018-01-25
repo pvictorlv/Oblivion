@@ -1184,13 +1184,13 @@ namespace Oblivion.HabboHotel.Catalogs
         {
             var level = 1u;
 
-            if (Oblivion.GetRandomNumber(1, 2000) == 2000)
+            if (Oblivion.GetRandomNumber(1, 1000) <= 20)
                 level = 5u;
-            else if (Oblivion.GetRandomNumber(1, 200) == 200)
+            else if (Oblivion.GetRandomNumber(1, 200) <= 15)
                 level = 4u;
-            else if (Oblivion.GetRandomNumber(1, 40) == 40)
+            else if (Oblivion.GetRandomNumber(1, 50) <= 10)
                 level = 3u;
-            else if (Oblivion.GetRandomNumber(1, 4) == 4)
+            else if (Oblivion.GetRandomNumber(1, 15) <= 5)
                 level = 2u;
 
             var ecotronRewardsForLevel = GetEcotronRewardsForLevel(level);

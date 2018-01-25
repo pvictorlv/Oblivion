@@ -25,9 +25,10 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         public WiredHandler(Room room)
         {
-            //todo: change _wiredItems to triggers only
+            //todo: change _wiredItems to cyclers only
             _wiredItems = new ConcurrentDictionary<long, IWiredItem>();
-            Effects = new ConcurrentDictionary<int, Dictionary<IWiredItem, Interaction>>();
+            Effects = new ConcurrentDictionary<int, List<IWiredItem>>();
+            Specials = new ConcurrentDictionary<int, List<IWiredItem>>();
             Conditions = new ConcurrentDictionary<int, List<IWiredItem>>();
             _room = room;
         }
@@ -42,11 +43,25 @@ namespace Oblivion.HabboHotel.Items.Wired
             item.Item.ReqUpdate(1, true);
         }
 
-        public IWiredItem GetRandomEffect(Dictionary<IWiredItem, Interaction> EffectList)
+        public IWiredItem GetRandomEffect(List<IWiredItem> EffectList) => EffectList[Oblivion.GetRandomNumber(0, EffectList.Count - 1)];
+        public IWiredItem GetRandomUnseenEffect(List<IWiredItem> EffectList)
         {
-            return EffectList.Keys.OrderBy(x => Guid.NewGuid()).FirstOrDefault();
+            if (ExecutedEffects.Count >= EffectList.Count)
+            {
+                ExecutedEffects.Clear();
+            }
+            foreach (var effect in EffectList.OrderBy(x => Guid.NewGuid()))
+            {
+                if (!ExecutedEffects.Contains(effect))
+                {
+                    ExecutedEffects.Add(effect);
+                    return effect;
+                }
+            }
+            return null;
         }
 
+        private List<IWiredItem> ExecutedEffects;
 
         public IWiredItem LoadWired(IWiredItem fItem)
         {
@@ -100,7 +115,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         public bool OtherBoxHasItem(IWiredItem Box, RoomItem boxItem)
         {
-            bool any = (from item in GetEffects(Box).Keys
+            bool any = (from item in GetEffects(Box)
                 where item.Item.Id != Box.Item.Id
                 where item.Type == Interaction.ActionMoveRotate || item.Type == Interaction.ActionMoveToDir ||
                       item.Type == Interaction.ActionChase || item.Type == Interaction.ActionInverseChase
@@ -112,7 +127,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         public static void SaveWired(IWiredItem fItem)
         {
-            if (fItem == null)
+            if (fItem?.Items == null)
                 return;
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -251,12 +266,12 @@ namespace Oblivion.HabboHotel.Items.Wired
             {
                 if (Effects.TryGetValue(point, out var items))
                 {
-                    items.Add(item, item.Item.GetBaseItem().InteractionType);
+                    items.Add(item);
                     Effects[point] = items;
                 }
                 else
                 {
-                    items = new Dictionary<IWiredItem, Interaction> {{item, item.Item.GetBaseItem().InteractionType}};
+                    items = new List<IWiredItem> { item };
                     Effects.TryAdd(point, items);
                 }
             }
@@ -359,6 +374,21 @@ namespace Oblivion.HabboHotel.Items.Wired
                     else
                     {
                         Conditions[point] = items;
+                    }
+                }
+            } else if (IsSpecial(current.Type))
+            {
+                ExecutedEffects = new List<IWiredItem>();
+                if (Specials.TryGetValue(point, out var items))
+                {
+                    items.Remove(current);
+                    if (items.Count <= 0)
+                    {
+                        Specials.TryRemove(point, out _);
+                    }
+                    else
+                    {
+                        Specials[point] = items;
                     }
                 }
             }
@@ -615,8 +645,9 @@ namespace Oblivion.HabboHotel.Items.Wired
             return items;
         }
 
-        public ConcurrentDictionary<int, Dictionary<IWiredItem, Interaction>> Effects;
+        public ConcurrentDictionary<int, List<IWiredItem>> Effects;
         public ConcurrentDictionary<int, List<IWiredItem>> Conditions;
+        public ConcurrentDictionary<int, List<IWiredItem>> Specials;
 
         public bool OnUserFurniCollision(Room Instance, RoomItem Item)
         {
@@ -637,27 +668,27 @@ namespace Oblivion.HabboHotel.Items.Wired
             return true;
         }
 
-        public Dictionary<IWiredItem, Interaction> GetEffects(IWiredItem item)
+        public List<IWiredItem> GetEffects(IWiredItem item)
         {
             var point = new Point(item.Item.X, item.Item.Y);
             var coord = Formatter.PointToInt(point);
 
             if (!Effects.TryGetValue(coord, out var items))
             {
-                return new Dictionary<IWiredItem, Interaction>();
+                return new List<IWiredItem>();
             }
 
             return items;
         }
 
-        public Dictionary<IWiredItem, Interaction> GetSpecial(IWiredItem item)
+        public List<IWiredItem> GetSpecials(IWiredItem item)
         {
             var point = new Point(item.Item.X, item.Item.Y);
             var coord = Formatter.PointToInt(point);
-            //todo
-            if (!Effects.TryGetValue(coord, out var items))
+
+            if (!Specials.TryGetValue(coord, out var items))
             {
-                return new Dictionary<IWiredItem, Interaction>();
+                return new List<IWiredItem>();
             }
 
             return items;
@@ -681,7 +712,9 @@ namespace Oblivion.HabboHotel.Items.Wired
             CleanUp();
             _wiredItems = null;
             _room = null;
+            ExecutedEffects = null;
             Effects = null;
+            Specials = null;
             Conditions = null;
         }
 
@@ -700,7 +733,8 @@ namespace Oblivion.HabboHotel.Items.Wired
 
             Effects.Clear();
             Conditions.Clear();
-
+            Specials.Clear();
+            ExecutedEffects.Clear();
         }
 
         private static bool IsTrigger(Interaction type) => InteractionTypes.AreFamiliar(GlobalInteractions.WiredTrigger,
@@ -708,6 +742,8 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         private static bool IsEffect(Interaction type) => InteractionTypes.AreFamiliar(GlobalInteractions.WiredEffect,
             type);
+
+        private static bool IsSpecial(Interaction type) => type == Interaction.SpecialRandom || type == Interaction.SpecialRandom;
 
         private static bool IsCondition(Interaction type) => InteractionTypes.AreFamiliar(
             GlobalInteractions.WiredCondition, type);

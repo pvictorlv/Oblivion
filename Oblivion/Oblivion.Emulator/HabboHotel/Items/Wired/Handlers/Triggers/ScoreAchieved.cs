@@ -75,23 +75,26 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 }
             if (effects.Count > 0)
             {
-                if (effects.ContainsValue(Interaction.SpecialRandom))
+                var specials = Room.GetWiredHandler().GetSpecials(this);
+                if (specials.Count > 0)
                 {
-                    var randomBox = effects.FirstOrDefault(x => x.Value == Interaction.SpecialRandom).Key;
+                    var specialBox = specials[0];
+                    if (specialBox != null)
+                    {
+                        var selectedBox = specialBox.Type == Interaction.SpecialRandom
+                            ? Room.GetWiredHandler().GetRandomEffect(effects)
+                            : Room.GetWiredHandler().GetRandomUnseenEffect(effects);
 
-                    if (!randomBox.Execute())
-                        return false;
+                        if (selectedBox == null || !selectedBox.Execute())
+                            return false;
 
-                    var selectedBox = Room.GetWiredHandler().GetRandomEffect(effects);
-                    if (!selectedBox.Execute())
-                        return false;
-
-                    WiredHandler.OnEvent(randomBox);
-                    WiredHandler.OnEvent(selectedBox);
+                        WiredHandler.OnEvent(specialBox);
+                        WiredHandler.OnEvent(selectedBox);
+                    }
                 }
                 else
                 {
-                    foreach (var current3 in effects.Keys)
+                    foreach (var current3 in effects)
                     {
                         if (current3.Execute(roomUser, Type))
                             WiredHandler.OnEvent(current3);
