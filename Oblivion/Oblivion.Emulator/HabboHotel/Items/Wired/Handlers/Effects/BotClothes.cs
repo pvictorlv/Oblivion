@@ -1,4 +1,5 @@
-﻿using Oblivion.Collections;
+﻿using System.Threading.Tasks;
+using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
@@ -55,7 +56,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         public bool Disposed { get; set; }
 
         private RoomUser _bot;
-        public bool Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
             if (_bot?.BotData == null || _bot.BotData.Name != OtherString)
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -23,7 +24,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public void Dispose()
         {
+            _bot = null;
         }
+
+        private RoomUser _bot;
 
         public bool Disposed { get; set; }
         public Interaction Type => Interaction.ActionBotTeleport;
@@ -43,7 +47,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
-        public bool OnCycle()
+        public async Task<bool> OnCycle()
         {
             if (!_requested) return false;
 
@@ -52,10 +56,17 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (_mNext > num)
                 return false;
 
-            var bot = Room.GetRoomUserManager().GetBotByName(OtherString);
-            if (bot == null) return false;
+            if (string.IsNullOrEmpty(OtherString)) return false;
 
-            Teleport(bot);
+            if (_bot?.BotData == null || _bot.BotData.Name != OtherString)
+            {
+                _bot = Room.GetRoomUserManager().GetBotByName(OtherString);
+            }
+
+            if (_bot == null)
+                return false;
+
+            Teleport(_bot);
 
             _mNext = Oblivion.Now() + Delay;
 
@@ -105,7 +116,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             }
         }
 
-        public bool Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
             if (_mNext == 0L || _mNext <= Oblivion.Now())
                 _mNext = Oblivion.Now() + Delay;

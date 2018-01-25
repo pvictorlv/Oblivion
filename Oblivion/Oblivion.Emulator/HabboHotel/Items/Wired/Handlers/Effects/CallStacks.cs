@@ -4,6 +4,7 @@ using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.User;
+using System.Threading.Tasks;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
@@ -40,7 +41,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
-        public bool Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
             var roomUser = (RoomUser) stuff[0];
             

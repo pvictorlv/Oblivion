@@ -4,6 +4,8 @@ using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
+using Oblivion.HabboHotel.Rooms.User;
+using System.Threading.Tasks;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
@@ -21,8 +23,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public void Dispose()
         {
-
+            _bot = null;
         }
+        private RoomUser _bot;
 
         public bool Disposed { get; set; }
         public Interaction Type => Interaction.ActionBotMove;
@@ -47,16 +50,19 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
-        public bool Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
-            var bot = Room.GetRoomUserManager().GetBotByName(OtherString);
+            if (string.IsNullOrEmpty(OtherString)) return false;
 
-            if (bot == null)
+            if (_bot?.BotData == null || _bot.BotData.Name != OtherString)
+                _bot = Room?.GetRoomUserManager()?.GetBotByName(OtherString);
+
+            if (_bot == null)
                 return false;
 
             var rnd = new Random();
             var goal = Items[rnd.Next(Items.Count)];
-            bot.MoveTo(goal.X, goal.Y);
+            _bot.MoveTo(goal.X, goal.Y);
 
             return true;
         }

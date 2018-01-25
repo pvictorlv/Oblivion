@@ -3,6 +3,7 @@ using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
+using System.Threading.Tasks;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 {
@@ -56,7 +57,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             set { }
         }
 
-        public bool Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
             var approved = false;
 

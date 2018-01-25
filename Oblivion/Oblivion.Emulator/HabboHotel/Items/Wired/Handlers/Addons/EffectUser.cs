@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -41,7 +42,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
 
         public bool OtherBool { get; set; }
 
-        public bool Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
             if (stuff[0] == null)
                 return false;

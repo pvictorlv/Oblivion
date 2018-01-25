@@ -93,7 +93,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     request.GetInteger();
                     request.GetString();
                     var furniItems2 = GetFurniItems(request, room);
-                    var num3 = request.GetInteger();
+                    var num3 = request.GetInteger() * 500;
                     wired.Delay = num3;
                     wired.Items = furniItems2;
                     wiredHandler.ReloadWired(wired);

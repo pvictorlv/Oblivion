@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -62,7 +63,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             set { }
         }
 
-        public bool Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
             var roomUser = (RoomUser) stuff[0];
             var roomItem = (RoomItem) stuff[1];
@@ -86,7 +87,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 /* TODO CHECK */
                 foreach (var current2 in conditions)
                 {
-                    if (!current2.Execute(roomUser, roomItem)) return false;
+                    if (!current2.Execute(roomUser, roomItem).Result) return false;
                     WiredHandler.OnEvent(current2);
                 }
 
@@ -102,7 +103,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                             ? Room.GetWiredHandler().GetRandomEffect(effects)
                             : Room.GetWiredHandler().GetRandomUnseenEffect(effects);
 
-                        if (selectedBox == null || !selectedBox.Execute())
+                        if (selectedBox == null || !selectedBox.Execute().Result)
                             return false;
 
                         WiredHandler.OnEvent(specialBox);
@@ -113,7 +114,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 {
                     foreach (var current3 in effects)
                     {
-                        if (current3.Execute(roomUser, Type))
+                        if (current3.Execute(roomUser, Type).Result)
                             WiredHandler.OnEvent(current3);
                     }
                 }

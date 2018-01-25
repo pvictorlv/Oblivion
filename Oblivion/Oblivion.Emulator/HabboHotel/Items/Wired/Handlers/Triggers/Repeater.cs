@@ -1,4 +1,4 @@
-using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -33,12 +33,14 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
         public double TickCount { get; set; }
         public bool Requested { get; set; }
 
-        public bool OnCycle()
+        public async Task<bool> OnCycle()
         {
-            var num = Oblivion.Now();
 
+
+            var num = Oblivion.Now();
+            
             if (_mNext > num)
-                return false;
+                await Task.Delay((int)(_mNext - num));
 
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
@@ -47,7 +49,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             if (conditions.Count > 0)
                 foreach (var current in conditions)
                 {
-                    if (!current.Execute(null))
+                    if (!current.Execute(null).Result)
                         return false;
 
                     WiredHandler.OnEvent(current);
@@ -65,7 +67,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                             ? Room.GetWiredHandler().GetRandomEffect(effects)
                             : Room.GetWiredHandler().GetRandomUnseenEffect(effects);
 
-                        if (selectedBox == null || !selectedBox.Execute())
+                        if (selectedBox == null || !selectedBox.Execute().Result)
                             return false;
 
                         WiredHandler.OnEvent(specialBox);
@@ -76,12 +78,15 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 {
                     foreach (var current3 in effects)
                     {
-                        if (current3.Execute(null, Type))
+                        if (current3.Execute(null, Type).Result)
                             WiredHandler.OnEvent(current3);
                     }
                 }
             }
+       
             _mNext = Oblivion.Now() + Delay;
+            await Task.Delay(Delay + 15);
+
             return false;
         }
 
@@ -131,10 +136,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             set { }
         }
 
-        public bool Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
-            if (_mNext == 0L || _mNext <= Oblivion.Now())
-                _mNext = Oblivion.Now() + Delay;
+//            if (_mNext == 0L || _mNext <= Oblivion.Now())
+//                _mNext = Oblivion.Now() + Delay;
             
             return false;
         }

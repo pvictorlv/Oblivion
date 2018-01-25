@@ -830,7 +830,7 @@ namespace Oblivion.HabboHotel.Rooms
                         continue;
 
                     var usersClient = user.GetClient();
-                    if (usersClient?.GetHabbo() == null)
+                    if (usersClient?.GetHabbo()?.Data == null)
                         continue;
 
                     Vector2D userCoord = new Vector2D(user.X, user.Y);

@@ -198,7 +198,7 @@ namespace Oblivion.HabboHotel.Achievements
         public bool ProgressUserAchievement(GameClient Session, string AchievementGroup, int ProgressAmount,
             bool FromZero = false, bool talentComplete = false)
         {
-            if (Session?.GetHabbo() == null) return false;
+            if (Session?.GetHabbo()?.Data?.Achievements == null) return false;
 
             if (!Achievements.TryGetValue(AchievementGroup, out var AchievementData))
                 return false;

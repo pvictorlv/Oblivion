@@ -1,9 +1,11 @@
+using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.User;
+using System.Threading.Tasks;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 {
@@ -62,19 +64,18 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             set { }
         }
 
-        public bool Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
             var user = (RoomUser) stuff[0];
             if (user == null) return false;
 
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
-            var specials = Room.GetWiredHandler().GetSpecials(this);
 
             if (conditions.Count > 0)
                 foreach (var current in conditions)
                 {
-                    if (!current.Execute(user))
+                    if (!current.Execute(user).Result)
                         return false;
 
                     WiredHandler.OnEvent(current);
@@ -82,6 +83,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
             if (effects.Count > 0)
             {
+                var specials = Room.GetWiredHandler().GetSpecials(this);
                 if (specials.Count > 0)
                 {
                     var specialBox = specials[0];
@@ -91,7 +93,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                             ? Room.GetWiredHandler().GetRandomEffect(effects)
                             : Room.GetWiredHandler().GetRandomUnseenEffect(effects);
 
-                        if (selectedBox == null || !selectedBox.Execute())
+                        if (selectedBox == null || !selectedBox.Execute().Result)
                             return false;
 
                         WiredHandler.OnEvent(specialBox);
@@ -103,7 +105,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                     foreach (var current3 in effects)
                     {
                         if (current3.Type == Interaction.ActionBotFollowAvatar || current3.Type == Interaction.ActionBotMove) continue;
-                        if (current3.Execute(user, Type))
+                        if (current3.Execute(user, Type).Result)
                             WiredHandler.OnEvent(current3);
                     }
                 }

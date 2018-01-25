@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -6,32 +5,32 @@ using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.User;
+using System.Threading.Tasks;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
-    public class KickUser : IWiredItem, IWiredCycler
+    public class KickUser : IWiredItem
     {
-        private readonly List<Interaction> _mBanned;
-        private readonly Queue _toKick;
+        private List<Interaction> _mBanned;
         public bool Requested { get; set; }
 
         public KickUser(RoomItem item, Room room)
         {
             Item = item;
             Room = room;
-            TickCount = Delay / 2;
             OtherString = string.Empty;
-            _toKick = new Queue();
             _mBanned = new List<Interaction>
             {
                 Interaction.TriggerRepeater,
+                Interaction.TriggerLongRepeater,
                 Interaction.TriggerRoomEnter
             };
         }
 
         public void Dispose()
         {
-
+            _mBanned.Clear();
+            _mBanned = null;
         }
 
         public bool Disposed { get; set; }
@@ -47,11 +46,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             set { }
         }
 
-        public int Delay
-        {
-            get => (int) (TickCount * 2);
-            set => TickCount = value / 2;
-        }
+        public int Delay { get; set; }
 
         public string OtherString { get; set; }
 
@@ -73,7 +68,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             set { }
         }
 
-        public bool Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
             if (stuff.Length < 2)
                 return false;
@@ -85,51 +80,13 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 return false;
             if (_mBanned.Contains(item))
                 return false;
-            if (TickCount <= 0)
-                TickCount = 3;
 
-            lock (_toKick.SyncRoot)
-            {
-                if (!_toKick.Contains(roomUser))
-                {
+            await Task.Delay(Delay);
 
-                    if (roomUser.GetClient().GetHabbo().HasFuse("mod_tool") ||roomUser.IsOwner())
-                    {
-                        roomUser.GetClient().SendWhisper("Você não pode ser kikado!");
-                        return false;
-                    }
-
-                    _toKick.Enqueue(roomUser);
-                    roomUser.GetClient().SendWhisper(OtherString);
-                }
-            }
-            return true;
-
-        }
-        
-        public double TickCount { get; set; }
-
-        public bool OnCycle()
-        {
-            if (Room == null)
-                return false;
-
-            if (_toKick.Count == 0)
-            {
-                TickCount = 3;
-                return true;
-            }
-
-            lock (_toKick.SyncRoot)
-            {
-                while (_toKick.Count > 0)
-                {
-                    var Player = (RoomUser)_toKick.Dequeue();
-                    Room.GetRoomUserManager().RemoveUserFromRoom(Player.GetClient(), true, false);
-                }
-            }
-            TickCount = 3;
+            Room.GetRoomUserManager().RemoveUserFromRoom(roomUser.GetClient(), true, false);
+            
             return true;
         }
+
     }
 }

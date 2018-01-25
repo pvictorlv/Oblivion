@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -41,9 +42,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public void Dispose()
         {
-
+            _bot = null;
         }
 
+        private RoomUser _bot;
         public bool Disposed { get; set; }
 
         public string OtherString { get; set; }
@@ -54,20 +56,26 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
-        public bool Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
             var roomUser = (RoomUser) stuff[0];
             if (roomUser == null)
                 return false;
-            var bot = Room.GetRoomUserManager().GetBotByName(OtherString);
 
-            if (bot == null)
+            if (string.IsNullOrEmpty(OtherString)) return false;
+
+            if (_bot?.BotData == null || _bot.BotData.Name != OtherString)
+            {
+                _bot = Room.GetRoomUserManager().GetBotByName(OtherString);
+            }
+
+            if (_bot == null)
                 return false;
 
             if (OtherBool)
             {
                 var whisp = new ServerMessage(LibraryParser.OutgoingRequest("WhisperMessageComposer"));
-                whisp.AppendInteger(bot.VirtualId);
+                whisp.AppendInteger(_bot.VirtualId);
                 whisp.AppendString(OtherExtraString);
                 whisp.AppendInteger(0);
                 whisp.AppendInteger(2);
@@ -77,7 +85,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             }
             else
             {
-                bot.Chat(null, roomUser.GetUserName() + " : " + OtherExtraString, false, 0);
+                _bot.Chat(null, roomUser.GetUserName() + " : " + OtherExtraString, false, 0);
             }
 
             return true;

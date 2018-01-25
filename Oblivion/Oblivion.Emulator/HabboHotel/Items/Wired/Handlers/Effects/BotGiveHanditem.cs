@@ -4,6 +4,7 @@ using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.User;
+using System.Threading.Tasks;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
@@ -26,16 +27,18 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public void Dispose()
         {
-
+            _bot = null;
         }
 
         public bool Disposed { get; set; }
+
         public ConcurrentList<RoomItem> Items
         {
             get { return new ConcurrentList<RoomItem>(); }
             set { }
         }
 
+        private RoomUser _bot;
         public int Delay { get; set; }
 
         public string OtherString { get; set; }
@@ -46,8 +49,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
-        public bool Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
+            if (string.IsNullOrEmpty(OtherString)) return false;
+
             var roomUser = (RoomUser) stuff[0];
             if (roomUser == null) return false;
             var handitem = Delay / 500;
@@ -55,10 +60,15 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (handitem < 0)
                 return false;
 
-            roomUser.CarryItem(handitem);
-            var bot = Room?.GetRoomUserManager()?.GetBotByName(OtherString);
 
-            bot?.Chat(null, Oblivion.GetLanguage().GetVar("bot_give_handitem"), false, 0);
+            if (_bot?.BotData == null || _bot.BotData.Name != OtherString)
+                _bot = Room?.GetRoomUserManager()?.GetBotByName(OtherString);
+
+            if (_bot == null) return false;
+
+            _bot.Chat(null, Oblivion.GetLanguage().GetVar("bot_give_handitem"), false, 0);
+            roomUser.CarryItem(handitem);
+
             return true;
         }
     }

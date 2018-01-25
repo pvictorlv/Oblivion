@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Linq;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -8,9 +8,8 @@ using Oblivion.HabboHotel.Rooms;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
-    public class ToggleFurniState : IWiredItem, IWiredCycler
+    public class ToggleFurniState : IWiredItem
     {
-        private int _delay;
         private long _mNext;
 
         public ToggleFurniState(RoomItem item, Room room)
@@ -18,39 +17,17 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             Item = item;
             Room = room;
             Items = new ConcurrentList<RoomItem>();
-            _delay = 0;
+            Delay = 0;
             _mNext = 0L;
         }
 
         public void Dispose()
         {
-
         }
 
         public bool Disposed { get; set; }
 
-        public double TickCount { get; set; }
-
-        public bool OnCycle()
-        {
-            if (!Requested || _mNext < 1)
-                return false;
-            if (Item == null || Items.Count <= 0)
-                return true;
-
-            var num = Oblivion.Now();
-
-            if (_mNext < num)
-                /* TODO CHECK */ foreach (var current in Items.Where(
-                    current => current != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(current)))
-                    current.Interactor.OnWiredTrigger(current);
-
-            if (_mNext >= num)
-                return false;
-
-            _mNext = 0L;
-            return true;
-        }
+    
         public bool Requested { get; set; }
 
         public Interaction Type => Interaction.ActionToggleState;
@@ -85,29 +62,27 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             set { }
         }
 
-        public int Delay
-        {
-            get => _delay;
-            set
-            {
-                _delay = value;
-                TickCount = value / 1000;
-            }
-        }
+        public int Delay { get;
+            set; }
 
-        public bool Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
-            
             if (Item == null || Items.Count <= 0)
                 return false;
 
-            if (!Requested)
-                Requested = true;
+            var num = Oblivion.Now();
 
-            if (_mNext == 0L || _mNext < Oblivion.Now())
-                _mNext = Oblivion.Now() + Delay;
+            if (_mNext > num)
+            {
+                await Task.Delay((int)(_mNext - num));
+            }
+            foreach (var current in Items.Where(
+                current => current != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(current)))
+                current.Interactor.OnWiredTrigger(current);
 
+            _mNext = Oblivion.Now() + Delay;
 
+            await Task.Delay(Delay);
             return true;
         }
     }
