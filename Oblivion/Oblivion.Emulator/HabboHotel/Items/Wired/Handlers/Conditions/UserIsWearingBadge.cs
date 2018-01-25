@@ -62,6 +62,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
         public async Task<bool> Execute(params object[] stuff)
         {
+            await Task.Yield();
+
             if (!(stuff?[0] is RoomUser))
                 return false;
 

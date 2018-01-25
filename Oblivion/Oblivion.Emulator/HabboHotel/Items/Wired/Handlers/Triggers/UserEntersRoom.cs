@@ -64,12 +64,15 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public async Task<bool> Execute(params object[] stuff)
         {
+
             var roomUser = (RoomUser) stuff[0];
             if (roomUser == null) return false;
 
             if (!string.IsNullOrEmpty(OtherString) && roomUser.GetUserName() != OtherString &&
                 !roomUser.GetClient().GetHabbo().IsTeleporting)
                 return false;
+
+            await Task.Yield();
 
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);

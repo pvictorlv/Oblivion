@@ -1326,6 +1326,28 @@ namespace Oblivion.HabboHotel.Rooms.User
                         roomItem.UserWalksOffFurni(roomUsers);
                         switch (roomItem.GetBaseItem().InteractionType)
                         {
+                            case Interaction.Normslaskates:
+                                if (roomUsers.LastRollerDate + 60 < Oblivion.GetUnixTimeStamp())
+                                {
+                                    Oblivion.GetGame().GetAchievementManager()
+                                        .ProgressUserAchievement(roomUsers.GetClient(), "ACH_RbTagC", 1);
+                                }
+
+                                Oblivion.GetGame().GetAchievementManager()
+                                    .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagB", 1);
+
+                                break;
+                            case Interaction.IceSkates:
+                                if (roomUsers.LastRollerDate + 60 < Oblivion.GetUnixTimeStamp())
+                                {
+                                    Oblivion.GetGame().GetAchievementManager()
+                                        .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagC", 1);
+                                }
+
+                                Oblivion.GetGame().GetAchievementManager()
+                                    .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagB", 1);
+                                break;
+
                             case Interaction.QuickTeleport:
                             case Interaction.GuildGate:
                             case Interaction.WalkInternalLink:
@@ -1374,102 +1396,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             return true;
         }
 
-        internal bool UserCanWalkInTile2(RoomUser roomUsers)
-        {
-            try
-            {
-                // Check if User CanWalk...
-                if ((_userRoom.GetGameMap().SquareIsOpen(roomUsers.SetX, roomUsers.SetY, roomUsers.AllowOverride)) ||
-                    (roomUsers.RidingHorse))
-                {
-                    // Let's Update his Movement...
-                    _userRoom.GetGameMap()
-                        .UpdateUserMovement(new Point(roomUsers.Coordinate.X, roomUsers.Coordinate.Y),
-                            new Point(roomUsers.SetX, roomUsers.SetY), roomUsers);
-                    var hasItemInPlace = _userRoom.GetGameMap().GetCoordinatedItems(new Point(roomUsers.X, roomUsers.Y))
-                        .ToList();
-
-                    // Set His Actual X,Y,Z Position...
-                    roomUsers.X = roomUsers.SetX;
-                    roomUsers.Y = roomUsers.SetY;
-                    roomUsers.Z = roomUsers.SetZ;
-
-                    // Check Sub Items Interactionables
-                    /* TODO CHECK */
-                    foreach (var roomItem in hasItemInPlace)
-                    {
-                        roomItem.UserWalksOffFurni(roomUsers);
-                        switch (roomItem.GetBaseItem().InteractionType)
-                        {
-                            case Interaction.Normslaskates:
-                                if (roomUsers.LastRollerDate + 60 < Oblivion.GetUnixTimeStamp())
-                                {
-                                    Oblivion.GetGame().GetAchievementManager()
-                                        .ProgressUserAchievement(roomUsers.GetClient(), "ACH_RbTagC", 1);
-                                }
-
-                                Oblivion.GetGame().GetAchievementManager()
-                                    .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagB", 1);
-
-                                break;
-                            case Interaction.IceSkates:
-                                if (roomUsers.LastRollerDate + 60 < Oblivion.GetUnixTimeStamp())
-                                {
-                                    Oblivion.GetGame().GetAchievementManager()
-                                        .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagC", 1);
-                                }
-
-                                Oblivion.GetGame().GetAchievementManager()
-                                    .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagB", 1);
-                                break;
-                            case Interaction.QuickTeleport:
-                            case Interaction.GuildGate:
-                            case Interaction.WalkInternalLink:
-                            case Interaction.FloorSwitch:
-                                roomItem.Interactor.OnUserWalk(roomUsers.GetClient(), roomItem, roomUsers);
-                                break;
-                            case Interaction.RunWaySage:
-                            case Interaction.ChairState:
-                            case Interaction.Shower:
-                            case Interaction.PressurePad:
-                            case Interaction.PressurePadBed:
-                            case Interaction.Guillotine:
-                                roomItem.ExtraData = "0";
-                                roomItem.UpdateState();
-                                break;
-
-                            case Interaction.Tent:
-                            case Interaction.BedTent:
-                                if (!roomUsers.IsBot && roomUsers.OnCampingTent)
-                                {
-                                    var serverMessage = new ServerMessage();
-                                    serverMessage.Init(
-                                        LibraryParser.OutgoingRequest("UpdateFloorItemExtraDataMessageComposer"));
-                                    serverMessage.AppendString(roomItem.Id.ToString());
-                                    serverMessage.AppendInteger(0);
-                                    serverMessage.AppendString("0");
-                                    roomUsers.GetClient().SendMessage(serverMessage);
-                                    roomUsers.OnCampingTent = false;
-                                }
-                                break;
-
-                            case Interaction.None:
-                                break;
-                        }
-                    }
-                    hasItemInPlace.Clear();
-                    // Let's Update user Status..
-                    UpdateUserStatus(roomUsers, true);
-                    return false;
-                }
-            }
-            catch (Exception e)
-            {
-                Logging.HandleException(e, "UserCanWalkInTile");
-            }
-            return true;
-        }
-
+  
         /// <summary>
         ///     Turns the user thread
         /// </summary>

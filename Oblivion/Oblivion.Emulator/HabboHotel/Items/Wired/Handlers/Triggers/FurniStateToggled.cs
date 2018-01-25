@@ -65,6 +65,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public async Task<bool> Execute(params object[] stuff)
         {
+            await Task.Yield();
+
             var roomUser = (RoomUser) stuff[0];
             var roomItem = (RoomItem) stuff[1];
 

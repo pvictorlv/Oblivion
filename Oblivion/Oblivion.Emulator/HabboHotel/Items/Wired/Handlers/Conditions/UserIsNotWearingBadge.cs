@@ -65,11 +65,13 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
         {
             var roomUser = stuff?[0] as RoomUser;
 
+            await Task.Yield();
+
             if ((roomUser?.IsBot ?? true) || roomUser.GetClient() == null || roomUser.GetClient().GetHabbo() == null ||
                 roomUser.GetClient().GetHabbo().GetBadgeComponent() == null || string.IsNullOrWhiteSpace(OtherString))
                 return false;
 
-            return roomUser.GetClient().GetHabbo().GetBadgeComponent().BadgeList.Values.Cast<Badge>()
+            return roomUser.GetClient().GetHabbo().GetBadgeComponent().BadgeList.Values
                 .All(badge => badge.Slot <= 0 ||
                               !string.Equals(badge.Code, OtherString, StringComparison.CurrentCultureIgnoreCase));
         }

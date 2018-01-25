@@ -43,6 +43,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
 
         public async Task<bool> Execute(params object[] stuff)
         {
+            await Task.Yield();
+
             var type = (Interaction) stuff[1];
 
             if (type == Interaction.TriggerRepeater) return false;

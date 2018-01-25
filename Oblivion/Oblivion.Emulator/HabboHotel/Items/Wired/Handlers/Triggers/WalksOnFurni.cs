@@ -64,12 +64,15 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public async Task<bool> Execute(params object[] stuff)
         {
+            await Task.Yield();
+
             var roomUser = (RoomUser) stuff[0];
             if (roomUser == null)
                 return false;
             var roomItem = (RoomItem) stuff[1];
             if (roomItem == null)
                 return false;
+
 
             var userPosition = roomUser.X;
             var lastUserPosition = roomUser.CopyX;

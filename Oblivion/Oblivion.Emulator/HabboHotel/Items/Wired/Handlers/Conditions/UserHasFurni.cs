@@ -60,6 +60,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
         public async Task<bool> Execute(params object[] stuff)
         {
+            await Task.Yield();
+
             var roomUser = stuff?[0] as RoomUser;
 
             if ((roomUser?.IsBot ?? true) || roomUser.GetClient() == null || roomUser.GetClient().GetHabbo() == null ||

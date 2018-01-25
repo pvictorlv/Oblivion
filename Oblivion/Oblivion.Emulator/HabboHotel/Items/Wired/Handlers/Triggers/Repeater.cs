@@ -138,7 +138,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public async Task<bool> Execute(params object[] stuff)
         {
-            return false;
+            await Task.Yield();
+
+            return true;
         }
     }
 }

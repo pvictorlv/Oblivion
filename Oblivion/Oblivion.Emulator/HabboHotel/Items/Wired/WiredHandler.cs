@@ -765,8 +765,6 @@ namespace Oblivion.HabboHotel.Items.Wired
 
                 case Interaction.ConditionUserHasHanditem:
                     return new UserHasHanditem(item, _room);
-                case Interaction.SpecialRandom:
-                    return new SpecialRandom(item, _room);
             }
 
             return null;

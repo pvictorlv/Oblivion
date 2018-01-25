@@ -59,6 +59,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
         public async Task<bool> Execute(params object[] stuff)
         {
+            await Task.Yield();
+
             double time = (Delay / 500 - 1) / 2;
             return (DateTime.Now - Room.LastTimerReset).TotalSeconds < time;
         }

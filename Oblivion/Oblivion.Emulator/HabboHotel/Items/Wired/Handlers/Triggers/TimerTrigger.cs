@@ -48,7 +48,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             set { }
         }
 
-        private bool _requested;
 
 
         private long _mNext;
@@ -112,7 +111,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
             _mNext = Oblivion.Now() + Delay;
 
-            _requested = false;
             return true;
 
         }

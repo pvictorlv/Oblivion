@@ -44,8 +44,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         public async Task<bool> Execute(params object[] stuff)
         {
             var roomUser = (RoomUser) stuff[0];
+
             
-            /* TODO CHECK */ foreach (var item in Items)
+            foreach (var item in Items)
                 if (item.IsWired && Room.GetRoomItemHandler().FloorItems.Values.Contains(item))
                 {
                     var wired = Room.GetWiredHandler().GetWired(item);
@@ -53,7 +54,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                         wired.Type != Interaction.TriggerRepeater && wired.Type != Interaction.TriggerLongRepeater)
                     {
                         WiredHandler.OnEvent(wired);
-                        wired.Execute(roomUser, Type);
+                        await wired.Execute(roomUser, Type);
                     }
                 }
 

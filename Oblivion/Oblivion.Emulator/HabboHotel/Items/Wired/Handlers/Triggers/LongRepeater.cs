@@ -131,6 +131,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public async Task<bool> Execute(params object[] stuff)
         {
+            await Task.Yield();
+
             if (NextExec == 0L || NextExec < Oblivion.Now())
                 NextExec = Oblivion.Now() + Delay;
 

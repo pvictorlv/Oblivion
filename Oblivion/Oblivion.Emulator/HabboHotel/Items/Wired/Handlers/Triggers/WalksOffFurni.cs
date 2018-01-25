@@ -66,6 +66,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             var roomUser = (RoomUser) stuff[0];
             var roomItem = (RoomItem) stuff[1];
 
+            await Task.Yield();
+
             if (!Items.Contains(roomItem) || roomUser.LastItem != roomItem.Id)
                 return false;
 

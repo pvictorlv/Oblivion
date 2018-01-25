@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -44,10 +43,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
 
         public async Task<bool> Execute(params object[] stuff)
         {
-            if (stuff[0] == null)
-                return false;
-
             var roomUser = (RoomUser) stuff[0];
+            if (roomUser == null) return false;
+
+            await Task.Yield();
 
             if (!int.TryParse(OtherString, out var effectId)) return false;
 

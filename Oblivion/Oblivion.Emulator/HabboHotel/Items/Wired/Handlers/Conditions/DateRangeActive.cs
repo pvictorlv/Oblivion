@@ -60,6 +60,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
         public async Task<bool> Execute(params object[] stuff)
         {
+            await Task.Yield();
+
             int date1;
             var date2 = 0;
 

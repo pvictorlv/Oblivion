@@ -54,6 +54,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         public bool Disposed { get; set; }
         public async Task<bool> Execute(params object[] stuff)
         {
+            await Task.Yield();
+
             if (stuff[0] == null)
                 return false;
 
