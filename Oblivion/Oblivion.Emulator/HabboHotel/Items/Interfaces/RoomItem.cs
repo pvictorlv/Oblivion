@@ -1901,7 +1901,10 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         internal void UserWalksOnFurni(RoomUser user)
         {
             if (GetRoom().GotWireds())
+            {
                 GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerWalkOnFurni, user, this);
+                GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedStuff, this);
+            }
             user.LastItem = Id;
         }
 

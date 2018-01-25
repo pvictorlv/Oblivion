@@ -46,6 +46,10 @@ namespace Oblivion.HabboHotel.Items.Wired
         public IWiredItem GetRandomEffect(List<IWiredItem> EffectList) => EffectList[Oblivion.GetRandomNumber(0, EffectList.Count - 1)];
         public IWiredItem GetRandomUnseenEffect(List<IWiredItem> EffectList)
         {
+            if (ExecutedEffects == null)
+            {
+                ExecutedEffects = new List<IWiredItem>();
+            }
             if (ExecutedEffects.Count >= EffectList.Count)
             {
                 ExecutedEffects.Clear();
@@ -734,7 +738,7 @@ namespace Oblivion.HabboHotel.Items.Wired
             Effects.Clear();
             Conditions.Clear();
             Specials.Clear();
-            ExecutedEffects.Clear();
+            ExecutedEffects?.Clear();
         }
 
         private static bool IsTrigger(Interaction type) => InteractionTypes.AreFamiliar(GlobalInteractions.WiredTrigger,

@@ -23,7 +23,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public void Dispose()
         {
-
         }
 
         public bool Disposed { get; set; }
@@ -34,7 +33,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         public Room Room { get; set; }
 
         public ConcurrentList<RoomItem> Items { get; set; }
-        
+
 
         public string OtherString { get; set; }
 
@@ -68,12 +67,13 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         {
             if (Items == null || Items.Count < 0)
                 return;
-            
+
 
             var rnd = new Random();
 
 
-            var roomItem = Items.OrderBy(x => rnd.Next()).FirstOrDefault(current => current != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(current));
+            var roomItem = Items.OrderBy(x => rnd.Next()).FirstOrDefault(current =>
+                current != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(current));
 
             /* TODO CHECK */
             if (roomItem == null) return;
@@ -83,6 +83,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             Room.GetRoomUserManager().OnUserUpdateStatus(oldX, oldY);
             Room.GetRoomUserManager().OnUserUpdateStatus(roomItem.X, roomItem.Y);
 
+
+            Room.GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedStuff, roomItem);
         }
 
         private bool _requested;
@@ -109,7 +111,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 _mNext = Oblivion.Now() + Delay;
 
 
-            var item = (Interaction)stuff[1];
+            var item = (Interaction) stuff[1];
 
             if (item == Interaction.TriggerRepeater || item == Interaction.TriggerLongRepeater)
                 return false;

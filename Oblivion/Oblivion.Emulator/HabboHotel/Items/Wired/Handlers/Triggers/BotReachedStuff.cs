@@ -28,11 +28,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public Room Room { get; set; }
 
-        public ConcurrentList<RoomItem> Items
-        {
-            get { return new ConcurrentList<RoomItem>(); }
-            set { }
-        }
+        public ConcurrentList<RoomItem> Items { get; set; }
 
         public int Delay
         {
@@ -66,6 +62,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public bool Execute(params object[] stuff)
         {
+            if (Items == null || Items.Count <= 0) return false;
+
+            var rItem = (RoomItem) stuff[0];
+            if (rItem == null) return false;
+            if (Items.Contains(rItem)) return false;
+
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
 
@@ -101,6 +103,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 {
                     foreach (var current3 in effects)
                     {
+                        if (current3.Type == Interaction.ActionBotTeleport || current3.Type == Interaction.ActionBotMove) continue;
+
                         if (current3.Execute(null, Type))
                             WiredHandler.OnEvent(current3);
                     }

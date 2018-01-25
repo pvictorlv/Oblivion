@@ -66,8 +66,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
         {
             var user = (RoomUser) stuff[0];
             if (user == null) return false;
-            var type = (Interaction) stuff[1];
-            if (type == Interaction.ActionBotFollowAvatar) return false;
 
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
@@ -104,6 +102,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 {
                     foreach (var current3 in effects)
                     {
+                        if (current3.Type == Interaction.ActionBotFollowAvatar || current3.Type == Interaction.ActionBotMove) continue;
                         if (current3.Execute(user, Type))
                             WiredHandler.OnEvent(current3);
                     }

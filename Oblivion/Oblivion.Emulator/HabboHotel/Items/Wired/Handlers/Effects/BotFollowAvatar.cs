@@ -76,12 +76,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                             if (Room.GetGameMap().SquareIsOpen(user.SquareInFront.X, user.SquareInFront.Y, false))
                             {
                                 _bot.MoveTo(user.SquareInFront);
-                                Room.GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedAvatar, user);
                             }
                             else
                             {
                                 _bot.MoveTo(user.SquareBehind);
-                                Room.GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedAvatar, user);
                             }
                         }
                     }

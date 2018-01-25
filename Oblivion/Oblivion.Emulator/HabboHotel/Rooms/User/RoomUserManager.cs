@@ -628,12 +628,8 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     Gets the pets.
         /// </summary>
         /// <returns>List&lt;Pet&gt;.</returns>
-        internal List<Pet> GetPets()
-        {
-            var list = _pets.ToList();
-            return
-                (from current in list select current.Value into value where value.IsPet select value.PetData).ToList();
-        }
+        internal List<Pet> GetPets() =>
+            (from current in _pets select current.Value into value where value.IsPet select value.PetData).ToList();
 
         /// <summary>
         ///     Serializes the status updates.
@@ -970,16 +966,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                     user.LastItem = item.Id;
                 }
 
-                if (user.Frozen)
-                {
-                    user.FrozenTick--;
-                    if (user.FrozenTick <= 0)
-                    {
-                        user.Frozen = false;
-                        user.GetClient().SendWhisper("Você foi descongelado!!");
-                    }
-
-                }
                 if (user.IsSitting && user.TeleportEnabled)
                 {
                     user.Z -= 0.35;
@@ -1541,6 +1527,47 @@ namespace Oblivion.HabboHotel.Rooms.User
                         roomUsers.CarryItem(0);
                 }
 
+
+                if (roomUsers.Frozen)
+                {
+                    roomUsers.FrozenTick--;
+                    if (roomUsers.FrozenTick <= 0)
+                    {
+                        roomUsers.Frozen = false;
+                        roomUsers.GetClient().SendWhisper("Você foi descongelado!!");
+                    }
+                }
+
+                if (roomUsers.IsBot)
+                {
+                    if (_userRoom.GotWireds())
+                    {
+                        if (roomUsers.FollowingOwner != null)
+                        {
+                            if (_userRoom.GetGameMap()
+                                .SquareIsOpen(roomUsers.FollowingOwner.SquareInFront.X,
+                                    roomUsers.FollowingOwner.SquareInFront.Y, false))
+                            {
+                                roomUsers.MoveTo(roomUsers.FollowingOwner.SquareInFront);
+                            }
+                            else
+                            {
+                                roomUsers.MoveTo(roomUsers.FollowingOwner.SquareBehind);
+                            }
+                        }
+
+                        var users = _userRoom.GetGameMap()
+                            .GetRoomUsers(roomUsers.SquareInFront);
+
+                        if (users?.Count > 0)
+                        {
+                            var user = users[0];
+
+                            _userRoom.GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedAvatar, user);
+                        }
+                    }
+                }
+
                 // Region Check User Got Freezed
                 if (_userRoom.GotFreeze())
                 {
@@ -1757,13 +1784,11 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
             try
             {
-
                 var inv = user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent();
                 if (inv == null) return;
                 var items = _userRoom.GetGameMap().GetAllRoomItemForSquare(x, y);
                 if (items.Count <= 0)
                 {
-
                     if (user.CurrentItemEffect != 0)
                     {
                         inv.ActivateCustomEffect(0);
@@ -1784,7 +1809,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                     if (inv.CurrentEffect == 0)
                     {
                         user.CurrentItemEffect = 0;
-                        
                     }
                     if (b == user.CurrentItemEffect)
                         return;
