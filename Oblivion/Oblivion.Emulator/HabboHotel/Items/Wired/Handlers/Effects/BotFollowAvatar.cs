@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -9,7 +8,7 @@ using Oblivion.HabboHotel.Rooms.User;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
-    public class BotFollowAvatar : IWiredItem, IWiredCycler
+    public class BotFollowAvatar : IWiredItem
     {
         public BotFollowAvatar(RoomItem item, Room room)
         {
@@ -18,7 +17,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             OtherString = string.Empty;
             OtherExtraString = string.Empty;
             OtherExtraString2 = string.Empty;
-            _toWorkQueue = new Queue<RoomUser>();
             Items = new ConcurrentList<RoomItem>();
         }
 
@@ -30,75 +28,11 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public ConcurrentList<RoomItem> Items { get; set; }
 
-        public double TickCount { get; set; }
 
-        private int _delay;
-
-        public int Delay
-        {
-            get => _delay;
-            set
-            {
-                _delay = value;
-                TickCount = value / 1000;
-            }
-        }
+        public int Delay { get; set; }
 
 
         private double _next;
-        public bool Requested;
-
-        public async Task<bool> OnCycle()
-        {
-            if (Disposed) return false;
-
-            if (!Requested) return false;
-
-            var time = Oblivion.GetUnixTimeStamp();
-
-            if (time < _next)
-                return false;
-
-            if (!string.IsNullOrEmpty(OtherString))
-            {
-                if (_bot?.BotData == null || _bot.BotData.Name != OtherString)
-                {
-                    _bot = Room.GetRoomUserManager().GetBotByName(OtherString);
-                }
-
-                if (OtherBool)
-                {
-                    while (_toWorkQueue.Count > 0)
-                    {
-                        var user = _toWorkQueue.Dequeue();
-                        _bot.FollowingOwner = user;
-                        if (user != null && !user.IsBot)
-                        {
-                            if (Room.GetGameMap().SquareIsOpen(user.SquareInFront.X, user.SquareInFront.Y, false))
-                            {
-                                _bot.MoveTo(user.SquareInFront);
-                            }
-                            else
-                            {
-                                _bot.MoveTo(user.SquareBehind);
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    _bot.FollowingOwner = null;
-                }
-            }
-
-
-            _next = Oblivion.GetUnixTimeStamp() + Delay;
-            Requested = false;
-
-            return true;
-        }
-
-        
 
         public string OtherString { get; set; }
 
@@ -114,25 +48,52 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (Disposed) return false;
 
             var user = (RoomUser) Params[0];
-            if (user == null) return false;
-            _toWorkQueue.Enqueue(user);
-            if (!Requested)
+            if (user == null || user.IsBot) return false;
+
+
+            var time = Oblivion.Now();
+
+            if (_next > time)
+                await Task.Delay((int) (_next - time));
+
+            if (!string.IsNullOrEmpty(OtherString))
             {
-                TickCount = Delay;
-                Requested = true;
+                if (_bot?.BotData == null || _bot.BotData.Name != OtherString)
+                {
+                    _bot = Room.GetRoomUserManager().GetBotByName(OtherString);
+                }
+
+                if (OtherBool)
+                {
+                    _bot.FollowingOwner = user;
+
+                    if (Room.GetGameMap().SquareIsOpen(user.SquareInFront.X, user.SquareInFront.Y, false))
+                    {
+                        _bot.MoveTo(user.SquareInFront);
+                    }
+                    else
+                    {
+                        _bot.MoveTo(user.SquareBehind);
+                    }
+                }
+                else
+                {
+                    _bot.FollowingOwner = null;
+                }
             }
+
+
+            _next = Oblivion.Now() + Delay;
 
             return true;
         }
 
         private RoomUser _bot;
-        private Queue<RoomUser> _toWorkQueue;
+
         public void Dispose()
         {
             Disposed = true;
             _bot = null;
-            _toWorkQueue.Clear();
-            _toWorkQueue = null;
         }
     }
 }

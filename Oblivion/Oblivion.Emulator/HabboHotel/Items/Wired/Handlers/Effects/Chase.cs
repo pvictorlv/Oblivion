@@ -137,7 +137,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             }
 
             _next = Oblivion.Now() + Delay;
-            await Task.Delay(Delay);    
             return true;
         }
 

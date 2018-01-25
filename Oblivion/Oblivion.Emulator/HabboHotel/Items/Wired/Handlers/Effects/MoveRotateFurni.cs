@@ -17,7 +17,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
     internal class MoveRotateFurni : IWiredItem
     {
         private readonly ConcurrentQueue<RoomItem> _toRemove = new ConcurrentQueue<RoomItem>();
-        private int _delay;
         private double _next;
         private int _rot, _dir;
 
@@ -26,8 +25,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             Item = item;
             Room = room;
             Items = new ConcurrentList<RoomItem>();
-            _delay = 0;
-            TickCount = 0;
+            Delay = 0;
             _rot = 0;
             _dir = 0;
         }
@@ -38,18 +36,66 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         }
 
-        public bool Disposed { get; set; }
-        public double TickCount { get; set; }
+        public bool Disposed { get; set; }        
+    
 
-        public async Task<bool> OnCycle()
+        public Interaction Type => Interaction.ActionMoveRotate;
+
+        public RoomItem Item { get; set; }
+
+        public Room Room { get; set; }
+
+        public ConcurrentList<RoomItem> Items { get; set; }
+
+        public string OtherString
         {
-            if (Room == null)
-                return false;
+            get => $"{_dir};{_rot}";
+            set
+            {
+                var array = value.Split(';');
 
-            if (Items == null || Items.Count <= 0) return true;
+                if (array.Length != 2)
+                {
+                    _rot = 0;
+                    _dir = 0;
+                    return;
+                }
 
-            await Task.Delay(Delay / 2);
-            //todo: queue in item add
+                int.TryParse(array[0], out _dir);
+                int.TryParse(array[1], out _rot);
+            }
+        }
+
+        public string OtherExtraString
+        {
+            get { return string.Empty; }
+            set { }
+        }
+
+        public string OtherExtraString2
+        {
+            get { return string.Empty; }
+            set { }
+        }
+
+        public bool OtherBool
+        {
+            get { return true; }
+            set { }
+        }
+
+        public int Delay { get; set; }
+
+        public bool Requested;
+
+        public async Task<bool> Execute(params object[] Params)
+        {
+            if (Items == null || Items.Count <= 0)
+                return true;
+            var now = Oblivion.Now();
+            if (_next > now)
+            await Task.Delay((int) (_next - now));
+
             foreach (var Item in Items.ToList())
             {
                 if (Item == null) continue;
@@ -139,74 +185,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 if (Items.Contains(rI))
                     Items.Remove(rI);
 
-//            _next = Oblivion.Now() + (Delay / 2);
-//            Requested = false;
+            _next = Oblivion.Now() + (Delay);
 
             return true;
-        }
-
-
-        public Interaction Type => Interaction.ActionMoveRotate;
-
-        public RoomItem Item { get; set; }
-
-        public Room Room { get; set; }
-
-        public ConcurrentList<RoomItem> Items { get; set; }
-
-        public string OtherString
-        {
-            get => $"{_dir};{_rot}";
-            set
-            {
-                var array = value.Split(';');
-
-                if (array.Length != 2)
-                {
-                    _rot = 0;
-                    _dir = 0;
-                    return;
-                }
-
-                int.TryParse(array[0], out _dir);
-                int.TryParse(array[1], out _rot);
-            }
-        }
-
-        public string OtherExtraString
-        {
-            get { return string.Empty; }
-            set { }
-        }
-
-        public string OtherExtraString2
-        {
-            get { return string.Empty; }
-            set { }
-        }
-
-        public bool OtherBool
-        {
-            get { return true; }
-            set { }
-        }
-
-        public int Delay
-        {
-            get => _delay;
-            set
-            {
-                _delay = value;
-                TickCount = value / 1000;
-            }
-        }
-
-        public bool Requested;
-
-        public async Task<bool> Execute(params object[] Params)
-        {
-            var ret = await OnCycle();
-            return ret;
         }
 
         private int HandleRotation(int mode, int rotation)

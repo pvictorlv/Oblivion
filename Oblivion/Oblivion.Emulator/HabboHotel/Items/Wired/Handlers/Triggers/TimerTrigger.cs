@@ -7,7 +7,7 @@ using Oblivion.HabboHotel.Rooms;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 {
-    internal class TimerTrigger : IWiredItem, IWiredCycler
+    internal class TimerTrigger : IWiredItem
     {
         public TimerTrigger(RoomItem item, Room room)
         {
@@ -50,30 +50,21 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         private bool _requested;
 
-        public double TickCount { get; set; }
 
-        private int _delay;
         private long _mNext;
 
 
-        public int Delay
-        {
-            get => _delay;
-            set
-            {
-                _delay = value;
-                TickCount = value / 2;
-            }
-        }
+        public int Delay { get; set; }
 
-        public async Task<bool> OnCycle()
-        {
-            if (!_requested) return false;
 
+        public async Task<bool> Execute(params object[] stuff)
+        {
+          
             var num = Oblivion.Now();
 
             if (_mNext > num)
-                return false;
+                await Task.Delay((int)(_mNext - num));
+
 
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
@@ -123,17 +114,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
             _requested = false;
             return true;
-        }
 
-
-        public async Task<bool> Execute(params object[] stuff)
-        {
-            if (_mNext == 0L || _mNext <= Oblivion.Now())
-                _mNext = Oblivion.Now() + Delay;
-
-            _requested = true;
-
-            return true;
         }
 
         public void Dispose()

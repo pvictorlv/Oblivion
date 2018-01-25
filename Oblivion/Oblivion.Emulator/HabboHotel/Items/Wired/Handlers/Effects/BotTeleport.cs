@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -10,7 +8,7 @@ using Oblivion.HabboHotel.Rooms.User;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
-    public class BotTeleport : IWiredItem, IWiredCycler
+    public class BotTeleport : IWiredItem
     {
         public BotTeleport(RoomItem item, Room room)
         {
@@ -47,14 +45,51 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
-        public async Task<bool> OnCycle()
+        private void Teleport(RoomUser user)
         {
-            if (!_requested) return false;
+            if (Items == null || Items.Count < 0)
+                return;
+
+            RoomItem roomItem = null;
+            while (true)
+            {
+                if (Items.Count <= 0)
+                    break;
+
+                roomItem = Items[Oblivion.GetRandomNumber(0, Items.Count - 1)];
+                if (roomItem != null && Room.GetRoomItemHandler().GetItem(roomItem.Id) != null)
+                    break;
+
+                Items.Remove(roomItem);
+            }
+            if (roomItem == null) return;
+
+            int oldX = user.X, oldY = user.Y;
+            Room.GetGameMap().TeleportToItem(user, roomItem);
+            Room.GetRoomUserManager().OnUserUpdateStatus(oldX, oldY);
+            Room.GetRoomUserManager().OnUserUpdateStatus(roomItem.X, roomItem.Y);
+
+
+            Room.GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedStuff, roomItem);
+        }
+
+
+        private long _mNext;
+
+
+        public int Delay { get; set; }
+
+        public async Task<bool> Execute(params object[] stuff)
+        {
+            var item = (Interaction) stuff[1];
+
+            if (item == Interaction.TriggerRepeater || item == Interaction.TriggerLongRepeater)
+                return false;
 
             var num = Oblivion.Now();
 
             if (_mNext > num)
-                return false;
+                await Task.Delay((int) (_mNext - num));
 
             if (string.IsNullOrEmpty(OtherString)) return false;
 
@@ -69,65 +104,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             Teleport(_bot);
 
             _mNext = Oblivion.Now() + Delay;
-
-            _requested = false;
-            return true;
-        }
-
-        private void Teleport(RoomUser user)
-        {
-            if (Items == null || Items.Count < 0)
-                return;
-
-
-            var rnd = new Random();
-
-
-            var roomItem = Items.OrderBy(x => rnd.Next()).FirstOrDefault(current =>
-                current != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(current));
-
-            /* TODO CHECK */
-            if (roomItem == null) return;
-
-            int oldX = user.X, oldY = user.Y;
-            Room.GetGameMap().TeleportToItem(user, roomItem);
-            Room.GetRoomUserManager().OnUserUpdateStatus(oldX, oldY);
-            Room.GetRoomUserManager().OnUserUpdateStatus(roomItem.X, roomItem.Y);
-
-
-            Room.GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedStuff, roomItem);
-        }
-
-        private bool _requested;
-
-        public double TickCount { get; set; }
-
-        private int _delay;
-        private long _mNext;
-
-
-        public int Delay
-        {
-            get => _delay;
-            set
-            {
-                _delay = value;
-                TickCount = value / 2;
-            }
-        }
-
-        public async Task<bool> Execute(params object[] stuff)
-        {
-            if (_mNext == 0L || _mNext <= Oblivion.Now())
-                _mNext = Oblivion.Now() + Delay;
-
-
-            var item = (Interaction) stuff[1];
-
-            if (item == Interaction.TriggerRepeater || item == Interaction.TriggerLongRepeater)
-                return false;
-
-            _requested = true;
 
             return true;
         }

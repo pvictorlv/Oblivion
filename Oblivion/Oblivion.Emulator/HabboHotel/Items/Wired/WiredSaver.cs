@@ -134,7 +134,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     var otherString3 = request.GetString();
                     request.GetInteger();
                     var delay = request.GetInteger();
-                    wired.Delay = delay;
+                    wired.Delay = delay * 500;
                     wired.OtherString = otherString3;
                     wiredHandler.ReloadWired(wired);
                     break;
@@ -198,7 +198,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     wired.OtherBool = request.GetInteger() == 1;
                     wired.OtherString = request.GetString();
                     request.GetInteger();
-                    wired.Delay = request.GetInteger();
+                    wired.Delay = request.GetInteger() * 500;
                    
                     break;
                 }

@@ -98,7 +98,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             _mNext = Oblivion.Now() + Delay;
 
-            await Task.Delay(Delay);
 
             return true;
         }
@@ -124,7 +123,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
                 Items.Remove(roomItem);
             }
-            /* TODO CHECK */
 
             if (roomItem == null)
             {

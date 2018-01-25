@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
-    public class ResetPosition : IWiredItem, IWiredCycler
+    public class ResetPosition : IWiredItem
     {
         public ResetPosition(RoomItem item, Room room)
         {
@@ -38,17 +38,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public ConcurrentList<RoomItem> Items { get; set; }
 
-        private int _delay;
-        public double TickCount { get; set; }
-        public int Delay
-        {
-            get => _delay;
-            set
-            {
-                _delay = value;
-                TickCount = value * 0.0005;
-            }
-        }
+        public int Delay { get; set; }
 
         private long _mNext;
 
@@ -60,19 +50,15 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
-        private bool _requested;
 
-        public async Task<bool> OnCycle()
+        public async Task<bool> Execute(params object[] stuff)
         {
-            if (!_requested)
+            if (Room == null)
                 return false;
 
-            var num = Oblivion.GetUnixTimeStamp();
-
-            if (_mNext > num)
+            if (Items?.Count == 0)
                 return false;
-
-
+            
             if (string.IsNullOrWhiteSpace(OtherString) || string.IsNullOrWhiteSpace(OtherExtraString))
                 return false;
 
@@ -80,6 +66,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             if (booleans.Length < 3)
                 return false;
+
+            var num = Oblivion.Now();
+
+            if (_mNext > num)
+                await Task.Delay((int)(_mNext - num));
+
 
             var extraData = booleans[0] == "true";
             var rot = booleans[1] == "true";
@@ -140,28 +132,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     fItem.ExtraData = extraDataToSet;
                     fItem.UpdateState();
                 }
-//                Room.GetGameMap().GenerateMaps();
             }
-            _mNext = Oblivion.GetUnixTimeStamp() + (Delay / 500);
-            _requested = false;
-
-            return true;
-
-        }
-
-        public async Task<bool> Execute(params object[] stuff)
-        {
-            if (Room == null)
-                return false;
-
-            if (Items?.Count == 0)
-                return false;
-
-            if (!_requested)
-            {
-                _requested = true;
-            }
-
+            _mNext = Oblivion.Now() + Delay;
             return true;
         }
     }

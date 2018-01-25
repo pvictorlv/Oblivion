@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -15,10 +14,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public void Dispose()
         {
-
         }
 
         public bool Disposed { get; set; }
+
         public LongRepeater(RoomItem item, Room room)
         {
             Item = item;
@@ -37,13 +36,13 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             var num = Oblivion.Now();
 
             if (NextExec >= num)
-                return false;
+                await Task.Delay((int) (NextExec - num));
 
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
 
             if (conditions.Count > 0)
-                /* TODO CHECK */ foreach (var current in conditions)
+                foreach (var current in conditions)
                 {
                     if (!current.Execute(null).Result)
                         return false;
@@ -80,7 +79,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 }
             }
             NextExec = Oblivion.Now() + Delay;
-            return false;
+
+            return true;
         }
 
         public Interaction Type => Interaction.TriggerLongRepeater;
