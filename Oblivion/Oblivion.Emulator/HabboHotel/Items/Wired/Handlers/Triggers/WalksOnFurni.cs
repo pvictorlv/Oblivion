@@ -57,15 +57,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public void Dispose()
         {
-
         }
 
         public bool Disposed { get; set; }
 
         public async Task<bool> Execute(params object[] stuff)
         {
-            await Task.Yield();
-
             var roomUser = (RoomUser) stuff[0];
             if (roomUser == null)
                 return false;
@@ -85,16 +82,17 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                     .GetRoomItemHandler().FloorItems.Values
                     .Any(i => i.X == roomItem.X && i.Y == roomItem.Y && i.Z > roomItem.Z))
                 return false;
-
-            if (Oblivion.Now() <= _mNext)
-                return false;
+            var num = Oblivion.Now();
+            if (num <= _mNext)
+                await Task.Delay((int) (_mNext - num));
 
 
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
 
             if (conditions.Count > 0)
-                /* TODO CHECK */ foreach (var current in conditions)
+                /* TODO CHECK */
+                foreach (var current in conditions)
                 {
                     if (!current.Execute(roomUser, roomItem).Result)
                         return false;
@@ -125,8 +123,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                     foreach (var current3 in effects)
                     {
                         if (current3 == null) continue;
-                        if (current3.Execute(roomUser, Type).Result)
-                            WiredHandler.OnEvent(current3);
+                        current3.Execute(roomUser, Type);
+                        WiredHandler.OnEvent(current3);
                     }
                 }
             }

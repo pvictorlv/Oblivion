@@ -91,6 +91,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     var itemId = uint.Parse(innerData[0]);
 
                     var fItem = Room.GetRoomItemHandler().GetItem(itemId);
+                    if (Room.GetWiredHandler().OtherBoxHasItem(this, fItem))
+                    {
+                        continue;
+                    }
 
                     if (fItem == null)
                         continue;

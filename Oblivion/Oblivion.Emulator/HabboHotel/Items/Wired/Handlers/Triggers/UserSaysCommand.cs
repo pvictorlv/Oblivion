@@ -24,7 +24,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public void Dispose()
         {
-
         }
 
         public bool Disposed { get; set; }
@@ -100,8 +99,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 {
                     foreach (var current3 in effects)
                     {
-                        if (current3.Execute(roomUser, Type).Result)
-                            WiredHandler.OnEvent(current3);
+                        current3.Execute(roomUser, Type);
+                        WiredHandler.OnEvent(current3);
                     }
                 }
             }

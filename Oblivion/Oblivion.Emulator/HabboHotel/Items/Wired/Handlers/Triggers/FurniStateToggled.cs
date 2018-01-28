@@ -65,7 +65,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public async Task<bool> Execute(params object[] stuff)
         {
-            await Task.Yield();
+//            await Task.Yield();
 
             var roomUser = (RoomUser) stuff[0];
             var roomItem = (RoomItem) stuff[1];
@@ -80,7 +80,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             var num = Oblivion.Now();
 
             if (_mNext >= num)
-                return false;
+                await Task.Delay((int) (_mNext - num));
 
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);

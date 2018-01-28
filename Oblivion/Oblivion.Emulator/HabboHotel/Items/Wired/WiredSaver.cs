@@ -65,6 +65,8 @@ namespace Oblivion.HabboHotel.Items.Wired
                 }
                 case Interaction.TriggerOnUserSay:
                 case Interaction.TriggerOnUserSayCommand:
+                case Interaction.TriggerBotReachedAvatar:
+                case Interaction.TriggerBotReachedStuff:
                 {
                     request.GetInteger();
                     var num = request.GetInteger();

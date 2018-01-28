@@ -65,7 +65,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public async Task<bool> Execute(params object[] stuff)
         {
-
             var user = (RoomUser) stuff[0];
             if (user == null) return false;
 
@@ -106,9 +105,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 {
                     foreach (var current3 in effects)
                     {
-                        if (current3.Type == Interaction.ActionBotFollowAvatar || current3.Type == Interaction.ActionBotMove) continue;
-                        if (current3.Execute(user, Type).Result)
-                            WiredHandler.OnEvent(current3);
+                        if (current3.Type == Interaction.ActionBotFollowAvatar ||
+                            current3.Type == Interaction.ActionBotMove) continue;
+                        current3.Execute(user, Type);
+                        WiredHandler.OnEvent(current3);
                     }
                 }
             }

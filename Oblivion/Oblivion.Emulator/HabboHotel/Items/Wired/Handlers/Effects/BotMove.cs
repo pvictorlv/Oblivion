@@ -52,6 +52,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public async Task<bool> Execute(params object[] stuff)
         {
+            await Task.Yield();
+
             if (string.IsNullOrEmpty(OtherString)) return false;
 
             if (_bot?.BotData == null || _bot.BotData.Name != OtherString)

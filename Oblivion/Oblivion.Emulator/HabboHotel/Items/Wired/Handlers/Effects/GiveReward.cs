@@ -57,6 +57,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public async Task<bool> Execute(params object[] stuff)
         {
+            await Task.Yield();
+
             var user = (RoomUser) stuff[0];
             if (user == null) return false;
             if (stuff[1] == null)

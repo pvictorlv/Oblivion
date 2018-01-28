@@ -73,7 +73,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 {
                     foreach (var current3 in effects)
                     {
-                        if (current3.Execute(null, Type).Result)
+                        current3.Execute(null, Type);
                             WiredHandler.OnEvent(current3);
                     }
                 }

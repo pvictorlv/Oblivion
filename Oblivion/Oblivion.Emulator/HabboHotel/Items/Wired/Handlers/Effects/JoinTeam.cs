@@ -16,6 +16,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             Item = item;
             Room = room;
             Delay = 0;
+            OtherString = "1";
         }
 
         public Interaction Type => Interaction.ActionJoinTeam;
@@ -54,6 +55,11 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 return false;
 
             var roomUser = (RoomUser) stuff[0];
+            if (roomUser?.GetClient()?.GetHabbo()?.CurrentRoom == null) return false;
+            var furni = (Interaction) stuff[1];
+
+            if (furni == Interaction.TriggerRepeater || furni == Interaction.TriggerLongRepeater) return false;
+
             if (!int.TryParse(OtherString, out var team))
             {
                 return false;

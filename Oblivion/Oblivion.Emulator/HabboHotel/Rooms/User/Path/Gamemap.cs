@@ -34,7 +34,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <summary>
         ///     The _user map
         /// </summary>
-        private Dictionary<int, List<RoomUser>> _userMap;
+        private ConcurrentDictionary<int, List<RoomUser>> _userMap;
 
         /// <summary>
         ///     The diagonal enabled
@@ -74,7 +74,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             CoordinatedItems = new ConcurrentDictionary<Point, List<RoomItem>>();
             GameMap = new byte[Model.MapSizeX, Model.MapSizeY];
             ItemHeightMap = new double[Model.MapSizeX, Model.MapSizeY];
-            _userMap = new Dictionary<int, List<RoomUser>>();
+            _userMap = new ConcurrentDictionary<int, List<RoomUser>>();
             WalkableList = GetWalkablePoints();
             GuildGates = new Dictionary<Point, RoomItem>();
         }
@@ -257,7 +257,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             else
             {
                 users = new List<RoomUser> {user};
-                _userMap.Add(coordKey, users);
+                _userMap.TryAdd(coordKey, users);
             }
         }
 
@@ -311,7 +311,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     users.Remove(user);
                 if (users.Count <= 0)
                 {
-                    _userMap.Remove(coordKey);
+                    _userMap.TryRemove(coordKey, out _);
                     return;
                 }
                 _userMap[coordKey] = users;
@@ -524,7 +524,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     {
                         AddItemToMap(item);
                     }
-                    var doors = floorItems.Where(x => (x.GetBaseItem().InteractionType == Interaction.Gate && x.ExtraData == "0") || x.GetBaseItem().InteractionType == Interaction.GuildGate);
+                    var doors = floorItems.Where(x => (x.GetBaseItem().InteractionType == Interaction.Gate && x.ExtraData == "0"));
                     foreach (var door in doors)
                     {
                         GameMap[door.X, door.Y] = 0;
@@ -898,10 +898,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 return false;
 
             var square = new Point(to.X, to.Y);
-            if (GuildGates.ContainsKey(square) && user.GetClient() != null && user.GetClient().GetHabbo() != null &&
+            if (GuildGates.TryGetValue(square, out var roomItem) && user.GetClient() != null && user.GetClient().GetHabbo() != null &&
                 user.GetClient().GetHabbo().UserGroups != null)
             {
-                var roomItem = GuildGates[square];
                 var guildId = roomItem.GroupId;
                 if (guildId > 0 &&
                     user.GetClient().GetHabbo().UserGroups.Any(member => member != null && member.GroupId == guildId))
@@ -948,9 +947,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             if (user == null)
                 return false;
 
-            if (GuildGates.ContainsKey(to))
+            if (GuildGates.TryGetValue(to, out var roomItem))
             {
-                var roomItem = GuildGates[to];
                 var guildId = roomItem.GroupId;
                 if (guildId > 0)
                     if (user.GetClient().GetHabbo() != null &&
@@ -1033,9 +1031,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             var square = new Point(to.X, to.Y);
             if (user.IsBot == false && user.GetClient() != null)
             {
-                if (GuildGates.ContainsKey(square))
+                if (GuildGates.TryGetValue(square, out var guild))
                 {
-                    var guildId = GuildGates[square].GroupId;
+                    var guildId = guild.GroupId;
                     if (guildId > 0 &&
                         user.GetClient()
                             .GetHabbo()

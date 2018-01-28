@@ -103,7 +103,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                         if (current3.Type != Interaction.ActionMoveRotate && current3.Type != Interaction.ActionChase &&
                             current3.Type != Interaction.ActionInverseChase)
                         {
-                            if (current3.Execute(roomUser, Type).Result)
+                            current3.Execute(roomUser, Type);
                              WiredHandler.OnEvent(current3);
                         }
                     }

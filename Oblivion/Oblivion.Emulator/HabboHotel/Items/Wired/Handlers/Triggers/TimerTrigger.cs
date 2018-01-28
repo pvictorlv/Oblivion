@@ -103,7 +103,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                     {
                         if (current3.Type == Interaction.ActionResetTimer) continue;
 
-                        if (current3.Execute(null, Type).Result)
+                        current3.Execute(null, Type);
                             WiredHandler.OnEvent(current3);
                     }
                 }

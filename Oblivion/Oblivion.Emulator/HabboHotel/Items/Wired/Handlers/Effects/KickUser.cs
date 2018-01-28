@@ -81,10 +81,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (_mBanned.Contains(item))
                 return false;
 
-            if (!string.IsNullOrEmpty(OtherString))
-                roomUser.GetClient().SendWhisper(OtherString);
-
             await Task.Delay(Delay);
+
+
+            if (!string.IsNullOrEmpty(OtherString))
+                roomUser.GetClient().SendNotif(OtherString);
+
 
             Room.GetRoomUserManager().RemoveUserFromRoom(roomUser.GetClient(), true, false);
 

@@ -90,11 +90,15 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (_mNext >= num)
                 await Task.Delay((int) (_mNext - num));
 
+            roomUser.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent()?.ActivateCustomEffect(4);
+            await Task.Delay(1000);
+
             Teleport(roomUser);
 
 
-            roomUser.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent()?.ActivateCustomEffect(4);
-            
+            roomUser.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent()?.ActivateCustomEffect(0);
+
+
 
             _mNext = Oblivion.Now() + Delay;
 

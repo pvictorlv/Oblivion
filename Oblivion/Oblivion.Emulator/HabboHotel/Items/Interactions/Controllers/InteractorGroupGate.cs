@@ -17,6 +17,17 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             if (distance > 0 || user.GoalX == 0 && user.GoalY == 0)
                 return;
+            var gp = Oblivion.GetGame().GetGroupManager().GetGroup(item.GroupId);
+            if (gp == null)
+            {
+                return;
+            }
+
+            if (!gp.Members.ContainsKey(session.GetHabbo().Id))
+            {
+                user.ClearMovement();
+                return;
+            }
 
             item.ExtraData = "0";
             item.UpdateState(false, true);

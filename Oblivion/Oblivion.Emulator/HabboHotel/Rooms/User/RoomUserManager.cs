@@ -1141,6 +1141,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
         internal bool UserGoToTile(RoomUser roomUsers, bool invalidStep)
         {
+            if (roomUsers == null) return false;
             if (((invalidStep) || (roomUsers.PathStep >= roomUsers.Path.Count) ||
                  ((roomUsers.GoalX == roomUsers.X) && (roomUsers.GoalY == roomUsers.Y))))
             {
@@ -1331,6 +1332,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                                 {
                                     Oblivion.GetGame().GetAchievementManager()
                                         .ProgressUserAchievement(roomUsers.GetClient(), "ACH_RbTagC", 1);
+                                    roomUsers.LastRollerDate = Oblivion.GetUnixTimeStamp();
                                 }
 
                                 Oblivion.GetGame().GetAchievementManager()
@@ -1342,6 +1344,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                                 {
                                     Oblivion.GetGame().GetAchievementManager()
                                         .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagC", 1);
+                                    roomUsers.LastRollerDate = Oblivion.GetUnixTimeStamp();
+
                                 }
 
                                 Oblivion.GetGame().GetAchievementManager()
@@ -1464,36 +1468,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         roomUsers.GetClient().SendWhisper("Você foi descongelado!!");
                     }
                 }
-
-                if (roomUsers.IsBot)
-                {
-                    if (_userRoom.GotWireds())
-                    {
-                        if (roomUsers.FollowingOwner != null)
-                        {
-                            if (_userRoom.GetGameMap()
-                                .SquareIsOpen(roomUsers.FollowingOwner.SquareInFront.X,
-                                    roomUsers.FollowingOwner.SquareInFront.Y, false))
-                            {
-                                roomUsers.MoveTo(roomUsers.FollowingOwner.SquareInFront);
-                            }
-                            else
-                            {
-                                roomUsers.MoveTo(roomUsers.FollowingOwner.SquareBehind);
-                            }
-                        }
-
-                        var users = _userRoom.GetGameMap()
-                            .GetRoomUsers(roomUsers.SquareInFront);
-
-                        if (users?.Count > 0)
-                        {
-                            var user = users[0];
-
-                            _userRoom.GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedAvatar, user);
-                        }
-                    }
-                }
+                
 
                 // Region Check User Got Freezed
                 if (_userRoom.GotFreeze())
@@ -1599,6 +1574,32 @@ namespace Oblivion.HabboHotel.Rooms.User
                 {
                     try
                     {
+                        if (_userRoom.GotWireds())
+                        {
+                            if (roomUsers.FollowingOwner != null)
+                            {
+                                if (_userRoom.GetGameMap()
+                                    .SquareIsOpen(roomUsers.FollowingOwner.SquareInFront.X,
+                                        roomUsers.FollowingOwner.SquareInFront.Y, false))
+                                {
+                                    roomUsers.MoveTo(roomUsers.FollowingOwner.SquareInFront);
+                                }
+                                else
+                                {
+                                    roomUsers.MoveTo(roomUsers.FollowingOwner.SquareBehind);
+                                }
+                            }
+
+                            var users = _userRoom.GetGameMap()
+                                .GetRoomUsers(roomUsers.SquareInFront);
+
+                            if (users != null && users.Count > 0)
+                            {
+                                var user = users[0];
+
+                                _userRoom.GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedAvatar, user);
+                            }
+                        }
                         roomUsers.BotAi?.OnTimerTick();
                     }
                     catch (Exception e)

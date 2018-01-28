@@ -58,6 +58,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         private RoomUser _bot;
         public async Task<bool> Execute(params object[] stuff)
         {
+            await Task.Yield();
+
             if (_bot?.BotData == null || _bot.BotData.Name != OtherString)
             {
                 _bot = Room.GetRoomUserManager().GetBotByName(OtherString);

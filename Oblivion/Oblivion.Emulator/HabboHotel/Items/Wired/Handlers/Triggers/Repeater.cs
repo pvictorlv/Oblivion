@@ -78,14 +78,13 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 {
                     foreach (var current3 in effects)
                     {
-                        if (current3.Execute(null, Type).Result)
+                        current3.Execute(null, Type);
                             WiredHandler.OnEvent(current3);
                     }
                 }
             }
        
             _mNext = Oblivion.Now() + Delay;
-            await Task.Delay(Delay + 15);
 
             return false;
         }
