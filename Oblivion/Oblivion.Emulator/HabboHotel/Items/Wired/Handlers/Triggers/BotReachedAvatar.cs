@@ -68,8 +68,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             var user = (RoomUser) stuff[0];
             if (user == null) return false;
 
-            await Task.Yield();
-
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
 

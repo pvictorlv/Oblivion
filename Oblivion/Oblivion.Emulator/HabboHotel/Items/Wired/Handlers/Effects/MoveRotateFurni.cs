@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
-    internal class MoveRotateFurni : IWiredItem
+    internal class MoveRotateFurni : IWiredItem, IWiredCycler
     {
         private readonly ConcurrentQueue<RoomItem> _toRemove = new ConcurrentQueue<RoomItem>();
         private double _next;
@@ -84,17 +84,48 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             set { }
         }
 
-        public int Delay { get; set; }
+        public double TickCount { get; set; }
 
+
+        private int _delay;
+
+        public int Delay
+        {
+            get => _delay;
+            set
+            {
+                _delay = value;
+                TickCount = value / 1000;
+            }
+        }
         public bool Requested;
 
         public async Task<bool> Execute(params object[] Params)
         {
+            if (Item == null || Items.Count == 0)
+                return false;
+
+
+
+            Requested = true;
+
+
+            return true;
+        }
+
+        public async Task<bool> OnCycle()
+        {
+            if (!Requested) return false;
+
             if (Items == null || Items.Count <= 0)
                 return true;
+
             var now = Oblivion.Now();
             if (_next > now)
-            await Task.Delay((int) (_next - now));
+                return false;
+
+            await Task.Yield();
+
 
             foreach (var Item in Items.ToList())
             {
@@ -186,7 +217,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     Items.Remove(rI);
 
             _next = Oblivion.Now() + (Delay);
-
+            Requested = false;
             return true;
         }
 

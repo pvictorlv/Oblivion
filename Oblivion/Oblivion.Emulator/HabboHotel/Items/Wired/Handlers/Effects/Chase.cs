@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
-    internal class Chase : IWiredItem
+    internal class Chase : IWiredItem, IWiredCycler
     {
         public Chase(RoomItem item, Room room)
         {
@@ -55,19 +55,34 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         }
 
         public double TickCount { get; set; }
+  
 
-        public int Delay { get; set; }
+        private int _delay;
 
-        public async Task<bool> Execute(params object[] Params)
+        public int Delay
         {
-            if (Item == null || Items.Count == 0)
+            get => _delay;
+            set
+            {
+                _delay = value;
+                TickCount = value / 1000;
+            }
+        }
+
+        public async Task<bool> OnCycle()
+        {
+            if (Items == null || Items.Count == 0)
                 return false;
 
+            if (!Requested) return false;
 
             var time = Oblivion.Now();
 
             if (_next > time)
-                await Task.Delay((int) (_next - time));
+                return false;
+
+            await Task.Yield();
+
 
             foreach (var item in Items)
             {
@@ -137,6 +152,25 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             }
 
             _next = Oblivion.Now() + Delay;
+
+            Requested = false;
+
+            return true;
+        }
+        public bool Requested;
+
+        public async Task<bool> Execute(params object[] Params)
+        {
+            if (Item == null || Items.Count == 0)
+                return false;
+            
+
+
+           
+                Requested = true;
+            
+
+            
             return true;
         }
 

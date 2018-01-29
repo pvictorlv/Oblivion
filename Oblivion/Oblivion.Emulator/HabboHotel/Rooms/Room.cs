@@ -1225,6 +1225,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="globalMessage"></param>
         internal void AddChatlog(uint id, string message, bool globalMessage)
         {
+            if (RoomData?.RoomChat == null) return;
             lock (RoomData.RoomChat)
             {
                 RoomData.RoomChat.Push(new Chatlog(id, message, DateTime.Now, globalMessage));

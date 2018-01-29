@@ -11,7 +11,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public FlagUser()
         {
-            MinRank = 8;
+            MinRank = 7;
             Description = "Enable name change for user";
             Usage = ":flaguser [name]";
             MinParams = 1;

@@ -49,7 +49,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
         }
 
 
-
         private long _mNext;
 
 
@@ -58,11 +57,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public async Task<bool> Execute(params object[] stuff)
         {
-          
             var num = Oblivion.Now();
 
             if (_mNext > num)
-                await Task.Delay((int)(_mNext - num));
+                await Task.Delay((int) (_mNext - num));
 
 
             var conditions = Room.GetWiredHandler().GetConditions(this);
@@ -104,7 +102,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                         if (current3.Type == Interaction.ActionResetTimer) continue;
 
                         current3.Execute(null, Type);
-                            WiredHandler.OnEvent(current3);
+                        WiredHandler.OnEvent(current3);
                     }
                 }
             }
@@ -112,12 +110,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             _mNext = Oblivion.Now() + Delay;
 
             return true;
-
         }
 
         public void Dispose()
         {
-            
         }
 
         public bool Disposed { get; set; }

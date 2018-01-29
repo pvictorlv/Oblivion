@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -18,7 +17,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public void Dispose()
         {
-
         }
 
         public bool Disposed { get; set; }
@@ -72,7 +70,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             var effects = Room.GetWiredHandler().GetEffects(this);
 
             if (conditions.Count > 0)
-                /* TODO CHECK */ foreach (var current in conditions)
+                /* TODO CHECK */
+                foreach (var current in conditions)
                 {
                     if (!current.Execute(null, Type).Result)
                         return false;
@@ -103,7 +102,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                     foreach (var current3 in effects)
                     {
                         current3.Execute(null, Type);
-                            WiredHandler.OnEvent(current3);
+                        WiredHandler.OnEvent(current3);
                     }
                 }
             }

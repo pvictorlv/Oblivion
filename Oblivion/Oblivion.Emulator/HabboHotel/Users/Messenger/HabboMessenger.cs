@@ -492,7 +492,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             Oblivion.GetGame().GetQuestManager().ProgressUserQuest(client, QuestType.AddFriends);
             var fromUser = client.GetHabbo();
 
-            if (clientByUsername?.GetHabbo() != null && fromUser != null)
+            if (clientByUsername?.GetHabbo()?.GetMessenger() != null && fromUser != null)
             {
                 var messengerRequest = new MessengerRequest(userId, _userId, fromUser.UserName, fromUser.Look);
 

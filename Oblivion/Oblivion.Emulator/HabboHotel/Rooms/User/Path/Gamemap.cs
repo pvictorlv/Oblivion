@@ -1571,6 +1571,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             var X = false;
 
             foreach (var User in _room.GetRoomUserManager().GetRoomUsers())
+            {
+                if (User.IsBot || User.IsPet || User.Coordinate == Item.Coordinate) continue;
                 if (User.X == Item.X)
                 {
                     var Difference = Math.Abs(User.Y - Item.Y);
@@ -1589,7 +1591,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     Coord = User.Coordinate;
                     X = true;
                 }
-
+            }
             if (Distance > 5)
             {
                 var sides = Item.GetSides();

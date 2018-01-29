@@ -60,20 +60,17 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public async Task<bool> Execute(params object[] stuff)
         {
-            await Task.Yield();
-
             var roomUser = (RoomUser) stuff[0];
 
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
 
             if (conditions.Count > 0)
-                /* TODO CHECK */
                 foreach (var current in conditions)
                 {
                     WiredHandler.OnEvent(current);
-
-                    if (!current.Execute(roomUser).Result)
+                    var b = await current.Execute(roomUser);
+                    if (!b)
                         return true;
                 }
 
@@ -103,7 +100,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                         if (current3.Type != Interaction.ActionMoveRotate && current3.Type != Interaction.ActionChase &&
                             current3.Type != Interaction.ActionInverseChase)
                         {
-                            current3.Execute(roomUser, Type);
+                             current3.Execute(roomUser, Type);
                              WiredHandler.OnEvent(current3);
                         }
                     }

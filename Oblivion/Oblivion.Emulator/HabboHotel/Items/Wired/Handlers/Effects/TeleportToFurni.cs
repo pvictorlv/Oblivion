@@ -87,7 +87,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             var num = Oblivion.Now();
 
 
-            if (_mNext >= num)
+            if (_mNext > num)
                 await Task.Delay((int) (_mNext - num));
 
             roomUser.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent()?.ActivateCustomEffect(4);

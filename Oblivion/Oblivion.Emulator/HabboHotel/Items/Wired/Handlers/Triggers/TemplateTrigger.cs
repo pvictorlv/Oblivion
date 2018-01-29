@@ -94,7 +94,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 {
                     foreach (var current3 in effects)
                     {
-                        current3.Execute(roomUser, Type);
+                        await current3.Execute(roomUser, Type);
                             WiredHandler.OnEvent(current3);
                     }
                 }
