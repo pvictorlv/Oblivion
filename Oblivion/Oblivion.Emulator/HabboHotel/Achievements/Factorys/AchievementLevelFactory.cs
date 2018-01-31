@@ -37,7 +37,7 @@ namespace Oblivion.HabboHotel.Achievements.Factorys
 
                 var level2 = new AchievementLevel(level, rewardPixels, rewardPoints, requirement);
 
-                if (!achievements.ContainsKey(text))
+                if (!achievements.TryGetValue(text, out var levelT))
                 {
                     var achievement = new Achievement(id, text, category);
                     achievement.AddLevel(level2);

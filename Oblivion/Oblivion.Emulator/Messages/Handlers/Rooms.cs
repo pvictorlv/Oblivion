@@ -109,19 +109,6 @@ namespace Oblivion.Messages.Handlers
 //                "Oblivion.Users",
 //                ConsoleColor.DarkGreen);
 
-            if (!ConfigurationData.Data.ContainsKey("welcome.message.enabled") ||
-                ConfigurationData.Data["welcome.message.enabled"] != "true")
-                return;
-
-            if (!ConfigurationData.Data.ContainsKey("welcome.message.image") ||
-                string.IsNullOrEmpty(ConfigurationData.Data["welcome.message.image"]))
-                Session.SendNotifWithScroll(ExtraSettings.WelcomeMessage.Replace("%username%",
-                    Session.GetHabbo().UserName));
-            else
-                Session.SendNotif(ExtraSettings.WelcomeMessage.Replace("%username%", Session.GetHabbo().UserName),
-                    ConfigurationData.Data.ContainsKey("welcome.message.title")
-                        ? ConfigurationData.Data["welcome.message.title"]
-                        : string.Empty, ConfigurationData.Data["welcome.message.image"]);
         }
 
         internal void GoToHotelView()
@@ -2405,10 +2392,9 @@ namespace Oblivion.Messages.Handlers
 
             user.Z = Session.GetHabbo().CurrentRoom.GetGameMap().SqAbsoluteHeight(user.X, user.Y);
 
-            if (!user.Statusses.ContainsKey("sit"))
+            if (user.Statusses.TryAdd("sit", "0.55"))
             {
                 user.UpdateNeeded = true;
-                user.Statusses.TryAdd("sit", "0.55");
             }
 
             user.IsSitting = true;
@@ -2686,10 +2672,9 @@ namespace Oblivion.Messages.Handlers
                 }
                 else if (code == 3)
                 {
-                    if (!competition.Entries.ContainsKey(room.RoomId))
+                    if (!competition.Entries.TryGetValue(room.RoomId, out var entry))
                         return;
 
-                    var entry = competition.Entries[room.RoomId];
 
                     if (entry == null)
                         return;
@@ -2730,10 +2715,9 @@ namespace Oblivion.Messages.Handlers
             if (competition == null)
                 return;
 
-            if (!competition.Entries.ContainsKey(room.RoomId))
+            if (!competition.Entries.TryGetValue(room.RoomId, out var entry))
                 return;
 
-            var entry = competition.Entries[room.RoomId];
 
             entry.CompetitionVotes++;
             Session.GetHabbo().DailyCompetitionVotes--;

@@ -213,6 +213,8 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void EnableEffect()
         {
+            if (Session?.GetHabbo()?.CurrentRoom == null) return;
+
             var currentRoom = Session.GetHabbo().CurrentRoom;
             var roomUserByHabbo = currentRoom?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
             if (roomUserByHabbo == null)

@@ -1380,20 +1380,16 @@ namespace Oblivion.Messages.Handlers
 
             if (userId == Session.GetHabbo().Id || byeGuild.Admins.ContainsKey(Session.GetHabbo().Id))
             {
-                GroupMember memberShip;
-
                 int type;
 
-                if (byeGuild.Members.ContainsKey(userId))
+                if (byeGuild.Members.TryGetValue(userId, out var memberShip))
                 {
-                    memberShip = byeGuild.Members[userId];
                     type = 3;
                     Session.GetHabbo().UserGroups.Remove(memberShip);
                     byeGuild.Members.Remove(userId);
                 }
-                else if (byeGuild.Admins.ContainsKey(userId))
+                else if (byeGuild.Admins.TryGetValue(userId, out memberShip))
                 {
-                    memberShip = byeGuild.Admins[userId];
                     type = 1;
                     Session.GetHabbo().UserGroups.Remove(memberShip);
                     byeGuild.Admins.Remove(userId);

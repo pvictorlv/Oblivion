@@ -176,10 +176,8 @@ namespace Oblivion.Collections
             var list = new List<T>();
             while (_removeQueue.TryDequeue(out var item))
             {
-                if (Inner.ContainsKey(item))
+                if (Inner.TryRemove(item, out var value))
                 {
-                    var value = Inner[item];
-                    Inner.TryRemove(item, out _);
                     var keyValuePair = new KeyValuePair<T, TV>(item, value);
                     _onRemove?.Invoke(keyValuePair, null);
                 }

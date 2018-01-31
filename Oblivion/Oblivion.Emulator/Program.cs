@@ -31,7 +31,6 @@ namespace Oblivion
         public static void Main(string[] args)
         {
             IntPtr hWnd = Process.GetCurrentProcess().MainWindowHandle;
-
             SetWindowPos(hWnd,
                 new IntPtr(HWND_TOPMOST),
                 0, 0, 0, 0,

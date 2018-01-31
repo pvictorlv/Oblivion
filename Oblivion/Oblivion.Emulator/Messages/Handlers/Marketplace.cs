@@ -233,13 +233,10 @@ namespace Oblivion.Messages.Handlers
                                       Item.SpriteId + "', '1', '" + Convert.ToInt32(Row["total_price"]) + "')");
 
 
-                if (Oblivion.GetGame().GetCatalog().GetMarketplace().MarketAverages.ContainsKey(Item.SpriteId) &&
-                    Oblivion.GetGame().GetCatalog().GetMarketplace().MarketCounts.ContainsKey(Item.SpriteId))
+                if (Oblivion.GetGame().GetCatalog().GetMarketplace().MarketAverages.TryGetValue(Item.SpriteId, out var num3) &&
+                    Oblivion.GetGame().GetCatalog().GetMarketplace().MarketCounts.TryGetValue(Item.SpriteId, out var num5))
                 {
-                    var num3 = Oblivion.GetGame().GetCatalog().GetMarketplace().MarketCounts[Item.SpriteId];
-                    var num4 =
-                        Oblivion.GetGame().GetCatalog().GetMarketplace().MarketAverages[Item.SpriteId] +=
-                            Convert.ToInt32(Row["total_price"]);
+                    var num4 = num5 + Convert.ToInt32(Row["total_price"]);
 
                     Oblivion.GetGame().GetCatalog().GetMarketplace().MarketAverages.Remove(Item.SpriteId);
                     Oblivion.GetGame().GetCatalog().GetMarketplace().MarketAverages.Add(Item.SpriteId, num4);

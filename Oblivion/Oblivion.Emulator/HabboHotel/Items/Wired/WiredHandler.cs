@@ -122,13 +122,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         public bool OtherBoxHasItem(IWiredItem Box, RoomItem boxItem)
         {
-            return (from item in GetEffects(Box)
-                where item.Item.Id != Box.Item.Id
-                where item.Type == Interaction.ActionMoveRotate || item.Type == Interaction.ActionMoveToDir ||
-                      item.Type == Interaction.ActionChase || item.Type == Interaction.ActionInverseChase ||
-                      item.Type == Interaction.ActionPosReset
-                where item.Items != null && item.Items.Count > 0
-                select item).Any(item => item.Items.Contains(boxItem));
+            return GetEffects(Box).Where(item => item.Item.Id != Box.Item.Id && (item.Type == Interaction.ActionMoveRotate || item.Type == Interaction.ActionMoveToDir || item.Type == Interaction.ActionChase || item.Type == Interaction.ActionInverseChase || item.Type == Interaction.ActionPosReset)).Where(item => item.Items != null && item.Items.Count > 0).Any(item => item.Items.Contains(boxItem));
         }
 
         public static void SaveWired(IWiredItem fItem)
@@ -738,7 +732,8 @@ namespace Oblivion.HabboHotel.Items.Wired
             if (Instance == null || Item == null)
                 return false;
 
-            foreach (RoomUser User in Item.GetSides().Select(point => Instance.GetGameMap().GetRoomUsers(point)).Where(users => users.Count > 0).SelectMany(users => users))
+            foreach (RoomUser User in Item.GetSides().Select(point => Instance.GetGameMap().GetRoomUsers(point))
+                .Where(users => users.Count > 0).SelectMany(users => users))
             {
                 ExecuteWired(Interaction.TriggerCollision, User, Item);
             }
@@ -771,6 +766,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
             return items;
         }
+
         public void Destroy()
         {
             CleanUp();

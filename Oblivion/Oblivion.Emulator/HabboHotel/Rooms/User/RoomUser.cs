@@ -943,9 +943,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 return;
             }
-            if (!Statusses.ContainsKey("mv"))
-                return;
-            Statusses.TryRemove("mv", out _);
+            if (Statusses.TryRemove("mv", out _))
             UpdateNeeded = true;
         }
 
@@ -1278,9 +1276,10 @@ namespace Oblivion.HabboHotel.Rooms.User
             stringBuilder.Append("/");
             message.AppendString(stringBuilder.ToString());
 
-            if (!Statusses.ContainsKey("sign")) return;
-            RemoveStatus("sign");
-            UpdateNeeded = true;
+            if (Statusses.TryRemove("sign", out _))
+            {
+                UpdateNeeded = true;
+            }
         }
 
         /// <summary>

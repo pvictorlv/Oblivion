@@ -90,12 +90,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
                 if (!Room.GetRoomItemHandler().FloorItems.ContainsKey(item.Id)) continue;
 
-                if (Room.GetWiredHandler().OtherBoxHasItem(this, item))
-                {
-                    _toRemove.Enqueue(item);
-                    continue;
-                }
-
                 var Point = Room.GetGameMap().GetChaseMovement(item);
 
 

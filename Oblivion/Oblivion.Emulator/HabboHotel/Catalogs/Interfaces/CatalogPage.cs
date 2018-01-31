@@ -137,8 +137,8 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
         {
             var num = pId;
             var flatInt = (int)pId;
-            if (FlatOffers.ContainsKey(flatInt))
-                return Items[FlatOffers[flatInt]];
+            if (FlatOffers.TryGetValue(flatInt, out var flatOff))
+                return Items[flatOff];
             return Items.TryGetValue(num, out CatalogItem it) ? it : null;
         }
     }

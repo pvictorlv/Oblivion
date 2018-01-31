@@ -179,9 +179,8 @@ namespace Oblivion.HabboHotel.Commands
                 /* TODO CHECK */ foreach (DataRow commandRow in commandsTable.Rows)
                 {
                     var key = commandRow["command"].ToString();
-                    if (!CommandsDictionary.ContainsKey(key)) continue;
+                    if (!CommandsDictionary.TryGetValue(key, out var command)) continue;
                     
-                    var command = CommandsDictionary[key];
 
                     if (!string.IsNullOrEmpty(commandRow["description"].ToString()))
                         command.Description = commandRow["description"].ToString();
@@ -236,9 +235,12 @@ namespace Oblivion.HabboHotel.Commands
 
             var commandName = pms[0];
 
-            if (AliasDictionary.ContainsKey(commandName)) commandName = AliasDictionary[commandName];
+            if (AliasDictionary.TryGetValue(commandName, out var newName))
+            {
+                commandName = newName;
+            }
 
-            if (!CommandsDictionary.ContainsKey(commandName)) return false;
+            if (!CommandsDictionary.TryGetValue(commandName, out var command)) return false;
 
             if (client.GetHabbo().CurrentRoom.RoomData.BlockedCommands.Contains(commandName) ||
                 client.GetHabbo().Data.BlockedCommands.Contains(commandName))
@@ -247,10 +249,7 @@ namespace Oblivion.HabboHotel.Commands
                 return false;
             }
 
-            
-
-            var command = CommandsDictionary[commandName];
-
+           
             if (!CanUse(command.MinRank, client)) return false;
 
             if (command.MinParams == -2 || (command.MinParams == -1 && pms.Length > 1) ||

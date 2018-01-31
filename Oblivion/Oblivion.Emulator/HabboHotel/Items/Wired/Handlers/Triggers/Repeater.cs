@@ -12,6 +12,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
         private int _delay;
         private long _mNext;
 
+        public double TickCount { get; set; }
+        public bool Requested { get; set; }
+
         public Repeater(RoomItem item, Room room)
         {
             Item = item;
@@ -28,8 +31,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
         public bool Disposed { get; set; }
 
 
-        public double TickCount { get; set; }
-        public bool Requested { get; set; }
 
         public async Task<bool> OnCycle()
         {

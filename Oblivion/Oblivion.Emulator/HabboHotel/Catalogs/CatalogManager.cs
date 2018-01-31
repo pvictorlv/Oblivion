@@ -209,8 +209,8 @@ namespace Oblivion.HabboHotel.Catalogs
         {
             CatalogItem result = null;
 
-            if (FlatOffers.ContainsKey(offerId))
-                result = Offers[FlatOffers[offerId]];
+            if (FlatOffers.TryGetValue(offerId, out var flatOff))
+                result = Offers[flatOff];
 
             return result ?? (Oblivion.GetGame().GetCatalog().GetItem(Convert.ToUInt32(offerId)));
         }

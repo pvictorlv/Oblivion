@@ -9,7 +9,6 @@ namespace Oblivion.HabboHotel.Camera
 {
     public class CameraPhotoManager
     {
-
         private readonly Dictionary<int, CameraPhotoPreview> _previews;
         private int _maxPreviewCacheCount = 1000;
 
@@ -56,7 +55,8 @@ namespace Oblivion.HabboHotel.Camera
             Out.WriteLine("Loaded Camera Photo Manager", "Oblivion.Camera");
         }
 
-        public CameraPhotoPreview GetPreview(int PhotoId) => !_previews.ContainsKey(PhotoId) ? null : _previews[PhotoId];
+        public CameraPhotoPreview GetPreview(int PhotoId) =>
+            _previews.TryGetValue(PhotoId, out var preview) ? preview : null;
 
         public void AddPreview(CameraPhotoPreview preview)
         {
@@ -81,6 +81,7 @@ namespace Oblivion.HabboHotel.Camera
         }
     }
 }
+
 public enum CameraPhotoType
 {
     PREVIEW,

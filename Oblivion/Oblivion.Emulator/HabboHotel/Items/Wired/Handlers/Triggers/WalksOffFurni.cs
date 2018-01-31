@@ -66,13 +66,16 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             if (stuff.Length < 2) return false;
 
             var roomUser = (RoomUser) stuff[0];
-            if (roomUser == null) return false;
+            if (roomUser == null || roomUser.IsBot || roomUser.IsPet)
+                return false;
 
             var roomItem = (RoomItem) stuff[1];
             if (roomItem == null) return false;
 
 
-            if (!Items.Contains(roomItem) || roomUser.LastItem != roomItem.Id)
+            if (!Items.Contains(roomItem)) return false;
+
+            if (roomUser.LastItem != roomItem.Id)
                 return false;
 
             if (roomItem.AffectedTiles.Values.Any(
@@ -80,9 +83,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                            roomUser.X == roomItem.X && roomUser.Y == roomItem.Y))
                 return false;
 
-            var num = Oblivion.Now();
-            if (num <= _mNext)
-                await Task.Delay((int) (_mNext - num));
+        
 
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
@@ -129,7 +130,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
             WiredHandler.OnEvent(this);
 
-            _mNext = Oblivion.Now() + Delay;
 
 
             return true;

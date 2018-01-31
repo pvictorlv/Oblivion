@@ -35,7 +35,7 @@ namespace Oblivion.HabboHotel.Achievements.Composers
 
                 var achievementLevel = achievement.Levels[i];
 
-                var oldLevel = (achievement.Levels.ContainsKey(i - 1)) ? achievement.Levels[i - 1] : achievementLevel;
+                var oldLevel = (achievement.Levels.TryGetValue(i - 1, out var level)) ? level : achievementLevel;
 
                 serverMessage.AppendInteger(achievement.Id);
                 serverMessage.AppendInteger(i);

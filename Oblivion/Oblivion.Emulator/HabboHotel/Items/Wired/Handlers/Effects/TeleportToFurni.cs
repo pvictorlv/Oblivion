@@ -9,21 +9,24 @@ using System.Threading.Tasks;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
-    internal class TeleportToFurni : IWiredItem
+    internal class TeleportToFurni : IWiredItem, IWiredCycler
     {
         private List<Interaction> _mBanned;
 
         private long _mNext;
-        public bool Requested { get; set; }
+        private Queue<RoomUser> _queue;
 
 
         public void Dispose()
         {
             _mBanned.Clear();
             _mBanned = null;
+            _queue.Clear();
+            _queue = null;
         }
 
         public bool Disposed { get; set; }
+
         public TeleportToFurni(RoomItem item, Room room)
         {
             Item = item;
@@ -31,13 +34,14 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             Items = new ConcurrentList<RoomItem>();
             Delay = 0;
             _mNext = 0L;
+            _queue = new Queue<RoomUser>();
             _mBanned = new List<Interaction>
             {
                 Interaction.TriggerRepeater,
                 Interaction.TriggerLongRepeater
             };
         }
-  
+
         public Interaction Type => Interaction.ActionTeleportTo;
 
         public RoomItem Item { get; set; }
@@ -70,41 +74,70 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             set { }
         }
 
-        public int Delay { get; set; }
+        public double TickCount { get; set; }
 
-        public async Task<bool> Execute(params object[] stuff)
+
+        private int _delay;
+
+        public int Delay
         {
-            var roomUser = (RoomUser) stuff[0];
+            get => _delay;
+            set
+            {
+                _delay = value;
+                TickCount = value / 1000;
+            }
+        }
+
+        public bool Requested;
+
+        public async Task<bool> Execute(params object[] Params)
+        {
+            if (Item == null || Items.Count == 0)
+                return false;
+
+
+            var roomUser = (RoomUser) Params[0];
             if (roomUser?.GetClient()?.GetHabbo() == null) return false;
-            var item = (Interaction) stuff[1];
-            
+            var item = (Interaction) Params[1];
+
             if (_mBanned.Contains(item))
                 return false;
 
-            if (Items?.Count < 0)
-                return false;
+            if (_queue == null || _queue.Contains(roomUser)) return false;
+            _queue.Enqueue(roomUser);
+
+            Requested = true;
+
+
+            return true;
+        }
+
+        public async Task<bool> OnCycle()
+        {
+            if (!Requested) return false;
+            if (_queue == null || _queue.Count <= 0) return false;
 
             var num = Oblivion.Now();
 
 
-            if (_mNext > num)
-                await Task.Delay((int) (_mNext - num));
+            if (_mNext >= num)
+                return false;
+            while (_queue.Count > 0)
+            {
+                var roomUser = _queue.Dequeue();
+                await Task.Delay(1000);
 
-            roomUser.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent()?.ActivateCustomEffect(4);
-            await Task.Delay(1000);
-
-            Teleport(roomUser);
-
-
-            roomUser.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent()?.ActivateCustomEffect(0);
-
-
+                Teleport(roomUser);
+            }
 
             _mNext = Oblivion.Now() + Delay;
 
 
             return true;
         }
+
+
 
         private void Teleport(RoomUser user)
         {
@@ -130,15 +163,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             if (roomItem == null)
             {
-                user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(0);
                 return;
             }
             int oldX = user.X, oldY = user.Y;
             Room.GetGameMap().TeleportToItem(user, roomItem);
             Room.GetRoomUserManager().OnUserUpdateStatus(oldX, oldY);
             Room.GetRoomUserManager().OnUserUpdateStatus(roomItem.X, roomItem.Y);
-            user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(0);
-
         }
     }
 }

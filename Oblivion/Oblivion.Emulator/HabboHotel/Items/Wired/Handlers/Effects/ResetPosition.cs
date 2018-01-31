@@ -25,7 +25,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public void Dispose()
         {
-
         }
 
         public bool Disposed { get; set; }
@@ -58,7 +57,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             if (Items?.Count == 0)
                 return false;
-            
+
             if (string.IsNullOrWhiteSpace(OtherString) || string.IsNullOrWhiteSpace(OtherExtraString))
                 return false;
 
@@ -70,7 +69,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             var num = Oblivion.Now();
 
             if (_mNext > num)
-                await Task.Delay((int)(_mNext - num));
+                await Task.Delay((int) (_mNext - num));
 
 
             var extraData = booleans[0] == "true";
@@ -91,10 +90,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     var itemId = uint.Parse(innerData[0]);
 
                     var fItem = Room.GetRoomItemHandler().GetItem(itemId);
-                    if (Room.GetWiredHandler().OtherBoxHasItem(this, fItem))
-                    {
-                        continue;
-                    }
+                   
 
                     if (fItem == null)
                         continue;
@@ -106,15 +102,21 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     if (positions.Length < 3)
                         continue;
 
-                    int xToSet;
-                    if (position) int.TryParse(positions[0], out xToSet);
-                    else xToSet = fItem.X;
-                    int yToSet;
-                    if (position) int.TryParse(positions[1], out yToSet);
-                    else yToSet = fItem.Y;
+                    int xToSet, yToSet;
                     double zToSet;
-                    if (position) double.TryParse(positions[2], out zToSet);
-                    else zToSet = fItem.Z;
+
+                    if (position)
+                    {
+                        int.TryParse(positions[0], out xToSet);
+                        int.TryParse(positions[1], out yToSet);
+                        double.TryParse(positions[2], out zToSet);
+                    }
+                    else
+                    {
+                        xToSet = fItem.X;
+                        yToSet = fItem.Y;
+                        zToSet = fItem.Z;
+                    }
 
 
                     var serverMessage =
@@ -131,8 +133,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     Room.SendMessage(serverMessage);
 
                     Room.GetRoomItemHandler().SetFloorItem(null, fItem, xToSet, yToSet, rotationToSet, false, false,
-                        false,
-                        false, false);
+                        true,
+                        false, true);
                     fItem.ExtraData = extraDataToSet;
                     fItem.UpdateState();
                 }

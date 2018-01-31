@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
-    public class KickUser : IWiredItem
+    public class KickUser : IWiredItem, IWiredCycler
     {
         private List<Interaction> _mBanned;
-        public bool Requested { get; set; }
+
 
         public KickUser(RoomItem item, Room room)
         {
@@ -25,14 +25,21 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 Interaction.TriggerLongRepeater,
                 Interaction.TriggerRoomEnter
             };
+            _queue = new Queue<RoomUser>();
         }
+
+
+        private long _mNext;
+        private Queue<RoomUser> _queue;
+
 
         public void Dispose()
         {
             _mBanned.Clear();
             _mBanned = null;
+            _queue.Clear();
+            _queue = null;
         }
-
         public bool Disposed { get; set; }
         public Interaction Type => Interaction.ActionKickUser;
 
@@ -46,7 +53,53 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             set { }
         }
 
-        public int Delay { get; set; }
+        public double TickCount { get; set; }
+
+
+        private int _delay;
+
+        public int Delay
+        {
+            get => _delay;
+            set
+            {
+                _delay = value;
+                TickCount = value / 1000;
+            }
+        }
+
+        public bool Requested;
+
+        public async Task<bool> OnCycle()
+        {
+            if (!Requested) return false;
+            if (_queue == null || _queue.Count <= 0) return false;
+
+            var num = Oblivion.Now();
+
+
+            if (_mNext >= num)
+                return false;
+
+            while (_queue.Count > 0)
+            {
+                var roomUser = _queue.Dequeue();
+                await Task.Delay(Delay);
+
+
+                if (!string.IsNullOrEmpty(OtherString))
+                    roomUser.GetClient().SendNotif(OtherString);
+
+
+                Room.GetRoomUserManager().RemoveUserFromRoom(roomUser.GetClient(), true, false);
+
+            }
+
+            _mNext = Oblivion.Now() + Delay;
+
+
+            return true;
+        }
 
         public string OtherString { get; set; }
 
@@ -68,29 +121,28 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             set { }
         }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] Params)
         {
-            if (stuff.Length < 2)
+            if (Item == null || Items.Count == 0)
                 return false;
 
-            var roomUser = (RoomUser) stuff[0];
-            var item = (Interaction) stuff[1];
 
-            if (roomUser == null)
-                return false;
+            var roomUser = (RoomUser)Params[0];
+            if (roomUser?.GetClient()?.GetHabbo() == null) return false;
+            var item = (Interaction)Params[1];
+
             if (_mBanned.Contains(item))
                 return false;
 
-            await Task.Delay(Delay);
+            if (_queue == null || _queue.Contains(roomUser)) return false;
+            _queue.Enqueue(roomUser);
 
+            Requested = true;
 
-            if (!string.IsNullOrEmpty(OtherString))
-                roomUser.GetClient().SendNotif(OtherString);
-
-
-            Room.GetRoomUserManager().RemoveUserFromRoom(roomUser.GetClient(), true, false);
 
             return true;
         }
+
+
     }
 }

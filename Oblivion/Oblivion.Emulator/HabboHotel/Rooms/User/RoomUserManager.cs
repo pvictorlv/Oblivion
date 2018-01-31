@@ -523,8 +523,8 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         /// <param name="virtualId">The virtual identifier.</param>
         /// <returns>RoomUser.</returns>
-        internal RoomUser GetRoomUserByVirtualId(int virtualId) => UserList.ContainsKey(virtualId)
-            ? UserList[virtualId]
+        internal RoomUser GetRoomUserByVirtualId(int virtualId) => UserList.TryGetValue(virtualId, out var user)
+            ? user
             : null;
 
         /// <summary>
@@ -683,14 +683,12 @@ namespace Oblivion.HabboHotel.Rooms.User
 
             if (removeStatusses)
             {
-                if (user.Statusses.ContainsKey("lay"))
+                if (user.Statusses.TryRemove("lay", out _))
                 {
-                    user.Statusses.TryRemove("lay", out _);
                     user.UpdateNeeded = true;
                 }
-                if (user.Statusses.ContainsKey("sit"))
+                if (user.Statusses.TryRemove("sit", out _))
                 {
-                    user.Statusses.TryRemove("sit", out _);
                     user.UpdateNeeded = true;
                 }
             }
@@ -1123,17 +1121,15 @@ namespace Oblivion.HabboHotel.Rooms.User
             // Check if User Is ina  Special Action..
 
             // User is Laying Down..
-            if (roomUsers.Statusses.ContainsKey("lay") || roomUsers.IsLyingDown)
+            if (roomUsers.Statusses.TryRemove("lay", out _) || roomUsers.IsLyingDown)
             {
-                roomUsers.Statusses.TryRemove("lay", out _);
                 roomUsers.IsLyingDown = false;
                 roomUsers.UpdateNeeded = true;
             }
 
             // User is Sitting Down..
-            if ((roomUsers.Statusses.ContainsKey("sit") || roomUsers.IsSitting) && (!roomUsers.RidingHorse))
+            if ((roomUsers.Statusses.TryRemove("sit", out _) || roomUsers.IsSitting) && (!roomUsers.RidingHorse))
             {
-                roomUsers.Statusses.TryRemove("sit", out _);
                 roomUsers.IsSitting = false;
                 roomUsers.UpdateNeeded = true;
             }

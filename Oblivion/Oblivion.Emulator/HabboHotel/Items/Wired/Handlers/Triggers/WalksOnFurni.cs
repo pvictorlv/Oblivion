@@ -61,30 +61,30 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public bool Disposed { get; set; }
 
+
         public async Task<bool> Execute(params object[] stuff)
         {
             var roomUser = (RoomUser) stuff[0];
-            if (roomUser == null)
+            if (roomUser == null || roomUser.IsBot|| roomUser.IsPet)
                 return false;
             var roomItem = (RoomItem) stuff[1];
             if (roomItem == null)
                 return false;
 
+            if (!Items.Contains(roomItem)) return false;
+
 
             var userPosition = roomUser.X;
             var lastUserPosition = roomUser.CopyX;
 
-            if (!Items.Contains(roomItem) || roomUser.LastItem != 0 && roomUser.LastItem == roomItem.Id &&
+            if (roomUser.LastItem != 0 && roomUser.LastItem == roomItem.Id &&
                 userPosition == lastUserPosition)
                 return false;
 
-            if (roomItem.GetRoom() == null || roomItem.GetRoom().GetRoomItemHandler() == null || roomItem.GetRoom()
+            if (Room
                     .GetRoomItemHandler().FloorItems.Values
                     .Any(i => i.X == roomItem.X && i.Y == roomItem.Y && i.Z > roomItem.Z))
                 return false;
-            var num = Oblivion.Now();
-            if (num <= _mNext)
-                await Task.Delay((int) (_mNext - num));
 
 
             var conditions = Room.GetWiredHandler().GetConditions(this);
@@ -130,7 +130,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             }
 
             WiredHandler.OnEvent(this);
-            _mNext = Oblivion.Now() + Delay;
 
 
             return true;

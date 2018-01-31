@@ -342,8 +342,8 @@ namespace Oblivion.HabboHotel.Achievements
         /// </summary>
         /// <param name="achievementGroup">The achievement group.</param>
         /// <returns>Achievement.</returns>
-        internal Achievement GetAchievement(string achievementGroup) => Achievements.ContainsKey(achievementGroup)
-            ? Achievements[achievementGroup]
+        internal Achievement GetAchievement(string achievementGroup) => Achievements.TryGetValue(achievementGroup, out var ach)
+            ? ach
             : new Achievement();
     }
 }
