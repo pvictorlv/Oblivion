@@ -36,7 +36,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             var num = Oblivion.Now();
 
             if (NextExec >= num)
-                await Task.Delay((int) (NextExec - num));
+                return false;
 
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
@@ -44,7 +44,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             if (conditions.Count > 0)
                 foreach (var current in conditions)
                 {
-                    if (!current.Execute(null).Result)
+                    if (!await current.Execute(null))
                         return false;
 
                     WiredHandler.OnEvent(current);

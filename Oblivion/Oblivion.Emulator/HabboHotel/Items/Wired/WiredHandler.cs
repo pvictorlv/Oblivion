@@ -196,8 +196,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 {
                     if (current != null && current.Type == type)
                     {
-                        var bW = await current.Execute(stuff);
-                        if (bW)
+                        if (current.Execute(stuff).Result)
                         {
                             b = true;
                         }

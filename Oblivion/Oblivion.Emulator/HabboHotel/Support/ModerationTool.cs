@@ -514,7 +514,7 @@ namespace Oblivion.HabboHotel.Support
                 message.AppendInteger(ticket.RoomId);
 
                 var tempChatlogs =
-                    room.RoomChat.Reverse().Skip(Math.Max(0, room.RoomChat.Count - 60)).Take(60).ToList();
+                    room.RoomChat.Skip(Math.Max(0, room.RoomChat.Count - 60)).Take(60).ToList();
 
                 message.AppendShort(tempChatlogs.Count);
 
@@ -553,7 +553,7 @@ namespace Oblivion.HabboHotel.Support
 
                 var tempChatlogs = new List<Chatlog>();
                 var i = 0;
-                foreach (var chatlog in room.RoomData.RoomChat.Reverse().TakeWhile(chatlog => i < 150))
+                foreach (var chatlog in room.RoomData.RoomChat.TakeWhile(chatlog => i < 150))
                 {
                     tempChatlogs.Add(chatlog);
                     i++;

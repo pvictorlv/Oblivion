@@ -545,15 +545,15 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return new Point(x, y);
             }
         }
+
         /// <summary>
         ///     Gets the square in front.
         /// </summary>
         /// <value>The square in front.</value>
         internal Point SquaresInFront(int count)
         {
-            
-                var x = X + count;
-                var y = 0;
+            var x = X + count;
+            var y = 0;
             switch (RotBody)
             {
                 case 0:
@@ -597,8 +597,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                     break;
             }
             return new Point(x, y);
-            
         }
+
         internal Point SquareInFrontSet
         {
             get
@@ -744,6 +744,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         }
 
         private bool _disposed;
+
         /// <summary>
         ///     Disposes this instance.
         /// </summary>
@@ -857,8 +858,11 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (session.GetHabbo() != null)
                     rank = session.GetHabbo().Rank;
 
-                msg = GetRoom()
-                    .RoomData.WordFilter.Aggregate(msg, (current, s) => Regex.Replace(current, Regex.Escape(s), "bobba", RegexOptions.IgnoreCase));
+                if (GetRoom()?
+                        .RoomData?.WordFilter != null && GetRoom()
+                        .RoomData.WordFilter.Count > 0)
+                    msg = GetRoom()
+                        .RoomData.WordFilter.Aggregate(msg, (current, s) => Regex.Replace(current, Regex.Escape(s), "bobba", RegexOptions.IgnoreCase));
 
                 if (rank < 4)
                 {
@@ -868,7 +872,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                         _floodCount = 0;
                         habbo.SpamProtectionBol = false;
                         habbo.SpamProtectionAbuse = 0;
-                    } else if (span.TotalSeconds > 4.0)
+                    }
+                    else if (span.TotalSeconds > 4.0)
                         _floodCount = 0;
                     ServerMessage message;
                     if (span.TotalSeconds < habbo.SpamProtectionTime && habbo.SpamProtectionBol)
@@ -881,7 +886,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                         GetClient().SendMessage(message);
                         return;
                     }
-                    if (span.TotalSeconds < 4.0 && _floodCount > 5 * (_mRoom.RoomData.ChatFloodProtection + 1) && rank < 5)
+                    if (span.TotalSeconds < 4.0 && _floodCount > 5 * (_mRoom.RoomData.ChatFloodProtection + 1) &&
+                        rank < 5)
                     {
                         message = new ServerMessage(LibraryParser.OutgoingRequest("FloodFilterMessageComposer"));
                         habbo.SpamProtectionCount++;
@@ -934,7 +940,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             GoalX = 0;
             GoalY = 0;
             SetStep = false;
-            
+
             SetX = 0;
             SetY = 0;
             SetZ = 0.0;
@@ -944,7 +950,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
             }
             if (Statusses.TryRemove("mv", out _))
-            UpdateNeeded = true;
+                UpdateNeeded = true;
         }
 
         /// <summary>

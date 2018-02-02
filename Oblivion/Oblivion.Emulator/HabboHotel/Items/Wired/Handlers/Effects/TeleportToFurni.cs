@@ -104,10 +104,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (_mBanned.Contains(item))
                 return false;
 
+            Requested = true;
+
+
             if (_queue == null || _queue.Contains(roomUser)) return false;
             _queue.Enqueue(roomUser);
 
-            Requested = true;
 
 
             return true;
@@ -123,10 +125,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             if (_mNext >= num)
                 return false;
+
+            await Task.Yield();
+
             while (_queue.Count > 0)
             {
                 var roomUser = _queue.Dequeue();
-                await Task.Delay(1000);
 
                 Teleport(roomUser);
             }

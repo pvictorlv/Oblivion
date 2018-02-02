@@ -145,7 +145,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         /// <summary>
         ///     The room chat
         /// </summary>
-        internal ConcurrentStack<Chatlog> RoomChat;
+        internal List<Chatlog> RoomChat;
 
         /// <summary>
         ///     The score
@@ -274,7 +274,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
             WhoCanMute = 0;
             TradeState = 2;
             State = 0;
-            RoomChat = new ConcurrentStack<Chatlog>();
+            RoomChat = new List<Chatlog>(200);
             WordFilter = new List<string>();
             WallHeight = -1;
             _model = Oblivion.GetGame().GetRoomManager().GetModel(ModelName, Id);
@@ -296,7 +296,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 Type = (string) row["roomtype"];
                 Owner = (string) row["owner"];
                 OwnerId = 0;
-                RoomChat = new ConcurrentStack<Chatlog>();
+                RoomChat = new List<Chatlog>(200);
                 WordFilter = new List<string>();
                 BlockedCommands = new List<string>();
 

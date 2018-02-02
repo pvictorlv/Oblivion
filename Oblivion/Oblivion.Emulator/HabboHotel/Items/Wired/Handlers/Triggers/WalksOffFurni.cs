@@ -11,7 +11,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 {
     internal class WalksOffFurni : IWiredItem
     {
-        private long _mNext;
 
         public WalksOffFurni(RoomItem item, Room room)
         {

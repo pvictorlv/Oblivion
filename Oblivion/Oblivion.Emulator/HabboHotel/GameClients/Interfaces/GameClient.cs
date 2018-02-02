@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Oblivion.Configuration;
 using Oblivion.Connection.Connection;
 using Oblivion.Connection.Net;

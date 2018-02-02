@@ -9,16 +9,21 @@ namespace Oblivion.Manager
     {
         private static Thread _thread;
         public static bool Working;
+
         public static void StartProcess()
         {
-            _thread = new Thread(Process) { Name = "Cache Thread" };
+            _thread = new Thread(Process)
+            {
+                Name = "Cache Thread",
+                IsBackground = true
+            };
             _thread.Start();
             Working = true;
         }
 
         public static void StopProcess()
         {
-            _thread.Abort();//todo: use timer
+            _thread.Abort(); //todo: use timer
             Working = false;
         }
 
@@ -45,7 +50,6 @@ namespace Oblivion.Manager
 
         private static void ClearUserCache()
         {
-
             foreach (var user in Oblivion.UsersCached.ToArray())
             {
                 if (user.Value == null)
@@ -69,13 +73,14 @@ namespace Oblivion.Manager
 
         private static void RemoveUser(uint user)
         {
-            Oblivion.UsersCached.TryRemove(user, out var removedUser);
-            removedUser.RemoveCached();
+            if (Oblivion.UsersCached.TryRemove(user, out var removedUser))
+                removedUser.RemoveCached();
         }
 
         private static void ClearRoomsCache()
         {
-            if (Oblivion.GetGame() == null || Oblivion.GetGame().GetRoomManager() == null || Oblivion.GetGame().GetRoomManager().LoadedRoomData == null)
+            if (Oblivion.GetGame() == null || Oblivion.GetGame().GetRoomManager() == null ||
+                Oblivion.GetGame().GetRoomManager().LoadedRoomData == null)
                 return;
 
             foreach (var roomData in Oblivion.GetGame().GetRoomManager().LoadedRoomData.Values.ToList())
@@ -89,7 +94,6 @@ namespace Oblivion.Manager
                     }
                 }
             }
-            
         }
     }
 }

@@ -78,7 +78,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             var num = Oblivion.Now();
 
 
-            if (_mNext >= num)
+            if (_mNext > num)
                 return false;
 
             while (_queue.Count > 0)
@@ -123,10 +123,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public async Task<bool> Execute(params object[] Params)
         {
-            if (Item == null || Items.Count == 0)
-                return false;
-
-
+            
             var roomUser = (RoomUser)Params[0];
             if (roomUser?.GetClient()?.GetHabbo() == null) return false;
             var item = (Interaction)Params[1];
@@ -134,10 +131,11 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (_mBanned.Contains(item))
                 return false;
 
+            Requested = true;
+
             if (_queue == null || _queue.Contains(roomUser)) return false;
             _queue.Enqueue(roomUser);
 
-            Requested = true;
 
 
             return true;
