@@ -121,7 +121,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             set { }
         }
 
-        public async Task<bool> Execute(params object[] Params)
+        public bool Execute(params object[] Params)
         {
             
             var roomUser = (RoomUser)Params[0];

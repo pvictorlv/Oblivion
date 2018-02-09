@@ -146,11 +146,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="pState">State of the p.</param>
         /// <param name="pOverride">if set to <c>true</c> [p override].</param>
         /// <returns><c>true</c> if this instance can walk the specified p state; otherwise, <c>false</c>.</returns>
-        internal static bool CanWalk(byte pState, bool pOverride)
-        {
-            
-           return pOverride || pState == 3 || pState == 1;
-        }
+        internal static bool CanWalk(byte pState, bool pOverride) => pOverride || pState == 3 || pState == 1;
 
         /// <summary>
         ///     Gets the affected tiles.
@@ -517,17 +513,14 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                         }
                     }
 
-
-                    /* TODO CHECK */
-
+                    
                     foreach (var item in floorItems)
                     {
                         AddItemToMap(item);
-                    }
-                    var doors = floorItems.Where(x => (x.GetBaseItem().InteractionType == Interaction.Gate && x.ExtraData == "0"));
-                    foreach (var door in doors)
-                    {
-                        GameMap[door.X, door.Y] = 0;
+                        if (item.GetBaseItem().InteractionType == Interaction.Gate && item.ExtraData == "0")
+                        {
+                            GameMap[item.X, item.Y] = 0;
+                        }
                     }
 
                     floorItems.Clear();
@@ -541,7 +534,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                         }
                     }
 
-                    GameMap[Model.DoorX, Model.DoorY] = 3;
                     break;
                 }
             }
@@ -637,39 +629,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
             return returnItems;
         }
-
-        /// <summary>
-        ///     Removes from map.
-        /// </summary>
-        /// <param name="item">The item.</param>
-        /// <param name="handleGameItem">if set to <c>true</c> [handle game item].</param>
-        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        /* internal bool RemoveFromMap(RoomItem item, bool handleGameItem)
-         {
-             if (item?.GetCoords == null) return false;
-
-             RemoveSpecialItem(item);
-             if (_room.GotSoccer())
-                 _room.GetSoccer().OnGateRemove(item);
-             var result = false;
-             var dictionary = new List<Point>();
-             foreach (var current in item.GetCoords)
-             {
-                 if (RemoveCoordinatedItem(item, current))
-                 {
-                     result = true;
-                     continue;
-                 }
-                 SetDefaultValue(current.X, current.Y);
-             }
-             if (GuildGates.ContainsKey(item.Coordinate))
-                 GuildGates.Remove(item.Coordinate);
-             _room.GetRoomItemHandler().OnHeightMapUpdate(dictionary);
-             dictionary.Clear();
-
-             return result;
-         }
- */
+        
         internal bool RemoveFromMap(RoomItem item, bool handleGameItem)
         {
             RemoveSpecialItem(item);
@@ -932,65 +892,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
             return SqAbsoluteHeight(to.X, to.Y) - SqAbsoluteHeight(from.X, from.Y) <= 1.5;
         }
-
-        /// <summary>
-        ///     Determines whether [is valid step2] [the specified user].
-        /// </summary>
-        /// <param name="user">The user.</param>
-        /// <param name="from">From.</param>
-        /// <param name="to">To.</param>
-        /// <param name="endOfPath">if set to <c>true</c> [end of path].</param>
-        /// <param name="Override">if set to <c>true</c> [override].</param>
-        /// <returns><c>true</c> if [is valid step2] [the specified user]; otherwise, <c>false</c>.</returns>
-        internal bool IsValidStep2(RoomUser user, Point from, Point to, bool endOfPath, bool Override)
-        {
-            if (user == null)
-                return false;
-
-            if (GuildGates.TryGetValue(to, out var roomItem))
-            {
-                var guildId = roomItem.GroupId;
-                if (guildId > 0)
-                    if (user.GetClient().GetHabbo() != null &&
-                        user.GetClient().GetHabbo().MyGroups != null &&
-                        user.GetClient().GetHabbo().MyGroups.Contains(guildId))
-                    {
-                        roomItem.ExtraData = "1";
-                        roomItem.UpdateState();
-                        return true;
-                    }
-            }
-            if (!ValidTile2(to.X, to.Y))
-                return false;
-            if (Override)
-                return true;
-            if (GameMap[to.X, to.Y] == 3 && !endOfPath || GameMap[to.X, to.Y] == 0 ||
-                GameMap[to.X, to.Y] == 2 && !endOfPath ||
-                SqAbsoluteHeight(to.X, to.Y) - SqAbsoluteHeight(from.X, from.Y) > 1.5)
-                return false;
-            var userForSquare = _room.GetRoomUserManager().GetUserForSquare(to.X, to.Y);
-            if (userForSquare != null && endOfPath && !_room.RoomData.AllowWalkThrough)
-            {
-                user.Path.Clear();
-                user.IsWalking = false;
-                user.RemoveStatus("mv");
-                _room.GetRoomUserManager().UpdateUserStatus(user, false);
-                if (user.RidingHorse && !user.IsPet && !user.IsBot)
-                {
-                    var roomUserByVirtualId =
-                        _room.GetRoomUserManager().GetRoomUserByVirtualId(Convert.ToInt32(user.HorseId));
-                    roomUserByVirtualId.IsWalking = false;
-                    roomUserByVirtualId.RemoveStatus("mv");
-                    var message = new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
-                    message.AppendInteger(1);
-                    roomUserByVirtualId.SerializeStatus(message, "");
-                    user.GetClient().GetHabbo().CurrentRoom.SendMessage(message);
-                }
-            }
-            else if (userForSquare != null && !_room.RoomData.AllowWalkThrough && !userForSquare.IsWalking)
-                return false;
-            return true;
-        }
+        
 
 
         /// <summary>

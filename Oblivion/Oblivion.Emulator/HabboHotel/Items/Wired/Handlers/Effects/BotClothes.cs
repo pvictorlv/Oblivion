@@ -56,9 +56,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         public bool Disposed { get; set; }
 
         private RoomUser _bot;
-        public async Task<bool> Execute(params object[] stuff)
+        public bool Execute(params object[] stuff)
         {
-            await Task.Yield();
+            
 
             if (_bot?.BotData == null || _bot.BotData.Name != OtherString)
             {

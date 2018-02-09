@@ -606,7 +606,7 @@ namespace Oblivion.Messages.Handlers
                 Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.FurniRotate);
             var oldCoords = item.GetCoords();
 
-            if (!room.GetRoomItemHandler().SetFloorItem(Session, item, x, y, rot, false, false, true, true, false))
+            if (!room.GetRoomItemHandler().SetFloorItem(Session, item, x, y, rot, false, false, true, true, false, room.CustomHeight))
             {
                 var message3 = new ServerMessage(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer"));
                 item.Serialize(message3);

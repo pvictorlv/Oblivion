@@ -184,7 +184,7 @@ namespace Oblivion.HabboHotel.Items.Wired
             }
         }
 
-        public async Task<bool> ExecuteWired(Interaction type, params object[] stuff)
+        public bool ExecuteWired(Interaction type, params object[] stuff)
         {
             try
             {
@@ -196,7 +196,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 {
                     if (current != null && current.Type == type)
                     {
-                        if (current.Execute(stuff).Result)
+                        if (current.Execute(stuff))
                         {
                             b = true;
                         }

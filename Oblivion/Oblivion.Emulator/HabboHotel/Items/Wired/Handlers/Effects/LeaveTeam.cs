@@ -48,9 +48,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public bool Execute(params object[] stuff)
         {
-            await Task.Yield();
+            
 
             var roomUser = (RoomUser) stuff[0];
             if (roomUser?.GetClient()?.GetHabbo() == null) return false;

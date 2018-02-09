@@ -100,7 +100,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         }
         public bool Requested;
 
-        public async Task<bool> Execute(params object[] Params)
+        public bool Execute(params object[] Params)
         {
             if (Item == null || Items.Count == 0)
                 return false;
@@ -120,11 +120,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (Items == null || Items.Count <= 0)
                 return true;
 
+            await Task.Yield();
+
             var now = Oblivion.Now();
             if (_next > now)
                 return false;
 
-            await Task.Yield();
 
 
             foreach (var Item in Items.ToList())

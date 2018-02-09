@@ -8,7 +8,7 @@ using Oblivion.HabboHotel.Rooms.User;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
-    public class BotFollowAvatar : IWiredItem
+    public class BotFollowAvatar : IWiredItem, IWiredCycler
     {
         public BotFollowAvatar(RoomItem item, Room room)
         {
@@ -29,7 +29,20 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         public ConcurrentList<RoomItem> Items { get; set; }
 
 
-        public int Delay { get; set; }
+        public double TickCount { get; set; }
+
+
+        private int _delay;
+
+        public int Delay
+        {
+            get => _delay;
+            set
+            {
+                _delay = value;
+                TickCount = value / 1000;
+            }
+        }
 
 
         private double _next;
@@ -43,18 +56,16 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         public bool OtherBool { get; set; }
         public bool Disposed { get; set; }
 
-        public async Task<bool> Execute(params object[] Params)
+        public async Task<bool> OnCycle()
         {
-            if (Disposed) return false;
+            if (_following == null) return false;
 
-            var user = (RoomUser) Params[0];
-            if (user == null || user.IsBot) return false;
-
+            await Task.Yield();
 
             var time = Oblivion.Now();
 
             if (_next > time)
-                await Task.Delay((int) (_next - time));
+                return false;
 
             if (!string.IsNullOrEmpty(OtherString))
             {
@@ -65,15 +76,15 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
                 if (OtherBool)
                 {
-                    _bot.FollowingOwner = user;
+                    _bot.FollowingOwner = _following;
 
-                    if (Room.GetGameMap().SquareIsOpen(user.SquareInFront.X, user.SquareInFront.Y, false))
+                    if (Room.GetGameMap().SquareIsOpen(_following.SquareInFront.X, _following.SquareInFront.Y, false))
                     {
-                        _bot.MoveTo(user.SquareInFront);
+                        _bot.MoveTo(_following.SquareInFront);
                     }
                     else
                     {
-                        _bot.MoveTo(user.SquareBehind);
+                        _bot.MoveTo(_following.SquareBehind);
                     }
                 }
                 else
@@ -82,18 +93,33 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 }
             }
 
+            _following = null;
 
             _next = Oblivion.Now() + Delay;
+            return true;
+        }
+
+        public bool Execute(params object[] Params)
+        {
+            if (Disposed) return false;
+
+            var user = (RoomUser) Params[0];
+            if (user == null || user.IsBot) return false;
+
+            _following = user;
+
 
             return true;
         }
 
         private RoomUser _bot;
+        private RoomUser _following;
 
         public void Dispose()
         {
             Disposed = true;
             _bot = null;
+            _following = null;
         }
     }
 }

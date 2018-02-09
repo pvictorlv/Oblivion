@@ -70,9 +70,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             set { }
         }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public bool Execute(params object[] stuff)
         {
-            await Task.Yield();
+            
 
             if (stuff[0] == null)
                 return false;

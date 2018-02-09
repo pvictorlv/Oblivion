@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
-    public class ResetPosition : IWiredItem
+    public class ResetPosition : IWiredItem, IWiredCycler
     {
         public ResetPosition(RoomItem item, Room room)
         {
@@ -37,8 +37,22 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public ConcurrentList<RoomItem> Items { get; set; }
 
-        public int Delay { get; set; }
 
+        private int _delay;
+
+        public double TickCount { get; set; }
+
+        public int Delay
+        {
+            get => _delay;
+            set
+            {
+                _delay = value;
+                TickCount = value / 1000;
+            }
+        }
+
+        public bool Requested;
         private long _mNext;
 
         public string OtherString { get; set; }
@@ -49,9 +63,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
-
-        public async Task<bool> Execute(params object[] stuff)
+        public async Task<bool> OnCycle()
         {
+            if (!Requested) return false;
+
             if (Room == null)
                 return false;
 
@@ -65,11 +80,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             if (booleans.Length < 3)
                 return false;
-
             var num = Oblivion.Now();
 
             if (_mNext > num)
-                await Task.Delay((int) (_mNext - num));
+                return false;
+
+            await Task.Yield();
 
 
             var extraData = booleans[0] == "true";
@@ -90,7 +106,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     var itemId = uint.Parse(innerData[0]);
 
                     var fItem = Room.GetRoomItemHandler().GetItem(itemId);
-                   
+
 
                     if (fItem == null)
                         continue;
@@ -139,7 +155,14 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     fItem.UpdateState();
                 }
             }
+            Requested = false;
             _mNext = Oblivion.Now() + Delay;
+            return true;
+
+        }
+        public bool Execute(params object[] stuff)
+        {
+            Requested = true;
             return true;
         }
     }

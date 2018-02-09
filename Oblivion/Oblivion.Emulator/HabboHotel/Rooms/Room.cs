@@ -211,6 +211,9 @@ namespace Oblivion.HabboHotel.Rooms
         /// <value>The room identifier.</value>
         internal uint RoomId { get; private set; }
 
+        internal double CustomHeight;
+
+
         /// <summary>
         ///     Gets a value indicating whether this instance can trade in room.
         /// </summary>
@@ -359,7 +362,7 @@ namespace Oblivion.HabboHotel.Rooms
                 while (GotWireds() && !Disposed)
                 {
                     _wiredHandler.OnCycle();
-                    await Task.Delay(500);
+                    await Task.Delay(250);
                 }
             }, TaskCreationOptions.LongRunning).Start();
         }
@@ -1279,6 +1282,7 @@ namespace Oblivion.HabboHotel.Rooms
             RoomData = roomData;
             Disposed = false;
             RoomId = id;
+            CustomHeight = -1;
             Bans = new Dictionary<long, double>();
             MutedUsers = new Dictionary<uint, uint>();
             ActiveTrades = new ArrayList();

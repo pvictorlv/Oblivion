@@ -8,7 +8,7 @@ using Oblivion.HabboHotel.Rooms;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
-    public class ToggleFurniState : IWiredItem
+    public class ToggleFurniState : IWiredItem, IWiredCycler
     {
         private long _mNext;
 
@@ -61,27 +61,49 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             get { return true; }
             set { }
         }
+        public double TickCount { get; set; }
 
-        public int Delay { get;
-            set; }
 
-        public async Task<bool> Execute(params object[] stuff)
+        private int _delay;
+
+        public int Delay
         {
-            if (Item == null || Items.Count <= 0)
-                return false;
+            get => _delay;
+            set
+            {
+                _delay = value;
+                TickCount = value / 1000;
+            }
+        }
+
+        public async Task<bool> OnCycle()
+        {
+            if (!Requested) return false;
 
             var num = Oblivion.Now();
-
+            await Task.Yield();
             if (_mNext > num)
             {
-                await Task.Delay((int)(_mNext - num));
+                return false;
             }
+
             foreach (var current in Items.Where(
                 current => current != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(current)))
                 current.Interactor.OnWiredTrigger(current);
 
             _mNext = Oblivion.Now() + Delay;
 
+            Requested = false;
+            return true;
+        }
+
+
+        public bool Execute(params object[] stuff)
+        {
+            if (Item == null || Items.Count <= 0)
+                return false;
+            Requested = true;
+            
             return true;
         }
     }

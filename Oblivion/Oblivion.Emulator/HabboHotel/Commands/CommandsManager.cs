@@ -134,6 +134,7 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("roomkick", new RoomKickUsers());
             CommandsDictionary.Add("buyroom", new BuyRoom());
             CommandsDictionary.Add("sellroom", new SellRoom());
+            CommandsDictionary.Add("setheight", new SetHeight());
             CommandsDictionary.Add("override", new Override());
             CommandsDictionary.Add("ipban", new BanUserIp());
             CommandsDictionary.Add("addblackword", new AddBlackWord());

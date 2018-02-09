@@ -417,14 +417,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
         {
             if (insert)
             {
-                if (fromRoom)
-                {
-//                    using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-//                        queryReactor.RunFastQuery("UPDATE items_rooms SET user_id = '" + UserId +
-//                                                  "', room_id= '0' WHERE (id='" + id + "')");
-                }
-                else
-                {
+                if (!fromRoom)
+                { 
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
                         queryReactor.SetQuery(
@@ -502,7 +496,9 @@ namespace Oblivion.HabboHotel.Users.Inventory
         internal ServerMessage SerializeFloorItemInventory()
         {
             if (_items == null) return null;
-            var items = _items.Values.ToList();
+
+            var items = _items.Values;
+
             var i = items.Count;
 
             if (i > 4500)

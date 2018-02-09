@@ -61,7 +61,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
         public bool Disposed { get; set; }
 
 
-        public async Task<bool> Execute(params object[] stuff)
+        public bool Execute(params object[] stuff)
         {
             var roomUser = (RoomUser) stuff[0];
             if (roomUser == null || roomUser.IsBot|| roomUser.IsPet)
@@ -93,7 +93,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 /* TODO CHECK */
                 foreach (var current in conditions)
                 {
-                    if (!current.Execute(roomUser, roomItem).Result)
+                    if (!current.Execute(roomUser, roomItem))
                         return false;
 
                     WiredHandler.OnEvent(current);
@@ -110,7 +110,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                             ? Room.GetWiredHandler().GetRandomEffect(effects)
                             : Room.GetWiredHandler().GetRandomUnseenEffect(effects);
 
-                        if (selectedBox == null || !selectedBox.Execute().Result)
+                        if (selectedBox == null || !selectedBox.Execute())
                             return false;
 
                         WiredHandler.OnEvent(specialBox);

@@ -68,7 +68,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 TickCount = value / 1000;
             }
         }
-        public async Task<bool> Execute(params object[] Params)
+        public bool Execute(params object[] Params)
         {
             if (Item == null || Items.Count == 0)
                 return false;
@@ -92,7 +92,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (_next > time)
                 return false;
 
+
             await Task.Yield();
+
 
 
             foreach (var item in Items)

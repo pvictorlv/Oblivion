@@ -107,7 +107,7 @@
     <OutputPath>..\bin\Release\x64\</OutputPath>
     <DefineConstants>
     </DefineConstants>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <FileAlignment>4096</FileAlignment>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -223,6 +223,7 @@
     <Compile Include="HabboHotel\Commands\Controllers\Pet.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\RefreshVirtual.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\SellRoom.cs" />
+    <Compile Include="HabboHotel\Commands\Controllers\SetHeight.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\ViewClones.cs" />
     <Compile Include="HabboHotel\Commands\Interfaces\Command.cs" />
     <Compile Include="HabboHotel\Commands\CommandsManager.cs" />

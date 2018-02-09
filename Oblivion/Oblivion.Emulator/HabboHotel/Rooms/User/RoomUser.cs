@@ -848,7 +848,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 var habbo = GetClient().GetHabbo();
 
                 if (GetRoom().GotWireds())
-                    if (GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSay, this, msg).Result)
+                    if (GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSay, this, msg))
                         return;
 
                 GetRoom().AddChatlog(session.GetHabbo().Id, msg, true);

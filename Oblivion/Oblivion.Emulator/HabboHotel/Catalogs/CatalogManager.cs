@@ -388,7 +388,7 @@ namespace Oblivion.HabboHotel.Catalogs
             bool isGift, string giftUser, string giftMessage, int giftSpriteId, int giftLazo, int giftColor, bool undef,
             uint theGroup)
         {
-            if (session.GetHabbo().GetInventoryComponent().GetItems.Count() >= 4500)
+            if (session.GetHabbo().GetInventoryComponent().TotalItems >= 4500)
             {
                 session.SendNotif("Você chegou ao limite de mobis, retire alguns antes de continuar!");
                 return;
@@ -1146,7 +1146,7 @@ namespace Oblivion.HabboHotel.Catalogs
                 });
             }
 
-            if (a == 'e')
+            else if (a == 'e')
             {
                 Task.Factory.StartNew(() =>
                 {
@@ -1184,13 +1184,13 @@ namespace Oblivion.HabboHotel.Catalogs
         {
             var level = 1u;
 
-            if (Oblivion.GetRandomNumber(1, 1000) <= 20)
+            if (Oblivion.GetRandomNumber(1, 2000) < 20)
                 level = 5u;
-            else if (Oblivion.GetRandomNumber(1, 200) <= 15)
+            else if (Oblivion.GetRandomNumber(1, 1000) < 15)
                 level = 4u;
-            else if (Oblivion.GetRandomNumber(1, 50) <= 10)
+            else if (Oblivion.GetRandomNumber(1, 150) < 10)
                 level = 3u;
-            else if (Oblivion.GetRandomNumber(1, 15) <= 5)
+            else if (Oblivion.GetRandomNumber(1, 50) < 5)
                 level = 2u;
 
             var ecotronRewardsForLevel = GetEcotronRewardsForLevel(level);

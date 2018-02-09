@@ -111,9 +111,9 @@ namespace Oblivion.HabboHotel.GameClients
         /// </summary>
         /// <param name="users">The users.</param>
         /// <returns>IEnumerable&lt;GameClient&gt;.</returns>
-        internal List<GameClient> GetClientsById(Dictionary<uint, MessengerBuddy>.KeyCollection users)
+        internal IEnumerable<GameClient> GetClientsById(List<uint> users)
         {
-            return users.Select(GetClientByUserId).Where(client => client?.GetHabbo() != null).ToList();
+            return users.Select(GetClientByUserId).Where(client => client?.GetHabbo() != null);
         }
 
         /// <summary>

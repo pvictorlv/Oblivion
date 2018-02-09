@@ -7,7 +7,7 @@ using Oblivion.HabboHotel.Rooms;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 {
-    internal class TimerTrigger : IWiredItem
+    internal class TimerTrigger : IWiredItem, IWiredCycler
     {
         public TimerTrigger(RoomItem item, Room room)
         {
@@ -52,16 +52,31 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
         private long _mNext;
 
 
-        public int Delay { get; set; }
+        private int _delay;
 
+        public double TickCount { get; set; }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public int Delay
         {
+            get => _delay;
+            set
+            {
+                _delay = value;
+                TickCount = value / 1000;
+            }
+        }
+
+        public bool Requested;
+
+        public async Task<bool> OnCycle()
+        {
+            if (!Requested) return false;
             var num = Oblivion.Now();
 
             if (_mNext > num)
-                await Task.Delay((int) (_mNext - num));
+                return false;
 
+            await Task.Yield();
 
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
@@ -70,7 +85,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             if (conditions.Count > 0)
                 foreach (var current in conditions)
                 {
-                    if (!current.Execute(null).Result)
+                    if (!current.Execute(null))
                         return false;
 
                     WiredHandler.OnEvent(current);
@@ -88,7 +103,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                             ? Room.GetWiredHandler().GetRandomEffect(effects)
                             : Room.GetWiredHandler().GetRandomUnseenEffect(effects);
 
-                        if (selectedBox == null || !selectedBox.Execute().Result)
+                        if (selectedBox == null || !selectedBox.Execute())
                             return false;
 
                         WiredHandler.OnEvent(specialBox);
@@ -108,7 +123,13 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             }
 
             _mNext = Oblivion.Now() + Delay;
+            Requested = false;
+            return true;
+        }
 
+        public bool Execute(params object[] stuff)
+        {
+            Requested = true;
             return true;
         }
 

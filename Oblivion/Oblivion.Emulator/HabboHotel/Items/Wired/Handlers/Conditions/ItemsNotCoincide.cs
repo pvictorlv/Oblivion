@@ -54,9 +54,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
         }
 
         public bool Disposed { get; set; }
-        public async Task<bool> Execute(params object[] stuff)
+        public bool Execute(params object[] stuff)
         {
-            await Task.Yield();
+            
 
             if (Items == null || Items.Count <= 0)
                 return true;

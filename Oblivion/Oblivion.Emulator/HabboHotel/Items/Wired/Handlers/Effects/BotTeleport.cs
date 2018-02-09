@@ -8,7 +8,7 @@ using Oblivion.HabboHotel.Rooms.User;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
-    public class BotTeleport : IWiredItem
+    public class BotTeleport : IWiredItem, IWiredCycler
     {
         public BotTeleport(RoomItem item, Room room)
         {
@@ -75,35 +75,57 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
 
         private long _mNext;
-
-
-        public int Delay { get; set; }
-
-        public async Task<bool> Execute(params object[] stuff)
+        public double TickCount { get; set; }
+        private int _delay;
+        public int Delay
         {
-            var item = (Interaction) stuff[1];
+            get => _delay;
+            set
+            {
+                _delay = value;
+                TickCount = value / 1000;
+            }
+        }
 
-            if (item == Interaction.TriggerRepeater || item == Interaction.TriggerLongRepeater)
-                return false;
+        public bool Requested;
+
+        public async Task<bool> OnCycle()
+        {
+            if (!Requested) return false;
+
+            await Task.Yield();
 
             var num = Oblivion.Now();
 
             if (_mNext > num)
-                await Task.Delay((int) (_mNext - num));
-
-            if (string.IsNullOrEmpty(OtherString)) return false;
-
-            if (_bot?.BotData == null || _bot.BotData.Name != OtherString)
-            {
-                _bot = Room.GetRoomUserManager().GetBotByName(OtherString);
-            }
-
+                return false;
+          
             if (_bot == null)
                 return false;
 
             Teleport(_bot);
 
             _mNext = Oblivion.Now() + Delay;
+            Requested = false;
+            return true;
+        }
+        public bool Execute(params object[] stuff)
+        {
+            var item = (Interaction) stuff[1];
+
+            if (item == Interaction.TriggerRepeater || item == Interaction.TriggerLongRepeater)
+                return false;
+
+            if (string.IsNullOrEmpty(OtherString)) return false;
+
+
+            if (_bot?.BotData == null || _bot.BotData.Name != OtherString)
+            {
+                _bot = Room.GetRoomUserManager().GetBotByName(OtherString);
+            }
+
+            Requested = true;
+
 
             return true;
         }
