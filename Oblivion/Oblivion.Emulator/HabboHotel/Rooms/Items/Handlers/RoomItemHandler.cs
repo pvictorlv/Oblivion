@@ -763,7 +763,12 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 return false;
             }
 
-            var height = customHeight ?? _room.GetGameMap().Model.SqFloorHeight[newX][newY];
+            double height;
+            if (customHeight != null && customHeight >= 0)
+            {
+                height = (double) customHeight;
+            }
+            else height = _room.GetGameMap().Model.SqFloorHeight[newX][newY];
             if (!onRoller)
             {
                 if (_room.GetGameMap().Model.SqState[newX][newY] != SquareState.Open && !item.GetBaseItem().IsSeat)

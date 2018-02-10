@@ -737,7 +737,7 @@ namespace Oblivion.HabboHotel.Users
             _myGroups = null;
             Data?.Dispose();
             Data = null;
-            _badgeComponent.BadgeList.Clear();
+            _badgeComponent?.BadgeList?.Clear();
             _badgeComponent = null;
             AchievementsToUpdate = null;
             RatedRooms = null;

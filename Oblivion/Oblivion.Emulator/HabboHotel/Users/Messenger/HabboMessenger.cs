@@ -128,8 +128,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         internal void Destroy()
         {
-
-            foreach (var user in Friends.Values.Select(current => current.Client))
+            foreach (var user in Friends.Values.ToList().Select(current => current.Client))
             {
                 user?.GetHabbo()?.GetMessenger()?.UpdateFriend(_userId, null, true);
             }

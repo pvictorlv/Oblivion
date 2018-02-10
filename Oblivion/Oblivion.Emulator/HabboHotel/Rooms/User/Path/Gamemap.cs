@@ -485,8 +485,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                                 GameMap[k, j] = 2;
                             else
                                 GameMap[k, j] = 0;
-
-                            }
+                        }
                     }
 
                     else
@@ -506,21 +505,25 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                                 else if (Model.SqState[num3][n] == SquareState.Seat)
                                 {
                                     GameMap[num3, n] = 2;
-                                }else
+                                }
+                                else
                                     GameMap[num3, n] = 0;
-
                             }
                         }
                     }
 
-                    
+
                     foreach (var item in floorItems)
                     {
-                        AddItemToMap(item);
-                        if (item.GetBaseItem().InteractionType == Interaction.Gate && item.ExtraData == "0")
+                        if (!AddItemToMap(item))
+                            continue;
+
+                        if ((item.GetBaseItem().InteractionType == Interaction.Gate && item.ExtraData == "0"))
                         {
                             GameMap[item.X, item.Y] = 0;
                         }
+                        if (item.GetBaseItem().InteractionType == Interaction.GuildGate)
+                            GameMap[item.X, item.Y] = 1; //open map
                     }
 
                     floorItems.Clear();
@@ -629,7 +632,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
             return returnItems;
         }
-        
+
         internal bool RemoveFromMap(RoomItem item, bool handleGameItem)
         {
             RemoveSpecialItem(item);
@@ -727,7 +730,10 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                         case Interaction.GuildGate:
                         {
                             if (!GuildGates.ContainsKey(item.Coordinate))
+                            {
                                 GuildGates.Add(item.Coordinate, item);
+                                GameMap[item.X, item.Y] = 0;
+                            }
                             break;
                         }
                     }
@@ -761,7 +767,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 AddCoordinatedItem(item, current);
                 retVal = ConstructMapForItem(item, current);
             }
-            
+
             return retVal;
         }
 
@@ -831,6 +837,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
             return true;
         }
+
         /// <summary>
         ///     Squares the is open.
         /// </summary>
@@ -858,7 +865,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 return false;
 
             var square = new Point(to.X, to.Y);
-            if (GuildGates.TryGetValue(square, out var roomItem) && user.GetClient() != null && user.GetClient().GetHabbo() != null &&
+            if (GuildGates.TryGetValue(square, out var roomItem) && user.GetClient() != null &&
+                user.GetClient().GetHabbo() != null &&
                 user.GetClient().GetHabbo().UserGroups != null)
             {
                 var guildId = roomItem.GroupId;
@@ -892,7 +900,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
             return SqAbsoluteHeight(to.X, to.Y) - SqAbsoluteHeight(from.X, from.Y) <= 1.5;
         }
-        
 
 
         /// <summary>
@@ -939,7 +946,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     if (guildId > 0 &&
                         user.GetClient()
                             .GetHabbo()
-                            .UserGroups.Any(member => member != null && member.GroupId == guildId)) return true;
+                            .UserGroups.Any(member => member != null && member.GroupId == guildId))
+                        return true;
                 }
             }
 

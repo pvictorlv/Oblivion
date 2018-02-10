@@ -134,6 +134,8 @@ namespace Oblivion.Messages.Handlers
                 var msg = new ServerMessage(LibraryParser.OutgoingRequest("UserBadgesMessageComposer"));
                 msg.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Id);
 
+                if (roomUserByHabbo.GetClient()?.GetHabbo()?.GetBadgeComponent()?.BadgeList == null) return;
+
                 msg.StartArray();
                 /* TODO CHECK */
                 foreach (var badge in

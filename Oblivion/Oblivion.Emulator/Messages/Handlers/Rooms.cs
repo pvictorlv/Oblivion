@@ -2439,7 +2439,7 @@ namespace Oblivion.Messages.Handlers
             _floodTime = DateTime.Now;
             _floodCount++;
 
-            if (roomUserByHabbo?.GetClient()?.GetHabbo() == null || roomUserByHabbo2?.GetClient()?.GetHabbo() == null)
+            if (roomUserByHabbo?.GetClient()?.GetHabbo() == null || roomUserByHabbo2?.GetClient()?.GetHabbo()?.Data?.Ignores == null)
             {
                 Session.SendWhisper(msg);
                 return;

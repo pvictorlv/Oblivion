@@ -96,16 +96,14 @@ namespace Oblivion.HabboHotel.PathFinding
 
                     if (gameLocalMap.IsValidStep(roomUserable, new Vector2D(pathFinderStart.Position.X, pathFinderStart.Position.Y), realEndPosition, isEndOfPath, roomUserable.AllowOverride))
                     {
-                        PathFinderNode pathFinderSecondNodeCalculation;
+                        PathFinderNode pathFinderSecondNodeCalculation = pathFinderMap[realEndPosition.X, realEndPosition.Y];
 
-                        if (pathFinderMap[realEndPosition.X, realEndPosition.Y] == null)
+                        if (pathFinderSecondNodeCalculation == null)
                         {
                             pathFinderSecondNodeCalculation = new PathFinderNode(realEndPosition);
                             pathFinderMap[realEndPosition.X, realEndPosition.Y] = pathFinderSecondNodeCalculation;
                         }
-                        else
-                            pathFinderSecondNodeCalculation = pathFinderMap[realEndPosition.X, realEndPosition.Y];
-
+                       
                         if (!pathFinderSecondNodeCalculation.InClosed)
                         {
                             var internalSpanTreeCost = 0;

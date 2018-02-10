@@ -1176,14 +1176,15 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (roomUsers.Path.Count < pathDataCount || pathDataCount < 0) return false;
             var nextStep = roomUsers.Path[pathDataCount];
 
-            if (!_userRoom.GetGameMap().SquareIsOpen(nextStep.X, nextStep.Y, roomUsers.AllowOverride) &&
-                !roomUsers.GetRoom().RoomData.AllowWalkThrough)
+            if (!_userRoom.GetGameMap().SquareIsOpen(nextStep.X, nextStep.Y, roomUsers.AllowOverride))
             {
-                roomUsers.IsWalking = false;
-                roomUsers.ClearMovement();
-                roomUsers.SetStep = false;
-                UpdateUserStatus(roomUsers, false);
-                return false;
+                
+                    roomUsers.IsWalking = false;
+                    roomUsers.ClearMovement();
+                    roomUsers.SetStep = false;
+                    UpdateUserStatus(roomUsers, false);
+                    return false;
+                
             }
 
             // Increase Step Data...
