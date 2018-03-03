@@ -46,11 +46,12 @@ namespace Oblivion.HabboHotel.Support
             _bannedUsernames.Clear();
             _bannedIPs.Clear();
             _bannedMachines.Clear();
-            dbClient.SetQuery("SELECT bantype,value,reason,expire FROM users_bans");
-            var table = dbClient.GetTable();
             double num = Oblivion.GetUnixTimeStamp();
 
-            /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
+            dbClient.SetQuery($"SELECT bantype,value,reason,expire FROM users_bans WHERE expire > '{num}'");
+            var table = dbClient.GetTable();
+
+            foreach (DataRow dataRow in table.Rows)
             {
                 var text = (string) dataRow["value"];
                 var reasonMessage = (string) dataRow["reason"];
@@ -75,9 +76,7 @@ namespace Oblivion.HabboHotel.Support
                 }
 
                 var moderationBan = new ModerationBan(type, text, reasonMessage, num2);
-
-                if (!(num2 > num))
-                    continue;
+                
 
                 switch (moderationBan.Type)
                 {
@@ -132,6 +131,7 @@ namespace Oblivion.HabboHotel.Support
                         return moderationBan3.ReasonMessage;
                 }
             }
+
             return string.Empty;
         }
 
@@ -142,7 +142,8 @@ namespace Oblivion.HabboHotel.Support
         /// <param name="machineId">The machine identifier.</param>
         /// <param name="userName"></param>
         /// <returns>System.String.</returns>
-        internal bool CheckBan(string userName, string ip, string machineId) => _bannedMachines.ContainsKey(machineId) || _bannedIPs.Contains(ip) || _bannedUsernames.Contains(userName);
+        internal bool CheckBan(string userName, string ip, string machineId) =>
+            _bannedMachines.ContainsKey(machineId) || _bannedIPs.Contains(ip) || _bannedUsernames.Contains(userName);
 
         /// <summary>
         ///     Bans the user.
@@ -174,6 +175,7 @@ namespace Oblivion.HabboHotel.Support
 
                 typeStr = "ip";
             }
+
             if (machine)
             {
                 type = ModerationBanType.Machine;
@@ -229,7 +231,8 @@ namespace Oblivion.HabboHotel.Support
                 {
                     using (var queryreactor4 = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        /* TODO CHECK */ foreach (DataRow dataRow in dataTable.Rows)
+                        /* TODO CHECK */
+                        foreach (DataRow dataRow in dataTable.Rows)
                             queryreactor4.RunFastQuery(
                                 $"UPDATE users_info SET bans = bans + 1 WHERE user_id = {Convert.ToUInt32(dataRow["id"])}");
                     }

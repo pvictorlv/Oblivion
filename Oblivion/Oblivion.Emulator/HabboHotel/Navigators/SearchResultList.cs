@@ -83,6 +83,8 @@ namespace Oblivion.HabboHotel.Navigators
         internal static void SerializeSearchResultListStatics(string staticId, bool direct, ServerMessage message,
             GameClient session)
         {
+            if (message == null || session == null) return;
+
             if (string.IsNullOrEmpty(staticId) || staticId == "official") staticId = "official_view";
             if (staticId != "hotel_view" && staticId != "roomads_view" && staticId != "myworld_view" &&
                 !staticId.StartsWith("category__") && staticId != "official_view")
@@ -141,13 +143,14 @@ namespace Oblivion.HabboHotel.Navigators
                 case "my":
                     {
                         var i = 0;
+						if (session?.GetHabbo()?.Data?.Rooms == null) return;
                         message.StartArray();
                         /* TODO CHECK */
                         foreach (var data in session.GetHabbo().Data.Rooms.Where(data => data != null))
                         {
                             data.Serialize(message);
                             message.SaveArray();
-                            if (i++ == (direct ? 100 : 8)) break;
+                            if (i++ == (direct ? 100 : 20)) break;
                         }
                         message.EndArray();
                         break;

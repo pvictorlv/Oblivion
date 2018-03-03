@@ -304,7 +304,6 @@ namespace Oblivion.Connection.Connection
                     return;
                 }
                 if (Oblivion.DebugMode)
-
                     Console.WriteLine("Header *production* " + oldHeader + " (" + packetName +
                                       ") has been translated to packet air.");
             }

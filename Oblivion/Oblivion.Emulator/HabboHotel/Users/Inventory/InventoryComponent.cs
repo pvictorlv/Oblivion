@@ -275,6 +275,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 var userItem = new UserItem(id, itemId, extraData, group, songCode, Convert.ToInt32(limitedString[0]),
                     Convert.ToInt32(limitedString[1]));
 
+                if (userItem.BaseItem == null) continue;
+
                 if (!_items.ContainsKey(userItem.Id))
                     _items.Add(userItem.Id, userItem);
             }
@@ -515,7 +517,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             {
                 if (userItem == null) continue;
                 if (inc == 4500)
-                    return serverMessage;
+                    break;
 
                 inc++;
 

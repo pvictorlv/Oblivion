@@ -32,7 +32,11 @@ namespace Oblivion.Messages.Handlers
 
             /* TODO CHECK */
             foreach (RoomData current2 in list)
-                NewMethod(current2);
+            {
+                Response.AppendInteger(current2.Id);
+                Response.AppendString(current2.Name);
+                Response.AppendBool(false);
+            }
 
             Response.AppendInteger(5);
             Response.AppendInteger(10);
@@ -333,12 +337,12 @@ namespace Oblivion.Messages.Handlers
                 return;
             }
 
-            GroupMember memberGroup = group.Requests[userId];
+            var member = group.Requests[userId];
 
-            memberGroup.DateJoin = Oblivion.GetUnixTimeStamp();
-            group.Members.Add(userId, memberGroup);
+            member.DateJoin = Oblivion.GetUnixTimeStamp();
+            group.Members.Add(userId, member);
             group.Requests.Remove(userId);
-            group.Admins.Add(userId, group.Members[userId]);
+            group.Admins.Add(userId, member);
 
             Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
             Response.Init(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
@@ -401,7 +405,8 @@ namespace Oblivion.Messages.Handlers
             uint groupId = Request.GetUInteger();
 
             Guild group = Oblivion.GetGame().GetGroupManager().GetGroup(groupId);
-            Habbo user = Session.GetHabbo();
+            Habbo user = Session?.GetHabbo();
+            if (user == null) return;
 
             if (!group.Members.ContainsKey(user.Id))
             {
@@ -416,11 +421,12 @@ namespace Oblivion.Messages.Handlers
                             " WHERE id= ", user.Id, " LIMIT 1"));
                     }
 
-                    group.Members.Add(user.Id,
-                        new GroupMember(user.Id, user.UserName, user.Look, group.Id, 0, Oblivion.GetUnixTimeStamp(),
-                            true));
-                    Session.GetHabbo().UserGroups.Add(group.Members[user.Id]);
-                    Session.GetHabbo().GetMessenger().SerializeUpdate(group);
+                    var member = new GroupMember(user.Id, user.UserName, user.Look, group.Id, 0,
+                        Oblivion.GetUnixTimeStamp(),
+                        true);
+                    group.Members.Add(user.Id, member);
+                    user.UserGroups.Add(member);
+                    user.GetMessenger().SerializeUpdate(group);
                 }
                 else
                 {
@@ -1442,17 +1448,7 @@ namespace Oblivion.Messages.Handlers
             }
         }
 
-        /// <summary>
-        /// News the method.
-        /// </summary>
-        /// <param name="current2">The current2.</param>
-        private void NewMethod(RoomData current2)
-        {
-            Response.AppendInteger(current2.Id);
-            Response.AppendString(current2.Name);
-            Response.AppendBool(false);
-        }
-
+       
         internal void UpdateForumSettings()
         {
             if (Session?.GetHabbo() == null) return;

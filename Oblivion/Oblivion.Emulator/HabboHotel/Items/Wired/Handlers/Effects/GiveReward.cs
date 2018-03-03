@@ -13,13 +13,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
     public class GiveReward : IWiredItem
     {
-
         public void Dispose()
         {
-
         }
 
         public bool Disposed { get; set; }
+
         public GiveReward(RoomItem item, Room room)
         {
             Item = item;
@@ -57,8 +56,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool Execute(params object[] stuff)
         {
-            
-
             var user = (RoomUser) stuff[0];
             if (user == null) return false;
             if (stuff[1] == null)
@@ -84,13 +81,24 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 return true;
             }
 
-            /* TODO CHECK */ foreach (var dataStr in OtherString.Split(';'))
+            /* TODO CHECK */
+            foreach (var dataStr in OtherString.Split(';'))
             {
                 var dataArray = dataStr.Split(',');
 
-                var isbadge = dataArray[0] == "0";
+                if (dataArray.Length < 3) continue;
+
+                var badge = dataArray[0];
+
+                if (badge == null) continue;
+
+                var isbadge = badge == "0";
+
                 var code = dataArray[1];
-                var percentage = int.Parse(dataArray[2]);
+
+                if (code == null) continue;
+
+                if (!int.TryParse(dataArray[2], out var percentage)) continue;
 
                 var random = Oblivion.GetRandomNumber(0, 100);
 

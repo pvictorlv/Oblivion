@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using Oblivion.Configuration;
@@ -274,7 +273,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
             WhoCanMute = 0;
             TradeState = 2;
             State = 0;
-            RoomChat = new List<Chatlog>(200);
+            RoomChat = new List<Chatlog>();
             WordFilter = new List<string>();
             WallHeight = -1;
             _model = Oblivion.GetGame().GetRoomManager().GetModel(ModelName, Id);
@@ -296,7 +295,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 Type = (string) row["roomtype"];
                 Owner = (string) row["owner"];
                 OwnerId = 0;
-                RoomChat = new List<Chatlog>(200);
+                RoomChat = new List<Chatlog>();
                 WordFilter = new List<string>();
                 BlockedCommands = new List<string>();
 
@@ -394,7 +393,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         /// <param name="enterRoom"></param>
         internal void Serialize(ServerMessage message, bool showEvents = false, bool enterRoom = false)
         {
-            if (message == null) return;
+            if (message == null || Tags == null) return;
 
             message.AppendInteger(Id);
             message.AppendString(Name);

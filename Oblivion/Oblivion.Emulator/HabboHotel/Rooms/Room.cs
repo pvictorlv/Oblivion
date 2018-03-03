@@ -1237,7 +1237,9 @@ namespace Oblivion.HabboHotel.Rooms
 
             if (RoomData.RoomChat.Count >= 200)
             {
-                RoomData.RoomChat.Remove(RoomData.RoomChat[0]);
+                var toRemove = RoomData.RoomChat.FirstOrDefault();
+                if (toRemove == null) return;
+                RoomData.RoomChat.Remove(toRemove);
             }
             RoomData.RoomChat.Add(new Chatlog(id, message, DateTime.Now, globalMessage));
         }
@@ -1435,8 +1437,6 @@ namespace Oblivion.HabboHotel.Rooms
                 }
                 RoomData.RoomChat.Clear();
             }
-            _roomKick.Clear();
-            _roomKick = null;
 
             _game?.Destroy();
             _game = null;
@@ -1451,9 +1451,12 @@ namespace Oblivion.HabboHotel.Rooms
             _gameMap = null;
             _processTimer?.Dispose();
             _processTimer = null;
-            RoomData.Tags.Clear();
-            RoomData.BlockedCommands.Clear();
+            RoomData?.Tags?.Clear();
+            RoomData.Tags = null;
+            RoomData?.BlockedCommands?.Clear();
+            RoomData.BlockedCommands = null;
             UsersWithRights.Clear();
+
             Bans.Clear();
             Bans = null;
             LoadedGroups.Clear();
@@ -1468,7 +1471,7 @@ namespace Oblivion.HabboHotel.Rooms
             _roomItemHandler = null;
             _roomUserManager.Destroy();
             _roomUserManager = null;
-            RoomData.Dispose();
+            RoomData?.Dispose();
             RoomData = null;
             TonerData = null;
             MutedUsers.Clear();
@@ -1482,6 +1485,9 @@ namespace Oblivion.HabboHotel.Rooms
 
             _roomThread?.Dispose();
             _roomThread = null;
+
+            _roomKick?.Clear();
+            _roomKick = null;
         }
     }
 }

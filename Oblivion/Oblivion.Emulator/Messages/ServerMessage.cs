@@ -343,6 +343,8 @@ namespace Oblivion.Messages
                 _arrayBuffer.Dispose();
             }
 
+            _arrayCurrentBuffer?.Dispose();
+
             _disposed = true;
         }
     }

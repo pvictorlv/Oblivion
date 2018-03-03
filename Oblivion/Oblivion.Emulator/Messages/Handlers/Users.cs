@@ -364,7 +364,7 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void GetBadges()
         {
-            Session.SendMessage(Session.GetHabbo().GetBadgeComponent().Serialize());
+            Session?.SendMessage(Session?.GetHabbo()?.GetBadgeComponent()?.Serialize());
         }
 
         /// <summary>
@@ -869,16 +869,17 @@ namespace Oblivion.Messages.Handlers
                 foreach (MessengerBuddy current2 in Session.GetHabbo().GetMessenger().Friends.Values.ToList())
                 {
                     if (current2.Client?.GetHabbo() != null)
-                        foreach (var current3 in current2.Client.GetHabbo()
-                            .GetMessenger()
-                            .Friends.Values.ToList())
+                    {
+                        var list = current2.Client.GetHabbo()
+                            .GetMessenger()?
+                            .Friends?.Values.Where(x => x.UserName == userName).ToList();
+                        if (list == null) continue;
+                        foreach (var current3 in list)
                         {
-                            if (current3.UserName == userName)
-                            {
-                                current3.UserName = text;
-                                current3.Serialize(Response, Session);
-                            }
+                            current3.UserName = text;
+                            current3.Serialize(Response, Session);
                         }
+                    }
                 }
             }
         }
@@ -1270,9 +1271,8 @@ namespace Oblivion.Messages.Handlers
         {
             string name = Request.GetString();
             var hotelViewBadges = Oblivion.GetGame().GetHotelView().HotelViewBadges;
-            if (!hotelViewBadges.ContainsKey(name))
+            if (!hotelViewBadges.TryGetValue(name, out var badge))
                 return;
-            var badge = hotelViewBadges[name];
             Session.GetHabbo().GetBadgeComponent().GiveBadge(badge, true, Session, true);
         }
 

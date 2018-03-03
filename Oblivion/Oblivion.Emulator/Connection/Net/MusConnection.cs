@@ -112,7 +112,7 @@ namespace Oblivion.Connection.Net
                         break;
 
                     case "kill":
-                        clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(uint.Parse(param[0]));
+                        clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserName(param[0]);
                         clientByUserId?.Disconnect("MUS Disconnection");
                         break;
 
@@ -244,7 +244,10 @@ namespace Oblivion.Connection.Net
                         clientByUserId.GetHabbo().SerializeClub();
                         break;
                     case "reload_bans":
-
+                        using (var adapter3 = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        {
+                            Oblivion.GetGame().GetBanManager().LoadBans(adapter3);
+                        }
                         break;
                     default:
                         return;

@@ -10,6 +10,7 @@ using Oblivion.HabboHotel.Events;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Navigators.Interfaces;
 using Oblivion.HabboHotel.Rooms.Data;
+using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Rooms
 {
@@ -300,7 +301,7 @@ namespace Oblivion.HabboHotel.Rooms
                         dbClient.AddParameter("room", roomid);
                         var row = dbClient.GetRow();
 
-                        if (row == null) return null;
+                        if (row == null) return new RoomModel(0, 0, 0, 0, "xxxxxx", false);
 
 
                         return new RoomModel((int) row["door_x"], (int) row["door_y"], (double) row["door_z"],
@@ -310,7 +311,7 @@ namespace Oblivion.HabboHotel.Rooms
                     dbClient.SetQuery("SELECT * FROM rooms_models WHERE id = @name LIMIT 1");
                     dbClient.AddParameter("name", model);
                     var dataRow = dbClient.GetRow();
-                    if (dataRow == null) return null;
+                    if (dataRow == null) return new RoomModel(0, 0, 0, 0, "xxxxxx", false);
                     return new RoomModel((int) dataRow["door_x"], (int) dataRow["door_y"],
                         (double) dataRow["door_z"],
                         (int) dataRow["door_dir"], (string) dataRow["heightmap"],
@@ -444,9 +445,17 @@ namespace Oblivion.HabboHotel.Rooms
         internal void RemoveAllRooms()
         {
             foreach (var current in LoadedRooms.Values)
-                Oblivion.GetGame().GetRoomManager().UnloadRoom(current, "RemoveAllRooms void called");
-
-//            Out.WriteLine("RoomManager Destroyed", "Oblivion.RoomManager", ConsoleColor.DarkYellow);
+            {
+                try
+                {
+                    Oblivion.GetGame().GetRoomManager().UnloadRoom(current, "RemoveAllRooms void called");
+                }
+                catch
+                {
+                    Out.WriteLine("Error unloading room");
+                }
+            }
+            Out.WriteLine("RoomManager Destroyed", "Oblivion.RoomManager", ConsoleColor.DarkYellow);
         }
 
         /// <summary>

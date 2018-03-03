@@ -523,11 +523,14 @@ namespace Oblivion.Messages.Handlers
             SendResponse();
 
 
-            Response.Init(LibraryParser.OutgoingRequest("RoomRatingMessageComposer"));
-            Response.AppendInteger(currentLoadingRoom.RoomData.Score);
-            Response.AppendBool(!Session.GetHabbo().RatedRooms.Contains(currentLoadingRoom.RoomId) &&
-                                !currentLoadingRoom.CheckRights(Session, true));
-            SendResponse();
+            if (Session?.GetHabbo()?.RatedRooms != null)
+            {
+                Response.Init(LibraryParser.OutgoingRequest("RoomRatingMessageComposer"));
+                Response.AppendInteger(currentLoadingRoom.RoomData.Score);
+                Response.AppendBool(!Session.GetHabbo().RatedRooms.Contains(currentLoadingRoom.RoomId) &&
+                                    !currentLoadingRoom.CheckRights(Session, true));
+                SendResponse();
+            }
 
             Response.Init(LibraryParser.OutgoingRequest("RoomUpdateMessageComposer"));
             Response.AppendInteger(currentLoadingRoom.RoomId);
@@ -585,7 +588,7 @@ namespace Oblivion.Messages.Handlers
 
         internal void CreateRoom()
         {
-            if (Session?.GetHabbo() == null)
+            if (Session?.GetHabbo()?.Data?.Rooms == null)
                 return;
             if (Session.GetHabbo().Data.Rooms.Count >= 75)
             {
@@ -1257,7 +1260,7 @@ namespace Oblivion.Messages.Handlers
 
         internal void IgnoreUser()
         {
-            if (Session?.GetHabbo()?.CurrentRoom == null)
+            if (Session?.GetHabbo()?.CurrentRoom == null || Session?.GetHabbo()?.Data?.Ignores == null)
                 return;
 
             var text = Request.GetString();

@@ -222,6 +222,8 @@ namespace Oblivion.HabboHotel.Commands
         public static bool TryExecute(string str, GameClient client)
         {
 
+            if (client?.GetHabbo()?.CurrentRoom?.RoomData == null) return false;
+
             if (string.IsNullOrEmpty(str) || client?.GetHabbo() == null || !client.GetHabbo().InRoom) return false;
 
 
