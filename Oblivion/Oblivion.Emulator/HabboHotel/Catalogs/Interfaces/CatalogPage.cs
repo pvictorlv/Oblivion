@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using Oblivion.Messages;
+
 namespace Oblivion.HabboHotel.Catalogs.Interfaces
 {
     /// <summary>
@@ -65,6 +67,7 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
         /// </summary>
         internal int ParentId;
 
+        internal ServerMessage PageMessage;
         /// <summary>
         ///     The visible
         /// </summary>

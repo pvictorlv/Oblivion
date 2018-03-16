@@ -1050,7 +1050,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 var point = new Point(x, y);
                 if (CoordinatedItems.TryGetValue(point, out var itemsOnSquare))
                 {
-                    return SqAbsoluteHeight(x, y, itemsOnSquare);
+                    return SqAbsoluteHeight(x, y, itemsOnSquare.ToList());
                 }
                 return Model.SqFloorHeight[x][y];
             }
@@ -1214,7 +1214,14 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             GuildGates = null;
             ItemHeightMap = null;
             CoordinatedItems = null;
-            SerializedFloormap = null;
+
+            if (SerializedFloormap != null)
+            {
+                SerializedFloormap.Disposable = true;
+                SerializedFloormap.Dispose();
+                SerializedFloormap = null;
+            }
+
             _room = null;
             Model = null;
             StaticModel = null;
@@ -1454,7 +1461,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <returns>ServerMessage.</returns>
         private ServerMessage NewHeightMap()
         {
-            var serverMessage = new ServerMessage();
+            var serverMessage = new ServerMessage {Disposable = false};
             serverMessage.Init(LibraryParser.OutgoingRequest("HeightMapMessageComposer"));
             serverMessage.AppendInteger(Model.MapSizeX);
             serverMessage.AppendInteger(Model.MapSizeX * Model.MapSizeY);

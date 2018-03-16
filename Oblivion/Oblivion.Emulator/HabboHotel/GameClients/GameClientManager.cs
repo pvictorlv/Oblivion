@@ -204,7 +204,7 @@ namespace Oblivion.HabboHotel.GameClients
 
             foreach (var current in Clients.Values.Where(current => current?.GetHabbo() != null).Where(current =>
                 (current.GetHabbo().Rank == 4u || current.GetHabbo().Rank == 5u) || current.GetHabbo().Rank == 6u))
-                current.GetConnection().SendData(bytes);
+                current.GetConnection().SendData(bytes, message);
         }
 
         /// <summary>
@@ -251,8 +251,9 @@ namespace Oblivion.HabboHotel.GameClients
                     if (!Client.GetHabbo().HasFuse(fuse))
                         continue;
 
-                Client.GetConnection().SendData(bytes);
+                Client.GetConnection().SendData(bytes, Packet);
             }
+
         }
 
         /// <summary>

@@ -238,8 +238,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                         }
 
 
-                        var cycle = item as IWiredCycler;
-                        if (cycle == null) continue;
+                        if (!(item is IWiredCycler cycle)) continue;
 
                         if (cycle.TickCount <= 0)
                         {
@@ -280,7 +279,6 @@ namespace Oblivion.HabboHotel.Items.Wired
                 {
                     if (items.Contains(item)) return;
                     items.Add(item);
-                    Effects[point] = items;
                 }
                 else
                 {
@@ -295,7 +293,6 @@ namespace Oblivion.HabboHotel.Items.Wired
                     if (items.Contains(item)) return;
 
                     items.Add(item);
-                    Conditions[point] = items;
                 }
                 else
                 {
@@ -308,9 +305,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 if (Specials.TryGetValue(point, out var items))
                 {
                     if (items.Contains(item)) return;
-
                     items.Add(item);
-                    Specials[point] = items;
                 }
                 else
                 {
@@ -337,10 +332,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     {
                         Effects.TryRemove(point, out _);
                     }
-                    else
-                    {
-                        Effects[point] = items;
-                    }
+
                 }
             }
             else if (IsCondition(item.Type))
@@ -351,10 +343,6 @@ namespace Oblivion.HabboHotel.Items.Wired
                     if (items.Count <= 0)
                     {
                         Conditions.TryRemove(point, out _);
-                    }
-                    else
-                    {
-                        Conditions[point] = items;
                     }
                 }
             }
@@ -367,10 +355,6 @@ namespace Oblivion.HabboHotel.Items.Wired
                     {
                         Specials.TryRemove(point, out _);
                     }
-                    else
-                    {
-                        Specials[point] = items;
-                    }
                 }
             }
             _wiredItems.TryRemove(item.Item.Id, out _);
@@ -378,7 +362,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         public IWiredItem ReloadWired(RoomItem item)
         {
-            IWiredItem current = null;
+            IWiredItem current;
 
 
             var coord = new Point(item.X, item.Y);
@@ -402,10 +386,6 @@ namespace Oblivion.HabboHotel.Items.Wired
                     {
                         Effects.TryRemove(point, out _);
                     }
-                    else
-                    {
-                        Effects[point] = items;
-                    }
                 }
             }
             else if (IsCondition(type))
@@ -423,10 +403,6 @@ namespace Oblivion.HabboHotel.Items.Wired
                     if (items.Count <= 0)
                     {
                         Conditions.TryRemove(point, out _);
-                    }
-                    else
-                    {
-                        Conditions[point] = items;
                     }
                 }
             }
@@ -447,10 +423,6 @@ namespace Oblivion.HabboHotel.Items.Wired
                     {
                         Specials.TryRemove(point, out _);
                     }
-                    else
-                    {
-                        Specials[point] = items;
-                    }
                 }
             }
             _wiredItems.TryRemove(item.Id, out current);
@@ -460,10 +432,7 @@ namespace Oblivion.HabboHotel.Items.Wired
         }
 
 
-        private List<IWiredItem> GetAllWireds()
-        {
-            return _wiredItems.Values.ToList();
-        }
+        private List<IWiredItem> GetAllWireds() => _wiredItems.Values.ToList();
 
 
         public IWiredItem GetWired(RoomItem item)

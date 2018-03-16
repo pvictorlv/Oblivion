@@ -315,9 +315,8 @@ namespace Oblivion.Messages.Handlers
                         dictionary[item.SpriteId] = item;
                     }
 
-                    var num = dictionary2[item.SpriteId];
-                    dictionary2.Remove(item.SpriteId);
-                    dictionary2.Add(item.SpriteId, num + 1);
+                    dictionary2[item.SpriteId]++;
+                    
                 }
                 else
                 {

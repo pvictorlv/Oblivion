@@ -142,17 +142,20 @@ namespace Oblivion.HabboHotel.Navigators
                     }
                 case "my":
                     {
-                        var i = 0;
 						if (session?.GetHabbo()?.Data?.Rooms == null) return;
-                        message.StartArray();
                         /* TODO CHECK */
-                        foreach (var data in session.GetHabbo().Data.Rooms.Where(data => data != null))
+                        var myRooms = session.GetHabbo().Data.Rooms;
+                        var count = myRooms.Count;
+                        if (count > (direct ? 100 : 20))
+                        {
+                            count = (direct ? 100 : 20);
+                        }
+                        message.AppendInteger(count);
+
+                        foreach (var data in myRooms)
                         {
                             data.Serialize(message);
-                            message.SaveArray();
-                            if (i++ == (direct ? 100 : 20)) break;
                         }
-                        message.EndArray();
                         break;
                     }
                 case "favorites":

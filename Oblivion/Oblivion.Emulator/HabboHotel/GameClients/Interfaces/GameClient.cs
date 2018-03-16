@@ -579,9 +579,9 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <returns>System.Byte[].</returns>
         public static byte[] GetBytesNotif(string message, string title = "Aviso", string picture = "")
         {
-            using (var serverMessage =
-                new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer")))
-            {
+            var serverMessage =
+                new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
+            
                 serverMessage.AppendString(picture);
                 serverMessage.AppendInteger(4);
                 serverMessage.AppendString("title");
@@ -594,7 +594,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 serverMessage.AppendString("ok");
 
                 return serverMessage.GetReversedBytes();
-            }
+            
         }
 
         /// <summary>
@@ -655,7 +655,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
             var bytes = message.GetReversedBytes();
 
-            GetConnection().SendData(bytes);
+            GetConnection().SendData(bytes, message);
         }
 
         /// <summary>
@@ -667,7 +667,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             if (GetConnection() == null)
                 return;
 
-            GetConnection().SendData(bytes);
+            GetConnection().SendData(bytes, null);
         }
 
         /// <summary>
@@ -679,7 +679,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             if (GetConnection() == null)
                 return;
 
-            GetConnection().SendData(StaticMessagesManager.Get(type));
+            GetConnection().SendData(StaticMessagesManager.Get(type), null);
         }
 
         /// <summary>
@@ -712,7 +712,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// </summary>
         private void PolicyRequest()
         {
-            _connection.SendData(CrossDomainPolicy.XmlPolicyBytes);
+            _connection.SendData(CrossDomainPolicy.XmlPolicyBytes, null);
         }
     }
 }

@@ -77,10 +77,12 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session == null)
                 return;
-
-            string name = Request.GetString();
-            string junk = Request.GetString();
-            Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializeNewNavigator(name, junk, Session));
+            lock (SessionLock)
+            {
+                string name = Request.GetString();
+                string junk = Request.GetString();
+                Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializeNewNavigator(name, junk, Session));
+            }
         }
 
         /// <summary>

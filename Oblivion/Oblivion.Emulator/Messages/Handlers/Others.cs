@@ -44,6 +44,8 @@ namespace Oblivion.Messages.Handlers
         {
             Session = session;
             Response = new ServerMessage();
+            SessionLock = new object();
+            RoomLock = new object();
         }
 
         /// <summary>
@@ -58,12 +60,24 @@ namespace Oblivion.Messages.Handlers
         /// <returns>ServerMessage.</returns>
         internal ServerMessage GetResponse() => Response;
 
+
+        internal object SessionLock;
+        internal object RoomLock;
         /// <summary>
         ///     Destroys this instance.
         /// </summary>
         internal void Destroy()
         {
-            Session = null;
+            lock (SessionLock)
+            {
+                Session = null;
+            }
+
+            lock (RoomLock)
+            {
+                CurrentLoadingRoom = null;
+            }
+            
         }
 
         /// <summary>
@@ -72,8 +86,11 @@ namespace Oblivion.Messages.Handlers
         /// <param name="request">The request.</param>
         internal void HandleRequest(ClientMessage request)
         {
-            Request = request;
-            LibraryParser.HandlePacket(this, request);
+            lock (SessionLock)
+            {
+                Request = request;
+                LibraryParser.HandlePacket(this, request);
+            }
         }
 
         /// <summary>
@@ -130,7 +147,7 @@ namespace Oblivion.Messages.Handlers
             if (Session == null)
                 return;
 
-            lock (Session)
+            lock (SessionLock)
             {
                 Oblivion.GetGame().GetAchievementManager()
                     .ProgressUserAchievement(Session, "ACH_AllTimeHotelPresence", 1, true);
@@ -218,6 +235,7 @@ namespace Oblivion.Messages.Handlers
                 Session?.Disconnect("Invalid sso or banned");
                 return;
             }
+
             if (Session == null) return;
             Session.TimePingedReceived = DateTime.Now;
         }
@@ -319,6 +337,7 @@ namespace Oblivion.Messages.Handlers
                 Oblivion.GetGame().GetTargetedOfferManager().GenerateMessage(GetResponse());
                 SendResponse();
             }
+
             if (Session.GetHabbo().CurrentQuestId != 0)
             {
                 var quest = Oblivion.GetGame().GetQuestManager().GetQuest(Session.GetHabbo().CurrentQuestId);
@@ -448,6 +467,7 @@ namespace Oblivion.Messages.Handlers
             {
                 return 0;
             }
+
             return client.GetMessenger().Friends.Count;
         }
 
@@ -501,6 +521,7 @@ namespace Oblivion.Messages.Handlers
                         roomId = rooms.First().Id;
                         break;
                     }
+
                     roomId = rooms[Oblivion.GetRandomNumber(0, rooms.Count)].Id;
                     break;
             }

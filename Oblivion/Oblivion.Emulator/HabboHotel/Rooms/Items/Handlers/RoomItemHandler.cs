@@ -1328,12 +1328,12 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         Point NextCoord = Item.SquareInFront;
 
                         // Obtenemos el Usuario que será movido si este existe.
-                        RoomUser UserOnRoller = _room.GetRoomUserManager().GetUserForSquare(Item.X, Item.Y);
+                        RoomUser userOnRoller = _room.GetRoomUserManager().GetUserForSquare(Item.X, Item.Y);
 
                         // Obtenemos los items que están encima del roller los cuales se moverán.
                         List<RoomItem> ItemsOnRoller = _room.GetGameMap().GetRoomItemForMinZ(Item.X, Item.Y, Item.TotalHeight);
 
-                        if (ItemsOnRoller.Count > 0 || UserOnRoller != null)
+                        if (ItemsOnRoller.Count > 0 || userOnRoller != null)
                         {
                             // Obtenemos los items que están en la baldosa destino.
                             List<RoomItem> ItemsOnNext = _room.GetGameMap().GetCoordinatedItems(NextCoord);
@@ -1390,13 +1390,20 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                                 }
                             }
 
-                            if (UserOnRoller != null && !UserOnRoller.Statusses.ContainsKey("sit") && !UserOnRoller.SetStep && NextRollerClear && !userOnNext && _room.GetGameMap().CanRollItemHere(NextCoord.X, NextCoord.Y, UserOnRoller.Z, true))
+
+                            if (userOnRoller?.Statusses == null)
                             {
-                                if (!_rollerUsersMoved.Contains(UserOnRoller.HabboId))
+                                return _rollerMessages;
+
+                            }
+
+                            if (!userOnRoller.Statusses.ContainsKey("sit") && !userOnRoller.SetStep && NextRollerClear && !userOnNext && _room.GetGameMap().CanRollItemHere(NextCoord.X, NextCoord.Y, userOnRoller.Z, true))
+                            {
+                                if (!_rollerUsersMoved.Contains(userOnRoller.HabboId))
                                 {
-                                    _rollerMessages.Add(UpdateUserOnRoller(UserOnRoller, NextCoord, Item.VirtualId));
+                                    _rollerMessages.Add(UpdateUserOnRoller(userOnRoller, NextCoord, Item.VirtualId));
                                     
-                                    _rollerUsersMoved.Add(UserOnRoller.HabboId);
+                                    _rollerUsersMoved.Add(userOnRoller.HabboId);
                                 }
                             }
                         }

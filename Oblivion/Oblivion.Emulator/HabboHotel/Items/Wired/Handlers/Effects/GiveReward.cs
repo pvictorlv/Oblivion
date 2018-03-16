@@ -57,7 +57,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         public bool Execute(params object[] stuff)
         {
             var user = (RoomUser) stuff[0];
-            if (user == null) return false;
+            if (user?.GetClient()?.GetHabbo()?.GetBadgeComponent() == null) return false;
             if (stuff[1] == null)
                 return false;
 
@@ -108,7 +108,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     continue;
 
                 premied = true;
-
+                
                 if (isbadge)
                 {
                     if (user.GetClient().GetHabbo().GetBadgeComponent().HasBadge(code))

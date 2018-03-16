@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Oblivion.Messages
 {
-    internal class ServerMessage : IDisposable
+    public class ServerMessage
     {
         /// <summary>
         /// The buffer for the ServerMessage.
@@ -27,6 +27,8 @@ namespace Oblivion.Messages
         /// The _on array
         /// </summary>
         private bool _onArray, _disposed;
+
+        public bool Disposable = true;
 
         /// <summary>
         /// The _array count
@@ -333,7 +335,7 @@ namespace Oblivion.Messages
         /// </summary>
         public void Dispose()
         {
-            if (_disposed)
+            if (_disposed || !Disposable)
                 return;
 
             _buffer.Dispose();

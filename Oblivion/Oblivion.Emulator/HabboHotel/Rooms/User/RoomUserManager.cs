@@ -295,6 +295,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 return users[0];
             }
+
             return null;
         }
 
@@ -319,12 +320,17 @@ namespace Oblivion.HabboHotel.Rooms.User
             roomUser.UserId = session.GetHabbo().Id;
             var userName = session.GetHabbo().UserName;
             var userId = roomUser.UserId;
-            if (UsersByUserName.ContainsKey(userName.ToLower()))
-                UsersByUserName.Remove(userName.ToLower());
-            if (UsersByUserId.Contains(userId))
-                UsersByUserId.Remove(userId);
-            UsersByUserName.Add(session.GetHabbo().UserName.ToLower(), roomUser);
-            UsersByUserId.Add(session.GetHabbo().Id, roomUser);
+
+            if (UsersByUserId == null || UsersByUserName == null) return;
+
+            if (!UsersByUserName.ContainsKey(userName.ToLower()))
+                UsersByUserName.Add(userName.ToLower(), roomUser);
+
+            if (!UsersByUserId.Contains(userId))
+            {
+                UsersByUserId.Add(session.GetHabbo().Id, roomUser);
+            }
+
             var num = _secondaryPrivateUserId++;
             roomUser.InternalRoomId = num;
             session.CurrentRoomUserId = num;
@@ -380,80 +386,88 @@ namespace Oblivion.HabboHotel.Rooms.User
                     var roomUserByHabbo = GetRoomUserByHabbo(userId);
                     if (roomUserByHabbo?.GetClient() == null)
                         return;
-                    if (notifyKick)
+                    lock (roomUserByHabbo)
                     {
-                        var model = room.GetGameMap().Model;
-                        if (model == null) return;
-
-                        roomUserByHabbo.MoveTo(model.DoorX, model.DoorY);
-                        roomUserByHabbo.CanWalk = false;
-                        session.GetMessageHandler()
-                            .GetResponse()
-                            .Init(LibraryParser.OutgoingRequest("RoomErrorMessageComposer"));
-                        session.GetMessageHandler().GetResponse().AppendInteger(4008);
-                        session.GetMessageHandler().SendResponse();
-
-                        session.GetMessageHandler()
-                            .GetResponse()
-                            .Init(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer"));
-                        session.GetMessageHandler().GetResponse().AppendShort(2);
-                        session.GetMessageHandler().SendResponse();
-                    }
-                    else if (notifyClient)
-                    {
-                        var serverMessage =
-                            new ServerMessage(LibraryParser.OutgoingRequest("UserIsPlayingFreezeMessageComposer"));
-                        serverMessage.AppendBool(roomUserByHabbo.Team != Team.None);
-                        roomUserByHabbo.GetClient().SendMessage(serverMessage);
-                        session.GetMessageHandler()
-                            .GetResponse()
-                            .Init(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer"));
-                        session.GetMessageHandler().GetResponse().AppendShort(2);
-                        session.GetMessageHandler().SendResponse();
-                    }
-                    if (roomUserByHabbo.Team != Team.None)
-                    {
-                        room.GetTeamManagerForBanzai().OnUserLeave(roomUserByHabbo);
-                        room.GetTeamManagerForFreeze().OnUserLeave(roomUserByHabbo);
-                    }
-                    if (roomUserByHabbo.RidingHorse)
-                    {
-                        roomUserByHabbo.RidingHorse = false;
-                        var horse = GetRoomUserByVirtualId((int) roomUserByHabbo.HorseId);
-                        if (horse != null)
+                        if (notifyKick)
                         {
-                            horse.RidingHorse = false;
-                            horse.HorseId = 0u;
+                            var model = room.GetGameMap().Model;
+                            if (model == null) return;
+
+                            roomUserByHabbo.MoveTo(model.DoorX, model.DoorY);
+                            roomUserByHabbo.CanWalk = false;
+                            session.GetMessageHandler()
+                                .GetResponse()
+                                .Init(LibraryParser.OutgoingRequest("RoomErrorMessageComposer"));
+                            session.GetMessageHandler().GetResponse().AppendInteger(4008);
+                            session.GetMessageHandler().SendResponse();
+
+                            session.GetMessageHandler()
+                                .GetResponse()
+                                .Init(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer"));
+                            session.GetMessageHandler().GetResponse().AppendShort(2);
+                            session.GetMessageHandler().SendResponse();
                         }
-                    }
-                    if (roomUserByHabbo.IsLyingDown || roomUserByHabbo.IsSitting)
-                    {
-                        roomUserByHabbo.IsSitting = false;
-                        roomUserByHabbo.IsLyingDown = false;
-                    }
-                    RemoveRoomUser(roomUserByHabbo);
-                    if (!roomUserByHabbo.IsSpectator)
-                    {
-                        if (roomUserByHabbo.CurrentItemEffect != 0)
-                            roomUserByHabbo.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().CurrentEffect =
-                                -1;
-                        if (room.HasActiveTrade(session.GetHabbo().Id))
-                            room.TryStopTrade(session.GetHabbo().Id);
-                        session.GetHabbo().CurrentRoomId = 0;
-                        if (session.GetHabbo().GetMessenger() != null)
-                            session.GetHabbo().GetMessenger().OnStatusChanged(true);
+                        else if (notifyClient)
+                        {
+                            var serverMessage =
+                                new ServerMessage(LibraryParser.OutgoingRequest("UserIsPlayingFreezeMessageComposer"));
+                            serverMessage.AppendBool(roomUserByHabbo.Team != Team.None);
+                            roomUserByHabbo.GetClient().SendMessage(serverMessage);
+                            session.GetMessageHandler()
+                                .GetResponse()
+                                .Init(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer"));
+                            session.GetMessageHandler().GetResponse().AppendShort(2);
+                            session.GetMessageHandler().SendResponse();
+                        }
+
+                        if (roomUserByHabbo.Team != Team.None)
+                        {
+                            room.GetTeamManagerForBanzai().OnUserLeave(roomUserByHabbo);
+                            room.GetTeamManagerForFreeze().OnUserLeave(roomUserByHabbo);
+                        }
+
+                        if (roomUserByHabbo.RidingHorse)
+                        {
+                            roomUserByHabbo.RidingHorse = false;
+                            var horse = GetRoomUserByVirtualId((int) roomUserByHabbo.HorseId);
+                            if (horse != null)
+                            {
+                                horse.RidingHorse = false;
+                                horse.HorseId = 0u;
+                            }
+                        }
+
+                        if (roomUserByHabbo.IsLyingDown || roomUserByHabbo.IsSitting)
+                        {
+                            roomUserByHabbo.IsSitting = false;
+                            roomUserByHabbo.IsLyingDown = false;
+                        }
+
+                        RemoveRoomUser(roomUserByHabbo);
+                        if (!roomUserByHabbo.IsSpectator)
+                        {
+                            if (roomUserByHabbo.CurrentItemEffect != 0)
+                                roomUserByHabbo.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent()
+                                        .CurrentEffect =
+                                    -1;
+                            if (room.HasActiveTrade(session.GetHabbo().Id))
+                                room.TryStopTrade(session.GetHabbo().Id);
+                            session.GetHabbo().CurrentRoomId = 0;
+                            if (session.GetHabbo().GetMessenger() != null)
+                                session.GetHabbo().GetMessenger().OnStatusChanged(true);
 
 
-                        using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                            queryreactor2.RunFastQuery(string.Concat(
-                                "UPDATE users_rooms_visits SET exit_timestamp = '", Oblivion.GetUnixTimeStamp(),
-                                "' WHERE room_id = '", room.RoomId, "' AND user_id = '", userId,
-                                "' ORDER BY exit_timestamp DESC LIMIT 1"));
-                        UsersByUserName?.Remove(session.GetHabbo().UserName.ToLower());
-                    }
+                            using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+                                queryreactor2.RunFastQuery(string.Concat(
+                                    "UPDATE users_rooms_visits SET exit_timestamp = '", Oblivion.GetUnixTimeStamp(),
+                                    "' WHERE room_id = '", room.RoomId, "' AND user_id = '", userId,
+                                    "' ORDER BY exit_timestamp DESC LIMIT 1"));
+                            UsersByUserName?.Remove(session.GetHabbo().UserName.ToLower());
+                        }
 
-                    UsersByUserId.Remove(roomUserByHabbo.UserId);
-                    roomUserByHabbo.Dispose();
+                        UsersByUserId.Remove(roomUserByHabbo.UserId);
+                        roomUserByHabbo.Dispose();
+                    }
                 }
             }
             catch (Exception ex)
@@ -616,8 +630,10 @@ namespace Oblivion.HabboHotel.Rooms.User
                             current.PetId));
                         break;
                 }
+
                 current.DbState = DatabaseUpdateState.Updated;
             }
+
             queryChunk.Execute(dbClient);
             queryChunk3.Execute(dbClient);
             queryChunk.Dispose();
@@ -656,10 +672,12 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                     current.UpdateNeeded = false;
                 }
+
                 current.SerializeStatus(serverMessage);
                 serverMessage.SaveArray();
                 i++;
             }
+
             serverMessage.EndArray();
             if (i <= 0)
             {
@@ -687,11 +705,13 @@ namespace Oblivion.HabboHotel.Rooms.User
                 {
                     user.UpdateNeeded = true;
                 }
+
                 if (user.Statusses.TryRemove("sit", out _))
                 {
                     user.UpdateNeeded = true;
                 }
             }
+
             var isBot = user.IsBot;
             if (isBot) cycleGameItems = false;
 
@@ -702,7 +722,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 var allRoomItemForSquare = roomMap.GetCoordinatedHeighestItems(userPoint).ToArray();
                 var itemsOnSquare = roomMap.GetCoordinatedItems(userPoint);
 
-                var newZ = _userRoom.GetGameMap().SqAbsoluteHeight(user.X, user.Y, itemsOnSquare) +
+                var newZ = _userRoom.GetGameMap().SqAbsoluteHeight(user.X, user.Y, itemsOnSquare.ToList()) +
                            ((user.RidingHorse && user.IsPet == false) ? 1 : 0);
 
                 if (Math.Abs(newZ - user.Z) > 0)
@@ -710,6 +730,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     user.Z = newZ;
                     user.UpdateNeeded = true;
                 }
+
                 /* TODO CHECK */
                 foreach (var item in allRoomItemForSquare)
                 {
@@ -794,6 +815,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                                 item.ExtraData = "1";
                                 item.UpdateState();
                             }
+
                             break;
                         }
 
@@ -838,6 +860,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                                     avatarEffectsInventoryComponent.ActivateCustomEffect(effect);
                                 break;
                             }
+
                             if (user.Team != Team.None && user.Team != item.Team)
                             {
                                 teamManagerForBanzai.OnUserLeave(user);
@@ -845,6 +868,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                                 avatarEffectsInventoryComponent.ActivateCustomEffect(0);
                                 break;
                             }
+
                             teamManagerForBanzai.OnUserLeave(user);
 
                             if (avatarEffectsInventoryComponent.CurrentEffect == effect)
@@ -874,6 +898,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                                     .GetAchievementManager()
                                     .ProgressUserAchievement(user.GetClient(), "ACH_PinataBreaker", 1);
                             }
+
                             break;
                         }
                         case Interaction.TileStackMagic:
@@ -895,6 +920,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                                 user.OnCampingTent = true;
                                 user.LastItem = item.Id;
                             }
+
                             break;
 
                         case Interaction.RunWaySage:
@@ -948,12 +974,14 @@ namespace Oblivion.HabboHotel.Rooms.User
                                         avatarEffectsInventoryComponent2.ActivateCustomEffect(0);
                                     user.Team = Team.None;
                                 }
+
                                 var serverMessage33 =
                                     new ServerMessage(
                                         LibraryParser.OutgoingRequest("UserIsPlayingFreezeMessageComposer"));
                                 serverMessage33.AppendBool(user.Team != Team.None);
                                 user.GetClient().SendMessage(serverMessage33);
                             }
+
                             break;
                         }
                     }
@@ -969,6 +997,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     user.Z -= 0.35;
                     user.UpdateNeeded = true;
                 }
+
                 if (cycleGameItems)
                 {
                     if (_userRoom.GotSoccer())
@@ -1044,6 +1073,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                                 _userRoom.GetRoomItemHandler().BreedingTerrier[roomUsers.PetData.WaitingForBreading]
                                     .PetsList[1]));
                         }
+
                         break;
 
                     case 4:
@@ -1060,6 +1090,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                                 _userRoom.GetRoomItemHandler().BreedingBear[roomUsers.PetData.WaitingForBreading]
                                     .PetsList[1]));
                         }
+
                         break;
                 }
 
@@ -1178,13 +1209,11 @@ namespace Oblivion.HabboHotel.Rooms.User
 
             if (!_userRoom.GetGameMap().SquareIsOpen(nextStep.X, nextStep.Y, roomUsers.AllowOverride))
             {
-                
-                    roomUsers.IsWalking = false;
-                    roomUsers.ClearMovement();
-                    roomUsers.SetStep = false;
-                    UpdateUserStatus(roomUsers, false);
-                    return false;
-                
+                roomUsers.IsWalking = false;
+                roomUsers.ClearMovement();
+                roomUsers.SetStep = false;
+                UpdateUserStatus(roomUsers, false);
+                return false;
             }
 
             // Increase Step Data...
@@ -1342,7 +1371,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                                     Oblivion.GetGame().GetAchievementManager()
                                         .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagC", 1);
                                     roomUsers.LastRollerDate = Oblivion.GetUnixTimeStamp();
-
                                 }
 
                                 Oblivion.GetGame().GetAchievementManager()
@@ -1378,12 +1406,14 @@ namespace Oblivion.HabboHotel.Rooms.User
                                     roomUsers.GetClient().SendMessage(serverMessage);
                                     roomUsers.OnCampingTent = false;
                                 }
+
                                 break;
 
                             case Interaction.None:
                                 break;
                         }
                     }
+
                     hasItemInPlace.Clear();
                     // Let's Update user Status..
                     UpdateUserStatus(roomUsers, true, false);
@@ -1394,10 +1424,11 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 Logging.HandleException(e, "UserCanWalkInTile");
             }
+
             return true;
         }
 
-  
+
         /// <summary>
         ///     Turns the user thread
         /// </summary>
@@ -1427,8 +1458,10 @@ namespace Oblivion.HabboHotel.Rooms.User
                         Oblivion.GetGame().GetAchievementManager()
                             .ProgressUserAchievement(ownerClient, "ACH_RoomDecoHosting", 1, true);
                     }
+
                     roomUsers.LastHostingDate = Oblivion.GetUnixTimeStamp();
                 }
+
                 // Region Check User Remove Unlocking
                 lock (_removeUsers)
                 {
@@ -1465,13 +1498,14 @@ namespace Oblivion.HabboHotel.Rooms.User
                         roomUsers.GetClient().SendWhisper("Você foi descongelado!!");
                     }
                 }
-                
+
 
                 // Region Check User Got Freezed
                 if (_userRoom.GotFreeze())
                 {
                     Freeze.CycleUser(roomUsers);
                 }
+
                 // Region Variable Registering
                 var invalidStep = false;
                 // Region Check User Tile Selection
@@ -1575,16 +1609,11 @@ namespace Oblivion.HabboHotel.Rooms.User
                         {
                             if (roomUsers.FollowingOwner != null)
                             {
-                                if (_userRoom.GetGameMap()
+                                roomUsers.MoveTo(_userRoom.GetGameMap()
                                     .SquareIsOpen(roomUsers.FollowingOwner.SquareInFront.X,
-                                        roomUsers.FollowingOwner.SquareInFront.Y, false))
-                                {
-                                    roomUsers.MoveTo(roomUsers.FollowingOwner.SquareInFront);
-                                }
-                                else
-                                {
-                                    roomUsers.MoveTo(roomUsers.FollowingOwner.SquareBehind);
-                                }
+                                        roomUsers.FollowingOwner.SquareInFront.Y, false)
+                                    ? roomUsers.FollowingOwner.SquareInFront
+                                    : roomUsers.FollowingOwner.SquareBehind);
                             }
 
                             var users = _userRoom.GetGameMap()
@@ -1597,14 +1626,17 @@ namespace Oblivion.HabboHotel.Rooms.User
                                 _userRoom.GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedAvatar, user);
                             }
                         }
+
                         roomUsers.BotAi?.OnTimerTick();
                     }
                     catch (Exception e)
                     {
                         Logging.HandleException(e, "RoomUsers - BotAi - OnTimerTick");
                     }
+
                     return;
                 }
+
 //                UpdateUserEffect(roomUsers, roomUsers.X, roomUsers.Y);
             }
         }
@@ -1676,10 +1708,12 @@ namespace Oblivion.HabboHotel.Rooms.User
                     else
                         RemoveRoomUser(userToRemove);
                 }
+
                 if (userInRoomCount == 0)
                 {
                     idleCount++;
                 }
+
                 if (userInRoomCount >= 5 && Oblivion.Multipy > 1)
                 {
                     if (_roomUserCount != userInRoomCount * (uint) Oblivion.Multipy)
@@ -1719,6 +1753,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         inv.ActivateCustomEffect(0);
                         user.CurrentItemEffect = 0;
                     }
+
                     return;
                 }
 
@@ -1735,6 +1770,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     {
                         user.CurrentItemEffect = 0;
                     }
+
                     if (b == user.CurrentItemEffect)
                         return;
 
@@ -1835,6 +1871,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                                 item.UpdateState(false, true);
                             }
                         }
+
                         if (!user.IsBot && client.GetHabbo().IsHopping)
                         {
                             client.GetHabbo().IsHopping = false;
@@ -1854,6 +1891,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                                 item2.UpdateState(false, true);
                             }
                         }
+
                         if (!user.IsSpectator)
                         {
                             var serverMessage =
@@ -1862,6 +1900,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             user.Serialize(serverMessage);
                             _userRoom.SendMessage(serverMessage);
                         }
+
                         if (!user.IsBot)
                         {
                             var serverMessage2 = new ServerMessage();
@@ -1873,6 +1912,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             serverMessage2.AppendInteger(client.GetHabbo().AchievementPoints);
                             _userRoom.SendMessage(serverMessage2);
                         }
+
                         if (_userRoom.RoomData.Owner != client.GetHabbo().UserName)
                         {
                             Oblivion.GetGame()
@@ -1883,6 +1923,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                                 .ProgressUserAchievement(client, "ACH_RoomEntry", 1);
                         }
                     }
+
                     if (client.GetHabbo().GetMessenger() != null)
                         client.GetHabbo().GetMessenger().OnStatusChanged(true);
                     client.GetMessageHandler()?.OnRoomUserAdd();
@@ -1920,6 +1961,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         userClient.CurrentRoom = null;
                         userClient.GetMessenger().DisposeRoom(_userRoom.RoomId);
                     }
+
                     user.Dispose();
                 }
             }
@@ -1927,6 +1969,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 Logging.HandleException(e, "dipose roomusermanager");
             }
+
             _userRoom = null;
             UsersByUserName.Clear();
             UsersByUserName = null;
@@ -1983,6 +2026,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         }
                     }
                 }
+
                 _userRoom.GetGameMap().RemoveUserFromMap(user, new Point(user.X, user.Y));
             }
             catch (Exception ex)

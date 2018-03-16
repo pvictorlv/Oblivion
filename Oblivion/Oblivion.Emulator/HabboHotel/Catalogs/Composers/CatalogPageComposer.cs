@@ -108,7 +108,13 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
         /// <returns>ServerMessage.</returns>
         internal static ServerMessage ComposePage(GameClient session, CatalogPage page, string mode)
         {
-            var message = new ServerMessage(LibraryParser.OutgoingRequest("CataloguePageMessageComposer"));
+            if (page.PageMessage != null)
+            {
+                return page.PageMessage;
+            }
+            var message =
+                new ServerMessage(LibraryParser.OutgoingRequest("CataloguePageMessageComposer")) {Disposable = false};
+
             message.AppendInteger(page.PageId);
             message.AppendString(mode);
             message.AppendString(page.Layout);
@@ -140,8 +146,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
             if (page.Layout.Equals("frontpage4"))
             {
                 List<DataRow> list = Oblivion.GetGame().GetCatalog().IndexText;
-                message.AppendInteger(list.Count); // count
-                                                   /* TODO CHECK */
+                message.AppendInteger(list.Count); 
                 foreach (var Catalog in list)
                 {
                     message.AppendInteger(1); // id
@@ -152,6 +157,8 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                     message.AppendInteger(Convert.ToInt32(Catalog["page_id"])); // page id?
                 }
             }
+
+            page.PageMessage = message;
             return message;
         }
 
