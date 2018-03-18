@@ -1550,7 +1550,7 @@ namespace Oblivion.Messages.Handlers
                 var roomData = room.RoomData;
                 var roomId = room.RoomData.Id;
 
-                Oblivion.GetGame().GetRoomManager().UnloadRoom(room, "Delete room");
+                Oblivion.GetGame().GetRoomManager().UnloadRoom(room);
                 Oblivion.GetGame().GetRoomManager().QueueVoteRemove(roomData);
 
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())

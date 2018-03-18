@@ -735,7 +735,7 @@ namespace Oblivion.HabboHotel.Rooms
                     {
                         if ((_idleTime >= 25 && !JustLoaded) || (_idleTime >= 100 && JustLoaded))
                         {
-                            Oblivion.GetGame().GetRoomManager().UnloadRoom(this, "No users");
+                            Oblivion.GetGame().GetRoomManager().UnloadRoom(this);
                             return;
                         }
                         var serverMessage = GetRoomUserManager().SerializeStatusUpdates(false);
@@ -1365,7 +1365,7 @@ namespace Oblivion.HabboHotel.Rooms
         private void OnRoomCrash(Exception e)
         {
             Logging.LogThreadException(e.ToString(), $"Room cycle task for room {RoomId}");
-            Oblivion.GetGame().GetRoomManager().UnloadRoom(this, "Room crashed");
+            Oblivion.GetGame().GetRoomManager().UnloadRoom(this);
             _isCrashed = true;
         }
 
@@ -1469,8 +1469,6 @@ namespace Oblivion.HabboHotel.Rooms
             ActiveTrades = null;
             _roomItemHandler.Destroy();
             _roomItemHandler = null;
-            _roomUserManager.Destroy();
-            _roomUserManager = null;
             RoomData?.Dispose();
             RoomData = null;
             TonerData = null;
@@ -1488,6 +1486,10 @@ namespace Oblivion.HabboHotel.Rooms
 
             _roomKick?.Clear();
             _roomKick = null;
+
+
+            _roomUserManager.Destroy();
+            _roomUserManager = null;
         }
     }
 }

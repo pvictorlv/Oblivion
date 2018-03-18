@@ -33,14 +33,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             message.AppendString("Staff Internal Alert");
             message.AppendString("message");
             message.AppendString(
-                string.Format(
-                    "{0}\r\n- <i>Sender: {1}</i>",
-                    msg, session.GetHabbo().UserName));
+                $"{msg}\r\n- <i>Sender: {session.GetHabbo().UserName}</i>");
             Oblivion.GetGame().GetClientManager().StaffAlert(message);
             Oblivion.GetGame()
                 .GetModerationTool()
                 .LogStaffEntry(session.GetHabbo().UserName, string.Empty, "StaffAlert",
-                    string.Format("Staff alert [{0}]", msg));
+                    $"Staff alert [{msg}]");
 
             return true;
         }

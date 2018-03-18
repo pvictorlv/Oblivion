@@ -16,24 +16,26 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
     /// </summary>
     internal static class CatalogPageComposer
     {
-        internal static ServerMessage ComposeIndex(uint rank, string type, GameClient session)
-        {
-            return ComposeIndex(rank, type, null, session);
-        }
+        internal static ServerMessage ComposeIndex(uint rank, string type, GameClient session) => ComposeIndex(rank, type, null, session);
 
         internal static ServerMessage ComposeIndex(uint rank, string type, string[] allowedPages, GameClient session)
         {
+            var mgr = Oblivion.GetGame().GetCatalog();
+
+            if (session.GetHabbo().Rank <= 1)
+            {
+                if (mgr.IndexMessage != null) return mgr.IndexMessage;
+            }
+
             var pages =
                 Oblivion.GetGame().GetCatalog().Categories.Values.ToList();
 
-            IOrderedEnumerable<CatalogPage> sortedPages;
-
             int parentIdType = (type == "NORMAL" ? -1 : -2);
 
-            sortedPages = allowedPages != null ? pages.Where(page => page.ParentId == parentIdType && page.MinRank <= rank && allowedPages.Contains(page.Layout)).OrderBy(x => x.OrderNum) : pages.Where(page => page.ParentId == parentIdType && page.MinRank <= rank).OrderBy(x => x.OrderNum);
+            var sortedPages = allowedPages != null ? pages.Where(page => page.ParentId == parentIdType && page.MinRank <= rank && allowedPages.Contains(page.Layout)).OrderBy(x => x.OrderNum) : pages.Where(page => page.ParentId == parentIdType && page.MinRank <= rank).OrderBy(x => x.OrderNum);
 
-            var message = new ServerMessage(LibraryParser.OutgoingRequest("CatalogueIndexMessageComposer"));
-
+            var message =
+                new ServerMessage(LibraryParser.OutgoingRequest("CatalogueIndexMessageComposer"));
             message.AppendBool(true);
             message.AppendInteger(0);
             message.AppendInteger(-1);
@@ -92,6 +94,10 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
 
             message.AppendBool(false);
             message.AppendString(type);
+            if (session.GetHabbo().Rank <= 1)
+            {
+                mgr.IndexMessage = message;
+            }
 
             return message;
         }
@@ -113,7 +119,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                 return page.PageMessage;
             }
             var message =
-                new ServerMessage(LibraryParser.OutgoingRequest("CataloguePageMessageComposer")) {Disposable = false};
+                new ServerMessage(LibraryParser.OutgoingRequest("CataloguePageMessageComposer"));
 
             message.AppendInteger(page.PageId);
             message.AppendString(mode);
@@ -174,8 +180,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
             var habboClubItems = Oblivion.GetGame().GetCatalog().HabboClubItems;
 
             message.AppendInteger(habboClubItems.Count);
-
-            /* TODO CHECK */
+            
             foreach (var item in habboClubItems)
             {
                 message.AppendInteger(item.Id);

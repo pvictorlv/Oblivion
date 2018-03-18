@@ -321,6 +321,8 @@ namespace Oblivion.Messages.Handlers
                     if (Session?.GetHabbo() == null || Session.GetHabbo().LoadingRoom == id)
                         return;
 
+                    if (Session?.GetHabbo()?.RecentlyVisitedRooms == null) return;
+
                     if (Oblivion.ShutdownStarted)
                     {
                         Session.SendNotif(Oblivion.GetLanguage().GetVar("server_shutdown"));
@@ -498,7 +500,7 @@ namespace Oblivion.Messages.Handlers
             Response.Init(LibraryParser.OutgoingRequest("RoomGroupMessageComposer"));
             Response.AppendInteger(CurrentLoadingRoom.LoadedGroups.Count);
             /* TODO CHECK */
-            foreach (var guild1 in CurrentLoadingRoom.LoadedGroups)
+            foreach (var guild1 in CurrentLoadingRoom.LoadedGroups.ToArray())
             {
                 Response.AppendInteger(guild1.Key);
                 Response.AppendString(guild1.Value);
@@ -1118,7 +1120,7 @@ namespace Oblivion.Messages.Handlers
                     .GetInventoryComponent()
                     .AddItemArray(room.GetRoomItemHandler().RemoveAllFurniture(Session));
             var roomData = room.RoomData;
-            Oblivion.GetGame().GetRoomManager().UnloadRoom(room, "Delete room");
+            Oblivion.GetGame().GetRoomManager().UnloadRoom(room);
             Oblivion.GetGame().GetRoomManager().QueueVoteRemove(roomData);
             if (roomData == null || Session == null)
                 return;
@@ -1767,7 +1769,7 @@ namespace Oblivion.Messages.Handlers
                         $"UPDATE rooms_data SET model_name = 'custom', wallthick = '{wallThickness}', floorthick = '{floorThickness}', walls_height = '{wallHeight}' WHERE id = {room.RoomId};");
                 }
                 room.ResetGameMap("custom", wallHeight, wallThickness, floorThickness);
-                Oblivion.GetGame().GetRoomManager().UnloadRoom(room, "Reload floor");
+                Oblivion.GetGame().GetRoomManager().UnloadRoom(room);
 
                 var forwardToRoom = new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
                 forwardToRoom.AppendInteger(room.RoomId);
@@ -1837,6 +1839,13 @@ namespace Oblivion.Messages.Handlers
                 !room.CheckRights(Session, true))
                 return;
 
+            if (room.GetRoomUserManager().Pets.Values.Count >= 5)
+            {
+                Session.SendNotif("Você só pode colocar 5 pets por sala!");
+                return;
+            }
+
+
             var petId = Request.GetUInteger();
             var pet = Session.GetHabbo().GetInventoryComponent().GetPet(petId);
 
@@ -1849,12 +1858,7 @@ namespace Oblivion.Messages.Handlers
             if (!room.GetGameMap().CanWalk(x, y, false))
                 return;
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-            {
-                queryReactor.RunFastQuery("UPDATE bots SET room_id = '" + room.RoomId + "', x = '" + x + "', y = '" +
-                                          y + "' WHERE id = '" + petId + "'");
-            }
-
+           
             pet.PlacedInRoom = true;
             pet.RoomId = room.RoomId;
 
@@ -1865,9 +1869,13 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().GetInventoryComponent().MovePetToRoom(pet.PetId);
             if (pet.DbState != DatabaseUpdateState.NeedsInsert)
                 pet.DbState = DatabaseUpdateState.NeedsUpdate;
-            using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+            
+
+            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                room.GetRoomUserManager().SavePets(queryreactor2);
+                queryReactor.RunFastQuery("UPDATE bots SET room_id = '" + room.RoomId + "', x = '" + x + "', y = '" +
+                                          y + "' WHERE id = '" + petId + "'");
+                room.GetRoomUserManager().SavePets(queryReactor);
             }
             Session.SendMessage(Session.GetHabbo().GetInventoryComponent().SerializePetInventory());
         }
@@ -2471,8 +2479,14 @@ namespace Oblivion.Messages.Handlers
 
             if (Session.GetHabbo().Rank < 4 && currentRoom.CheckMute(Session))
                 return;
-
-            currentRoom.AddChatlog(Session.GetHabbo().Id, $"<Sussurro para {text2}>: {msg}", false);
+            try
+            {
+                currentRoom.AddChatlog(Session.GetHabbo().Id, $"<Sussurro para {text2}>: {msg}", false);
+            }
+            catch (Exception e)
+            {
+                Logging.HandleException(e, "whisper addchatlog");
+            }
 
             Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.SocialChat);
 
@@ -2494,29 +2508,29 @@ namespace Oblivion.Messages.Handlers
             whisp.AppendInteger(-1);
 
             roomUserByHabbo.GetClient().SendMessage(whisp);
-
             if (!roomUserByHabbo2.IsBot && roomUserByHabbo2.UserId != roomUserByHabbo.UserId && !roomUserByHabbo2
                     .GetClient().GetHabbo().Data.Ignores.Contains(Session.GetHabbo().Id))
                 roomUserByHabbo2.GetClient().SendMessage(whisp);
 
             var roomUserByRank = currentRoom.GetRoomUserManager().GetRoomUserByRank(4);
 
-            if (!roomUserByRank.Any())
+            if (roomUserByRank.Count <= 0)
                 return;
 
-            /* TODO CHECK */
+
+            var whispStaff = new ServerMessage(LibraryParser.OutgoingRequest("WhisperMessageComposer"));
+
+            whispStaff.AppendInteger(roomUserByHabbo.VirtualId);
+            whispStaff.AppendString($"Whisper to {text2}: {msg}");
+            whispStaff.AppendInteger(0);
+            whispStaff.AppendInteger(colour2);
+            whispStaff.AppendInteger(0);
+            whispStaff.AppendInteger(-1);
+
             foreach (var current2 in roomUserByRank)
                 if (current2 != null && current2.HabboId != roomUserByHabbo2.HabboId &&
                     current2.HabboId != roomUserByHabbo.HabboId && current2.GetClient() != null)
                 {
-                    var whispStaff = new ServerMessage(LibraryParser.OutgoingRequest("WhisperMessageComposer"));
-
-                    whispStaff.AppendInteger(roomUserByHabbo.VirtualId);
-                    whispStaff.AppendString($"Whisper to {text2}: {msg}");
-                    whispStaff.AppendInteger(0);
-                    whispStaff.AppendInteger(colour2);
-                    whispStaff.AppendInteger(0);
-                    whispStaff.AppendInteger(-1);
 
                     current2.GetClient().SendMessage(whispStaff);
                 }

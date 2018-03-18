@@ -655,7 +655,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
             var bytes = message.GetReversedBytes();
 
-            GetConnection().SendData(bytes, message);
+            GetConnection().SendData(bytes);
         }
 
         /// <summary>
@@ -667,7 +667,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             if (GetConnection() == null)
                 return;
 
-            GetConnection().SendData(bytes, null);
+            GetConnection().SendData(bytes);
         }
 
         /// <summary>
@@ -679,7 +679,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             if (GetConnection() == null)
                 return;
 
-            GetConnection().SendData(StaticMessagesManager.Get(type), null);
+            GetConnection().SendData(StaticMessagesManager.Get(type));
         }
 
         /// <summary>
@@ -712,7 +712,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// </summary>
         private void PolicyRequest()
         {
-            _connection.SendData(CrossDomainPolicy.XmlPolicyBytes, null);
+            _connection.SendData(CrossDomainPolicy.XmlPolicyBytes);
         }
     }
 }

@@ -75,9 +75,6 @@ namespace Oblivion.Collections
             _removeQueue.Enqueue(key);
         }
 
-        public TV GetValue(T key) => Inner.ContainsKey(key) ? Inner[key] : default(TV);
-
-        public bool ContainsKey(T key) => Inner.ContainsKey(key);
 
         public void Clear()
         {
@@ -100,24 +97,28 @@ namespace Oblivion.Collections
                 {
                 }
             }
+
             if (_updateQueue != null && _updateQueue.Any())
             {
                 while (_updateQueue.TryDequeue(out _))
                 {
                 }
             }
+
             if (_removeQueue != null && _removeQueue.Any())
             {
                 while (_removeQueue.TryDequeue(out _))
                 {
                 }
             }
+
             if (_onCycleEventQueue != null && _onCycleEventQueue.Any())
             {
                 while (_onCycleEventQueue.TryDequeue(out _))
                 {
                 }
             }
+
             Inner = null;
             _addQueue = null;
             _updateQueue = null;
@@ -146,10 +147,7 @@ namespace Oblivion.Collections
                 return;
             while (_addQueue.TryDequeue(out var item))
             {
-                if (Inner.ContainsKey(item.Key))
-                    Inner[item.Key] = item.Value;
-                else
-                    Inner.TryAdd(item.Key, item.Value);
+                Inner[item.Key] = item.Value;
 
                 _onAdd?.Invoke(item, null);
             }
@@ -161,10 +159,7 @@ namespace Oblivion.Collections
                 return;
             while (_updateQueue.TryDequeue(out var item))
             {
-                if (Inner.ContainsKey(item.Key))
-                    Inner[item.Key] = item.Value;
-                else
-                    Inner.TryAdd(item.Key, item.Value);
+                Inner[item.Key] = item.Value;
                 _onUpdate?.Invoke(item, null);
             }
         }
@@ -184,6 +179,7 @@ namespace Oblivion.Collections
                 else
                     list.Add(item);
             }
+
             if (!list.Any())
                 return;
             foreach (var current in list)

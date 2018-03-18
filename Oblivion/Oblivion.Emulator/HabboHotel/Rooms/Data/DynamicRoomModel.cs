@@ -255,7 +255,6 @@ namespace Oblivion.HabboHotel.Rooms.Data
             _mRoom = null;
             if (_serializedHeightmap != null)
             {
-                _serializedHeightmap.Disposable = true;
                 _serializedHeightmap.Dispose();
                 _serializedHeightmap = null;
             }
@@ -273,7 +272,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         private ServerMessage SerializeHeightmap()
         {
             var serverMessage =
-                new ServerMessage(LibraryParser.OutgoingRequest("FloorMapMessageComposer")) {Disposable = false};
+                new ServerMessage(LibraryParser.OutgoingRequest("FloorMapMessageComposer"));
             serverMessage.AppendBool(false);
             serverMessage.AppendInteger(_mRoom.RoomData.WallHeight);
             var FloorMap = new StringBuilder();

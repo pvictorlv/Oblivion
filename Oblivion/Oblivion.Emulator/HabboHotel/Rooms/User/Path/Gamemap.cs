@@ -1015,12 +1015,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool ItemCanBePlacedHere(int x, int y)
-        {
-            return (Model.MapSizeX - 1 >= x && Model.MapSizeY - 1 >= y) &&
-                   (x != Model.DoorX || y != Model.DoorY) &&
-                   (x <= GameMap.GetLength(0) && y <= GameMap.GetLength(1) && GameMap[x, y] == 1);
-        }
+        internal bool ItemCanBePlacedHere(int x, int y) => (Model.MapSizeX - 1 >= x && Model.MapSizeY - 1 >= y) &&
+                                                           (x != Model.DoorX || y != Model.DoorY) &&
+                                                           (x <= GameMap.GetLength(0) && y <= GameMap.GetLength(1) && GameMap[x, y] == 1);
 
         /// <summary>
         ///     Items the can be placed here.
@@ -1217,7 +1214,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
             if (SerializedFloormap != null)
             {
-                SerializedFloormap.Disposable = true;
                 SerializedFloormap.Dispose();
                 SerializedFloormap = null;
             }
@@ -1461,7 +1457,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <returns>ServerMessage.</returns>
         private ServerMessage NewHeightMap()
         {
-            var serverMessage = new ServerMessage {Disposable = false};
+            var serverMessage = new ServerMessage();
             serverMessage.Init(LibraryParser.OutgoingRequest("HeightMapMessageComposer"));
             serverMessage.AppendInteger(Model.MapSizeX);
             serverMessage.AppendInteger(Model.MapSizeX * Model.MapSizeY);

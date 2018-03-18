@@ -372,6 +372,8 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void UpdateBadges()
         {
+            if (Session?.GetHabbo()?.GetBadgeComponent() == null) return;
+
             Session.GetHabbo().GetBadgeComponent().ResetSlots();
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.RunFastQuery(
@@ -450,7 +452,9 @@ namespace Oblivion.Messages.Handlers
         {
             lock (SessionLock)
             {
-
+                var msgr = Session?.GetHabbo()?.GetMessenger();
+                if (msgr == null)
+                    return;
 
                 var userId = Request.GetUInteger();
                 Request.GetBool();
@@ -463,7 +467,7 @@ namespace Oblivion.Messages.Handlers
                 }
 
                 var createTime = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(habbo.CreateDate);
-
+                var isFriend = msgr.FriendshipExists(habbo.Id);
                 var msg = new ServerMessage(LibraryParser.OutgoingRequest("UserProfileMessageComposer"));
                 msg.AppendInteger(habbo.Id);
                 msg.AppendString(habbo.UserName);
@@ -473,11 +477,12 @@ namespace Oblivion.Messages.Handlers
                 msg.AppendInteger(habbo.AchievementPoints);
                 msg.AppendInteger(habbo.GetMessenger().Friends.Count);
                 msg.AppendBool(habbo.Id != Session.GetHabbo().Id &&
-                               Session.GetHabbo().GetMessenger().FriendshipExists(habbo.Id));
+                               isFriend);
                 msg.AppendBool(habbo.Id != Session.GetHabbo().Id &&
-                               !Session.GetHabbo().GetMessenger().FriendshipExists(habbo.Id) &&
-                               Session.GetHabbo().GetMessenger().RequestExists(habbo.Id));
-                msg.AppendBool(Oblivion.GetGame().GetClientManager().GetClientByUserId(habbo.Id) != null);
+                               !isFriend &&
+                               msgr.RequestExists(habbo.Id));
+
+                msg.AppendBool(habbo.GetClient() != null);
 
                 if (!habbo.LoadedGroups)
                 {

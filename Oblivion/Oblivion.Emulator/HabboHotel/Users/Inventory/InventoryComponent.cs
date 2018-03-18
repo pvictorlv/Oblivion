@@ -499,7 +499,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         {
             if (_items == null) return null;
 
-            var items = _items.Values;
+            var items = _items.Values.ToList();
 
             var i = items.Count;
 
@@ -698,7 +698,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         {
             try
             {
-                if (_mAddedItems?.Count > 0)
+                if (_mAddedItems != null && _mAddedItems.Count > 0)
                 {
                     var added = _mAddedItems.ToList();
 

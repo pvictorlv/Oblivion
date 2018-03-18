@@ -624,9 +624,15 @@ namespace Oblivion.HabboHotel.Users
 
                 /* TODO CHECK */
                 foreach (DataRow dataRow in table.Rows)
-                    Data.Rooms.Add(Oblivion.GetGame()
+                {
+                    var roomData = Oblivion.GetGame()
                         .GetRoomManager()
-                        .FetchRoomData(Convert.ToUInt32(dataRow["id"]), dataRow, Id));
+                        .FetchRoomData(Convert.ToUInt32(dataRow["id"]), dataRow, Id);
+                    if (roomData != null)
+                    {
+                        Data.Rooms.Add(roomData);
+                    }
+                }
             }
         }
 

@@ -210,21 +210,24 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void SendInstantInvite()
         {
-            if (Session?.GetHabbo() == null)
+            if (Session?.GetHabbo()?.GetMessenger() == null)
                 return;
             var num = Request.GetInteger();
+            
             var list = new List<uint>();
             for (var i = 0; i < num; i++) list.Add(Request.GetUInteger());
             var s = Request.GetString();
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleInvitationMessageComposer"));
+            var serverMessage =
+                new ServerMessage(LibraryParser.OutgoingRequest("ConsoleInvitationMessageComposer"));
             serverMessage.AppendInteger(Session.GetHabbo().Id);
             serverMessage.AppendString(s);
-            /* TODO CHECK */ foreach (var clientByUserId in (from current in list
-                    where Session.GetHabbo().GetMessenger().FriendshipExists(current)
-                    select Oblivion.GetGame().GetClientManager().GetClientByUserId(current))
-                .TakeWhile(
-                    clientByUserId => clientByUserId != null))
-                clientByUserId.SendMessage(serverMessage);
+            /* TODO CHECK */
+            foreach (var current in list)
+            {
+                if (!Session.GetHabbo().GetMessenger().FriendshipExists(current)) continue;
+                var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(current);
+                clientByUserId?.SendMessage(serverMessage);
+            }
         }
     }
 }

@@ -288,7 +288,7 @@ namespace Oblivion.Connection.Connection
         /// Sends the data.
         /// </summary>
         /// <param name="packet">The packet.</param>
-        public void SendData(byte[] packet, ServerMessage msg)
+        public void SendData(byte[] packet)
         {
             if (Socket == null || !Socket.Connected) return;
             byte[] newHeader = null;
@@ -316,9 +316,7 @@ namespace Oblivion.Connection.Connection
             {
                 //                Logging.HandleException(e, "SendData - ConnectionInformation.cs");
                 HandleDisconnect(e);
-                msg?.Dispose();
             }
-            msg?.Dispose();
         }
     }
 }

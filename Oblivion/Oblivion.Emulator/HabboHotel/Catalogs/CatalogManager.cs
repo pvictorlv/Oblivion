@@ -200,6 +200,8 @@ namespace Oblivion.HabboHotel.Catalogs
                 Oblivion.UnixToDateTime((int) mRow["untilgrown_stamp"]), moplaBreed);
         }
 
+        public ServerMessage IndexMessage;
+
         /// <summary>
         ///     Gets the item from offer.
         /// </summary>

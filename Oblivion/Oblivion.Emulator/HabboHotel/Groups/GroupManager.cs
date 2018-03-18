@@ -474,7 +474,6 @@ namespace Oblivion.HabboHotel.Groups
             var dateTime2 = dateTime.AddSeconds(group.CreateTime);
 
             response.Init(LibraryParser.OutgoingRequest("GroupDataMessageComposer"));
-
             response.AppendInteger(group.Id);
             response.AppendBool(true);
             response.AppendInteger(group.State);

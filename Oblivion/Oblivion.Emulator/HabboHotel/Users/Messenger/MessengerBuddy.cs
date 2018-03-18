@@ -112,6 +112,8 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="session">The session.</param>
         internal void Serialize(ServerMessage message, GameClient session)
         {
+            if (session?.GetHabbo()?.Data?.Relations == null) return;
+
             var value =
                 session.GetHabbo().Data.Relations.FirstOrDefault(x => x.Value.UserId == Convert.ToInt32(Id)).Value;
 

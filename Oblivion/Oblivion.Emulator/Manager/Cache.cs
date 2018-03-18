@@ -74,7 +74,7 @@ namespace Oblivion.Manager
         private static void RemoveUser(uint user)
         {
             if (Oblivion.UsersCached.TryRemove(user, out var removedUser))
-                removedUser.RemoveCached();
+                removedUser?.RemoveCached();
         }
 
         private static void ClearRoomsCache()

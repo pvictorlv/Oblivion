@@ -53,12 +53,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         /// <param name="itemId">The item identifier.</param>
         internal void AddPyramid(RoomItem item, long itemId)
         {
-            if (_banzaiPyramids.ContainsKey(itemId))
-            {
-                _banzaiPyramids[itemId] = item;
-                return;
-            }
-            _banzaiPyramids.TryAdd(itemId, item);
+            _banzaiPyramids[itemId] = item;
         }
 
         /// <summary>
@@ -77,12 +72,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         /// <param name="itemId">The item identifier.</param>
         internal void AddTeleport(RoomItem item, long itemId)
         {
-            if (_banzaiTeleports.ContainsKey(itemId))
-            {
-                _banzaiTeleports.Inner[itemId] = item;
-                return;
-            }
-            _banzaiTeleports.Add(itemId, item);
+            _banzaiTeleports.Inner[itemId] = item;
         }
 
         /// <summary>
@@ -119,6 +109,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
                         countAmount++;
                         continue;
                     }
+
                     current.ExtraData = "1";
                     current.UpdateNeeded = true;
                     _room.GetGameMap().TeleportToItem(user, current);
@@ -149,13 +140,15 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         /// </summary>
         private void CyclePyramids()
         {
-            /* TODO CHECK */ foreach (var item in _banzaiPyramids.Select(pyramid => pyramid.Value).Where(current => current != null))
+            /* TODO CHECK */
+            foreach (var item in _banzaiPyramids.Select(pyramid => pyramid.Value).Where(current => current != null))
             {
                 if (item.InteractionCountHelper == 0 && item.ExtraData == "1")
                 {
                     _room.GetGameMap().RemoveFromMap(item, false);
                     item.InteractionCountHelper = 1;
                 }
+
                 if (string.IsNullOrEmpty(item.ExtraData))
                     item.ExtraData = "0";
 

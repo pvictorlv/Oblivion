@@ -63,21 +63,16 @@ namespace Oblivion.Messages.Handlers
 
         internal object SessionLock;
         internal object RoomLock;
+
         /// <summary>
         ///     Destroys this instance.
         /// </summary>
         internal void Destroy()
         {
-            lock (SessionLock)
-            {
-                Session = null;
-            }
+            Session = null;
 
-            lock (RoomLock)
-            {
-                CurrentLoadingRoom = null;
-            }
-            
+
+            CurrentLoadingRoom = null;
         }
 
         /// <summary>
@@ -86,11 +81,10 @@ namespace Oblivion.Messages.Handlers
         /// <param name="request">The request.</param>
         internal void HandleRequest(ClientMessage request)
         {
-            lock (SessionLock)
-            {
-                Request = request;
-                LibraryParser.HandlePacket(this, request);
-            }
+            if (Session == null) return;
+
+            Request = request;
+            LibraryParser.HandlePacket(this, request);
         }
 
         /// <summary>

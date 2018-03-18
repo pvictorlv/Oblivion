@@ -6,7 +6,6 @@ using System.Text;
 using Oblivion.Configuration;
 using Oblivion.Connection.Connection;
 using Oblivion.HabboHotel.GameClients.Interfaces;
-using Oblivion.HabboHotel.Users.Messenger;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
 using Oblivion.Util;
@@ -204,7 +203,7 @@ namespace Oblivion.HabboHotel.GameClients
 
             foreach (var current in Clients.Values.Where(current => current?.GetHabbo() != null).Where(current =>
                 (current.GetHabbo().Rank == 4u || current.GetHabbo().Rank == 5u) || current.GetHabbo().Rank == 6u))
-                current.GetConnection().SendData(bytes, message);
+                current.GetConnection().SendData(bytes);
         }
 
         /// <summary>
@@ -251,7 +250,7 @@ namespace Oblivion.HabboHotel.GameClients
                     if (!Client.GetHabbo().HasFuse(fuse))
                         continue;
 
-                Client.GetConnection().SendData(bytes, Packet);
+                Client.GetConnection().SendData(bytes);
             }
 
         }

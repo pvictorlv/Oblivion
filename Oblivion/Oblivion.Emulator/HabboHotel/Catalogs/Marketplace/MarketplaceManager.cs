@@ -18,11 +18,11 @@ namespace Oblivion.HabboHotel.Catalogs.Marketplace
         {
             int num;
             int num2;
-            if (MarketAverages.ContainsKey(spriteId))
+            if (MarketAverages.TryGetValue(spriteId, out var marketAvg))
             {
-                if (MarketCounts.ContainsKey(spriteId))
-                    if (MarketCounts[spriteId] > 0)
-                        return MarketAverages[spriteId] / MarketCounts[spriteId];
+                if (!MarketCounts.TryGetValue(spriteId, out var makertCounts)) return 0;
+                if (makertCounts > 0)
+                    return marketAvg / makertCounts;
                 return 0;
             }
 
@@ -52,26 +52,23 @@ namespace Oblivion.HabboHotel.Catalogs.Marketplace
         {
             var dictionary = new Dictionary<int, MarketOffer>();
             var dictionary2 = new Dictionary<int, int>();
-            /* TODO CHECK */
+
             foreach (var item in MarketItems)
-                if (dictionary.ContainsKey(item.SpriteId))
+                if (dictionary.TryGetValue(item.SpriteId, out var makertItem))
                 {
-                    if (dictionary[item.SpriteId].TotalPrice > item.TotalPrice)
+                    if (makertItem.TotalPrice > item.TotalPrice)
                     {
-                        dictionary.Remove(item.SpriteId);
-                        dictionary.Add(item.SpriteId, item);
+                        dictionary[item.SpriteId] = item;
                     }
 
-                    var num = dictionary2[item.SpriteId];
-                    dictionary2.Remove(item.SpriteId);
-                    dictionary2.Add(item.SpriteId, num + 1);
+                     dictionary2[item.SpriteId]++;
                 }
                 else
                 {
                     dictionary.Add(item.SpriteId, item);
                     dictionary2.Add(item.SpriteId, 1);
                 }
-            return dictionary2.ContainsKey(spriteId) ? dictionary2[spriteId] : 0;
+            return dictionary2.TryGetValue(spriteId, out var dicItem) ? dicItem : 0;
         }
 
         public int CalculateComissionPrice(float sellingPrice) => Convert.ToInt32(Math.Ceiling(sellingPrice / 100 * 1));

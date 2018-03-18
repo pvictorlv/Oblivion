@@ -39,13 +39,7 @@ namespace Oblivion.Messages.Parsers
             return -1;
         }
 
-        public static string TryGetOutgoingName(int header)
-        {
-            if (OutgoingNames.TryGetValue(header, out string incomingName))
-                return incomingName;
-
-            return string.Empty;
-        }
+        public static string TryGetOutgoingName(int header) => OutgoingNames.TryGetValue(header, out var incomingName) ? incomingName : string.Empty;
 
         public static void RegisterAll()
         {
@@ -72,7 +66,7 @@ namespace Oblivion.Messages.Parsers
         {
             Console.ForegroundColor = ConsoleColor.DarkCyan;
 
-            if (Incoming.ContainsKey(message.Id))
+            if (Incoming.TryGetValue(message.Id, out var staticRequestHandler))
             {
                 if (Oblivion.DebugMode)
                 {
@@ -88,8 +82,7 @@ namespace Oblivion.Messages.Parsers
 
                     Console.WriteLine();
                 }
-                
-                var staticRequestHandler = Incoming[message.Id];
+
                 staticRequestHandler(handler);
             }
             else if (Oblivion.DebugMode)

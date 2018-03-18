@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Oblivion.Configuration;
 using Oblivion.HabboHotel.Camera;
 using Oblivion.HabboHotel.Commands;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -168,6 +169,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         internal long LastRollerDate;
 
 
+        internal bool LeavingRoom;
         /// <summary>
         ///     The horse identifier
         /// </summary>
@@ -846,14 +848,22 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (GetRoom().Disposed) return;
 
                 var habbo = GetClient().GetHabbo();
+                if (habbo == null) return;
 
                 if (GetRoom().GotWireds())
                     if (GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSay, this, msg))
                         return;
+                try
+                {
+                    GetRoom().AddChatlog(session.GetHabbo().Id, msg, true);
+                }
+                catch (Exception e)
+                {
+                    Logging.HandleException(e, "addchatlog chat()");
+                }
+            
 
-                GetRoom().AddChatlog(session.GetHabbo().Id, msg, true);
-
-                uint rank = 1;
+            uint rank = 1;
 
                 if (session.GetHabbo() != null)
                     rank = session.GetHabbo().Rank;
@@ -867,6 +877,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (rank < 4)
                 {
                     var span = DateTime.Now - habbo.SpamFloodTime;
+                    
                     if (span.TotalSeconds > habbo.SpamProtectionTime && habbo.SpamProtectionBol)
                     {
                         _floodCount = 0;
@@ -1202,7 +1213,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
 
             if (BotAi == null || BotData == null)
-                throw new NullReferenceException("BotAI or BotData is undefined");
+                return;
 
             message.AppendInteger(BotAi.BaseId);
             message.AppendString(BotData.Name);

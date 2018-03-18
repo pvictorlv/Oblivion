@@ -113,7 +113,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
               
                 var UsersToReturn = currentRoom.GetRoomUserManager().GetRoomUsers();
-                Oblivion.GetGame().GetRoomManager().UnloadRoom(currentRoom, "Room sold");
+                Oblivion.GetGame().GetRoomManager().UnloadRoom(currentRoom);
                 /* TODO CHECK */ foreach (var User in UsersToReturn.Where(User => User?.GetClient() != null))
                 {
                     var forwardToRoom = new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
