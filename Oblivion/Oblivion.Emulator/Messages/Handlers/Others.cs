@@ -219,9 +219,9 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void LoginWithTicket()
         {
-            if (Session == null || Session.GetHabbo() != null)
+            if (Session == null)
                 return;
-
+            if (Session.Logged) return;
             var sso = Request.GetString();
 
             if (string.IsNullOrEmpty(sso) || string.IsNullOrWhiteSpace(sso) || sso.Length < 5 || !Session.TryLogin(sso))
@@ -229,6 +229,8 @@ namespace Oblivion.Messages.Handlers
                 Session?.Disconnect("Invalid sso or banned");
                 return;
             }
+
+            Session.Logged = true;
 
             if (Session == null) return;
             Session.TimePingedReceived = DateTime.Now;

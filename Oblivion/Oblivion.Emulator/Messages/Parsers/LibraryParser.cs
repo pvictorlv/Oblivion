@@ -144,10 +144,8 @@ namespace Oblivion.Messages.Parsers
 
                     var packetId = fields[1].ToLower().Contains('x') ? Convert.ToInt32(fields[1], 16) : Convert.ToInt32(fields[1]);
                     
-                    if (!Library.ContainsKey(packetName))
+                    if (!Library.TryGetValue(packetName, out var libValue))
                         continue;
-
-                    var libValue = Library[packetName];
 
                     var del = (PacketLibrary.GetProperty)Delegate.CreateDelegate(typeof(PacketLibrary.GetProperty), typeof(PacketLibrary), libValue);
 

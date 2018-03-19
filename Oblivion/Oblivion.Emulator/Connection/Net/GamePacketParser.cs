@@ -26,11 +26,11 @@ namespace Oblivion.Connection.Net
         /// <summary>
         /// The memory container
         /// </summary>
-        private static readonly MemoryContainer MemoryContainer = new MemoryContainer(10, 4072);
+        private static MemoryContainer MemoryContainer = new MemoryContainer(10, 4072);
         /// <summary>
         /// The _buffered data
         /// </summary>
-        private readonly byte[] _bufferedData;
+        private byte[] _bufferedData;
         /// <summary>
         /// The _buffer position
         /// </summary>
@@ -66,6 +66,10 @@ namespace Oblivion.Connection.Net
             _currentClient = me;
         }
 
+        public void StopConnection()
+        {
+            _currentClient = null;
+        }
         /// <summary>
         /// Handles the packet data.
         /// </summary>

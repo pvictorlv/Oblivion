@@ -101,18 +101,18 @@ namespace Oblivion.HabboHotel.Roles
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool RankGotCommand(uint rankId, string cmd)
         {
-            if (!_cmdRights.ContainsKey(cmd))
+            if (!_cmdRights.TryGetValue(cmd, out var role))
             {
                 return false;
             }
-            if (!_cmdRights[cmd].Contains(";"))
+            if (!role.Contains(";"))
             {
-                return rankId >= uint.Parse(_cmdRights[cmd]);
+                return rankId >= uint.Parse(role);
             }
 
-            var cmdranks = _cmdRights[cmd].Split(';');
+            var cmdranks = role.Split(';');
             return cmdranks.Any(rank => rank.Contains(Convert.ToString(rankId))) ||
-                   _cmdRights[cmd].Contains(Convert.ToString(rankId));
+                   role.Contains(Convert.ToString(rankId));
         }
 
         /// <summary>
@@ -121,10 +121,7 @@ namespace Oblivion.HabboHotel.Roles
         /// <param name="rankId">The rank identifier.</param>
         /// <param name="fuse">The fuse.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool RankHasRight(uint rankId, string fuse)
-        {
-            return ContainsRight(fuse) && rankId >= _rights[fuse];
-        }
+        internal bool RankHasRight(uint rankId, string fuse) => _rights.TryGetValue(fuse, out var right) && rankId >= right;
 
         /// <summary>
         ///     Determines whether the specified sub has vip.
@@ -134,7 +131,7 @@ namespace Oblivion.HabboHotel.Roles
         /// <returns><c>true</c> if the specified sub has vip; otherwise, <c>false</c>.</returns>
         internal bool HasVip(int sub, string fuse)
         {
-            return _subRights.ContainsKey(fuse) && _subRights[fuse] == sub;
+            return _subRights.TryGetValue(fuse, out var right) && right == sub;
         }
 
         /// <summary>
@@ -145,23 +142,18 @@ namespace Oblivion.HabboHotel.Roles
         internal List<string> GetRightsForRank(uint rankId)
         {
             var list = new List<string>();
-            /* TODO CHECK */ foreach (var current in _rights.Where(current => rankId >= current.Value && !list.Contains(current.Key)))
+            /* TODO CHECK */
+            foreach (var current in _rights)
             {
-                list.Add(current.Key);
+                if (rankId >= current.Value && !list.Contains(current.Key))
+                {
+                    list.Add(current.Key);
+                }
             }
+
             return list;
         }
-
-        /// <summary>
-        ///     Determines whether the specified right contains right.
-        /// </summary>
-        /// <param name="right">The right.</param>
-        /// <returns><c>true</c> if the specified right contains right; otherwise, <c>false</c>.</returns>
-        internal bool ContainsRight(string right)
-        {
-            return _rights.ContainsKey(right);
-        }
-
+        
         /// <summary>
         ///     Clears the rights.
         /// </summary>

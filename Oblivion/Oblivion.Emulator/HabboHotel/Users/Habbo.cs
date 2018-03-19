@@ -514,6 +514,7 @@ namespace Oblivion.HabboHotel.Users
                     select new GroupMember(Id, UserName, Look, (uint) row["group_id"], Convert.ToInt16(row["rank"]),
                         (int) row["date_join"], Oblivion.EnumToBool(row["has_chat"].ToString()))).ToList();
             }
+
             LoadedGroups = true;
         }
 
@@ -645,7 +646,7 @@ namespace Oblivion.HabboHotel.Users
             Data = data;
         }
 
-       
+
         /// <summary>
         ///     Gots the command.
         /// </summary>
@@ -843,6 +844,7 @@ namespace Oblivion.HabboHotel.Users
                 _messenger.Destroy();
                 _messenger = null;
             }
+
             CurrentRoom = null;
             GuideOtherUser = null;
             _subscriptionManager?.Dispose();
@@ -890,9 +892,8 @@ namespace Oblivion.HabboHotel.Users
             client.SendMessage(_messenger.SerializeFriends());
             client.SendMessage(_messenger.SerializeRequests());
 
-            if (Oblivion.OfflineMessages.ContainsKey(Id))
+            if (Oblivion.OfflineMessages.TryGetValue(Id, out var list))
             {
-                var list = Oblivion.OfflineMessages[Id];
                 foreach (var current in list)
                     client.SendMessage(_messenger.SerializeOfflineMessages(current));
                 Oblivion.OfflineMessages.Remove(Id);
@@ -1166,8 +1167,12 @@ namespace Oblivion.HabboHotel.Users
                 dTable = dbClient.GetTable();
             }
 
-            foreach (DataRow dRow in dTable.Rows)
-                _myGroups.Add(Convert.ToUInt32(dRow["id"]));
+            if (dTable != null)
+                foreach (DataRow dRow in dTable.Rows)
+                {
+                    if (dRow != null)
+                        _myGroups?.Add(Convert.ToUInt32(dRow["id"]));
+                }
 
             _loadedMyGroups = true;
         }

@@ -45,8 +45,8 @@ namespace Oblivion.HabboHotel.Achievements.Factorys
                 }
                 else
                 {
-                    if (!achievements[text].CheckLevel(level2))
-                        achievements[text].AddLevel(level2);
+                    if (!levelT.CheckLevel(level2))
+                        levelT.AddLevel(level2);
                     else
                         Out.WriteLine("Was Found a Duplicated Level for: " + text + ", Level: " + level2.Level,
                             "[Oblivion.Achievements]", ConsoleColor.Cyan);

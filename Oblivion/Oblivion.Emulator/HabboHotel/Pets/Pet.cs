@@ -327,7 +327,7 @@ namespace Oblivion.HabboHotel.Pets
         /// <returns><c>true</c> if the specified command has command; otherwise, <c>false</c>.</returns>
         internal bool HasCommand(short command)
         {
-            return PetCommands.ContainsKey(command) && PetCommands[command];
+            return PetCommands.TryGetValue(command, out var cmd) && cmd;
         }
 
         /// <summary>
