@@ -406,8 +406,8 @@ namespace Oblivion.HabboHotel.Navigators
                     if (containsOwner)
                     {
                         dbClient.SetQuery(
-                            "SELECT * FROM rooms_data WHERE owner LIKE @query AND roomtype = 'private' LIMIT 50");
-                        dbClient.AddParameter("query", $"%{searchQuery}%");
+                            "SELECT * FROM rooms_data WHERE owner = @query AND roomtype = 'private' LIMIT 50");
+                        dbClient.AddParameter("query", searchQuery);
                         dTable = dbClient.GetTable();
                     }
                     else if (containsGroup)

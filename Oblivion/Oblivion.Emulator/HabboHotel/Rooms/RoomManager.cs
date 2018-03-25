@@ -8,7 +8,6 @@ using Oblivion.Collections;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.Events;
 using Oblivion.HabboHotel.GameClients.Interfaces;
-using Oblivion.HabboHotel.Navigators.Interfaces;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.Util;
 
@@ -474,12 +473,10 @@ namespace Oblivion.HabboHotel.Rooms
 
             room.Disposed = true;
 
-            if (Oblivion.GetGame().GetNavigator().PrivateCategories.Contains(room.RoomData.Category))
-                if (Oblivion.GetGame().GetNavigator().PrivateCategories.Contains(room.RoomData.Category))
-                {
-                    ((FlatCat) Oblivion.GetGame().GetNavigator().PrivateCategories[room.RoomData.Category]).UsersNow -=
-                        room.UserCount;
-                }
+            if (Oblivion.GetGame().GetNavigator().PrivateCategories.TryGetValue(room.RoomData.Category, out var flatCat))
+            {
+                flatCat.UsersNow -= room.UserCount;
+            }
 
             room.RoomData.UsersNow = 0;
             var state = "open";

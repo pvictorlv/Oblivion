@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -56,7 +54,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool Execute(params object[] stuff)
         {
-            var user = (RoomUser) stuff[0];
+            var user = (RoomUser) stuff?[0];
             if (user?.GetClient()?.GetHabbo()?.GetBadgeComponent() == null) return false;
             if (stuff[1] == null)
                 return false;
@@ -65,7 +63,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (OtherExtraString2 == null)
                 return false;
 
-            var amountLeft = Convert.ToInt32(OtherExtraString2);
+            if (!int.TryParse(OtherExtraString2, out var amountLeft))
+                return false;
 
             var unique = OtherBool;
 

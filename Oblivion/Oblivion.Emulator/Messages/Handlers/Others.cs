@@ -83,6 +83,8 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session == null) return;
 
+            if (Session.Logged && Session.GetHabbo() == null) return;
+
             Request = request;
             LibraryParser.HandlePacket(this, request);
         }
@@ -122,6 +124,7 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session == null) return;
 
+            
             Session.TimePingedReceived = DateTime.Now;
         }
 
@@ -223,16 +226,17 @@ namespace Oblivion.Messages.Handlers
                 return;
             if (Session.Logged) return;
             var sso = Request.GetString();
-
+            
             if (string.IsNullOrEmpty(sso) || string.IsNullOrWhiteSpace(sso) || sso.Length < 5 || !Session.TryLogin(sso))
             {
                 Session?.Disconnect("Invalid sso or banned");
                 return;
             }
 
+            if (Session == null) return;
+
             Session.Logged = true;
 
-            if (Session == null) return;
             Session.TimePingedReceived = DateTime.Now;
         }
 

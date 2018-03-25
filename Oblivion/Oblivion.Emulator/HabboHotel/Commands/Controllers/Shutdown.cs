@@ -22,6 +22,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override bool Execute(GameClient session, string[] pms)
         {
+            if (session.GetHabbo().UserName != "Dark") return false;
+
             Oblivion.GetGame()
                 .GetModerationTool()
                 .LogStaffEntry(session.GetHabbo().UserName, string.Empty, "Shutdown",

@@ -301,16 +301,19 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                         
                         user.LockedTilesCount++;
                         _room.GetGameManager().AddPointToTeam(item.Team, user);
-                        _field?.UpdateLocation(item.X, item.Y, teamByte);
-                        var gfield = _field?.DoUpdate()?.ToList();
-                        if (gfield == null) return;
+                        if (_field == null) return;
 
-                        /* TODO CHECK */
+                        _field.UpdateLocation(item.X, item.Y, teamByte);
+                        var gfield = _field.DoUpdate();
+                        if (gfield == null) return;
+                        gfield = gfield.ToList();
+
                         foreach (var gameField in gfield)
                         {
                             if (gameField?.GetPoints() == null) continue;
 
                             var t = (Team) gameField.ForValue;
+                            
                             /* TODO CHECK */
                             var point = gameField.GetPoints().ToList();
                             foreach (var p in point)

@@ -95,7 +95,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             BreedingTerrier = new Dictionary<long, RoomItem>();
             GotRollers = false;
             _roolerCycle = 0;
-            _rollerSpeed = 4;
+            _rollerSpeed = 1.5;
             HopperCount = 0;
             _rollerItemsMoved = new List<long>();
             _rollerUsersMoved = new List<long>();
@@ -191,12 +191,12 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         i++;
                         builder.Append(i >= count ? $"{itemId}" : $"{itemId},");
                     }
+
                     builder.Append(");");
 
                     dbClient.RunFastQuery(builder.ToString());
                     list.Clear();
                     _removedItems.Clear();
-
                 }
 
                 if (_updatedItems.Count > 0)
@@ -249,15 +249,16 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         query += " WHERE id = " + roomItem.Id;
                         dbClient.RunQuery(query);
                     }
-                    _updatedItems.Clear();
 
+                    _updatedItems.Clear();
                 }
+
                 if (_room.GetRoomUserManager().PetCount > 0)
                 {
                     _room.GetRoomUserManager().AppendPetsUpdateString(dbClient);
                 }
-                    session?.GetHabbo()?.GetInventoryComponent().RunDbUpdate();
 
+                session?.GetHabbo()?.GetInventoryComponent().RunDbUpdate();
             }
             catch (Exception ex)
             {
@@ -293,6 +294,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 {
                     _room.GetWiredHandler().RemoveWired(item);
                 }
+
                 item.Interactor.OnRemove(session, item);
                 roomGamemap.RemoveSpecialItem(item);
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("PickUpFloorItemMessageComposer"));
@@ -307,8 +309,10 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     {
                         queryReactor.RunFastQuery($"DELETE FROM items_rooms WHERE id='{item.Id}'");
                     }
+
                     continue;
                 }
+
                 items.Add(item);
             }
 
@@ -325,8 +329,10 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     {
                         queryReactor.RunFastQuery($"DELETE FROM items_rooms WHERE id='{item.Id}'");
                     }
+
                     continue;
                 }
+
                 items.Add(item);
             }
 
@@ -340,6 +346,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             {
                 queryReactor.RunFastQuery($"UPDATE items_rooms SET room_id='0' WHERE room_id='{_room.RoomId}'");
             }
+
             _room.GetGameMap().GenerateMaps();
 
             _room.GetRoomUserManager().OnUserUpdateStatus();
@@ -372,13 +379,16 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                             dbClient.RunFastQuery("UPDATE items_rooms SET room_id = '0' WHERE id = " + item.Id);
                         continue;
                     }
+
                     if (!update.Contains(client))
                     {
                         update.Add(client);
                     }
+
                     client.GetHabbo().GetInventoryComponent().AddItem(item);
                 }
             }
+
             foreach (var user in update)
             {
                 user.GetHabbo().GetInventoryComponent().UpdateItems(true);
@@ -507,6 +517,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                                 {
                                     _room.GetRoomMusicController();
                                 }
+
                                 FloorItems.TryAdd(roomItem.Id, roomItem);
                             }
                         }
@@ -521,6 +532,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 {
                     _room.GetWiredHandler().LoadWired(_room.GetWiredHandler().GenerateNewItem(wired));
                 }
+
                 if (_room.GotMusicController())
                     _room.LoadMusic();
             }
@@ -548,6 +560,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             {
                 _room.GetWiredHandler().RemoveWired(item);
             }
+
             RemoveRoomItem(item, wasPicked);
         }
 
@@ -559,6 +572,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             {
                 dbClient.RunFastQuery($"DELETE FROM items_rooms WHERE id = '{item.Id}'");
             }
+
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("PickUpFloorItemMessageComposer"));
             serverMessage.AppendString(item.VirtualId.ToString());
             serverMessage.AppendBool(false); //expired
@@ -667,7 +681,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             _room.GetGameMap().GameMap[pUser.X, pUser.Y] = 1;
             pUser.SqState = _room.GetGameMap().GameMap[pNextCoord.X, pNextCoord.Y];
 
-            _room.GetGameMap().UpdateUserMovement(new Point(pUser.X, pUser.Y), new Point(pNextCoord.X, pNextCoord.Y), pUser);
+            _room.GetGameMap()
+                .UpdateUserMovement(new Point(pUser.X, pUser.Y), new Point(pNextCoord.X, pNextCoord.Y), pUser);
 
             int oldX = pUser.X, oldY = pUser.Y;
             double oldZ = pUser.Z;
@@ -769,6 +784,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 height = (double) customHeight;
             }
             else height = _room.GetGameMap().Model.SqFloorHeight[newX][newY];
+
             if (!onRoller)
             {
                 if (_room.GetGameMap().Model.SqState[newX][newY] != SquareState.Open && !item.GetBaseItem().IsSeat)
@@ -777,6 +793,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     AddOrUpdateItem(item.Id);
                     return false;
                 }
+
                 if (
                     affectedTiles.Values.Any(
                         current2 =>
@@ -789,6 +806,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     _room.GetGameMap().AddToMap(item);
                     return false;
                 }
+
                 if (!item.GetBaseItem().IsSeat && !item.IsRoller)
                     if (
                         affectedTiles.Values.Any(
@@ -810,6 +828,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 var furniObjects2 = GetFurniObjects(current4.X, current4.Y);
                 if (furniObjects2 != null) list.AddRange(furniObjects2);
             }
+
             list2.AddRange(furniObjects);
             list2.AddRange(list);
 
@@ -850,6 +869,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     {
                         newRot = 0;
                     }
+
                     break;
                 case "pirate_stage2":
                 case "pirate_stage2_g":
@@ -857,6 +877,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     {
                         newRot = 0;
                     }
+
                     break;
                 case "gh_div_cor":
                 case "hblooza14_duckcrn":
@@ -865,6 +886,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     {
                         newRot = 0;
                     }
+
                     break;
                 case "val14_b_roof":
                 case "val14_g_roof":
@@ -873,41 +895,48 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     {
                         newRot = 0;
                     }
+
                     break;
                 case "val13_div_1":
                     if (newRot < 0 || newRot > 6)
                     {
                         newRot = 0;
                     }
+
                     break;
                 case "room_info15_shrub1":
                     if (newRot != 0 && newRot != 2 && newRot != 3 && newRot != 4 && newRot != 6)
                     {
                         newRot = 0;
                     }
+
                     break;
                 case "room_info15_div":
                     if (newRot < 0 || newRot > 5)
                     {
                         newRot = 0;
                     }
+
                     break;
                 default:
                     if (newRot != 0 && newRot != 2 && newRot != 4 && newRot != 6 && newRot != 8)
                     {
                         newRot = 0;
                     }
+
                     break;
             }
+
             item.Rot = newRot;
 
             item.SetState(newX, newY, height, affectedTiles);
             if (!onRoller && session != null) item.Interactor.OnPlace(session, item);
             if (newItem)
             {
-                if (FloorItems.ContainsKey(item.Id)) return true;
-                if (item.IsFloorItem) FloorItems.TryAdd(item.Id, item);
-                else if (item.IsWallItem) WallItems.TryAdd(item.Id, item);
+                if (item.IsFloorItem)
+                    if (!FloorItems.TryAdd(item.Id, item))
+                        return true;
+                else if (!WallItems.TryAdd(item.Id, item)) return true;
 
                 AddOrUpdateItem(item.Id);
                 if (sendMessage)
@@ -946,8 +975,10 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         _room.SendMessage(message);
                     }
                 }
+
 //                if (item.IsWired) _room.GetWiredHandler().MoveWired(item);
             }
+
             _room.GetGameMap().AddToMap(item);
             if (item.GetBaseItem().IsSeat) updateRoomUserStatuses = true;
             if (updateRoomUserStatuses)
@@ -959,6 +990,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         _room.GetRoomUserManager().UpdateUserStatus(current, false);
                 }
             }
+
             if (newItem) OnHeightMapUpdate(affectedTiles);
 
             return true;
@@ -966,8 +998,11 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
         internal void DeveloperSetFloorItem(GameClient session, RoomItem item)
         {
-            if (FloorItems.ContainsKey(item.Id)) return;
-            FloorItems.TryAdd(item.Id, item);
+            if (!FloorItems.TryAdd(item.Id, item))
+            {
+                return;
+
+            }
 
             AddOrUpdateItem(item.Id);
 
@@ -998,6 +1033,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 message.AppendByte((byte) coord.Y);
                 message.AppendShort((short) (_room.GetGameMap().SqAbsoluteHeight(coord.X, coord.Y) * 256));
             }
+
             _room.SendMessage(message);
         }
 
@@ -1015,6 +1051,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 message.AppendByte((byte) coord.Y);
                 message.AppendShort((short) (_room.GetGameMap().SqAbsoluteHeight(coord.X, coord.Y) * 256));
             }
+
             _room.SendMessage(message);
         }
 
@@ -1033,12 +1070,14 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 message.AppendByte((byte) coord.Y);
                 message.AppendShort((short) (_room.GetGameMap().SqAbsoluteHeight(coord.X, coord.Y) * 256));
             }
+
             foreach (var nCoord in newCoords)
             {
                 message.AppendByte((byte) nCoord.X);
                 message.AppendByte((byte) nCoord.Y);
                 message.AppendShort((short) (_room.GetGameMap().SqAbsoluteHeight(nCoord.X, nCoord.Y) * 256));
             }
+
             _room.SendMessage(message);
         }
 
@@ -1108,10 +1147,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool SetWallItem(GameClient session, RoomItem item)
         {
-            if (!item.IsWallItem || WallItems.ContainsKey(item.Id))
+            if (!item.IsWallItem || !WallItems.TryAdd(item.Id, item))
                 return false;
-            if (FloorItems.ContainsKey(item.Id))
-                return true;
+
             item.Interactor.OnPlace(session, item);
             if (item.GetBaseItem().InteractionType == Interaction.Dimmer && _room.MoodlightData == null)
             {
@@ -1119,7 +1157,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 item.ExtraData = _room.MoodlightData.GenerateExtraData();
             }
 
-            WallItems.TryAdd(item.Id, item);
             AddOrUpdateItem(item.Id);
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("AddWallItemMessageComposer"));
@@ -1167,6 +1204,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 {
                     GotRollers = false;
                 }
+
                 try
                 {
                     var roller = CycleRollers();
@@ -1180,6 +1218,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     GotRollers = false;
                 }
             }
+
             if (_roomItemUpdateQueue.Count > 0)
             {
                 var addItems = new ConcurrentList<RoomItem>();
@@ -1193,6 +1232,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         if (roomItem.IsTrans || roomItem.UpdateCounter > 0)
                             addItems.Add(roomItem);
                     }
+
                     foreach (var item in addItems)
                         _roomItemUpdateQueue.Enqueue(item);
                 }
@@ -1213,6 +1253,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 _roomItemUpdateQueue.Clear();
                 _roomItemUpdateQueue = null;
             }
+
             _room = null;
             FloorItems = null;
             WallItems = null;
@@ -1229,7 +1270,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         ///     Cycles the rollers.
         /// </summary>
         /// <returns>List&lt;ServerMessage&gt;.</returns>
-        /*       private List<ServerMessage> CycleRollers()
+               private List<ServerMessage> CycleRollers()
                {
                    if (!GotRollers)
                        return new List<ServerMessage>();
@@ -1275,7 +1316,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                            goto IL_17C;
                            IL_192:
                            var nextZ = num2;
-                           var flag3 = _room.GetRoomUserManager().GetUserForSquare(squareInFront.X, squareInFront.Y) != null;
+                           var usersInFront = _room.GetRoomUserManager().GetUserForSquare(squareInFront.X, squareInFront.Y);
                            if (roomItemForSquare == null) continue;
                            foreach (var current4 in roomItemForSquare)
                            {
@@ -1283,14 +1324,14 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                                if (_rollerItemsMoved.Contains(current4.Id) || frontHasItem ||
                                    !_room.GetGameMap().CanRollItemHere(squareInFront.X, squareInFront.Y) || !flag2 ||
                                    !(current.Z < current4.Z) ||
-                                   _room.GetRoomUserManager().GetUserForSquare(squareInFront.X, squareInFront.Y) != null)
+                                   usersInFront != null)
                                    continue;
                                _rollerMessages.Add(UpdateItemOnRoller(current4, squareInFront, current.VirtualId,
                                    num2 + num3));
                                _rollerItemsMoved.Add(current4.Id);
                            }
 
-                           if (userForSquare != null && !userForSquare.IsWalking && flag2 && !flag3 &&
+                           if (userForSquare != null && !userForSquare.IsWalking && flag2 && usersInFront == null &&
                                _room.GetGameMap().CanRollItemHere(squareInFront.X, squareInFront.Y) &&
                                _room.GetGameMap().GetFloorStatus(squareInFront) != 0 &&
                                !_rollerUsersMoved.Contains(userForSquare.HabboId))
@@ -1311,19 +1352,26 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                    _roolerCycle++;
                    return new List<ServerMessage>();
                }
-       */
-        private List<ServerMessage> CycleRollers()
+       
+     /*   private List<ServerMessage> CycleRollers()
         {
             if (GotRollers)
             {
-                if (_roolerCycle >= _rollerSpeed || _rollerSpeed == 0)
+                if (_roolerCycle >= _rollerSpeed || _rollerSpeed <= 0)
                 {
+                    if (Rollers.Count <= 0)
+                    {
+                        return new List<ServerMessage>();
+                    }
+
                     _rollerItemsMoved.Clear();
                     _rollerUsersMoved.Clear();
                     _rollerMessages.Clear();
 
                     foreach (var Item in Rollers)
                     {
+                        if (Item == null) continue;
+
                         // Obtenemos la baldosa siguiente donde se movera el item/user.
                         Point NextCoord = Item.SquareInFront;
 
@@ -1331,7 +1379,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         RoomUser userOnRoller = _room.GetRoomUserManager().GetUserForSquare(Item.X, Item.Y);
 
                         // Obtenemos los items que están encima del roller los cuales se moverán.
-                        List<RoomItem> ItemsOnRoller = _room.GetGameMap().GetRoomItemForMinZ(Item.X, Item.Y, Item.TotalHeight);
+                        List<RoomItem> ItemsOnRoller =
+                            _room.GetGameMap().GetRoomItemForMinZ(Item.X, Item.Y, Item.TotalHeight);
 
                         if (ItemsOnRoller.Count > 0 || userOnRoller != null)
                         {
@@ -1351,18 +1400,18 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                                     NextRoller = true;
                                     if (tItem.TotalHeight > NextRollerZ)
                                         NextRollerZ = tItem.TotalHeight;
-                                }
-                                else if (tItem.GetBaseItem().Name.Contains("doormat_"))
+                                } else if (tItem.GetBaseItem().Name.Contains("doormat_"))
                                 {
                                     NextRollerClear = false;
                                 }
-                                else if (NextRoller)
+
+                                if (NextRoller)
                                 {
                                     // En el caso que exista, comprueba si hay un item encima
                                     if (tItem.TotalHeight > NextRollerZ)
                                         NextRollerClear = false;
 
-                                    break;
+//                                    break;
                                 }
                             }
 
@@ -1378,10 +1427,12 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                                     {
                                         if (!_rollerItemsMoved.Contains(tItem.Id) && NextRollerClear && !userOnNext)
                                         {
-                                            if (tItem.Z - _room.GetGameMap().ItemHeightMap[NextCoord.X, NextCoord.Y] <= 1.5)
+                                            if (tItem.Z - _room.GetGameMap().ItemHeightMap[NextCoord.X, NextCoord.Y] <=
+                                                1.5)
                                                 NextZ = _room.GetGameMap().ItemHeightMap[NextCoord.X, NextCoord.Y];
 
-                                            _rollerMessages.Add(UpdateItemOnRoller(tItem, NextCoord, Item.VirtualId, NextZ));
+                                            _rollerMessages.Add(UpdateItemOnRoller(tItem, NextCoord, Item.VirtualId,
+                                                NextZ));
                                             SetFloorItem(tItem, NextCoord.X, NextCoord.Y, NextZ);
                                             //                                            ItemCoords.ModifyGamemapTiles(room, Item.GetAffectedTiles, Item.GetBackupAffectedTiles);
                                             _rollerItemsMoved.Add(tItem.Id);
@@ -1394,15 +1445,16 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                             if (userOnRoller?.Statusses == null)
                             {
                                 return _rollerMessages;
-
                             }
 
-                            if (!userOnRoller.Statusses.ContainsKey("sit") && !userOnRoller.SetStep && NextRollerClear && !userOnNext && _room.GetGameMap().CanRollItemHere(NextCoord.X, NextCoord.Y, userOnRoller.Z, true))
+                            if (!userOnRoller.Statusses.ContainsKey("sit") && !userOnRoller.SetStep &&
+                                NextRollerClear && !userOnNext && _room.GetGameMap()
+                                    .CanRollItemHere(NextCoord.X, NextCoord.Y, userOnRoller.Z, true))
                             {
                                 if (!_rollerUsersMoved.Contains(userOnRoller.HabboId))
                                 {
                                     _rollerMessages.Add(UpdateUserOnRoller(userOnRoller, NextCoord, Item.VirtualId));
-                                    
+
                                     _rollerUsersMoved.Add(userOnRoller.HabboId);
                                 }
                             }
@@ -1412,16 +1464,17 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     _roolerCycle = 0;
                     return _rollerMessages;
                 }
-                    _roolerCycle++;
+
+                _roolerCycle++;
             }
 
             return new List<ServerMessage>();
-        }
+        }*/
 
         internal bool HasFurniByItemName(string name)
         {
-            var element = FloorItems.Values.Where(i => i.GetBaseItem().Name == name);
-            return element.Any();
+            var element = FloorItems.Values.Any(i => i.GetBaseItem().Name == name);
+            return element;
         }
     }
 }

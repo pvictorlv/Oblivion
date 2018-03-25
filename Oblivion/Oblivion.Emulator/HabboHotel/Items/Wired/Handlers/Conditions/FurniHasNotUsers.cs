@@ -63,13 +63,11 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
         public bool Execute(params object[] stuff)
         {
-            
-
-            if (Items == null || Items.Count <= 0)
+            if (Items == null || Items.Count <= 0 || Room == null)
                 return true;
 
             /* TODO CHECK */
-            return Items.All(current => !current.AffectedTiles.Values.Any(current2 => Room.GetGameMap().SquareHasUsers(current2.X, current2.Y)));
+            return Items.All(current => current?.AffectedTiles != null && !current.AffectedTiles.Values.Any(current2 => Room.GetGameMap().SquareHasUsers(current2.X, current2.Y)));
         }
     }
 }

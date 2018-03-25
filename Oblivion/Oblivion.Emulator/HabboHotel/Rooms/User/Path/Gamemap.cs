@@ -1045,7 +1045,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     return 0.0;
 
                 var point = new Point(x, y);
-                if (CoordinatedItems.TryGetValue(point, out var itemsOnSquare))
+                if (CoordinatedItems.TryGetValue(point, out var itemsOnSquare) && itemsOnSquare != null && itemsOnSquare.Count > 0)
                 {
                     return SqAbsoluteHeight(x, y, itemsOnSquare.ToList());
                 }

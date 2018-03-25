@@ -860,12 +860,9 @@ namespace Oblivion.HabboHotel.Users
 
             try
             {
-                if (_inventoryComponent != null)
-                {
-                    _inventoryComponent.RunDbUpdate();
-                    _inventoryComponent.Dispose();
-                    _inventoryComponent = null;
-                }
+                _inventoryComponent?.RunDbUpdate();
+                _inventoryComponent?.Dispose();
+                _inventoryComponent = null;
             }
             catch (Exception e)
             {

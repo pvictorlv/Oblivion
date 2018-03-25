@@ -160,7 +160,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 if (Items.Count <= 0)
                     break;
 
-                roomItem = Items[Oblivion.GetRandomNumber(0, Items.Count - 1)];
+                roomItem = Items[Oblivion.GetRandomNumber(0, Items.Count)];
                 if (roomItem != null && Room.GetRoomItemHandler().GetItem(roomItem.Id) != null)
                     break;
 

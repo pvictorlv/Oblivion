@@ -911,11 +911,13 @@ namespace Oblivion.Messages.Handlers
 
                 if (habboForId?.Data == null)
                     return;
+                if (habboForId.GetMessenger() == null) return;
 
                 if (!habboForId.Data.LoadedRelations)
                 {
                     habboForId.Data.LoadRelations();
                 }
+
 
                 var rand = new Random();
                 var num = 0;
@@ -923,9 +925,6 @@ namespace Oblivion.Messages.Handlers
                 var num3 = 0;
                 foreach (var x in habboForId.Data.Relations)
                 {
-                    if (!habboForId.GetMessenger().FriendshipExists((uint) x.Value.UserId))
-                        continue;
-
                     if (x.Value.Type == 1) num++;
                     else if (x.Value.Type == 2) num2++;
                     else if (x.Value.Type == 3) num3++;
@@ -936,10 +935,11 @@ namespace Oblivion.Messages.Handlers
                 Response.AppendInteger(habboForId.Id);
 
                 Response.StartArray();
-//            Response.AppendInteger(habboForId.Data.Relations.Count);
 
                 foreach (var current in habboForId.Data.Relations.Values.OrderBy(x => rand.Next()))
                 {
+                    if (current == null) continue;
+                    
                     if (!habboForId.GetMessenger().FriendshipExists((uint) current.UserId))
                         continue;
 

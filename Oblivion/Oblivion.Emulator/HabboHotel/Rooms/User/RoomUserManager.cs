@@ -313,9 +313,12 @@ namespace Oblivion.HabboHotel.Rooms.User
                 spectator);
             if (roomUser.GetClient()?.GetHabbo() == null)
                 return;
+            var habbo = session.GetHabbo();
+            roomUser.UserId = habbo.Id;
+            var userName = habbo.UserName;
 
-            roomUser.UserId = session.GetHabbo().Id;
-            var userName = session.GetHabbo().UserName;
+            if (userName == null) return;
+
             var userId = roomUser.UserId;
 
             if (UsersByUserId == null || UsersByUserName == null) return;
@@ -328,15 +331,16 @@ namespace Oblivion.HabboHotel.Rooms.User
             var num = _secondaryPrivateUserId++;
             roomUser.InternalRoomId = num;
             session.CurrentRoomUserId = num;
-            session.GetHabbo().CurrentRoomId = _userRoom.RoomId;
-            session.GetHabbo().CurrentRoom = _userRoom;
+            habbo.CurrentRoomId = _userRoom.RoomId;
+            habbo.CurrentRoom = _userRoom;
             UserList.TryAdd(num, roomUser);
             OnUserAdd(roomUser);
 
-            session.GetHabbo().LoadingRoom = 0;
+            habbo.LoadingRoom = 0;
 
-            if (Oblivion.GetGame().GetNavigator().PrivateCategories.Contains(_userRoom.RoomData.Category))
-                ((FlatCat) Oblivion.GetGame().GetNavigator().PrivateCategories[_userRoom.RoomData.Category]).UsersNow++;
+            if (Oblivion.GetGame().GetNavigator().PrivateCategories
+                .TryGetValue(_userRoom.RoomData.Category, out var cat))
+                cat.UsersNow++;
         }
 
         /// <summary>
@@ -812,8 +816,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                         case Interaction.Guillotine:
                         {
-                         
-                                user.Statusses["lay"] = TextHandling.GetString(item.GetBaseItem().Height);
+                            user.Statusses["lay"] = TextHandling.GetString(item.GetBaseItem().Height);
 
                             user.Z = item.Z;
                             user.RotBody = item.Rot;

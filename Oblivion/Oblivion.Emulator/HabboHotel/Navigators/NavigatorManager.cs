@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Data;
 using System.Linq;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
@@ -41,7 +40,7 @@ namespace Oblivion.HabboHotel.Navigators
         /// <summary>
         ///     The private categories
         /// </summary>
-        internal HybridDictionary PrivateCategories;
+        internal Dictionary<int,FlatCat> PrivateCategories;
 
         /// <summary>
         ///     The promo categories
@@ -53,7 +52,7 @@ namespace Oblivion.HabboHotel.Navigators
         /// </summary>
         internal NavigatorManager()
         {
-            PrivateCategories = new HybridDictionary();
+            PrivateCategories = new Dictionary<int, FlatCat>();
             InCategories = new Dictionary<int, string>();
             _publicItems = new Dictionary<uint, PublicItem>();
             NavigatorHeaders = new List<NavigatorHeader>();
@@ -273,7 +272,7 @@ namespace Oblivion.HabboHotel.Navigators
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns>FlatCat.</returns>
-        internal FlatCat GetFlatCat(int id) => PrivateCategories.Contains(id) ? (FlatCat) PrivateCategories[id] : null;
+        internal FlatCat GetFlatCat(int id) => PrivateCategories.TryGetValue(id, out var privateCat) ? privateCat : null;
 
         /// <summary>
         ///     Serializes the nv recommend rooms.
