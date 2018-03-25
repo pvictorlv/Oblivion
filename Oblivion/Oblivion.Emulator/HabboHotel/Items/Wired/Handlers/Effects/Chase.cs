@@ -144,7 +144,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             while (_toRemove.Count > 0)
             {
                 var rI = _toRemove.Dequeue();
-                if (Items.Contains(rI))
                     Items.Remove(rI);
             }
 

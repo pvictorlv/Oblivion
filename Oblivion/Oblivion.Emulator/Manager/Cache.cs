@@ -76,8 +76,8 @@ namespace Oblivion.Manager
             if (!Oblivion.UsersCached.TryRemove(user, out var removedUser)) return;
             if (clear)
             {
-//                if (removedUser.GetClient()?.GetConnection() == null)
-//                removedUser.RemoveCached();
+                if (removedUser.GetClient()?.GetConnection() == null)
+                removedUser.RemoveCached();
             }
         }
 

@@ -452,10 +452,9 @@ namespace Oblivion.HabboHotel.RoomBots
                         if (user.RotBody % 2 != 0) user.RotBody--;
 
                         user.Z = GetRoom().GetGameMap().SqAbsoluteHeight(user.X, user.Y);
-                        if (!user.Statusses.ContainsKey("sit"))
+                        if (user.Statusses.TryAdd("sit", "0.55"))
                         {
                             user.UpdateNeeded = true;
-                            user.Statusses.TryAdd("sit", "0.55");
                         }
                         user.IsSitting = true;
                         return;

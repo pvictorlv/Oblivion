@@ -1114,21 +1114,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             else RotHead = rotation;
             UpdateNeeded = true;
         }
-
-        /// <summary>
-        ///     Sets the status.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        internal void SetStatus(string key, string value)
-        {
-            if (Statusses.ContainsKey(key))
-            {
-                Statusses[key] = value;
-                return;
-            }
-            AddStatus(key, value);
-        }
+        
 
         /// <summary>
         ///     Adds the status.

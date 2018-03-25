@@ -285,7 +285,7 @@ namespace Oblivion.HabboHotel.Rooms
             var data = GenerateRoomData(roomId);
             if (data == null) return null;
 
-            session.GetHabbo().Data.Rooms.Add(data);
+            session.GetHabbo().Data.Rooms.Add(roomId);
             return data;
         }
 

@@ -23,7 +23,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public void Dispose()
         {
-
         }
 
         public bool Disposed { get; set; }
@@ -51,8 +50,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool Execute(params object[] stuff)
         {
-            
-
             var roomUser = (RoomUser) stuff[0];
 
             if (roomUser == null || roomUser.IsBot || roomUser.GetClient() == null ||
@@ -69,10 +66,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             var userId = roomUser.GetClient().GetHabbo().Id;
 
-            if (Room.MutedUsers.ContainsKey(userId))
-                Room.MutedUsers.Remove(userId);
+            Room.MutedUsers[userId] = Convert.ToUInt32(Oblivion.GetUnixTimeStamp() + minutes * 60);
 
-            Room.MutedUsers.Add(userId, Convert.ToUInt32(Oblivion.GetUnixTimeStamp() + minutes * 60));
 
             if (!string.IsNullOrEmpty(OtherString))
                 roomUser.GetClient().SendWhisper(OtherString);

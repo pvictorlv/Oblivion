@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -74,28 +73,6 @@ namespace Oblivion.Security
             Load();
         }
 
-        /// <summary>
-        /// Replaces the specified mode.
-        /// </summary>
-        /// <param name="mode">The mode.</param>
-        /// <param name="str">The string.</param>
-        /// <returns>System.String.</returns>
-        public static string Replace(string mode, string str)
-        {
-            str = str.RemoveDiacritics().ToLower();
 
-            return !Dictionary.ContainsKey(mode) || string.IsNullOrEmpty(str) ? str : Dictionary[mode].Aggregate(str, (current, array) => current.Replace(array.Key, array.Value));
-        }
-
-        private static string RemoveDiacritics(this string s)
-        {
-            var normalizedString = s.Normalize(NormalizationForm.FormD);
-            var stringBuilder = new StringBuilder();
-
-            /* TODO CHECK */ foreach (var c in normalizedString.Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark))
-                stringBuilder.Append(c);
-
-            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
-        }
     }
 }

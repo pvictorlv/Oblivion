@@ -190,10 +190,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             roomUser.BotAi.OnSelfEnterRoom();
             if (roomUser.IsPet)
             {
-//                if (_pets.ContainsKey(roomUser.PetData.PetId))
                 Pets[roomUser.PetData.PetId] = roomUser;
-//                else
-//                    _pets.Add(roomUser.PetData.PetId, roomUser);
 
                 PetCount++;
             }

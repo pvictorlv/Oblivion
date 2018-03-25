@@ -144,13 +144,13 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Hardcode to get users room via habbo air
         /// </summary>
-        private int count;
+        private int _count;
 
         internal void HabboAirGetUserRooms()
         {
-            if (count <= 4)
+            if (_count <= 4)
             {
-                count++;
+                _count++;
                 return;
             }
 
@@ -160,8 +160,9 @@ namespace Oblivion.Messages.Handlers
             message.AppendInteger(5); //maybe category
             message.AppendString("");
             message.AppendInteger(Session.GetHabbo().Data.Rooms.Count);
-            foreach (var data in Session.GetHabbo().Data.Rooms)
+            foreach (var room in Session.GetHabbo().Data.Rooms)
             {
+                var data = Oblivion.GetGame().GetRoomManager().GenerateRoomData(room);
                 data.Serialize(message);
             }
             message.AppendBool(false);
@@ -201,9 +202,9 @@ namespace Oblivion.Messages.Handlers
         internal void NewNavigatorDeleteSavedSearch()
         {
             int searchId = Request.GetInteger();
-            if (!Session.GetHabbo().NavigatorLogs.ContainsKey(searchId))
+            if (!Session.GetHabbo().NavigatorLogs.Remove(searchId))
                 return;
-            Session.GetHabbo().NavigatorLogs.Remove(searchId);
+
             var message = new ServerMessage(LibraryParser.OutgoingRequest("NavigatorSavedSearchesComposer"));
             message.AppendInteger(Session.GetHabbo().NavigatorLogs.Count);
 

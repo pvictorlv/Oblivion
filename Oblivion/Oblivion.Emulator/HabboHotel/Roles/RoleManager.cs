@@ -129,10 +129,7 @@ namespace Oblivion.HabboHotel.Roles
         /// <param name="sub">The sub.</param>
         /// <param name="fuse">The fuse.</param>
         /// <returns><c>true</c> if the specified sub has vip; otherwise, <c>false</c>.</returns>
-        internal bool HasVip(int sub, string fuse)
-        {
-            return _subRights.TryGetValue(fuse, out var right) && right == sub;
-        }
+        internal bool HasVip(int sub, string fuse) => _subRights.TryGetValue(fuse, out var right) && right == sub;
 
         /// <summary>
         ///     Gets the rights for rank.

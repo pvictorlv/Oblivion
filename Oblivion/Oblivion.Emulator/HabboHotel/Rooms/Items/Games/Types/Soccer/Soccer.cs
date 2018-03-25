@@ -226,6 +226,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                 if (!_room.GetGameMap().ValidTile(newX, newY))
                     return false;
             }
+
             var oldRoomCoord = item.Coordinate;
             var itemIsOnGameItem = GameItemOverlaps(item);
 //            double  = _room.GetGameMap().Model.SqFloorHeight[newX][newY];
@@ -322,6 +323,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                         item.BallIsMoving = false;
                         break;
                     }
+
                     ignoreUsers = true;
                 }
 
@@ -355,6 +357,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                     item.BallValue = 1;
                     item.InteractingBallUser = null;
                 }
+
                 break;
                 //break;
             }
@@ -368,18 +371,21 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                 _gates[0] = item;
                 return;
             }
+
             if (_gates[1] == null)
             {
                 item.Team = Team.Red;
                 _gates[1] = item;
                 return;
             }
+
             if (_gates[2] == null)
             {
                 item.Team = Team.Green;
                 _gates[2] = item;
                 return;
             }
+
             if (_gates[3] != null)
                 return;
             item.Team = Team.Yellow;
@@ -390,8 +396,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
         {
             if (_room == null) return;
             var manager = Oblivion.GetGame().GetRoomManager();
-            if (manager.LoadedBallRooms.Contains(_room))
-                manager.LoadedBallRooms.Remove(_room);
+            manager.LoadedBallRooms.Remove(_room);
 
             if (_ball == null) return;
             lock (_ball)

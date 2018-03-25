@@ -142,7 +142,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 queryreactor2.SetQuery(
                     $"SELECT id FROM items_rooms WHERE user_id={session.GetHabbo().Id} AND room_id='0'");
                 var table = queryreactor2.GetTable();
-            
+
                 foreach (DataRow dataRow in table.Rows)
                 {
                     var item = GetItem(Convert.ToUInt32(dataRow[0]));
@@ -305,8 +305,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
                         var pet = CatalogManager.GeneratePetFromRow(botRow, row);
 
-                        if (_inventoryPets.Contains(pet.PetId))
-                            _inventoryPets.Remove(pet.PetId);
+                        _inventoryPets.Remove(pet.PetId);
 
                         _inventoryPets.Add(pet.PetId, pet);
                     }
@@ -420,7 +419,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             if (insert)
             {
                 if (!fromRoom)
-                { 
+                {
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
                         queryReactor.SetQuery(
@@ -477,13 +476,14 @@ namespace Oblivion.HabboHotel.Users.Inventory
             GetClient().GetMessageHandler().GetResponse().AppendInteger(item.VirtualId);
 
             GetClient().GetMessageHandler().SendResponse();
-            if (_mAddedItems.Contains(id))
-                _mAddedItems.Remove(id);
+
+            _mAddedItems.Remove(id);
 
             if (placedInroom)
             {
                 item.RoomId = roomId;
             }
+
             if (_mRemovedItems.Contains(item))
                 return;
 
@@ -526,6 +526,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 else
                     userItem.SerializeFloor(serverMessage, true);
             }
+
             return serverMessage;
         }
 
@@ -567,6 +568,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 serverMessage.AppendString(string.Empty);
                 serverMessage.AppendInteger(0);
             }
+
             var id = item.Id;
             if (UserHoldsItem(id))
                 RemoveItem(id, false, 0);
@@ -574,8 +576,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             _items.Add(userItem.Id, userItem);
 
-            if (_mRemovedItems.Contains(userItem))
-                _mRemovedItems.Remove(userItem);
+            _mRemovedItems.Remove(userItem);
 
             if (!_mAddedItems.Contains(id))
                 _mAddedItems.Add(id);
@@ -617,6 +618,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 serverMessage.AppendString(string.Empty);
                 serverMessage.AppendInteger(0);
             }
+
             var id = userItem.Id;
             if (UserHoldsItem(id))
                 RemoveItem(id, false, 0);
@@ -624,8 +626,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             _items.Add(userItem.Id, userItem);
 
-            if (_mRemovedItems.Contains(userItem))
-                _mRemovedItems.Remove(userItem);
+            _mRemovedItems.Remove(userItem);
 
             if (!_mAddedItems.Contains(id))
                 _mAddedItems.Add(id);
@@ -671,6 +672,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 serverMessage.AppendString("m");
                 serverMessage.AppendString(current.Look);
             }
+
             return serverMessage;
         }
 
@@ -711,6 +713,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                         i++;
                         builder.Append(i >= count ? $"{itemId}" : $"{itemId},");
                     }
+
                     builder.Append(");");
 
                     using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -731,7 +734,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                         using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                         {
                             foreach (var room in from item in removed
-                                where item.RoomId > 0   
+                                where item.RoomId > 0
                                 select Oblivion.GetGame().GetRoomManager().GetRoom(item.RoomId))
                             {
                                 room?.GetRoomItemHandler().SaveFurniture(queryReactor);
@@ -742,6 +745,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     {
                         // ignored
                     }
+
                     removed.Clear();
                     _mRemovedItems?.Clear();
                 }
@@ -828,6 +832,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             {
                 Logging.HandleException(e, "inventory dispose");
             }
+
             _items?.Clear();
             _items = null;
         }

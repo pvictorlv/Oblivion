@@ -199,8 +199,31 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 }
 
                 case Interaction.ConditionUserIsInTeam:
-                case Interaction.ConditionUserIsNotInTeam:
                 {
+                    if (!int.TryParse(extraInfo, out var team))
+                    {
+                        team = 0;
+                    }
+                        var serverMessage5 =
+                        new ServerMessage(LibraryParser.OutgoingRequest("WiredConditionMessageComposer"));
+                    serverMessage5.AppendBool(false);
+                    serverMessage5.AppendInteger(5);
+                    serverMessage5.AppendInteger(0);
+                    serverMessage5.AppendInteger(item.GetBaseItem().SpriteId);
+                    serverMessage5.AppendInteger(item.VirtualId);
+                    serverMessage5.AppendString("");
+                    serverMessage5.AppendInteger(1); //delay type
+                    serverMessage5.AppendInteger(team);
+                    serverMessage5.AppendInteger(0);
+                    serverMessage5.AppendInteger(6);
+                    session.SendMessage(serverMessage5);
+                    return;
+                } case Interaction.ConditionUserIsNotInTeam:
+                {
+                    if (!int.TryParse(extraInfo, out var team))
+                    {
+                        team = 0;
+                    }
                     var serverMessage5 =
                         new ServerMessage(LibraryParser.OutgoingRequest("WiredConditionMessageComposer"));
                     serverMessage5.AppendBool(false);
@@ -208,10 +231,11 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage5.AppendInteger(0);
                     serverMessage5.AppendInteger(item.GetBaseItem().SpriteId);
                     serverMessage5.AppendInteger(item.VirtualId);
-                    serverMessage5.AppendString(extraInfo);
-                    serverMessage5.AppendInteger(0); //delay type
+                    serverMessage5.AppendString("");
+                    serverMessage5.AppendInteger(1); //delay type
+                    serverMessage5.AppendInteger(team); //delay type
                     serverMessage5.AppendInteger(0);
-                    serverMessage5.AppendInteger(6);
+                    serverMessage5.AppendInteger(17);
                     session.SendMessage(serverMessage5);
                     return;
                 }

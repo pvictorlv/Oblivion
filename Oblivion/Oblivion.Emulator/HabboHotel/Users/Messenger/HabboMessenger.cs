@@ -48,17 +48,14 @@ namespace Oblivion.HabboHotel.Users.Messenger
             Friends = new Dictionary<uint, MessengerBuddy>();
             _userId = userId;
         }
-        
+
         internal void Init()
         {
-           
-
             DataTable friendsTable;
             DataTable friendsRequestsTable;
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-
                 queryReactor.SetQuery(
                     string.Format(
                         "SELECT users.id,users.username,users.motto,users.look,users.last_online,users.hide_inroom,users.hide_online FROM users JOIN messenger_friendships ON users.id = messenger_friendships.user_one_id WHERE messenger_friendships.user_two_id = {0} UNION ALL SELECT users.id,users.username,users.motto,users.look,users.last_online,users.hide_inroom,users.hide_online FROM users JOIN messenger_friendships ON users.id = messenger_friendships.user_two_id WHERE messenger_friendships.user_one_id = {0} LIMIT 1100",
@@ -69,16 +66,14 @@ namespace Oblivion.HabboHotel.Users.Messenger
                     $"SELECT messenger_requests.from_id,messenger_requests.to_id,users.Username, users.Look FROM users JOIN messenger_requests ON users.id = messenger_requests.from_id WHERE messenger_requests.to_id = {_userId}");
                 friendsRequestsTable = queryReactor.GetTable();
             }
-           
-
 
 
             foreach (DataRow row in friendsTable.Rows)
             {
                 var num4 = Convert.ToUInt32(row["id"]);
-                var pUsername = (string)row["username"];
-                var pLook = (string)row["look"];
-                var pMotto = (string)row["motto"];
+                var pUsername = (string) row["username"];
+                var pLook = (string) row["look"];
+                var pMotto = (string) row["motto"];
                 var pAppearOffline = Oblivion.EnumToBool(row["hide_online"].ToString());
                 var pHideInroom = Oblivion.EnumToBool(row["hide_inroom"].ToString());
 
@@ -103,8 +98,6 @@ namespace Oblivion.HabboHotel.Users.Messenger
                         Requests.Add(num6, new MessengerRequest(_userId, num6, pUsername2, pLook));
                 }
             }
-
-            
         }
 
         /// <summary>
@@ -147,7 +140,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         {
             if (Friends == null)
                 return;
-            
+
             foreach (var current in Friends.Values.ToList())
             {
                 var user = current?.Client;
@@ -283,17 +276,16 @@ namespace Oblivion.HabboHotel.Users.Messenger
                         " AND target = ", habbo.Id, ")"));
 
 
-                    if (habbo.Data.Relations.ContainsKey(id))
-                        habbo.Data.Relations.Remove(id);
+                    habbo.Data.Relations.Remove(id);
                 }
+
                 var clientRelationship = Oblivion.GetGame().GetClientManager().GetClientByUserId(friendId);
 
                 if (clientRelationship?.GetHabbo().GetMessenger() != null)
                 {
                     clientRelationship.GetHabbo().GetMessenger().OnDestroyFriendship(_userId);
 
-                    if (clientRelationship.GetHabbo().Data.Relations.ContainsKey(id))
-                        clientRelationship.GetHabbo().Data.Relations.Remove(id);
+                    clientRelationship.GetHabbo().Data.Relations.Remove(id);
                 }
             }
 
@@ -579,19 +571,23 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 DeliverInstantMessageError(6, toId);
                 return;
             }
+
             var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(toId);
             if (clientByUserId?.GetHabbo().GetMessenger() == null)
             {
-                if (Oblivion.OfflineMessages.ContainsKey(toId))
+                if (Oblivion.OfflineMessages.TryGetValue(toId, out var msgs))
                 {
-                    Oblivion.OfflineMessages[toId].Add(new OfflineMessage(GetClient().GetHabbo().Id, message,
+                    msgs.Add(new OfflineMessage(GetClient().GetHabbo().Id, message,
                         Oblivion.GetUnixTimeStamp()));
                 }
                 else
                 {
-                    Oblivion.OfflineMessages.Add(toId, new List<OfflineMessage>());
-                    Oblivion.OfflineMessages[toId].Add(new OfflineMessage(GetClient().GetHabbo().Id, message,
-                        Oblivion.GetUnixTimeStamp()));
+                    msgs = new List<OfflineMessage>
+                    {
+                        new OfflineMessage(GetClient().GetHabbo().Id, message,
+                            Oblivion.GetUnixTimeStamp())
+                    };
+                    Oblivion.OfflineMessages.Add(toId, msgs);
                 }
 
                 OfflineMessage.SaveMessage(Oblivion.GetDatabaseManager().GetQueryReactor(), toId,
@@ -722,6 +718,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 serverMessage.AppendBool(false);
                 serverMessage.AppendShort(0);
             }
+
             return serverMessage;
         }
 

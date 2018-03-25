@@ -5,7 +5,6 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
-using Oblivion.Collections;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Catalogs.Wrappers;
 using Oblivion.HabboHotel.Items.Interactions;
@@ -223,13 +222,7 @@ namespace Oblivion.HabboHotel.Items
             return false;
         }
 
-        internal bool GetItem(uint id, out Item item)
-        {
-            if (_items.ContainsKey(id))
-                return _items.TryGetValue(id, out item);
-            item = null;
-            return false;
-        }
+        internal bool GetItem(uint id, out Item item) => _items.TryGetValue(id, out item);
 
         internal Item GetItemByName(string name) => _items.Values.FirstOrDefault(item => item.Name == name);
 

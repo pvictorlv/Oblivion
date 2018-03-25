@@ -674,13 +674,12 @@ namespace Oblivion.HabboHotel.Navigators
                 {
                     reply.AppendInteger(14);
 
-                    var activeGRooms = new List<RoomData>();
+                    var activeGRooms = new List<uint>();
                     var rooms = Oblivion.GetGame().GetRoomManager().GetActiveRooms();
 
                     if (rooms != null && rooms.Any())
                     {
-                        activeGRooms.AddRange(from rd in rooms where rd.Key.GroupId != 0 select rd.Key);
-                        activeGRooms = activeGRooms.OrderByDescending(p => p.UsersNow).ToList();
+                        activeGRooms.AddRange(from room in rooms.OrderByDescending(p => p.Key.UsersNow) where room.Key.GroupId != 0 select room.Key.Id);
                     }
 
                     SerializeNavigatorRooms(ref reply, activeGRooms);
@@ -692,12 +691,12 @@ namespace Oblivion.HabboHotel.Navigators
                 {
                     reply.AppendInteger(mode * (-1));
 
-                    var activeFriends =
-                        session.GetHabbo()
-                            .GetMessenger()
-                            .GetActiveFriendsRooms()
-                            .OrderByDescending(p => p.UsersNow)
-                            .ToList();
+                    var activeFriends = session.GetHabbo()
+                        .GetMessenger()
+                        .GetActiveFriendsRooms()
+                        .OrderByDescending(p => p.UsersNow)
+                        .Select(data => data.Id)
+                        .ToList();
                     SerializeNavigatorRooms(ref reply, activeFriends);
 
                     return reply;
@@ -785,7 +784,7 @@ namespace Oblivion.HabboHotel.Navigators
         /// </summary>
         /// <param name="reply">The reply.</param>
         /// <param name="rooms">The rooms.</param>
-        private static void SerializeNavigatorRooms(ref ServerMessage reply, ICollection<RoomData> rooms)
+        private static void SerializeNavigatorRooms(ref ServerMessage reply, ICollection<uint> rooms)
         {
             reply.AppendString(string.Empty);
 
@@ -801,7 +800,10 @@ namespace Oblivion.HabboHotel.Navigators
 
             /* TODO CHECK */
             foreach (var pair in rooms)
-                pair.Serialize(reply);
+            {
+                var data = Oblivion.GetGame().GetRoomManager().GenerateRoomData(pair);
+                data?.Serialize(reply);
+            }
 
             reply.AppendBool(false);
         }

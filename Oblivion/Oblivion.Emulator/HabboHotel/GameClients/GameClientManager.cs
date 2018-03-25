@@ -73,7 +73,8 @@ namespace Oblivion.HabboHotel.GameClients
         /// </summary>
         /// <param name="userName">Name of the user.</param>
         /// <returns>GameClient.</returns>
-        internal GameClient GetClientByUserName(string userName) => _userNameRegister.TryGetValue(userName.ToLower(), out var client) ? client : null;
+        internal GameClient GetClientByUserName(string userName) =>
+            _userNameRegister.TryGetValue(userName.ToLower(), out var client) ? client : null;
 
         /// <summary>
         ///     Gets the client.
@@ -217,7 +218,6 @@ namespace Oblivion.HabboHotel.GameClients
 
             Clients.AddOrUpdate(clientId, gameClient, (key, value) => gameClient);
             gameClient.StartConnection();
-
         }
 
         /// <summary>
@@ -252,7 +252,6 @@ namespace Oblivion.HabboHotel.GameClients
 
                 Client.GetConnection().SendData(bytes);
             }
-
         }
 
         /// <summary>
@@ -273,14 +272,8 @@ namespace Oblivion.HabboHotel.GameClients
         /// <param name="userName">Name of the user.</param>
         internal void RegisterClient(GameClient client, uint userId, string userName)
         {
-            if (_userNameRegister.ContainsKey(userName.ToLower()))
-                _userNameRegister[userName.ToLower()] = client;
-            else
-                _userNameRegister.TryAdd(userName.ToLower(), client);
-            if (_userIdRegister.ContainsKey(userId))
-                _userIdRegister[userId] = client;
-            else
-                _userIdRegister.TryAdd(userId, client);
+            _userNameRegister[userName.ToLower()] = client;
+            _userIdRegister[userId] = client;
         }
 
         /// <summary>
@@ -333,6 +326,7 @@ namespace Oblivion.HabboHotel.GameClients
                         queryReactor.RunFastQuery(stringBuilder.ToString());
                 }
             }
+
             try
             {
                 Out.WriteLine("Closing Connection Manager...", "Oblivion.Boot", ConsoleColor.DarkMagenta);

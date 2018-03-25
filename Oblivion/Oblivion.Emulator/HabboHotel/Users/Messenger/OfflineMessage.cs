@@ -53,10 +53,17 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 var msg = dataRow[3].ToString();
                 var ts = (double) dataRow[4];
 
-                if (!Oblivion.OfflineMessages.ContainsKey(key))
-                    Oblivion.OfflineMessages.Add(key, new List<OfflineMessage>());
+                if (Oblivion.OfflineMessages.TryGetValue(key, out var msgs))
+                {
+                    msgs.Add(new OfflineMessage(id, msg, ts));
+                }
+                else
+                {
+                    msgs = new List<OfflineMessage> {new OfflineMessage(id, msg, ts)};
 
-                Oblivion.OfflineMessages[key].Add(new OfflineMessage(id, msg, ts));
+                    Oblivion.OfflineMessages.Add(key, msgs);
+                }
+
             }
         }
 

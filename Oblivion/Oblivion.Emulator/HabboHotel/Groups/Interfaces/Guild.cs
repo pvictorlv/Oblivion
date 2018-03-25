@@ -230,25 +230,31 @@ namespace Oblivion.HabboHotel.Groups.Interfaces
             message.AppendInteger(WhoCanThread);
             message.AppendInteger(WhoCanMod);
 
-            if (WhoCanRead == 1 && !Members.ContainsKey(requesterId))
+            var isMember = Members.ContainsKey(requesterId);
+            var isAdmin = Admins.ContainsKey(requesterId);
+
+            if (WhoCanRead == 1 && !isMember)
                 string1 = "not_member";
-            if (WhoCanRead == 2 && !Admins.ContainsKey(requesterId))
+            else if (WhoCanRead == 2 && !isAdmin)
                 string1 = "not_admin";
-            if (WhoCanPost == 1 && !Members.ContainsKey(requesterId))
+
+            if (WhoCanPost == 1 && !isMember)
                 string2 = "not_member";
-            if (WhoCanPost == 2 && !Admins.ContainsKey(requesterId))
+            else if (WhoCanPost == 2 && !isAdmin)
                 string2 = "not_admin";
-            if (WhoCanPost == 3 && requesterId != CreatorId)
+            else if (WhoCanPost == 3 && requesterId != CreatorId)
                 string2 = "not_owner";
-            if (WhoCanThread == 1 && !Members.ContainsKey(requesterId))
+
+            if (WhoCanThread == 1 && !isMember)
                 string3 = "not_member";
-            if (WhoCanThread == 2 && !Admins.ContainsKey(requesterId))
+            else if (WhoCanThread == 2 && !isAdmin)
                 string3 = "not_admin";
-            if (WhoCanThread == 3 && requesterId != CreatorId)
+            else if (WhoCanThread == 3 && requesterId != CreatorId)
                 string3 = "not_owner";
-            if (WhoCanMod == 2 && !Admins.ContainsKey(requesterId))
+
+            if (WhoCanMod == 2 && !isAdmin)
                 string4 = "not_admin";
-            if (WhoCanMod == 3 && requesterId != CreatorId)
+            else if (WhoCanMod == 3 && requesterId != CreatorId)
                 string4 = "not_owner";
 
             message.AppendString(string1);

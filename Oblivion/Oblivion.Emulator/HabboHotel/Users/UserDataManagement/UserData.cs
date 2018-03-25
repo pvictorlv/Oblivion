@@ -62,7 +62,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         /// <summary>
         ///     The rooms
         /// </summary>
-        internal List<RoomData> Rooms;
+        internal List<uint> Rooms;
 
         /// <summary>
         ///     The subscriptions
@@ -127,7 +127,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         public UserData(uint userId, Dictionary<string, UserAchievement> achievements,
             Dictionary<int, UserTalent> talents, List<uint> favouritedRooms, List<uint> ignores, List<string> tags,
             Subscription sub,
-            List<RoomData> rooms, Dictionary<uint, int> quests, Habbo user,
+            List<uint> rooms, Dictionary<uint, int> quests, Habbo user,
             Dictionary<int, Relationship> relations, HashSet<uint> suggestedPolls,
             uint miniMailCount, List<string> blockedCommands, List<int> openedGifts)
         {
