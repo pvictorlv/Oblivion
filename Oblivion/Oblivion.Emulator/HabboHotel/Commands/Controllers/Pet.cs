@@ -32,7 +32,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var habbo = client.GetHabbo();
             if (room == null) return true;
 
-            var roomUser = room.GetRoomUserManager().GetRoomUserByHabbo(habbo.UserName);
+            var roomUser = room.GetRoomUserManager().GetRoomUserByHabbo(habbo.Id);
 
             if (pms[0] == "habbo")
             {

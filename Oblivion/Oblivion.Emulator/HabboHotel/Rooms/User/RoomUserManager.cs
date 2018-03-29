@@ -8,7 +8,6 @@ using Oblivion.Configuration;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
-using Oblivion.HabboHotel.Navigators.Interfaces;
 using Oblivion.HabboHotel.Pathfinding;
 using Oblivion.HabboHotel.PathFinding;
 using Oblivion.HabboHotel.Pets;
@@ -327,7 +326,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
             var num = _secondaryPrivateUserId++;
             roomUser.InternalRoomId = num;
-            session.CurrentRoomUserId = num;
+            session.GetHabbo().CurrentRoomUserId = num;
             habbo.CurrentRoomId = _userRoom.RoomId;
             habbo.CurrentRoom = _userRoom;
             UserList.TryAdd(num, roomUser);
@@ -368,11 +367,9 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             try
             {
-                if (session?.GetHabbo() == null || _userRoom == null)
-                    return;
-
                 if (Disposing) return;
-                lock (session)
+
+                if (session?.GetHabbo() != null && _userRoom != null) 
                 {
                     var userId = session.GetHabbo().Id;
                     session.GetHabbo().CurrentRoom = null;
@@ -552,11 +549,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <returns>List&lt;RoomUser&gt;.</returns>
         internal List<RoomUser> GetRoomUserByRank(int minRank)
         {
-            return
-                UserList.Values.Where(
-                    current =>
-                        !current.IsBot && current.GetClient() != null && current.GetClient().GetHabbo() != null &&
-                        current.GetClient().GetHabbo().Rank > (ulong) minRank).ToList();
+            return UserList.Values.Where(current => !current.IsBot && current.GetClient() != null && current.GetClient().GetHabbo() != null && current.GetClient().GetHabbo().Rank > (ulong) minRank).ToList();
         }
 
         /// <summary>
@@ -597,35 +590,26 @@ namespace Oblivion.HabboHotel.Rooms.User
                     "INSERT INTO pets_data (type,race,color,experience,energy,createstamp,nutrition,respect) VALUES ");
             var queryChunk3 = new QueryChunk();
             var list = new List<uint>();
-            foreach (var current in GetPets().Where(current => !list.Contains(current.PetId)))
+            foreach (var current in GetPets())
             {
-                if (!list.Contains(current.PetId))
-                    list.Add(current.PetId);
+                if (list.Contains(current.PetId)) continue;
+                if (!list.Contains(current.PetId)) list.Add(current.PetId);
                 switch (current.DbState)
                 {
                     case DatabaseUpdateState.NeedsInsert:
                         queryChunk.AddParameter($"{current.PetId}name", current.Name);
                         queryChunk2.AddParameter($"{current.PetId}race", current.Race);
                         queryChunk2.AddParameter($"{current.PetId}color", current.Color);
-                        queryChunk.AddQuery(string.Concat("(", current.PetId, ",", current.OwnerId, ",", current.RoomId,
-                            ",@", current.PetId, "name,", current.X, ",", current.Y, ",", current.Z, ")"));
-                        queryChunk2.AddQuery(string.Concat("(", current.Type, ",@", current.PetId, "race,@",
-                            current.PetId, "color,0,100,'", current.CreationStamp, "',0,0)"));
+                        queryChunk.AddQuery(string.Concat("(", current.PetId, ",", current.OwnerId, ",", current.RoomId, ",@", current.PetId, "name,", current.X, ",", current.Y, ",", current.Z, ")"));
+                        queryChunk2.AddQuery(string.Concat("(", current.Type, ",@", current.PetId, "race,@", current.PetId, "color,0,100,'", current.CreationStamp, "',0,0)"));
                         break;
 
                     case DatabaseUpdateState.NeedsUpdate:
                         queryChunk3.AddParameter($"{current.PetId}name", current.Name);
                         queryChunk3.AddParameter($"{current.PetId}race", current.Race);
                         queryChunk3.AddParameter($"{current.PetId}color", current.Color);
-                        queryChunk3.AddQuery(string.Concat("UPDATE bots SET room_id = ", current.RoomId, ", name = @",
-                            current.PetId, "name, x = ", current.X, ", Y = ", current.Y, ", Z = ", current.Z,
-                            " WHERE id = ", current.PetId));
-                        queryChunk3.AddQuery(string.Concat("UPDATE pets_data SET race = @", current.PetId,
-                            "race, color = @", current.PetId, "color, type = ", current.Type, ", experience = ",
-                            current.Experience, ", energy = ", current.Energy, ", nutrition = ", current.Nutrition,
-                            ", respect = ", current.Respect, ", createstamp = '", current.CreationStamp,
-                            "' WHERE id = ",
-                            current.PetId));
+                        queryChunk3.AddQuery(string.Concat("UPDATE bots SET room_id = ", current.RoomId, ", name = @", current.PetId, "name, x = ", current.X, ", Y = ", current.Y, ", Z = ", current.Z, " WHERE id = ", current.PetId));
+                        queryChunk3.AddQuery(string.Concat("UPDATE pets_data SET race = @", current.PetId, "race, color = @", current.PetId, "color, type = ", current.Type, ", experience = ", current.Experience, ", energy = ", current.Energy, ", nutrition = ", current.Nutrition, ", respect = ", current.Respect, ", createstamp = '", current.CreationStamp, "' WHERE id = ", current.PetId));
                         break;
                 }
 
@@ -717,10 +701,10 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 var roomMap = _userRoom.GetGameMap();
                 var userPoint = new Point(user.X, user.Y);
-                var allRoomItemForSquare = roomMap.GetCoordinatedHeighestItems(userPoint).ToArray();
+                var allRoomItemForSquare = roomMap.GetCoordinatedHeighestItems(userPoint).ToList();
                 var itemsOnSquare = roomMap.GetCoordinatedItems(userPoint);
 
-                var newZ = _userRoom.GetGameMap().SqAbsoluteHeight(user.X, user.Y, itemsOnSquare.ToList()) +
+                var newZ = _userRoom.GetGameMap().SqAbsoluteHeight(user.X, user.Y, itemsOnSquare) +
                            ((user.RidingHorse && user.IsPet == false) ? 1 : 0);
 
                 if (Math.Abs(newZ - user.Z) > 0)
@@ -1339,6 +1323,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                     /* TODO CHECK */
                     foreach (var roomItem in hasItemInPlace)
                     {
+                        if (roomItem == null) continue;
+
                         roomItem.UserWalksOffFurni(roomUsers);
                         switch (roomItem.GetBaseItem().InteractionType)
                         {

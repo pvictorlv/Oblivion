@@ -43,7 +43,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             if (room == null) return true;
 
             room.GetRoomUserManager().RemoveUserFromRoom(userSession, true, false);
-            userSession.CurrentRoomUserId = -1;
+            userSession.GetHabbo().CurrentRoomUserId = -1;
             if (pms.Length > 1)
             {
                 userSession.SendNotif(

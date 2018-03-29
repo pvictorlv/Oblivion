@@ -301,12 +301,12 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                     if (item.Value == 3)
                     {
                         var teamByte = Convert.ToByte(Team);
-
+                        
                         user.LockedTilesCount++;
                         _room.GetGameManager().AddPointToTeam(item.Team, user);
                         if (_field == null) return;
-
                         _field.UpdateLocation(item.X, item.Y, teamByte);
+
                         var gfield = _field.DoUpdate();
                         if (gfield == null) return;
                         gfield = gfield.ToList();

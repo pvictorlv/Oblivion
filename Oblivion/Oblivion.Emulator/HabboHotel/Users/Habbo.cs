@@ -438,7 +438,7 @@ namespace Oblivion.HabboHotel.Users
             if (rank < 1u)
                 rank = 1u;
 
-
+            CurrentRoomUserId = -1;
             OnDuty = onDuty;
             DutyLevel = dutyLevel;
             Rank = rank;
@@ -739,6 +739,11 @@ namespace Oblivion.HabboHotel.Users
         }
 
 
+        /// <summary>
+        ///     The current room user identifier
+        /// </summary>
+        internal int CurrentRoomUserId;
+
         internal void RemoveCached()
         {
             _myGroups?.Clear();
@@ -762,7 +767,7 @@ namespace Oblivion.HabboHotel.Users
         {
             if (Disconnected)
                 return;
-
+            CurrentRoomUserId = -1;
             if (AchievementsToUpdate?.Count > 0)
             {
                 var queryBuilder = new StringBuilder();

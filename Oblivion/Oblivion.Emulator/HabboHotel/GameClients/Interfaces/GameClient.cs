@@ -38,10 +38,6 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// </summary>
         private GameClientMessageHandler _messageHandler;
 
-        /// <summary>
-        ///     The current room user identifier
-        /// </summary>
-        internal int CurrentRoomUserId;
 
         /// <summary>
         ///     The designed handler
@@ -77,7 +73,6 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         {
             ConnectionId = clientId;
             _connection = connection;
-            CurrentRoomUserId = -1;
             PacketParser = new GamePacketParser();
         }
 
@@ -175,15 +170,18 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <returns>GameClientMessageHandler.</returns>
         internal GameClientMessageHandler GetMessageHandler() => _messageHandler;
 
+        private bool _disposed;
         /// <summary>
         ///     Gets the habbo.
         /// </summary>
         /// <returns>Habbo.</returns>
+       
         internal Habbo GetHabbo()
         {
-            if (_habbo == null)
+            if (_habbo == null || _disposed)
             {
                 Stop();
+                return null;
             }
 
             return _habbo;
@@ -546,7 +544,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             if (GetHabbo() == null || GetHabbo().CurrentRoom == null)
                 return;
 
-            var roomUserByHabbo = GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(GetHabbo().UserName);
+            var roomUserByHabbo = GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByVirtualId(GetHabbo().CurrentRoomUserId);
 
             if (roomUserByHabbo == null)
                 return;
@@ -605,11 +603,12 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// </summary>
         internal void Stop()
         {
+            _disposed = true;
+
             _messageHandler?.Destroy();
 
             _habbo?.OnDisconnect("disconnect");
 
-            CurrentRoomUserId = -1;
             _messageHandler = null;
 
             _habbo = null;

@@ -1070,7 +1070,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 if (CoordinatedItems.TryGetValue(point, out var itemsOnSquare) && itemsOnSquare != null &&
                     itemsOnSquare.Count > 0)
                 {
-                    return SqAbsoluteHeight(x, y, itemsOnSquare.ToList());
+                    return SqAbsoluteHeight(x, y, itemsOnSquare);
                 }
 
                 return Model.SqFloorHeight[x][y];
@@ -1094,6 +1094,11 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         {
             try
             {
+                if (itemsOnSquare == null || itemsOnSquare.Count <= 0)
+                {
+                    return 0.0;
+                }
+
                 double[] highestStack = {Model.SqFloorHeight[x][y]};
                 var deductable = 0.0;
 
@@ -1103,16 +1108,14 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     return 0.0;
                 }
 
-                if (itemsOnSquare?.Count > 0)
+                foreach (var item in itemsOnSquare.ToList())
                 {
-                    foreach (var item in itemsOnSquare)
-                    {
-                        if ((item?.GetBaseItem() == null || !(item.TotalHeight > highestStack[0]))) continue;
-                        if (item.GetBaseItem().IsSeat || item.GetBaseItem().InteractionType == Interaction.Bed)
-                            deductable = item.GetBaseItem().Height;
-                        highestStack[0] = item.TotalHeight;
-                    }
+                    if ((item?.GetBaseItem() == null || !(item.TotalHeight > highestStack[0]))) continue;
+                    if (item.GetBaseItem().IsSeat || item.GetBaseItem().InteractionType == Interaction.Bed)
+                        deductable = item.GetBaseItem().Height;
+                    highestStack[0] = item.TotalHeight;
                 }
+
 
                 highestStack[0] -= deductable;
                 return highestStack[0] < 0 ? 0 : highestStack[0];
@@ -1204,10 +1207,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         {
             var point = new Point(pX, pY);
             var list = new List<RoomItem>();
-            if (!CoordinatedItems.TryGetValue(point, out List<RoomItem> list2))
-                return list;
-
-            return list2;
+            return !CoordinatedItems.TryGetValue(point, out List<RoomItem> list2) ? list : list2;
         }
 
         /// <summary>

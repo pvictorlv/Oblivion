@@ -18,7 +18,6 @@ using Oblivion.HabboHotel.Polls.Enums;
 using Oblivion.HabboHotel.Quests;
 using Oblivion.HabboHotel.RoomBots;
 using Oblivion.HabboHotel.Rooms;
-using Oblivion.HabboHotel.Users.Badges;
 using Oblivion.Messages.Parsers;
 using Oblivion.Security.BlackWords;
 using Oblivion.Security.BlackWords.Enums;
@@ -131,7 +130,7 @@ namespace Oblivion.Messages.Handlers
                 Session.SendMessage(serverMessage);
             }
 
-            Session.CurrentRoomUserId = -1;
+            Session.GetHabbo().CurrentRoomUserId = -1;
         }
 
         internal void LandingCommunityGoal()
@@ -238,9 +237,9 @@ namespace Oblivion.Messages.Handlers
 
             CurrentLoadingRoom.JustLoaded = false;
             /* TODO CHECK */
-            foreach (var current4 in CurrentLoadingRoom.GetRoomUserManager().UserList.Values
-                .Where(current4 => current4 != null))
+            foreach (var current4 in CurrentLoadingRoom.GetRoomUserManager().UserList.Values)
             {
+                if (current4 == null) continue;
                 if (current4.IsBot)
                 {
                     if (current4.BotData.DanceId > 0)
@@ -275,12 +274,10 @@ namespace Oblivion.Messages.Handlers
                     SendResponse();
                 }
 
-                if (current4.IsBot)
-                    continue;
+                if (current4.IsBot) continue;
                 try
                 {
-                    if (current4.GetClient() != null &&
-                        current4.GetClient().GetHabbo() != null)
+                    if (current4.GetClient() != null && current4.GetClient().GetHabbo() != null)
                     {
                         if (current4.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent() != null &&
                             current4.CurrentEffect >= 1)
@@ -322,69 +319,67 @@ namespace Oblivion.Messages.Handlers
         {
             try
             {
-                lock (SessionLock)
+                if (Session?.GetHabbo() == null || Session.GetHabbo().LoadingRoom == id)
+                    return;
+
+                if (Session?.GetHabbo()?.RecentlyVisitedRooms == null) return;
+
+                if (Oblivion.ShutdownStarted)
                 {
-                    if (Session?.GetHabbo() == null || Session.GetHabbo().LoadingRoom == id)
-                        return;
+                    Session.SendNotif(Oblivion.GetLanguage().GetVar("server_shutdown"));
+                    return;
+                }
 
-                    if (Session?.GetHabbo()?.RecentlyVisitedRooms == null) return;
+                Session.GetHabbo().LoadingRoom = id;
 
-                    if (Oblivion.ShutdownStarted)
-                    {
-                        Session.SendNotif(Oblivion.GetLanguage().GetVar("server_shutdown"));
-                        return;
-                    }
+                Room room;
+                if (Session.GetHabbo().InRoom)
+                {
+                    room = Session.GetHabbo().CurrentRoom;
+                    if (room?.GetRoomUserManager() != null)
+                        room.GetRoomUserManager().RemoveUserFromRoom(Session, false, false);
+                }
 
-                    Session.GetHabbo().LoadingRoom = id;
+                room = Oblivion.GetGame().GetRoomManager().LoadRoom(id);
+                if (room == null)
+                    return;
 
-                    Room room;
-                    if (Session.GetHabbo().InRoom)
-                    {
-                        room = Session.GetHabbo().CurrentRoom;
-                        if (room?.GetRoomUserManager() != null)
-                            room.GetRoomUserManager().RemoveUserFromRoom(Session, false, false);
-                    }
-
-                    room = Oblivion.GetGame().GetRoomManager().LoadRoom(id);
-                    if (room == null)
-                        return;
-
-                    if (room.UserCount >= room.RoomData.UsersMax &&
-                        !Session.GetHabbo().HasFuse("fuse_enter_full_rooms") &&
-                        Session.GetHabbo().Id != (ulong) room.RoomData.OwnerId)
-                    {
-                        /* var roomQueue = new ServerMessage(LibraryParser.OutgoingRequest("RoomsQueue"));
-                        //todo: room queue
-                         roomQueue.AppendInteger(2);
-                         roomQueue.AppendString("visitors");
-                         roomQueue.AppendInteger(2);
-                         roomQueue.AppendInteger(1);
-                         roomQueue.AppendString("visitors");
-                         roomQueue.AppendInteger(room.UserCount -
-                                                 (int) room.RoomData.UsersNow); // Currently people are in the queue -1 ()
-                         roomQueue.AppendString("spectators");
-                         roomQueue.AppendInteger(1);
-                         roomQueue.AppendInteger(1);
-                         roomQueue.AppendString("spectators");
-                         roomQueue.AppendInteger(0);
-     
-                         Session.SendMessage(roomQueue);
-     */
+                if (room.UserCount >= room.RoomData.UsersMax &&
+                    !Session.GetHabbo().HasFuse("fuse_enter_full_rooms") &&
+                    Session.GetHabbo().Id != (ulong) room.RoomData.OwnerId)
+                {
+                    /* var roomQueue = new ServerMessage(LibraryParser.OutgoingRequest("RoomsQueue"));
+                    //todo: room queue
+                     roomQueue.AppendInteger(2);
+                     roomQueue.AppendString("visitors");
+                     roomQueue.AppendInteger(2);
+                     roomQueue.AppendInteger(1);
+                     roomQueue.AppendString("visitors");
+                     roomQueue.AppendInteger(room.UserCount -
+                                             (int) room.RoomData.UsersNow); // Currently people are in the queue -1 ()
+                     roomQueue.AppendString("spectators");
+                     roomQueue.AppendInteger(1);
+                     roomQueue.AppendInteger(1);
+                     roomQueue.AppendString("spectators");
+                     roomQueue.AppendInteger(0);
+ 
+                     Session.SendMessage(roomQueue);
+ */
 //                    ClearRoomLoading();
 //                    return;
 
-                        var serverMessage =
-                            new ServerMessage(LibraryParser.OutgoingRequest("RoomEnterErrorMessageComposer"));
-                        serverMessage.AppendInteger(1);
-                        Session.SendMessage(serverMessage);
-                        var message = new ServerMessage(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer"));
-                        Session.SendMessage(message);
+                    var serverMessage =
+                        new ServerMessage(LibraryParser.OutgoingRequest("RoomEnterErrorMessageComposer"));
+                    serverMessage.AppendInteger(1);
+                    Session.SendMessage(serverMessage);
+                    var message = new ServerMessage(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer"));
+                    Session.SendMessage(message);
 
-                        ClearRoomLoading();
-                        return;
-                    }
+                    ClearRoomLoading();
+                    return;
+                }
 
-                    CurrentLoadingRoom = room;
+                CurrentLoadingRoom = room;
 
 /*
                 if (Session.GetHabbo().Id != room.RoomData.OwnerId &&
@@ -395,80 +390,79 @@ namespace Oblivion.Messages.Handlers
                         return;
                     }*/
 
-                    if (!Session.GetHabbo().HasFuse("fuse_enter_any_room") && room.UserIsBanned(Session.GetHabbo().Id))
+                if (!Session.GetHabbo().HasFuse("fuse_enter_any_room") && room.UserIsBanned(Session.GetHabbo().Id))
+                {
+                    if (!room.HasBanExpired(Session.GetHabbo().Id))
                     {
-                        if (!room.HasBanExpired(Session.GetHabbo().Id))
-                        {
-                            ClearRoomLoading();
+                        ClearRoomLoading();
 
-                            var serverMessage2 =
-                                new ServerMessage(LibraryParser.OutgoingRequest("RoomEnterErrorMessageComposer"));
-                            serverMessage2.AppendInteger(4);
-                            Session.SendMessage(serverMessage2);
-                            Response.Init(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer"));
-                            SendResponse();
-                            return;
-                        }
-
-                        room.RemoveBan(Session.GetHabbo().Id);
+                        var serverMessage2 =
+                            new ServerMessage(LibraryParser.OutgoingRequest("RoomEnterErrorMessageComposer"));
+                        serverMessage2.AppendInteger(4);
+                        Session.SendMessage(serverMessage2);
+                        Response.Init(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer"));
+                        SendResponse();
+                        return;
                     }
 
-                    if (!isReload && !Session.GetHabbo().HasFuse("fuse_enter_any_room") &&
-                        !room.CheckRightsDoorBell(Session, true, true,
-                            room.RoomData.Group != null &&
-                            room.RoomData.Group.Members.ContainsKey(Session.GetHabbo().Id)) &&
-                        !(Session.GetHabbo().IsTeleporting && Session.GetHabbo().TeleportingRoomId == id) &&
-                        !Session.GetHabbo().IsHopping)
-                    {
-                        if (room.RoomData.State == 1)
-                        {
-                            if (room.UserCount <= 0)
-                            {
-                                Session.SendMessage(
-                                    new ServerMessage(LibraryParser.OutgoingRequest("DoorbellNoOneMessageComposer")));
-                                return;
-                            }
-
-                            Session.GetHabbo().LastBellId = room.RoomId;
-                            var msg = new ServerMessage(LibraryParser.OutgoingRequest("DoorbellMessageComposer"));
-                            msg.AppendString("");
-                            Session.SendMessage(msg);
-                            var serverMessage3 =
-                                new ServerMessage(LibraryParser.OutgoingRequest("DoorbellMessageComposer"));
-                            serverMessage3.AppendString(Session.GetHabbo().UserName);
-                            room.SendMessageToUsersWithRights(serverMessage3);
-                            return;
-                        }
-
-                        if (room.RoomData.State == 2 &&
-                            !string.Equals(pWd, room.RoomData.PassWord, StringComparison.CurrentCultureIgnoreCase))
-                        {
-                            ClearRoomLoading();
-
-                            Session.GetMessageHandler()
-                                .GetResponse()
-                                .Init(LibraryParser.OutgoingRequest("RoomErrorMessageComposer"));
-                            Session.GetMessageHandler().GetResponse().AppendInteger(-100002);
-                            Session.GetMessageHandler().SendResponse();
-
-                            Session.GetMessageHandler()
-                                .GetResponse()
-                                .Init(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer"));
-                            Session.GetMessageHandler().GetResponse();
-                            Session.GetMessageHandler().SendResponse();
-                            return;
-                        }
-                    }
-
-                    Response.Init(LibraryParser.OutgoingRequest("PrepareRoomMessageComposer"));
-                    SendResponse();
-                    Session.GetHabbo().LoadingChecksPassed = true;
-                    LoadRoomForUser();
-
-                    if (Session.GetHabbo().RecentlyVisitedRooms.Contains(room.RoomId))
-                        Session.GetHabbo().RecentlyVisitedRooms.Remove(room.RoomId);
-                    Session.GetHabbo().RecentlyVisitedRooms.AddFirst(room.RoomId);
+                    room.RemoveBan(Session.GetHabbo().Id);
                 }
+
+                if (!isReload && !Session.GetHabbo().HasFuse("fuse_enter_any_room") &&
+                    !room.CheckRightsDoorBell(Session, true, true,
+                        room.RoomData.Group != null &&
+                        room.RoomData.Group.Members.ContainsKey(Session.GetHabbo().Id)) &&
+                    !(Session.GetHabbo().IsTeleporting && Session.GetHabbo().TeleportingRoomId == id) &&
+                    !Session.GetHabbo().IsHopping)
+                {
+                    if (room.RoomData.State == 1)
+                    {
+                        if (room.UserCount <= 0)
+                        {
+                            Session.SendMessage(
+                                new ServerMessage(LibraryParser.OutgoingRequest("DoorbellNoOneMessageComposer")));
+                            return;
+                        }
+
+                        Session.GetHabbo().LastBellId = room.RoomId;
+                        var msg = new ServerMessage(LibraryParser.OutgoingRequest("DoorbellMessageComposer"));
+                        msg.AppendString("");
+                        Session.SendMessage(msg);
+                        var serverMessage3 =
+                            new ServerMessage(LibraryParser.OutgoingRequest("DoorbellMessageComposer"));
+                        serverMessage3.AppendString(Session.GetHabbo().UserName);
+                        room.SendMessageToUsersWithRights(serverMessage3);
+                        return;
+                    }
+
+                    if (room.RoomData.State == 2 &&
+                        !string.Equals(pWd, room.RoomData.PassWord, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        ClearRoomLoading();
+
+                        Session.GetMessageHandler()
+                            .GetResponse()
+                            .Init(LibraryParser.OutgoingRequest("RoomErrorMessageComposer"));
+                        Session.GetMessageHandler().GetResponse().AppendInteger(-100002);
+                        Session.GetMessageHandler().SendResponse();
+
+                        Session.GetMessageHandler()
+                            .GetResponse()
+                            .Init(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer"));
+                        Session.GetMessageHandler().GetResponse();
+                        Session.GetMessageHandler().SendResponse();
+                        return;
+                    }
+                }
+
+                Response.Init(LibraryParser.OutgoingRequest("PrepareRoomMessageComposer"));
+                SendResponse();
+                Session.GetHabbo().LoadingChecksPassed = true;
+                LoadRoomForUser();
+
+                if (Session.GetHabbo().RecentlyVisitedRooms.Contains(room.RoomId))
+                    Session.GetHabbo().RecentlyVisitedRooms.Remove(room.RoomId);
+                Session.GetHabbo().RecentlyVisitedRooms.AddFirst(room.RoomId);
             }
             catch (Exception e)
             {
@@ -759,11 +753,13 @@ namespace Oblivion.Messages.Handlers
             GetResponse().AppendInteger(room.UsersWithRights.Count);
 
             /* TODO CHECK */
-            foreach (var habboForId in room.UsersWithRights
-                .Select(Oblivion.GetHabboById).Where(habboForId => habboForId != null))
+            foreach (var habboForId in room.UsersWithRights.Select(Oblivion.GetHabboById))
             {
-                GetResponse().AppendInteger(habboForId.Id);
-                GetResponse().AppendString(habboForId.UserName);
+                if (habboForId != null)
+                {
+                    GetResponse().AppendInteger(habboForId.Id);
+                    GetResponse().AppendString(habboForId.UserName);
+                }
             }
 
             SendResponse();
@@ -930,8 +926,9 @@ namespace Oblivion.Messages.Handlers
 
         internal void GiveRights()
         {
-            if (Session?.GetHabbo() == null)
+            if (Session?.GetHabbo() == null || Session.GetHabbo().CurrentRoom == null)
                 return;
+
             var num = Request.GetUInteger();
             var room = Session.GetHabbo().CurrentRoom;
             if (room == null)
@@ -1070,7 +1067,7 @@ namespace Oblivion.Messages.Handlers
                 roomUserByHabbo.GetClient().GetHabbo().HasFuse("fuse_no_kick"))
                 return;
             room.GetRoomUserManager().RemoveUserFromRoom(roomUserByHabbo.GetClient(), true, true);
-            roomUserByHabbo.GetClient().CurrentRoomUserId = -1;
+            roomUserByHabbo.GetClient().GetHabbo().CurrentRoomUserId = -1;
             Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_SelfModKickSeen", 1);
         }
 
@@ -1098,7 +1095,7 @@ namespace Oblivion.Messages.Handlers
                 time = 788922000L;
             room.AddBan(num, time);
             room.GetRoomUserManager().RemoveUserFromRoom(roomUserByHabbo.GetClient(), true, true);
-            Session.CurrentRoomUserId = -1;
+            Session.GetHabbo().CurrentRoomUserId = -1;
             Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_SelfModBanSeen", 1);
         }
 
@@ -1230,7 +1227,7 @@ namespace Oblivion.Messages.Handlers
             var msg2 = new ServerMessage(LibraryParser.OutgoingRequest("UserBadgesMessageComposer"));
             msg2.AppendInteger(habbo.Id);
 
-            var badges = habbo.GetBadgeComponent().BadgeList.Values.Cast<Badge>().Where(badge => badge.Slot > 0)
+            var badges = habbo.GetBadgeComponent().BadgeList.Values.Where(badge => badge.Slot > 0)
                 .ToList();
             msg2.AppendInteger(badges.Count);
             foreach (
@@ -2005,15 +2002,15 @@ namespace Oblivion.Messages.Handlers
                         var mix = array[3] == "true";
                         if (speechDelay < 7) speechDelay = 7;
 
-                        var speechs =
-                            speechsJunk.Where(
-                                    speech =>
-                                        !string.IsNullOrEmpty(speech) &&
-                                        (!speech.ToLower().Contains("update") || !speech.ToLower().Contains("set")))
-                                .Aggregate(string.Empty,
-                                    (current, speech) =>
-                                        current + TextHandling.FilterHtml(speech, Session.GetHabbo().GotCommand("ha")) +
-                                        ";");
+                        var speechs = speechsJunk
+                            .Where(speech =>
+                                !string.IsNullOrEmpty(speech) &&
+                                (!speech.ToLower().Contains("update") || !speech.ToLower().Contains("set")))
+                            .Aggregate(string.Empty,
+                                (current, speech) =>
+                                    current + TextHandling.FilterHtml(speech, Session.GetHabbo().GotCommand("ha")) +
+                                    ";");
+
                         using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                         {
                             queryReactor.SetQuery(
@@ -2491,6 +2488,7 @@ namespace Oblivion.Messages.Handlers
 
             var roomUserByHabbo = currentRoom.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
             var roomUserByHabbo2 = currentRoom.GetRoomUserManager().GetRoomUserByHabbo(text2);
+
 
             msg = currentRoom.RoomData.WordFilter.Aggregate(msg,
                 (current, s) => Regex.Replace(current, Regex.Escape(s), "bobba", RegexOptions.IgnoreCase));

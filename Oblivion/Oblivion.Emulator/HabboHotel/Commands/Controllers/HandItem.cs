@@ -21,12 +21,11 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override bool Execute(GameClient session, string[] pms)
         {
-            ushort itemId;
-            if (!ushort.TryParse(pms[0], out itemId)) return true;
+            if (!ushort.TryParse(pms[0], out var itemId)) return true;
 
             var user = session.GetHabbo()
                 .CurrentRoom.GetRoomUserManager()
-                .GetRoomUserByHabbo(session.GetHabbo().UserName);
+                .GetRoomUserByVirtualId(session.GetHabbo().CurrentRoomUserId);
             if (user.RidingHorse)
             {
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("horse_handitem_error"));

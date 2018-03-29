@@ -45,7 +45,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 adapter.RunQuery();
             }
 
-            var myUser = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().UserName);
+            var myUser = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
             if (myUser == null) return true;
 
             var message = new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));

@@ -391,9 +391,9 @@ namespace Oblivion.HabboHotel.Rooms.Data
         /// <param name="message">The message.</param>
         /// <param name="showEvents">if set to <c>true</c> [show events].</param>
         /// <param name="enterRoom"></param>
-        internal void Serialize(ServerMessage message, bool showEvents = false, bool enterRoom = false)
+        internal bool Serialize(ServerMessage message, bool showEvents = false, bool enterRoom = false)
         {
-            if (message == null || Tags == null) return;
+            if (message == null || Tags == null) return false;
 
             message.AppendInteger(Id);
             message.AppendString(Name);
@@ -443,6 +443,8 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 message.AppendString(Event.Description);
                 message.AppendInteger((int) Math.Floor((Event.Time - Oblivion.GetUnixTimeStamp()) / 60.0));
             }
+
+            return true;
         }
 
         /// <summary>

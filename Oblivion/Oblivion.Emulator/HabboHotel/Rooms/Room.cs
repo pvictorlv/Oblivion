@@ -451,7 +451,7 @@ namespace Oblivion.HabboHotel.Rooms
                 if (!t.IsBot && t.GetClient().GetHabbo().Rank < 4u)
                 {
                     GetRoomUserManager().RemoveUserFromRoom(t.GetClient(), true, false);
-                    t.GetClient().CurrentRoomUserId = -1;
+                    t.GetClient().GetHabbo().CurrentRoomUserId = -1;
                 }
             }
         }
@@ -1351,7 +1351,7 @@ namespace Oblivion.HabboHotel.Rooms
                                     .SendNotif(string.Format(Oblivion.GetLanguage().GetVar("kick_mod_room_message"),
                                         roomKick.Alert));
                             GetRoomUserManager().RemoveUserFromRoom(current.GetClient(), true, false);
-                            current.GetClient().CurrentRoomUserId = -1;
+                            current.GetClient().GetHabbo().CurrentRoomUserId = -1;
                         }
                     }
                 }

@@ -60,7 +60,7 @@ namespace Oblivion.Manager
 
                 if (Oblivion.GetGame().GetClientManager().Clients.ContainsKey(user.Key))
                 {
-                    RemoveUser(user.Key, true);
+                    RemoveUser(user.Key, false);
                     continue;
                 }
 

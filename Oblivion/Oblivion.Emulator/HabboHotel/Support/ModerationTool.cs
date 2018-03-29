@@ -200,7 +200,7 @@ namespace Oblivion.HabboHotel.Support
                 return;
 
             room.GetRoomUserManager().RemoveUserFromRoom(clientByUserId, true, false);
-            clientByUserId.CurrentRoomUserId = -1;
+            clientByUserId.GetHabbo().CurrentRoomUserId = -1;
 
             clientByUserId.SendNotif(message);
 
@@ -620,7 +620,7 @@ namespace Oblivion.HabboHotel.Support
 
 
             IEnumerable<ModerationTemplate> enumerable =
-                (from x in ModerationTemplates.Values where x.Category == -1 select x).ToArray();
+                (from x in ModerationTemplates.Values where x.Category == -1 select x).ToList();
 
             serverMessage.AppendInteger(enumerable.Count());
             using (var enumerator3 = enumerable.GetEnumerator())

@@ -23,7 +23,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             {
                 var serverMessage = new ServerMessage();
                 serverMessage.Init(LibraryParser.OutgoingRequest("WhisperMessageComposer"));
-                serverMessage.AppendInteger(client.CurrentRoomUserId);
+                serverMessage.AppendInteger(client.GetHabbo().CurrentRoomUserId);
                 serverMessage.AppendString(message);
                 serverMessage.AppendInteger(0);
                 serverMessage.AppendInteger(36);

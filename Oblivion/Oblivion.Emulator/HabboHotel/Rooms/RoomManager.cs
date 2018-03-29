@@ -473,7 +473,8 @@ namespace Oblivion.HabboHotel.Rooms
 
             room.Disposed = true;
 
-            if (Oblivion.GetGame().GetNavigator().PrivateCategories.TryGetValue(room.RoomData.Category, out var flatCat))
+            if (Oblivion.GetGame().GetNavigator().PrivateCategories
+                .TryGetValue(room.RoomData.Category, out var flatCat))
             {
                 flatCat.UsersNow -= room.UserCount;
             }
@@ -571,7 +572,7 @@ namespace Oblivion.HabboHotel.Rooms
                             if (current.GetClient() != null)
                             {
                                 room.GetRoomUserManager().RemoveUserFromRoom(current.GetClient(), true, false);
-                                current.GetClient().CurrentRoomUserId = -1;
+                                current.GetClient().GetHabbo().CurrentRoomUserId = -1;
                             }
                         }
                     }
@@ -619,8 +620,7 @@ namespace Oblivion.HabboHotel.Rooms
                     }
                     else
                     {
-                        if (_activeRooms.ContainsKey(roomData))
-                            _activeRooms.Remove(roomData);
+                        _activeRooms.Remove(roomData);
                     }
                 }
             }

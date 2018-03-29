@@ -74,7 +74,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var room = session.GetHabbo().CurrentRoom;
 
             var user = room.GetRoomUserManager()
-                .GetRoomUserByHabbo(session.GetHabbo().UserName);
+                .GetRoomUserByHabbo(session.GetHabbo().Id);
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
@@ -98,7 +98,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var room = session.GetHabbo().CurrentRoom;
 
             var user = room.GetRoomUserManager()
-                .GetRoomUserByHabbo(session.GetHabbo().UserName);
+                .GetRoomUserByVirtualId(session.GetHabbo().CurrentRoomUserId);
 
             if (user.CopyX == 0 || user.CopyY == 0)
             {
@@ -281,7 +281,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var user =
                 session.GetHabbo()
                     .CurrentRoom.GetRoomUserManager()
-                    .GetRoomUserByHabbo(session.GetHabbo().UserName);
+                    .GetRoomUserByVirtualId(session.GetHabbo().CurrentRoomUserId);
             var text = new StringBuilder();
             switch (type)
             {

@@ -268,11 +268,10 @@ namespace Oblivion.Messages.Handlers
             Room room = Oblivion.GetGame().GetRoomManager().GetRoom(group.RoomId);
 
             RoomUser roomUserByHabbo = room?.GetRoomUserManager()
-                .GetRoomUserByHabbo(Oblivion.GetHabboById(num2).UserName);
+                .GetRoomUserByVirtualId(Oblivion.GetHabboById(num2).CurrentRoomUserId);
 
             if (roomUserByHabbo != null)
             {
-                if (!roomUserByHabbo.Statusses.ContainsKey("flatctrl 1"))
                     roomUserByHabbo.AddStatus("flatctrl 1", "");
 
                 Response.Init(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
@@ -309,11 +308,10 @@ namespace Oblivion.Messages.Handlers
 
             Room room = Oblivion.GetGame().GetRoomManager().GetRoom(group.RoomId);
             RoomUser roomUserByHabbo = room?.GetRoomUserManager()
-                .GetRoomUserByHabbo(Oblivion.GetHabboById(num2).UserName);
+                .GetRoomUserByVirtualId(Oblivion.GetHabboById(num2).CurrentRoomUserId);
 
             if (roomUserByHabbo != null)
             {
-                if (roomUserByHabbo.Statusses.ContainsKey("flatctrl 1"))
                     roomUserByHabbo.RemoveStatus("flatctrl 1");
 
                 Response.Init(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
@@ -394,11 +392,11 @@ namespace Oblivion.Messages.Handlers
 
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(group.RoomId);
 
-            var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Oblivion.GetHabboById(userId).UserName);
+            var roomUserByHabbo = room?.GetRoomUserManager()
+                .GetRoomUserByVirtualId(Oblivion.GetHabboById(userId).CurrentRoomUserId);
 
             if (roomUserByHabbo != null)
             {
-                if (roomUserByHabbo.Statusses.ContainsKey("flatctrl 1"))
                     roomUserByHabbo.RemoveStatus("flatctrl 1");
 
                 roomUserByHabbo.UpdateNeeded = true;
@@ -474,11 +472,9 @@ namespace Oblivion.Messages.Handlers
 
             if (num2 == Session.GetHabbo().Id)
             {
-                if (group.Members.ContainsKey(num2))
-                    group.Members.Remove(num2);
+                group.Members.Remove(num2);
 
-                if (group.Admins.ContainsKey(num2))
-                    group.Admins.Remove(num2);
+                group.Admins.Remove(num2);
 
                 using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     queryReactor.RunFastQuery(string.Concat("DELETE FROM groups_members WHERE user_id=", num2,
@@ -506,7 +502,7 @@ namespace Oblivion.Messages.Handlers
                     if (group.AdminOnlyDeco == 0u)
                     {
                         RoomUser roomUserByHabbo = Oblivion.GetGame().GetRoomManager().GetRoom(group.RoomId)
-                            .GetRoomUserManager().GetRoomUserByHabbo(Oblivion.GetHabboById(num2).UserName);
+                            .GetRoomUserManager().GetRoomUserByVirtualId(Oblivion.GetHabboById(num2).CurrentRoomUserId);
 
                         if (roomUserByHabbo == null)
                             return;
@@ -528,8 +524,7 @@ namespace Oblivion.Messages.Handlers
 
             group.Members.Remove(num2);
 
-            if (group.Admins.ContainsKey(num2))
-                group.Admins.Remove(num2);
+            group.Admins.Remove(num2);
 
             Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
             Response.Init(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
@@ -1263,7 +1258,6 @@ namespace Oblivion.Messages.Handlers
                         /* TODO CHECK */
                         foreach (KeyValuePair<uint, string> current in Session.GetHabbo().CurrentRoom.LoadedGroups)
                         {
-
                             Response.AppendInteger(current.Key);
                             Response.AppendString(current.Value);
                         }

@@ -40,7 +40,7 @@ namespace Oblivion.Enclosure
 
         public void UpdateLocation(int x, int y, byte value)
         {
-            _newEntries.Enqueue(new GametileUpdate(x, y, value));
+            _newEntries?.Enqueue(new GametileUpdate(x, y, value));
         }
 
         public List<PointField> DoUpdate(bool oneloop = false)

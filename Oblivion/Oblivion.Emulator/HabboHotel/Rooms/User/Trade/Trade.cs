@@ -457,7 +457,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         {
             try
             {
-                Task.Factory.StartNew(() => { DeliverItems(); });
+                Task.Factory.StartNew(DeliverItems);
                 CloseTradeClean();
             }
             catch (Exception ex)
