@@ -22,33 +22,21 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             var dictionary = new Dictionary<string, string>();
 
-            dictionary.Clear();
 
             var array2 = array[1].Split('.');
 
-            /* TODO CHECK */ foreach (var text in array2)
+            foreach (var text in array2)
             {
                 var array3 = session.GetHabbo().Look.Split('.');
-
-                /* TODO CHECK */ foreach (var text2 in array3)
+                foreach (var text2 in array3)
                 {
                     if (text2.Split('-')[0] == text.Split('-')[0])
                     {
-                        if (dictionary.ContainsKey(text2.Split('-')[0]) && !dictionary.ContainsValue(text))
-                        {
-                            dictionary.Remove(text2.Split('-')[0]);
-                            dictionary.Add(text2.Split('-')[0], text);
-                        }
-                        else
-                        {
-                            if (!dictionary.ContainsKey(text2.Split('-')[0]) && !dictionary.ContainsValue(text))
-                                dictionary.Add(text2.Split('-')[0], text);
-                        }
+                        dictionary[text2.Split('-')[0]] = text;
                     }
                     else
                     {
-                        if (!dictionary.ContainsKey(text2.Split('-')[0]))
-                            dictionary.Add(text2.Split('-')[0], text2);
+                        dictionary[text2.Split('-')[0]] = text2;
                     }
                 }
             }

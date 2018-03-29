@@ -107,7 +107,7 @@
     <OutputPath>..\bin\Release\x64\</OutputPath>
     <DefineConstants>
     </DefineConstants>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <FileAlignment>4096</FileAlignment>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -540,10 +540,6 @@
     <Compile Include="Connection\Connection\SocketInitializationException.cs" />
     <Compile Include="Messages\Parsers\LibraryParser.cs" />
     <Compile Include="Messages\Enums\StaticMessages.cs" />
-    <Compile Include="Security\BlackWords\Structs\BlackWord.cs" />
-    <Compile Include="Security\BlackWords\BlackWordsManager.cs" />
-    <Compile Include="Security\BlackWords\Enums\BlackWordType.cs" />
-    <Compile Include="Security\BlackWords\Structs\BlackWordTypeSettings.cs" />
     <Compile Include="Security\BobbaFilter.cs" />
     <Compile Include="Security\Filter.cs" />
     <Compile Include="Configuration\ConfigData.cs" />

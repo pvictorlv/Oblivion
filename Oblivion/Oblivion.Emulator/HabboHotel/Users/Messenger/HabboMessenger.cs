@@ -8,8 +8,7 @@ using Oblivion.HabboHotel.Quests;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
-using Oblivion.Security.BlackWords;
-using Oblivion.Security.BlackWords.Enums;
+using Oblivion.Security;
 
 namespace Oblivion.HabboHotel.Users.Messenger
 {
@@ -511,17 +510,9 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="message">The message.</param>
         internal void SendInstantMessage(Guild gp, string message)
         {
-            if (BlackWordsManager.Check(message, BlackWordType.Hotel, out var word))
+            if (!BobbaFilter.CanTalk(GetClient(), message))
             {
-                var settings = word.TypeSettings;
-                if (settings == null) return;
-                if (settings.Value.ShowMessage)
-                {
-                    GetClient()
-                        .SendModeratorMessage("A mensagem contém a palavra: " + word.Word +
-                                              " que não é permitida, você poderá ser banido!");
-                    return;
-                }
+                return;
             }
 
             if (!gp.Members.ContainsKey(GetClient().GetHabbo().Id))
@@ -551,20 +542,11 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="message">The message.</param>
         internal void SendInstantMessage(uint toId, string message)
         {
-            if (BlackWordsManager.Check(message, BlackWordType.Hotel, out var word))
+            if (!BobbaFilter.CanTalk(GetClient(), message))
             {
-                var settings = word.TypeSettings;
-                //GetClient().HandlePublicist(word.Word, message, "WHISPER", settings);
-                if (settings == null) return;
-
-                if (settings.Value.ShowMessage)
-                {
-                    GetClient()
-                        .SendModeratorMessage("A mensagem contém a palavra: " + word.Word +
-                                              " que não é permitida, você poderá ser banido!");
-                    return;
-                }
+                return;
             }
+
 
             if (!FriendshipExists(toId))
             {

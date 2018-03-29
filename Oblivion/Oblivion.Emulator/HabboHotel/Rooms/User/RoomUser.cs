@@ -19,8 +19,6 @@ using Oblivion.HabboHotel.Users;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
 using Oblivion.Security;
-using Oblivion.Security.BlackWords;
-using Oblivion.Security.BlackWords.Enums;
 using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Rooms.User
@@ -808,22 +806,10 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (msg.Length > 100)
                 return;
 
-            if (!BobbaFilter.CanTalk(session, msg))
+            if (!((msg.StartsWith(":deleteblackword ") || msg.Contains("ban")) && session.GetHabbo().Rank > 4)  && !BobbaFilter.CanTalk(session, msg))
                 return;
 
-
-            if (!((msg.StartsWith(":deleteblackword ") || msg.Contains("ban")) && session.GetHabbo().Rank > 4) &&
-                BlackWordsManager.Check(msg, BlackWordType.Hotel, out var word))
-            {
-                var settings = word.TypeSettings;
-                if (settings == null) return;
-                if (settings.Value.ShowMessage)
-                {
-                    session.SendWhisper("A mensagem contém a palavra: " + word.Word +
-                                        " que não é permitida, você poderá ser banido!");
-                    return;
-                }
-            }
+            
 
 
             if (!IsBot && IsFlooded && FloodExpiryTime <= Oblivion.GetUnixTimeStamp())

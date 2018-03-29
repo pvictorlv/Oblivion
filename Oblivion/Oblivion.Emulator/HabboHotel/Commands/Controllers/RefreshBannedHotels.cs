@@ -1,7 +1,6 @@
 ﻿using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Security;
-using Oblivion.Security.BlackWords;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
 {
@@ -24,7 +23,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         public override bool Execute(GameClient session, string[] pms)
         {
             Filter.Reload();
-            BlackWordsManager.Reload();
+            BobbaFilter.InitSwearWord();
 
             session.SendNotif(Oblivion.GetLanguage().GetVar("command_refresh_banned_hotels"));
             return true;

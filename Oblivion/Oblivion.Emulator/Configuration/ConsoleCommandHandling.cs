@@ -10,7 +10,6 @@ using Oblivion.HabboHotel;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
 using Oblivion.Security;
-using Oblivion.Security.BlackWords;
 using Oblivion.Util;
 
 namespace Oblivion.Configuration
@@ -268,7 +267,7 @@ namespace Oblivion.Configuration
 
                     case "filter":
                         Filter.Reload();
-                        BlackWordsManager.Reload();
+                        BobbaFilter.InitSwearWord();
                         break;
 
                     default:

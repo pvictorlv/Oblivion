@@ -9,7 +9,6 @@ using Oblivion.Messages;
 using Oblivion.Messages.Enums;
 using Oblivion.Messages.Handlers;
 using Oblivion.Messages.Parsers;
-using Oblivion.Security.BlackWords.Structs;
 
 namespace Oblivion.HabboHotel.GameClients.Interfaces
 {
@@ -90,74 +89,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 if (_connection != null) _connection.IsAir = value;
             }
         }
-
-        /// <summary>
-        ///     Handles the publicist.
-        /// </summary>
-        /// <param name="word">The word.</param>
-        /// <param name="message">The message.</param>
-        /// <param name="method">The method.</param>
-        /// <param name="settings">The settings.</param>
-        internal void HandlePublicist(string word, string message, string method, BlackWordTypeSettings settings)
-        {
-            ServerMessage serverMessage;
-
-            if (GetHabbo().Rank < 5 && settings.MaxAdvices == PublicistCount++ && settings.AutoBan)
-            {
-                serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
-                serverMessage.AppendString("staffcloud");
-                serverMessage.AppendInteger(2);
-                serverMessage.AppendString("title");
-                serverMessage.AppendString("Staff Internal Alert");
-                serverMessage.AppendString("message");
-                serverMessage.AppendString("O usuário " + GetHabbo().UserName +
-                                           " Foi banido por enviar repetidamente palavras repetidas. A última palavra foi: " +
-                                           word + ", na frase: " + message);
-
-                Oblivion.GetGame().GetClientManager().StaffAlert(serverMessage);
-
-                Oblivion.GetGame().GetBanManager().BanUser(this, GetHabbo().UserName, 3600,
-                    "Você está passando muitos spams de outros hotéis. Por esta razão, sancioná-lo por 1 hora, de modo que você aprender a controlar-se.",
-                    false, false);
-                return;
-            }
-
-            //if (PublicistCount > 4)
-            //    return;
-
-            // Queremos que os Staffs Saibam desses dados.
-
-            var alert = settings.Alert.Replace("{0}", GetHabbo().UserName);
-
-            alert = alert.Replace("{1}", GetHabbo().Id.ToString());
-            alert = alert.Replace("{2}", word);
-            alert = alert.Replace("{3}", message);
-            alert = alert.Replace("{4}", method);
-
-            serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UsersClassificationMessageComposer"));
-            serverMessage.AppendInteger(1);
-
-            serverMessage.AppendInteger(GetHabbo().Id);
-            serverMessage.AppendString(GetHabbo().UserName);
-            serverMessage.AppendString("BadWord: " + word);
-
-            Oblivion.GetGame().GetClientManager().StaffAlert(serverMessage);
-
-            serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
-            serverMessage.AppendString(settings.ImageAlert);
-            serverMessage.AppendInteger(4);
-            serverMessage.AppendString("title");
-            serverMessage.AppendString("${generic.notice}");
-            serverMessage.AppendString("message");
-            serverMessage.AppendString(alert);
-            serverMessage.AppendString("link");
-            serverMessage.AppendString("event:");
-            serverMessage.AppendString("linkTitle");
-            serverMessage.AppendString("ok");
-
-            Oblivion.GetGame().GetClientManager().StaffAlert(serverMessage);
-        }
-
+        
         /// <summary>
         ///     Gets the connection.
         /// </summary>

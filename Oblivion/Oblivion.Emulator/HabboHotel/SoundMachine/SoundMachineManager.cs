@@ -158,10 +158,8 @@ namespace Oblivion.HabboHotel.SoundMachine
             if (song == null)
                 return -1;
 
-            if (_mLoadedDisks.ContainsKey(diskItem.ItemId))
+            if (!_mLoadedDisks.TryAdd(diskItem.ItemId, diskItem))
                 return -1;
-
-            _mLoadedDisks.TryAdd(diskItem.ItemId, diskItem);
 
 
             var count = _mPlaylist.Count;
@@ -176,10 +174,9 @@ namespace Oblivion.HabboHotel.SoundMachine
         /// <returns>SongItem.</returns>
         public SongItem RemoveDisk(int playlistIndex)
         {
-            if (!_mPlaylist.ContainsKey(playlistIndex))
+            if (!_mPlaylist.TryRemove(playlistIndex, out var songInstance))
                 return null;
 
-            _mPlaylist.TryRemove(playlistIndex, out var songInstance);
 
 
             _mLoadedDisks.TryRemove(songInstance.DiskItem.ItemId, out var item);

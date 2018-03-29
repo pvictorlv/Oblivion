@@ -318,9 +318,8 @@ namespace Oblivion.HabboHotel.Rooms.User
             var userId = roomUser.UserId;
 
             if (UsersByUserId == null || UsersByUserName == null) return;
-
-            if (!UsersByUserName.ContainsKey(userName.ToLower()))
-                UsersByUserName.Add(userName.ToLower(), roomUser);
+            
+            UsersByUserName[userName.ToLower()] = roomUser;
 
             UsersByUserId.TryAdd(userId, roomUser);
 
@@ -369,7 +368,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 if (Disposing) return;
 
-                if (session?.GetHabbo() != null && _userRoom != null) 
+                if (session?.GetHabbo() != null && _userRoom != null)
                 {
                     var userId = session.GetHabbo().Id;
                     session.GetHabbo().CurrentRoom = null;
@@ -549,7 +548,9 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <returns>List&lt;RoomUser&gt;.</returns>
         internal List<RoomUser> GetRoomUserByRank(int minRank)
         {
-            return UserList.Values.Where(current => !current.IsBot && current.GetClient() != null && current.GetClient().GetHabbo() != null && current.GetClient().GetHabbo().Rank > (ulong) minRank).ToList();
+            return UserList.Values.Where(current =>
+                !current.IsBot && current.GetClient() != null && current.GetClient().GetHabbo() != null &&
+                current.GetClient().GetHabbo().Rank > (ulong) minRank).ToList();
         }
 
         /// <summary>
@@ -600,16 +601,24 @@ namespace Oblivion.HabboHotel.Rooms.User
                         queryChunk.AddParameter($"{current.PetId}name", current.Name);
                         queryChunk2.AddParameter($"{current.PetId}race", current.Race);
                         queryChunk2.AddParameter($"{current.PetId}color", current.Color);
-                        queryChunk.AddQuery(string.Concat("(", current.PetId, ",", current.OwnerId, ",", current.RoomId, ",@", current.PetId, "name,", current.X, ",", current.Y, ",", current.Z, ")"));
-                        queryChunk2.AddQuery(string.Concat("(", current.Type, ",@", current.PetId, "race,@", current.PetId, "color,0,100,'", current.CreationStamp, "',0,0)"));
+                        queryChunk.AddQuery(string.Concat("(", current.PetId, ",", current.OwnerId, ",", current.RoomId,
+                            ",@", current.PetId, "name,", current.X, ",", current.Y, ",", current.Z, ")"));
+                        queryChunk2.AddQuery(string.Concat("(", current.Type, ",@", current.PetId, "race,@",
+                            current.PetId, "color,0,100,'", current.CreationStamp, "',0,0)"));
                         break;
 
                     case DatabaseUpdateState.NeedsUpdate:
                         queryChunk3.AddParameter($"{current.PetId}name", current.Name);
                         queryChunk3.AddParameter($"{current.PetId}race", current.Race);
                         queryChunk3.AddParameter($"{current.PetId}color", current.Color);
-                        queryChunk3.AddQuery(string.Concat("UPDATE bots SET room_id = ", current.RoomId, ", name = @", current.PetId, "name, x = ", current.X, ", Y = ", current.Y, ", Z = ", current.Z, " WHERE id = ", current.PetId));
-                        queryChunk3.AddQuery(string.Concat("UPDATE pets_data SET race = @", current.PetId, "race, color = @", current.PetId, "color, type = ", current.Type, ", experience = ", current.Experience, ", energy = ", current.Energy, ", nutrition = ", current.Nutrition, ", respect = ", current.Respect, ", createstamp = '", current.CreationStamp, "' WHERE id = ", current.PetId));
+                        queryChunk3.AddQuery(string.Concat("UPDATE bots SET room_id = ", current.RoomId, ", name = @",
+                            current.PetId, "name, x = ", current.X, ", Y = ", current.Y, ", Z = ", current.Z,
+                            " WHERE id = ", current.PetId));
+                        queryChunk3.AddQuery(string.Concat("UPDATE pets_data SET race = @", current.PetId,
+                            "race, color = @", current.PetId, "color, type = ", current.Type, ", experience = ",
+                            current.Experience, ", energy = ", current.Energy, ", nutrition = ", current.Nutrition,
+                            ", respect = ", current.Respect, ", createstamp = '", current.CreationStamp,
+                            "' WHERE id = ", current.PetId));
                         break;
                 }
 
@@ -737,7 +746,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                                     var num2 = Convert.ToInt32(item.ExtraData);
                                     user.Statusses.TryAdd("sit",
                                         item.GetBaseItem().ToggleHeight[num2].ToString(CultureInfo.InvariantCulture)
-                                            .Replace(',', '.'));
+                                            ?.Replace(',', '.'));
                                 }
                                 else
                                 {
@@ -1289,8 +1298,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
 
             // Isn't a Valid Step! And he Can Go? Erase Imediatile Effect
-            if (roomUsers.Statusses.ContainsKey("mv"))
-                roomUsers.ClearMovement();
+            roomUsers.ClearMovement();
 
             // If user isn't pet and Bot, we have serious Problems. Let Recalculate Path!
             if ((!roomUsers.IsPet) && (!roomUsers.IsBot))
@@ -1559,8 +1567,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 // If user Isn't Walking, Let's go Back..
                 if ((!roomUsers.IsWalking) || (roomUsers.Freezed))
                 {
-                    if (roomUsers.Statusses.ContainsKey("mv"))
-                        roomUsers.ClearMovement();
+                    roomUsers.ClearMovement();
                 }
                 else
                 {

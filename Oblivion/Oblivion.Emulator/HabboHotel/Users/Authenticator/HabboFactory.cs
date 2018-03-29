@@ -92,16 +92,10 @@ namespace Oblivion.HabboHotel.Users.Authenticator
                     LoadedGroups = true
                 };
             /* TODO CHECK */
-            foreach (
-                var naviLogs in
-                navilogstring.Split(';')
-                    .Where(value => navilogstring.Contains(","))
-                    .Select(
-                        value =>
-                            new NaviLogs(int.Parse(value.Split(',')[0]), value.Split(',')[1],
-                                value.Split(',')[2]))
-                    .Where(naviLogs => !navilogs.ContainsKey(naviLogs.Id)))
+            foreach (var naviLogs in navilogstring.Split(';').Where(value => navilogstring.Contains(",")).Select(value => new NaviLogs(int.Parse(value.Split(',')[0]), value.Split(',')[1], value.Split(',')[2])).Where(naviLogs => !navilogs.ContainsKey(naviLogs.Id)))
+            {
                 navilogs.Add(naviLogs.Id, naviLogs);
+            }
 
             return new Habbo(id, userName, ras, motto, look, gender, credits, activityPoints, muted, homeRoom, respect,
                 dailyRespectPoints, dailyPetRespectPoints,

@@ -1,6 +1,6 @@
 ﻿using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
-using Oblivion.Security.BlackWords;
+using Oblivion.Security;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
 {
@@ -16,21 +16,20 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         {
             MinRank = 8;
             Description = "Adds a word to filter list.";
-            Usage = ":addblackword type(hotel|insult|all) word";
-            MinParams = 2;
+            Usage = ":addblackword word";
+            MinParams = 1;
         }
 
         public override bool Execute(GameClient session, string[] pms)
         {
-            var type = pms[0];
-            var word = pms[1];
+            var word = pms[0];
 
             if (string.IsNullOrEmpty(word))
             {
                 session.SendWhisper("Palabra inválida.");
                 return true;
             }
-            BlackWordsManager.AddBlackWord(type, word);
+            BobbaFilter.AddBlackWord(word);
             return true;
         }
     }

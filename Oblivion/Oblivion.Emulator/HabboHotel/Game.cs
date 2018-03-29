@@ -26,7 +26,6 @@ using Oblivion.HabboHotel.Users.Helpers;
 using Oblivion.Manager;
 using Oblivion.Messages.Enums;
 using Oblivion.Security;
-using Oblivion.Security.BlackWords;
 using Oblivion.Util;
 
 namespace Oblivion.HabboHotel
@@ -463,7 +462,7 @@ namespace Oblivion.HabboHotel
                 _catalog.Initialize(queryReactor, out _);
                 Filter.Load();
                 BobbaFilter.InitSwearWord();
-                BlackWordsManager.Load();
+                
                 SoundMachineSongManager.Initialize();
                 LowPriorityWorker.Init(queryReactor);
                 _roomManager.LoadCompetitionManager();

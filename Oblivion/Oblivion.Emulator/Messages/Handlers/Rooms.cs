@@ -19,8 +19,7 @@ using Oblivion.HabboHotel.Quests;
 using Oblivion.HabboHotel.RoomBots;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.Messages.Parsers;
-using Oblivion.Security.BlackWords;
-using Oblivion.Security.BlackWords.Enums;
+using Oblivion.Security;
 using Oblivion.Util;
 
 namespace Oblivion.Messages.Handlers
@@ -2492,17 +2491,11 @@ namespace Oblivion.Messages.Handlers
 
             msg = currentRoom.RoomData.WordFilter.Aggregate(msg,
                 (current, s) => Regex.Replace(current, Regex.Escape(s), "bobba", RegexOptions.IgnoreCase));
-            if (BlackWordsManager.Check(msg, BlackWordType.Hotel, out var word))
-            {
-                var settings = word.TypeSettings;
-                if (settings == null) return;
-                if (settings.Value.ShowMessage)
-                {
-                    Session.SendWhisper("A mensagem enviada tem a palavra: " + word.Word +
-                                        " Que não é permitida aqui, você poderá ser banido!");
-                    return;
-                }
-            }
+
+            if (!BobbaFilter.CanTalk(Session, msg))
+                return;
+
+
 
             var span = DateTime.Now - _floodTime;
 

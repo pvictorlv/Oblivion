@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Web;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Util;
 
@@ -31,40 +33,46 @@ namespace Oblivion.Security
                     session.GetHabbo().BobbaFiltered++;
 
                 if (session.GetHabbo().BobbaFiltered < 3)
-                    session.SendNotif("Your language is inappropriate. If you do not change this , measures are being taken by the automated system of Habbo.");
+                    session.SendNotif(
+                        "Your language is inappropriate. If you do not change this , measures are being taken by the automated system of Habbo.");
                 else if (session.GetHabbo().BobbaFiltered >= 3)
                 {
                     if (session.GetHabbo().BobbaFiltered == 3)
                     {
                         session.GetHabbo().BobbaFiltered = 4;
-                        Oblivion.MutedUsersByFilter.Add(session.GetHabbo().Id, uint.Parse((Oblivion.GetUnixTimeStamp() + (300 * 60)).ToString()));
+                        Oblivion.MutedUsersByFilter.Add(session.GetHabbo().Id,
+                            uint.Parse((Oblivion.GetUnixTimeStamp() + (300 * 60)).ToString()));
 
                         return false;
                     }
 
                     if (session.GetHabbo().BobbaFiltered == 4)
-                        session.SendNotif("Now you can not talk for 5 minutes . This is because your exhibits inappropriate language in Habbo Hotel.");
+                        session.SendNotif(
+                            "Now you can not talk for 5 minutes . This is because your exhibits inappropriate language in Habbo Hotel.");
                     else if (session.GetHabbo().BobbaFiltered == 5)
                         session.SendNotif("You risk a ban if you continue to scold it . This is your last warning");
                     else if (session.GetHabbo().BobbaFiltered >= 7)
                     {
                         session.GetHabbo().BobbaFiltered = 0;
 
-                        Oblivion.GetGame().GetBanManager().BanUser(session, "Auto-system-ban", 3600, "ban.", false, false);
+                        Oblivion.GetGame().GetBanManager()
+                            .BanUser(session, "Auto-system-ban", 3600, "ban.", false, false);
                     }
                 }
             }
 
-            if (Oblivion.MutedUsersByFilter.ContainsKey(session.GetHabbo().Id))
+            if (Oblivion.MutedUsersByFilter.TryGetValue(session.GetHabbo().Id, out var muted))
             {
-                if (Oblivion.MutedUsersByFilter[session.GetHabbo().Id] < Oblivion.GetUnixTimeStamp())
+                if (muted < Oblivion.GetUnixTimeStamp())
                     Oblivion.MutedUsersByFilter.Remove(session.GetHabbo().Id);
                 else
                 {
                     DateTime now = DateTime.Now;
-                    TimeSpan timeStillBanned = now - Oblivion.UnixToDateTime(Oblivion.MutedUsersByFilter[session.GetHabbo().Id]);
+                    TimeSpan timeStillBanned = now - Oblivion.UnixToDateTime(muted);
 
-                    session.SendNotif("Damn! you can't talk for " + timeStillBanned.Minutes.ToString().Replace("-", "") + " minutes and " + timeStillBanned.Seconds.ToString().Replace("-", "") + " seconds.");
+                    session.SendNotif("Damn! you can't talk for " +
+                                      timeStillBanned.Minutes.ToString().Replace("-", "") + " minutes and " +
+                                      timeStillBanned.Seconds.ToString().Replace("-", "") + " seconds.");
                     return false;
                 }
             }
@@ -72,23 +80,54 @@ namespace Oblivion.Security
             return true;
         }
 
+        public static void AddBlackWord(string word)
+        {
+            if (Word.Contains(word))
+                return;
+
+            using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                adapter.SetQuery("INSERT INTO server_blackwords VALUES ( @word)");
+                adapter.AddParameter("word", word);
+                adapter.RunQuery();
+            }
+
+            Word.Add(word);
+        }
+
+
+        public static void DeleteBlackWord(string word)
+        {
+            if (!Word.Contains(word))
+                return;
+
+            using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                adapter.SetQuery("DELETE FROM server_blackwords WHERE word = @word");
+                adapter.AddParameter("word", word);
+                adapter.RunQuery();
+            }
+
+            Word.Remove(word);
+        }
+
+
         /// <summary>
         /// Initializes the swear word.
         /// </summary>
         internal static void InitSwearWord()
         {
             Word = new List<string>();
-            Word.Clear();
 
             using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                adapter.SetQuery("SELECT `word` FROM wordfilter");
+                adapter.SetQuery("SELECT `word` FROM server_blackwords");
                 var table = adapter.GetTable();
 
                 if (table == null)
                     return;
 
-                /* TODO CHECK */ foreach (DataRow row in table.Rows)
+                foreach (DataRow row in table.Rows)
                     Word.Add(row[0].ToString().ToLower());
             }
 
@@ -96,22 +135,38 @@ namespace Oblivion.Security
 
             Console.WriteLine();
         }
-
+        
         /// <summary>
         /// Checks for banned phrases.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal static bool CheckForBannedPhrases(string message)
+        internal static bool CheckForBannedPhrases(string str)
         {
-            message = message.ToLower();
+            var oldStr = str;
+            str = HttpUtility.HtmlDecode(str) ?? oldStr;
+            str = str.Replace("&nbsp;", "").ToLower();
 
-            message = message.Replace(".", "");
-            message = message.Replace(" ", "");
-            message = message.Replace("-", "");
-            message = message.Replace(",", "");
+            if (str.Contains("s2.vc") || str.Contains("abre.ai"))
+                return true;
 
-            return Word.Any(mWord => message.Contains(mWord.ToLower()));
+            str = Regex.Replace(str, "[àâäàáâãäåÀÁÂÃÄÅ@4ª]", "a");
+            str = Regex.Replace(str, "[ß8∞]", "b");
+            str = Regex.Replace(str, "[©çÇ¢]", "c");
+            str = Regex.Replace(str, "[éèëêðÉÈËÊ£3∑]", "e");
+            str = Regex.Replace(str, "[ìíîïÌÍÎÏ1]", "i");
+            str = Regex.Replace(str, "[ñÑ]", "n");
+            str = Regex.Replace(str, "[òóôõöøÒÓÔÕÖØ0|ºΩ]", "o");
+            str = Regex.Replace(str, "[$5§2]", "s");
+            str = Regex.Replace(str, "[ùúûüµÙÚÛÜ]", "u");
+            str = Regex.Replace(str, "[ÿ¥]", "y");
+            str = Regex.Replace(str, @"[—•∂∫šŠŸžŽ™ ',-_¹²³.?´` ƒ()*/\\]", "");
+            str = str.Replace("æ", "ae");
+            str = str.Replace("π", "p");
+            str = str.Replace("Ð", "d");
+            str = str.Replace("\"", "");
+
+            return Word.Any(mWord => str.Contains(mWord));
         }
     }
 }

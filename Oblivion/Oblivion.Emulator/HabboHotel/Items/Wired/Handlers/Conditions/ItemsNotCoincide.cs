@@ -89,10 +89,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
             /* TODO CHECK */ foreach (var current in Items)
             {
-                if (current == null || !itemsOriginalData.ContainsKey(current.Id))
+                if (current == null || !itemsOriginalData.TryGetValue(current.Id, out var originalData))
                     return false;
 
-                var originalData = itemsOriginalData[current.Id];
 
                 if (useRot)
                     if (current.Rot != int.Parse(originalData[1]))
