@@ -35,8 +35,7 @@ namespace Oblivion.HabboHotel.Navigators
 
             try
             {
-                var rooms = Oblivion.GetGame().GetRoomManager().LoadedRoomData.Where(x => x.Value.UsersNow > 0)
-                    .OrderBy(x => x.Key);
+                var rooms = Oblivion.GetGame().GetRoomManager().GetActiveRooms();
                 Oblivion.GetGame()
                     .GetNavigator()
                     .SerializeNavigatorPopularRoomsNews(ref message, rooms, flatCatId, direct);
@@ -63,8 +62,7 @@ namespace Oblivion.HabboHotel.Navigators
             message.AppendInteger(-1);
             try
             {
-                var rooms = Oblivion.GetGame().GetRoomManager().LoadedRoomData.Where(x => x.Value.UsersNow > 0 && x.Value.HasEvent)
-                    .OrderBy(x => x.Key);
+                var rooms = Oblivion.GetGame().GetRoomManager().GetEventRooms();
                 Oblivion.GetGame()
                     .GetNavigator()
                     .SerializeNavigatorPopularRoomsNews(ref message, rooms, flatCatId, direct);
@@ -97,7 +95,7 @@ namespace Oblivion.HabboHotel.Navigators
                 message.AppendInteger(staticId == "official-root" ? 1 : 0); // 0 : list - 1 : thumbnail
             }
 
-            List<KeyValuePair<uint, RoomData>> rooms;
+            KeyValuePair<RoomData, uint>[] rooms;
             switch (staticId)
             {
                 case "hotel_view":
@@ -236,16 +234,20 @@ namespace Oblivion.HabboHotel.Navigators
                 {
                     try
                     {
-                        rooms = Oblivion.GetGame().GetRoomManager().LoadedRoomData.OrderByDescending(x => x.Value.UsersNow).Take(50)
-                            .ToList();
-
-
-                        message.AppendInteger(rooms.Count);
-                        /* TODO CHECK */
-                        foreach (var room in rooms)
+                        rooms = Oblivion.GetGame().GetRoomManager().GetActiveRooms();
+                        if (rooms == null)
                         {
-                            room.Value?.Serialize(message);
+                            message.AppendInteger(0);
+
+                            break;
                         }
+
+                        message.AppendInteger(rooms.Length);
+                            /* TODO CHECK */
+                            foreach (var room in rooms)
+                        {
+                            room.Key?.Serialize(message);
+                            }
                     }
                     catch (Exception e)
                     {
@@ -260,15 +262,15 @@ namespace Oblivion.HabboHotel.Navigators
                 {
                     try
                     {
-                        rooms = Oblivion.GetGame().GetRoomManager().LoadedRoomData.Where(x => x.Value.Event != null)
-                            .OrderByDescending(x => x.Value.Id).ToList();
-                        message.StartArray();
+                        rooms = Oblivion.GetGame().GetRoomManager().GetEventRooms();
+                            message.StartArray();
                         /* TODO CHECK */
                         foreach (var room in rooms)
                         {
-                            if (room.Value == null) continue;
-                            if (!room.Value.Serialize(message)) continue;
-                            message.SaveArray();
+                            if (room.Key == null) continue;
+
+                            if (!room.Key.Serialize(message)) continue;
+                                message.SaveArray();
                         }
 
                         message.EndArray();
@@ -389,8 +391,8 @@ namespace Oblivion.HabboHotel.Navigators
                 var initforeach = false;
                 try
                 {
-                    var loadedRooms = Oblivion.GetGame().GetRoomManager().LoadedRooms;
-                    if (loadedRooms != null && loadedRooms.Count > 0)
+                    var loadedRooms = Oblivion.GetGame().GetRoomManager().GetActiveRooms();
+                    if (loadedRooms != null && loadedRooms.Any())
                         initforeach = true;
                 }
                 catch
@@ -401,10 +403,10 @@ namespace Oblivion.HabboHotel.Navigators
                 if (initforeach)
                 {
                     /* TODO CHECK */
-                    foreach (var rms in Oblivion.GetGame().GetRoomManager().LoadedRoomData)
+                    foreach (var rms in Oblivion.GetGame().GetRoomManager().GetActiveRooms())
                     {
-                        if (rms.Value.Name.ToLower().Contains(searchQuery.ToLower()) && rooms.Count <= 50)
-                            rooms.Add(rms.Value);
+                        if (rms.Key.Name.ToLower().Contains(searchQuery.ToLower()) && rooms.Count <= 50)
+                            rooms.Add(rms.Key);
                         else break;
                     }
                 }

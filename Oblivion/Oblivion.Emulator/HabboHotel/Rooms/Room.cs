@@ -70,10 +70,6 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         private int _idleTime;
 
-        /// <summary>
-        ///     The _is crashed
-        /// </summary>
-        private bool _isCrashed;
 
         /// <summary>
         ///     The _m cycle ended
@@ -85,10 +81,8 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         private SoundMachineManager _musicController;
 
-        /// <summary>
-        ///     The _process timer
-        /// </summary>
-        private Timer _processTimer;
+        public bool IsCrashed;
+
 
         /// <summary>
         ///     The _room item handling
@@ -103,8 +97,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <summary>
         /// The _room thread
         /// </summary>
-        private Task _roomThread;
-
+//        private Task _roomThread;
         /// <summary>
         ///     The _room user manager
         /// </summary>
@@ -341,13 +334,6 @@ namespace Oblivion.HabboHotel.Rooms
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool GotFreeze() => _freeze != null;
 
-        /// <summary>
-        /// Starts the room processing.
-        /// </summary>
-        internal void StartRoomProcessing()
-        {
-            _processTimer = new Timer(ProcessRoom, null, 500, 500);
-        }
 
         private bool _processingWireds;
 
@@ -398,6 +384,7 @@ namespace Oblivion.HabboHotel.Rooms
 
                         continue;
                     }
+
                     var roomBot = BotManager.GenerateBotFromRow(dataRow);
                     _roomUserManager.DeployBot(roomBot, null);
                 }
@@ -580,6 +567,7 @@ namespace Oblivion.HabboHotel.Rooms
                 queryReactor.SetQuery($"SELECT rooms_rights.user_id FROM rooms_rights WHERE room_id = {RoomId}");
                 dataTable = queryReactor.GetTable();
             }
+
             if (dataTable == null)
                 return;
             /* TODO CHECK */
@@ -599,6 +587,7 @@ namespace Oblivion.HabboHotel.Rooms
                 queryReactor.SetQuery($"SELECT user_id, expire FROM rooms_bans WHERE room_id = {RoomId}");
                 table = queryReactor.GetTable();
             }
+
             if (table == null)
                 return;
             /* TODO CHECK */
@@ -654,6 +643,7 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 Logging.HandleException(e, "Room.CheckRights");
             }
+
             return false;
         }
 
@@ -698,81 +688,105 @@ namespace Oblivion.HabboHotel.Rooms
                             RoomData.Group.Members.ContainsKey(session.GetHabbo().Id)) return true;
                     }
                 }
+
                 return false;
             }
             catch (Exception e)
             {
                 Logging.HandleException(e, "Room.CheckRights");
             }
+
             return false;
         }
 
+        internal bool OngoingProcess;
+        public Task ProcessTask;
+
+        private CancellationTokenSource TokenSource;
+
+        public CancellationToken Token;
+        public int IsLagging { get; set; }
 
         /// <summary>
         ///     Processes the room.
         /// </summary>
-        internal void ProcessRoom(object callItem)
+        internal async void ProcessRoom()
         {
-            try
+            while (!IsCrashed && !Disposed && !Oblivion.ShutdownStarted)
             {
-                if (_isCrashed || Disposed || Oblivion.ShutdownStarted)
-                    return;
 
                 try
                 {
-                    var idle = 0;
-                    if (UserCount > 0)
+                    await Task.Delay(500, Token);
+
+                    OngoingProcess = true;
+
+                    try
                     {
-                        GetRoomItemHandler().OnCycle();
-                    }
-
-                    GetRoomUserManager().OnCycle(ref idle);
-
-                    if (idle > 0)
-                        _idleTime++;
-                    else
-                        _idleTime = 0;
-
-                    if (!_mCycleEnded)
-                    {
-                        if ((_idleTime >= 25 && !JustLoaded) || (_idleTime >= 100 && JustLoaded))
+                        Token.ThrowIfCancellationRequested();
+                        var idle = 0;
+                        if (UserCount > 0)
                         {
-                            Oblivion.GetGame().GetRoomManager().UnloadRoom(this);
-                            return;
+                            GetRoomItemHandler().OnCycle();
                         }
 
-                        var serverMessage = GetRoomUserManager().SerializeStatusUpdates(false);
-                        if (serverMessage != null)
-                            SendMessage(serverMessage);
+                        GetRoomUserManager().OnCycle(ref idle);
+
+                        if (idle > 0)
+                            _idleTime++;
+                        else
+                            _idleTime = 0;
+
+                        if (!_mCycleEnded)
+                        {
+                            if ((_idleTime >= 25 && !JustLoaded) || (_idleTime >= 100 && JustLoaded))
+                            {
+                                Oblivion.GetGame().GetRoomManager().UnloadRoom(this);
+                                return;
+                            }
+
+                            var serverMessage = GetRoomUserManager().SerializeStatusUpdates(false);
+                            if (serverMessage != null)
+                                SendMessage(serverMessage);
+                        }
+
+                        if (UserCount <= 0) continue;
+                        _gameItemHandler?.OnCycle();
+
+                        _game?.OnCycle();
+
+                        if (GotMusicController())
+                        {
+                            GetRoomMusicController().Update(this);
+                        }
+
+                        if (GotWireds())
+                        {
+                            StartWiredProcessing();
+                        }
+
+                        WorkRoomKickQueue();
                     }
-
-                    if (UserCount <= 0) return;
-                    _gameItemHandler?.OnCycle();
-
-                    _game?.OnCycle();
-
-                    if (GotMusicController())
+                    catch (Exception e)
                     {
-                        GetRoomMusicController().Update(this);
+                        Writer.Writer.LogException(e.ToString());
+                        OnRoomCrash(e);
                     }
-
-                    if (GotWireds())
-                    {
-                        StartWiredProcessing();
-                    }
-
-                    WorkRoomKickQueue();
                 }
                 catch (Exception e)
                 {
-                    Writer.Writer.LogException(e.ToString());
+                    Logging.LogCriticalException($"Sub crash in room cycle: {e}");
                     OnRoomCrash(e);
                 }
-            }
-            catch (Exception e)
-            {
-                Logging.LogCriticalException($"Sub crash in room cycle: {e}");
-                OnRoomCrash(e);
+                finally
+                {
+                    OngoingProcess = false;
+                }
+
+                if (Token.IsCancellationRequested)
+                {
+                    Token.ThrowIfCancellationRequested();
+                }
 
             }
         }
@@ -1014,6 +1028,7 @@ namespace Oblivion.HabboHotel.Rooms
                 var table = queryReactor.GetTable();
                 list.AddRange(from DataRow dataRow in table.Rows select (uint) dataRow[0]);
             }
+
             return list;
         }
 
@@ -1128,6 +1143,7 @@ namespace Oblivion.HabboHotel.Rooms
                             if (user.Y == goalY)
                                 return false;
                         }
+
                         /* TODO CHECK */
                         foreach (var casella in furno.GetCoords())
                         {
@@ -1141,20 +1157,24 @@ namespace Oblivion.HabboHotel.Rooms
                                         goalY = furno.Y;
                                         return true;
                                     }
+
                                     return false;
                                 }
+
                                 if (GetGameMap().CanWalk(furno.X, casella.Y, false))
                                 {
                                     goalX = furno.X;
                                     goalY = casella.Y;
                                     return true;
                                 }
+
                                 return false;
                             }
                         }
                     }
                 }
             }
+
             return true;
         }
 
@@ -1204,6 +1224,7 @@ namespace Oblivion.HabboHotel.Rooms
                 roomItem.Serialize(serverMessage);
                 list.Add(serverMessage);
             }
+
             /* TODO CHECK */
             foreach (var roomItem2 in GetRoomItemHandler().WallItems.Values.ToList())
             {
@@ -1212,6 +1233,7 @@ namespace Oblivion.HabboHotel.Rooms
                 roomItem2.Serialize(serverMessage2);
                 list.Add(serverMessage2);
             }
+
             SendMessage(list);
         }
 
@@ -1248,6 +1270,7 @@ namespace Oblivion.HabboHotel.Rooms
                 if (toRemove == null) return;
                 RoomData.RoomChat.Remove(toRemove);
             }
+
             RoomData.RoomChat.Add(new Chatlog(id, message, DateTime.Now, globalMessage));
         }
 
@@ -1290,6 +1313,7 @@ namespace Oblivion.HabboHotel.Rooms
         {
             RoomData = roomData;
             Disposed = false;
+            IsCrashed = false;
             RoomId = id;
             CustomHeight = -1;
             Bans = new Dictionary<long, double>();
@@ -1326,13 +1350,24 @@ namespace Oblivion.HabboHotel.Rooms
                 foreach (DataRow data in tableCmd.Rows)
                     roomData.BlockedCommands.Add(data["command_name"].ToString());
             }
+
             if (!forceLoad)
             {
-                //todo: task canc. token and remove timer.
-                _roomThread = new Task(StartRoomProcessing, TaskCreationOptions.LongRunning);
-                _roomThread.Start();
+                //                _roomThread = new Task(StartRoomProcessing, TaskCreationOptions.LongRunning);
+                //                _roomThread.Start();
+
+
+                ProcessTask = new Task(ProcessRoom, Token,
+                    TaskCreationOptions.LongRunning);
+                ProcessTask.Start();
+                IsLagging = 0;
+
+                TokenSource = new CancellationTokenSource();
+                Token = TokenSource.Token;
             }
 
+
+            Oblivion.GetGame().GetRoomManager().QueueActiveRoomAdd(RoomData);
         }
 
         /// <summary>
@@ -1372,7 +1407,7 @@ namespace Oblivion.HabboHotel.Rooms
         {
             Logging.LogThreadException(e.ToString(), $"Room cycle task for room {RoomId}");
             Oblivion.GetGame().GetRoomManager().UnloadRoom(this);
-            _isCrashed = true;
+            IsCrashed = true;
         }
 
         /// <summary>
@@ -1380,33 +1415,50 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         public void Dispose()
         {
+            if (Disposed) return;
+            IsCrashed = false;
+            Disposed = true;
+            try
+            {
+                TokenSource.Cancel();
+                TokenSource.Dispose();
+            }
+            catch
+            {
+            }
+
             _roomUserManager.Disposed = true;
             _mCycleEnded = true;
-
+            Oblivion.GetGame().GetRoomManager().QueueActiveRoomRemove(RoomData);
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 GetRoomItemHandler().SaveFurniture(queryReactor);
             }
+
             if (GotSoccer())
             {
                 _soccer.Destroy();
                 _soccer = null;
             }
+
             if (GotBanzai())
             {
                 _banzai.Destroy();
                 _banzai = null;
             }
+
             if (GotFreeze())
             {
                 _freeze.Destroy();
                 _freeze = null;
             }
+
             if (GotWireds())
             {
                 _wiredHandler.Destroy();
                 _wiredHandler = null;
             }
+
             if (GotMusicController())
             {
                 _musicController.Destroy();
@@ -1433,14 +1485,17 @@ namespace Oblivion.HabboHotel.Rooms
                             dbClient.AddParameter("message" + i, chat.Message);
                             break;
                         }
+
                         builder.Append(
                             $"('{chat.UserId}', '{RoomId}', '{Oblivion.DateTimeToUnix(chat.TimeStamp)}', @message{i}),");
                         dbClient.AddParameter("message" + i, chat.Message);
 
 //                        chat.Save(RoomId, dbClient);
                     }
+
                     dbClient.RunQuery(builder.ToString());
                 }
+
                 RoomData.RoomChat.Clear();
             }
 
@@ -1454,9 +1509,10 @@ namespace Oblivion.HabboHotel.Rooms
                 _gameMap.StaticModel?.Destroy();
                 _gameMap.Destroy();
             }
+
             _gameMap = null;
-            _processTimer?.Dispose();
-            _processTimer = null;
+//            _processTimer?.Dispose();
+//            _processTimer = null;
             RoomData?.Tags?.Clear();
             RoomData.Tags = null;
             RoomData?.BlockedCommands?.Clear();
@@ -1471,6 +1527,7 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 current.Destroy();
             }
+
             ActiveTrades.Clear();
             ActiveTrades = null;
             _roomItemHandler.Destroy();
@@ -1487,8 +1544,6 @@ namespace Oblivion.HabboHotel.Rooms
             UsersWithRights = null;
             Oblivion.GetGame().GetRoomManager().RemoveRoomData(RoomId);
 
-            _roomThread?.Dispose();
-            _roomThread = null;
 
             _roomKick?.Clear();
             _roomKick = null;

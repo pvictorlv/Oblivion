@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.Events;
@@ -17,20 +19,63 @@ namespace Oblivion.HabboHotel.Rooms
     /// </summary>
     internal class RoomManager
     {
-     //todo: recode room cycles
+        /// <summary>
+        ///     The _active rooms
+        /// </summary>
+        private readonly Dictionary<RoomData, uint> _activeRooms;
+
+        /// <summary>
+        ///     The _active rooms add queue
+        /// </summary>
+        private readonly Queue _activeRoomsAddQueue;
+
+        /// <summary>
+        ///     The _active rooms update queue
+        /// </summary>
+        private readonly Queue _activeRoomsUpdateQueue;
+
         /// <summary>
         ///     The _event manager
         /// </summary>
         private readonly EventManager _eventManager;
 
-        
+        /// <summary>
+        ///     The _room models
+        /// </summary>
+//        private readonly HybridDictionary _roomModels;
+        /// <summary>
+        ///     The _voted rooms
+        /// </summary>
+        private readonly Dictionary<RoomData, int> _votedRooms;
+
+        /// <summary>
+        ///     The _voted rooms add queue
+        /// </summary>
+        private readonly Queue _votedRoomsAddQueue;
+
+        /// <summary>
+        ///     The _voted rooms remove queue
+        /// </summary>
+        private readonly Queue _votedRoomsRemoveQueue;
 
         internal readonly ConcurrentDictionary<uint, RoomData> LoadedRoomData;
 
         private RoomCompetitionManager _competitionManager;
 
-        
-        
+        /// <summary>
+        ///     The _ordered active rooms
+        /// </summary>
+        private IEnumerable<KeyValuePair<RoomData, uint>> _orderedActiveRooms;
+
+        /// <summary>
+        ///     The _ordered voted rooms
+        /// </summary>
+        private IEnumerable<KeyValuePair<RoomData, int>> _orderedVotedRooms;
+
+        /// <summary>
+        ///     The active rooms remove queue
+        /// </summary>
+        public Queue ActiveRoomsRemoveQueue;
 
         /// <summary>
         ///     The loaded rooms
@@ -44,6 +89,13 @@ namespace Oblivion.HabboHotel.Rooms
         {
             LoadedRooms = new ConcurrentDictionary<uint, Room>();
             LoadedRoomData = new ConcurrentDictionary<uint, RoomData>();
+            _votedRooms = new Dictionary<RoomData, int>();
+            _activeRooms = new Dictionary<RoomData, uint>();
+            _votedRoomsRemoveQueue = new Queue();
+            _votedRoomsAddQueue = new Queue();
+            ActiveRoomsRemoveQueue = new Queue();
+            _activeRoomsUpdateQueue = new Queue();
+            _activeRoomsAddQueue = new Queue();
             _eventManager = new EventManager();
             LoadedBallRooms = new ConcurrentList<Room>();
         }
@@ -65,8 +117,14 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Gets the active rooms.
         /// </summary>
         /// <returns>KeyValuePair&lt;RoomData, System.UInt32&gt;[].</returns>
-//        internal KeyValuePair<RoomData, uint>[] GetActiveRooms() => _orderedActiveRooms?.ToArray();
-        
+        internal KeyValuePair<RoomData, uint>[] GetActiveRooms() => _orderedActiveRooms?.ToArray();
+
+        /// <summary>
+        ///     Gets the voted rooms.
+        /// </summary>
+        /// <returns>KeyValuePair&lt;RoomData, System.Int32&gt;[].</returns>
+        internal KeyValuePair<RoomData, int>[] GetVotedRooms() => _orderedVotedRooms?.ToArray();
+
         /// <summary>
         ///     Gets the model.
         /// </summary>
@@ -153,10 +211,10 @@ namespace Oblivion.HabboHotel.Rooms
 
                 room.Start(roomData, forceLoad);
 
-//                Out.WriteLine($"Room #{id} was loaded", "Oblivion.Room.Manager", ConsoleColor.DarkCyan);
+                //                Out.WriteLine($"Room #{id} was loaded", "Oblivion.Room.Manager", ConsoleColor.DarkCyan);
 
-//                room.InitBots();
-//                room.InitPets();
+                //                room.InitBots();
+                //                room.InitPets();
                 return room;
             }
             catch (Exception e)
@@ -222,7 +280,7 @@ namespace Oblivion.HabboHotel.Rooms
                 dbClient.AddParameter("cat", category);
                 dbClient.AddParameter("usmax", maxVisitors);
                 dbClient.AddParameter("tstate", tradeState.ToString());
-                roomId = (uint) dbClient.InsertQuery();
+                roomId = (uint)dbClient.InsertQuery();
             }
 
             var data = GenerateRoomData(roomId);
@@ -248,18 +306,18 @@ namespace Oblivion.HabboHotel.Rooms
                         if (row == null) return new RoomModel(0, 0, 0, 0, "xxxxxx", false);
 
 
-                        return new RoomModel((int) row["door_x"], (int) row["door_y"], (double) row["door_z"],
-                            (int) row["door_dir"],
-                            (string) row["heightmap"], false);
+                        return new RoomModel((int)row["door_x"], (int)row["door_y"], (double)row["door_z"],
+                            (int)row["door_dir"],
+                            (string)row["heightmap"], false);
                     }
 
                     dbClient.SetQuery("SELECT * FROM rooms_models WHERE id = @name LIMIT 1");
                     dbClient.AddParameter("name", model);
                     var dataRow = dbClient.GetRow();
                     if (dataRow == null) return new RoomModel(0, 0, 0, 0, "xxxxxx", false);
-                    return new RoomModel((int) dataRow["door_x"], (int) dataRow["door_y"],
-                        (double) dataRow["door_z"],
-                        (int) dataRow["door_dir"], (string) dataRow["heightmap"],
+                    return new RoomModel((int)dataRow["door_x"], (int)dataRow["door_y"],
+                        (double)dataRow["door_z"],
+                        (int)dataRow["door_dir"], (string)dataRow["heightmap"],
                         Oblivion.EnumToBool(dataRow["club_only"].ToString()));
                 }
             }
@@ -274,6 +332,7 @@ namespace Oblivion.HabboHotel.Rooms
         public ConcurrentList<Room> LoadedBallRooms;
 
         private DateTime _cycleBallLastExecution;
+        private DateTime _cycleLastExecution;
 
 
         /// <summary>
@@ -287,7 +346,7 @@ namespace Oblivion.HabboHotel.Rooms
                 if (sinceBallLastTime.TotalMilliseconds >= 145)
                 {
                     _cycleBallLastExecution = DateTime.Now;
-                    /* TODO CHECK */
+                   //todo add new task for ball
                     foreach (var Room in LoadedBallRooms.ToList())
                     {
                         try
@@ -307,7 +366,43 @@ namespace Oblivion.HabboHotel.Rooms
 
             try
             {
-              
+                var sinceLastTime = DateTime.Now - _cycleLastExecution;
+                if (!(sinceLastTime.TotalMilliseconds >= 500)) return;
+
+                _cycleLastExecution = DateTime.Now;
+               
+            }
+            catch (Exception e)
+            {
+                Logging.LogCriticalException("Issue with the RoomManager: " + e);
+            }
+
+            try
+            {
+                foreach (var data in _activeRooms.Keys)
+                {
+                    var room = GetRoom(data.Id);
+                    if (room != null)
+                    {
+                        if (room.IsCrashed) continue;
+                        if (room.OngoingProcess)
+                        {
+                            room.IsLagging++;
+                            if (room.IsLagging < 30) continue;
+                            room.IsCrashed = true;
+                            UnloadRoom(room);
+                            Logging.LogMessage($"Room {room.RoomId} crashed!");
+                        }
+                    }
+                }
+
+                var flag = WorkActiveRoomsAddQueue();
+                var flag2 = WorkActiveRoomsRemoveQueue();
+                var flag3 = WorkActiveRoomsUpdateQueue();
+                if (flag || flag2 || flag3) SortActiveRooms();
+                var flag4 = WorkVotedRoomsAddQueue();
+                var flag5 = WorkVotedRoomsRemoveQueue();
+                if (flag4 || flag5) SortVotedRooms();
 
                 Oblivion.GetGame().RoomManagerCycleEnded = true;
             }
@@ -316,8 +411,69 @@ namespace Oblivion.HabboHotel.Rooms
                 Logging.LogThreadException(ex.ToString(), "RoomManager.OnCycle Exception --> Not inclusive");
             }
         }
-        
-        
+
+        /// <summary>
+        ///     Queues the vote add.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        internal void QueueVoteAdd(RoomData data)
+        {
+            lock (_votedRoomsAddQueue.SyncRoot)
+            {
+                _votedRoomsAddQueue.Enqueue(data);
+            }
+        }
+
+        /// <summary>
+        ///     Queues the vote remove.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        internal void QueueVoteRemove(RoomData data)
+        {
+            lock (_votedRoomsRemoveQueue.SyncRoot)
+            {
+                _votedRoomsRemoveQueue.Enqueue(data);
+            }
+        }
+
+        /// <summary>
+        ///     Queues the active room update.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        internal void QueueActiveRoomUpdate(RoomData data)
+        {
+            lock (_activeRoomsUpdateQueue.SyncRoot)
+            {
+
+                _activeRoomsUpdateQueue.Enqueue(data);
+            }
+        }
+
+        /// <summary>
+        ///     Queues the active room add.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        internal void QueueActiveRoomAdd(RoomData data)
+        {
+            lock (_activeRoomsAddQueue.SyncRoot)
+            {
+
+                _activeRoomsAddQueue.Enqueue(data);
+            }
+        }
+
+        /// <summary>
+        ///     Queues the active room remove.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        internal void QueueActiveRoomRemove(RoomData data)
+        {
+            lock (ActiveRoomsRemoveQueue.SyncRoot)
+            {
+                ActiveRoomsRemoveQueue.Enqueue(data);
+            }
+        }
+
         /// <summary>
         ///     Removes all rooms.
         /// </summary>
@@ -329,9 +485,8 @@ namespace Oblivion.HabboHotel.Rooms
                 {
                     Oblivion.GetGame().GetRoomManager().UnloadRoom(current);
                 }
-                catch (Exception e)
+                catch
                 {
-                    Logging.HandleException(e, "unload shutdwon");
                     Out.WriteLine("Error unloading room");
                 }
             }
@@ -463,9 +618,131 @@ namespace Oblivion.HabboHotel.Rooms
             room.Destroy();
             room = null;
         }
-        
-        
-        
-        
+
+        /// <summary>
+        ///     Sorts the active rooms.
+        /// </summary>
+        private void SortActiveRooms()
+        {
+            _orderedActiveRooms = _activeRooms.OrderByDescending(t => t.Value).Take(40);
+        }
+
+        /// <summary>
+        ///     Sorts the voted rooms.
+        /// </summary>
+        private void SortVotedRooms()
+        {
+            _orderedVotedRooms = _votedRooms.OrderByDescending(t => t.Value).Take(40);
+        }
+
+        /// <summary>
+        ///     Works the active rooms update queue.
+        /// </summary>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        private bool WorkActiveRoomsUpdateQueue()
+        {
+            if (_activeRoomsUpdateQueue.Count <= 0) return false;
+            lock (_activeRoomsUpdateQueue.SyncRoot)
+            {
+                while (_activeRoomsUpdateQueue.Count > 0)
+                {
+                    var roomData = (RoomData)_activeRoomsUpdateQueue.Dequeue();
+                    if (roomData == null) continue;
+                    
+
+
+                    if (roomData.UsersNow > 0)
+                    {
+                        _activeRooms[roomData] = roomData.UsersNow;
+                    }
+                    else
+                    {
+                        _activeRooms.Remove(roomData);
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        ///     Works the active rooms add queue.
+        /// </summary>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        private bool WorkActiveRoomsAddQueue()
+        {
+            if (_activeRoomsAddQueue.Count <= 0) return false;
+            lock (_activeRoomsAddQueue.SyncRoot)
+            {
+                while (_activeRoomsAddQueue.Count > 0)
+                {
+                    var roomData = (RoomData)_activeRoomsAddQueue.Dequeue();
+                   
+
+                    if (!_activeRooms.ContainsKey(roomData))
+                        _activeRooms.Add(roomData, roomData.UsersNow);
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        ///     Works the active rooms remove queue.
+        /// </summary>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        private bool WorkActiveRoomsRemoveQueue()
+        {
+            if (ActiveRoomsRemoveQueue.Count <= 0) return false;
+            lock (ActiveRoomsRemoveQueue.SyncRoot)
+            {
+                while (ActiveRoomsRemoveQueue.Count > 0)
+                {
+                    var key = (RoomData)ActiveRoomsRemoveQueue.Dequeue();
+                    _activeRooms.Remove(key);
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        ///     Works the voted rooms add queue.
+        /// </summary>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        private bool WorkVotedRoomsAddQueue()
+        {
+            if (_votedRoomsAddQueue.Count <= 0) return false;
+            lock (_votedRoomsAddQueue.SyncRoot)
+            {
+                while (_votedRoomsAddQueue.Count > 0)
+                {
+                    var roomData = (RoomData)_votedRoomsAddQueue.Dequeue();
+                    _votedRooms[roomData] = roomData.Score;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        ///     Works the voted rooms remove queue.
+        /// </summary>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        private bool WorkVotedRoomsRemoveQueue()
+        {
+            if (_votedRoomsRemoveQueue.Count <= 0) return false;
+            lock (_votedRoomsRemoveQueue.SyncRoot)
+            {
+                while (_votedRoomsRemoveQueue.Count > 0)
+                {
+                    var key = (RoomData)_votedRoomsRemoveQueue.Dequeue();
+                    if (key == null) continue;
+                    _votedRooms.Remove(key);
+                }
+            }
+
+            return true;
+        }
     }
 }

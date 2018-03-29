@@ -13,11 +13,14 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 return;
 
             var roomUserByHabbo = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().CurrentRoomId);
-            roomUserByHabbo.GoalX = item.X;
-            roomUserByHabbo.GoalY = item.Y;
+            if (roomUserByHabbo != null)
+            {
+                roomUserByHabbo.GoalX = item.X;
+                roomUserByHabbo.GoalY = item.Y;
 
-            if (roomUserByHabbo.Team != Team.None)
-                roomUserByHabbo.ThrowBallAtGoal = true;
+                if (roomUserByHabbo.Team != Team.None)
+                    roomUserByHabbo.ThrowBallAtGoal = true;
+            }
         }
     }
 }

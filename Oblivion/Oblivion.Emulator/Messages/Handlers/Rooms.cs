@@ -950,7 +950,7 @@ namespace Oblivion.Messages.Handlers
                     room.RoomId, ",", num, ")"));
             }
 
-            if (roomUserByHabbo != null && !roomUserByHabbo.IsBot)
+            if (roomUserByHabbo?.GetClient()?.GetHabbo() != null && !roomUserByHabbo.IsBot)
             {
                 if (!roomUserByHabbo.IsBot)
                 {
@@ -1139,7 +1139,7 @@ namespace Oblivion.Messages.Handlers
                     .AddItemArray(room.GetRoomItemHandler().RemoveAllFurniture(Session));
             var roomData = room.RoomData;
             Oblivion.GetGame().GetRoomManager().UnloadRoom(room);
-
+            Oblivion.GetGame().GetRoomManager().QueueVoteRemove(roomData);
             if (roomData == null || Session == null)
                 return;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -1387,6 +1387,7 @@ namespace Oblivion.Messages.Handlers
                     default:
                         return;
                 }
+                Oblivion.GetGame().GetRoomManager().QueueVoteAdd(room.RoomData);
 
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {

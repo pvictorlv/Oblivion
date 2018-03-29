@@ -178,12 +178,12 @@ namespace Oblivion.Messages.Handlers
 
             message.AppendInteger(1); //maybe category
             message.AppendString("");
-            var rooms = Oblivion.GetGame().GetRoomManager().LoadedRooms;
+            var rooms = Oblivion.GetGame().GetRoomManager().GetActiveRooms();
 
-            message.AppendInteger(rooms.Count);
+            message.AppendInteger(rooms.Length);
             foreach (var data in rooms)
             {
-                data.Value.RoomData.Serialize(message);
+                data.Key.Serialize(message);
             }
             message.AppendBool(false);
 

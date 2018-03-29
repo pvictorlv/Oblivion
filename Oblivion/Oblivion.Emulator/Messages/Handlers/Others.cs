@@ -512,8 +512,8 @@ namespace Oblivion.Messages.Handlers
                     break;
 
                 case "random_friending_room":
-                    var rooms = Oblivion.GetGame().GetRoomManager().LoadedRoomData.Select(room => room.Value)
-                        .Where(room => room.UsersNow > 0).ToList();
+                    var rooms = Oblivion.GetGame().GetRoomManager().GetActiveRooms().Select(room => room.Key)
+                        .Where(room => room != null && room.UsersNow > 0).ToList();
                     if (!rooms.Any())
                         return;
                     if (rooms.Count == 1)

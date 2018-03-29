@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Oblivion.HabboHotel.Achievements.Interfaces;
-using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.HabboHotel.Users.Relationships;
 using Oblivion.HabboHotel.Users.Subscriptions;
 
@@ -164,40 +163,80 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                             row => new Relationship((int) row[0], (int) row[2], Convert.ToInt32(row[3].ToString())));
                 }
             }
+
             LoadedRelations = true;
         }
 
         public void Dispose()
         {
-            BlockedCommands.Clear();
-            BlockedCommands = null;
-            Rooms.Clear();
-            Rooms = null;
-            Quests.Clear();
-            Quests = null;
-            User = null;
-            Relations.Clear();
-            Relations = null;
-            SuggestedPolls.Clear();
-            SuggestedPolls = null;
-            MiniMailCount = 0;
-            FavouritedRooms.Clear();
-            FavouritedRooms = null;
-            Ignores.Clear();
-            Ignores = null;
-            Tags.Clear();
-            Tags = null;
+            if (BlockedCommands != null)
+            {
+                BlockedCommands.Clear();
+                BlockedCommands = null;
+            }
+
+            if (Rooms != null)
+            {
+                Rooms.Clear();
+                Rooms = null;
+            }
+
+            if (Quests != null)
+            {
+                Quests.Clear();
+                Quests = null;
+            }
+
+            if (Relations != null)
+            {
+                Relations.Clear();
+                Relations = null;
+            }
+
+            if (SuggestedPolls != null)
+            {
+                SuggestedPolls.Clear();
+                SuggestedPolls = null;
+            }
+
+            if (FavouritedRooms != null)
+            {
+                FavouritedRooms.Clear();
+                FavouritedRooms = null;
+            }
+
+            if (Ignores != null)
+            {
+                Ignores.Clear();
+                Ignores = null;
+            }
+
+            if (Tags != null)
+            {
+                Tags.Clear();
+                Tags = null;
+            }
+
+            if (Talents != null)
+            {
+                Talents.Clear();
+                Talents = null;
+            }
+
+            if (Achievements != null)
+            {
+                Achievements.Clear();
+                Achievements = null;
+            }
+
+            if (OpenedGifts != null)
+            {
+                OpenedGifts.Clear();
+                OpenedGifts = null;
+            }
+
             Subscriptions = null;
-//            Friends.Clear();
-//            Friends = null;
-//            Requests.Clear();
-//            Requests = null;
-            Talents.Clear();
-            Talents = null;
-            Achievements.Clear();
-            Achievements = null;
-            OpenedGifts.Clear();
-            OpenedGifts = null;
+            User = null;
         }
     }
 }
