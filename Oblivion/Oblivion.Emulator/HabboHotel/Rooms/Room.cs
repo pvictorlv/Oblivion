@@ -707,6 +707,7 @@ namespace Oblivion.HabboHotel.Rooms
             return false;
         }
 
+
         /// <summary>
         ///     Processes the room.
         /// </summary>
@@ -724,6 +725,7 @@ namespace Oblivion.HabboHotel.Rooms
                     {
                         GetRoomItemHandler().OnCycle();
                     }
+
                     GetRoomUserManager().OnCycle(ref idle);
 
                     if (idle > 0)
@@ -738,6 +740,7 @@ namespace Oblivion.HabboHotel.Rooms
                             Oblivion.GetGame().GetRoomManager().UnloadRoom(this);
                             return;
                         }
+
                         var serverMessage = GetRoomUserManager().SerializeStatusUpdates(false);
                         if (serverMessage != null)
                             SendMessage(serverMessage);
@@ -752,10 +755,12 @@ namespace Oblivion.HabboHotel.Rooms
                     {
                         GetRoomMusicController().Update(this);
                     }
+
                     if (GotWireds())
                     {
                         StartWiredProcessing();
                     }
+
                     WorkRoomKickQueue();
                 }
                 catch (Exception e)
@@ -767,6 +772,8 @@ namespace Oblivion.HabboHotel.Rooms
             catch (Exception e)
             {
                 Logging.LogCriticalException($"Sub crash in room cycle: {e}");
+                OnRoomCrash(e);
+
             }
         }
 
@@ -1326,7 +1333,6 @@ namespace Oblivion.HabboHotel.Rooms
                 _roomThread.Start();
             }
 
-            Oblivion.GetGame().GetRoomManager().QueueActiveRoomAdd(RoomData);
         }
 
         /// <summary>
@@ -1376,7 +1382,7 @@ namespace Oblivion.HabboHotel.Rooms
         {
             _roomUserManager.Disposed = true;
             _mCycleEnded = true;
-            Oblivion.GetGame().GetRoomManager().QueueActiveRoomRemove(RoomData);
+
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 GetRoomItemHandler().SaveFurniture(queryReactor);

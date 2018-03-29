@@ -523,7 +523,6 @@ namespace Oblivion.HabboHotel.Rooms.User
 
             _userRoom.RoomData.UsersNow = count;
 
-            Oblivion.GetGame().GetRoomManager().QueueActiveRoomUpdate(_userRoom.RoomData);
         }
 
         /// <summary>

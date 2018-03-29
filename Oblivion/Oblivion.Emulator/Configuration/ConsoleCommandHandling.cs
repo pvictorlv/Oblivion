@@ -266,7 +266,6 @@ namespace Oblivion.Configuration
                         break;
 
                     case "filter":
-                        Filter.Reload();
                         BobbaFilter.InitSwearWord();
                         break;
 

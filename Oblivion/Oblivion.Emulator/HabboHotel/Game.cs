@@ -460,7 +460,6 @@ namespace Oblivion.HabboHotel
             {
                 PetRace.Init(queryReactor);
                 _catalog.Initialize(queryReactor, out _);
-                Filter.Load();
                 BobbaFilter.InitSwearWord();
                 
                 SoundMachineSongManager.Initialize();

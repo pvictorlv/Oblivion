@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -27,31 +26,30 @@ namespace Oblivion.Security
         /// <returns><c>true</c> if this instance can talk the specified session; otherwise, <c>false</c>.</returns>
         internal static bool CanTalk(GameClient session, string message)
         {
-            if (CheckForBannedPhrases(message) && session.GetHabbo().Rank < 4)
+            if (CheckForBannedPhrases(message) && session.GetHabbo().Rank < 10)
             {
-                if (!Oblivion.MutedUsersByFilter.ContainsKey(session.GetHabbo().Id))
+                var isMuted = Oblivion.MutedUsersByFilter.ContainsKey(session.GetHabbo().Id);
+                if (!isMuted)
                     session.GetHabbo().BobbaFiltered++;
 
-                if (session.GetHabbo().BobbaFiltered < 3)
+                if (session.GetHabbo().BobbaFiltered <= 5)
                     session.SendNotif(
                         "Your language is inappropriate. If you do not change this , measures are being taken by the automated system of Habbo.");
-                else if (session.GetHabbo().BobbaFiltered >= 3)
+                else if (session.GetHabbo().BobbaFiltered >= 6)
                 {
-                    if (session.GetHabbo().BobbaFiltered == 3)
+                    if (session.GetHabbo().BobbaFiltered == 6)
                     {
-                        session.GetHabbo().BobbaFiltered = 4;
-                        Oblivion.MutedUsersByFilter.Add(session.GetHabbo().Id,
-                            uint.Parse((Oblivion.GetUnixTimeStamp() + (300 * 60)).ToString()));
-
+                        if (!isMuted)
+                            Oblivion.MutedUsersByFilter.Add(session.GetHabbo().Id,
+                                uint.Parse((Oblivion.GetUnixTimeStamp() + (300 * 60)).ToString()));
+                        session.SendNotif(
+                            "Now you can not talk for 5 minutes . This is because your exhibits inappropriate language in Habbo Hotel.");
                         return false;
                     }
 
-                    if (session.GetHabbo().BobbaFiltered == 4)
-                        session.SendNotif(
-                            "Now you can not talk for 5 minutes . This is because your exhibits inappropriate language in Habbo Hotel.");
-                    else if (session.GetHabbo().BobbaFiltered == 5)
+                    if (session.GetHabbo().BobbaFiltered == 8)
                         session.SendNotif("You risk a ban if you continue to scold it . This is your last warning");
-                    else if (session.GetHabbo().BobbaFiltered >= 7)
+                    else if (session.GetHabbo().BobbaFiltered >= 9)
                     {
                         session.GetHabbo().BobbaFiltered = 0;
 
@@ -59,6 +57,8 @@ namespace Oblivion.Security
                             .BanUser(session, "Auto-system-ban", 3600, "ban.", false, false);
                     }
                 }
+
+                return false;
             }
 
             if (Oblivion.MutedUsersByFilter.TryGetValue(session.GetHabbo().Id, out var muted))
@@ -135,7 +135,7 @@ namespace Oblivion.Security
 
             Console.WriteLine();
         }
-        
+
         /// <summary>
         /// Checks for banned phrases.
         /// </summary>
@@ -166,7 +166,12 @@ namespace Oblivion.Security
             str = str.Replace("Ð", "d");
             str = str.Replace("\"", "");
 
-            return Word.Any(mWord => str.Contains(mWord));
+            foreach (var mWord in Word)
+            {
+                if (str.Contains(mWord)) return true;
+            }
+
+            return false;
         }
     }
 }

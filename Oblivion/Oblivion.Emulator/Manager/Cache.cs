@@ -54,7 +54,7 @@ namespace Oblivion.Manager
             {
                 if (user.Value == null)
                 {
-                    RemoveUser(user.Key, true);
+                    RemoveUser(user.Key, false);
                     continue;
                 }
 
@@ -67,7 +67,7 @@ namespace Oblivion.Manager
                 if ((DateTime.Now - user.Value.LastUsed).TotalMilliseconds < 1800000)
                     continue;
 
-                RemoveUser(user.Key, true);
+                RemoveUser(user.Key, false);
             }
         }
 

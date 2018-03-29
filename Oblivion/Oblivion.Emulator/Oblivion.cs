@@ -213,6 +213,7 @@ namespace Oblivion
                     var habbo = clientByUserId.GetHabbo();
                     if (habbo != null && habbo.Id > 0)
                     {
+
                         UsersCached.AddOrUpdate(userId, habbo, (key, value) => habbo);
                         return habbo;
                     }

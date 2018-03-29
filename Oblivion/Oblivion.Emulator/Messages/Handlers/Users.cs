@@ -10,8 +10,7 @@ using Oblivion.HabboHotel.Users;
 using Oblivion.HabboHotel.Users.Messenger;
 using Oblivion.HabboHotel.Users.Relationships;
 using Oblivion.Messages.Parsers;
-using Oblivion.Security.BlackWords;
-using Oblivion.Security.BlackWords.Enums;
+using Oblivion.Security;
 
 namespace Oblivion.Messages.Handlers
 {
@@ -619,7 +618,7 @@ namespace Oblivion.Messages.Handlers
                 return;
 
 
-            if (BlackWordsManager.Check(text, BlackWordType.Hotel, out _))
+            if (!BobbaFilter.CanTalk(Session, text))
             {
                 return;
             }
@@ -1079,8 +1078,8 @@ namespace Oblivion.Messages.Handlers
 //                queryReactor.SetQuery("SELECT id FROM rooms_data WHERE state='open' ORDER BY users_now DESC LIMIT 1");
 //                var @string = queryReactor.GetString();
 
-                roomData = Oblivion.GetGame().GetRoomManager().GetActiveRooms()
-                    .FirstOrDefault(x => x.Key.UsersNow > 0 && x.Key.State == 0).Key;
+                roomData = Oblivion.GetGame().GetRoomManager().LoadedRoomData
+                    .FirstOrDefault(x => x.Value.UsersNow > 0 && x.Value.State == 0).Value;
             }
 
             if (roomData != null)
@@ -1278,11 +1277,10 @@ namespace Oblivion.Messages.Handlers
 
         internal void FindMoreFriends()
         {
-            var allRooms = Oblivion.GetGame().GetRoomManager().GetActiveRooms();
-            if (allRooms != null)
+            var allRooms = Oblivion.GetGame().GetRoomManager().LoadedRooms.Values.ToList();
             {
                 Random rnd = new Random();
-                var randomRoom = allRooms[rnd.Next(allRooms.Length)].Key;
+                var randomRoom = allRooms[rnd.Next(allRooms.Count)];
                 var success = new ServerMessage(LibraryParser.OutgoingRequest("FindMoreFriendsSuccessMessageComposer"));
                 if (randomRoom == null)
                 {
@@ -1294,7 +1292,7 @@ namespace Oblivion.Messages.Handlers
                 success.AppendBool(true);
                 Session.SendMessage(success);
                 var roomFwd = new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
-                roomFwd.AppendInteger(randomRoom.Id);
+                roomFwd.AppendInteger(randomRoom.RoomId);
                 Session.SendMessage(roomFwd);
             }
         }

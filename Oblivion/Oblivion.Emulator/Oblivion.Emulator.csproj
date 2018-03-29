@@ -107,7 +107,7 @@
     <OutputPath>..\bin\Release\x64\</OutputPath>
     <DefineConstants>
     </DefineConstants>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <FileAlignment>4096</FileAlignment>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -541,7 +541,6 @@
     <Compile Include="Messages\Parsers\LibraryParser.cs" />
     <Compile Include="Messages\Enums\StaticMessages.cs" />
     <Compile Include="Security\BobbaFilter.cs" />
-    <Compile Include="Security\Filter.cs" />
     <Compile Include="Configuration\ConfigData.cs" />
     <Compile Include="Configuration\ConfigurationData.cs" />
     <Compile Include="Configuration\ConnectionHandling.cs" />
