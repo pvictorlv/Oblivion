@@ -77,14 +77,10 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session == null)
                 return;
-            lock (SessionLock)
-            {
-                string name = Request.GetString();
-                string junk = Request.GetString();
-                var roomsMessage = Oblivion.GetGame().GetNavigator().SerializeNewNavigator(name, junk, Session);
-                if (roomsMessage == null) return;
-                Session.SendMessage(roomsMessage);
-            }
+
+            string name = Request.GetString();
+            string junk = Request.GetString();
+            Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializeNewNavigator(name, junk, Session));
         }
 
         /// <summary>
@@ -146,13 +142,13 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Hardcode to get users room via habbo air
         /// </summary>
-        private int _count;
+        private int count;
 
         internal void HabboAirGetUserRooms()
         {
-            if (_count <= 4)
+            if (count <= 4)
             {
-                _count++;
+                count++;
                 return;
             }
 
@@ -162,9 +158,8 @@ namespace Oblivion.Messages.Handlers
             message.AppendInteger(5); //maybe category
             message.AppendString("");
             message.AppendInteger(Session.GetHabbo().Data.Rooms.Count);
-            foreach (var room in Session.GetHabbo().Data.Rooms)
+            foreach (var data in Session.GetHabbo().Data.Rooms)
             {
-                var data = Oblivion.GetGame().GetRoomManager().GenerateRoomData(room);
                 data.Serialize(message);
             }
             message.AppendBool(false);
@@ -204,9 +199,9 @@ namespace Oblivion.Messages.Handlers
         internal void NewNavigatorDeleteSavedSearch()
         {
             int searchId = Request.GetInteger();
-            if (!Session.GetHabbo().NavigatorLogs.Remove(searchId))
+            if (!Session.GetHabbo().NavigatorLogs.ContainsKey(searchId))
                 return;
-
+            Session.GetHabbo().NavigatorLogs.Remove(searchId);
             var message = new ServerMessage(LibraryParser.OutgoingRequest("NavigatorSavedSearchesComposer"));
             message.AppendInteger(Session.GetHabbo().NavigatorLogs.Count);
 

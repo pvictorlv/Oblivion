@@ -75,8 +75,7 @@ namespace Oblivion.HabboHotel.Events
             WorkUpdate();
             SortCollection();
 
-            /* TODO CHECK */
-            foreach (var current in _eventCategories.Values)
+            /* TODO CHECK */ foreach (var current in _eventCategories.Values)
                 current.OnCycle();
         }
 
@@ -139,7 +138,7 @@ namespace Oblivion.HabboHotel.Events
             {
                 while (_addQueue.Count > 0)
                 {
-                    var roomData = (RoomData) _addQueue.Dequeue();
+                    var roomData = (RoomData)_addQueue.Dequeue();
 
                     if (!_events.ContainsKey(roomData))
                         _events.Add(roomData, roomData.UsersNow);
@@ -159,7 +158,7 @@ namespace Oblivion.HabboHotel.Events
             {
                 while (_removeQueue.Count > 0)
                 {
-                    var key = (RoomData) _removeQueue.Dequeue();
+                    var key = (RoomData)_removeQueue.Dequeue();
                     _events.Remove(key);
                 }
             }
@@ -177,9 +176,10 @@ namespace Oblivion.HabboHotel.Events
             {
                 while (_removeQueue.Count > 0)
                 {
-                    var roomData = (RoomData) _updateQueue.Dequeue();
+                    var roomData = (RoomData)_updateQueue.Dequeue();
 
-                    _events[roomData] = roomData.UsersNow;
+                    if (_events.ContainsKey(roomData))
+                        _events[roomData] = roomData.UsersNow;
                 }
             }
         }

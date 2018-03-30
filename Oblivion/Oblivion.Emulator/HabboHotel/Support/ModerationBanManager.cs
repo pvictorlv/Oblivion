@@ -122,9 +122,10 @@ namespace Oblivion.HabboHotel.Support
                 }
                 else
                 {
-                    if (!_bannedMachines.TryGetValue(machineid, out var moderationBan3))
+                    if (!_bannedMachines.ContainsKey(machineid))
                         return string.Empty;
 
+                    var moderationBan3 = _bannedMachines[machineid];
 
                     if (!moderationBan3.Expired)
                         return moderationBan3.ReasonMessage;
@@ -187,15 +188,18 @@ namespace Oblivion.HabboHotel.Support
             switch (moderationBan.Type)
             {
                 case ModerationBanType.Ip:
-                    _bannedIPs[text] = moderationBan;
+                    if (_bannedIPs.Contains(text)) _bannedIPs[text] = moderationBan;
+                    else _bannedIPs.Add(text, moderationBan);
                     break;
 
                 case ModerationBanType.Machine:
-                    _bannedMachines[text] = moderationBan;
+                    if (_bannedMachines.ContainsKey(text)) _bannedMachines[text] = moderationBan;
+                    else _bannedMachines.Add(text, moderationBan);
                     break;
 
                 default:
-                    _bannedUsernames[text] = moderationBan;
+                    if (_bannedUsernames.Contains(text)) _bannedUsernames[text] = moderationBan;
+                    else _bannedUsernames.Add(text, moderationBan);
                     break;
             }
 

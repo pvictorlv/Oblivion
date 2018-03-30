@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Oblivion.Configuration;
 using Oblivion.HabboHotel.Camera;
 using Oblivion.HabboHotel.Commands;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -167,7 +166,6 @@ namespace Oblivion.HabboHotel.Rooms.User
         internal long LastRollerDate;
 
 
-        internal bool LeavingRoom;
         /// <summary>
         ///     The horse identifier
         /// </summary>
@@ -542,6 +540,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         y = Y - 1;
                         break;
                 }
+
                 return new Point(x, y);
             }
         }
@@ -596,6 +595,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     y = Y - count;
                     break;
             }
+
             return new Point(x, y);
         }
 
@@ -647,6 +647,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         y = SetY - 1;
                         break;
                 }
+
                 return new Point(x, y);
             }
         }
@@ -806,10 +807,9 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (msg.Length > 100)
                 return;
 
-            if (!((msg.StartsWith(":deleteblackword ") || msg.Contains("ban")) && session.GetHabbo().Rank > 4)  && !BobbaFilter.CanTalk(session, msg))
+            if (!((msg.StartsWith(":deleteblackword ") || msg.Contains("ban")) && session.GetHabbo().Rank > 4) &&
+                !BobbaFilter.CanTalk(session, msg))
                 return;
-
-            
 
 
             if (!IsBot && IsFlooded && FloodExpiryTime <= Oblivion.GetUnixTimeStamp())
@@ -834,22 +834,14 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (GetRoom().Disposed) return;
 
                 var habbo = GetClient().GetHabbo();
-                if (habbo == null) return;
 
                 if (GetRoom().GotWireds())
                     if (GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSay, this, msg))
                         return;
-                try
-                {
-                    GetRoom().AddChatlog(session.GetHabbo().Id, msg, true);
-                }
-                catch (Exception e)
-                {
-                    Logging.HandleException(e, "addchatlog chat()");
-                }
-            
 
-            uint rank = 1;
+                GetRoom().AddChatlog(session.GetHabbo().Id, msg, true);
+
+                uint rank = 1;
 
                 if (session.GetHabbo() != null)
                     rank = session.GetHabbo().Rank;
@@ -858,12 +850,12 @@ namespace Oblivion.HabboHotel.Rooms.User
                         .RoomData?.WordFilter != null && GetRoom()
                         .RoomData.WordFilter.Count > 0)
                     msg = GetRoom()
-                        .RoomData.WordFilter.Aggregate(msg, (current, s) => Regex.Replace(current, Regex.Escape(s), "bobba", RegexOptions.IgnoreCase));
+                        .RoomData.WordFilter.Aggregate(msg,
+                            (current, s) => Regex.Replace(current, Regex.Escape(s), "bobba", RegexOptions.IgnoreCase));
 
                 if (rank < 4)
                 {
                     var span = DateTime.Now - habbo.SpamFloodTime;
-                    
                     if (span.TotalSeconds > habbo.SpamProtectionTime && habbo.SpamProtectionBol)
                     {
                         _floodCount = 0;
@@ -872,6 +864,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     }
                     else if (span.TotalSeconds > 4.0)
                         _floodCount = 0;
+
                     ServerMessage message;
                     if (span.TotalSeconds < habbo.SpamProtectionTime && habbo.SpamProtectionBol)
                     {
@@ -883,6 +876,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         GetClient().SendMessage(message);
                         return;
                     }
+
                     if (span.TotalSeconds < 4.0 && _floodCount > 5 * (_mRoom.RoomData.ChatFloodProtection + 1) &&
                         rank < 5)
                     {
@@ -900,9 +894,11 @@ namespace Oblivion.HabboHotel.Rooms.User
                         GetClient().SendMessage(message);
                         return;
                     }
+
                     habbo.SpamFloodTime = DateTime.Now;
                     _floodCount++;
                 }
+
                 if (habbo.Preferences.ChatColor != textColor)
                 {
                     habbo.Preferences.ChatColor = textColor;
@@ -946,6 +942,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 return;
             }
+
             if (Statusses.TryRemove("mv", out _))
                 UpdateNeeded = true;
         }
@@ -980,6 +977,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 GetRoom().GetRoomUserManager().UpdateUserStatus(this, false);
                 return;
             }
+
             if (GetRoom().GetGameMap().SquareHasUsers(x, y) && !pOverride) return;
             if (Frozen)
             {
@@ -1098,9 +1096,11 @@ namespace Oblivion.HabboHotel.Rooms.User
                 RotBody = rotation;
             }
             else RotHead = rotation;
+
             UpdateNeeded = true;
         }
-        
+
+       
 
         /// <summary>
         ///     Adds the status.
@@ -1178,6 +1178,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     message.AppendInteger(0);
                     message.AppendString("");
                 }
+
                 message.AppendString("");
                 message.AppendInteger(habbo.AchievementPoints);
                 message.AppendBool(false);
@@ -1185,7 +1186,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
 
             if (BotAi == null || BotData == null)
-                return;
+                throw new NullReferenceException("BotAI or BotData is undefined");
 
             message.AppendInteger(BotAi.BaseId);
             message.AppendString(BotData.Name);
@@ -1223,6 +1224,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 message.AppendString(PetData.Type == 16u ? PetData.MoplaBreed.GrowStatus : "");
                 return;
             }
+
             message.AppendString(BotData.Gender.ToLower());
             message.AppendInteger(BotData.OwnerId);
             message.AppendString(Oblivion.GetGame().GetClientManager().GetNameById(BotData.OwnerId));
@@ -1260,8 +1262,10 @@ namespace Oblivion.HabboHotel.Rooms.User
                     stringBuilder.Append(" ");
                     stringBuilder.Append(current.Value);
                 }
+
                 stringBuilder.Append("/");
             }
+
             stringBuilder.Append("/");
             message.AppendString(stringBuilder.ToString());
 

@@ -46,7 +46,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
 
         public void RemoveTile(RoomItem item)
         {
-            _banzaiTiles.Remove(item);
+            if (_banzaiTiles.Contains(item))
+                _banzaiTiles.Remove(item);
         }
 
         public void AddPuck(RoomItem item)
@@ -57,7 +58,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
 
         public void RemovePuck(RoomItem item)
         {
-            _pucks.Remove(item);
+            if (_pucks.Contains(item))
+                _pucks.Remove(item);
         }
 
 
@@ -86,7 +88,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                     }
                 }
             }
-
             if (IsBanzaiActive)
                 HandleBanzaiTiles(User.Coordinate, User.Team, User);
         }
@@ -198,7 +199,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                     waveAtWin.AppendInteger(1);
                     _room.SendMessage(waveAtWin);
                 }
-
                 _field?.Destroy();
             }
         }
@@ -269,14 +269,11 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                             x += item.X;
                             y += item.Y;
                         }
-
                         break;
                     }
-
                     if (i != length)
                         list.Add(new Point(x, y));
                 }
-
                 if (client?.GetHabbo() != null)
                 {
                     var roomUserByHabbo =
@@ -304,19 +301,16 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                         
                         user.LockedTilesCount++;
                         _room.GetGameManager().AddPointToTeam(item.Team, user);
-                        if (_field == null) return;
-                        _field.UpdateLocation(item.X, item.Y, teamByte);
-
-                        var gfield = _field.DoUpdate();
+                        _field?.UpdateLocation(item.X, item.Y, teamByte);
+                        var gfield = _field?.DoUpdate()?.ToList();
                         if (gfield == null) return;
-                        gfield = gfield.ToList();
 
+                        /* TODO CHECK */
                         foreach (var gameField in gfield)
                         {
                             if (gameField?.GetPoints() == null) continue;
 
                             var t = (Team) gameField.ForValue;
-
                             /* TODO CHECK */
                             var point = gameField.GetPoints().ToList();
                             foreach (var p in point)
@@ -324,10 +318,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                                 HandleMaxBanzaiTiles(new Point(p.X, p.Y), t, user);
                                 _floorMap[p.Y, p.X] = gameField.ForValue;
                             }
-
                             point.Clear();
                         }
-
                         gfield.Clear();
                     }
                 }
@@ -378,7 +370,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                     i++;
                 _item.UpdateState(false, true);
             }
-
             if (i == _banzaiTiles.Count)
                 BanzaiEnd();
         }

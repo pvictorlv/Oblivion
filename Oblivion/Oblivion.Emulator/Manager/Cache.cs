@@ -54,31 +54,27 @@ namespace Oblivion.Manager
             {
                 if (user.Value == null)
                 {
-                    RemoveUser(user.Key, false);
+                    RemoveUser(user.Key);
                     continue;
                 }
 
                 if (Oblivion.GetGame().GetClientManager().Clients.ContainsKey(user.Key))
                 {
-                    RemoveUser(user.Key, false);
+                    RemoveUser(user.Key);
                     continue;
                 }
 
                 if ((DateTime.Now - user.Value.LastUsed).TotalMilliseconds < 1800000)
                     continue;
 
-                RemoveUser(user.Key, false);
+                RemoveUser(user.Key);
             }
         }
 
-        private static void RemoveUser(uint user, bool clear)
+        private static void RemoveUser(uint user)
         {
-            if (!Oblivion.UsersCached.TryRemove(user, out var removedUser)) return;
-            if (clear)
-            {
-                if (removedUser.GetClient()?.GetConnection() == null)
-                removedUser.RemoveCached();
-            }
+            Oblivion.UsersCached.TryRemove(user, out var removedUser);
+//                removedUser.RemoveCached();
         }
 
         private static void ClearRoomsCache()

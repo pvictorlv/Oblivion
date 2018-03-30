@@ -58,7 +58,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
 
                 var message = new ServerMessage();
                 message.Init(LibraryParser.OutgoingRequest("DanceStatusMessageComposer"));
-                message.AppendInteger(roomUser.GetClient().GetHabbo().CurrentRoomUserId);
+                message.AppendInteger(roomUser.GetClient().CurrentRoomUserId);
                 message.AppendInteger(danceId);
                 roomUser.GetClient().GetHabbo().CurrentRoom.SendMessage(message);
                 roomUser.DanceId = danceId;

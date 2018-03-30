@@ -438,7 +438,7 @@ namespace Oblivion.HabboHotel.Users
             if (rank < 1u)
                 rank = 1u;
 
-            CurrentRoomUserId = -1;
+
             OnDuty = onDuty;
             DutyLevel = dutyLevel;
             Rank = rank;
@@ -549,7 +549,7 @@ namespace Oblivion.HabboHotel.Users
         {
             _habboinfoSaved = true;
             return string.Concat("UPDATE users SET online='0', last_online = '", Oblivion.GetUnixTimeStamp(),
-                "', activity_points = '", ActivityPoints, "', vip_points = '", Emeralds, "', diamonds = '", Diamonds,
+                "', activity_points = '", ActivityPoints, "', ", Oblivion.GetDbConfig().DbData["emerald.column"], " = '", Emeralds, "', diamonds = '", Diamonds,
                 "', credits = '", Credits,
                 "' WHERE id = '", Id, "'; UPDATE users_stats SET achievement_score = ", AchievementPoints,
                 " WHERE id=", Id, " LIMIT 1; ");
@@ -625,16 +625,9 @@ namespace Oblivion.HabboHotel.Users
 
                 /* TODO CHECK */
                 foreach (DataRow dataRow in table.Rows)
-                {
-                    var id = Convert.ToUInt32(dataRow["id"]);
-                    var roomData = Oblivion.GetGame()
+                    Data.Rooms.Add(Oblivion.GetGame()
                         .GetRoomManager()
-                        .FetchRoomData(id, dataRow, Id);
-                    if (roomData != null)
-                    {
-                        Data.Rooms.Add(id);
-                    }
-                }
+                        .FetchRoomData(Convert.ToUInt32(dataRow["id"]), dataRow, Id));
             }
         }
 
@@ -739,11 +732,6 @@ namespace Oblivion.HabboHotel.Users
         }
 
 
-        /// <summary>
-        ///     The current room user identifier
-        /// </summary>
-        internal int CurrentRoomUserId;
-
         internal void RemoveCached()
         {
             _myGroups?.Clear();
@@ -767,7 +755,7 @@ namespace Oblivion.HabboHotel.Users
         {
             if (Disconnected)
                 return;
-            CurrentRoomUserId = -1;
+
             if (AchievementsToUpdate?.Count > 0)
             {
                 var queryBuilder = new StringBuilder();
@@ -818,7 +806,8 @@ namespace Oblivion.HabboHotel.Users
                     queryReactor.SetQuery("UPDATE users SET activity_points = '" + ActivityPoints +
                                           "', disabled_alert = '" + Oblivion.BoolToEnum(DisableEventAlert) +
                                           "', credits = '" +
-                                          Credits + "', diamonds = '" + Diamonds + "', online='0', vip_points = '" +
+                                          Credits + "', diamonds = '" + Diamonds + "', online='0', " +
+                                          Oblivion.GetDbConfig().DbData["emerald.column"] + " = '" +
                                           Emeralds + "', last_online = '" +
                                           Oblivion.GetUnixTimeStamp() + "', builders_items_used = '" +
                                           BuildersItemsUsed +
@@ -866,9 +855,12 @@ namespace Oblivion.HabboHotel.Users
 
             try
             {
-                _inventoryComponent?.RunDbUpdate();
-                _inventoryComponent?.Dispose();
-                _inventoryComponent = null;
+                if (_inventoryComponent != null)
+                {
+                    _inventoryComponent.RunDbUpdate();
+                    _inventoryComponent.Dispose();
+                    _inventoryComponent = null;
+                }
             }
             catch (Exception e)
             {
@@ -1105,9 +1097,8 @@ namespace Oblivion.HabboHotel.Users
         {
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                dbClient.RunFastQuery(string.Concat("UPDATE users SET last_online = '", Oblivion.GetUnixTimeStamp(),
-                    "', activity_points = '", ActivityPoints, "', credits = '", Credits, "', diamonds = '", Diamonds,
-                    "', vip_points = '", Emeralds, "' WHERE id = '", Id, "' LIMIT 1; "));
+                dbClient.RunFastQuery(
+                    $"UPDATE users SET last_online = '{Oblivion.GetUnixTimeStamp()}', activity_points = '{ActivityPoints}', credits = '{Credits}', diamonds = '{Diamonds}', {Oblivion.GetDbConfig().DbData["emerald.column"]} = '{Emeralds}' WHERE id = '{Id}' LIMIT 1; ");
             }
         }
 
@@ -1170,12 +1161,8 @@ namespace Oblivion.HabboHotel.Users
                 dTable = dbClient.GetTable();
             }
 
-            if (dTable != null)
-                foreach (DataRow dRow in dTable.Rows)
-                {
-                    if (dRow != null)
-                        _myGroups?.Add(Convert.ToUInt32(dRow["id"]));
-                }
+            foreach (DataRow dRow in dTable.Rows)
+                _myGroups.Add(Convert.ToUInt32(dRow["id"]));
 
             _loadedMyGroups = true;
         }

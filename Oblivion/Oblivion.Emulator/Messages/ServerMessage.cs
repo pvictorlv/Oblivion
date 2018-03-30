@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Oblivion.Messages
 {
-    public class ServerMessage : IDisposable
+    internal class ServerMessage : IDisposable
     {
         /// <summary>
         /// The buffer for the ServerMessage.
@@ -27,7 +27,6 @@ namespace Oblivion.Messages
         /// The _on array
         /// </summary>
         private bool _onArray, _disposed;
-
 
         /// <summary>
         /// The _array count
@@ -296,7 +295,7 @@ namespace Oblivion.Messages
         public byte[] GetReversedBytes()
         {
             byte[] bytes;
-           
+
             using (MemoryStream finalBuffer = new MemoryStream())
             {
 
@@ -344,6 +343,7 @@ namespace Oblivion.Messages
                 _arrayBuffer.Dispose();
             }
 
+            _arrayCurrentBuffer?.Dispose();
 
             _disposed = true;
         }

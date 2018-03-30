@@ -16,7 +16,6 @@ using Oblivion.HabboHotel.Pets;
 using Oblivion.HabboHotel.Polls;
 using Oblivion.HabboHotel.Quests;
 using Oblivion.HabboHotel.Roles;
-using Oblivion.HabboHotel.RoomBots;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.HabboHotel.SoundMachine;
@@ -461,7 +460,6 @@ namespace Oblivion.HabboHotel
                 PetRace.Init(queryReactor);
                 _catalog.Initialize(queryReactor, out _);
                 BobbaFilter.InitSwearWord();
-                
                 SoundMachineSongManager.Initialize();
                 LowPriorityWorker.Init(queryReactor);
                 _roomManager.LoadCompetitionManager();

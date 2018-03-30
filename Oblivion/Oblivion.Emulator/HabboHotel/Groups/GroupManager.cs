@@ -374,7 +374,7 @@ namespace Oblivion.HabboHotel.Groups
             {
                 response.AppendInteger(theGroup.Requests.Count);
 
-                if (theGroup.Requests.Count > 0 && list.Count - 1 >= page)
+                if (theGroup.Requests.Count > 0 && list.Count - 1 >= page && members != null)
                 {
                     response.AppendInteger(members.Count);
 
@@ -474,6 +474,7 @@ namespace Oblivion.HabboHotel.Groups
             var dateTime2 = dateTime.AddSeconds(group.CreateTime);
 
             response.Init(LibraryParser.OutgoingRequest("GroupDataMessageComposer"));
+
             response.AppendInteger(group.Id);
             response.AppendBool(true);
             response.AppendInteger(group.State);

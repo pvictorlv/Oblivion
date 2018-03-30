@@ -78,7 +78,7 @@ namespace Oblivion.HabboHotel.RoomBots
                     return;
                 }
                 _speechInterval = GetBotData().SpeechInterval < 2 ? 2000 : GetBotData().SpeechInterval * 1000;
-                _speechInterval = _speechInterval > 20000 ? 20000 : _speechInterval;
+
                 if (_chatTimer == null)
                 {
                     _chatTimer = new Timer(ChatTimerTick, null, _speechInterval, _speechInterval);
@@ -452,9 +452,10 @@ namespace Oblivion.HabboHotel.RoomBots
                         if (user.RotBody % 2 != 0) user.RotBody--;
 
                         user.Z = GetRoom().GetGameMap().SqAbsoluteHeight(user.X, user.Y);
-                        if (user.Statusses.TryAdd("sit", "0.55"))
+                        if (!user.Statusses.ContainsKey("sit"))
                         {
                             user.UpdateNeeded = true;
+                            user.Statusses.TryAdd("sit", "0.55");
                         }
                         user.IsSitting = true;
                         return;

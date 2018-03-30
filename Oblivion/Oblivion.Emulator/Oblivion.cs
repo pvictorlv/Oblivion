@@ -213,7 +213,6 @@ namespace Oblivion
                     var habbo = clientByUserId.GetHabbo();
                     if (habbo != null && habbo.Id > 0)
                     {
-
                         UsersCached.AddOrUpdate(userId, habbo, (key, value) => habbo);
                         return habbo;
                     }
@@ -389,12 +388,12 @@ namespace Oblivion
                     Timer.Start();
                 }
 
-                if (ConfigurationData.Data.TryGetValue("StaffAlert.MinRank", out var minRank))
-                    StaffAlertMinRank = uint.Parse(minRank);
+                if (ConfigurationData.Data.ContainsKey("StaffAlert.MinRank"))
+                    StaffAlertMinRank = uint.Parse(ConfigurationData.Data["StaffAlert.MinRank"]);
 
 
-                if (ConfigurationData.Data.TryGetValue("Debug", out var debug))
-                    if (debug == "true")
+                if (ConfigurationData.Data.ContainsKey("Debug"))
+                    if (ConfigurationData.Data["Debug"] == "true")
                         DebugMode = true;
 
                 Out.WriteLine("Oblivion Emulator ready. Status: idle", "Oblivion.Boot");

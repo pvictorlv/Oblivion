@@ -47,7 +47,6 @@ namespace Oblivion.Messages
         /// </summary>
         public void Dispose()
         {
-            _body = null;
             ClientMessageFactory.ObjectCallback(this);
             GC.SuppressFinalize(this);
         }
@@ -144,9 +143,11 @@ namespace Oblivion.Messages
         /// <returns>System.Int32.</returns>
         internal int GetIntegerFromString()
         {
+            int result;
+
             string stringValue = GetString(Encoding.ASCII);
 
-            int.TryParse(stringValue, out var result);
+            int.TryParse(stringValue, out result);
 
             return result;
         }

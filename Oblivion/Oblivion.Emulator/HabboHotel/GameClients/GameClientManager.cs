@@ -6,6 +6,7 @@ using System.Text;
 using Oblivion.Configuration;
 using Oblivion.Connection.Connection;
 using Oblivion.HabboHotel.GameClients.Interfaces;
+using Oblivion.HabboHotel.Users.Messenger;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
 using Oblivion.Util;

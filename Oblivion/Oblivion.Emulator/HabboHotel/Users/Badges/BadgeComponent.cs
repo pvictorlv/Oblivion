@@ -33,6 +33,7 @@ namespace Oblivion.HabboHotel.Users.Badges
                 foreach (DataRow dataRow8 in badgesTable.Rows)
                 {
                     var badge = new Badge((string) dataRow8["badge_id"], (int) dataRow8["badge_slot"]);
+                    if (!BadgeList.ContainsKey(badge.Code))
                         BadgeList.TryAdd(badge.Code, badge);
                 }
             }
@@ -78,7 +79,7 @@ namespace Oblivion.HabboHotel.Users.Badges
             if (wiredReward)
                 session.SendMessage(SerializeBadgeReward(!HasBadge(badge)));
 
-            if (!BadgeList.TryAdd(badge, new Badge(badge, 0)))
+            if (HasBadge(badge))
                 return;
 
             if (inDatabase)
@@ -93,6 +94,7 @@ namespace Oblivion.HabboHotel.Users.Badges
                 }
             }
 
+            BadgeList.TryAdd(badge, new Badge(badge, 0));
 
             session.SendMessage(SerializeBadge(badge));
             session.SendMessage(Update(badge));

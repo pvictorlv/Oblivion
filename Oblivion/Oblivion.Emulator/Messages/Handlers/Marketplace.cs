@@ -69,12 +69,8 @@ namespace Oblivion.Messages.Handlers
                         .GetCatalog()
                         .GetMarketplace()
                         .MarketItemKeys.Contains(Convert.ToInt32(row["offer_id"]))) continue;
-                    Oblivion.GetGame().GetCatalog().GetMarketplace().MarketItemKeys
-                        .Add(Convert.ToInt32(row["offer_id"]));
-                    Oblivion.GetGame().GetCatalog().GetMarketplace().MarketItems.Add(new MarketOffer(
-                        Convert.ToInt32(row["offer_id"]), Convert.ToInt32(row["sprite_id"]),
-                        Convert.ToInt32(row["total_price"]), int.Parse(row["item_type"].ToString()),
-                        Convert.ToInt32(row["limited_number"]), Convert.ToInt32(row["limited_stack"])));
+                    Oblivion.GetGame().GetCatalog().GetMarketplace().MarketItemKeys.Add(Convert.ToInt32(row["offer_id"]));
+                    Oblivion.GetGame().GetCatalog().GetMarketplace().MarketItems.Add(new MarketOffer(Convert.ToInt32(row["offer_id"]), Convert.ToInt32(row["sprite_id"]), Convert.ToInt32(row["total_price"]), int.Parse(row["item_type"].ToString()), Convert.ToInt32(row["limited_number"]), Convert.ToInt32(row["limited_stack"])));
                 }
 
             var dictionary = new Dictionary<int, MarketOffer>();
@@ -82,7 +78,7 @@ namespace Oblivion.Messages.Handlers
 
             /* TODO CHECK */
             foreach (var item in Oblivion.GetGame().GetCatalog().GetMarketplace().MarketItems)
-                if (dictionary.TryGetValue(item.SpriteId, out var spriteItem))
+                if (dictionary.ContainsKey(item.SpriteId))
                 {
                     if (item.LimitedNumber > 0)
                     {
@@ -93,28 +89,29 @@ namespace Oblivion.Messages.Handlers
                     }
                     else
                     {
-                        if (spriteItem.TotalPrice > item.TotalPrice)
+                        if (dictionary[item.SpriteId].TotalPrice > item.TotalPrice)
                         {
                             dictionary.Remove(item.SpriteId);
                             dictionary.Add(item.SpriteId, item);
                         }
 
-                        dictionary2[item.SpriteId]++;
+                        var num = dictionary2[item.SpriteId];
+                        dictionary2.Remove(item.SpriteId);
+                        dictionary2.Add(item.SpriteId, num + 1);
                     }
                 }
                 else
                 {
-                    dictionary.Add(item.SpriteId, item);
+                    if (!dictionary.ContainsKey(item.SpriteId))
+                        dictionary.Add(item.SpriteId, item);
                     if (!dictionary2.ContainsKey(item.SpriteId))
                         dictionary2.Add(item.SpriteId, 1);
                 }
-
             var message = new ServerMessage(LibraryParser.OutgoingRequest("MarketPlaceOffersMessageComposer"));
             message.AppendInteger(dictionary.Count);
             /* TODO CHECK */
             if (dictionary.Count > 0)
-                foreach (var pair in
-                    dictionary.Values /*.Where(x => x.TotalPrice >= minCost && x.TotalPrice <= maxCost)*/)
+                foreach (var pair in dictionary.Values/*.Where(x => x.TotalPrice >= minCost && x.TotalPrice <= maxCost)*/)
                 {
                     message.AppendInteger(pair.OfferId);
                     message.AppendInteger(1);
@@ -130,7 +127,6 @@ namespace Oblivion.Messages.Handlers
                         .AvgPriceForSprite(pair.SpriteId));
                     message.AppendInteger(dictionary2[pair.SpriteId]);
                 }
-
             message.AppendInteger(dictionary.Count);
             Session.SendMessage(message);
         }
@@ -193,7 +189,6 @@ namespace Oblivion.Messages.Handlers
                 ReloadOffers(Session);
                 return;
             }
-
             if (Convert.ToInt32(Row["user_id"]) == Session.GetHabbo().Id)
             {
                 Session.SendNotif(
@@ -206,7 +201,6 @@ namespace Oblivion.Messages.Handlers
                 Session.SendNotif("Oops, you do not have enough diamonds for this.");
                 return;
             }
-
             var price = Convert.ToInt32(Row["total_price"]);
             Session.GetHabbo().Diamonds -= price;
             Session.GetHabbo().UpdateSeasonalCurrencyBalance();
@@ -239,10 +233,8 @@ namespace Oblivion.Messages.Handlers
                                       Item.SpriteId + "', '1', '" + Convert.ToInt32(Row["total_price"]) + "')");
 
 
-                if (Oblivion.GetGame().GetCatalog().GetMarketplace().MarketAverages
-                        .TryGetValue(Item.SpriteId, out var num3) &&
-                    Oblivion.GetGame().GetCatalog().GetMarketplace().MarketCounts
-                        .TryGetValue(Item.SpriteId, out var num5))
+                if (Oblivion.GetGame().GetCatalog().GetMarketplace().MarketAverages.TryGetValue(Item.SpriteId, out var num3) &&
+                    Oblivion.GetGame().GetCatalog().GetMarketplace().MarketCounts.TryGetValue(Item.SpriteId, out var num5))
                 {
                     var num4 = num5 + Convert.ToInt32(Row["total_price"]);
 
@@ -323,7 +315,9 @@ namespace Oblivion.Messages.Handlers
                         dictionary[item.SpriteId] = item;
                     }
 
-                    dictionary2[item.SpriteId]++;
+                    var num = dictionary2[item.SpriteId];
+                    dictionary2.Remove(item.SpriteId);
+                    dictionary2.Add(item.SpriteId, num + 1);
                 }
                 else
                 {
@@ -352,7 +346,6 @@ namespace Oblivion.Messages.Handlers
                         Oblivion.GetGame().GetCatalog().GetMarketplace().AvgPriceForSprite(pair.Value.SpriteId));
                     msg.AppendInteger(dictionary2[pair.Value.SpriteId]);
                 }
-
             msg.AppendInteger(dictionary.Count);
             session.SendMessage(msg);
         }
@@ -525,7 +518,6 @@ namespace Oblivion.Messages.Handlers
                             num3 = 3;
                             num2 = 0;
                         }
-
                         msg.AppendInteger(Convert.ToInt32(row["offer_id"]));
                         msg.AppendInteger(num3);
                         msg.AppendInteger(1);
@@ -545,7 +537,6 @@ namespace Oblivion.Messages.Handlers
                 {
                     msg.AppendInteger(0);
                 }
-
                 Session.SendMessage(msg);
             }
         }

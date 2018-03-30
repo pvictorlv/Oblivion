@@ -18,6 +18,7 @@ using Oblivion.HabboHotel.Polls.Enums;
 using Oblivion.HabboHotel.Quests;
 using Oblivion.HabboHotel.RoomBots;
 using Oblivion.HabboHotel.Rooms;
+using Oblivion.HabboHotel.Users.Badges;
 using Oblivion.Messages.Parsers;
 using Oblivion.Security;
 using Oblivion.Util;
@@ -45,7 +46,6 @@ namespace Oblivion.Messages.Handlers
                 message.AppendBool(current.Has1Color);
                 message.AppendBool(current.Has2Color);
             }
-
             Session.SendMessage(message);
         }
 
@@ -107,6 +107,7 @@ namespace Oblivion.Messages.Handlers
 //                "Is connected now with user: " + Request.GetString() + " and ip: " + Session.GetConnection().GetIp(),
 //                "Oblivion.Users",
 //                ConsoleColor.DarkGreen);
+
         }
 
         internal void GoToHotelView()
@@ -128,8 +129,7 @@ namespace Oblivion.Messages.Handlers
                 serverMessage.AppendInteger(120 - Session.GetHabbo().Respect);
                 Session.SendMessage(serverMessage);
             }
-
-            Session.GetHabbo().CurrentRoomUserId = -1;
+            Session.CurrentRoomUserId = -1;
         }
 
         internal void LandingCommunityGoal()
@@ -205,7 +205,6 @@ namespace Oblivion.Messages.Handlers
                     Writer.Writer.LogException(e.ToString());
                     Response.Clear();
                 }
-
             Response.EndArray();
             SendResponse();
             Session.SendMessage(RoomFloorAndWallComposer(CurrentLoadingRoom));
@@ -236,9 +235,9 @@ namespace Oblivion.Messages.Handlers
 
             CurrentLoadingRoom.JustLoaded = false;
             /* TODO CHECK */
-            foreach (var current4 in CurrentLoadingRoom.GetRoomUserManager().UserList.Values)
+            foreach (var current4 in CurrentLoadingRoom.GetRoomUserManager().UserList.Values
+                .Where(current4 => current4 != null))
             {
-                if (current4 == null) continue;
                 if (current4.IsBot)
                 {
                     if (current4.BotData.DanceId > 0)
@@ -256,7 +255,6 @@ namespace Oblivion.Messages.Handlers
                     Response.AppendInteger(current4.DanceId);
                     SendResponse();
                 }
-
                 if (current4.IsAsleep)
                 {
                     var sleepMsg = new ServerMessage(LibraryParser.OutgoingRequest("RoomUserIdleMessageComposer"));
@@ -264,7 +262,6 @@ namespace Oblivion.Messages.Handlers
                     sleepMsg.AppendBool(true);
                     Session.SendMessage(sleepMsg);
                 }
-
                 if (current4.CarryItemId > 0 && current4.CarryTimer > 0)
                 {
                     Response.Init(LibraryParser.OutgoingRequest("ApplyHanditemMessageComposer"));
@@ -272,11 +269,12 @@ namespace Oblivion.Messages.Handlers
                     Response.AppendInteger(current4.CarryTimer);
                     SendResponse();
                 }
-
-                if (current4.IsBot) continue;
+                if (current4.IsBot)
+                    continue;
                 try
                 {
-                    if (current4.GetClient() != null && current4.GetClient().GetHabbo() != null)
+                    if (current4.GetClient() != null &&
+                        current4.GetClient().GetHabbo() != null)
                     {
                         if (current4.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent() != null &&
                             current4.CurrentEffect >= 1)
@@ -287,7 +285,6 @@ namespace Oblivion.Messages.Handlers
                             Response.AppendInteger(0);
                             SendResponse();
                         }
-
                         var serverMessage2 =
                             new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
                         serverMessage2.AppendInteger(current4.VirtualId);
@@ -321,14 +318,11 @@ namespace Oblivion.Messages.Handlers
                 if (Session?.GetHabbo() == null || Session.GetHabbo().LoadingRoom == id)
                     return;
 
-                if (Session?.GetHabbo()?.RecentlyVisitedRooms == null) return;
-
                 if (Oblivion.ShutdownStarted)
                 {
                     Session.SendNotif(Oblivion.GetLanguage().GetVar("server_shutdown"));
                     return;
                 }
-
                 Session.GetHabbo().LoadingRoom = id;
 
                 Room room;
@@ -338,13 +332,11 @@ namespace Oblivion.Messages.Handlers
                     if (room?.GetRoomUserManager() != null)
                         room.GetRoomUserManager().RemoveUserFromRoom(Session, false, false);
                 }
-
                 room = Oblivion.GetGame().GetRoomManager().LoadRoom(id);
                 if (room == null)
                     return;
 
-                if (room.UserCount >= room.RoomData.UsersMax &&
-                    !Session.GetHabbo().HasFuse("fuse_enter_full_rooms") &&
+                if (room.UserCount >= room.RoomData.UsersMax && !Session.GetHabbo().HasFuse("fuse_enter_full_rooms") &&
                     Session.GetHabbo().Id != (ulong) room.RoomData.OwnerId)
                 {
                     /* var roomQueue = new ServerMessage(LibraryParser.OutgoingRequest("RoomsQueue"));
@@ -403,10 +395,8 @@ namespace Oblivion.Messages.Handlers
                         SendResponse();
                         return;
                     }
-
                     room.RemoveBan(Session.GetHabbo().Id);
                 }
-
                 if (!isReload && !Session.GetHabbo().HasFuse("fuse_enter_any_room") &&
                     !room.CheckRightsDoorBell(Session, true, true,
                         room.RoomData.Group != null &&
@@ -422,7 +412,6 @@ namespace Oblivion.Messages.Handlers
                                 new ServerMessage(LibraryParser.OutgoingRequest("DoorbellNoOneMessageComposer")));
                             return;
                         }
-
                         Session.GetHabbo().LastBellId = room.RoomId;
                         var msg = new ServerMessage(LibraryParser.OutgoingRequest("DoorbellMessageComposer"));
                         msg.AppendString("");
@@ -433,7 +422,6 @@ namespace Oblivion.Messages.Handlers
                         room.SendMessageToUsersWithRights(serverMessage3);
                         return;
                     }
-
                     if (room.RoomData.State == 2 &&
                         !string.Equals(pWd, room.RoomData.PassWord, StringComparison.CurrentCultureIgnoreCase))
                     {
@@ -488,24 +476,19 @@ namespace Oblivion.Messages.Handlers
                     !CurrentLoadingRoom.LoadedGroups.ContainsKey(CurrentLoadingRoom.RoomData.Group.Id))
                     CurrentLoadingRoom.LoadedGroups.Add(CurrentLoadingRoom.RoomData.Group.Id,
                         CurrentLoadingRoom.RoomData.Group.Badge);
-
-                var favGroup = Oblivion.GetGame().GetGroupManager().GetGroup(Session.GetHabbo().FavouriteGroup);
-                if (favGroup != null && !CurrentLoadingRoom.LoadedGroups.ContainsKey(Session.GetHabbo().FavouriteGroup))
-                {
+                if (!CurrentLoadingRoom.LoadedGroups.ContainsKey(Session.GetHabbo().FavouriteGroup) &&
+                    Oblivion.GetGame().GetGroupManager().GetGroup(Session.GetHabbo().FavouriteGroup) != null)
                     CurrentLoadingRoom.LoadedGroups.Add(Session.GetHabbo().FavouriteGroup,
-                        favGroup.Badge);
-                }
+                        Oblivion.GetGame().GetGroupManager().GetGroup(Session.GetHabbo().FavouriteGroup).Badge);
             }
-
             Response.Init(LibraryParser.OutgoingRequest("RoomGroupMessageComposer"));
             Response.AppendInteger(CurrentLoadingRoom.LoadedGroups.Count);
             /* TODO CHECK */
-            foreach (var guild1 in CurrentLoadingRoom.LoadedGroups.ToArray())
+            foreach (var guild1 in CurrentLoadingRoom.LoadedGroups)
             {
                 Response.AppendInteger(guild1.Key);
                 Response.AppendString(guild1.Value);
             }
-
             SendResponse();
 
             Response.Init(LibraryParser.OutgoingRequest("InitialRoomInfoMessageComposer"));
@@ -525,7 +508,6 @@ namespace Oblivion.Messages.Handlers
                 Response.AppendString(currentLoadingRoom.RoomData.WallPaper);
                 SendResponse();
             }
-
             if (currentLoadingRoom.RoomData.Floor != "0.0")
             {
                 Response.Init(LibraryParser.OutgoingRequest("RoomSpacesMessageComposer"));
@@ -553,6 +535,9 @@ namespace Oblivion.Messages.Handlers
             Response.AppendInteger(currentLoadingRoom.RoomId);
 
             SendResponse();
+
+
+          
         }
 
         internal void ClearRoomLoading()
@@ -609,7 +594,6 @@ namespace Oblivion.Messages.Handlers
                 Session.SendNotif(Oblivion.GetLanguage().GetVar("user_has_more_then_75_rooms"));
                 return;
             }
-
             if (Oblivion.GetUnixTimeStamp() - Session.GetHabbo().LastSqlQuery < 20)
             {
                 Session.SendNotif(Oblivion.GetLanguage().GetVar("user_create_room_flood_error"));
@@ -731,7 +715,6 @@ namespace Oblivion.Messages.Handlers
                 SerializeRoomInformation(room, false);
                 return;
             }
-
             SerializeRoomInformation(room, true);
         }
 
@@ -752,15 +735,12 @@ namespace Oblivion.Messages.Handlers
             GetResponse().AppendInteger(room.UsersWithRights.Count);
 
             /* TODO CHECK */
-            foreach (var habboForId in room.UsersWithRights.Select(Oblivion.GetHabboById))
+            foreach (var habboForId in room.UsersWithRights
+                .Select(Oblivion.GetHabboById).Where(habboForId => habboForId != null))
             {
-                if (habboForId != null)
-                {
-                    GetResponse().AppendInteger(habboForId.Id);
-                    GetResponse().AppendString(habboForId.UserName);
-                }
+                GetResponse().AppendInteger(habboForId.Id);
+                GetResponse().AppendString(habboForId.UserName);
             }
-
             SendResponse();
         }
 
@@ -788,7 +768,6 @@ namespace Oblivion.Messages.Handlers
                 room.RoomData.State = 0;
                 return;
             }
-
             room.RoomData.PassWord = Request.GetString();
             room.RoomData.UsersMax = Request.GetUInteger();
             room.RoomData.Category = Request.GetInteger();
@@ -867,7 +846,6 @@ namespace Oblivion.Messages.Handlers
             {
                 count = 1;
             }
-
             msg.AppendInteger(count);
             if (list.Count <= 0)
             {
@@ -882,7 +860,6 @@ namespace Oblivion.Messages.Handlers
                         ? Oblivion.GetHabboById(current).UserName
                         : "Undefined");
                 }
-
             Session.SendMessage(msg);
         }
 
@@ -902,7 +879,6 @@ namespace Oblivion.Messages.Handlers
                 Response.AppendInteger(current);
                 Response.AppendString(habboForId.Look);
             }
-
             SendResponse();
         }
 
@@ -925,9 +901,8 @@ namespace Oblivion.Messages.Handlers
 
         internal void GiveRights()
         {
-            if (Session?.GetHabbo() == null || Session.GetHabbo().CurrentRoom == null)
+            if (Session?.GetHabbo() == null)
                 return;
-
             var num = Request.GetUInteger();
             var room = Session.GetHabbo().CurrentRoom;
             if (room == null)
@@ -940,7 +915,6 @@ namespace Oblivion.Messages.Handlers
                 Session.SendNotif(Oblivion.GetLanguage().GetVar("no_room_rights_error"));
                 return;
             }
-
             if (num == 0)
                 return;
             room.UsersWithRights.Add(num);
@@ -949,8 +923,7 @@ namespace Oblivion.Messages.Handlers
                 queryReactor.RunFastQuery(string.Concat("INSERT INTO rooms_rights (room_id,user_id) VALUES (",
                     room.RoomId, ",", num, ")"));
             }
-
-            if (roomUserByHabbo?.GetClient()?.GetHabbo() != null && !roomUserByHabbo.IsBot)
+            if (roomUserByHabbo != null && !roomUserByHabbo.IsBot)
             {
                 if (!roomUserByHabbo.IsBot)
                 {
@@ -959,7 +932,6 @@ namespace Oblivion.Messages.Handlers
                     Response.AppendInteger(1);
                     roomUserByHabbo.GetClient().SendMessage(GetResponse());
                 }
-
                 Response.Init(LibraryParser.OutgoingRequest("GiveRoomRightsMessageComposer"));
                 Response.AppendInteger(room.RoomId);
                 Response.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Id);
@@ -967,7 +939,6 @@ namespace Oblivion.Messages.Handlers
                 SendResponse();
                 roomUserByHabbo.UpdateNeeded = true;
             }
-
             UsersWithRights();
         }
 
@@ -999,13 +970,11 @@ namespace Oblivion.Messages.Handlers
                         roomUserByHabbo.RemoveStatus("flatctrl 1");
                         roomUserByHabbo.UpdateNeeded = true;
                     }
-
                     Response.Init(LibraryParser.OutgoingRequest("RemoveRightsMessageComposer"));
                     Response.AppendInteger(room.RoomId);
                     Response.AppendInteger(num2);
                     SendResponse();
                 }
-
                 UsersWithRights();
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
@@ -1038,12 +1007,10 @@ namespace Oblivion.Messages.Handlers
                 roomUserByHabbo.RemoveStatus("flatctrl 1");
                 roomUserByHabbo.UpdateNeeded = true;
             }
-
             using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryreactor2.RunFastQuery($"DELETE FROM rooms_rights WHERE room_id = {room.RoomId}");
             }
-
             room.UsersWithRights.Clear();
             UsersWithRights();
         }
@@ -1054,8 +1021,7 @@ namespace Oblivion.Messages.Handlers
             if (room == null)
                 return;
             if (!room.CheckRights(Session) && room.RoomData.WhoCanKick != 2
-                                           && Session.GetHabbo().Rank <
-                                           Convert.ToUInt32(Oblivion.GetDbConfig().DbData["ambassador.minrank"]))
+                && Session.GetHabbo().Rank < Convert.ToUInt32(Oblivion.GetDbConfig().DbData["ambassador.minrank"]))
                 return;
             var pId = Request.GetUInteger();
             var roomUserByHabbo = room.GetRoomUserManager().GetRoomUserByHabbo(pId);
@@ -1066,7 +1032,7 @@ namespace Oblivion.Messages.Handlers
                 roomUserByHabbo.GetClient().GetHabbo().HasFuse("fuse_no_kick"))
                 return;
             room.GetRoomUserManager().RemoveUserFromRoom(roomUserByHabbo.GetClient(), true, true);
-            roomUserByHabbo.GetClient().GetHabbo().CurrentRoomUserId = -1;
+            roomUserByHabbo.GetClient().CurrentRoomUserId = -1;
             Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_SelfModKickSeen", 1);
         }
 
@@ -1094,7 +1060,7 @@ namespace Oblivion.Messages.Handlers
                 time = 788922000L;
             room.AddBan(num, time);
             room.GetRoomUserManager().RemoveUserFromRoom(roomUserByHabbo.GetClient(), true, true);
-            Session.GetHabbo().CurrentRoomUserId = -1;
+            Session.CurrentRoomUserId = -1;
             Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_SelfModBanSeen", 1);
         }
 
@@ -1138,7 +1104,7 @@ namespace Oblivion.Messages.Handlers
                     .GetInventoryComponent()
                     .AddItemArray(room.GetRoomItemHandler().RemoveAllFurniture(Session));
             var roomData = room.RoomData;
-            Oblivion.GetGame().GetRoomManager().UnloadRoom(room);
+            Oblivion.GetGame().GetRoomManager().UnloadRoom(room, "Delete room");
             Oblivion.GetGame().GetRoomManager().QueueVoteRemove(roomData);
             if (roomData == null || Session == null)
                 return;
@@ -1150,15 +1116,18 @@ namespace Oblivion.Messages.Handlers
                 queryReactor.RunFastQuery($"DELETE FROM rooms_rights WHERE room_id = {roomId}");
                 queryReactor.RunFastQuery($"UPDATE users SET home_room = '0' WHERE home_room = {roomId}");
             }
-
             if (Session.GetHabbo().Rank > 5u && Session.GetHabbo().UserName != roomData.Owner)
                 Oblivion.GetGame()
                     .GetModerationTool()
                     .LogStaffEntry(Session.GetHabbo().UserName, roomData.Name, "Room deletion",
                         $"Deleted room ID {roomData.Id}");
+            var roomData2 = (
+                from p in Session.GetHabbo().Data.Rooms
+                where p.Id == roomId
+                select p).SingleOrDefault();
 
-
-            Session.GetHabbo().Data.Rooms.Remove(roomId);
+            if (roomData2 != null)
+                Session.GetHabbo().Data.Rooms.Remove(roomData2);
         }
 
         internal void AirClickUser()
@@ -1210,7 +1179,6 @@ namespace Oblivion.Messages.Handlers
                     msg.AppendInteger(-1);
                     msg.AppendBool(false);
                 }
-
             if (habbo.PreviousOnline == 0)
                 msg.AppendInteger(-1);
             else if (Oblivion.GetGame().GetClientManager().GetClientByUserId(habbo.Id) == null)
@@ -1226,7 +1194,7 @@ namespace Oblivion.Messages.Handlers
             var msg2 = new ServerMessage(LibraryParser.OutgoingRequest("UserBadgesMessageComposer"));
             msg2.AppendInteger(habbo.Id);
 
-            var badges = habbo.GetBadgeComponent().BadgeList.Values.Where(badge => badge.Slot > 0)
+            var badges = habbo.GetBadgeComponent().BadgeList.Values.Cast<Badge>().Where(badge => badge.Slot > 0)
                 .ToList();
             msg2.AppendInteger(badges.Count);
             foreach (
@@ -1235,7 +1203,6 @@ namespace Oblivion.Messages.Handlers
                 msg2.AppendInteger(badge.Slot);
                 msg2.AppendString(badge.Code);
             }
-
             Session.SendMessage(msg2);
         }
 
@@ -1338,7 +1305,6 @@ namespace Oblivion.Messages.Handlers
                 b = false;
                 i = 3;
             }
-
             Response.AppendBool(b);
             Response.AppendInteger(i);
         }
@@ -1388,13 +1354,11 @@ namespace Oblivion.Messages.Handlers
                         return;
                 }
                 Oblivion.GetGame().GetRoomManager().QueueVoteAdd(room.RoomData);
-
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
                     queryReactor.RunFastQuery(string.Concat("UPDATE rooms_data SET score = ", room.RoomData.Score,
                         " WHERE id = ", room.RoomId));
                 }
-
                 Session.GetHabbo().RatedRooms.Add(room.RoomId);
                 Response.Init(LibraryParser.OutgoingRequest("RoomRatingMessageComposer"));
                 Response.AppendInteger(room.RoomData.Score);
@@ -1450,7 +1414,6 @@ namespace Oblivion.Messages.Handlers
                 clientByUserName.GetMessageHandler().SendResponse();
                 return;
             }
-
             if (clientByUserName.GetHabbo().CurrentRoomId != Session.GetHabbo().CurrentRoomId)
             {
                 clientByUserName.GetMessageHandler()
@@ -1482,7 +1445,6 @@ namespace Oblivion.Messages.Handlers
                     return;
                 }
             }
-
             if (room.RoomData.WordFilter.Contains(text))
                 return;
             if (text.Contains("+"))
@@ -1490,7 +1452,6 @@ namespace Oblivion.Messages.Handlers
                 Session.SendNotif(Oblivion.GetLanguage().GetVar("character_error_plus"));
                 return;
             }
-
             room.RoomData.WordFilter.Add(text);
             using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
@@ -1572,7 +1533,6 @@ namespace Oblivion.Messages.Handlers
                         .ProgressUserAchievement(Session, "ACH_RoomDecoLandscape", 1);
                     break;
             }
-
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery(string.Concat("UPDATE rooms_data SET ", type, " = @extradata WHERE id = ",
@@ -1581,7 +1541,6 @@ namespace Oblivion.Messages.Handlers
                 queryReactor.RunQuery();
                 queryReactor.RunFastQuery($"DELETE FROM items_rooms WHERE id={item.Id} LIMIT 1");
             }
-
             Session.GetHabbo().GetInventoryComponent().RemoveItem(item.Id, false, 0);
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("RoomSpacesMessageComposer"));
             serverMessage.AppendString(type);
@@ -1611,7 +1570,6 @@ namespace Oblivion.Messages.Handlers
             catch (Exception)
             {
             }
-
             var category = Request.GetInteger();
 
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(num) ?? new Room();
@@ -1624,21 +1582,18 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().Credits -= (int) catalogItem.CreditsCost;
                 Session.GetHabbo().UpdateCreditsBalance(true);
             }
-
             if (catalogItem.DucketsCost > 0)
             {
                 if (catalogItem.DucketsCost > Session.GetHabbo().ActivityPoints) return;
                 Session.GetHabbo().ActivityPoints -= (int) catalogItem.DucketsCost;
                 Session.GetHabbo().UpdateActivityPointsBalance(true);
             }
-
             if (catalogItem.DiamondsCost > 0)
             {
                 if (catalogItem.DiamondsCost > Session.GetHabbo().Diamonds) return;
                 Session.GetHabbo().Diamonds -= (int) catalogItem.DiamondsCost;
                 Session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
             }
-
             Session.SendMessage(CatalogPageComposer.PurchaseOk(catalogItem, catalogItem.Items));
 
             if (room.RoomData.Event != null && !room.RoomData.Event.HasExpired)
@@ -1651,7 +1606,6 @@ namespace Oblivion.Messages.Handlers
                 Oblivion.GetGame().GetRoomEvents().AddNewEvent(room.RoomId, text, text2, Session, 7200, category);
                 Oblivion.GetGame().GetRoomEvents().SerializeEventInfo(room.RoomId);
             }
-
             Session.GetHabbo().GetBadgeComponent().GiveBadge("RADZZ", true, Session);
         }
 
@@ -1664,12 +1618,10 @@ namespace Oblivion.Messages.Handlers
             /* TODO CHECK */
             foreach (var current in Session.GetHabbo().Data.Rooms)
             {
-                var data = Oblivion.GetGame().GetRoomManager().GenerateRoomData(current);
-                serverMessage.AppendInteger(data.Id);
-                serverMessage.AppendString(data.Name);
+                serverMessage.AppendInteger(current.Id);
+                serverMessage.AppendString(current.Name);
                 serverMessage.AppendBool(false);
             }
-
             Response = serverMessage;
             SendResponse();
         }
@@ -1773,7 +1725,6 @@ namespace Oblivion.Messages.Handlers
 
                         return;
                     }
-
                 double doorZ;
                 var charDoor = lines[doorY][doorX];
                 if (charDoor >= (char) 97 && charDoor <= 119) // a-w
@@ -1801,9 +1752,8 @@ namespace Oblivion.Messages.Handlers
                     queryReactor.RunFastQuery(
                         $"UPDATE rooms_data SET model_name = 'custom', wallthick = '{wallThickness}', floorthick = '{floorThickness}', walls_height = '{wallHeight}' WHERE id = {room.RoomId};");
                 }
-
                 room.ResetGameMap("custom", wallHeight, wallThickness, floorThickness);
-                Oblivion.GetGame().GetRoomManager().UnloadRoom(room);
+                Oblivion.GetGame().GetRoomManager().UnloadRoom(room, "Reload floor");
 
                 var forwardToRoom = new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
                 forwardToRoom.AppendInteger(room.RoomId);
@@ -1837,7 +1787,6 @@ namespace Oblivion.Messages.Handlers
                 queryReactor.RunFastQuery(string.Concat("UPDATE bots SET room_id = '", room.RoomId, "', x = '", getX,
                     "', y = '", getY, "' WHERE id = '", pet.PetId, "'"));
             }
-
             pet.PlacedInRoom = true;
             pet.RoomId = room.RoomId;
             var bot = new RoomBot(pet.PetId, pet.OwnerId, pet.RoomId, AiType.Pet, "freeroam", pet.Name, "", pet.Look,
@@ -1874,13 +1823,6 @@ namespace Oblivion.Messages.Handlers
                 !room.CheckRights(Session, true))
                 return;
 
-            if (room.GetRoomUserManager().Pets.Values.Count >= 5)
-            {
-                Session.SendNotif("Você só pode colocar 5 pets por sala!");
-                return;
-            }
-
-
             var petId = Request.GetUInteger();
             var pet = Session.GetHabbo().GetInventoryComponent().GetPet(petId);
 
@@ -1893,6 +1835,11 @@ namespace Oblivion.Messages.Handlers
             if (!room.GetGameMap().CanWalk(x, y, false))
                 return;
 
+            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                queryReactor.RunFastQuery("UPDATE bots SET room_id = '" + room.RoomId + "', x = '" + x + "', y = '" +
+                                          y + "' WHERE id = '" + petId + "'");
+            }
 
             pet.PlacedInRoom = true;
             pet.RoomId = room.RoomId;
@@ -1904,15 +1851,10 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().GetInventoryComponent().MovePetToRoom(pet.PetId);
             if (pet.DbState != DatabaseUpdateState.NeedsInsert)
                 pet.DbState = DatabaseUpdateState.NeedsUpdate;
-
-
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.RunFastQuery("UPDATE bots SET room_id = '" + room.RoomId + "', x = '" + x + "', y = '" +
-                                          y + "' WHERE id = '" + petId + "'");
-                room.GetRoomUserManager().SavePets(queryReactor);
+                room.GetRoomUserManager().SavePets(queryreactor2);
             }
-
             Session.SendMessage(Session.GetHabbo().GetInventoryComponent().SerializePetInventory());
         }
 
@@ -1960,7 +1902,6 @@ namespace Oblivion.Messages.Handlers
                 SendResponse();
                 return;
             }
-
             if (num3 != 5)
                 return;
 
@@ -2001,15 +1942,15 @@ namespace Oblivion.Messages.Handlers
                         var mix = array[3] == "true";
                         if (speechDelay < 7) speechDelay = 7;
 
-                        var speechs = speechsJunk
-                            .Where(speech =>
-                                !string.IsNullOrEmpty(speech) &&
-                                (!speech.ToLower().Contains("update") || !speech.ToLower().Contains("set")))
-                            .Aggregate(string.Empty,
-                                (current, speech) =>
-                                    current + TextHandling.FilterHtml(speech, Session.GetHabbo().GotCommand("ha")) +
-                                    ";");
-
+                        var speechs =
+                            speechsJunk.Where(
+                                    speech =>
+                                        !string.IsNullOrEmpty(speech) &&
+                                        (!speech.ToLower().Contains("update") || !speech.ToLower().Contains("set")))
+                                .Aggregate(string.Empty,
+                                    (current, speech) =>
+                                        current + TextHandling.FilterHtml(speech, Session.GetHabbo().GotCommand("ha")) +
+                                        ";");
                         using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                         {
                             queryReactor.SetQuery(
@@ -2022,7 +1963,6 @@ namespace Oblivion.Messages.Handlers
                             queryReactor.AddParameter("botid", botId);
                             queryReactor.RunQuery();
                         }
-
                         var randomSpeech = speechs.Split(';').ToList();
 
                         room.GetRoomUserManager()
@@ -2045,7 +1985,6 @@ namespace Oblivion.Messages.Handlers
                         queryReactor.AddParameter("botid", botId);
                         queryReactor.RunQuery();
                     }
-
                     goto IL_439;
                 case 4:
                     break;
@@ -2066,7 +2005,6 @@ namespace Oblivion.Messages.Handlers
                 default:
                     goto IL_439;
             }
-
             if (bot.BotData.DanceId > 0)
             {
                 bot.BotData.DanceId = 0;
@@ -2077,7 +2015,6 @@ namespace Oblivion.Messages.Handlers
                 bot.DanceId = random.Next(1, 4);
                 bot.BotData.DanceId = bot.DanceId;
             }
-
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("DanceStatusMessageComposer"));
             serverMessage.AppendInteger(bot.VirtualId);
             serverMessage.AppendInteger(bot.BotData.DanceId);
@@ -2169,7 +2106,6 @@ namespace Oblivion.Messages.Handlers
                 sleep.AppendBool(roomUserByHabbo.IsAsleep);
                 room.SendMessage(sleep);
             }
-
             Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.SocialWave);
         }
 
@@ -2184,27 +2120,24 @@ namespace Oblivion.Messages.Handlers
         {
             try
             {
-                lock (SessionLock)
+                if (Session?.GetConnection() != null)
                 {
-                    if (Session?.GetConnection() != null)
+                    if (Session?.GetHabbo()?.LoadingRoom <= 0u || CurrentLoadingRoom == null)
+                        return;
+                    var roomData = CurrentLoadingRoom.RoomData;
+                    if (roomData == null)
+                        return;
+                    if (roomData.Model == null || CurrentLoadingRoom.GetGameMap() == null)
                     {
-                        if (Session?.GetHabbo()?.LoadingRoom <= 0u || CurrentLoadingRoom == null)
-                            return;
-                        var roomData = CurrentLoadingRoom.RoomData;
-                        if (roomData == null)
-                            return;
-                        if (roomData.Model == null || CurrentLoadingRoom.GetGameMap() == null)
-                        {
-                            Session.SendMessage(
-                                new ServerMessage(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer")));
-                            ClearRoomLoading();
-                        }
-                        else
-                        {
-                            Session.SendMessage(CurrentLoadingRoom.GetGameMap().GetNewHeightmap());
-                            Session.SendMessage(CurrentLoadingRoom.GetGameMap().Model.GetHeightmap());
-                            GetRoomData3();
-                        }
+                        Session.SendMessage(
+                            new ServerMessage(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer")));
+                        ClearRoomLoading();
+                    }
+                    else
+                    {
+                        Session.SendMessage(CurrentLoadingRoom.GetGameMap().GetNewHeightmap());
+                        Session.SendMessage(CurrentLoadingRoom.GetGameMap().Model.GetHeightmap());
+                        GetRoomData3();
                     }
                 }
             }
@@ -2217,71 +2150,66 @@ namespace Oblivion.Messages.Handlers
 
         internal void GetRoomData3()
         {
-            lock (SessionLock)
+            if (Session?.GetHabbo() == null || Session.GetHabbo().LoadingRoom <= 0u ||
+                !Session.GetHabbo().LoadingChecksPassed ||
+                CurrentLoadingRoom == null)
+                return;
+            if (CurrentLoadingRoom.RoomData.UsersNow + 1 > CurrentLoadingRoom.RoomData.UsersMax &&
+                !Session.GetHabbo().HasFuse("fuse_enter_full_rooms"))
             {
-                if (Session?.GetHabbo() == null || Session.GetHabbo().LoadingRoom <= 0u ||
-                    !Session.GetHabbo().LoadingChecksPassed ||
-                    CurrentLoadingRoom == null)
-                    return;
-                if (CurrentLoadingRoom.RoomData.UsersNow + 1 > CurrentLoadingRoom.RoomData.UsersMax &&
-                    !Session.GetHabbo().HasFuse("fuse_enter_full_rooms"))
-                {
-                    var roomFull = new ServerMessage(LibraryParser.OutgoingRequest("RoomEnterErrorMessageComposer"));
-                    roomFull.AppendInteger(1);
-                    return;
-                }
-
-                var array = CurrentLoadingRoom.GetRoomItemHandler().FloorItems.Values.ToList();
-                var array2 = CurrentLoadingRoom.GetRoomItemHandler().WallItems.Values.ToList();
-                Response.Init(LibraryParser.OutgoingRequest("RoomFloorItemsMessageComposer"));
-
-
-                Response.AppendInteger(1);
-                Response.AppendInteger(CurrentLoadingRoom.RoomData.OwnerId);
-                Response.AppendString(CurrentLoadingRoom.RoomData.Owner);
-
-
-                Response.AppendInteger(array.Count);
-                /* TODO CHECK */
-                foreach (var roomItem in array)
-                    roomItem.Serialize(Response);
-
-                SendResponse();
-                Response.Init(LibraryParser.OutgoingRequest("RoomWallItemsMessageComposer"));
-
-                Response.AppendInteger(1);
-                Response.AppendInteger(CurrentLoadingRoom.RoomData.OwnerId);
-                Response.AppendString(CurrentLoadingRoom.RoomData.Owner);
-
-                Response.AppendInteger(array2.Count);
-                foreach (var roomItem2 in array2)
-                    roomItem2.Serialize(Response);
-
-                SendResponse();
-                array.Clear();
-                array2.Clear();
-                CurrentLoadingRoom.GetRoomUserManager().AddUserToRoom(Session, Session.GetHabbo().SpectatorMode);
-                Session.GetHabbo().SpectatorMode = false;
-
-                if (Oblivion.GetUnixTimeStamp() < Session.GetHabbo().FloodTime && Session.GetHabbo().FloodTime != 0)
-                {
-                    var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FloodFilterMessageComposer"));
-                    serverMessage.AppendInteger(Session.GetHabbo().FloodTime - Oblivion.GetUnixTimeStamp());
-
-                    Session.SendMessage(serverMessage);
-                }
-
-                ClearRoomLoading();
-
-                if (!Oblivion.GetGame().GetPollManager().TryGetPoll(CurrentLoadingRoom.RoomId, out var poll) ||
-                    Session.GetHabbo().GotPollData(poll.Id))
-                    return;
-
-                Response.Init(LibraryParser.OutgoingRequest("SuggestPollMessageComposer"));
-                poll.Serialize(Response);
-
-                SendResponse();
+                var roomFull = new ServerMessage(LibraryParser.OutgoingRequest("RoomEnterErrorMessageComposer"));
+                roomFull.AppendInteger(1);
+                return;
             }
+            var array = CurrentLoadingRoom.GetRoomItemHandler().FloorItems.Values.ToList();
+            var array2 = CurrentLoadingRoom.GetRoomItemHandler().WallItems.Values.ToList();
+            Response.Init(LibraryParser.OutgoingRequest("RoomFloorItemsMessageComposer"));
+
+
+            Response.AppendInteger(1);
+            Response.AppendInteger(CurrentLoadingRoom.RoomData.OwnerId);
+            Response.AppendString(CurrentLoadingRoom.RoomData.Owner);
+
+
+            Response.AppendInteger(array.Count);
+            /* TODO CHECK */
+            foreach (var roomItem in array)
+                roomItem.Serialize(Response);
+
+            SendResponse();
+            Response.Init(LibraryParser.OutgoingRequest("RoomWallItemsMessageComposer"));
+
+            Response.AppendInteger(1);
+            Response.AppendInteger(CurrentLoadingRoom.RoomData.OwnerId);
+            Response.AppendString(CurrentLoadingRoom.RoomData.Owner);
+
+            Response.AppendInteger(array2.Count);
+            foreach (var roomItem2 in array2)
+                roomItem2.Serialize(Response);
+
+            SendResponse();
+            array.Clear();
+            array2.Clear();
+            CurrentLoadingRoom.GetRoomUserManager().AddUserToRoom(Session, Session.GetHabbo().SpectatorMode);
+            Session.GetHabbo().SpectatorMode = false;
+            
+            if (Oblivion.GetUnixTimeStamp() < Session.GetHabbo().FloodTime && Session.GetHabbo().FloodTime != 0)
+            {
+                var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FloodFilterMessageComposer"));
+                serverMessage.AppendInteger(Session.GetHabbo().FloodTime - Oblivion.GetUnixTimeStamp());
+
+                Session.SendMessage(serverMessage);
+            }
+            ClearRoomLoading();
+
+            if (!Oblivion.GetGame().GetPollManager().TryGetPoll(CurrentLoadingRoom.RoomId, out var poll) ||
+                Session.GetHabbo().GotPollData(poll.Id))
+                return;
+
+            Response.Init(LibraryParser.OutgoingRequest("SuggestPollMessageComposer"));
+            poll.Serialize(Response);
+
+            SendResponse();
         }
 
         internal void WidgetContainers()
@@ -2488,14 +2416,12 @@ namespace Oblivion.Messages.Handlers
             var roomUserByHabbo = currentRoom.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
             var roomUserByHabbo2 = currentRoom.GetRoomUserManager().GetRoomUserByHabbo(text2);
 
-
             msg = currentRoom.RoomData.WordFilter.Aggregate(msg,
                 (current, s) => Regex.Replace(current, Regex.Escape(s), "bobba", RegexOptions.IgnoreCase));
-
             if (!BobbaFilter.CanTalk(Session, msg))
+            {
                 return;
-
-
+            }
 
             var span = DateTime.Now - _floodTime;
 
@@ -2508,8 +2434,7 @@ namespace Oblivion.Messages.Handlers
             _floodTime = DateTime.Now;
             _floodCount++;
 
-            if (roomUserByHabbo?.GetClient()?.GetHabbo() == null ||
-                roomUserByHabbo2?.GetClient()?.GetHabbo()?.Data?.Ignores == null)
+            if (roomUserByHabbo?.GetClient()?.GetHabbo() == null || roomUserByHabbo2?.GetClient()?.GetHabbo()?.Data?.Ignores == null)
             {
                 Session.SendWhisper(msg);
                 return;
@@ -2517,14 +2442,8 @@ namespace Oblivion.Messages.Handlers
 
             if (Session.GetHabbo().Rank < 4 && currentRoom.CheckMute(Session))
                 return;
-            try
-            {
-                currentRoom.AddChatlog(Session.GetHabbo().Id, $"<Sussurro para {text2}>: {msg}", false);
-            }
-            catch (Exception e)
-            {
-                Logging.HandleException(e, "whisper addchatlog");
-            }
+
+            currentRoom.AddChatlog(Session.GetHabbo().Id, $"<Sussurro para {text2}>: {msg}", false);
 
             Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.SocialChat);
 
@@ -2546,29 +2465,30 @@ namespace Oblivion.Messages.Handlers
             whisp.AppendInteger(-1);
 
             roomUserByHabbo.GetClient().SendMessage(whisp);
+
             if (!roomUserByHabbo2.IsBot && roomUserByHabbo2.UserId != roomUserByHabbo.UserId && !roomUserByHabbo2
                     .GetClient().GetHabbo().Data.Ignores.Contains(Session.GetHabbo().Id))
                 roomUserByHabbo2.GetClient().SendMessage(whisp);
 
             var roomUserByRank = currentRoom.GetRoomUserManager().GetRoomUserByRank(4);
 
-            if (roomUserByRank.Count <= 0)
+            if (!roomUserByRank.Any())
                 return;
 
-
-            var whispStaff = new ServerMessage(LibraryParser.OutgoingRequest("WhisperMessageComposer"));
-
-            whispStaff.AppendInteger(roomUserByHabbo.VirtualId);
-            whispStaff.AppendString($"Whisper to {text2}: {msg}");
-            whispStaff.AppendInteger(0);
-            whispStaff.AppendInteger(colour2);
-            whispStaff.AppendInteger(0);
-            whispStaff.AppendInteger(-1);
-
+            /* TODO CHECK */
             foreach (var current2 in roomUserByRank)
                 if (current2 != null && current2.HabboId != roomUserByHabbo2.HabboId &&
                     current2.HabboId != roomUserByHabbo.HabboId && current2.GetClient() != null)
                 {
+                    var whispStaff = new ServerMessage(LibraryParser.OutgoingRequest("WhisperMessageComposer"));
+
+                    whispStaff.AppendInteger(roomUserByHabbo.VirtualId);
+                    whispStaff.AppendString($"Whisper to {text2}: {msg}");
+                    whispStaff.AppendInteger(0);
+                    whispStaff.AppendInteger(colour2);
+                    whispStaff.AppendInteger(0);
+                    whispStaff.AppendInteger(-1);
+
                     current2.GetClient().SendMessage(whispStaff);
                 }
         }

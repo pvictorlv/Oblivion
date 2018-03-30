@@ -1,5 +1,8 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using Oblivion.Configuration;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
+using Oblivion.Messages;
+using Oblivion.Messages.Parsers;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
 {
@@ -28,21 +31,30 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 return true;
             }
 
-            client.GetHabbo().Diamonds += 10;
-            client.GetHabbo().UpdateSeasonalCurrencyBalance();
+            client.GetHabbo().Emeralds++;
+            client.GetHabbo().Diamonds += 3;
+            client.GetHabbo().Credits += 500;
+            client.GetHabbo().ActivityPoints += 500;
+            client.SendWhisper("Você recebeu 3 diamantes, 500 moedas e 500 duckets!");
+            client.GetHabbo().UpdateCreditsBalance();
+            client.GetHabbo().UpdateSeasonalCurrencyBalance(true);
 
-            Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(client, "JU", 1, true);
-
-            client.SendNotif(string.Format(Oblivion.GetLanguage().GetVar("staff_gives_diamonds"),
-                session.GetHabbo().UserName, 20));
+            Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(client, Oblivion.GetDbConfig().DbData["badge.code"], 1, true);
+            
             Oblivion.GetGame()
                 .GetModerationTool()
                 .LogStaffEntry(session.GetHabbo().UserName, client.GetHabbo().UserName,
-                    "Diamonds", $"Diamonds given to user [{pms[0]}]");
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
-            {
-                dbClient.RunFastQuery($"UPDATE users SET epoints = epoints + 1 WHERE id = {client.GetHabbo().Id}");
-            }
+                    "EventPoints", $"Rewarded user [{pms[0]}] in event");
+
+
+            var msg = new ServerMessage(LibraryParser.OutgoingRequest("RoomNotificationMessageComposer"));
+            msg.AppendString("rank");
+            msg.AppendInteger(1);
+            msg.AppendString("message");
+            msg.AppendString($"O usuário {client.GetHabbo().UserName} ganhou o evento!");
+            Oblivion.GetGame().GetClientManager().SendMessage(msg);
+            
+
             return true;
         }
     }

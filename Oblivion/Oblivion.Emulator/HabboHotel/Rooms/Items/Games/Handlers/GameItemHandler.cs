@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Rooms.User;
@@ -40,8 +41,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         /// <summary>
         ///     Called when [cycle].
         /// </summary>
-        internal void OnCycle()
+        internal async void OnCycle()
         {
+            await Task.Yield();
             CyclePyramids();
             CycleRandomTeleports();
         }
@@ -109,7 +111,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
                         countAmount++;
                         continue;
                     }
-
                     current.ExtraData = "1";
                     current.UpdateNeeded = true;
                     _room.GetGameMap().TeleportToItem(user, current);
@@ -140,15 +141,13 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         /// </summary>
         private void CyclePyramids()
         {
-            /* TODO CHECK */
-            foreach (var item in _banzaiPyramids.Select(pyramid => pyramid.Value).Where(current => current != null))
+            /* TODO CHECK */ foreach (var item in _banzaiPyramids.Select(pyramid => pyramid.Value).Where(current => current != null))
             {
                 if (item.InteractionCountHelper == 0 && item.ExtraData == "1")
                 {
                     _room.GetGameMap().RemoveFromMap(item, false);
                     item.InteractionCountHelper = 1;
                 }
-
                 if (string.IsNullOrEmpty(item.ExtraData))
                     item.ExtraData = "0";
 

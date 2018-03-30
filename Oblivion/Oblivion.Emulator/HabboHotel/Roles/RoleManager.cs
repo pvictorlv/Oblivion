@@ -48,11 +48,12 @@ namespace Oblivion.HabboHotel.Roles
             var table = dbClient.GetTable();
             if (table != null)
             {
-                /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
+                /* TODO CHECK */
+                foreach (DataRow dataRow in table.Rows)
                 {
-                    if (!_cmdRights.ContainsKey((string) dataRow[0]))
+                    if (!_cmdRights.ContainsKey((string)dataRow[0]))
                     {
-                        _cmdRights.Add((string) dataRow[0], (string) dataRow[1]);
+                        _cmdRights.Add((string)dataRow[0], (string)dataRow[1]);
                     }
                     else
                     {
@@ -66,13 +67,14 @@ namespace Oblivion.HabboHotel.Roles
             {
                 return;
             }
-            /* TODO CHECK */ foreach (DataRow dataRow2 in table2.Rows)
+            /* TODO CHECK */
+            foreach (DataRow dataRow2 in table2.Rows)
             {
-                if ((int) dataRow2[3] == 0)
+                if ((int)dataRow2[3] == 0)
                 {
-                    if (!_rights.ContainsKey((string) dataRow2[0]))
+                    if (!_rights.ContainsKey((string)dataRow2[0]))
                     {
-                        _rights.Add((string) dataRow2[0], Convert.ToUInt32(dataRow2[1]));
+                        _rights.Add((string)dataRow2[0], Convert.ToUInt32(dataRow2[1]));
                     }
                     else
                     {
@@ -81,9 +83,9 @@ namespace Oblivion.HabboHotel.Roles
                 }
                 else
                 {
-                    if ((int) dataRow2[3] > 0)
+                    if ((int)dataRow2[3] > 0)
                     {
-                        _subRights.Add((string) dataRow2[0], (int) dataRow2[3]);
+                        _subRights.Add((string)dataRow2[0], (int)dataRow2[3]);
                     }
                     else
                     {
@@ -150,7 +152,7 @@ namespace Oblivion.HabboHotel.Roles
 
             return list;
         }
-        
+
         /// <summary>
         ///     Clears the rights.
         /// </summary>

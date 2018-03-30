@@ -25,7 +25,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             var user = session.GetHabbo()
                 .CurrentRoom.GetRoomUserManager()
-                .GetRoomUserByVirtualId(session.GetHabbo().CurrentRoomUserId);
+                .GetRoomUserByVirtualId(session.CurrentRoomUserId);
             if (user.RidingHorse)
             {
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("horse_handitem_error"));

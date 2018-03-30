@@ -44,8 +44,6 @@ namespace Oblivion.Messages.Handlers
         {
             Session = session;
             Response = new ServerMessage();
-            SessionLock = new object();
-            RoomLock = new object();
         }
 
         /// <summary>
@@ -60,19 +58,12 @@ namespace Oblivion.Messages.Handlers
         /// <returns>ServerMessage.</returns>
         internal ServerMessage GetResponse() => Response;
 
-
-        internal object SessionLock;
-        internal object RoomLock;
-
         /// <summary>
         ///     Destroys this instance.
         /// </summary>
         internal void Destroy()
         {
             Session = null;
-
-
-            CurrentLoadingRoom = null;
         }
 
         /// <summary>
@@ -81,10 +72,6 @@ namespace Oblivion.Messages.Handlers
         /// <param name="request">The request.</param>
         internal void HandleRequest(ClientMessage request)
         {
-            if (Session == null) return;
-
-            if (Session.Logged && Session.GetHabbo() == null) return;
-
             Request = request;
             LibraryParser.HandlePacket(this, request);
         }
@@ -124,7 +111,6 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session == null) return;
 
-            
             Session.TimePingedReceived = DateTime.Now;
         }
 
@@ -144,7 +130,7 @@ namespace Oblivion.Messages.Handlers
             if (Session == null)
                 return;
 
-            lock (SessionLock)
+            lock (Session)
             {
                 Oblivion.GetGame().GetAchievementManager()
                     .ProgressUserAchievement(Session, "ACH_AllTimeHotelPresence", 1, true);
@@ -222,21 +208,17 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void LoginWithTicket()
         {
-            if (Session == null)
+            if (Session == null || Session.GetHabbo() != null)
                 return;
-            if (Session.Logged) return;
+
             var sso = Request.GetString();
-            
+
             if (string.IsNullOrEmpty(sso) || string.IsNullOrWhiteSpace(sso) || sso.Length < 5 || !Session.TryLogin(sso))
             {
                 Session?.Disconnect("Invalid sso or banned");
                 return;
             }
-
             if (Session == null) return;
-
-            Session.Logged = true;
-
             Session.TimePingedReceived = DateTime.Now;
         }
 
@@ -337,7 +319,6 @@ namespace Oblivion.Messages.Handlers
                 Oblivion.GetGame().GetTargetedOfferManager().GenerateMessage(GetResponse());
                 SendResponse();
             }
-
             if (Session.GetHabbo().CurrentQuestId != 0)
             {
                 var quest = Oblivion.GetGame().GetQuestManager().GetQuest(Session.GetHabbo().CurrentQuestId);
@@ -467,7 +448,6 @@ namespace Oblivion.Messages.Handlers
             {
                 return 0;
             }
-
             return client.GetMessenger().Friends.Count;
         }
 
@@ -521,7 +501,6 @@ namespace Oblivion.Messages.Handlers
                         roomId = rooms.First().Id;
                         break;
                     }
-
                     roomId = rooms[Oblivion.GetRandomNumber(0, rooms.Count)].Id;
                     break;
             }

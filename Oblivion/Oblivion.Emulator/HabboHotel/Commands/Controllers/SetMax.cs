@@ -27,7 +27,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 return true;
             }
 
-            if (maxUsers > 100 * Oblivion.Multipy && !(session.GetHabbo().Vip || session.GetHabbo().HasFuse("fuse_vip_commands")))
+            if (maxUsers > 75 * Oblivion.Multipy && !(session.GetHabbo().Vip || session.GetHabbo().HasFuse("fuse_vip_commands")))
             {
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("command_setmax_error_max"));
                 return true;

@@ -25,7 +25,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var user =
                 session.GetHabbo()
                     .CurrentRoom.GetRoomUserManager()
-                    .GetRoomUserByVirtualId(session.GetHabbo().CurrentRoomUserId);
+                    .GetRoomUserByVirtualId(session.CurrentRoomUserId);
 
             if (user == null) return true;
             if (user.RidingHorse) return true;

@@ -151,7 +151,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
 
         public void OnUserLeave(RoomUser user)
         {
-            if (user?.Team == null) return;
+            if (user == null) return;
             if (user.Team.Equals(Team.Blue)) BlueTeam.Remove(user);
             else
             {

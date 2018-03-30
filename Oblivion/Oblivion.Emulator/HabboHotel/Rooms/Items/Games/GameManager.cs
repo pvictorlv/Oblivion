@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -37,8 +38,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
         }
         
 
-        internal void OnCycle()
+        internal async void OnCycle()
         {
+            await Task.Yield();
             _redTeamItems.OnCycle();
             _blueTeamItems.OnCycle();
             _greenTeamItems.OnCycle();
@@ -178,7 +180,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
                         while (enumerator.MoveNext())
                         {
                             var current = enumerator.Current;
-                            if (current?.GetBaseItem().InteractionType != Interaction.FreezeBlueCounter) continue;
+                            if (current.GetBaseItem().InteractionType != Interaction.FreezeBlueCounter) continue;
                             var result = current;
                             return result;
                         }
@@ -273,7 +275,10 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             GetRoom().GetWiredHandler().ResetExtraString(Interaction.ActionGiveScore);
         }
 
-        internal Room GetRoom() => _room;
+        internal Room GetRoom()
+        {
+            return _room;
+        }
 
         internal void Destroy()
         {
@@ -290,10 +295,16 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             _room = null;
         }
 
-        private static bool IsSoccerGoal(Interaction type) => type == Interaction.FootballGoalBlue || type == Interaction.FootballGoalGreen ||
-                                                              type == Interaction.FootballGoalRed || type == Interaction.FootballGoalYellow;
+        private static bool IsSoccerGoal(Interaction type)
+        {
+            return type == Interaction.FootballGoalBlue || type == Interaction.FootballGoalGreen ||
+                   type == Interaction.FootballGoalRed || type == Interaction.FootballGoalYellow;
+        }
 
-        private int GetScoreForTeam(Team team) => TeamPoints[(int) team];
+        private int GetScoreForTeam(Team team)
+        {
+            return TeamPoints[(int) team];
+        }
 
         private QueuedDictionary<long, RoomItem> GetFurniItems(Team team)
         {
