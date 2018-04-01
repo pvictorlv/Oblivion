@@ -975,6 +975,13 @@ namespace Oblivion.HabboHotel.Items.Interactions
                 case "totem":
                     return Interaction.Totem;
 
+                case "name_prefix":
+                    return Interaction.NamePrefix;
+                case "name_color":
+                    return Interaction.ColorName;
+                case "bubble_word":
+                    return Interaction.ColorBubble;
+
                 case "actioncallstacks":
                 case "wf_act_call_stacks":
                     return Interaction.ActionCallStacks;

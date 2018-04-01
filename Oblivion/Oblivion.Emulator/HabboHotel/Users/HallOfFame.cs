@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Data;
+using Oblivion.Configuration;
+using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Users
 {
@@ -21,14 +24,31 @@ namespace Oblivion.HabboHotel.Users
             Rankings.Clear();
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery("SELECT id,username,look,vip_points FROM users WHERE rank < 3 ORDER BY vip_points DESC LIMIT 10");
+                queryReactor.SetQuery("SELECT id,username,look,diamonds FROM users WHERE rank < 3 ORDER BY diamonds DESC LIMIT 10");
                 var table = queryReactor.GetTable();
 
                 if (table == null)
                     return;
+               
+                    foreach (DataRow row in table.Rows)
+                {
+                    try
+                    {
+                        if (!int.TryParse(row["diamonds"].ToString(), out var diamonds))
+                        {
+                            Out.WriteLine($"User {row["id"]} has invalid diamond amount");
+                            continue;
+                        }
 
-                foreach (DataRow row in table.Rows)
-                    Rankings.Add(new HallOfFameElement((uint) row["id"], (int) row["vip_points"], row["username"].ToString(), row["look"].ToString()));
+                        Rankings.Add(new HallOfFameElement((uint) row["id"], diamonds,
+                            row["username"].ToString(), row["look"].ToString()));
+                    }
+                    catch (Exception e)
+                    {
+                        Logging.HandleException(e, $"Hall of fame user: {row["id"]}");
+                    }
+                }
+                
             }
         }
     }

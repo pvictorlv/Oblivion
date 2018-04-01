@@ -65,16 +65,19 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
         public bool Execute(params object[] stuff)
         {
             var roomUser = (RoomUser) stuff[0];
-            var roomItem = (RoomItem) stuff[1];
+            var roomItem = stuff[1];
 
-            if (roomUser == null || roomItem == null)
+            if (!(roomItem is RoomItem item))
+            {
+                return false;
+            }
+            if (roomUser == null)
                 return false;
 
-            if (!Items.Contains(roomItem))
+            if (!Items.Contains(item))
                 return false;
 
-
-            var num = Oblivion.Now();
+;
             //todo delay
 
 //            if (_mNext > num)
@@ -87,7 +90,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 /* TODO CHECK */
                 foreach (var current2 in conditions)
                 {
-                    if (!current2.Execute(roomUser, roomItem)) return false;
+                    if (!current2.Execute(roomUser, item)) return false;
                     WiredHandler.OnEvent(current2);
                 }
 

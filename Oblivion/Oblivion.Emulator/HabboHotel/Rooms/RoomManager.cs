@@ -162,7 +162,7 @@ namespace Oblivion.HabboHotel.Rooms
                 return room;
             }
 
-            var data = GetRoom(roomId).RoomData;
+            var data = GetRoom(roomId)?.RoomData;
             if (data != null)
                 return data;
 

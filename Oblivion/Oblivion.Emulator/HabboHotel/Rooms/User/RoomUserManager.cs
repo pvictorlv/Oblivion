@@ -1142,7 +1142,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
         internal bool UserGoToTile(RoomUser roomUsers, bool invalidStep)
         {
-            if (roomUsers == null) return false;
+            if (roomUsers?.Path == null) return false;
             if (((invalidStep) || (roomUsers.PathStep >= roomUsers.Path.Count) ||
                  ((roomUsers.GoalX == roomUsers.X) && (roomUsers.GoalY == roomUsers.Y))))
             {
@@ -1408,210 +1408,219 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="roomUsers"></param>
         internal async void UserCycleOnRoom(RoomUser roomUsers)
         {
-            await Task.Yield();
-
-            // Region Check User Elegibility
-            if (roomUsers?.Statusses == null) return;
-
-            if (!IsValid(roomUsers))
+            try
             {
-                if (roomUsers.GetClient() != null)
-                    RemoveUserFromRoom(roomUsers.GetClient(), false, false);
-                else
-                    RemoveRoomUser(roomUsers);
-                return;
-            }
+                await Task.Yield();
 
-            lock (roomUsers)
-            {
-                if (!roomUsers.IsOwner() && roomUsers.LastHostingDate + 60 < Oblivion.GetUnixTimeStamp())
+                // Region Check User Elegibility
+                if (roomUsers?.Statusses == null) return;
+
+                if (!IsValid(roomUsers))
                 {
-                    var roomOwner = (uint) roomUsers.GetRoom().RoomData.OwnerId;
-                    var ownerClient = Oblivion.GetGame().GetClientManager().GetClientByUserId(roomOwner);
-                    if (ownerClient != null)
+                    if (roomUsers.GetClient() != null)
+                        RemoveUserFromRoom(roomUsers.GetClient(), false, false);
+                    else
+                        RemoveRoomUser(roomUsers);
+                    return;
+                }
+
+                lock (roomUsers)
+                {
+                    if (!roomUsers.IsOwner() && roomUsers.LastHostingDate + 60 < Oblivion.GetUnixTimeStamp())
                     {
-                        Oblivion.GetGame().GetAchievementManager()
-                            .ProgressUserAchievement(ownerClient, "ACH_RoomDecoHosting", 1, true);
+                        var roomOwner = (uint) roomUsers.GetRoom().RoomData.OwnerId;
+                        var ownerClient = Oblivion.GetGame().GetClientManager().GetClientByUserId(roomOwner);
+                        if (ownerClient != null)
+                        {
+                            Oblivion.GetGame().GetAchievementManager()
+                                .ProgressUserAchievement(ownerClient, "ACH_RoomDecoHosting", 1, true);
+                        }
+
+                        roomUsers.LastHostingDate = Oblivion.GetUnixTimeStamp();
                     }
 
-                    roomUsers.LastHostingDate = Oblivion.GetUnixTimeStamp();
-                }
-
-                // Region Check User Remove Unlocking
-                lock (_removeUsers)
-                {
-                    if (roomUsers.NeedsAutokick && !_removeUsers.Contains(roomUsers))
-                    {
-                        _removeUsers.Add(roomUsers);
-                        return;
-                    }
-                }
-
-                // Region Idle and Room Tiem Check
-                roomUsers.IdleTime++;
-
-                // Region User Achievement of Room
-                UserRoomTimeCycles(roomUsers);
-
-                // Carry Item Hand Checking
-                if (roomUsers.CarryItemId > 0)
-                {
-                    roomUsers.CarryTimer--;
-
-                    // If The Carry Timer is 0.. Remove CarryItem.
-                    if (roomUsers.CarryTimer <= 0)
-                        roomUsers.CarryItem(0);
-                }
-
-
-                if (roomUsers.Frozen)
-                {
-                    roomUsers.FrozenTick--;
-                    if (roomUsers.FrozenTick <= 0)
-                    {
-                        roomUsers.Frozen = false;
-                        roomUsers.GetClient().SendWhisper("Você foi descongelado!!");
-                    }
-                }
-
-
-                // Region Check User Got Freezed
-                if (_userRoom.GotFreeze())
-                {
-                    Freeze.CycleUser(roomUsers);
-                }
-
-                // Region Variable Registering
-                var invalidStep = false;
-                // Region Check User Tile Selection
-                if (roomUsers.SetStep)
-                {
-                    // Check if User is Going to the Door.
+                    // Region Check User Remove Unlocking
                     lock (_removeUsers)
                     {
-                        if ((roomUsers.SetX == _userRoom.GetGameMap().Model.DoorX) &&
-                            (roomUsers.SetY == _userRoom.GetGameMap().Model.DoorY) &&
-                            (!_removeUsers.Contains(roomUsers)) &&
-                            (!roomUsers.IsBot) && (!roomUsers.IsPet))
+                        if (roomUsers.NeedsAutokick && !_removeUsers.Contains(roomUsers))
                         {
                             _removeUsers.Add(roomUsers);
                             return;
                         }
                     }
 
-                    // Check Elegibility of Walk In Tile
-                    invalidStep = UserCanWalkInTile(roomUsers);
+                    // Region Idle and Room Tiem Check
+                    roomUsers.IdleTime++;
 
-                    // User isn't Anymore Set a Tile to Walk
-                    roomUsers.SetStep = false;
-                }
+                    // Region User Achievement of Room
+                    UserRoomTimeCycles(roomUsers);
 
-                // Pet Must Stop Too!
-                if (((roomUsers.GoalX == roomUsers.X) && (roomUsers.GoalY == roomUsers.Y)) && (roomUsers.RidingHorse) &&
-                    (!roomUsers.IsPet))
-                {
-                    var horseStopWalkRidingPet = GetRoomUserByVirtualId(Convert.ToInt32(roomUsers.HorseId));
-
-                    if (horseStopWalkRidingPet != null)
+                    // Carry Item Hand Checking
+                    if (roomUsers.CarryItemId > 0)
                     {
-                        var horseStopWalkRidingPetMessage =
-                            new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
-                        horseStopWalkRidingPetMessage.AppendInteger(1);
-                        horseStopWalkRidingPet.SerializeStatus(horseStopWalkRidingPetMessage, "");
-                        _userRoom.SendMessage(horseStopWalkRidingPetMessage);
+                        roomUsers.CarryTimer--;
 
-                        horseStopWalkRidingPet.IsWalking = false;
-                        horseStopWalkRidingPet.ClearMovement();
+                        // If The Carry Timer is 0.. Remove CarryItem.
+                        if (roomUsers.CarryTimer <= 0)
+                            roomUsers.CarryItem(0);
                     }
-                }
-
-                // User Reached Goal Need Stop.
-                if (((roomUsers.GoalX == roomUsers.X) && (roomUsers.GoalY == roomUsers.Y)) || (roomUsers.Freezed))
-                {
-                    roomUsers.IsWalking = false;
-                    roomUsers.ClearMovement();
-                    roomUsers.SetStep = false;
-                    UpdateUserStatus(roomUsers, false);
-                }
 
 
-                // Check if Proably the Pathfinder is with Some Errors..
-                if (roomUsers.PathRecalcNeeded)
-                {
-                    roomUsers.Path.Clear();
-                    roomUsers.Path = PathFinder.FindPath(roomUsers, _userRoom.GetGameMap().DiagonalEnabled,
-                        _userRoom.GetGameMap(), new Vector2D(roomUsers.X, roomUsers.Y),
-                        new Vector2D(roomUsers.GoalX, roomUsers.GoalY));
-
-                    if (roomUsers.Path.Count > 1)
+                    if (roomUsers.Frozen)
                     {
-                        roomUsers.PathStep = 1;
-                        roomUsers.IsWalking = true;
-                        roomUsers.PathRecalcNeeded = false;
-                    }
-                    else
-                    {
-                        roomUsers.PathRecalcNeeded = false;
-                        roomUsers.Path.Clear();
-                    }
-                }
-
-                // If user Isn't Walking, Let's go Back..
-                if ((!roomUsers.IsWalking) || (roomUsers.Freezed))
-                {
-                    roomUsers.ClearMovement();
-                }
-                else
-                {
-                    // If he Want's to Walk.. Let's Continue!..
-
-                    // Let's go to The Tile! And Walk :D
-                    if (UserGoToTile(roomUsers, invalidStep))
-                    {
-                        // If User isn't Riding, Must Update Statusses...
-                        if (!roomUsers.RidingHorse)
-                            roomUsers.UpdateNeeded = true;
-                    }
-                }
-
-                // If is a Bot.. Let's Tick the Time Count of Bot..
-                if (roomUsers.IsBot)
-                {
-                    try
-                    {
-                        if (_userRoom.GotWireds())
+                        roomUsers.FrozenTick--;
+                        if (roomUsers.FrozenTick <= 0)
                         {
-                            if (roomUsers.FollowingOwner != null)
+                            roomUsers.Frozen = false;
+                            roomUsers.GetClient().SendWhisper("Você foi descongelado!!");
+                        }
+                    }
+
+
+                    // Region Check User Got Freezed
+                    if (_userRoom.GotFreeze())
+                    {
+                        Freeze.CycleUser(roomUsers);
+                    }
+
+                    // Region Variable Registering
+                    var invalidStep = false;
+                    // Region Check User Tile Selection
+                    if (roomUsers.SetStep)
+                    {
+                        // Check if User is Going to the Door.
+                        lock (_removeUsers)
+                        {
+                            if ((roomUsers.SetX == _userRoom.GetGameMap().Model.DoorX) &&
+                                (roomUsers.SetY == _userRoom.GetGameMap().Model.DoorY) &&
+                                (!_removeUsers.Contains(roomUsers)) &&
+                                (!roomUsers.IsBot) && (!roomUsers.IsPet))
                             {
-                                roomUsers.MoveTo(_userRoom.GetGameMap()
-                                    .SquareIsOpen(roomUsers.FollowingOwner.SquareInFront.X,
-                                        roomUsers.FollowingOwner.SquareInFront.Y, false)
-                                    ? roomUsers.FollowingOwner.SquareInFront
-                                    : roomUsers.FollowingOwner.SquareBehind);
-                            }
-
-                            var users = _userRoom.GetGameMap()
-                                .GetRoomUsers(roomUsers.SquareInFront);
-
-                            if (users != null && users.Count > 0)
-                            {
-                                var user = users[0];
-
-                                _userRoom.GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedAvatar, user);
+                                _removeUsers.Add(roomUsers);
+                                return;
                             }
                         }
 
-                        roomUsers.BotAi?.OnTimerTick();
-                    }
-                    catch (Exception e)
-                    {
-                        Logging.HandleException(e, "RoomUsers - BotAi - OnTimerTick");
+                        // Check Elegibility of Walk In Tile
+                        invalidStep = UserCanWalkInTile(roomUsers);
+
+                        // User isn't Anymore Set a Tile to Walk
+                        roomUsers.SetStep = false;
                     }
 
-                    return;
-                }
+                    // Pet Must Stop Too!
+                    if (((roomUsers.GoalX == roomUsers.X) && (roomUsers.GoalY == roomUsers.Y)) &&
+                        (roomUsers.RidingHorse) &&
+                        (!roomUsers.IsPet))
+                    {
+                        var horseStopWalkRidingPet = GetRoomUserByVirtualId(Convert.ToInt32(roomUsers.HorseId));
+
+                        if (horseStopWalkRidingPet != null)
+                        {
+                            var horseStopWalkRidingPetMessage =
+                                new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
+                            horseStopWalkRidingPetMessage.AppendInteger(1);
+                            horseStopWalkRidingPet.SerializeStatus(horseStopWalkRidingPetMessage, "");
+                            _userRoom.SendMessage(horseStopWalkRidingPetMessage);
+
+                            horseStopWalkRidingPet.IsWalking = false;
+                            horseStopWalkRidingPet.ClearMovement();
+                        }
+                    }
+
+                    // User Reached Goal Need Stop.
+                    if (((roomUsers.GoalX == roomUsers.X) && (roomUsers.GoalY == roomUsers.Y)) || (roomUsers.Freezed))
+                    {
+                        roomUsers.IsWalking = false;
+                        roomUsers.ClearMovement();
+                        roomUsers.SetStep = false;
+                        UpdateUserStatus(roomUsers, false);
+                    }
+
+
+                    // Check if Proably the Pathfinder is with Some Errors..
+                    if (roomUsers.PathRecalcNeeded)
+                    {
+                        roomUsers.Path.Clear();
+                        roomUsers.Path = PathFinder.FindPath(roomUsers, _userRoom.GetGameMap().DiagonalEnabled,
+                            _userRoom.GetGameMap(), new Vector2D(roomUsers.X, roomUsers.Y),
+                            new Vector2D(roomUsers.GoalX, roomUsers.GoalY));
+
+                        if (roomUsers.Path.Count > 1)
+                        {
+                            roomUsers.PathStep = 1;
+                            roomUsers.IsWalking = true;
+                            roomUsers.PathRecalcNeeded = false;
+                        }
+                        else
+                        {
+                            roomUsers.PathRecalcNeeded = false;
+                            roomUsers.Path.Clear();
+                        }
+                    }
+
+                    // If user Isn't Walking, Let's go Back..
+                    if ((!roomUsers.IsWalking) || (roomUsers.Freezed))
+                    {
+                        roomUsers.ClearMovement();
+                    }
+                    else
+                    {
+                        // If he Want's to Walk.. Let's Continue!..
+
+                        // Let's go to The Tile! And Walk :D
+                        if (UserGoToTile(roomUsers, invalidStep))
+                        {
+                            // If User isn't Riding, Must Update Statusses...
+                            if (!roomUsers.RidingHorse)
+                                roomUsers.UpdateNeeded = true;
+                        }
+                    }
+
+                    // If is a Bot.. Let's Tick the Time Count of Bot..
+                    if (roomUsers.IsBot)
+                    {
+                        try
+                        {
+                            if (_userRoom.GotWireds())
+                            {
+                                if (roomUsers.FollowingOwner != null)
+                                {
+                                    roomUsers.MoveTo(_userRoom.GetGameMap()
+                                        .SquareIsOpen(roomUsers.FollowingOwner.SquareInFront.X,
+                                            roomUsers.FollowingOwner.SquareInFront.Y, false)
+                                        ? roomUsers.FollowingOwner.SquareInFront
+                                        : roomUsers.FollowingOwner.SquareBehind);
+                                }
+
+                                var users = _userRoom.GetGameMap()
+                                    .GetRoomUsers(roomUsers.SquareInFront);
+
+                                if (users != null && users.Count > 0)
+                                {
+                                    var user = users[0];
+
+                                    _userRoom.GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedAvatar, user);
+                                }
+                            }
+
+                            roomUsers.BotAi?.OnTimerTick();
+                        }
+                        catch (Exception e)
+                        {
+                            Logging.HandleException(e, "RoomUsers - BotAi - OnTimerTick");
+                        }
+
+                        return;
+                    }
 
 //                UpdateUserEffect(roomUsers, roomUsers.X, roomUsers.Y);
+                }
+            }
+            catch (Exception e)
+            {
+                Logging.HandleException(e, "RoomMgr - Cycle");
+
             }
         }
 

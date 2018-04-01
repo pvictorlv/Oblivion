@@ -119,6 +119,23 @@ namespace Oblivion.Messages.Handlers
             var room = Session.GetHabbo().CurrentRoom;
             room?.GetRoomUserManager().RemoveUserFromRoom(Session, true, false);
 
+            var rankings = Oblivion.GetGame().GetHallOfFame().Rankings;
+
+            GetResponse().Init(LibraryParser.OutgoingRequest("HotelViewHallOfFameMessageComposer"));
+            GetResponse().AppendString("");
+            GetResponse().StartArray();
+            foreach (var element in rankings)
+            {
+                GetResponse().AppendInteger(element.UserId);
+                GetResponse().AppendString(element.Username);
+                GetResponse().AppendString(element.Look);
+                GetResponse().AppendInteger(2);
+                GetResponse().AppendInteger(element.Score);
+                GetResponse().SaveArray();
+            }
+            GetResponse().EndArray();
+            SendResponse();
+
             var hotelView = Oblivion.GetGame().GetHotelView();
             if (hotelView.FurniRewardName != null)
             {
@@ -130,6 +147,8 @@ namespace Oblivion.Messages.Handlers
                 Session.SendMessage(serverMessage);
             }
             Session.CurrentRoomUserId = -1;
+
+
         }
 
         internal void LandingCommunityGoal()
@@ -1921,7 +1940,7 @@ namespace Oblivion.Messages.Handlers
             var action = Request.GetInteger();
             var data = Oblivion.FilterInjectionChars(Request.GetString());
             var bot = room.GetRoomUserManager().GetBot(botId);
-            if (bot.BotData == null) return;
+            if (bot?.BotData == null) return;
 
             var flag = false;
             switch (action)
@@ -2245,6 +2264,23 @@ namespace Oblivion.Messages.Handlers
 
             if (Session?.GetHabbo() == null)
                 return;
+
+            var rankings = Oblivion.GetGame().GetHallOfFame().Rankings;
+
+            GetResponse().Init(LibraryParser.OutgoingRequest("HotelViewHallOfFameMessageComposer"));
+            GetResponse().AppendString("");
+            GetResponse().StartArray();
+            foreach (var element in rankings)
+            {
+                GetResponse().AppendInteger(element.UserId);
+                GetResponse().AppendString(element.Username);
+                GetResponse().AppendString(element.Look);
+                GetResponse().AppendInteger(2);
+                GetResponse().AppendInteger(element.Score);
+                GetResponse().SaveArray();
+            }
+            GetResponse().EndArray();
+            SendResponse();
 
             if (hotelView.HotelViewPromosIndexers.Count <= 0)
                 return;

@@ -21,10 +21,11 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var name = pms[0];
             var user = Oblivion.GetGame().GetClientManager().GetClientByUserName(name);
             if (user?.GetConnection() == null) return false;
+            var col = Oblivion.GetDbConfig().DbData["emerald.column"];
 
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                dbClient.SetQuery("SELECT username,mail,online,vip_points,rank FROM users WHERE ip_last = @ip OR ip_reg = @ip");
+                dbClient.SetQuery($"SELECT username,mail,online,{col},rank FROM users WHERE ip_last = @ip OR ip_reg = @ip");
                 dbClient.AddParameter("ip", user.GetConnection().GetIp());
                 data = dbClient.GetTable();
             }
@@ -35,7 +36,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             {
                 builder.Append("Name: " + row["username"] + "\r");
                 builder.Append("Mail: " + row["mail"] + "\r");
-                builder.Append("Diamonds: " + row["vip_points"] + "\r");
+                builder.Append("Diamonds: " + row[col] + "\r");
                 builder.Append("Rank: " + row["rank"] + "\r");
                 builder.Append("Online: " + Oblivion.EnumToBool(row["online"].ToString() == "1" ? "Yes" : "No") + "\r\r");
                 builder.AppendLine("------------------");

@@ -18,21 +18,12 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         ///     The achievements
         /// </summary>
         internal Dictionary<string, UserAchievement> Achievements;
-
-
-        /// <summary>
-        ///     The effects
-        /// </summary>
-//        internal List<AvatarEffect> Effects;
+        
         /// <summary>
         ///     The favourited rooms
         /// </summary>
         internal List<uint> FavouritedRooms;
-
-        /// <summary>
-        ///     The friends
-        /// </summary>
-//        internal Dictionary<uint, MessengerBuddy> Friends;
+        
         /// <summary>
         ///     The ignores
         /// </summary>

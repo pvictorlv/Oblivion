@@ -110,6 +110,10 @@ namespace Oblivion.HabboHotel.Users
         internal int BuildersItemsUsed;
 
         /// <summary>
+        /// Specify if the user allow commands like :sex
+        /// </summary>
+        internal bool AllowCustomCommands;
+        /// <summary>
         ///     The create date
         /// </summary>
         internal double CreateDate;
@@ -143,6 +147,8 @@ namespace Oblivion.HabboHotel.Users
 
         internal uint DutyLevel;
 
+
+        internal string[] Prefixes;
 
         /// <summary>
         ///     The favourite group
@@ -353,6 +359,11 @@ namespace Oblivion.HabboHotel.Users
         internal int TradeLockExpire;
 
         /// <summary>
+        /// Specify if the user has radio rights
+        /// </summary>
+        internal int RadioRank;
+        
+        /// <summary>
         ///     The user groups
         /// </summary>
         internal List<GroupMember> UserGroups;
@@ -362,7 +373,10 @@ namespace Oblivion.HabboHotel.Users
         /// </summary>
         internal string UserName, Motto, Look, Gender;
 
-
+        /// <summary>
+        /// Specify when user executed an custom command
+        /// </summary>
+        internal int LastCustomCommand;
         ///<summary>
         /// User blockeds commands
         /// </summary>
@@ -424,7 +438,7 @@ namespace Oblivion.HabboHotel.Users
             List<GroupMember> groups, uint favId, int lastChange, bool tradeLocked, int tradeLockExpire,
             int buildersExpire, int buildersItemsMax, int buildersItemsUsed, bool onDuty,
             Dictionary<int, NaviLogs> naviLogs, int dailyCompetitionVotes, uint dutyLevel, bool disableAlert,
-            int lastTotem, int vipPoints)
+            int lastTotem, int vipPoints, int radioRank, string prefixes)
         {
             Id = id;
             UserName = userName;
@@ -438,6 +452,9 @@ namespace Oblivion.HabboHotel.Users
             if (rank < 1u)
                 rank = 1u;
 
+            RadioRank = radioRank;
+
+            Prefixes = prefixes.Split(',');
 
             OnDuty = onDuty;
             DutyLevel = dutyLevel;
@@ -460,6 +477,7 @@ namespace Oblivion.HabboHotel.Users
             LoadingRoom = 0u;
             CreateDate = createDate;
             LoadingChecksPassed = false;
+            AllowCustomCommands = true;
             FloodTime = 0;
             CurrentRoomId = 0u;
             TimeLoggedOn = DateTime.Now;
@@ -1092,7 +1110,6 @@ namespace Oblivion.HabboHotel.Users
         /// <summary>
         ///     Runs the database update.
         /// </summary>
-        /// <param name="dbClient">The database client.</param>
         internal void RunDbUpdate()
         {
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())

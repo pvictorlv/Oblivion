@@ -47,9 +47,12 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("fixroom", new FixRoom());
             CommandsDictionary.Add("follow", new FollowUser());
             CommandsDictionary.Add("faq", new UserFaq());
+            CommandsDictionary.Add("weapon", new Weapon());
+            CommandsDictionary.Add("sex", new Sex());
+            CommandsDictionary.Add("dsex", new DisableSex());
 
             CommandsDictionary.Add("credits", new GiveCredits());
-            CommandsDictionary.Add("epoints", new GivePoints());
+            CommandsDictionary.Add("reward", new GivePoints());
             CommandsDictionary.Add("duckets", new GiveDuckets());
             CommandsDictionary.Add("emeralds", new GiveEmeralds());
             CommandsDictionary.Add("diamonds", new GiveDiamonds());
@@ -105,6 +108,7 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("staffalert", new StaffAlert());
             CommandsDictionary.Add("sa", new StaffAlert());
             CommandsDictionary.Add("eventha", new EventAlert());
+            CommandsDictionary.Add("bubble", new SendBubble());
             CommandsDictionary.Add("alert", new Alert());
             CommandsDictionary.Add("kick", new Kick());
             CommandsDictionary.Add("teleport", new TelePort());

@@ -302,8 +302,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             var coordKey = Formatter.PointToInt(coord);
             if (_userMap.TryGetValue(coordKey, out var users))
             {
-                if (users.Contains(user))
-                    users.Remove(user);
+                var toRemove = users.IndexOf(user);
+                if (toRemove < users.Count)
+                    users.RemoveAt(users.IndexOf(user));
                 if (users.Count <= 0)
                 {
                     _userMap.TryRemove(coordKey, out _);
@@ -1081,15 +1082,18 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 {
                     return 0.0;
                 }
-                if (itemsOnSquare?.Count > 0)
+                if (itemsOnSquare != null && itemsOnSquare.Count > 0)
                 {
-                    foreach (var item in itemsOnSquare)
+                    var items = itemsOnSquare.ToList();
+                    foreach (var item in items)
                     {
                         if ((item?.GetBaseItem() == null || !(item.TotalHeight > highestStack[0]))) continue;
                         if (item.GetBaseItem().IsSeat || item.GetBaseItem().InteractionType == Interaction.Bed)
                             deductable = item.GetBaseItem().Height;
                         highestStack[0] = item.TotalHeight;
                     }
+
+                    items.Clear();
                 }
                 highestStack[0] -= deductable;
                 return highestStack[0] < 0 ? 0 : highestStack[0];

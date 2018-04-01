@@ -1,5 +1,4 @@
-﻿using Oblivion.Configuration;
-using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
@@ -18,7 +17,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         {
             MinRank = 6;
             Description = "Give points for user";
-            Usage = ":epoints [username]";
+            Usage = ":reward [username]";
             MinParams = 1;
         }
 
@@ -48,10 +47,19 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
 
             var msg = new ServerMessage(LibraryParser.OutgoingRequest("RoomNotificationMessageComposer"));
+          
             msg.AppendString("rank");
-            msg.AppendInteger(1);
+            msg.AppendInteger(5);
+            msg.AppendString("title");
+            msg.AppendString("Hotel");
             msg.AppendString("message");
             msg.AppendString($"O usuário {client.GetHabbo().UserName} ganhou o evento!");
+            msg.AppendString("linkUrl");
+            msg.AppendString("");
+            msg.AppendString("linkTitle");
+            msg.AppendString("");
+            msg.AppendString("display");
+            msg.AppendString("BUBBLE");
             Oblivion.GetGame().GetClientManager().SendMessage(msg);
             
 

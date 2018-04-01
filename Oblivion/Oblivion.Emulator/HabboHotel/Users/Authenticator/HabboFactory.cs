@@ -29,7 +29,7 @@ namespace Oblivion.HabboHotel.Users.Authenticator
             var gender = (string) dRow["gender"];
             var lastOnline = int.Parse(dRow["last_online"].ToString());
             var credits = (int) dRow["credits"];
-            var vipPoints = (int) dRow["vip_points"];
+            var vipPoints = (int) dRow[Oblivion.GetDbConfig().DbData["emerald.column"]];
             var activityPoints = (int) dRow["activity_points"];
             var muted = Oblivion.EnumToBool(dRow["is_muted"].ToString());
             var homeRoom = Convert.ToUInt32(dRow["home_room"]);
@@ -80,6 +80,9 @@ namespace Oblivion.HabboHotel.Users.Authenticator
             var disableAlert = Oblivion.EnumToBool(dRow["disabled_alert"].ToString());
             var navilogs = new Dictionary<int, NaviLogs>();
             var navilogstring = (string) dRow["navilogs"];
+            var radioRank = (int) dRow["teamRank"];
+            var prefixes = (string) dRow["prefixes"];
+
             if (navilogstring.Length <= 0)
                 return new Habbo(id, userName, ras, motto, look, gender, credits, activityPoints, muted, homeRoom,
                     respect, dailyRespectPoints, dailyPetRespectPoints,
@@ -87,7 +90,7 @@ namespace Oblivion.HabboHotel.Users.Authenticator
                     lastOnline, appearOffline, hideInRoom, vip, createDate, citizenship, diamonds, group, favId,
                     lastChange, tradeLocked, tradeLockExpire, buildersExpire, buildersItemsMax,
                     buildersItemsUsed, onDuty, navilogs, dailyCompetitionVotes, dutyLevel, disableAlert, lastTotem,
-                    vipPoints)
+                    vipPoints, radioRank, prefixes)
                 {
                     LoadedGroups = true
                 };
@@ -109,7 +112,7 @@ namespace Oblivion.HabboHotel.Users.Authenticator
                 lastOnline, appearOffline, hideInRoom, vip, createDate, citizenship, diamonds, group, favId,
                 lastChange, tradeLocked, tradeLockExpire, buildersExpire, buildersItemsMax,
                 buildersItemsUsed, onDuty, navilogs, dailyCompetitionVotes, dutyLevel, disableAlert, lastTotem,
-                vipPoints)
+                vipPoints, radioRank, prefixes)
             {
                 LoadedGroups = true
             };
@@ -127,10 +130,7 @@ namespace Oblivion.HabboHotel.Users.Authenticator
             var favId = uint.Parse(dRow["favourite_group"].ToString());
 
 
-            //AQUI
-            var hasFriendRequestsDisabled = Oblivion.EnumToBool(dRow["block_newfriends"].ToString());
-
-            // TERMINA
+            var hasFriendRequestsDisabled = Oblivion.EnumToBool(dRow["block_newfriends"].ToString());            
             var createDate = Convert.ToDouble(dRow["account_created"]);
 
 
@@ -139,7 +139,7 @@ namespace Oblivion.HabboHotel.Users.Authenticator
                 hasFriendRequestsDisabled, 0, achievementPoints,
                 lastOnline, false, false, false, createDate, "citizenship", 0, group, favId,
                 0, false, 0, 0, 0,
-                0, false, null, 0, 0, false, 0, 0);
+                0, false, null, 0, 0, false, 0, 0, 0, "");
         }
     }
 }

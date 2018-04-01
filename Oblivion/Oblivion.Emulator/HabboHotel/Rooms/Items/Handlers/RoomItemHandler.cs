@@ -1197,45 +1197,56 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// </summary>
         internal async void OnCycle()
         {
-            await Task.Yield();
-            if (GotRollers)
+            try
             {
-                if (Rollers.Count <= 0)
+                await Task.Yield();
+                if (GotRollers)
                 {
-                    GotRollers = false;
-                }
-
-                try
-                {
-                    var roller = CycleRollers();
-                    if (roller == null) return;
-                    _room.SendMessage(roller);
-                }
-                catch (Exception ex)
-                {
-                    Logging.LogThreadException(ex.ToString(),
-                        $"rollers for room with ID {_room.RoomId}");
-                    GotRollers = false;
-                }
-            }
-
-            if (_roomItemUpdateQueue.Count > 0)
-            {
-                var addItems = new ConcurrentList<RoomItem>();
-                lock (_roomItemUpdateQueue.SyncRoot)
-                {
-                    while (_roomItemUpdateQueue.Count > 0)
+                    if (Rollers.Count <= 0)
                     {
-                        var roomItem = (RoomItem) _roomItemUpdateQueue.Dequeue();
-                        roomItem.ProcessUpdates();
-
-                        if (roomItem.IsTrans || roomItem.UpdateCounter > 0)
-                            addItems.Add(roomItem);
+                        GotRollers = false;
                     }
 
-                    foreach (var item in addItems)
-                        _roomItemUpdateQueue.Enqueue(item);
+                    try
+                    {
+                        var roller = CycleRollers();
+                        if (roller == null) return;
+                        _room.SendMessage(roller);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logging.LogThreadException(ex.ToString(),
+                            $"rollers for room with ID {_room.RoomId}");
+                        GotRollers = false;
+                    }
                 }
+
+                if (_roomItemUpdateQueue != null)
+                {
+                    if (_roomItemUpdateQueue.Count > 0)
+                    {
+                        var addItems = new ConcurrentList<RoomItem>();
+                        lock (_roomItemUpdateQueue.SyncRoot)
+                        {
+                            while (_roomItemUpdateQueue.Count > 0)
+                            {
+                                var roomItem = (RoomItem) _roomItemUpdateQueue.Dequeue();
+                                roomItem.ProcessUpdates();
+
+                                if (roomItem.IsTrans || roomItem.UpdateCounter > 0)
+                                    addItems.Add(roomItem);
+                            }
+
+                            foreach (var item in addItems)
+                                _roomItemUpdateQueue.Enqueue(item);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Logging.LogThreadException(e.ToString(),
+                    $"rollers for room with ID {_room.RoomId}");
             }
         }
 

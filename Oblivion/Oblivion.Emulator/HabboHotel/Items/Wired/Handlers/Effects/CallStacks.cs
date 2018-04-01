@@ -4,7 +4,6 @@ using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.User;
-using System.Threading.Tasks;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
@@ -51,7 +50,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 {
                     var wired = Room.GetWiredHandler().GetWired(item);
                     if (wired != null && wired.Type != Interaction.ActionCallStacks &&
-                        wired.Type != Interaction.TriggerRepeater && wired.Type != Interaction.TriggerLongRepeater)
+                        wired.Type != Interaction.TriggerRepeater && wired.Type != Interaction.TriggerLongRepeater && wired.Type != Interaction.ActionToggleState)
                     {
                         WiredHandler.OnEvent(wired);
                         wired.Execute(roomUser, Type);

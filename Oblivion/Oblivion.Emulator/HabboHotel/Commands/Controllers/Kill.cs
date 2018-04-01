@@ -32,6 +32,11 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
+            if (session.GetHabbo().LastCustomCommand + 30 >= Oblivion.GetUnixTimeStamp())
+            {
+                session.SendWhisper("Espere um pouco!");
+                return true;
+            }
 
             var user =
                 room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
@@ -41,13 +46,13 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
                 return true;
             }
+
             if (user2.IsLyingDown || user2.IsSitting)
             {
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("kil_command_error_2"));
                 return true;
             }
-            if (
-                !string.Equals(user2.GetUserName(), session.GetHabbo().UserName,
+            if (!string.Equals(user2.GetUserName(), session.GetHabbo().UserName,
                     StringComparison.CurrentCultureIgnoreCase))
             {
                 if (!user2.Statusses.ContainsKey("lay"))
@@ -60,6 +65,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 user2.Chat(user2.GetClient(), "Estou morto :(", true, 0,
                     3);
             }
+
+            session.GetHabbo().LastCustomCommand = Oblivion.GetUnixTimeStamp();
             return true;
         }
     }

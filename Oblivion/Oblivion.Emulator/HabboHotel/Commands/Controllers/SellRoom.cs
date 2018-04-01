@@ -38,15 +38,15 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 return false;
             }
 
-            if (roomCost < 1)
+            if (roomCost < 50)
             {
                 currentRoom.RoomData.RoomForSale = false;
-                client.SendWhisper("A sala não está mais a venda!");
+                client.SendWhisper("A sala não está mais a venda! (Valor mínimo: 50)");
                 return true;
             }
-            if (roomCost > 10000000)
+            if (roomCost > 1000000)
             {
-                client.SendWhisper("Valor muito grande, o máximo permitido é 10000000");
+                client.SendWhisper("Valor muito grande, o máximo permitido é 1000000");
                 return false;
             }
             if (actualInput.EndsWith("c") || actualInput.EndsWith("d"))

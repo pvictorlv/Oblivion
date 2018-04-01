@@ -1036,6 +1036,9 @@
         ActionFxRoom,
         ActionDance,
         WalkInternalLink,
-        Totem
+        Totem,
+        NamePrefix,
+        ColorBubble,
+        ColorName
     }
 }

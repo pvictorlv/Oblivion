@@ -365,6 +365,10 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                 else
                 {
                     message.AppendString(baseItem.Key.Type.ToString());
+                    if (baseItem.Key.Type == 'b')
+                    {
+                        message.AppendString(baseItem.Key.Name);
+                    }
                     message.AppendInteger(baseItem.Key.SpriteId);
 
                     if (item.Name.Contains("wallpaper_single") || item.Name.Contains("floor_single") ||

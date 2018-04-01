@@ -50,6 +50,10 @@ namespace Oblivion.HabboHotel.Rooms.User
         internal bool AllowOverride;
 
         /// <summary>
+        /// The interacting user id used in custom commands like :sex
+        /// </summary>
+        internal uint InteractingUser;
+        /// <summary>
         ///     The banzai power up
         /// </summary>
         internal FreezePowerUp BanzaiPowerUp;
@@ -908,6 +912,22 @@ namespace Oblivion.HabboHotel.Rooms.User
             else if (!IsPet)
                 textColor = 2;
 
+            var needReChange = false;
+            var colorPrefix = session.GetHabbo().Prefixes[0];
+            var prefix = session.GetHabbo().Prefixes[1];
+            var colorBubble = session.GetHabbo().Prefixes[2];
+            if (colorPrefix != "#000000" || !string.IsNullOrWhiteSpace(prefix))
+            {
+                var name = session.GetHabbo().UserName;
+                name = $"<span color=\"#{colorPrefix}\">{prefix} {name}<span>";
+                ChangeName(name);
+                needReChange = true;
+            }
+
+            if (colorBubble != "#000000")
+            {
+                msg = $"<span color=\"#{colorBubble}\">{msg}</span>";
+            }
             var chatMsg = new ServerMessage();
             chatMsg.Init(shout
                 ? LibraryParser.OutgoingRequest("ShoutMessageComposer")
@@ -919,11 +939,21 @@ namespace Oblivion.HabboHotel.Rooms.User
             chatMsg.AppendInteger(0);
             chatMsg.AppendInteger(count);
             GetRoom().BroadcastChatMessageWithRange(chatMsg, this, session.GetHabbo().Id);
-
+            if (needReChange)
+            {
+                ChangeName(GetUserName());
+            }
             GetRoom().OnUserSay(this, msg, shout);
         }
 
-
+        private void ChangeName(string name)
+        {
+            var message = new ServerMessage(LibraryParser.OutgoingRequest("UserUpdateNameInRoomMessageComposer"));
+            message.AppendInteger(RoomId);
+            message.AppendInteger(VirtualId);
+            message.AppendString(name);
+            GetRoom().SendMessage(message);
+        }
         /// <summary>
         ///     Clears the movement.
         /// </summary>

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using Oblivion.Collections;
+using Oblivion.Configuration;
 using Oblivion.HabboHotel.Items.Interactions;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -40,11 +41,18 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
 
         internal async void OnCycle()
         {
-            await Task.Yield();
-            _redTeamItems.OnCycle();
-            _blueTeamItems.OnCycle();
-            _greenTeamItems.OnCycle();
-            _yellowTeamItems.OnCycle();
+            try
+            {
+                await Task.Yield();
+                _redTeamItems.OnCycle();
+                _blueTeamItems.OnCycle();
+                _greenTeamItems.OnCycle();
+                _yellowTeamItems.OnCycle();
+            }
+            catch (Exception e)
+            {
+                Logging.HandleException(e, "GameManager Cycle");
+            }
         }
 
         internal QueuedDictionary<long, RoomItem> GetItems(Team team)

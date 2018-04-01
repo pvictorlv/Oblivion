@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using Oblivion.Collections;
+using Oblivion.Configuration;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Rooms.User;
 
@@ -43,9 +45,16 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         /// </summary>
         internal async void OnCycle()
         {
-            await Task.Yield();
-            CyclePyramids();
-            CycleRandomTeleports();
+            try
+            {
+                await Task.Yield();
+                CyclePyramids();
+                CycleRandomTeleports();
+            }
+            catch (Exception e)
+            {
+                Logging.HandleException(e, "Cycle - GameItemHandler");
+            }
         }
 
         /// <summary>
