@@ -21,6 +21,11 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override bool Execute(GameClient session, string[] pms)
         {
+            var room = session.GetHabbo().CurrentRoom;
+            if (!room.CheckRights(session, true))
+            {
+                return false;
+            }
             if (!ushort.TryParse(pms[0], out var maxUsers) || maxUsers == 0 || maxUsers > (150 * Oblivion.Multipy))
             {
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("command_setmax_error_number"));

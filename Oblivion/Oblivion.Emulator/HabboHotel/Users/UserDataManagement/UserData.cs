@@ -53,7 +53,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         /// <summary>
         ///     The rooms
         /// </summary>
-        internal List<RoomData> Rooms;
+        internal List<uint> Rooms;
 
         /// <summary>
         ///     The subscriptions
@@ -118,7 +118,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         public UserData(uint userId, Dictionary<string, UserAchievement> achievements,
             Dictionary<int, UserTalent> talents, List<uint> favouritedRooms, List<uint> ignores, List<string> tags,
             Subscription sub,
-            List<RoomData> rooms, Dictionary<uint, int> quests, Habbo user,
+            List<uint> rooms, Dictionary<uint, int> quests, Habbo user,
             Dictionary<int, Relationship> relations, HashSet<uint> suggestedPolls,
             uint miniMailCount, List<string> blockedCommands, List<int> openedGifts)
         {
@@ -160,34 +160,30 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
         public void Dispose()
         {
-            BlockedCommands.Clear();
+            BlockedCommands?.Clear();
             BlockedCommands = null;
-            Rooms.Clear();
+            Rooms?.Clear();
             Rooms = null;
-            Quests.Clear();
+            Quests?.Clear();
             Quests = null;
             User = null;
-            Relations.Clear();
+            Relations?.Clear();
             Relations = null;
-            SuggestedPolls.Clear();
+            SuggestedPolls?.Clear();
             SuggestedPolls = null;
             MiniMailCount = 0;
-            FavouritedRooms.Clear();
+            FavouritedRooms?.Clear();
             FavouritedRooms = null;
-            Ignores.Clear();
+            Ignores?.Clear();
             Ignores = null;
-            Tags.Clear();
+            Tags?.Clear();
             Tags = null;
             Subscriptions = null;
-//            Friends.Clear();
-//            Friends = null;
-//            Requests.Clear();
-//            Requests = null;
-            Talents.Clear();
+            Talents?.Clear();
             Talents = null;
-            Achievements.Clear();
+            Achievements?.Clear();
             Achievements = null;
-            OpenedGifts.Clear();
+            OpenedGifts?.Clear();
             OpenedGifts = null;
         }
     }

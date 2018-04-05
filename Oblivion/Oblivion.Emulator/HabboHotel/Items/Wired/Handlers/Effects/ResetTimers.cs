@@ -1,4 +1,5 @@
-﻿using Oblivion.Collections;
+﻿using System;
+using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
@@ -73,6 +74,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (_mNext > num)
                 return false;
 
+            Room.LastTimerReset = DateTime.Now;
+            
             Room.GetWiredHandler().ExecuteWired(Interaction.TriggerTimer);
 
             _mNext = Oblivion.Now() + Delay;

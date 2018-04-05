@@ -302,9 +302,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             var coordKey = Formatter.PointToInt(coord);
             if (_userMap.TryGetValue(coordKey, out var users))
             {
-                var toRemove = users.IndexOf(user);
-                if (toRemove < users.Count)
-                    users.RemoveAt(users.IndexOf(user));
+                if (users.Contains(user))
+                    users.Remove(user);
+
                 if (users.Count <= 0)
                 {
                     _userMap.TryRemove(coordKey, out _);
@@ -561,14 +561,13 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             }
             else
             {
-                if (items.Contains(item))
-                    return;
+                if (items.Count > 0)
+                {
+                    if (items.Contains(item))
+                        return;
+                }
 
                 items.Add(item);
-
-                //                CoordinatedItems.TryRemove(coord, out _);
-                //                CoordinatedItems.TryAdd(coord, items);
-//                CoordinatedItems[coord] = items;
             }
         }
 
@@ -616,8 +615,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             double heighest = -1;
 
             /* TODO CHECK */
-            foreach (var i in items)
+            foreach (var i in items.ToList())
             {
+                if (i == null) continue;
                 if (i.TotalHeight > heighest)
                 {
                     heighest = i.Z;
@@ -978,7 +978,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 {
                     roomUserByVirtualId.IsWalking = false;
                     roomUserByVirtualId.ClearMovement();
-                    roomUserByVirtualId.RemoveStatus("mv");
                     roomUserByVirtualId.SerializeStatus(message, "");
                 }
                 user.GetClient().GetHabbo().CurrentRoom.SendMessage(message);
@@ -1084,7 +1083,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 }
                 if (itemsOnSquare != null && itemsOnSquare.Count > 0)
                 {
-                    var items = itemsOnSquare.ToList();
+                    var items = new List<RoomItem>(itemsOnSquare);
                     foreach (var item in items)
                     {
                         if ((item?.GetBaseItem() == null || !(item.TotalHeight > highestStack[0]))) continue;

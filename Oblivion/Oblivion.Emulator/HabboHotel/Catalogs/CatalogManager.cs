@@ -19,6 +19,7 @@ using Oblivion.HabboHotel.RoomBots;
 using Oblivion.HabboHotel.SoundMachine;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
+using Oblivion.Security;
 
 namespace Oblivion.HabboHotel.Catalogs
 {
@@ -483,6 +484,17 @@ namespace Oblivion.HabboHotel.Catalogs
 
             if (item.Name == "room_ad_plus_badge")
                 return;
+            if (item.GetFirstBaseItem().InteractionType == Interaction.NamePrefix)
+            {
+
+                if (!BobbaFilter.CanUsePrefix(session, extraData))
+                {
+                    session.SendNotif("Prefixo inválido, tente outro!");
+
+                    return;
+                }
+
+            }
 
             if (item.ClubOnly && !session.GetHabbo().GetSubscriptionManager().HasSubscription)
             {
@@ -753,43 +765,52 @@ namespace Oblivion.HabboHotel.Catalogs
 
                     case Interaction.ColorName:
                     {
-                        session.GetHabbo().Prefixes[0] = item.ExtraData;
+                        session.GetHabbo().Prefixes[0] = item.Badge;
                         var prefixStr = string.Join(",", session.GetHabbo().Prefixes);
                         using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                         {
+                            dbClient.SetQuery(
+                                $"UPDATE users SET prefixes = @prefixes WHERE id = '{session.GetHabbo().Id}'");
                             dbClient.AddParameter("prefixes", prefixStr);
-                            dbClient.RunFastQuery(
-                                $"UPDATE users SET prefixes = @prefixes WHERE id = {session.GetHabbo().Id}");
+                            dbClient.RunQuery();
+                            session.SendMessage(CatalogPageComposer.PurchaseOk(item, item.Items));
+
+                            return;
                         }
                     }
-                        break;
 
                     case Interaction.NamePrefix:
                     {
-                        session.GetHabbo().Prefixes[1] = $"[{item.ExtraData}]";
+                        session.GetHabbo().Prefixes[1] = $"[{extraData}]";
                         var prefixStr = string.Join(",", session.GetHabbo().Prefixes);
                         using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                         {
+                            dbClient.SetQuery(
+                                $"UPDATE users SET prefixes = @prefixes WHERE id = '{session.GetHabbo().Id}'");
                             dbClient.AddParameter("prefixes", prefixStr);
-                            dbClient.RunFastQuery(
-                                $"UPDATE users SET prefixes = @prefixes WHERE id = {session.GetHabbo().Id}");
+                            dbClient.RunQuery();
+                            session.SendMessage(CatalogPageComposer.PurchaseOk(item, item.Items));
+
+                            return;
                         }
                     }
-                        break;
 
 
                     case Interaction.ColorBubble:
                     {
-                        session.GetHabbo().Prefixes[2] = item.ExtraData;
+                        session.GetHabbo().Prefixes[2] = item.Badge;
                         var prefixStr = string.Join(",", session.GetHabbo().Prefixes);
                         using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                         {
+                            dbClient.SetQuery(
+                                $"UPDATE users SET prefixes = @prefixes WHERE id = '{session.GetHabbo().Id}'");
                             dbClient.AddParameter("prefixes", prefixStr);
-                            dbClient.RunFastQuery(
-                                $"UPDATE users SET prefixes = @prefixes WHERE id = {session.GetHabbo().Id}");
+                            dbClient.RunQuery();
+                            session.SendMessage(CatalogPageComposer.PurchaseOk(item, item.Items));
+
+                            return;
                         }
                     }
-                        break;
 
 
                     case Interaction.PetDog:

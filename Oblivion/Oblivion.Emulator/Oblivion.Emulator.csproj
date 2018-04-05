@@ -107,7 +107,7 @@
     <OutputPath>..\bin\Release\x64\</OutputPath>
     <DefineConstants>
     </DefineConstants>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <FileAlignment>4096</FileAlignment>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -117,7 +117,7 @@
     <Prefer32Bit>true</Prefer32Bit>
     <LangVersion>default</LangVersion>
     <UseVSHostingProcess>false</UseVSHostingProcess>
-    <WarningLevel>3</WarningLevel>
+    <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
@@ -153,37 +153,21 @@
     <StartupObject>Oblivion.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="MySql.Data">
-      <HintPath>..\..\..\..\Documents\GitHub\Oblivion - Copy\Oblivion\bin\Release\x64\MySql.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="SuperSocket.Common, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SuperSocket.1.6.6.1\lib\net45\SuperSocket.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="SuperSocket.Facility, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SuperSocket.1.6.6.1\lib\net45\SuperSocket.Facility.dll</HintPath>
-    </Reference>
-    <Reference Include="SuperSocket.SocketBase, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SuperSocket.1.6.6.1\lib\net45\SuperSocket.SocketBase.dll</HintPath>
-    </Reference>
-    <Reference Include="SuperSocket.SocketEngine, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SuperSocket.Engine.1.6.6.1\lib\net45\SuperSocket.SocketEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="SuperSocket.SocketService, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SuperSocket.Engine.1.6.6.1\lib\net45\SuperSocket.SocketService.exe</HintPath>
+    <Reference Include="MySql.Data, Version=6.10.6.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MySql.Data.6.10.6\lib\net452\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Management" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Reflection" />
@@ -699,13 +683,11 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Config\log4net.config" />
-    <None Include="Config\log4net.unix.config" />
     <None Include="packages.config" />
     <None Include="Properties\app.config" />
-    <None Include="Properties\app.manifest" />
-    <None Include="supersocket.cmd" />
-    <None Include="supersocket.sh" />
+    <None Include="Properties\app.manifest">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="docs\MySqlCommand.xml" />
@@ -725,34 +707,28 @@
     <ProjectReference Include="..\Oblivion.Astar\Oblivion.AStar.csproj">
       <Project>{ee38464b-d381-40cf-b399-fffa87b1421f}</Project>
       <Name>Oblivion.AStar</Name>
-      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Oblivion.Collections\Oblivion.Collections.csproj">
       <Project>{a59d019b-c611-4182-82cc-3ca9d58ef170}</Project>
       <Name>Oblivion.Collections</Name>
-      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Oblivion.Console\Oblivion.Console.csproj">
       <Project>{90b88926-d336-458a-be86-16e181a659fc}</Project>
       <Name>Oblivion.Console</Name>
-      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Oblivion.Database\Oblivion.Database.csproj">
       <Project>{beaba059-531e-4deb-a5c2-262d64c7951f}</Project>
       <Name>Oblivion.Database</Name>
-      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Oblivion.Enclosure\Oblivion.Enclosure.csproj">
       <Project>{a5ff89f2-3aa5-4fb4-978b-b813e796a255}</Project>
       <Name>Oblivion.Enclosure</Name>
-      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Oblivion.Encryption\Oblivion.Encryption.csproj">
       <Project>{f9c5ae6b-2ddd-4087-b75e-534fd8a31e3d}</Project>
       <Name>Oblivion.Encryption</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

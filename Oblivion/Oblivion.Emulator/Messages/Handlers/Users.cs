@@ -856,8 +856,9 @@ namespace Oblivion.Messages.Handlers
                     Response.AppendString(text);
                 }
                 /* TODO CHECK */
-                foreach (var current in Session.GetHabbo().Data.Rooms.ToList())
+                foreach (var data in Session.GetHabbo().Data.Rooms.ToList())
                 {
+                    var current = Oblivion.GetGame().GetRoomManager().GenerateRoomData(data);
                     current.Owner = text;
                     current.SerializeRoomData(Response, Session, false, true);
                     var room = Oblivion.GetGame().GetRoomManager().GetRoom(current.Id);

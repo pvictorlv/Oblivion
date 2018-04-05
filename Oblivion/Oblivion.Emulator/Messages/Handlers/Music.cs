@@ -74,7 +74,7 @@ namespace Oblivion.Messages.Handlers
             if (roomMusicController.PlaylistSize >= roomMusicController.PlaylistCapacity)
                 return;
 
-            uint num = Request.GetUInteger();
+            var num = Oblivion.GetGame().GetItemManager().GetRealId(Request.GetUInteger());
 
             UserItem item = Session.GetHabbo().GetInventoryComponent().GetItem(num);
 

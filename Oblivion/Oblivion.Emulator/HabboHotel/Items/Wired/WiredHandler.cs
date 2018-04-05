@@ -122,7 +122,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         public bool OtherBoxHasItem(IWiredItem Box, RoomItem boxItem)
         {
-            return GetEffects(Box).Where(item => item.Item.Id != Box.Item.Id && (item.Type == Interaction.ActionMoveRotate || item.Type == Interaction.ActionMoveToDir || item.Type == Interaction.ActionChase || item.Type == Interaction.ActionInverseChase || item.Type == Interaction.ActionPosReset)).Where(item => item.Items != null && item.Items.Count > 0).Any(item => item.Items.Contains(boxItem));
+            return GetEffects(Box).Where(item => item.Item.Id != Box.Item.Id && (item.Type == Interaction.ActionMoveRotate || item.Type == Interaction.ActionMoveToDir || item.Type == Interaction.ActionChase || item.Type == Interaction.ActionInverseChase)).Where(item => item.Items != null && item.Items.Count > 0).Any(item => item.Items.Contains(boxItem));
         }
 
         public static void SaveWired(IWiredItem fItem)
@@ -217,7 +217,7 @@ namespace Oblivion.HabboHotel.Items.Wired
         {
             try
             {
-                if (_wiredItems == null || _room == null || _wiredItems.Count <= 0)
+                if (_wiredItems == null || _wiredItems.Count <= 0 || _room == null)
                     return;
 
                 var wireds = _wiredItems.Values.ToList();

@@ -284,9 +284,8 @@ namespace Oblivion.HabboHotel.Rooms
                 roomId = (uint) dbClient.InsertQuery();
             }
             var data = GenerateRoomData(roomId);
-            if (data == null) return null;
 
-            session.GetHabbo().Data.Rooms.Add(data);
+            session.GetHabbo().Data.Rooms.Add(roomId);
             return data;
         }
 
@@ -491,6 +490,10 @@ namespace Oblivion.HabboHotel.Rooms
 
             try
             {
+                if (room.RoomData.Tags == null)
+                {
+                    room.RoomData.Tags = new List<string>();
+                }
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
                     queryReactor.SetQuery(
@@ -571,7 +574,7 @@ namespace Oblivion.HabboHotel.Rooms
                         {
                             if (current.GetClient() != null)
                             {
-                                room.GetRoomUserManager().RemoveUserFromRoom(current.GetClient(), true, false);
+                                room.GetRoomUserManager().RemoveUserFromRoom(current, true, false);
                                 current.GetClient().CurrentRoomUserId = -1;
                             }
                         }

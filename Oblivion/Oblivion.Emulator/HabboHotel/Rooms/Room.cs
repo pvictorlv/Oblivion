@@ -450,7 +450,7 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 if (!t.IsBot && t.GetClient().GetHabbo().Rank < 4u)
                 {
-                    GetRoomUserManager().RemoveUserFromRoom(t.GetClient(), true, false);
+                    GetRoomUserManager().RemoveUserFromRoom(t, true, false);
                     t.GetClient().CurrentRoomUserId = -1;
                 }
             }
@@ -543,7 +543,11 @@ namespace Oblivion.HabboHotel.Rooms
             foreach (DataRow dataRow in table.Rows)
             {
                 var songId = (uint) dataRow[0];
-                var num = Convert.ToUInt32(dataRow[1]);
+                if (!int.TryParse(dataRow[1].ToString(), out var num))
+                {
+                    num = 0;
+                }
+//                var num = Convert.ToUInt32(dataRow[1]);
                 var baseItem = Convert.ToInt32(dataRow[2]);
                 var songCode = string.Empty;
                 var extraData = string.Empty;
@@ -560,7 +564,9 @@ namespace Oblivion.HabboHotel.Rooms
                     }
                 }
 
-                var diskItem = new SongItem(num, songId, baseItem, extraData, songCode);
+                var virtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(num);
+
+                var diskItem = new SongItem(virtualId, songId, baseItem, extraData, songCode);
 
                 GetRoomMusicController().AddDisk(diskItem);
             }
@@ -1350,7 +1356,7 @@ namespace Oblivion.HabboHotel.Rooms
                                 current.GetClient()
                                     .SendNotif(string.Format(Oblivion.GetLanguage().GetVar("kick_mod_room_message"),
                                         roomKick.Alert));
-                            GetRoomUserManager().RemoveUserFromRoom(current.GetClient(), true, false);
+                            GetRoomUserManager().RemoveUserFromRoom(current, true, false);
                             current.GetClient().CurrentRoomUserId = -1;
                         }
                     }

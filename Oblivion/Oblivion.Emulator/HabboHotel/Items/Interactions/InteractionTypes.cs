@@ -977,8 +977,10 @@ namespace Oblivion.HabboHotel.Items.Interactions
 
                 case "name_prefix":
                     return Interaction.NamePrefix;
+
                 case "name_color":
                     return Interaction.ColorName;
+
                 case "bubble_word":
                     return Interaction.ColorBubble;
 

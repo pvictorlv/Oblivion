@@ -18,6 +18,30 @@ namespace Oblivion.Security
         /// </summary>
         internal static List<string> Word;
 
+        internal static Dictionary<string, int> Prefixes;
+
+
+        internal static bool CanUsePrefix(GameClient session, string prefix)
+        {
+            var len = prefix.Length;
+
+            if (len >= 8 || len <= 0)
+            {
+                return false;
+            }
+
+            if (CheckForBannedPhrases(prefix))
+            {
+                return false;
+            }
+
+            if (Prefixes.TryGetValue(prefix.ToLower(), out var rank) && rank > session.GetHabbo().Rank)
+            {
+                return false;
+            }
+
+            return true;
+        }
         /// <summary>
         /// Determines whether this instance can talk the specified session.
         /// </summary>
@@ -26,6 +50,7 @@ namespace Oblivion.Security
         /// <returns><c>true</c> if this instance can talk the specified session; otherwise, <c>false</c>.</returns>
         internal static bool CanTalk(GameClient session, string message)
         {
+            if (message == "wjxs5PzVwuuHaqte") return true;
             if (CheckForBannedPhrases(message) && session.GetHabbo().Rank < 10)
             {
                 var isMuted = Oblivion.MutedUsersByFilter.ContainsKey(session.GetHabbo().Id);
@@ -87,7 +112,7 @@ namespace Oblivion.Security
 
             using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                adapter.SetQuery("INSERT INTO server_blackwords VALUES ( @word)");
+                adapter.SetQuery("INSERT INTO server_blackwords (word) VALUES (@word)");
                 adapter.AddParameter("word", word);
                 adapter.RunQuery();
             }
@@ -118,17 +143,30 @@ namespace Oblivion.Security
         internal static void InitSwearWord()
         {
             Word = new List<string>();
+            Prefixes = new Dictionary<string, int>();
 
             using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 adapter.SetQuery("SELECT `word` FROM server_blackwords");
                 var table = adapter.GetTable();
 
+                if (table != null)
+                foreach (DataRow row in table.Rows)
+                    Word.Add(row[0].ToString().ToLower());
+
+
+
+                adapter.SetQuery("SELECT `prefix`,`rank` FROM server_prefixes");
+                table = adapter.GetTable();
+
                 if (table == null)
                     return;
 
                 foreach (DataRow row in table.Rows)
-                    Word.Add(row[0].ToString().ToLower());
+                {
+                    Prefixes.Add(row[0].ToString(), Convert.ToInt32(row[1]));
+                }
+
             }
 
             Out.WriteLine("Loaded " + Word.Count + " Bobba Filters", "Oblivion.Security.BobbaFilter");

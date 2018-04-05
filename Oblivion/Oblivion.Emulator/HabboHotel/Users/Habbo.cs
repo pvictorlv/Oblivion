@@ -643,9 +643,7 @@ namespace Oblivion.HabboHotel.Users
 
                 /* TODO CHECK */
                 foreach (DataRow dataRow in table.Rows)
-                    Data.Rooms.Add(Oblivion.GetGame()
-                        .GetRoomManager()
-                        .FetchRoomData(Convert.ToUInt32(dataRow["id"]), dataRow, Id));
+                    Data.Rooms.Add(Convert.ToUInt32(dataRow["id"]));
             }
         }
 
@@ -671,12 +669,25 @@ namespace Oblivion.HabboHotel.Users
         /// </summary>
         /// <param name="fuse">The fuse.</param>
         /// <returns><c>true</c> if the specified fuse has fuse; otherwise, <c>false</c>.</returns>
-        internal bool HasFuse(string fuse) => Oblivion.GetGame().GetRoleManager().RankHasRight(Rank, fuse) ||
-                                              (GetSubscriptionManager().HasSubscription &&
-                                               Oblivion.GetGame()
-                                                   .GetRoleManager()
-                                                   .HasVip(GetSubscriptionManager().GetSubscription().SubscriptionId,
-                                                       fuse));
+        internal bool HasFuse(string fuse)
+        {
+            try
+            {
+                if (GetSubscriptionManager()?.GetSubscription() == null) return false;
+
+                return Oblivion.GetGame().GetRoleManager().RankHasRight(Rank, fuse) ||
+                       (GetSubscriptionManager().HasSubscription &&
+                        Oblivion.GetGame()
+                            .GetRoleManager()
+                            .HasVip(GetSubscriptionManager().GetSubscription().SubscriptionId,
+                                fuse));
+            }
+            catch (Exception e)
+            {
+                Logging.HandleException(e, "HasFuse(fuse)");
+                return false;
+            }
+        }
 
 
         /// <summary>
@@ -773,6 +784,7 @@ namespace Oblivion.HabboHotel.Users
         {
             if (Disconnected)
                 return;
+            Disconnected = true;
 
             if (AchievementsToUpdate?.Count > 0)
             {
@@ -800,7 +812,6 @@ namespace Oblivion.HabboHotel.Users
 
             AchievementsToUpdate?.Clear();
             AchievementsToUpdate = null;
-            Disconnected = true;
 
             var navilogs = string.Empty;
 
@@ -848,9 +859,10 @@ namespace Oblivion.HabboHotel.Users
                 }
             }
 
-            if (InRoom)
-                CurrentRoom?.GetRoomUserManager().RemoveUserFromRoom(_mClient, false, false);
+            if (CurrentRoom?.GetRoomUserManager() != null && _mClient != null)
+                CurrentRoom?.GetRoomUserManager()?.RemoveUserFromRoom(_mClient, false, false);
 
+            CurrentRoom = null;
             if (_messenger != null)
             {
                 _messenger.AppearOffline = true;
@@ -858,10 +870,10 @@ namespace Oblivion.HabboHotel.Users
                 _messenger = null;
             }
 
-            CurrentRoom = null;
             GuideOtherUser = null;
             _subscriptionManager?.Dispose();
             _subscriptionManager = null;
+
             _avatarEffectsInventoryComponent?.Dispose();
             _avatarEffectsInventoryComponent = null;
             _badgeComponent = null;

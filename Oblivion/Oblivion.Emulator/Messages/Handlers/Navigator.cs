@@ -158,8 +158,10 @@ namespace Oblivion.Messages.Handlers
             message.AppendInteger(5); //maybe category
             message.AppendString("");
             message.AppendInteger(Session.GetHabbo().Data.Rooms.Count);
-            foreach (var data in Session.GetHabbo().Data.Rooms)
+            foreach (var current in Session.GetHabbo().Data.Rooms)
             {
+                var data = Oblivion.GetGame().GetRoomManager().GenerateRoomData(current);
+
                 data.Serialize(message);
             }
             message.AppendBool(false);

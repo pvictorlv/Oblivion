@@ -22,17 +22,13 @@ namespace Oblivion.HabboHotel.SoundMachine
         /// <summary>
         ///     The _m loaded disks
         /// </summary>
-        private ConcurrentDictionary<uint, SongItem> _mLoadedDisks;
+        private ConcurrentDictionary<long, SongItem> _mLoadedDisks;
 
         /// <summary>
         ///     The _m playlist
         /// </summary>
         private ConcurrentDictionary<int, SongInstance> _mPlaylist;
-
-        /// <summary>
-        ///     The _m room output item
-        /// </summary>
-        private RoomItem _mRoomOutputItem;
+        
 
         /// <summary>
         ///     The _m started playing timestamp
@@ -44,7 +40,7 @@ namespace Oblivion.HabboHotel.SoundMachine
         /// </summary>
         public SoundMachineManager()
         {
-            _mLoadedDisks = new ConcurrentDictionary<uint, SongItem>();
+            _mLoadedDisks = new ConcurrentDictionary<long, SongItem>();
             _mPlaylist = new ConcurrentDictionary<int, SongInstance>();
         }
 
@@ -113,13 +109,7 @@ namespace Oblivion.HabboHotel.SoundMachine
         /// </summary>
         /// <value>The size of the playlist.</value>
         public int PlaylistSize => _mPlaylist.Count;
-
-        /// <summary>
-        ///     Gets a value indicating whether this instance has linked item.
-        /// </summary>
-        /// <value><c>true</c> if this instance has linked item; otherwise, <c>false</c>.</value>
-        public bool HasLinkedItem => _mRoomOutputItem != null;
-
+        
         /// <summary>
         ///     Gets the linked item identifier.
         /// </summary>
@@ -136,10 +126,7 @@ namespace Oblivion.HabboHotel.SoundMachine
         ///     Links the room output item.
         /// </summary>
         /// <param name="item">The item.</param>
-        public void LinkRoomOutputItem(RoomItem item)
-        {
-            _mRoomOutputItem = item;
-        }
+      
 
         /// <summary>
         ///     Adds the disk.
@@ -198,14 +185,11 @@ namespace Oblivion.HabboHotel.SoundMachine
         /// <param name="instance">The instance.</param>
         public void Update(Room instance)
         {
-            if (_mRoomOutputItem == null) return;
             if (IsPlaying && (CurrentSong == null || TimePlaying >= CurrentSong.SongData.LengthSeconds + 1.0))
             {
                 if (_mPlaylist.Count <= 0)
                 {
                     Stop();
-                    _mRoomOutputItem.ExtraData = "0";
-                    _mRoomOutputItem.UpdateState();
                 }
                 else
                     SetNextSong();
@@ -295,7 +279,6 @@ namespace Oblivion.HabboHotel.SoundMachine
 
             _mPlaylist.Clear();
 
-            _mRoomOutputItem = null;
             SongQueuePosition = -1;
             _mStartedPlayingTimestamp = 0.0;
         }
@@ -344,7 +327,7 @@ namespace Oblivion.HabboHotel.SoundMachine
             _mLoadedDisks = null;
 
             CurrentSong = null;
-            _mRoomOutputItem = null;
+
         }
     }
 }

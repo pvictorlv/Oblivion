@@ -60,11 +60,11 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             {
                 Task.Run(async () =>
                 {
-                    fuckerUser.Chat(client, "*Virando " + pms[0] + " pra começar a fazer sexo*", false,0);
+                    fuckerUser.Chat(client, "*Virando " + fuckedUser.GetUserName() + " pra começar a fazer sexo*", false,0);
                     await Task.Delay(1000);
                     fuckedUser.Chat(client, "Gostei da ideia, vamos fazer um sexo gostoso!", false, 0);
                     await Task.Delay(1000);
-                    fuckerUser.Chat(client, "*Agarra, beija e chupa " + pms[0] + " deliciosamente*", false, 0);
+                    fuckerUser.Chat(client, "*Agarra, beija e chupa " + fuckedUser.GetUserName() + " deliciosamente*", false, 0);
                     await Task.Delay(2000);
                     fuckedUser.Chat(client, "*Ai, ai, ai, to quase lá, vai com força, vaai*", false, 0);
                     await Task.Delay(1500);

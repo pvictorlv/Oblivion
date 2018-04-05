@@ -11,7 +11,7 @@ namespace Oblivion.Messages
         /// <summary>
         /// The buffer for the ServerMessage.
         /// </summary>
-        private readonly MemoryStream _buffer;
+        private MemoryStream _buffer;
 
         /// <summary>
         /// The buffer for the Arrays.
@@ -50,6 +50,11 @@ namespace Oblivion.Messages
             : this()
         {
             Init(header);
+        }
+
+        ~ServerMessage()
+        {
+            Dispose();
         }
 
         /// <summary>
@@ -155,7 +160,8 @@ namespace Oblivion.Messages
         /// <param name="messages">The messages.</param>
         public void AppendServerMessages(List<ServerMessage> messages)
         {
-            /* TODO CHECK */ foreach (ServerMessage message in messages)
+            /* TODO CHECK */
+            foreach (ServerMessage message in messages)
             {
                 AppendServerMessage(message);
             }
@@ -167,7 +173,7 @@ namespace Oblivion.Messages
         /// <param name="i">The i.</param>
         public void AppendShort(int i)
         {
-            Int16 value = (short)i;
+            Int16 value = (short) i;
 
             AppendBytes(BitConverter.GetBytes(value), true);
         }
@@ -187,7 +193,7 @@ namespace Oblivion.Messages
         /// <param name="i">The i.</param>
         public void AppendInteger(uint i)
         {
-            AppendInteger((int)i);
+            AppendInteger((int) i);
         }
 
         /// <summary>
@@ -215,7 +221,8 @@ namespace Oblivion.Messages
 
             uint i = 0;
 
-            /* TODO CHECK */ foreach (string text in array.TakeWhile(text => i != lenght))
+            /* TODO CHECK */
+            foreach (string text in array.TakeWhile(text => i != lenght))
             {
                 i++;
 
@@ -279,7 +286,7 @@ namespace Oblivion.Messages
         /// <param name="number">The number.</param>
         public void AppendByte(int number)
         {
-            CurrentMessage.WriteByte((byte)number);
+            CurrentMessage.WriteByte((byte) number);
         }
 
         /// <summary>
@@ -298,8 +305,7 @@ namespace Oblivion.Messages
 
             using (MemoryStream finalBuffer = new MemoryStream())
             {
-
-                byte[] length = BitConverter.GetBytes((int)CurrentMessage.Length);
+                byte[] length = BitConverter.GetBytes((int) CurrentMessage.Length);
                 Array.Reverse(length);
                 finalBuffer.Write(length, 0, length.Length);
 
@@ -307,6 +313,7 @@ namespace Oblivion.Messages
 
                 bytes = finalBuffer.ToArray();
             }
+
             if (Oblivion.DebugMode)
             {
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
@@ -315,7 +322,8 @@ namespace Oblivion.Messages
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.Write("PREPARED ");
                 Console.ForegroundColor = ConsoleColor.DarkGray;
-                Console.Write(Id + Environment.NewLine + HabboEncoding.GetCharFilter(Oblivion.GetDefaultEncoding().GetString(bytes)));
+                Console.Write(Id + Environment.NewLine +
+                              HabboEncoding.GetCharFilter(Oblivion.GetDefaultEncoding().GetString(bytes)));
                 Console.WriteLine();
             }
 
@@ -326,7 +334,8 @@ namespace Oblivion.Messages
         /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>A <see cref="string" /> that represents this instance.</returns>
-        public override string ToString() => HabboEncoding.GetCharFilter(Oblivion.GetDefaultEncoding().GetString(GetReversedBytes()));
+        public override string ToString() =>
+            HabboEncoding.GetCharFilter(Oblivion.GetDefaultEncoding().GetString(GetReversedBytes()));
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -337,14 +346,15 @@ namespace Oblivion.Messages
                 return;
 
             _buffer.Dispose();
-
+            _buffer = null;
             if (_onArray)
             {
-                _arrayBuffer.Dispose();
+                _arrayBuffer?.Dispose();
+                _arrayBuffer = null;
             }
 
             _arrayCurrentBuffer?.Dispose();
-
+            _arrayCurrentBuffer = null;
             _disposed = true;
         }
     }

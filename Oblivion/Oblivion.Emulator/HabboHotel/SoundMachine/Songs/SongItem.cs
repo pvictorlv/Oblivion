@@ -72,7 +72,10 @@ namespace Oblivion.HabboHotel.SoundMachine.Songs
         internal void SaveToDatabase(uint roomId)
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery($"REPLACE INTO items_songs VALUES ('{ItemId}', '{roomId}', '{SongId}')");
+            {
+                var id = Oblivion.GetGame().GetItemManager().GetRealId(ItemId);
+                queryReactor.RunFastQuery($"REPLACE INTO items_songs VALUES ('{id}', '{roomId}', '{SongId}')");
+            }
         }
 
         /// <summary>
@@ -81,7 +84,11 @@ namespace Oblivion.HabboHotel.SoundMachine.Songs
         internal void RemoveFromDatabase()
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery($"DELETE FROM items_songs WHERE itemid = '{ItemId}'");
+            {
+                var id = Oblivion.GetGame().GetItemManager().GetRealId(ItemId);
+
+                queryReactor.RunFastQuery($"DELETE FROM items_songs WHERE itemid = '{id}'");
+            }
         }
     }
 }

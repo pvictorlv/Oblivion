@@ -24,7 +24,12 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void SerializeGroupPurchasePage()
         {
-            var list = new HashSet<RoomData>(Session.GetHabbo().Data.Rooms.Where(x => x.Group == null));
+            var list = new List<RoomData>();
+            foreach (var x in Session.GetHabbo().Data.Rooms)
+            {
+                var current = Oblivion.GetGame().GetRoomManager().GenerateRoomData(x);
+                if (current.Group == null) list.Add(current);
+            }
 
             Response.Init(LibraryParser.OutgoingRequest("GroupPurchasePageMessageComposer"));
             Response.AppendInteger(10);
@@ -258,7 +263,7 @@ namespace Oblivion.Messages.Handlers
 
             if (roomUserByHabbo != null)
             {
-                if (!roomUserByHabbo.Statusses.ContainsKey("flatctrl 1"))
+//                if (!roomUserByHabbo.Statusses.ContainsKey("flatctrl 1"))
                     roomUserByHabbo.AddStatus("flatctrl 1", "");
 
                 Response.Init(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
@@ -299,7 +304,7 @@ namespace Oblivion.Messages.Handlers
 
             if (roomUserByHabbo != null)
             {
-                if (roomUserByHabbo.Statusses.ContainsKey("flatctrl 1"))
+//                if (roomUserByHabbo.Statusses.ContainsKey("flatctrl 1"))
                     roomUserByHabbo.RemoveStatus("flatctrl 1");
 
                 Response.Init(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
@@ -384,7 +389,7 @@ namespace Oblivion.Messages.Handlers
 
             if (roomUserByHabbo != null)
             {
-                if (roomUserByHabbo.Statusses.ContainsKey("flatctrl 1"))
+//                if (roomUserByHabbo.Statusses.ContainsKey("flatctrl 1"))
                     roomUserByHabbo.RemoveStatus("flatctrl 1");
 
                 roomUserByHabbo.UpdateNeeded = true;
@@ -1325,13 +1330,11 @@ namespace Oblivion.Messages.Handlers
                         }
                         else
                         {
-                            if (num2 == 0u && !current.Statusses.ContainsKey("flatctrl 1"))
-                            {
                                 current.AddStatus("flatctrl 1", "");
                                 Response.Init(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
                                 Response.AppendInteger(1);
                                 current.GetClient().SendMessage(GetResponse());
-                            }
+                            
                         }
 
                         current.UpdateNeeded = true;
@@ -1561,11 +1564,11 @@ namespace Oblivion.Messages.Handlers
                     queryReactor.RunFastQuery($"UPDATE users SET home_room = '0' WHERE home_room = {roomId}");
                 }
 
-                var roomData2 =
-                    (from p in Session.GetHabbo().Data.Rooms where p.Id == roomId select p).SingleOrDefault();
+//                var roomData2 =
+//                    (from p in Session.GetHabbo().Data.Rooms where p.Id == roomId select p).SingleOrDefault();
 
-                if (roomData2 != null)
-                    Session.GetHabbo().Data.Rooms.Remove(roomData2);
+//                if (roomData2 != null)
+                    Session.GetHabbo().Data.Rooms.Remove(roomId);
             }
         }
     }

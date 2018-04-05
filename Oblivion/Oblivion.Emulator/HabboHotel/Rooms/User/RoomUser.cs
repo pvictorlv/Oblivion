@@ -916,18 +916,15 @@ namespace Oblivion.HabboHotel.Rooms.User
             var colorPrefix = session.GetHabbo().Prefixes[0];
             var prefix = session.GetHabbo().Prefixes[1];
             var colorBubble = session.GetHabbo().Prefixes[2];
-            if (colorPrefix != "#000000" || !string.IsNullOrWhiteSpace(prefix))
+            var name = session.GetHabbo().UserName;
+
+            if (colorPrefix != "#000000" || !string.IsNullOrWhiteSpace(prefix) || colorBubble != "#000000")
             {
-                var name = session.GetHabbo().UserName;
-                name = $"<span color=\"#{colorPrefix}\">{prefix} {name}<span>";
+                name = $"<font color='#{colorPrefix}'>{prefix}</font> <font color='#{colorBubble}'>{name}</font>";
                 ChangeName(name);
                 needReChange = true;
             }
 
-            if (colorBubble != "#000000")
-            {
-                msg = $"<span color=\"#{colorBubble}\">{msg}</span>";
-            }
             var chatMsg = new ServerMessage();
             chatMsg.Init(shout
                 ? LibraryParser.OutgoingRequest("ShoutMessageComposer")
@@ -1167,23 +1164,23 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     Serializes the specified message.
         /// </summary>
         /// <param name="message">The message.</param>
-        internal void Serialize(ServerMessage message)
+        internal bool Serialize(ServerMessage message)
         {
             if (message == null)
-                return;
+                return false;
             if (IsSpectator)
-                return;
+                return false;
             if (!IsBot)
             {
                 if (GetClient() == null || GetClient().GetHabbo() == null)
-                    return;
+                    return false;
                 var group = Oblivion.GetGame().GetGroupManager().GetGroup(GetClient().GetHabbo().FavouriteGroup);
                 if (GetClient() == null || GetClient().GetHabbo() == null)
-                    return;
+                    return false;
                 var habbo = GetClient().GetHabbo();
 
                 if (habbo == null)
-                    return;
+                    return false;
 
                 message.AppendInteger(habbo.Id);
                 message.AppendString(habbo.UserName);
@@ -1212,11 +1209,11 @@ namespace Oblivion.HabboHotel.Rooms.User
                 message.AppendString("");
                 message.AppendInteger(habbo.AchievementPoints);
                 message.AppendBool(false);
-                return;
+                return true;
             }
 
             if (BotAi == null || BotData == null)
-                throw new NullReferenceException("BotAI or BotData is undefined");
+                return false;
 
             message.AppendInteger(BotAi.BaseId);
             message.AppendString(BotData.Name);
@@ -1252,7 +1249,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 message.AppendInteger(0);
                 message.AppendInteger(PetData.Type == 16u ? 1 : 0);
                 message.AppendString(PetData.Type == 16u ? PetData.MoplaBreed.GrowStatus : "");
-                return;
+                return true;
             }
 
             message.AppendString(BotData.Gender.ToLower());
@@ -1264,6 +1261,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             message.AppendShort(3);
             message.AppendShort(4);
             message.AppendShort(5);
+            return true;
         }
 
         /// <summary>

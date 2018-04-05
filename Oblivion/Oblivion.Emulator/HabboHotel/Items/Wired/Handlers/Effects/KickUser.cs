@@ -91,7 +91,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     roomUser.GetClient().SendNotif(OtherString);
 
 
-                Room.GetRoomUserManager().RemoveUserFromRoom(roomUser.GetClient(), true, false);
+                Room.GetRoomUserManager().RemoveUserFromRoom(roomUser, true, false);
 
             }
 
@@ -127,9 +127,13 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             var roomUser = (RoomUser)Params[0];
             if (roomUser?.GetClient()?.GetHabbo() == null) return false;
             var item = (Interaction)Params[1];
-
+            
             if (_mBanned.Contains(item))
                 return false;
+
+            if (Room == null) return false;
+
+            if (Room.CheckRights(roomUser.GetClient(), true)) return false;
 
             Requested = true;
 

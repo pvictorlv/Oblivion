@@ -805,6 +805,27 @@ namespace Oblivion.HabboHotel.Navigators
                 pair.Serialize(reply);
 
             reply.AppendBool(false);
+        }   private static void SerializeNavigatorRooms(ref ServerMessage reply, ICollection<uint> rooms)
+        {
+            reply.AppendString(string.Empty);
+
+            if (rooms == null || !rooms.Any())
+            {
+                reply.AppendInteger(0);
+                reply.AppendBool(false);
+
+                return;
+            }
+
+            reply.AppendInteger(rooms.Count);
+
+            /* TODO CHECK */
+            foreach (var current in rooms.Select(pair => Oblivion.GetGame().GetRoomManager().GenerateRoomData(pair)))
+            {
+                current.Serialize(reply);
+            }
+
+            reply.AppendBool(false);
         }
 
         /// <summary>

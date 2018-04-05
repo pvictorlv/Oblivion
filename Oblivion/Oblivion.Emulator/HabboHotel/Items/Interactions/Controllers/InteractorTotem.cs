@@ -1,10 +1,8 @@
-﻿using System;
-using Oblivion.HabboHotel.GameClients.Interfaces;
+﻿using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interactions.Models;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Quests;
-using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
@@ -49,11 +47,12 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             foreach (var squareItem in items)
             {
                 if (squareItem.GetBaseItem().InteractionType != Interaction.Totem) continue;
-                if (squareItem.ExtraData == null)
+                
+                if (!int.TryParse(squareItem.ExtraData, out var currentState))
                 {
-                    squareItem.ExtraData = "0";
+                    currentState = 0;
                 }
-                var currentState = Convert.ToInt32(squareItem.ExtraData);
+
                 if (squareItem.GetBaseItem().Name == "totem_head")
                 {
                     currentHead = currentState;

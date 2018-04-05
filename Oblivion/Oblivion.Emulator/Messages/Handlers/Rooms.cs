@@ -216,13 +216,12 @@ namespace Oblivion.Messages.Handlers
             foreach (var current2 in list)
                 try
                 {
-                    current2.Serialize(Response);
+                    if (!current2.Serialize(Response)) continue;
                     Response.SaveArray();
                 }
                 catch (Exception e)
                 {
                     Writer.Writer.LogException(e.ToString());
-                    Response.Clear();
                 }
             Response.EndArray();
             SendResponse();
@@ -503,7 +502,7 @@ namespace Oblivion.Messages.Handlers
             Response.Init(LibraryParser.OutgoingRequest("RoomGroupMessageComposer"));
             Response.AppendInteger(CurrentLoadingRoom.LoadedGroups.Count);
             /* TODO CHECK */
-            foreach (var guild1 in CurrentLoadingRoom.LoadedGroups)
+            foreach (var guild1 in CurrentLoadingRoom.LoadedGroups.ToList())
             {
                 Response.AppendInteger(guild1.Key);
                 Response.AppendString(guild1.Value);
@@ -1050,7 +1049,7 @@ namespace Oblivion.Messages.Handlers
                 roomUserByHabbo.GetClient().GetHabbo().HasFuse("fuse_mod") ||
                 roomUserByHabbo.GetClient().GetHabbo().HasFuse("fuse_no_kick"))
                 return;
-            room.GetRoomUserManager().RemoveUserFromRoom(roomUserByHabbo.GetClient(), true, true);
+            room.GetRoomUserManager().RemoveUserFromRoom(roomUserByHabbo, true, true);
             roomUserByHabbo.GetClient().CurrentRoomUserId = -1;
             Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_SelfModKickSeen", 1);
         }
@@ -1078,7 +1077,7 @@ namespace Oblivion.Messages.Handlers
             else if (text.ToLower().Contains("perm"))
                 time = 788922000L;
             room.AddBan(num, time);
-            room.GetRoomUserManager().RemoveUserFromRoom(roomUserByHabbo.GetClient(), true, true);
+            room.GetRoomUserManager().RemoveUserFromRoom(roomUserByHabbo, true, true);
             Session.CurrentRoomUserId = -1;
             Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_SelfModBanSeen", 1);
         }
@@ -1140,19 +1139,14 @@ namespace Oblivion.Messages.Handlers
                     .GetModerationTool()
                     .LogStaffEntry(Session.GetHabbo().UserName, roomData.Name, "Room deletion",
                         $"Deleted room ID {roomData.Id}");
-            var roomData2 = (
-                from p in Session.GetHabbo().Data.Rooms
-                where p.Id == roomId
-                select p).SingleOrDefault();
-
-            if (roomData2 != null)
-                Session.GetHabbo().Data.Rooms.Remove(roomData2);
+           
+                Session.GetHabbo().Data.Rooms.Remove(roomId);
         }
 
         internal void AirClickUser()
         {
             var userId = Request.GetUInteger();
-            var habbo = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId)?.GetHabbo();
+            var habbo = Oblivion.GetHabboById(userId);
             if (habbo == null) return;
             var createTime = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(habbo.CreateDate);
 
@@ -1635,8 +1629,10 @@ namespace Oblivion.Messages.Handlers
             serverMessage.AppendBool(true);
             serverMessage.AppendInteger(Session.GetHabbo().Data.Rooms.Count);
             /* TODO CHECK */
-            foreach (var current in Session.GetHabbo().Data.Rooms)
+            foreach (var data in Session.GetHabbo().Data.Rooms)
             {
+                var current = Oblivion.GetGame().GetRoomManager().GenerateRoomData(data);
+
                 serverMessage.AppendInteger(current.Id);
                 serverMessage.AppendString(current.Name);
                 serverMessage.AppendBool(false);

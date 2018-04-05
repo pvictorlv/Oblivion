@@ -213,6 +213,7 @@ namespace Oblivion
                     var habbo = clientByUserId.GetHabbo();
                     if (habbo != null && habbo.Id > 0)
                     {
+
                         UsersCached.AddOrUpdate(userId, habbo, (key, value) => habbo);
                         return habbo;
                     }
@@ -222,8 +223,8 @@ namespace Oblivion
                     if (UsersCached.TryGetValue(userId, out var user))
                         return user;
 
-                    var userData = UserDataFactory.GetUserData((int) userId);
-                    
+                    var userData = UserDataFactory.GetUserData((int)userId);
+
 
                     if (userData?.User == null)
                         return null;

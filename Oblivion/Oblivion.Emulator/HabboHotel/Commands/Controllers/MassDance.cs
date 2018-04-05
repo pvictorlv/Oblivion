@@ -36,6 +36,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             /* TODO CHECK */ foreach (var roomUser in roomUsers)
             {
+
                 var message =
                     new ServerMessage(LibraryParser.OutgoingRequest("DanceStatusMessageComposer"));
                 message.AppendInteger(roomUser.VirtualId);

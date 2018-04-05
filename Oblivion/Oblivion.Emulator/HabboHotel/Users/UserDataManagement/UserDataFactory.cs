@@ -207,7 +207,8 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             var blockedCommands = (from DataRow r in dBlockedCommands.Rows select r["command_name"].ToString())
                 .ToList();
 
-            var myRooms = (from DataRow row in myRoomsTable.Rows let roomId = Convert.ToUInt32(row["id"].ToString()) select Oblivion.GetGame().GetRoomManager().FetchRoomData(roomId, row, userId)).ToList();
+            var myRooms = (from DataRow r in myRoomsTable.Rows select Convert.ToUInt32(r["id"]))
+                .ToList();
 
             var openedGifts = new List<int>();
 
@@ -267,7 +268,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             var favouritedRooms = new List<uint>();
             var ignores = new List<uint>();
             var tags = new List<string>();
-            var rooms = new List<RoomData>();
+            var rooms = new List<uint>();
             var quests = new Dictionary<uint, int>();
             var group = new List<GroupMember>();
             var pollData = new HashSet<uint>();

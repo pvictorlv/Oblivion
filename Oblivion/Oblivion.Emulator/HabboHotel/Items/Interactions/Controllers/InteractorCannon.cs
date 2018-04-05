@@ -18,12 +18,76 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
         public override void OnPlace(GameClient session, RoomItem item)
         {
-            item.ExtraData = "0";
+//            item.ExtraData = "0";
         }
 
         public override void OnRemove(GameClient session, RoomItem item)
         {
-            item.ExtraData = "0";
+//            item.ExtraData = "0";
+        }
+
+        public override void OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        {
+            var room = session?.GetHabbo()?.CurrentRoom;
+            if (room == null) return;
+
+            if (!hasRights) return;
+            if (item.OnCannonActing)
+                return;
+
+            item.OnCannonActing = true;
+
+            var coords = new HashSet<Point>();
+
+            var itemX = item.X;
+            var itemY = item.Y;
+
+            switch (item.Rot)
+            {
+                case 0: // TESTEADO OK
+                    var startingcoordX = itemX - 1;
+
+                    for (var i = startingcoordX; i > 0; i--)
+                        coords.Add(new Point(i, itemY));
+
+                    break;
+
+                case 4: // TESTEADO OK
+                    var startingcoordX2 = itemX + 2;
+                    var mapsizeX = item.GetRoom().GetGameMap().Model.MapSizeX;
+
+                    for (var i = startingcoordX2; i < mapsizeX; i++)
+                        coords.Add(new Point(i, itemY));
+
+                    break;
+
+                case 2: // TESTEADO OK
+                    var startingcoordY = itemY - 1;
+
+                    for (var i = startingcoordY; i > 0; i--)
+                        coords.Add(new Point(itemX, i));
+
+                    break;
+
+                case 6: // OK!
+                    var startingcoordY2 = itemY + 2;
+                    var mapsizeY = item.GetRoom().GetGameMap().Model.MapSizeY;
+
+                    for (var i = startingcoordY2; i < mapsizeY; i++)
+                        coords.Add(new Point(itemX, i));
+
+                    break;
+            }
+
+            item.ExtraData = (item.ExtraData == "0") ? "1" : "0";
+            item.UpdateState();
+
+            _mItem = item;
+            _mCoords = coords;
+
+            var explodeTimer = new Timer(1350);
+            explodeTimer.Elapsed += ExplodeAndKick;
+            explodeTimer.Enabled = true;
         }
 
         public override void OnWiredTrigger(RoomItem item)
@@ -120,7 +184,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             /* TODO CHECK */ foreach (var user in toRemove)
             {
-                room.GetRoomUserManager().RemoveUserFromRoom(user.GetClient(), true, false);
+                room.GetRoomUserManager().RemoveUserFromRoom(user, true, false);
                 user.GetClient().SendMessage(serverMessage);
             }
 
