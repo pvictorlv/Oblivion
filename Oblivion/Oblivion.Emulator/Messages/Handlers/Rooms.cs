@@ -576,6 +576,7 @@ namespace Oblivion.Messages.Handlers
             if (roomUserByHabbo == null || !roomUserByHabbo.CanWalk)
                 return;
 
+           
             var targetX = Request.GetInteger();
             var targetY = Request.GetInteger();
 
@@ -589,6 +590,14 @@ namespace Oblivion.Messages.Handlers
 
             var roomUserByVirtualId = currentRoom.GetRoomUserManager()
                 .GetRoomUserByVirtualId((int) roomUserByHabbo.HorseId);
+
+            if (currentRoom.GetRoomUserManager().LastClickIndex >= int.MaxValue - 10)
+            {
+                currentRoom.GetRoomUserManager().LastClickIndex = 0;
+            }
+            currentRoom.GetRoomUserManager().LastClickIndex++;
+            roomUserByHabbo.ClickIndex = currentRoom.GetRoomUserManager().LastClickIndex;
+
 
             roomUserByVirtualId.MoveTo(targetX, targetY);
         }

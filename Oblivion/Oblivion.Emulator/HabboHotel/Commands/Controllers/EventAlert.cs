@@ -35,7 +35,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 session.GetHabbo().UserName +
                 "</b>\n\nCorra para participar antes que o quarto seja fechado! Clique em " +
                 "<i>Ir para o Evento</i>\n\nE o " +
-                "evento vai ser:\n\n<b>" + string.Join(" ", pms) + "</b>\n\nEstamos esperando você lá em!");
+                "evento vai ser:\n\n<b>" + string.Join(" ", pms) + "</b>\n\nEstamos esperando você lá em!<br><br><small>Digite :eventsoff para desativar o alerta!</small>");
             message.AppendString("linkUrl");
             message.AppendString("event:navigator/goto/" + session.GetHabbo().CurrentRoomId);
             message.AppendString("linkTitle");
@@ -59,6 +59,10 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 }
                 client.SendWhisper(
                     $"Um novo evento está acontecendo! Procure por {session.GetHabbo().CurrentRoom.RoomData.Owner} e venha ao evento!");
+            }
+            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                dbClient.RunFastQuery("UPDATE `users` SET `mod_points` = mod_points + 1 WHERE `id` = '" + session.GetHabbo().Id + "' LIMIT 1");
             }
             return true;
         }

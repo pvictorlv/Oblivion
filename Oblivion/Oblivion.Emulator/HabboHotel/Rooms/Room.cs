@@ -547,8 +547,12 @@ namespace Oblivion.HabboHotel.Rooms
                 {
                     num = 0;
                 }
+                if (!int.TryParse(dataRow[2].ToString(), out var baseItem))
+                {
+                    continue;
+                }
 //                var num = Convert.ToUInt32(dataRow[1]);
-                var baseItem = Convert.ToInt32(dataRow[2]);
+//                var baseItem = Convert.ToInt32(dataRow[2]);
                 var songCode = string.Empty;
                 var extraData = string.Empty;
 

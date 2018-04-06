@@ -741,7 +741,8 @@ namespace Oblivion.Messages.Handlers
                 queryReactor.SetQuery("SELECT username FROM users WHERE username=@name LIMIT 1");
                 queryReactor.AddParameter("name", text);
                 var @string = queryReactor.GetString();
-                var array = text.ToLower().ToCharArray();
+                var lower = text.ToLower();
+                var array = lower.ToCharArray();
                 const string source = "abcdefghijklmnopqrstuvwxyz1234567890.,_-;:?!@";
                 var array2 = array;
                 if (array2.Any(c => !source.Contains(char.ToLower(c))))
@@ -753,8 +754,8 @@ namespace Oblivion.Messages.Handlers
                     SendResponse();
                     return;
                 }
-                if (text.ToLower().Contains("mod") || text.ToLower().Contains("m0d") || text.Contains(" ") ||
-                    text.ToLower().Contains("admin"))
+                if (lower.Contains("mod") || lower.Contains("m0d")||
+                    lower.Contains("admin"))
                 {
                     Response.Init(LibraryParser.OutgoingRequest("NameChangedUpdatesMessageComposer"));
                     Response.AppendInteger(4);

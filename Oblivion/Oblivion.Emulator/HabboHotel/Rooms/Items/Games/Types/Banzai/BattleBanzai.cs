@@ -67,29 +67,36 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
         {
             if (User == null) return;
             /* TODO CHECK */
-            foreach (var item in _pucks.ToList())
+            if (_pucks?.Count > 0)
             {
-                var num = User.X - item.X;
-                var num2 = User.Y - item.Y;
-                if (num <= 1 && num >= -1 && num2 <= 1 && num2 >= -1)
+                foreach (var item in _pucks.ToList())
                 {
-                    var x = num * -1;
-                    var y = num2 * -1;
-                    x += item.X;
-                    y += item.Y;
-                    if (item.InteractingUser == User.UserId && _room.GetGameMap().ValidTile(x, y))
+                    if (item == null) continue;
+
+                    var num = User.X - item.X;
+                    var num2 = User.Y - item.Y;
+                    if (num <= 1 && num >= -1 && num2 <= 1 && num2 >= -1)
                     {
-                        item.InteractingUser = 0;
-                        MovePuck(item, User.GetClient(), User.Coordinate, item.Coordinate, 6, User.Team);
-                    }
-                    else if (_room.GetGameMap().ValidTile(x, y))
-                    {
-                        MovePuck(item, User.GetClient(), x, y, User.Team);
+                        var x = num * -1;
+                        var y = num2 * -1;
+                        x += item.X;
+                        y += item.Y;
+                        if (item.InteractingUser == User.UserId && _room.GetGameMap().ValidTile(x, y))
+                        {
+                            item.InteractingUser = 0;
+                            MovePuck(item, User.GetClient(), User.Coordinate, item.Coordinate, 6, User.Team);
+                        }
+                        else if (_room.GetGameMap().ValidTile(x, y))
+                        {
+                            MovePuck(item, User.GetClient(), x, y, User.Team);
+                        }
                     }
                 }
             }
+
             if (IsBanzaiActive)
-                HandleBanzaiTiles(User.Coordinate, User.Team, User);
+                    HandleBanzaiTiles(User.Coordinate, User.Team, User);
+            
         }
 
         public void BanzaiStart()
@@ -345,33 +352,38 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
 
             var i = 0;
             /* TODO CHECK */
-            foreach (var _item in _banzaiTiles.ToList())
+            if (_banzaiTiles?.Count > 0)
             {
-                if (_item.GetBaseItem().InteractionType != Interaction.BanzaiFloor)
+                foreach (var _item in _banzaiTiles.ToList())
                 {
-                    user.Team = Team.None;
-                    user.ApplyEffect(0);
-                    continue;
+                    if (_item == null) continue;
+                    if (_item.GetBaseItem().InteractionType != Interaction.BanzaiFloor)
+                    {
+                        user.Team = Team.None;
+                        user.ApplyEffect(0);
+                        continue;
+                    }
+
+                    if (_item.ExtraData.Equals("5") || _item.ExtraData.Equals("8") || _item.ExtraData.Equals("11") ||
+                        _item.ExtraData.Equals("14"))
+                    {
+                        i++;
+                        continue;
+                    }
+
+                    if (_item.X != coord.X || _item.Y != coord.Y)
+                        continue;
+
+                    SetTile(_item, Team, user);
+                    if (_item.ExtraData.Equals("5") || _item.ExtraData.Equals("8") || _item.ExtraData.Equals("11") ||
+                        _item.ExtraData.Equals("14"))
+                        i++;
+                    _item.UpdateState(false, true);
                 }
 
-                if (_item.ExtraData.Equals("5") || _item.ExtraData.Equals("8") || _item.ExtraData.Equals("11") ||
-                    _item.ExtraData.Equals("14"))
-                {
-                    i++;
-                    continue;
-                }
-
-                if (_item.X != coord.X || _item.Y != coord.Y)
-                    continue;
-
-                SetTile(_item, Team, user);
-                if (_item.ExtraData.Equals("5") || _item.ExtraData.Equals("8") || _item.ExtraData.Equals("11") ||
-                    _item.ExtraData.Equals("14"))
-                    i++;
-                _item.UpdateState(false, true);
+                if (i == _banzaiTiles.Count)
+                    BanzaiEnd();
             }
-            if (i == _banzaiTiles.Count)
-                BanzaiEnd();
         }
 
         private void HandleMaxBanzaiTiles(Point coord, Team Team, RoomUser user)

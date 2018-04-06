@@ -213,6 +213,8 @@ namespace Oblivion.HabboHotel.Rooms.User
             return roomUser;
         }
 
+        public int LastClickIndex;
+
         /// <summary>
         ///     Updates the bot.
         /// </summary>
@@ -290,6 +292,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 return users[0];
             }
+
             return null;
         }
 
@@ -363,6 +366,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 RemoveUserFromRoom(roomUser, notifyClient, notifyKick);
             }
         }
+
         /// <summary>
         ///     Removes the user from room.
         /// </summary>
@@ -373,7 +377,6 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             try
             {
-
                 var client = user.GetClient();
                 var habbo = user.GetClient().GetHabbo();
                 if (client == null || habbo == null) return;
@@ -381,7 +384,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 habbo.CurrentRoom = null;
                 habbo.GetAvatarEffectsInventoryComponent()?.OnRoomExit();
                 var room = _userRoom;
-                
+
                 if (notifyKick)
                 {
                     var model = room.GetGameMap().Model;
@@ -998,36 +1001,58 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
         }
 
-        internal void UserRoomTimeCycles(RoomUser roomUsers)
+        internal async void UserRoomTimeCycles(RoomUser roomUsers)
         {
-            if ((!roomUsers.IsAsleep) && (roomUsers.IdleTime >= 600) && (!roomUsers.IsBot) && (!roomUsers.IsPet))
+            try
             {
-                roomUsers.IsAsleep = true;
+                await Task.Yield();
 
-                var sleepEffectMessage =
-                    new ServerMessage(LibraryParser.OutgoingRequest("RoomUserIdleMessageComposer"));
-                sleepEffectMessage.AppendInteger(roomUsers.VirtualId);
-                sleepEffectMessage.AppendBool(true);
-                _userRoom.SendMessage(sleepEffectMessage);
-                roomUsers.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateEffect(517);
+                if (!roomUsers.IsOwner() && roomUsers.LastHostingDate + 60 < Oblivion.GetUnixTimeStamp())
+                {
+                    var roomOwner = (uint) roomUsers.GetRoom().RoomData.OwnerId;
+                    var ownerClient = Oblivion.GetGame().GetClientManager().GetClientByUserId(roomOwner);
+                    if (ownerClient != null)
+                    {
+                        Oblivion.GetGame().GetAchievementManager()
+                            .ProgressUserAchievement(ownerClient, "ACH_RoomDecoHosting", 1, true);
+                    }
+
+                    roomUsers.LastHostingDate = Oblivion.GetUnixTimeStamp();
+                }
+
+                if ((!roomUsers.IsAsleep) && (roomUsers.IdleTime >= 600) && (!roomUsers.IsBot) && (!roomUsers.IsPet))
+                {
+                    roomUsers.IsAsleep = true;
+
+                    var sleepEffectMessage =
+                        new ServerMessage(LibraryParser.OutgoingRequest("RoomUserIdleMessageComposer"));
+                    sleepEffectMessage.AppendInteger(roomUsers.VirtualId);
+                    sleepEffectMessage.AppendBool(true);
+                    _userRoom.SendMessage(sleepEffectMessage);
+                    roomUsers.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateEffect(517);
+                }
+
+                if ((!roomUsers.IsOwner()) && (roomUsers.IdleTime >= 300) && (!roomUsers.IsBot) && (!roomUsers.IsPet))
+                {
+                    try
+                    {
+                        var ownerAchievementMessage =
+                            Oblivion.GetGame().GetClientManager().GetClientByUserId((uint) _userRoom.RoomData.OwnerId);
+
+                        if (ownerAchievementMessage != null)
+                            Oblivion.GetGame()
+                                .GetAchievementManager()
+                                .ProgressUserAchievement(ownerAchievementMessage, "ACH_RoomDecoHosting", 1, true);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
             }
-
-            if ((!roomUsers.IsOwner()) && (roomUsers.IdleTime >= 300) && (!roomUsers.IsBot) && (!roomUsers.IsPet))
+            catch (Exception e)
             {
-                try
-                {
-                    var ownerAchievementMessage =
-                        Oblivion.GetGame().GetClientManager().GetClientByUserId((uint) _userRoom.RoomData.OwnerId);
-
-                    if (ownerAchievementMessage != null)
-                        Oblivion.GetGame()
-                            .GetAchievementManager()
-                            .ProgressUserAchievement(ownerAchievementMessage, "ACH_RoomDecoHosting", 1, true);
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
+                Logging.HandleException(e, "UserRoomTimeCycles");
             }
         }
 
@@ -1190,6 +1215,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             var pathDataCount = ((roomUsers.Path.Count - roomUsers.PathStep) - 1);
             if (roomUsers.Path.Count < pathDataCount || pathDataCount < 0) return false;
             var nextStep = roomUsers.Path[pathDataCount];
+      
 
             if (!_userRoom.GetGameMap().SquareIsOpen(nextStep.X, nextStep.Y, roomUsers.AllowOverride))
             {
@@ -1416,13 +1442,10 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     Turns the user thread
         /// </summary>
         /// <param name="roomUsers"></param>
-        internal  void UserCycleOnRoom(RoomUser roomUsers)
+        internal void UserCycleOnRoom(RoomUser roomUsers)
         {
             try
             {
-//                await Task.Yield();
-
-                // Region Check User Elegibility
                 if (roomUsers?.Statusses == null) return;
 
                 if (!IsValid(roomUsers))
@@ -1434,18 +1457,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                     return;
                 }
 
-                if (!roomUsers.IsOwner() && roomUsers.LastHostingDate + 60 < Oblivion.GetUnixTimeStamp())
-                {
-                    var roomOwner = (uint) roomUsers.GetRoom().RoomData.OwnerId;
-                    var ownerClient = Oblivion.GetGame().GetClientManager().GetClientByUserId(roomOwner);
-                    if (ownerClient != null)
-                    {
-                        Oblivion.GetGame().GetAchievementManager()
-                            .ProgressUserAchievement(ownerClient, "ACH_RoomDecoHosting", 1, true);
-                    }
-
-                    roomUsers.LastHostingDate = Oblivion.GetUnixTimeStamp();
-                }
 
                 // Region Check User Remove Unlocking
                 lock (_removeUsers)
@@ -1627,7 +1638,6 @@ namespace Oblivion.HabboHotel.Rooms.User
             catch (Exception e)
             {
                 Logging.HandleException(e, "RoomMgr - Cycle");
-
             }
         }
 
@@ -1671,11 +1681,11 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
 
             // Region: Main User Procedure... Really Main..
-            foreach (var roomUsers in UserList.Values)
+            foreach (var roomUsers in UserList.Values.OrderBy(x => x.ClickIndex))
             {
                 // User Main OnCycle
                 UserCycleOnRoom(roomUsers);
-
+                
                 // If is a Valid user, We must increase the User Count..
                 if ((!roomUsers.IsPet) && (!roomUsers.IsBot))
                 {

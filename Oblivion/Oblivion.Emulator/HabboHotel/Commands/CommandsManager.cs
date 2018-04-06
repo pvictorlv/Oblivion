@@ -33,6 +33,7 @@ namespace Oblivion.HabboHotel.Commands
             AliasDictionary = new Dictionary<string, string>();
 
             CommandsDictionary.Add("about", new About());
+            CommandsDictionary.Add("info", new About());
             CommandsDictionary.Add("multiply", new Multiply());
             CommandsDictionary.Add("disablechat", new DisableGroupChat());
             CommandsDictionary.Add("disablemessage", new DisableGroupMessage());
@@ -40,19 +41,25 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("status", new Offline());
             CommandsDictionary.Add("followable", new HideInRoom());
             CommandsDictionary.Add("commands", new CommandList());
+            CommandsDictionary.Add("comandos", new CommandList());
             CommandsDictionary.Add("disable_diagonal", new DisableDiagonal());
             CommandsDictionary.Add("disableevent", new DisableEvent());
             CommandsDictionary.Add("eventsoff", new DisableEvent());
+            CommandsDictionary.Add("eventosoff", new DisableEvent());
             CommandsDictionary.Add("viewclones", new ViewClones());
+            CommandsDictionary.Add("fakes", new ViewClones());
             CommandsDictionary.Add("fixroom", new FixRoom());
             CommandsDictionary.Add("follow", new FollowUser());
+            CommandsDictionary.Add("seguir", new FollowUser());
             CommandsDictionary.Add("faq", new UserFaq());
             CommandsDictionary.Add("weapon", new Weapon());
+            CommandsDictionary.Add("armas", new Weapon());
             CommandsDictionary.Add("sex", new Sex());
+            CommandsDictionary.Add("sexo", new Sex());
             CommandsDictionary.Add("dsex", new DisableSex());
-
             CommandsDictionary.Add("credits", new GiveCredits());
             CommandsDictionary.Add("reward", new GivePoints());
+            CommandsDictionary.Add("premiar", new GivePoints());
             CommandsDictionary.Add("duckets", new GiveDuckets());
             CommandsDictionary.Add("emeralds", new GiveEmeralds());
             CommandsDictionary.Add("diamonds", new GiveDiamonds());
@@ -101,6 +108,7 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("freeze", new Freeze());
             CommandsDictionary.Add("algemar", new Freeze());
             CommandsDictionary.Add("userinfo", new UserInfo());
+            CommandsDictionary.Add("ui", new UserInfo());
             CommandsDictionary.Add("roomalert", new RoomAlert());
             CommandsDictionary.Add("ra", new RoomAlert());
             CommandsDictionary.Add("hotelalert", new HotelAlert());
@@ -108,6 +116,7 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("staffalert", new StaffAlert());
             CommandsDictionary.Add("sa", new StaffAlert());
             CommandsDictionary.Add("eventha", new EventAlert());
+            CommandsDictionary.Add("eha", new EventAlert());
             CommandsDictionary.Add("bubble", new SendBubble());
             CommandsDictionary.Add("alert", new Alert());
             CommandsDictionary.Add("kick", new Kick());
@@ -129,6 +138,7 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("makesay", new MakeSay());
             CommandsDictionary.Add("empty_user", new EmptyUser());
             CommandsDictionary.Add("handitem", new HandItem());
+            CommandsDictionary.Add("carry", new HandItem());
             CommandsDictionary.Add("summon", new Summon());
             CommandsDictionary.Add("summonall", new SummonAll());
             CommandsDictionary.Add("unmute", new UnMute());
@@ -137,7 +147,9 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("roommute", new RoomMute());
             CommandsDictionary.Add("roomkick", new RoomKickUsers());
             CommandsDictionary.Add("buyroom", new BuyRoom());
+            CommandsDictionary.Add("comprarquarto", new BuyRoom());
             CommandsDictionary.Add("sellroom", new SellRoom());
+            CommandsDictionary.Add("venderquarto", new SellRoom());
             CommandsDictionary.Add("setheight", new SetHeight());
             CommandsDictionary.Add("override", new Override());
             CommandsDictionary.Add("ipban", new BanUserIp());
@@ -153,6 +165,7 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("invisible", new GoInvisible());
 
             CommandsDictionary.Add("copy", new CopyLook());
+            CommandsDictionary.Add("mimic", new CopyLook());
             CommandsDictionary.Add("faceless", new FaceLess());
             CommandsDictionary.Add("pulluser", new PullUser());
             CommandsDictionary.Add("pull", new PullUser());
@@ -170,7 +183,6 @@ namespace Oblivion.HabboHotel.Commands
             //CommandsDictionary.Add("test", new Test());
             UpdateInfo();
         }
-
         /// <summary>
         ///     Updates the information.
         /// </summary>
