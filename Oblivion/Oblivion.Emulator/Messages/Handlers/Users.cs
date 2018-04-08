@@ -263,6 +263,9 @@ namespace Oblivion.Messages.Handlers
                 uint.Parse(
                     ((Oblivion.GetUnixTimeStamp()) + checked(num2 * 60u)).ToString()));
 
+            Oblivion.GetGame()
+                .GetModerationTool().LogStaffEntry(Session.GetHabbo().UserName, roomUserByHabbo.GetUserName(),
+                    "Mute", "Muted user");
             roomUserByHabbo.GetClient()
                 .SendNotif(string.Format(Oblivion.GetLanguage().GetVar("room_owner_has_mute_user"), num2));
             Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_SelfModMuteSeen", 1);

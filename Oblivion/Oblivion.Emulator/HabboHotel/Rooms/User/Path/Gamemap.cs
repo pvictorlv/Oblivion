@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using Oblivion.Collections;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -69,7 +70,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 throw new ArgumentNullException($"No modeldata found for roomID {room.RoomId}");
 
             Model = new DynamicRoomModel(StaticModel, room);
-            CoordinatedItems = new ConcurrentDictionary<Point, List<RoomItem>>();
+            CoordinatedItems = new ConcurrentDictionary<Point, ConcurrentList<RoomItem>>();
             GameMap = new byte[Model.MapSizeX, Model.MapSizeY];
             ItemHeightMap = new double[Model.MapSizeX, Model.MapSizeY];
             _userMap = new ConcurrentDictionary<int, List<RoomUser>>();
@@ -124,7 +125,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         ///     Gets the coordinated items.
         /// </summary>
         /// <value>The coordinated items.</value>
-        internal ConcurrentDictionary<Point, List<RoomItem>> CoordinatedItems { get; private set; }
+        internal ConcurrentDictionary<Point, ConcurrentList<RoomItem>> CoordinatedItems { get; private set; }
 
         /// <summary>
         ///     The sqstate. 0 = Closed, 1 = Open, 2 = Chair, 3 = Door
@@ -144,7 +145,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="pState">State of the p.</param>
         /// <param name="pOverride">if set to <c>true</c> [p override].</param>
         /// <returns><c>true</c> if this instance can walk the specified p state; otherwise, <c>false</c>.</returns>
-        internal static bool CanWalk(byte pState, bool pOverride) => pOverride || pState == 3 || pState == 1;
+        internal static bool CanWalk(byte pState, bool pOverride) => pOverride || pState == 3 || pState == 1 || pState == 2;
 
         /// <summary>
         ///     Gets the affected tiles.
@@ -563,7 +564,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             if (item == null) return;
             if (!CoordinatedItems.TryGetValue(coord, out var items))
             {
-                items = new List<RoomItem> {item};
+                items = new ConcurrentList<RoomItem> {item};
 
                 CoordinatedItems.TryAdd(coord, items);
             }
@@ -584,8 +585,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// </summary>
         /// <param name="coord">The coord.</param>
         /// <returns>List&lt;RoomItem&gt;.</returns>
-        internal List<RoomItem> GetCoordinatedItems(Point coord) =>
-            !CoordinatedItems.TryGetValue(coord, out var items) ? new List<RoomItem>() : items;
+        internal ConcurrentList<RoomItem> GetCoordinatedItems(Point coord) =>
+            !CoordinatedItems.TryGetValue(coord, out var items) ? new ConcurrentList<RoomItem>() : items;
 
         /// <summary>
         ///     Removes the coordinated item.
@@ -602,29 +603,30 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             {
                 if (items != null)
                 {
-                    items.Remove(item);
-                    return true;
+                        items.Remove(item);
+                        return true;
+                    
                 }
             }
 
             return false;
         }
 
-        internal List<RoomItem> GetCoordinatedHeighestItems(Point coord)
+        internal ConcurrentList<RoomItem> GetCoordinatedHeighestItems(Point coord)
         {
             if (!CoordinatedItems.TryGetValue(coord, out var items))
             {
-                return new List<RoomItem>();
+                return new ConcurrentList<RoomItem>();
             }
 
 
             if (items.Count == 1)
                 return items;
-            var returnItems = new List<RoomItem>();
+            var returnItems = new ConcurrentList<RoomItem>();
             double heighest = -1;
 
             /* TODO CHECK */
-            foreach (var i in items.ToList())
+            foreach (var i in items)
             {
                 if (i == null) continue;
                 if (i.TotalHeight > heighest)
@@ -646,7 +648,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             if (_room.GotSoccer())
                 _room.GetSoccer().OnGateRemove(item);
             var result = false;
-            var coordinatedItems = new Dictionary<Point, List<RoomItem>>();
+            var coordinatedItems = new Dictionary<Point, ConcurrentList<RoomItem>>();
             foreach (var current2 in item.GetCoords())
             {
                 if (RemoveCoordinatedItem(item, current2)) result = true;
@@ -858,9 +860,17 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
         /// <param name="pOverride">if set to <c>true</c> [p override].</param>
+        /// <param name="checkUsers">if set to <c>true</c> check for users in square.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool SquareIsOpen(int x, int y, bool pOverride) =>
-            (Model.MapSizeX - 1 >= x && Model.MapSizeY - 1 >= y) && CanWalk(GameMap[x, y], pOverride) && GetRoomUsers(new Point(x, y)).Count <= 0;
+        internal bool SquareIsOpen(int x, int y, bool pOverride, bool checkUsers = true)
+        {
+            if (checkUsers && !_room.RoomData.AllowWalkThrough)
+            {
+                if (GetRoomUsers(new Point(x, y)).Count > 0) return false;
+            }
+
+            return (Model.MapSizeX - 1 >= x && Model.MapSizeY - 1 >= y) && CanWalk(GameMap[x, y], pOverride);
+        }
 
         /// <summary>
         ///     Determines whether [is valid step3] [the specified user].
@@ -907,7 +917,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
                 return false;
             }
-            
+
             return SqAbsoluteHeight(to.X, to.Y) - SqAbsoluteHeight(from.X, from.Y) <= 1.5;
         }
 
@@ -945,12 +955,12 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="Override">if set to <c>true</c> [override].</param>
         /// <param name="diagMove">specify if the user is diagonally moving.</param>
         /// <returns><c>true</c> if [is valid step] [the specified user]; otherwise, <c>false</c>.</returns>
-        internal bool IsValidStep(RoomUser user, Vector2D from, Vector2D to, bool endOfPath, bool Override, bool diagMove = false)
+        internal bool IsValidStep(RoomUser user, Vector2D from, Vector2D to, bool endOfPath, bool Override,
+            bool diagMove = false, bool GeneratingPath = false)
         {
             if (user == null)
                 return false;
-
-
+            
             if (Override)
                 return true;
 
@@ -972,6 +982,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             if (!ValidTile(to.X, to.Y))
                 return false;
 
+            var xLen = GameMap.GetLength(0);
+            var yLen = GameMap.GetLength(1);
             if (diagMove)
             {
                 int xValue = to.X - from.X;
@@ -979,36 +991,95 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
                 if (xValue == -1 && yValue == -1)
                 {
-                    if (GameMap[to.X + 1, to.Y + 1] != 1 && GameMap[to.X + 1, to.Y + 1] != 2)
+                    if (xLen <= to.X + 1 || yLen <= to.Y + 1)
+                    {
+                        return false;
+                    }
+
+                    var sqState = GameMap[to.X + 1, to.Y + 1];
+                    if (sqState != 1 && sqState != 2)
                         return false;
                 }
                 else if (xValue == 1 && yValue == -1)
                 {
-                    if (GameMap[to.X - 1, to.Y + 1] != 1 && GameMap[to.X - 1, to.Y + 1] != 2)
+
+                    if (xLen <= to.X - 1 || yLen <= to.Y + 1)
+                    {
+                        return false;
+                    }
+                    var sqState = GameMap[to.X - 1, to.Y + 1];
+
+                    if (sqState != 1 && sqState != 2)
                         return false;
                 }
                 else if (xValue == 1 && yValue == 1)
                 {
-                    if (GameMap[to.X - 1, to.Y - 1] != 1 && GameMap[to.X - 1, to.Y - 1] != 2)
+                    if (xLen <= to.X - 1 || yLen <= to.Y - 1)
+                    {
+                        return false;
+                    }
+                    var sqState = GameMap[to.X - 1, to.Y - 1];
+
+                    if (sqState != 1 && sqState != 2)
                         return false;
                 }
                 else if (xValue == -1 && yValue == 1)
                 {
-                    if (GameMap[to.X + 1, to.Y - 1] != 1 && GameMap[to.X + 1, to.Y - 1] != 2)
+                    if (xLen <= to.X + 1 || yLen <= to.Y - 1)
+                    {
+                        return false;
+                    }
+                    var sqState = GameMap[to.X + 1, to.Y - 1];
+
+                    if (sqState != 1 && sqState != 2)
                         return false;
                 }
             }
 
-            if (GameMap.GetLength(0) > to.X && GameMap.GetLength(1) > to.Y)
+            if (xLen > to.X && yLen > to.Y)
             {
                 if (GameMap[to.X, to.Y] == 3 && !endOfPath || GameMap[to.X, to.Y] == 0 ||
                     GameMap[to.X, to.Y] == 2 && !endOfPath)
                     return false;
             }
 
-      
+            if (!TileIsWalkable(to.X, to.Y, endOfPath))
+            {
+                if (!GeneratingPath)
+                {
+                    user.ClearMovement();
+                    user.Path.Clear();
+                    user.PathRecalcNeeded = false;
+                    user.UpdateNeeded = true;
+                }
+
+                return false;
+            }
 
             return SqAbsoluteHeight(to.X, to.Y) - SqAbsoluteHeight(from.X, from.Y) <= 1.5;
+        }
+
+
+        public bool TileIsWalkable(int pX, int pY, bool endPath = false, bool guildGate = false)
+        {
+            if (SquareHasUsers(pX, pY))
+            {
+                if (endPath)
+                    return false;
+                if (!_room.RoomData.AllowWalkThrough)
+                    return false;
+            }
+
+            if (!ValidTile(pX, pY))
+                return false;
+
+            if (!guildGate)
+            {
+                if (GameMap[pX, pY] == 0)
+                    return false;
+            }
+
+            return Model.SqState[pX][pY] == SquareState.Open;
         }
 
         /// <summary>
@@ -1040,12 +1111,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool ItemCanBePlacedHere(int x, int y)
-        {
-            return (Model.MapSizeX - 1 >= x && Model.MapSizeY - 1 >= y) &&
-                   (x != Model.DoorX || y != Model.DoorY) &&
-                   (x <= GameMap.GetLength(0) && y <= GameMap.GetLength(1) && GameMap[x, y] == 1);
-        }
+        internal bool ItemCanBePlacedHere(int x, int y) => (Model.MapSizeX - 1 >= x && Model.MapSizeY - 1 >= y) &&
+                                                           (x != Model.DoorX || y != Model.DoorY) &&
+                                                           (x <= GameMap.GetLength(0) && y <= GameMap.GetLength(1) && GameMap[x, y] == 1);
 
         /// <summary>
         ///     Items the can be placed here.
@@ -1095,7 +1163,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="y">The y.</param>
         /// <param name="itemsOnSquare">The items on square.</param>
         /// <returns>System.Double.</returns>
-        internal double SqAbsoluteHeight(int x, int y, List<RoomItem> itemsOnSquare)
+        internal double SqAbsoluteHeight(int x, int y, ConcurrentList<RoomItem> itemsOnSquare)
         {
             try
             {
@@ -1110,16 +1178,13 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
                 if (itemsOnSquare != null && itemsOnSquare.Count > 0)
                 {
-                    var items = new List<RoomItem>(itemsOnSquare);
-                    foreach (var item in items)
+                    foreach (var item in itemsOnSquare)
                     {
                         if ((item?.GetBaseItem() == null || !(item.TotalHeight > highestStack[0]))) continue;
                         if (item.GetBaseItem().IsSeat || item.GetBaseItem().InteractionType == Interaction.Bed)
                             deductable = item.GetBaseItem().Height;
                         highestStack[0] = item.TotalHeight;
                     }
-
-                    items.Clear();
                 }
 
                 highestStack[0] -= deductable;
@@ -1179,7 +1244,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         internal bool SquareHasFurni(int x, int y, Interaction type)
         {
             var point = new Point(x, y);
-            if (!CoordinatedItems.TryGetValue(point, out List<RoomItem> list))
+            if (!CoordinatedItems.TryGetValue(point, out ConcurrentList<RoomItem> list))
                 return false;
 
             return
@@ -1198,7 +1263,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         internal bool SquareHasFurni(int x, int y)
         {
             var point = new Point(x, y);
-            return CoordinatedItems.TryGetValue(point, out List<RoomItem> list) &&
+            return CoordinatedItems.TryGetValue(point, out ConcurrentList<RoomItem> list) &&
                    list.Any(item => item.Coordinate.X == x && item.Coordinate.Y == y);
         }
 
@@ -1208,14 +1273,11 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="pX">The p x.</param>
         /// <param name="pY">The p y.</param>
         /// <returns>List&lt;RoomItem&gt;.</returns>
-        internal List<RoomItem> GetAllRoomItemForSquare(int pX, int pY)
+        internal ConcurrentList<RoomItem> GetAllRoomItemForSquare(int pX, int pY)
         {
             var point = new Point(pX, pY);
-            var list = new List<RoomItem>();
-            if (!CoordinatedItems.TryGetValue(point, out List<RoomItem> list2))
-                return list;
-
-            return list2;
+            var list = new ConcurrentList<RoomItem>();
+            return !CoordinatedItems.TryGetValue(point, out var list2) ? list : list2;
         }
 
         /// <summary>
@@ -1357,25 +1419,25 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     {
                         if (item.GetBaseItem().Walkable)
                         {
-                            if (GameMap[coord.X, coord.Y] != 3)
+                            if (GameMap[coord.X, coord.Y] != 2)
                                 GameMap[coord.X, coord.Y] = 1;
                         }
                         else if (item.Z <= Model.SqFloorHeight[item.X][item.Y] + 0.1 &&
                                  item.GetBaseItem().InteractionType == Interaction.Gate && item.ExtraData == "1")
                         {
-                            if (GameMap[coord.X, coord.Y] != 3)
+                            if (GameMap[coord.X, coord.Y] != 2)
                                 GameMap[coord.X, coord.Y] = 1;
                         }
                         else if (item.GetBaseItem().IsSeat)
-                            GameMap[coord.X, coord.Y] = 3;
+                            GameMap[coord.X, coord.Y] = 2;
                         else if (item.GetBaseItem().InteractionType == Interaction.Bed ||
                                  item.GetBaseItem().InteractionType == Interaction.Guillotine ||
                                  item.GetBaseItem().InteractionType == Interaction.BedTent)
                         {
                             //if (coord.X == item.X && coord.Y == item.Y)
-                            GameMap[coord.X, coord.Y] = 3;
+                            GameMap[coord.X, coord.Y] = 2;
                         }
-                        else if (GameMap[coord.X, coord.Y] != 3)
+                        else if (GameMap[coord.X, coord.Y] != 2)
                             GameMap[coord.X, coord.Y] = 0;
                     }
 

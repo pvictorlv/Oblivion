@@ -30,6 +30,10 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 .GetModerationTool()
                 .LogStaffEntry(session.GetHabbo().UserName, user, "Unban",
                     $"User has been Unbanned [{pms[0]}]");
+            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                Oblivion.GetGame().GetBanManager().LoadBans(queryReactor);
+            }
 
             return true;
         }

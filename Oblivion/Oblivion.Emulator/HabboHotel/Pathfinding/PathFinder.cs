@@ -79,7 +79,8 @@ namespace Oblivion.HabboHotel.PathFinding
             var pathFinderMap = new PathFinderNode[gameLocalMap.Model.MapSizeX, gameLocalMap.Model.MapSizeY];
             var pathFinderStart = new PathFinderNode(startMap) {Cost = 0};
             var pathFinderEnd = new PathFinderNode(endMap);
-
+            if (pathFinderMap.GetLength(0) <= pathFinderStart.Position.X ||
+                pathFinderMap.GetLength(1) <= pathFinderStart.Position.Y) return null;
             pathFinderMap[pathFinderStart.Position.X, pathFinderStart.Position.Y] = pathFinderStart;
             minSpanTreeCost.Add(pathFinderStart);
 
@@ -88,31 +89,42 @@ namespace Oblivion.HabboHotel.PathFinding
                 pathFinderStart = minSpanTreeCost.ExtractFirst();
                 pathFinderStart.InClosed = true;
 
-                for (var index = 0; (whatIsDiag ? (index < DiagMovePoints.Length ? 1 : 0) : (index < NoDiagMovePoints.Length ? 1 : 0)) != 0; index++)
+                for (var index = 0;
+                    (whatIsDiag
+                        ? (index < DiagMovePoints.Length ? 1 : 0)
+                        : (index < NoDiagMovePoints.Length ? 1 : 0)) != 0;
+                    index++)
                 {
-                    var realEndPosition = pathFinderStart.Position + (whatIsDiag ? DiagMovePoints[index] : NoDiagMovePoints[index]);
+                    var realEndPosition = pathFinderStart.Position +
+                                          (whatIsDiag ? DiagMovePoints[index] : NoDiagMovePoints[index]);
 
                     var isEndOfPath = ((realEndPosition.X == endMap.X) && (realEndPosition.Y == endMap.Y));
 
-                    if (gameLocalMap.IsValidStep(roomUserable, new Vector2D(pathFinderStart.Position.X, pathFinderStart.Position.Y), realEndPosition, isEndOfPath, roomUserable.AllowOverride))
+                    if (gameLocalMap.IsValidStep(roomUserable,
+                        new Vector2D(pathFinderStart.Position.X, pathFinderStart.Position.Y), realEndPosition,
+                        isEndOfPath, roomUserable.AllowOverride, true, true))
                     {
-                        PathFinderNode pathFinderSecondNodeCalculation = pathFinderMap[realEndPosition.X, realEndPosition.Y];
+                        PathFinderNode pathFinderSecondNodeCalculation =
+                            pathFinderMap[realEndPosition.X, realEndPosition.Y];
 
                         if (pathFinderSecondNodeCalculation == null)
                         {
                             pathFinderSecondNodeCalculation = new PathFinderNode(realEndPosition);
                             pathFinderMap[realEndPosition.X, realEndPosition.Y] = pathFinderSecondNodeCalculation;
                         }
-                       
+
                         if (!pathFinderSecondNodeCalculation.InClosed)
                         {
                             var internalSpanTreeCost = 0;
 
-                            if (pathFinderStart.Position.X != pathFinderSecondNodeCalculation.Position.X) internalSpanTreeCost++;
+                            if (pathFinderStart.Position.X != pathFinderSecondNodeCalculation.Position.X)
+                                internalSpanTreeCost++;
 
-                            if (pathFinderStart.Position.Y != pathFinderSecondNodeCalculation.Position.Y) internalSpanTreeCost++;
+                            if (pathFinderStart.Position.Y != pathFinderSecondNodeCalculation.Position.Y)
+                                internalSpanTreeCost++;
 
-                            var loopTotalCost = pathFinderStart.Cost + internalSpanTreeCost + pathFinderSecondNodeCalculation.Position.GetDistanceSquared(endMap);
+                            var loopTotalCost = pathFinderStart.Cost + internalSpanTreeCost +
+                                                pathFinderSecondNodeCalculation.Position.GetDistanceSquared(endMap);
 
                             if (loopTotalCost < pathFinderSecondNodeCalculation.Cost)
                             {

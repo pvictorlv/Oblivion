@@ -715,7 +715,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 var roomMap = _userRoom.GetGameMap();
                 var userPoint = new Point(user.X, user.Y);
-                var allRoomItemForSquare = roomMap.GetCoordinatedHeighestItems(userPoint).ToArray();
+                var allRoomItemForSquare = roomMap.GetCoordinatedItems(userPoint);
                 var itemsOnSquare = roomMap.GetCoordinatedItems(userPoint);
 
                 var newZ = _userRoom.GetGameMap().SqAbsoluteHeight(user.X, user.Y, itemsOnSquare) +
@@ -755,13 +755,13 @@ namespace Oblivion.HabboHotel.Rooms.User
                                 }
                                 else
                                 {
-                                    user.Statusses.TryAdd("sit",
-                                        Convert.ToString(item.GetBaseItem().Height, CultureInfo.InvariantCulture));
+                                    user.Statusses["sit"] = Convert.ToString(item.GetBaseItem().Height,
+                                        CultureInfo.InvariantCulture);
                                 }
                             else
                             {
-                                user.Statusses.TryAdd("sit",
-                                    Convert.ToString(item.GetBaseItem().Height, CultureInfo.InvariantCulture));
+                                user.Statusses["sit"] = Convert.ToString(item.GetBaseItem().Height,
+                                    CultureInfo.InvariantCulture);
                             }
                         }
 
@@ -864,9 +864,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                             break;
                         }
 
-                        case Interaction.Jump:
-                            break;
-
                         case Interaction.Pinata:
                         {
                             if (!user.IsWalking || item.ExtraData.Length <= 0) break;
@@ -888,6 +885,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                             break;
                         }
+                        case Interaction.Jump:
                         case Interaction.TileStackMagic:
                         case Interaction.Poster:
                             break;
@@ -1059,7 +1057,8 @@ namespace Oblivion.HabboHotel.Rooms.User
         internal void RoomUserBreedInteraction(RoomUser roomUsers)
         {
             if (roomUsers.IsPet && (roomUsers.PetData.Type == 3 || roomUsers.PetData.Type == 4) &&
-                roomUsers.PetData.WaitingForBreading > 0 && roomUsers.PetData.BreadingTile.X == roomUsers.X && roomUsers.PetData.BreadingTile.Y == roomUsers.Y)
+                roomUsers.PetData.WaitingForBreading > 0 && roomUsers.PetData.BreadingTile.X == roomUsers.X &&
+                roomUsers.PetData.BreadingTile.Y == roomUsers.Y)
             {
                 roomUsers.Freezed = true;
                 _userRoom.GetGameMap().RemoveUserFromMap(roomUsers, roomUsers.Coordinate);
@@ -1104,7 +1103,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                 UpdateUserStatus(roomUsers, false);
             }
             else if (roomUsers.IsPet && (roomUsers.PetData.Type == 3 || roomUsers.PetData.Type == 4) &&
-                     roomUsers.PetData.WaitingForBreading > 0 && roomUsers.PetData.BreadingTile.X != roomUsers.X && roomUsers.PetData.BreadingTile.Y != roomUsers.Y)
+                     roomUsers.PetData.WaitingForBreading > 0 && roomUsers.PetData.BreadingTile.X != roomUsers.X &&
+                     roomUsers.PetData.BreadingTile.Y != roomUsers.Y)
             {
                 roomUsers.Freezed = false;
                 roomUsers.PetData.WaitingForBreading = 0;
@@ -1175,7 +1175,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             if (roomUsers?.Path == null) return false;
             if (roomUsers.PathStep >= roomUsers.Path.Count ||
-                 roomUsers.GoalX == roomUsers.X && roomUsers.GoalY == roomUsers.Y)
+                roomUsers.GoalX == roomUsers.X && roomUsers.GoalY == roomUsers.Y)
             {
                 // Erase all Movement Data..
                 roomUsers.IsWalking = false;
@@ -1313,7 +1313,11 @@ namespace Oblivion.HabboHotel.Rooms.User
                     UpdateUserStatus(roomUsers, false);
 
                 // Region Update User Map Data
-                _userRoom.GetGameMap().GameMap[roomUsers.X, roomUsers.Y] = roomUsers.SqState;
+                if (roomUsers.SqState != 3)
+                {
+                    _userRoom.GetGameMap().GameMap[roomUsers.X, roomUsers.Y] = roomUsers.SqState;
+                }
+
                 roomUsers.SqState = _userRoom.GetGameMap().GameMap[roomUsers.SetX, roomUsers.SetY];
 
                 // If user is in soccer proccess.
@@ -1347,16 +1351,14 @@ namespace Oblivion.HabboHotel.Rooms.User
                     _userRoom.GetGameMap()
                         .UpdateUserMovement(new Point(roomUsers.Coordinate.X, roomUsers.Coordinate.Y),
                             new Point(roomUsers.SetX, roomUsers.SetY), roomUsers);
-                    var hasItemInPlace = _userRoom.GetGameMap().GetCoordinatedItems(new Point(roomUsers.X, roomUsers.Y))
-                        .ToList();
+                    var hasItemInPlace =
+                        _userRoom.GetGameMap().GetCoordinatedItems(new Point(roomUsers.X, roomUsers.Y));
 
                     // Set His Actual X,Y,Z Position...
                     roomUsers.X = roomUsers.SetX;
                     roomUsers.Y = roomUsers.SetY;
                     roomUsers.Z = roomUsers.SetZ;
 
-                    // Check Sub Items Interactionables
-                    /* TODO CHECK */
                     foreach (var roomItem in hasItemInPlace)
                     {
                         roomItem.UserWalksOffFurni(roomUsers);
@@ -1439,26 +1441,22 @@ namespace Oblivion.HabboHotel.Rooms.User
 
         public void GenerateNewPath(RoomUser roomUsers)
         {
-//            if (true)
-            {
-                roomUsers.Path.Clear();
-                roomUsers.Path =
-                    PathFinder.FindPath(roomUsers, _userRoom.GetGameMap().DiagonalEnabled,
-                        _userRoom.GetGameMap(), new Vector2D(roomUsers.X, roomUsers.Y),
-                        new Vector2D(roomUsers.GoalX, roomUsers.GoalY))
-                    ;
+            roomUsers.Path.Clear();
+            roomUsers.Path =
+                PathFinder.FindPath(roomUsers, _userRoom.GetGameMap().DiagonalEnabled,
+                    _userRoom.GetGameMap(), new Vector2D(roomUsers.X, roomUsers.Y),
+                    new Vector2D(roomUsers.GoalX, roomUsers.GoalY));
 
-                if (roomUsers.Path.Count > 1)
-                {
-                    roomUsers.PathStep = 1;
-                    roomUsers.IsWalking = true;
-                    roomUsers.PathRecalcNeeded = false;
-                }
-                else
-                {
-                    roomUsers.PathRecalcNeeded = false;
-                    roomUsers.Path.Clear();
-                }
+            if (roomUsers.Path.Count > 1)
+            {
+                roomUsers.PathStep = 1;
+                roomUsers.IsWalking = true;
+                roomUsers.PathRecalcNeeded = false;
+            }
+            else
+            {
+                roomUsers.PathRecalcNeeded = false;
+                roomUsers.Path.Clear();
             }
         }
 
@@ -1545,296 +1543,311 @@ namespace Oblivion.HabboHotel.Rooms.User
                         }
                     }
 
-                    _userRoom.GetGameMap().GameMap[roomUsers.X, roomUsers.Y] = roomUsers.SqState;
+//                    _userRoom.GetGameMap().GameMap[roomUsers.X, roomUsers.Y] = roomUsers.SqState;
 
-                    roomUsers.SqState = _userRoom.GetGameMap().GameMap[roomUsers.SetX, roomUsers.SetY];
-
-                    var hasItemInPlace = _userRoom.GetGameMap().GetCoordinatedItems(new Point(roomUsers.X, roomUsers.Y))
-                        .ToList();
-
-
-                    // Check Sub Items Interactionables
-                    /* TODO CHECK */
-                    foreach (var roomItem in hasItemInPlace)
+                    if (_userRoom.GetGameMap()
+                        .SquareIsOpen(roomUsers.SetX, roomUsers.SetY, roomUsers.AllowOverride, false))
                     {
-                        roomItem.UserWalksOffFurni(roomUsers);
-                        switch (roomItem.GetBaseItem().InteractionType)
-                        {
-                            case Interaction.Normslaskates:
-                                if (roomUsers.LastRollerDate + 60 < Oblivion.GetUnixTimeStamp())
-                                {
-                                    Oblivion.GetGame().GetAchievementManager()
-                                        .ProgressUserAchievement(roomUsers.GetClient(), "ACH_RbTagC", 1);
-                                    roomUsers.LastRollerDate = Oblivion.GetUnixTimeStamp();
-                                }
-
-                                Oblivion.GetGame().GetAchievementManager()
-                                    .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagB", 1);
-
-                                break;
-                            case Interaction.IceSkates:
-                                if (roomUsers.LastRollerDate + 60 < Oblivion.GetUnixTimeStamp())
-                                {
-                                    Oblivion.GetGame().GetAchievementManager()
-                                        .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagC", 1);
-                                    roomUsers.LastRollerDate = Oblivion.GetUnixTimeStamp();
-                                }
-
-                                Oblivion.GetGame().GetAchievementManager()
-                                    .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagB", 1);
-                                break;
-
-                            case Interaction.QuickTeleport:
-                            case Interaction.GuildGate:
-                            case Interaction.WalkInternalLink:
-                            case Interaction.FloorSwitch:
-                                roomItem.Interactor.OnUserWalk(roomUsers.GetClient(), roomItem, roomUsers);
-                                break;
-                            case Interaction.RunWaySage:
-                            case Interaction.ChairState:
-                            case Interaction.Shower:
-                            case Interaction.PressurePad:
-                            case Interaction.PressurePadBed:
-                            case Interaction.Guillotine:
-                                roomItem.ExtraData = "0";
-                                roomItem.UpdateState();
-                                break;
-
-                            case Interaction.Tent:
-                            case Interaction.BedTent:
-                                if (!roomUsers.IsBot && roomUsers.OnCampingTent)
-                                {
-                                    var serverMessage = new ServerMessage();
-                                    serverMessage.Init(
-                                        LibraryParser.OutgoingRequest("UpdateFloorItemExtraDataMessageComposer"));
-                                    serverMessage.AppendString(roomItem.Id.ToString());
-                                    serverMessage.AppendInteger(0);
-                                    serverMessage.AppendString("0");
-                                    roomUsers.GetClient().SendMessage(serverMessage);
-                                    roomUsers.OnCampingTent = false;
-                                }
-
-                                break;
-
-                            case Interaction.None:
-                                break;
-                        }
-                    }
-
-                    hasItemInPlace.Clear();
-
-
-                    // Set His Actual X,Y,Z Position...
-                    roomUsers.X = roomUsers.SetX;
-                    roomUsers.Y = roomUsers.SetY;
-                    roomUsers.Z = roomUsers.SetZ;
-
-                    // Let's Update user Status..
-                    if (roomUsers.X == _userRoom.GetGameMap().Model.DoorX &&
-                        roomUsers.Y == _userRoom.GetGameMap().Model.DoorY && !roomUsers.IsBot)
-                    {
-                        lock (_removeUsers)
-                        {
-                            if (!_removeUsers.Contains(roomUsers))
-                            _removeUsers.Add(roomUsers);
-                        }
-
-                        return;
-                    }
-                    UpdateUserStatus(roomUsers, true, false);
-                    roomUsers.SetStep = false;
-
-                }
-
-                while (true) { 
-                GenerateNewPath(roomUsers);
-
-                // Pet Must Stop Too!
-                if (roomUsers.GoalX == roomUsers.X && roomUsers.GoalY == roomUsers.Y &&
-                    roomUsers.RidingHorse &&
-                    !roomUsers.IsPet)
-                {
-                    var horseStopWalkRidingPet = GetRoomUserByVirtualId(Convert.ToInt32(roomUsers.HorseId));
-
-                    if (horseStopWalkRidingPet != null)
-                    {
-                        var horseStopWalkRidingPetMessage =
-                            new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
-                        horseStopWalkRidingPetMessage.AppendInteger(1);
-                        horseStopWalkRidingPet.SerializeStatus(horseStopWalkRidingPetMessage, "");
-                        _userRoom.SendMessage(horseStopWalkRidingPetMessage);
-
-                        horseStopWalkRidingPet.IsWalking = false;
-                        horseStopWalkRidingPet.ClearMovement();
-                    }
-                }
-
-                    
-
-                if (!roomUsers.IsWalking || roomUsers.Freezed)
-                {
-                    if (roomUsers.Statusses.TryRemove("mv", out _))
-                        roomUsers.UpdateNeeded = true;
-                }
-                else
-                {
-                    if (roomUsers.PathStep >= roomUsers.Path.Count ||
-                        roomUsers.GoalX == roomUsers.X && roomUsers.GoalY == roomUsers.Y)
-                    {
-                        // Erase all Movement Data..
-                        roomUsers.ClearMovement();
-                        roomUsers.HandelingBallStatus = 0;
-                        RoomUserBreedInteraction(roomUsers);
-                        // Check if he is in a Horse, and if if Erase Horse and User Movement Data
-                        if (roomUsers.RidingHorse && !roomUsers.IsPet)
-                        {
-                            var horseStopWalkRidingPet = GetRoomUserByVirtualId(Convert.ToInt32(roomUsers.HorseId));
-
-                            if (horseStopWalkRidingPet != null)
-                            {
-                                var horseStopWalkRidingPetMessage =
-                                    new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
-                                horseStopWalkRidingPetMessage.AppendInteger(1);
-                                horseStopWalkRidingPet.SerializeStatus(horseStopWalkRidingPetMessage, "");
-                                _userRoom.SendMessage(horseStopWalkRidingPetMessage);
-
-                                horseStopWalkRidingPet.IsWalking = false;
-                                horseStopWalkRidingPet.ClearMovement();
-                            }
-                        }
-
-                        // Finally Update User Status
-                        UpdateUserStatus(roomUsers, false);
-                        break;
-                    }
-
-                    // Region Set Variables
-                    var pathDataCount = roomUsers.Path.Count - roomUsers.PathStep - 1;
-                    var nextStep = roomUsers.Path[pathDataCount];
-                    // Increase Step Data...
-                    roomUsers.PathStep++;
-                      
-                    roomUsers.RemoveStatus("mv");
-                    if (_userRoom.GetGameMap().IsValidStep(roomUsers, new Vector2D(roomUsers.X, roomUsers.Y),
-                        nextStep, roomUsers.GoalX == nextStep.X && roomUsers.GoalY == nextStep.Y,
-                        roomUsers.AllowOverride))
-                    {
-                        if (roomUsers.FastWalking && roomUsers.PathStep < roomUsers.Path.Count)
-                        {
-                            pathDataCount = roomUsers.Path.Count - roomUsers.PathStep - 1;
-                            nextStep = roomUsers.Path[pathDataCount];
-                            roomUsers.PathStep++;
-                        }
-                        int nextX = nextStep.X;
-                        int nextY = nextStep.Y;
-
-                        double nextZ = _userRoom.GetGameMap().SqAbsoluteHeight(nextX, nextY);
-                        if (roomUsers.Statusses.TryRemove("lay", out _))
-                        {
-                            roomUsers.IsLyingDown = false;
-                            roomUsers.UpdateNeeded = true;
-                        }
-                        else if (roomUsers.Statusses.TryRemove("sit", out _))
-                        {
-                            roomUsers.IsSitting = false;
-                            roomUsers.UpdateNeeded = true;
-                        }
-
-                        // Check if User is Ridding in Horse, if if Let's Update Ride Data.
-                        if (roomUsers.RidingHorse && !roomUsers.IsPet)
-                        {
-                            var horseRidingPet = GetRoomUserByVirtualId(Convert.ToInt32(roomUsers.HorseId));
-                            if (horseRidingPet != null)
-                            {
-                                horseRidingPet?.BotAi?.OnTimerTick();
-
-                                var theUser = "mv " + roomUsers.SetX + "," + roomUsers.SetY + "," +
-                                              TextHandling.GetString(roomUsers.SetZ);
-                                var thePet = "mv " + roomUsers.SetX + "," + roomUsers.SetY + "," +
-                                             TextHandling.GetString(horseRidingPet.SetZ);
-
-                                var horseRidingPetMessage =
-                                    new ServerMessage(
-                                        LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
-                                horseRidingPetMessage.AppendInteger(2);
-                                roomUsers.SerializeStatus(horseRidingPetMessage, theUser);
-                                horseRidingPet.SerializeStatus(horseRidingPetMessage, thePet);
-                                _userRoom.SendMessage(horseRidingPetMessage);
-
-                                horseRidingPet.RotBody = roomUsers.RotBody;
-                                horseRidingPet.RotHead = roomUsers.RotBody;
-                                horseRidingPet.SetX = roomUsers.SetX;
-                                horseRidingPet.SetY = roomUsers.SetY;
-                                horseRidingPet.SetZ = roomUsers.SetZ - 1;
-                                horseRidingPet.SetStep = true;
-
-                                UpdateUserEffect(horseRidingPet, horseRidingPet.SetX, horseRidingPet.SetY);
-                                UpdateUserStatus(horseRidingPet, false);
-                            }
-                        }
-                        else
-                        {
-                            roomUsers.AddStatus("mv", nextX + "," + nextY + "," + TextHandling.GetString(nextZ));
-                        }
-
-                        int newRot = Rotation.Calculate(roomUsers.X, roomUsers.Y, nextX, nextY,
-                            roomUsers.IsMoonwalking);
-                        roomUsers.RotBody = newRot;
-                        roomUsers.RotHead = newRot;
-
-                        // Establecemos que hay una baldosa a la que moverse y su futura coordenada.
-                        roomUsers.SetStep = true;
-                        roomUsers.SetX = nextX;
-                        roomUsers.SetY = nextY;
-                        roomUsers.SetZ = nextZ;
-
-                        // Actualizamos lista de usuarios sobre baldosa. Borramos la anterior y metemos al usuario en la nueva balodsa.
-                        _userRoom.GetGameMap().UpdateUserMovement(new Point(roomUsers.X, roomUsers.Y),
-                            new Point(roomUsers.SetX, roomUsers.SetY), roomUsers);
-
-
-
-                        // If user is in soccer proccess.
-                        if (_userRoom.GotSoccer())
-                            _userRoom.GetSoccer().OnUserWalk(roomUsers);
-
+                        _userRoom.GetGameMap()
+                            .UpdateUserMovement(new Point(roomUsers.Coordinate.X, roomUsers.Coordinate.Y),
+                                new Point(roomUsers.SetX, roomUsers.SetY), roomUsers);
 
 
                         UpdateUserEffect(roomUsers, roomUsers.SetX, roomUsers.SetY);
 
-                        // Horse Ridding need be Updated First
-                        if (roomUsers.RidingHorse)
-                        {
-                            // Set User Position Data
-                            UserSetPositionData(roomUsers, nextStep);
-                            CheckUserSittableLayable(roomUsers);
+                        
 
-                            // Add Status of Walking
-                            roomUsers.AddStatus("mv",
-                                +roomUsers.SetX + "," + roomUsers.SetY + "," +
-                                TextHandling.GetString(roomUsers.SetZ));
+                        var hasItemInPlace = _userRoom.GetGameMap()
+                            .GetCoordinatedItems(new Point(roomUsers.X, roomUsers.Y));
+
+
+                        // Set His Actual X,Y,Z Position...
+                        roomUsers.X = roomUsers.SetX;
+                        roomUsers.Y = roomUsers.SetY;
+                        roomUsers.Z = roomUsers.SetZ;
+
+                        if (hasItemInPlace.Count > 0)
+                        {
+                            foreach (var roomItem in hasItemInPlace)
+                            {
+
+                                if (roomItem == null)
+                                    continue;
+
+                                roomItem.UserWalksOffFurni(roomUsers);
+                                switch (roomItem.GetBaseItem().InteractionType)
+                                {
+                                    case Interaction.Normslaskates:
+                                        if (roomUsers.LastRollerDate + 60 < Oblivion.GetUnixTimeStamp())
+                                        {
+                                            Oblivion.GetGame().GetAchievementManager()
+                                                .ProgressUserAchievement(roomUsers.GetClient(), "ACH_RbTagC", 1);
+                                            roomUsers.LastRollerDate = Oblivion.GetUnixTimeStamp();
+                                        }
+
+                                        Oblivion.GetGame().GetAchievementManager()
+                                            .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagB", 1);
+
+                                        break;
+                                    case Interaction.IceSkates:
+                                        if (roomUsers.LastRollerDate + 60 < Oblivion.GetUnixTimeStamp())
+                                        {
+                                            Oblivion.GetGame().GetAchievementManager()
+                                                .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagC", 1);
+                                            roomUsers.LastRollerDate = Oblivion.GetUnixTimeStamp();
+                                        }
+
+                                        Oblivion.GetGame().GetAchievementManager()
+                                            .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagB", 1);
+                                        break;
+
+                                    case Interaction.QuickTeleport:
+                                    case Interaction.GuildGate:
+                                    case Interaction.WalkInternalLink:
+                                    case Interaction.FloorSwitch:
+                                        roomItem.Interactor.OnUserWalk(roomUsers.GetClient(), roomItem, roomUsers);
+                                        break;
+                                    case Interaction.RunWaySage:
+                                    case Interaction.ChairState:
+                                    case Interaction.Shower:
+                                    case Interaction.PressurePad:
+                                    case Interaction.PressurePadBed:
+                                    case Interaction.Guillotine:
+                                        roomItem.ExtraData = "0";
+                                        roomItem.UpdateState();
+                                        break;
+
+                                    case Interaction.Tent:
+                                    case Interaction.BedTent:
+                                        if (!roomUsers.IsBot && roomUsers.OnCampingTent)
+                                        {
+                                            var serverMessage = new ServerMessage();
+                                            serverMessage.Init(
+                                                LibraryParser.OutgoingRequest(
+                                                    "UpdateFloorItemExtraDataMessageComposer"));
+                                            serverMessage.AppendString(roomItem.Id.ToString());
+                                            serverMessage.AppendInteger(0);
+                                            serverMessage.AppendString("0");
+                                            roomUsers.GetClient().SendMessage(serverMessage);
+                                            roomUsers.OnCampingTent = false;
+                                        }
+
+                                        break;
+
+                                    case Interaction.None:
+                                        break;
+                                }
+                            }
+                        }
+                        
+                        // Let's Update user Status..
+                        if (roomUsers.X == _userRoom.GetGameMap().Model.DoorX &&
+                            roomUsers.Y == _userRoom.GetGameMap().Model.DoorY && !roomUsers.IsBot)
+                        {
+                            lock (_removeUsers)
+                            {
+                                if (!_removeUsers.Contains(roomUsers))
+                                    _removeUsers.Add(roomUsers);
+                            }
+
+                            return;
+                        }
+
+                        UpdateUserStatus(roomUsers, true, false);
+                    }
+                    else
+                    {
+                        invalidStep = true;
+                    }
+
+                    roomUsers.SetStep = false;
+                }
+
+                while (true)
+                {
+                    if (!roomUsers.IsWalking && !roomUsers.SetStep && !roomUsers.PathRecalcNeeded) break;
+                    GenerateNewPath(roomUsers);
+
+                    // Pet Must Stop Too!
+                    if ((roomUsers.GoalX == roomUsers.X && roomUsers.GoalY == roomUsers.Y &&
+                        roomUsers.RidingHorse &&
+                        !roomUsers.IsPet) || invalidStep)
+                    {
+                        var horseStopWalkRidingPet = GetRoomUserByVirtualId(Convert.ToInt32(roomUsers.HorseId));
+
+                        if (horseStopWalkRidingPet != null)
+                        {
+                            var horseStopWalkRidingPetMessage =
+                                new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
+                            horseStopWalkRidingPetMessage.AppendInteger(1);
+                            horseStopWalkRidingPet.SerializeStatus(horseStopWalkRidingPetMessage, "");
+                            _userRoom.SendMessage(horseStopWalkRidingPetMessage);
+
+                            horseStopWalkRidingPet.IsWalking = false;
+                            horseStopWalkRidingPet.ClearMovement();
                         }
                     }
 
-                    if (roomUsers.PathRecalcNeeded && !roomUsers.SetStep)
-                        continue;
 
-                    // Update Effect if is Ridding
-                    if (roomUsers.RidingHorse)
-                        UpdateUserStatus(roomUsers, false);
+                    if (!roomUsers.IsWalking || roomUsers.Freezed)
+                    {
+                        if (roomUsers.Statusses.TryRemove("mv", out _))
+                            roomUsers.UpdateNeeded = true;
+                    }
                     else
                     {
-                        roomUsers.UpdateNeeded = true;
-                    }
-                    if (roomUsers.GoalX == roomUsers.X && roomUsers.GoalY == roomUsers.Y)
-                    {
+                        if (roomUsers.PathStep >= roomUsers.Path.Count ||
+                            roomUsers.GoalX == roomUsers.X && roomUsers.GoalY == roomUsers.Y)
+                        {
+                            // Erase all Movement Data..
+                            roomUsers.ClearMovement();
+                            roomUsers.HandelingBallStatus = 0;
+                            RoomUserBreedInteraction(roomUsers);
+                            // Check if he is in a Horse, and if if Erase Horse and User Movement Data
+                            if (roomUsers.RidingHorse && !roomUsers.IsPet)
+                            {
+                                var horseStopWalkRidingPet = GetRoomUserByVirtualId(Convert.ToInt32(roomUsers.HorseId));
 
-                    }
+                                if (horseStopWalkRidingPet != null)
+                                {
+                                    var horseStopWalkRidingPetMessage =
+                                        new ServerMessage(
+                                            LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
+                                    horseStopWalkRidingPetMessage.AppendInteger(1);
+                                    horseStopWalkRidingPet.SerializeStatus(horseStopWalkRidingPetMessage, "");
+                                    _userRoom.SendMessage(horseStopWalkRidingPetMessage);
+
+                                    horseStopWalkRidingPet.IsWalking = false;
+                                    horseStopWalkRidingPet.ClearMovement();
+                                }
+                            }
+                            // Finally Update User Status
+                            UpdateUserStatus(roomUsers, false);
+                            break;
+                        }
+
+                        // Region Set Variables
+                        var pathDataCount = roomUsers.Path.Count - roomUsers.PathStep - 1;
+                        var nextStep = roomUsers.Path[pathDataCount];
+
+                        if (!_userRoom.GetGameMap()
+                            .SquareIsOpen(nextStep.X, nextStep.Y, roomUsers.AllowOverride))
+                        {
+                            roomUsers.ClearMovement();
+                            UpdateUserStatus(roomUsers, false);
+                            break;
+                        }
+                        // Increase Step Data...
+                        roomUsers.PathStep++;
+
+                        roomUsers.RemoveStatus("mv");
+                        if (_userRoom.GetGameMap().IsValidStep(roomUsers, new Vector2D(roomUsers.X, roomUsers.Y),
+                            nextStep, roomUsers.GoalX == nextStep.X && roomUsers.GoalY == nextStep.Y,
+                            roomUsers.AllowOverride))
+                        {
+                            if (roomUsers.FastWalking && roomUsers.PathStep < roomUsers.Path.Count)
+                            {
+                                pathDataCount = roomUsers.Path.Count - roomUsers.PathStep - 1;
+                                nextStep = roomUsers.Path[pathDataCount];
+                                roomUsers.PathStep++;
+                            }
+
+                            int nextX = nextStep.X;
+                            int nextY = nextStep.Y;
+
+                            double nextZ = _userRoom.GetGameMap().SqAbsoluteHeight(nextX, nextY);
+                            if (roomUsers.Statusses.TryRemove("lay", out _))
+                            {
+                                roomUsers.IsLyingDown = false;
+                                roomUsers.UpdateNeeded = true;
+                            }
+                            else if (roomUsers.Statusses.TryRemove("sit", out _))
+                            {
+                                roomUsers.IsSitting = false;
+                                roomUsers.UpdateNeeded = true;
+                            }
+
+
+                            int newRot = Rotation.Calculate(roomUsers.X, roomUsers.Y, nextX, nextY,
+                                roomUsers.IsMoonwalking);
+                            roomUsers.RotBody = newRot;
+                            roomUsers.RotHead = newRot;
+
+                            roomUsers.SetStep = true;
+                            roomUsers.SetX = nextX;
+                            roomUsers.SetY = nextY;
+                            roomUsers.SetZ = nextZ;
+
+                            // Check if User is Ridding in Horse, if if Let's Update Ride Data.
+                            if (roomUsers.RidingHorse && !roomUsers.IsPet)
+                            {
+                                var horseRidingPet = GetRoomUserByVirtualId(Convert.ToInt32(roomUsers.HorseId));
+                                if (horseRidingPet != null)
+                                {
+                                    horseRidingPet?.BotAi?.OnTimerTick();
+
+                                    var theUser = "mv " + roomUsers.SetX + "," + roomUsers.SetY + "," +
+                                                  TextHandling.GetString(roomUsers.SetZ);
+                                    var thePet = "mv " + roomUsers.SetX + "," + roomUsers.SetY + "," +
+                                                 TextHandling.GetString(horseRidingPet.SetZ);
+
+                                    var horseRidingPetMessage =
+                                        new ServerMessage(
+                                            LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
+                                    horseRidingPetMessage.AppendInteger(2);
+                                    roomUsers.SerializeStatus(horseRidingPetMessage, theUser);
+                                    horseRidingPet.SerializeStatus(horseRidingPetMessage, thePet);
+                                    _userRoom.SendMessage(horseRidingPetMessage);
+
+                                    horseRidingPet.RotBody = roomUsers.RotBody;
+                                    horseRidingPet.RotHead = roomUsers.RotBody;
+                                    horseRidingPet.SetX = roomUsers.SetX;
+                                    horseRidingPet.SetY = roomUsers.SetY;
+                                    horseRidingPet.SetZ = roomUsers.SetZ - 1;
+                                    horseRidingPet.SetStep = true;
+
+                                    UpdateUserEffect(horseRidingPet, horseRidingPet.SetX, horseRidingPet.SetY);
+                                    UpdateUserStatus(horseRidingPet, false);
+                                }
+                            }
+                            else
+                            {
+//                                                    UserSetPositionData(roomUsers, nextStep);
+//                                                    CheckUserSittableLayable(roomUsers);
+                                roomUsers.AddStatus("mv", nextX + "," + nextY + "," + TextHandling.GetString(nextZ));
+                            }
+
+                            UpdateUserEffect(roomUsers, roomUsers.SetX, roomUsers.SetY);
+
+
+                            // Update Effect if is Ridding
+                            if (roomUsers.RidingHorse)
+                                UpdateUserStatus(roomUsers, false);
+
+                            _userRoom.GetGameMap().GameMap[roomUsers.X, roomUsers.Y] = roomUsers.SqState;
+                            roomUsers.SqState = _userRoom.GetGameMap().GameMap[roomUsers.SetX, roomUsers.SetY];
+
+                            // If user is in soccer proccess.
+                            if (_userRoom.GotSoccer())
+                                _userRoom.GetSoccer().OnUserWalk(roomUsers);
+                           
+
+                        }
+
+                        if (roomUsers.PathRecalcNeeded && !roomUsers.SetStep)
+                            continue;
+
+                        // Update Effect if is Ridding
+                        if (!roomUsers.RidingHorse)
+                            roomUsers.UpdateNeeded = true;
+                        
+                        
+
                         roomUsers.UpdateNeeded = true;
                     }
+
                     break;
                 }
-
 
 
                 // If is a Bot.. Let's Tick the Time Count of Bot..
@@ -2233,7 +2246,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                 var userOnCurrentItem = _userRoom.GetGameMap().GetCoordinatedItems(new Point(user.X, user.Y));
                 /* TODO CHECK */
-                foreach (var roomItem in userOnCurrentItem.ToList())
+                foreach (var roomItem in userOnCurrentItem)
                 {
                     switch (roomItem.GetBaseItem().InteractionType)
                     {

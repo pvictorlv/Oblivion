@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Rooms.Items.Games.Teams.Enums;
@@ -559,6 +560,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
             return list;
         }
 
-        private List<RoomItem> GetItemsForSquare(Point point) => _room.GetGameMap().GetCoordinatedItems(point);
+        private ConcurrentList<RoomItem> GetItemsForSquare(Point point) => _room.GetGameMap().GetCoordinatedItems(point);
     }
 }

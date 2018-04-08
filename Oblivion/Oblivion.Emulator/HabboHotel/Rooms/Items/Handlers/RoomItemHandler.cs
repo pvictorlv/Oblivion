@@ -1084,7 +1084,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
         /// <returns>List&lt;RoomItem&gt;.</returns>
-        internal List<RoomItem> GetFurniObjects(int x, int y) =>
+        internal ConcurrentList<RoomItem> GetFurniObjects(int x, int y) =>
             _room.GetGameMap().GetCoordinatedItems(new Point(x, y));
 
         /// <summary>

@@ -1084,8 +1084,7 @@ namespace Oblivion.HabboHotel.Users
 
             Muted = false;
 
-            if (CurrentRoom != null && CurrentRoom.MutedUsers.ContainsKey(Id))
-                CurrentRoom.MutedUsers.Remove(Id);
+            CurrentRoom?.MutedUsers?.Remove(Id);
         }
 
         /// <summary>
