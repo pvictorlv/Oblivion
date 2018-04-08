@@ -33,8 +33,12 @@ namespace Oblivion
     public class CryptoKeys
     {
         public const string E = "3";
-        public const string N = "86851dd364d5c5cece3c883171cc6ddc5760779b992482bd1e20dd296888df91b33b936a7b93f06d29e8870f703a216257dec7c81de0058fea4cc5116f75e6efc4e9113513e45357dc3fd43d4efab5963ef178b78bd61e81a14c603b24c8bcce0a12230b320045498edc29282ff0603bc7b7dae8fc1b05b52b2f301a9dc783b7";
-        public const string D = "59ae13e243392e89ded305764bdd9e92e4eafa67bb6dac7e1415e8c645b0950bccd26246fd0d4af37145af5fa026c0ec3a94853013eaae5ff1888360f4f9449ee023762ec195dff3f30ca0b08b8c947e3859877b5d7dced5c8715c58b53740b84e11fbc71349a27c31745fcefeeea57cff291099205e230e0c7c27e8e1c0512b";
+
+        public const string N =
+            "86851dd364d5c5cece3c883171cc6ddc5760779b992482bd1e20dd296888df91b33b936a7b93f06d29e8870f703a216257dec7c81de0058fea4cc5116f75e6efc4e9113513e45357dc3fd43d4efab5963ef178b78bd61e81a14c603b24c8bcce0a12230b320045498edc29282ff0603bc7b7dae8fc1b05b52b2f301a9dc783b7";
+
+        public const string D =
+            "59ae13e243392e89ded305764bdd9e92e4eafa67bb6dac7e1415e8c645b0950bccd26246fd0d4af37145af5fa026c0ec3a94853013eaae5ff1888360f4f9449ee023762ec195dff3f30ca0b08b8c947e3859877b5d7dced5c8715c58b53740b84e11fbc71349a27c31745fcefeeea57cff291099205e230e0c7c27e8e1c0512b";
     }
 
     /// <summary>
@@ -181,7 +185,8 @@ namespace Oblivion
             var pluginType = typeof(IPlugin);
             var pluginTypes = new List<Type>();
 
-            /* TODO CHECK */ foreach (var types in from assembly in assemblies where assembly != null select assembly.GetTypes())
+            /* TODO CHECK */
+            foreach (var types in from assembly in assemblies where assembly != null select assembly.GetTypes())
                 pluginTypes.AddRange(types.Where(type => type != null && !type.IsInterface && !type.IsAbstract)
                     .Where(type => type.GetInterface(pluginType.FullName) != null));
 
@@ -204,6 +209,7 @@ namespace Oblivion
             {
                 return null;
             }
+
             try
             {
                 var clientByUserId = GetGame().GetClientManager().GetClientByUserId(userId);
@@ -211,34 +217,29 @@ namespace Oblivion
                 if (clientByUserId != null)
                 {
                     var habbo = clientByUserId.GetHabbo();
-                    if (habbo != null && habbo.Id > 0)
-                    {
 
-                        UsersCached.AddOrUpdate(userId, habbo, (key, value) => habbo);
-                        return habbo;
-                    }
+                    return habbo;
                 }
-                else
-                {
-                    if (UsersCached.TryGetValue(userId, out var user))
-                        return user;
 
-                    var userData = UserDataFactory.GetUserData((int)userId);
+                if (UsersCached.TryGetValue(userId, out var user))
+                    return user;
+
+                var userData = UserDataFactory.GetUserData((int) userId);
 
 
-                    if (userData?.User == null)
-                        return null;
+                if (userData?.User == null)
+                    return null;
 
-                    UsersCached.TryAdd(userId, userData.User);
-                    userData.User.InitInformation(userData);
+                UsersCached.TryAdd(userId, userData.User);
+                userData.User.InitInformation(userData);
 
-                    return userData.User;
-                }
+                return userData.User;
             }
             catch (Exception e)
             {
                 Writer.Writer.LogException("Habbo GetHabboForId: " + e);
             }
+
             return null;
         }
 
@@ -301,7 +302,7 @@ namespace Oblivion
                     Pooling = true,
                     AllowZeroDateTime = true,
                     ConvertZeroDateTime = true,
-                    DefaultCommandTimeout = 90,
+                    DefaultCommandTimeout = 300,
                     Logging = false,
                     ConnectionTimeout = 10
                 };
@@ -330,7 +331,8 @@ namespace Oblivion
                 var plugins = LoadPlugins();
 
                 if (plugins != null)
-                    /* TODO CHECK */ foreach (var item in plugins.Where(item => item != null))
+                    /* TODO CHECK */
+                    foreach (var item in plugins.Where(item => item != null))
                     {
                         Plugins.Add(item.PluginName, item);
 
@@ -350,7 +352,8 @@ namespace Oblivion
                 Out.WriteLine("Loaded " + _languages.Count() + " Languages Vars", "Oblivion.Lang");
 
                 if (plugins != null)
-                    /* TODO CHECK */ foreach (var itemTwo in plugins)
+                    /* TODO CHECK */
+                    foreach (var itemTwo in plugins)
                         itemTwo?.message_void();
 
                 if (ConsoleTimerOn)
@@ -515,6 +518,7 @@ namespace Oblivion
 
             return Convert.ToInt32(time1 - time2);
         }
+
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
             var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
@@ -549,26 +553,28 @@ namespace Oblivion
         {
             try
             {
+                int id;
                 using (var queryReactor = GetDatabaseManager().GetQueryReactor())
                 {
                     queryReactor.SetQuery("SELECT id FROM users WHERE username = @user");
 
                     queryReactor.AddParameter("user", userName);
 
-                    var integer = queryReactor.GetInteger();
+                    id = queryReactor.GetInteger();
+                }
 
-                    if (integer > 0)
-                    {
-                        var result = GetHabboById((uint) integer);
+                if (id > 0)
+                {
+                    var result = GetHabboById((uint) id);
 
-                        return result;
-                    }
+                    return result;
                 }
             }
             catch (Exception)
             {
                 // ignored
             }
+
             return null;
         }
 

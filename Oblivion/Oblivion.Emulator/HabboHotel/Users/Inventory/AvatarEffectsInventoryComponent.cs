@@ -267,6 +267,26 @@ namespace Oblivion.HabboHotel.Users.Inventory
             serverMessage.AppendInteger(0);
             userRoom.SendMessage(serverMessage);
         }
+        /// <summary>
+        ///     Enables the in room.
+        /// </summary>
+        /// <param name="effectId">The effect identifier.</param>
+        /// <param name="setAsCurrentEffect">if set to <c>true</c> [set as current effect].</param>
+        private void EnableInClient(int effectId, uint userId)
+        {
+            var userRoom = GetUserRoom();
+
+            var roomUserByHabbo = userRoom?.GetRoomUserManager().GetRoomUserByHabbo(userId);
+
+            if (roomUserByHabbo == null)
+                return;
+
+            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ApplyEffectMessageComposer"));
+            serverMessage.AppendInteger(roomUserByHabbo.VirtualId);
+            serverMessage.AppendInteger(effectId);
+            serverMessage.AppendInteger(0);
+            roomUserByHabbo.GetClient().SendMessage(serverMessage);
+        }
 
         /// <summary>
         ///     Gets the user room.

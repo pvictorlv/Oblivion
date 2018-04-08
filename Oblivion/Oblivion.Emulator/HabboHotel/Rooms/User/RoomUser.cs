@@ -975,6 +975,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                 UpdateNeeded = true;
         }
 
+            
+
         /// <summary>
         ///     Moves to.
         /// </summary>

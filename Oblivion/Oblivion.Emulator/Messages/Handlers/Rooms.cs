@@ -1231,11 +1231,12 @@ namespace Oblivion.Messages.Handlers
         internal void LookAt()
         {
             if (Session?.GetHabbo() == null) return;
+
             var room = Session.GetHabbo().CurrentRoom;
+            
             var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
             if (roomUserByHabbo == null)
                 return;
-
             roomUserByHabbo.UnIdle();
             var x = Request.GetInteger();
             var y = Request.GetInteger();

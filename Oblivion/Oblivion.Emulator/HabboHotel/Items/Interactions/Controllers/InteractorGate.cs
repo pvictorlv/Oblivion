@@ -24,7 +24,10 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 item.GetRoom().GetGameMap().SquareHasUsers(item.X, item.Y))
                 return;
 
-            int.TryParse(item.ExtraData, out var currentMode);
+            if (!int.TryParse(item.ExtraData, out var currentMode))
+            {
+                currentMode = 0;
+            }
             int newMode;
 
             if (currentMode <= 0)
@@ -55,8 +58,11 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     .GetWiredHandler()
                     .ExecuteWired(Interaction.TriggerStateChanged,
                         item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id), item);
-//            item.GetRoom().GetGameMap().UpdateMapForItem(item);
 
+            if (item.GetBaseItem().Width > 1 || item.GetBaseItem().Length > 1)
+            {
+                item.GetRoom().GetGameMap().UpdateMapForItem(item);
+            }
         }
 
         public override void OnWiredTrigger(RoomItem item)
@@ -70,8 +76,11 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 item.GetRoom().GetGameMap().SquareHasUsers(item.X, item.Y))
                 return;
 
-            int num2;
-            int.TryParse(item.ExtraData, out num2);
+            if (!int.TryParse(item.ExtraData, out var num2))
+            {
+                num2 = 0;
+            }
+
             int num3;
 
             if (num2 <= 0)
@@ -99,7 +108,10 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             item.ExtraData = num3.ToString();
             item.UpdateState();
-//            item.GetRoom().GetGameMap().UpdateMapForItem(item);
+            if (item.GetBaseItem().Width > 1 || item.GetBaseItem().Length > 1)
+            {
+                item.GetRoom().GetGameMap().UpdateMapForItem(item);
+            }
         }
     }
 }

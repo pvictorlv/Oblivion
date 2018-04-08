@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -128,7 +127,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         internal ConcurrentDictionary<Point, List<RoomItem>> CoordinatedItems { get; private set; }
 
         /// <summary>
-        ///     Gets the game map.
+        ///     The sqstate. 0 = Closed, 1 = Open, 2 = Chair, 3 = Door
         /// </summary>
         /// <value>The game map.</value>
         internal byte[,] GameMap { get; private set; }
@@ -251,7 +250,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             if (_userMap.TryGetValue(coordKey, out var users))
             {
                 users.Add(user);
-//                _userMap[coordKey] = users;
             }
             else
             {
@@ -648,31 +646,31 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             if (_room.GotSoccer())
                 _room.GetSoccer().OnGateRemove(item);
             var result = false;
-            var hybridDictionary = new HybridDictionary();
+            var coordinatedItems = new Dictionary<Point, List<RoomItem>>();
             foreach (var current2 in item.GetCoords())
             {
                 if (RemoveCoordinatedItem(item, current2)) result = true;
 
                 if (CoordinatedItems.TryGetValue(current2, out var value))
                 {
-                    if (!hybridDictionary.Contains(current2))
-                        hybridDictionary.Add(current2, value);
+                    if (!coordinatedItems.ContainsKey(current2))
+                        coordinatedItems.Add(current2, value);
                 }
 
                 SetDefaultValue(current2.X, current2.Y);
             }
 
-            foreach (Point point2 in hybridDictionary.Keys)
+            foreach (var pair in coordinatedItems)
             {
-                var list = (List<RoomItem>) hybridDictionary[point2];
-                foreach (var current3 in list.ToList())
-                    ConstructMapForItem(current3, point2);
+                var list = pair.Value;
+                foreach (var current3 in list)
+                    ConstructMapForItem(current3, pair.Key);
             }
 
             if (GuildGates.ContainsKey(item.Coordinate))
                 GuildGates.Remove(item.Coordinate);
-            _room.GetRoomItemHandler().OnHeightMapUpdate(hybridDictionary.Keys);
-            hybridDictionary.Clear();
+            _room.GetRoomItemHandler().OnHeightMapUpdate(coordinatedItems.Keys);
+            coordinatedItems.Clear();
 
             return result;
         }
@@ -945,12 +943,19 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="to">To.</param>
         /// <param name="endOfPath">if set to <c>true</c> [end of path].</param>
         /// <param name="Override">if set to <c>true</c> [override].</param>
+        /// <param name="diagMove">specify if the user is diagonally moving.</param>
         /// <returns><c>true</c> if [is valid step] [the specified user]; otherwise, <c>false</c>.</returns>
-        internal bool IsValidStep(RoomUser user, Vector2D from, Vector2D to, bool endOfPath, bool Override)
+        internal bool IsValidStep(RoomUser user, Vector2D from, Vector2D to, bool endOfPath, bool Override, bool diagMove = false)
         {
             if (user == null)
                 return false;
+
+
+            if (Override)
+                return true;
+
             var square = new Point(to.X, to.Y);
+
             if (user.IsBot == false && user.GetClient() != null)
             {
                 if (GuildGates.TryGetValue(square, out var guild))
@@ -966,8 +971,33 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
             if (!ValidTile(to.X, to.Y))
                 return false;
-            if (Override)
-                return true;
+
+            if (diagMove)
+            {
+                int xValue = to.X - from.X;
+                int yValue = to.Y - from.Y;
+
+                if (xValue == -1 && yValue == -1)
+                {
+                    if (GameMap[to.X + 1, to.Y + 1] != 1 && GameMap[to.X + 1, to.Y + 1] != 2)
+                        return false;
+                }
+                else if (xValue == 1 && yValue == -1)
+                {
+                    if (GameMap[to.X - 1, to.Y + 1] != 1 && GameMap[to.X - 1, to.Y + 1] != 2)
+                        return false;
+                }
+                else if (xValue == 1 && yValue == 1)
+                {
+                    if (GameMap[to.X - 1, to.Y - 1] != 1 && GameMap[to.X - 1, to.Y - 1] != 2)
+                        return false;
+                }
+                else if (xValue == -1 && yValue == 1)
+                {
+                    if (GameMap[to.X + 1, to.Y - 1] != 1 && GameMap[to.X + 1, to.Y - 1] != 2)
+                        return false;
+                }
+            }
 
             if (GameMap.GetLength(0) > to.X && GameMap.GetLength(1) > to.Y)
             {
@@ -976,35 +1006,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     return false;
             }
 
-            var squaseHasUser = GetRoomUsers(new Point(to.X, to.Y)).Count > 0;
-
-            if (squaseHasUser && endOfPath && !_room.RoomData.AllowWalkThrough)
-            {
-                user.Path.Clear();
-                user.IsWalking = false;
-                user.RemoveStatus("mv");
-                _room.GetRoomUserManager().UpdateUserStatus(user, false);
-                if (!user.RidingHorse || user.IsPet || user.IsBot)
-                    return true;
-                var roomUserByVirtualId =
-                    _room.GetRoomUserManager().GetRoomUserByVirtualId(Convert.ToInt32(user.HorseId));
-
-                var message = new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
-                message.AppendInteger(1);
-                if (roomUserByVirtualId != null)
-                {
-                    roomUserByVirtualId.IsWalking = false;
-                    roomUserByVirtualId.ClearMovement();
-                    roomUserByVirtualId.SerializeStatus(message, "");
-                }
-
-                user.GetClient().GetHabbo().CurrentRoom.SendMessage(message);
-            }
-            else if (squaseHasUser && !_room.RoomData.AllowWalkThrough)
-            {
-                user.PathRecalcNeeded = true;
-                return false;
-            }
+      
 
             return SqAbsoluteHeight(to.X, to.Y) - SqAbsoluteHeight(from.X, from.Y) <= 1.5;
         }

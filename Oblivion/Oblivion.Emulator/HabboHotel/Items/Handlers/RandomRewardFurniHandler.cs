@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.Messages;
 
@@ -54,9 +55,12 @@ namespace Oblivion.HabboHotel.Items.Handlers
             {
                 return 0;
             }
-            var items = itemsString.Split(',');
 
-            var rnd = Oblivion.GetRandomNumber(0, items.Length - 1);
+
+            var items = itemsString.Split(',').OrderBy(x => new Random().Next()).ToList();
+
+            var rnd = Oblivion.GetRandomNumber(0, items.Count - 1);
+
             var randomItem = items[rnd];
             return Convert.ToUInt32(randomItem);
         }

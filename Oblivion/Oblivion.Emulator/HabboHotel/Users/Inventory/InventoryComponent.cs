@@ -499,7 +499,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         {
             if (_items == null) return null;
 
-            if (_items.Values.Count <= 0)
+            if (_items.Count <= 0)
             {
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("LoadInventoryMessageComposer"));
                 message.AppendInteger(1);

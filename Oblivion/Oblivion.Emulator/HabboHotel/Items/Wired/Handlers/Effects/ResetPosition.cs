@@ -151,8 +151,11 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     Room.GetRoomItemHandler().SetFloorItem(null, fItem, xToSet, yToSet, rotationToSet, false, false,
                         true,
                         false, true);
+
                     fItem.ExtraData = extraDataToSet;
                     fItem.UpdateState();
+                    fItem.GetRoom().GetGameMap().UpdateMapForItem(fItem);
+
                 }
             }
             Requested = false;
