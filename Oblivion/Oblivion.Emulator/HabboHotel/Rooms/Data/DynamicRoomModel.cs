@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Text;
 using Oblivion.HabboHotel.Rooms.Chat.Enums;
 using Oblivion.Messages;
@@ -174,7 +174,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
             SqFloorHeight = newSqFloorHeight;
             SqSeatRot = newSqSeatRot;
         }
-     
+
 
         /// <summary>
         ///     Sets the state of the update.
@@ -217,7 +217,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         {
             if (z > 9.0) z = 9.0;
             if (z < 0.0) z = 0.0;
-            SqFloorHeight[x][y] = ((short) z);
+            SqFloorHeight[x][y] = ((short)z);
 
             SqState[x][y] = SquareState.Open;
         }

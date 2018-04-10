@@ -70,8 +70,8 @@ namespace Oblivion.HabboHotel.Rooms
         ///     The sq state
         /// </summary>
         internal SquareState[][] SqState;
-        
 
+        internal bool IsCustom;
         /// <summary>
         ///     Initializes a new instance of the <see cref="RoomModel" /> class.
         /// </summary>
@@ -81,10 +81,11 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="doorOrientation">The door orientation.</param>
         /// <param name="heightmap">The heightmap.</param>
         /// <param name="clubOnly">if set to <c>true</c> [club only].</param>
-        internal RoomModel(int doorX, int doorY, double doorZ, int doorOrientation, string heightmap, bool clubOnly)
+        internal RoomModel(int doorX, int doorY, double doorZ, int doorOrientation, string heightmap, bool clubOnly, bool isCustom)
         {
             try
             {
+                IsCustom = isCustom;
                 DoorX = doorX;
                 DoorY = doorY;
                 DoorZ = doorZ;
@@ -127,12 +128,12 @@ namespace Oblivion.HabboHotel.Rooms
                     {
                         var c = 'x';
 
-                        if(x < text2.Length)
+                        if (x < text2.Length)
                             c = text2[x];
 
                         if (x == doorX && y == doorY)
                         {
-                            SqFloorHeight[x][y] = (short) DoorZ;
+                            SqFloorHeight[x][y] = (short)DoorZ;
                             SqState[x][y] = SquareState.Open;
 
                             if (SqFloorHeight[x][y] > 9)
@@ -169,11 +170,27 @@ namespace Oblivion.HabboHotel.Rooms
 
         public void Destroy()
         {
+            if (!IsCustom) return;
+
             Heightmap = "";
-           SqChar = null;
-            SqFloorHeight = null;
-            SqSeatRot = null;
-            SqState = null;
+            if (SqChar != null)
+            {
+                Array.Clear(SqChar, 0, SqChar.Length);
+                SqChar = null;
+            }
+
+            if (SqFloorHeight != null)
+            {
+                Array.Clear(SqFloorHeight, 0, SqFloorHeight.Length);
+                SqFloorHeight = null;
+
+            }
+
+            if (SqState != null)
+            {
+                Array.Clear(SqState, 0, SqState.Length);
+                SqState = null;
+            }
         }
     }
 }

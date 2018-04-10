@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -30,6 +31,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         public ConcurrentList<RoomItem> Items { get; set; }
 
         private Queue<RoomItem> _toRemove = new Queue<RoomItem>();
+
         public string OtherString
         {
             get { return string.Empty; }
@@ -55,7 +57,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         }
 
         public double TickCount { get; set; }
-  
+
 
         private int _delay;
 
@@ -84,17 +86,24 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (_next > time)
                 return false;
 
-            
-
 
             foreach (var item in Items)
             {
-                if (item == null) continue;
+                if (item == null)
+                    continue;
 
-                if (!Room.GetRoomItemHandler().FloorItems.ContainsKey(item.Id)) continue;
+                if (!Room.GetRoomItemHandler().FloorItems.ContainsKey(item.Id))
+                    continue;
 
-                var Point = Room.GetGameMap().GetChaseMovement(item);
 
+                MovementState movement = Room.GetGameMap().GetChasingMovement(item.X, item.Y);
+                if (movement == MovementState.None)
+                    continue;
+
+                var Point = HandleMovement(item.Coordinate, movement, item.Rot);
+
+                if (Point == item.Coordinate)
+                    continue;
 
                 if (!Room.GetGameMap().ItemCanMove(item, Point))
                     continue;
@@ -139,12 +148,14 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                         Room.GetRoomItemHandler().SetFloorItem(item, Point.X, Point.Y, NewZ);
                     }
                 }
+
                 Room.GetWiredHandler().OnUserFurniCollision(Room, item);
             }
+
             while (_toRemove.Count > 0)
             {
                 var rI = _toRemove.Dequeue();
-                    Items.Remove(rI);
+                Items.Remove(rI);
             }
 
             _next = Oblivion.Now() + Delay;
@@ -153,20 +164,126 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             return true;
         }
+
         public bool Requested;
+
+
+        private static void HandleMovement(ref Point coordinate, MovementState state)
+        {
+            switch (state)
+            {
+                case MovementState.Down:
+                {
+                    coordinate.Y++;
+                    break;
+                }
+
+                case MovementState.Up:
+                {
+                    coordinate.Y--;
+                    break;
+                }
+
+                case MovementState.Left:
+                {
+                    coordinate.X--;
+                    break;
+                }
+
+                case MovementState.Right:
+                {
+                    coordinate.X++;
+                    break;
+                }
+            }
+        }
+
+        protected Point HandleMovement(Point newCoordinate, MovementState state, int newRotation)
+        {
+            var newPoint = new Point(newCoordinate.X, newCoordinate.Y);
+
+            switch (state)
+            {
+                case MovementState.Up:
+                case MovementState.Down:
+                case MovementState.Left:
+                case MovementState.Right:
+                {
+                    HandleMovement(ref newPoint, state);
+                    break;
+                }
+
+                case MovementState.LeftRight:
+                {
+                    if (Oblivion.GetRandomNumber(0, 2) == 1)
+                    {
+                        HandleMovement(ref newPoint, MovementState.Left);
+                    }
+                    else
+                    {
+                        HandleMovement(ref newPoint, MovementState.Right);
+                    }
+
+                    break;
+                }
+
+                case MovementState.UpDown:
+                {
+                    if (Oblivion.GetRandomNumber(0, 2) == 1)
+                    {
+                        HandleMovement(ref newPoint, MovementState.Up);
+                    }
+                    else
+                    {
+                        HandleMovement(ref newPoint, MovementState.Down);
+                    }
+
+                    break;
+                }
+
+                case MovementState.Random:
+                {
+                    switch (Oblivion.GetRandomNumber(1, 5))
+                    {
+                        case 1:
+                        {
+                            HandleMovement(ref newPoint, MovementState.Up);
+                            break;
+                        }
+                        case 2:
+                        {
+                            HandleMovement(ref newPoint, MovementState.Down);
+                            break;
+                        }
+
+                        case 3:
+                        {
+                            HandleMovement(ref newPoint, MovementState.Left);
+                            break;
+                        }
+                        case 4:
+                        {
+                            HandleMovement(ref newPoint, MovementState.Right);
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+            }
+
+            return newPoint;
+        }
 
         public bool Execute(params object[] Params)
         {
             if (Item == null || Items.Count == 0)
                 return false;
-            
 
 
-           
-                Requested = true;
-            
+            Requested = true;
 
-            
+
             return true;
         }
 
@@ -179,6 +296,5 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         public bool Disposed { get; set; }
 
         private double _next;
-        
     }
 }

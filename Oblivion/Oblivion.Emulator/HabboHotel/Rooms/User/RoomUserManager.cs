@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -97,7 +97,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             UsersByUserId = new HybridDictionary();
             _primaryPrivateUserId = 0;
             _secondaryPrivateUserId = 0;
-            _removeUsers = new List<RoomUser>((int) room.RoomData.UsersMax);
+            _removeUsers = new List<RoomUser>((int)room.RoomData.UsersMax);
             PetCount = 0;
             _roomUserCount = 0;
         }
@@ -120,7 +120,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="pId">The p identifier.</param>
         /// <returns>RoomUser.</returns>
         public RoomUser GetRoomUserByHabbo(uint pId) => UsersByUserId.Contains(pId)
-            ? (RoomUser) UsersByUserId[pId]
+            ? (RoomUser)UsersByUserId[pId]
             : null;
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
             var sum = UserList.Count - Bots.Count - _pets.Count;
 
-            return sum >= 5 ? sum * Oblivion.Multipy : sum;
+            return sum >= 5 ? (sum) * Oblivion.Multipy : sum;
         }
 
         /// <summary>
@@ -153,7 +153,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
             var model = _userRoom.GetGameMap().Model;
             var coord = new Point(bot.X, bot.Y);
-            if (bot.X > 0 && bot.Y >= 0 && bot.X < model.MapSizeX && bot.Y < model.MapSizeY)
+            if ((bot.X > 0) && (bot.Y >= 0) && (bot.X < model.MapSizeX) && (bot.Y < model.MapSizeY))
             {
                 _userRoom.GetGameMap().AddUserToMap(roomUser, coord);
                 roomUser.SetPos(bot.X, bot.Y, bot.Z);
@@ -170,7 +170,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             bot.RoomUser = roomUser;
             roomUser.BotData = bot;
 
-            roomUser.BotAi = bot.GenerateBotAi(roomUser.VirtualId, (int) bot.BotId);
+            roomUser.BotAi = bot.GenerateBotAi(roomUser.VirtualId, (int)bot.BotId);
             if (roomUser.IsPet)
             {
                 roomUser.BotAi.Init(bot.BotId, roomUser.VirtualId, _userRoom.RoomId, roomUser, _userRoom);
@@ -311,7 +311,8 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (habbo == null || _userRoom == null)
                 return;
             var roomUser = new RoomUser(habbo.Id, _userRoom.RoomId, _primaryPrivateUserId++, _userRoom,
-                spectator) {UserId = habbo.Id};
+                spectator)
+            { UserId = habbo.Id };
 
 
             var userName = habbo.UserName;
@@ -330,7 +331,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             habbo.LoadingRoom = 0;
 
             if (Oblivion.GetGame().GetNavigator().PrivateCategories.Contains(_userRoom.RoomData.Category))
-                ((FlatCat) Oblivion.GetGame().GetNavigator().PrivateCategories[_userRoom.RoomData.Category]).UsersNow++;
+                ((FlatCat)Oblivion.GetGame().GetNavigator().PrivateCategories[_userRoom.RoomData.Category]).UsersNow++;
         }
 
         /// <summary>
@@ -426,7 +427,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (user.RidingHorse)
                 {
                     user.RidingHorse = false;
-                    var horse = GetRoomUserByVirtualId((int) user.HorseId);
+                    var horse = GetRoomUserByVirtualId((int)user.HorseId);
                     if (horse != null)
                     {
                         horse.RidingHorse = false;
@@ -554,7 +555,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 UserList.Values.Where(
                     current =>
                         !current.IsBot && current.GetClient() != null && current.GetClient().GetHabbo() != null &&
-                        current.GetClient().GetHabbo().Rank > (ulong) minRank).ToList();
+                        current.GetClient().GetHabbo().Rank > (ulong)minRank).ToList();
         }
 
         /// <summary>
@@ -715,11 +716,11 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 var roomMap = _userRoom.GetGameMap();
                 var userPoint = new Point(user.X, user.Y);
-                var allRoomItemForSquare = roomMap.GetCoordinatedItems(userPoint);
+                var allRoomItemForSquare = roomMap.GetCoordinatedHeighestItems(userPoint).ToArray();
                 var itemsOnSquare = roomMap.GetCoordinatedItems(userPoint);
 
                 var newZ = _userRoom.GetGameMap().SqAbsoluteHeight(user.X, user.Y, itemsOnSquare) +
-                           (user.RidingHorse && user.IsPet == false ? 1 : 0);
+                           ((user.RidingHorse && user.IsPet == false) ? 1 : 0);
 
                 if (Math.Abs(newZ - user.Z) > 0)
                 {
@@ -755,13 +756,13 @@ namespace Oblivion.HabboHotel.Rooms.User
                                 }
                                 else
                                 {
-                                    user.Statusses["sit"] = Convert.ToString(item.GetBaseItem().Height,
-                                        CultureInfo.InvariantCulture);
+                                    user.Statusses.TryAdd("sit",
+                                        Convert.ToString(item.GetBaseItem().Height, CultureInfo.InvariantCulture));
                                 }
                             else
                             {
-                                user.Statusses["sit"] = Convert.ToString(item.GetBaseItem().Height,
-                                    CultureInfo.InvariantCulture);
+                                user.Statusses.TryAdd("sit",
+                                    Convert.ToString(item.GetBaseItem().Height, CultureInfo.InvariantCulture));
                             }
                         }
 
@@ -782,48 +783,48 @@ namespace Oblivion.HabboHotel.Rooms.User
                         case Interaction.GuildGate:
                         case Interaction.WalkInternalLink:
                         case Interaction.FloorSwitch:
-                        {
-                            item.Interactor.OnUserWalk(user.GetClient(), item, user);
-                            break;
-                        }
+                            {
+                                item.Interactor.OnUserWalk(user.GetClient(), item, user);
+                                break;
+                            }
                         case Interaction.None:
                             break;
 
                         case Interaction.PressurePadBed:
                         case Interaction.Bed:
-                        {
-                            user.Statusses["lay"] = TextHandling.GetString(item.GetBaseItem().Height);
-
-
-                            user.Z = item.Z;
-                            user.RotHead = item.Rot;
-                            user.RotBody = item.Rot;
-                            user.UpdateNeeded = true;
-
-                            if (item.GetBaseItem().InteractionType == Interaction.PressurePadBed)
                             {
-                                item.ExtraData = "1";
-                                item.UpdateState();
+                                user.Statusses["lay"] = TextHandling.GetString(item.GetBaseItem().Height);
+
+
+                                user.Z = item.Z;
+                                user.RotHead = item.Rot;
+                                user.RotBody = item.Rot;
+                                user.UpdateNeeded = true;
+
+                                if (item.GetBaseItem().InteractionType == Interaction.PressurePadBed)
+                                {
+                                    item.ExtraData = "1";
+                                    item.UpdateState();
+                                }
+
+                                break;
                             }
 
-                            break;
-                        }
-
                         case Interaction.Guillotine:
-                        {
-                            user.Statusses["lay"] = TextHandling.GetString(item.GetBaseItem().Height);
+                            {
+                                user.Statusses["lay"] = TextHandling.GetString(item.GetBaseItem().Height);
 
-                            user.Z = item.Z;
-                            user.RotBody = item.Rot;
+                                user.Z = item.Z;
+                                user.RotBody = item.Rot;
 
-                            item.ExtraData = "1";
-                            item.UpdateState();
-                            var avatarEffectsInventoryComponent =
-                                user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent();
+                                item.ExtraData = "1";
+                                item.UpdateState();
+                                var avatarEffectsInventoryComponent =
+                                    user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent();
 
-                            avatarEffectsInventoryComponent.ActivateCustomEffect(133);
-                            break;
-                        }
+                                avatarEffectsInventoryComponent.ActivateCustomEffect(133);
+                                break;
+                            }
 
                         case Interaction.FootballGate:
                             break;
@@ -832,60 +833,62 @@ namespace Oblivion.HabboHotel.Rooms.User
                         case Interaction.BanzaiGateRed:
                         case Interaction.BanzaiGateYellow:
                         case Interaction.BanzaiGateGreen:
-                        {
-                            var effect = (int) item.Team + 32;
-                            var teamManagerForBanzai =
-                                user.GetClient().GetHabbo().CurrentRoom.GetTeamManagerForBanzai();
-                            var avatarEffectsInventoryComponent =
-                                user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent();
-                            if (user.Team == Team.None)
                             {
-                                if (!teamManagerForBanzai.CanEnterOnTeam(item.Team)) break;
-                                user.Team = item.Team;
-                                teamManagerForBanzai.AddUser(user);
-                                if (avatarEffectsInventoryComponent.CurrentEffect != effect)
-                                    avatarEffectsInventoryComponent.ActivateCustomEffect(effect);
-                                break;
-                            }
+                                var effect = (int)item.Team + 32;
+                                var teamManagerForBanzai =
+                                    user.GetClient().GetHabbo().CurrentRoom.GetTeamManagerForBanzai();
+                                var avatarEffectsInventoryComponent =
+                                    user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent();
+                                if (user.Team == Team.None)
+                                {
+                                    if (!teamManagerForBanzai.CanEnterOnTeam(item.Team)) break;
+                                    user.Team = item.Team;
+                                    teamManagerForBanzai.AddUser(user);
+                                    if (avatarEffectsInventoryComponent.CurrentEffect != effect)
+                                        avatarEffectsInventoryComponent.ActivateCustomEffect(effect);
+                                    break;
+                                }
 
-                            if (user.Team != Team.None && user.Team != item.Team)
-                            {
+                                if (user.Team != Team.None && user.Team != item.Team)
+                                {
+                                    teamManagerForBanzai.OnUserLeave(user);
+                                    user.Team = Team.None;
+                                    avatarEffectsInventoryComponent.ActivateCustomEffect(0);
+                                    break;
+                                }
+
                                 teamManagerForBanzai.OnUserLeave(user);
+
+                                if (avatarEffectsInventoryComponent.CurrentEffect == effect)
+                                    avatarEffectsInventoryComponent.ActivateCustomEffect(0);
                                 user.Team = Team.None;
-                                avatarEffectsInventoryComponent.ActivateCustomEffect(0);
                                 break;
                             }
 
-                            teamManagerForBanzai.OnUserLeave(user);
-
-                            if (avatarEffectsInventoryComponent.CurrentEffect == effect)
-                                avatarEffectsInventoryComponent.ActivateCustomEffect(0);
-                            user.Team = Team.None;
+                        case Interaction.Jump:
                             break;
-                        }
 
                         case Interaction.Pinata:
-                        {
-                            if (!user.IsWalking || item.ExtraData.Length <= 0) break;
-                            var num5 = int.Parse(item.ExtraData);
-                            if (num5 >= 100 || user.CurrentEffect != 158) break;
-                            var num6 = num5 + 1;
-                            item.ExtraData = num6.ToString();
-                            item.UpdateState();
-                            Oblivion.GetGame()
-                                .GetAchievementManager()
-                                .ProgressUserAchievement(user.GetClient(), "ACH_PinataWhacker", 1);
-                            if (num6 == 100)
                             {
-                                Oblivion.GetGame().GetPinataHandler().DeliverRandomPinataItem(user, _userRoom, item);
+                                if (!user.IsWalking || item.ExtraData.Length <= 0) break;
+                                var num5 = int.Parse(item.ExtraData);
+                                if (num5 >= 100 || user.CurrentEffect != 158) break;
+                                var num6 = num5 + 1;
+                                item.ExtraData = num6.ToString();
+                                item.UpdateState();
                                 Oblivion.GetGame()
                                     .GetAchievementManager()
-                                    .ProgressUserAchievement(user.GetClient(), "ACH_PinataBreaker", 1);
-                            }
+                                    .ProgressUserAchievement(user.GetClient(), "ACH_PinataWhacker", 1);
+                                if (num6 == 100)
+                                {
+                                    Oblivion.GetGame().GetPinataHandler().DeliverRandomPinataItem(user, _userRoom, item);
+                                    Oblivion.GetGame()
+                                        .GetAchievementManager()
+                                        .ProgressUserAchievement(user.GetClient(), "ACH_PinataBreaker", 1);
+                                }
 
-                            break;
-                        }
-                        case Interaction.Jump:
+                                break;
+                            }
                         case Interaction.TileStackMagic:
                         case Interaction.Poster:
                             break;
@@ -909,66 +912,66 @@ namespace Oblivion.HabboHotel.Rooms.User
                             break;
 
                         case Interaction.RunWaySage:
-                        {
-                            var num7 = new Random().Next(1, 4);
-                            item.ExtraData = num7.ToString();
-                            item.UpdateState();
-                            break;
-                        }
+                            {
+                                var num7 = new Random().Next(1, 4);
+                                item.ExtraData = num7.ToString();
+                                item.UpdateState();
+                                break;
+                            }
                         case Interaction.Shower:
                         case Interaction.ChairState:
                         case Interaction.PressurePad:
-                        {
-                            item.ExtraData = "1";
-                            item.UpdateState();
-                            break;
-                        }
+                            {
+                                item.ExtraData = "1";
+                                item.UpdateState();
+                                break;
+                            }
                         case Interaction.BanzaiTele:
-                        {
-                            if (user.IsWalking)
-                                _userRoom.GetGameItemHandler().OnTeleportRoomUserEnter(user, item);
-                            break;
-                        }
+                            {
+                                if (user.IsWalking)
+                                    _userRoom.GetGameItemHandler().OnTeleportRoomUserEnter(user, item);
+                                break;
+                            }
                         case Interaction.FreezeYellowGate:
                         case Interaction.FreezeRedGate:
                         case Interaction.FreezeGreenGate:
                         case Interaction.FreezeBlueGate:
-                        {
-                            if (cycleGameItems)
                             {
-                                var num4 = (int) (item.Team + 39);
-                                var teamManagerForFreeze =
-                                    user.GetClient().GetHabbo().CurrentRoom.GetTeamManagerForFreeze();
-                                var avatarEffectsInventoryComponent2 =
-                                    user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent();
-                                if (user.Team != item.Team)
+                                if (cycleGameItems)
                                 {
-                                    if (teamManagerForFreeze.CanEnterOnTeam(item.Team))
+                                    var num4 = (int)(item.Team + 39);
+                                    var teamManagerForFreeze =
+                                        user.GetClient().GetHabbo().CurrentRoom.GetTeamManagerForFreeze();
+                                    var avatarEffectsInventoryComponent2 =
+                                        user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent();
+                                    if (user.Team != item.Team)
                                     {
-                                        if (user.Team != Team.None) teamManagerForFreeze.OnUserLeave(user);
-                                        user.Team = item.Team;
-                                        teamManagerForFreeze.AddUser(user);
-                                        if (avatarEffectsInventoryComponent2.CurrentEffect != num4)
-                                            avatarEffectsInventoryComponent2.ActivateCustomEffect(num4);
+                                        if (teamManagerForFreeze.CanEnterOnTeam(item.Team))
+                                        {
+                                            if (user.Team != Team.None) teamManagerForFreeze.OnUserLeave(user);
+                                            user.Team = item.Team;
+                                            teamManagerForFreeze.AddUser(user);
+                                            if (avatarEffectsInventoryComponent2.CurrentEffect != num4)
+                                                avatarEffectsInventoryComponent2.ActivateCustomEffect(num4);
+                                        }
                                     }
-                                }
-                                else
-                                {
-                                    teamManagerForFreeze.OnUserLeave(user);
-                                    if (avatarEffectsInventoryComponent2.CurrentEffect == num4)
-                                        avatarEffectsInventoryComponent2.ActivateCustomEffect(0);
-                                    user.Team = Team.None;
+                                    else
+                                    {
+                                        teamManagerForFreeze.OnUserLeave(user);
+                                        if (avatarEffectsInventoryComponent2.CurrentEffect == num4)
+                                            avatarEffectsInventoryComponent2.ActivateCustomEffect(0);
+                                        user.Team = Team.None;
+                                    }
+
+                                    var serverMessage33 =
+                                        new ServerMessage(
+                                            LibraryParser.OutgoingRequest("UserIsPlayingFreezeMessageComposer"));
+                                    serverMessage33.AppendBool(user.Team != Team.None);
+                                    user.GetClient().SendMessage(serverMessage33);
                                 }
 
-                                var serverMessage33 =
-                                    new ServerMessage(
-                                        LibraryParser.OutgoingRequest("UserIsPlayingFreezeMessageComposer"));
-                                serverMessage33.AppendBool(user.Team != Team.None);
-                                user.GetClient().SendMessage(serverMessage33);
+                                break;
                             }
-
-                            break;
-                        }
                     }
 
                     if (item.GetBaseItem().InteractionType == Interaction.BedTent)
@@ -1007,7 +1010,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                 if (!roomUsers.IsOwner() && roomUsers.LastHostingDate + 60 < Oblivion.GetUnixTimeStamp())
                 {
-                    var roomOwner = (uint) roomUsers.GetRoom().RoomData.OwnerId;
+                    var roomOwner = (uint)roomUsers.GetRoom().RoomData.OwnerId;
                     var ownerClient = Oblivion.GetGame().GetClientManager().GetClientByUserId(roomOwner);
                     if (ownerClient != null)
                     {
@@ -1018,7 +1021,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     roomUsers.LastHostingDate = Oblivion.GetUnixTimeStamp();
                 }
 
-                if (!roomUsers.IsAsleep && roomUsers.IdleTime >= 600 && !roomUsers.IsBot && !roomUsers.IsPet)
+                if ((!roomUsers.IsAsleep) && (roomUsers.IdleTime >= 600) && (!roomUsers.IsBot) && (!roomUsers.IsPet))
                 {
                     roomUsers.IsAsleep = true;
 
@@ -1030,12 +1033,12 @@ namespace Oblivion.HabboHotel.Rooms.User
                     roomUsers.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateEffect(517);
                 }
 
-                if (!roomUsers.IsOwner() && roomUsers.IdleTime >= 300 && !roomUsers.IsBot && !roomUsers.IsPet)
+                if ((!roomUsers.IsOwner()) && (roomUsers.IdleTime >= 300) && (!roomUsers.IsBot) && (!roomUsers.IsPet))
                 {
                     try
                     {
                         var ownerAchievementMessage =
-                            Oblivion.GetGame().GetClientManager().GetClientByUserId((uint) _userRoom.RoomData.OwnerId);
+                            Oblivion.GetGame().GetClientManager().GetClientByUserId((uint)_userRoom.RoomData.OwnerId);
 
                         if (ownerAchievementMessage != null)
                             Oblivion.GetGame()
@@ -1056,9 +1059,10 @@ namespace Oblivion.HabboHotel.Rooms.User
 
         internal void RoomUserBreedInteraction(RoomUser roomUsers)
         {
-            if (roomUsers.IsPet && (roomUsers.PetData.Type == 3 || roomUsers.PetData.Type == 4) &&
-                roomUsers.PetData.WaitingForBreading > 0 && roomUsers.PetData.BreadingTile.X == roomUsers.X &&
-                roomUsers.PetData.BreadingTile.Y == roomUsers.Y)
+            if ((roomUsers.IsPet) && ((roomUsers.PetData.Type == 3) || (roomUsers.PetData.Type == 4)) &&
+                (roomUsers.PetData.WaitingForBreading > 0) &&
+                ((roomUsers.PetData.BreadingTile.X == roomUsers.X) &&
+                 (roomUsers.PetData.BreadingTile.Y == roomUsers.Y)))
             {
                 roomUsers.Freezed = true;
                 _userRoom.GetGameMap().RemoveUserFromMap(roomUsers, roomUsers.Coordinate);
@@ -1102,9 +1106,10 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                 UpdateUserStatus(roomUsers, false);
             }
-            else if (roomUsers.IsPet && (roomUsers.PetData.Type == 3 || roomUsers.PetData.Type == 4) &&
-                     roomUsers.PetData.WaitingForBreading > 0 && roomUsers.PetData.BreadingTile.X != roomUsers.X &&
-                     roomUsers.PetData.BreadingTile.Y != roomUsers.Y)
+            else if ((roomUsers.IsPet) && ((roomUsers.PetData.Type == 3) || (roomUsers.PetData.Type == 4)) &&
+                     (roomUsers.PetData.WaitingForBreading > 0) &&
+                     ((roomUsers.PetData.BreadingTile.X != roomUsers.X) &&
+                      (roomUsers.PetData.BreadingTile.Y != roomUsers.Y)))
             {
                 roomUsers.Freezed = false;
                 roomUsers.PetData.WaitingForBreading = 0;
@@ -1116,7 +1121,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         internal void UserSetPositionData(RoomUser roomUsers, Vector2D nextStep)
         {
             // Check if the User is in a Horse or Not..
-            if (roomUsers.RidingHorse && !roomUsers.IsPet)
+            if ((roomUsers.RidingHorse) && (!roomUsers.IsPet))
             {
                 var horseRidingPet = GetRoomUserByVirtualId(Convert.ToInt32(roomUsers.HorseId));
 
@@ -1129,7 +1134,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                     roomUsers.SetX = nextStep.X;
                     roomUsers.SetY = nextStep.Y;
-                    roomUsers.SetZ = _userRoom.GetGameMap().SqAbsoluteHeight(nextStep.X, nextStep.Y) + 1;
+                    roomUsers.SetZ = (_userRoom.GetGameMap().SqAbsoluteHeight(nextStep.X, nextStep.Y) + 1);
 
                     horseRidingPet.SetX = roomUsers.SetX;
                     horseRidingPet.SetY = roomUsers.SetY;
@@ -1164,7 +1169,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
 
             // User is Sitting Down..
-            if ((roomUsers.Statusses.TryRemove("sit", out _) || roomUsers.IsSitting) && !roomUsers.RidingHorse)
+            if ((roomUsers.Statusses.TryRemove("sit", out _) || roomUsers.IsSitting) && (!roomUsers.RidingHorse))
             {
                 roomUsers.IsSitting = false;
                 roomUsers.UpdateNeeded = true;
@@ -1174,8 +1179,8 @@ namespace Oblivion.HabboHotel.Rooms.User
         internal bool UserGoToTile(RoomUser roomUsers, bool invalidStep)
         {
             if (roomUsers?.Path == null) return false;
-            if (roomUsers.PathStep >= roomUsers.Path.Count ||
-                roomUsers.GoalX == roomUsers.X && roomUsers.GoalY == roomUsers.Y)
+            if ((invalidStep || (roomUsers.PathStep >= roomUsers.Path.Count) ||
+                 ((roomUsers.GoalX == roomUsers.X) && (roomUsers.GoalY == roomUsers.Y))))
             {
                 // Erase all Movement Data..
                 roomUsers.IsWalking = false;
@@ -1184,7 +1189,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 RoomUserBreedInteraction(roomUsers);
 
                 // Check if he is in a Horse, and if if Erase Horse and User Movement Data
-                if (roomUsers.RidingHorse && !roomUsers.IsPet)
+                if ((roomUsers.RidingHorse) && (!roomUsers.IsPet))
                 {
                     var horseStopWalkRidingPet = GetRoomUserByVirtualId(Convert.ToInt32(roomUsers.HorseId));
 
@@ -1203,162 +1208,183 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                 // Finally Update User Status
                 UpdateUserStatus(roomUsers, false);
-                return false;
+            }
+            else
+            {
+
+
+                // Region Set Variables
+                var pathDataCount = ((roomUsers.Path.Count - roomUsers.PathStep) - 1);
+                if (roomUsers.Path.Count < pathDataCount || pathDataCount < 0)
+                    return false;
+                var nextStep = roomUsers.Path[pathDataCount];
+
+                
+                // Increase Step Data...
+                roomUsers.PathStep++;
+                // Ins't a Invalid Step.. Continuing.
+
+                if (roomUsers.FastWalking)
+                {
+                    pathDataCount = (roomUsers.Path.Count - roomUsers.PathStep) - 1;
+                    nextStep = roomUsers.Path[pathDataCount];
+                    roomUsers.PathStep++;
+                }
+
+                roomUsers.RemoveStatus("mv");
+
+
+                // Check Against if is a Valid Step...
+
+                if (_userRoom.GetGameMap()
+                    .IsValidStep(roomUsers, new Vector2D(roomUsers.X, roomUsers.Y),
+                        new Vector2D(nextStep.X, nextStep.Y),
+                        ((roomUsers.GoalX == nextStep.X) && (roomUsers.GoalY == nextStep.Y)), roomUsers.AllowOverride,
+                        false, false))
+                {
+                    // If is a PET Must Give the Time Tick In Syncrony with User..
+                    if ((roomUsers.RidingHorse) && (!roomUsers.IsPet))
+                    {
+                        var horsePetAi = GetRoomUserByVirtualId(Convert.ToInt32(roomUsers.HorseId));
+                        try
+                        {
+                            horsePetAi?.BotAi.OnTimerTick();
+                        }
+                        catch (Exception e)
+                        {
+                            Logging.HandleException(e, "RoomUserManager - horsePetAi.OnTimerTick");
+                        }
+                    }
+
+                    // Horse Ridding need be Updated First
+                    if (roomUsers.RidingHorse)
+                    {
+                        // Set User Position Data
+                        UserSetPositionData(roomUsers, nextStep);
+                        CheckUserSittableLayable(roomUsers);
+
+                        // Add Status of Walking
+                        roomUsers.AddStatus("mv",
+                            +roomUsers.SetX + "," + roomUsers.SetY + "," + TextHandling.GetString(roomUsers.SetZ));
+                    }
+
+                    // Check if User is Ridding in Horse, if if Let's Update Ride Data.
+                    if ((roomUsers.RidingHorse) && (!roomUsers.IsPet))
+                    {
+                        var horseRidingPet = GetRoomUserByVirtualId(Convert.ToInt32(roomUsers.HorseId));
+
+                        if (horseRidingPet != null)
+                        {
+                            var theUser = "mv " + roomUsers.SetX + "," + roomUsers.SetY + "," +
+                                          TextHandling.GetString(roomUsers.SetZ);
+                            var thePet = "mv " + roomUsers.SetX + "," + roomUsers.SetY + "," +
+                                         TextHandling.GetString(horseRidingPet.SetZ);
+
+                            var horseRidingPetMessage =
+                                new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
+                            horseRidingPetMessage.AppendInteger(2);
+                            roomUsers.SerializeStatus(horseRidingPetMessage, theUser);
+                            horseRidingPet.SerializeStatus(horseRidingPetMessage, thePet);
+                            _userRoom.SendMessage(horseRidingPetMessage);
+
+                            horseRidingPet.RotBody = roomUsers.RotBody;
+                            horseRidingPet.RotHead = roomUsers.RotBody;
+                            horseRidingPet.SetX = roomUsers.SetX;
+                            horseRidingPet.SetY = roomUsers.SetY;
+                            horseRidingPet.SetZ = (roomUsers.SetZ - 1);
+                            horseRidingPet.SetStep = true;
+
+                            UpdateUserEffect(horseRidingPet, horseRidingPet.SetX, horseRidingPet.SetY);
+                            UpdateUserStatus(horseRidingPet, false);
+                        }
+                    }
+
+                    // If is not Ridding Horse doesn't Need Update Effect
+                    if (!roomUsers.RidingHorse)
+                    {
+
+                        // Set User Position Data
+                        UserSetPositionData(roomUsers, nextStep);
+                        CheckUserSittableLayable(roomUsers);
+
+                        // Add Status of Walking
+                        roomUsers.AddStatus("mv",
+                            +roomUsers.SetX + "," + roomUsers.SetY + "," + TextHandling.GetString(roomUsers.SetZ));
+                    }
+
+                    // Region Update User Effect And Status
+                    UpdateUserEffect(roomUsers, roomUsers.SetX, roomUsers.SetY);
+
+                    // Update Effect if is Ridding
+                    if (roomUsers.RidingHorse)
+                        UpdateUserStatus(roomUsers, false);
+
+
+                    // If user is in soccer proccess.
+                    if (_userRoom.GotSoccer())
+                        _userRoom.GetSoccer().OnUserWalk(roomUsers);
+
+                    //                    if (!roomUsers.RidingHorse)
+                    //                        roomUsers.UpdateNeeded = true;
+
+                    return true;
+                }
+
+                if (roomUsers.PathRecalcNeeded && !roomUsers.SetStep)
+                    return false;
+
             }
 
+//            if (!roomUsers.RidingHorse)
+//                    roomUsers.UpdateNeeded = true;
+/*
 
-            // Region Set Variables
-            var pathDataCount = roomUsers.Path.Count - roomUsers.PathStep - 1;
-            if (roomUsers.Path.Count < pathDataCount || pathDataCount < 0) return false;
-            var nextStep = roomUsers.Path[pathDataCount];
+                // Isn't a Valid Step! And he Can Go? Erase Imediatile Effect
+                roomUsers.ClearMovement();
 
-
-            if (!_userRoom.GetGameMap().SquareIsOpen(nextStep.X, nextStep.Y, roomUsers.AllowOverride))
-            {
-                roomUsers.Path.Clear();
-                roomUsers.PathRecalcNeeded = true;
-//
-//                roomUsers.ClearMovement();
-//                roomUsers.SetStep = false;
-//                UpdateUserStatus(roomUsers, false);
-                return false;
-            }
-
-            // Increase Step Data...
-            roomUsers.PathStep++;
-            // Ins't a Invalid Step.. Continuing.
-
-
-            // Check Against if is a Valid Step...
-
-            if (_userRoom.GetGameMap()
-                .IsValidStep3(roomUsers, new Vector2D(roomUsers.X, roomUsers.Y), new Vector2D(nextStep.X, nextStep.Y),
-                    roomUsers.GoalX == nextStep.X && roomUsers.GoalY == nextStep.Y, roomUsers.AllowOverride,
-                    roomUsers.GetClient()))
-            {
-                // If is a PET Must Give the Time Tick In Syncrony with User..
-                if (roomUsers.RidingHorse && !roomUsers.IsPet)
-                {
-                    var horsePetAi = GetRoomUserByVirtualId(Convert.ToInt32(roomUsers.HorseId));
-                    try
-                    {
-                        horsePetAi?.BotAi.OnTimerTick();
-                    }
-                    catch (Exception e)
-                    {
-                        Logging.HandleException(e, "RoomUserManager - horsePetAi.OnTimerTick");
-                    }
-                }
-
-                // Horse Ridding need be Updated First
-                if (roomUsers.RidingHorse)
-                {
-                    // Set User Position Data
-                    UserSetPositionData(roomUsers, nextStep);
-                    CheckUserSittableLayable(roomUsers);
-
-                    // Add Status of Walking
-                    roomUsers.AddStatus("mv",
-                        +roomUsers.SetX + "," + roomUsers.SetY + "," + TextHandling.GetString(roomUsers.SetZ));
-                }
-
-                // Check if User is Ridding in Horse, if if Let's Update Ride Data.
-                if (roomUsers.RidingHorse && !roomUsers.IsPet)
-                {
-                    var horseRidingPet = GetRoomUserByVirtualId(Convert.ToInt32(roomUsers.HorseId));
-
-                    if (horseRidingPet != null)
-                    {
-                        var theUser = "mv " + roomUsers.SetX + "," + roomUsers.SetY + "," +
-                                      TextHandling.GetString(roomUsers.SetZ);
-                        var thePet = "mv " + roomUsers.SetX + "," + roomUsers.SetY + "," +
-                                     TextHandling.GetString(horseRidingPet.SetZ);
-
-                        var horseRidingPetMessage =
-                            new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
-                        horseRidingPetMessage.AppendInteger(2);
-                        roomUsers.SerializeStatus(horseRidingPetMessage, theUser);
-                        horseRidingPet.SerializeStatus(horseRidingPetMessage, thePet);
-                        _userRoom.SendMessage(horseRidingPetMessage);
-
-                        horseRidingPet.RotBody = roomUsers.RotBody;
-                        horseRidingPet.RotHead = roomUsers.RotBody;
-                        horseRidingPet.SetX = roomUsers.SetX;
-                        horseRidingPet.SetY = roomUsers.SetY;
-                        horseRidingPet.SetZ = roomUsers.SetZ - 1;
-                        horseRidingPet.SetStep = true;
-
-                        UpdateUserEffect(horseRidingPet, horseRidingPet.SetX, horseRidingPet.SetY);
-                        UpdateUserStatus(horseRidingPet, false);
-                    }
-                }
-
-                // If is not Ridding Horse doesn't Need Update Effect
-                if (!roomUsers.RidingHorse)
-                {
-                    // Set User Position Data
-//                    UserSetPositionData(roomUsers, nextStep);
-//                    CheckUserSittableLayable(roomUsers);
-
-                    // Add Status of Walking
-                    roomUsers.AddStatus("mv",
-                        +roomUsers.SetX + "," + roomUsers.SetY + "," + TextHandling.GetString(roomUsers.SetZ));
-                }
-
-                // Region Update User Effect And Status
-                UpdateUserEffect(roomUsers, roomUsers.SetX, roomUsers.SetY);
-
-                // Update Effect if is Ridding
-                if (roomUsers.RidingHorse)
-                    UpdateUserStatus(roomUsers, false);
-
-                // Region Update User Map Data
-                if (roomUsers.SqState != 3)
-                {
-                    _userRoom.GetGameMap().GameMap[roomUsers.X, roomUsers.Y] = roomUsers.SqState;
-                }
-
-                roomUsers.SqState = _userRoom.GetGameMap().GameMap[roomUsers.SetX, roomUsers.SetY];
-
-                // If user is in soccer proccess.
-                if (_userRoom.GotSoccer())
-                    _userRoom.GetSoccer().OnUserWalk(roomUsers);
+                // If user isn't pet and Bot, we have serious Problems. Let Recalculate Path!
+                if ((!roomUsers.IsPet) && (!roomUsers.IsBot))
+                    roomUsers.PathRecalcNeeded = true;
+*/
 
                 return true;
-            }
-
-            // Isn't a Valid Step! And he Can Go? Erase Imediatile Effect
-            roomUsers.ClearMovement();
-
-            // If user isn't pet and Bot, we have serious Problems. Let Recalculate Path!
-            if (!roomUsers.IsPet && !roomUsers.IsBot)
-                roomUsers.PathRecalcNeeded = true;
-
-            return true;
+            
         }
 
         internal bool UserCanWalkInTile(RoomUser roomUsers)
         {
             try
             {
-//                _userRoom.GetGameMap().GameMap[roomUsers.X, roomUsers.Y] = roomUsers.SqState;
+                var hasGroup = false;
+                if (!roomUsers.IsBot && !roomUsers.IsPet)
+                if (_userRoom.GetGameMap().GuildGates.TryGetValue(new Point(roomUsers.SetX, roomUsers.SetY), out var guild))
+                {
+                    var guildId = guild.GroupId;
+                    if (guildId > 0 &&
+                        roomUsers.GetClient()
+                            .GetHabbo()
+                            .UserGroups.Any(member => member != null && member.GroupId == guildId))
+                        hasGroup = true;
+                }
 
                 // Check if User CanWalk...
-                if (_userRoom.GetGameMap().SquareIsOpen(roomUsers.SetX, roomUsers.SetY, roomUsers.AllowOverride) ||
-                    roomUsers.RidingHorse)
+                if ((_userRoom.GetGameMap().SquareIsOpen(roomUsers.SetX, roomUsers.SetY, roomUsers.AllowOverride)) ||
+                    (roomUsers.RidingHorse) || hasGroup)
                 {
                     // Let's Update his Movement...
                     _userRoom.GetGameMap()
                         .UpdateUserMovement(new Point(roomUsers.Coordinate.X, roomUsers.Coordinate.Y),
                             new Point(roomUsers.SetX, roomUsers.SetY), roomUsers);
-                    var hasItemInPlace =
-                        _userRoom.GetGameMap().GetCoordinatedItems(new Point(roomUsers.X, roomUsers.Y));
+                    var hasItemInPlace = _userRoom.GetGameMap().GetCoordinatedItems(new Point(roomUsers.X, roomUsers.Y))
+                        .ToList();
 
                     // Set His Actual X,Y,Z Position...
                     roomUsers.X = roomUsers.SetX;
                     roomUsers.Y = roomUsers.SetY;
                     roomUsers.Z = roomUsers.SetZ;
 
+                    // Check Sub Items Interactionables
+                    /* TODO CHECK */
                     foreach (var roomItem in hasItemInPlace)
                     {
                         roomItem.UserWalksOffFurni(roomUsers);
@@ -1436,28 +1462,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 Logging.HandleException(e, "UserCanWalkInTile");
             }
 
-            return true;
-        }
-
-        public void GenerateNewPath(RoomUser roomUsers)
-        {
-            roomUsers.Path.Clear();
-            roomUsers.Path =
-                PathFinder.FindPath(roomUsers, _userRoom.GetGameMap().DiagonalEnabled,
-                    _userRoom.GetGameMap(), new Vector2D(roomUsers.X, roomUsers.Y),
-                    new Vector2D(roomUsers.GoalX, roomUsers.GoalY));
-
-            if (roomUsers.Path.Count > 1)
-            {
-                roomUsers.PathStep = 1;
-                roomUsers.IsWalking = true;
-                roomUsers.PathRecalcNeeded = false;
-            }
-            else
-            {
-                roomUsers.PathRecalcNeeded = false;
-                roomUsers.Path.Clear();
-            }
+            return !_userRoom.RoomData.AllowWalkThrough;
         }
 
 
@@ -1514,7 +1519,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     if (roomUsers.FrozenTick <= 0)
                     {
                         roomUsers.Frozen = false;
-                        roomUsers.GetClient().SendWhisper("Você foi descongelado!!");
+                        roomUsers.GetClient().SendWhisper("Vocï¿½ foi descongelado!!");
                     }
                 }
 
@@ -1533,322 +1538,106 @@ namespace Oblivion.HabboHotel.Rooms.User
                     // Check if User is Going to the Door.
                     lock (_removeUsers)
                     {
-                        if (roomUsers.SetX == _userRoom.GetGameMap().Model.DoorX &&
-                            roomUsers.SetY == _userRoom.GetGameMap().Model.DoorY &&
-                            !_removeUsers.Contains(roomUsers) &&
-                            !roomUsers.IsBot && !roomUsers.IsPet)
+                        if ((roomUsers.SetX == _userRoom.GetGameMap().Model.DoorX) &&
+                            (roomUsers.SetY == _userRoom.GetGameMap().Model.DoorY) &&
+                            (!_removeUsers.Contains(roomUsers)) &&
+                            (!roomUsers.IsBot) && (!roomUsers.IsPet))
                         {
                             _removeUsers.Add(roomUsers);
                             return;
                         }
                     }
 
-//                    _userRoom.GetGameMap().GameMap[roomUsers.X, roomUsers.Y] = roomUsers.SqState;
-
-                    if (_userRoom.GetGameMap()
-                        .SquareIsOpen(roomUsers.SetX, roomUsers.SetY, roomUsers.AllowOverride, false))
-                    {
-                        _userRoom.GetGameMap()
-                            .UpdateUserMovement(new Point(roomUsers.Coordinate.X, roomUsers.Coordinate.Y),
-                                new Point(roomUsers.SetX, roomUsers.SetY), roomUsers);
+                    _userRoom.GetGameMap().GameMap[roomUsers.X, roomUsers.Y] = roomUsers.SqState;
+                    roomUsers.SqState = _userRoom.GetGameMap().GameMap[roomUsers.SetX, roomUsers.SetY];
 
 
-                        UpdateUserEffect(roomUsers, roomUsers.SetX, roomUsers.SetY);
+                    // Check Elegibility of Walk In Tile
+                    invalidStep = UserCanWalkInTile(roomUsers);
 
-                        
-
-                        var hasItemInPlace = _userRoom.GetGameMap()
-                            .GetCoordinatedItems(new Point(roomUsers.X, roomUsers.Y));
-
-
-                        // Set His Actual X,Y,Z Position...
-                        roomUsers.X = roomUsers.SetX;
-                        roomUsers.Y = roomUsers.SetY;
-                        roomUsers.Z = roomUsers.SetZ;
-
-                        if (hasItemInPlace.Count > 0)
-                        {
-                            foreach (var roomItem in hasItemInPlace)
-                            {
-
-                                if (roomItem == null)
-                                    continue;
-
-                                roomItem.UserWalksOffFurni(roomUsers);
-                                switch (roomItem.GetBaseItem().InteractionType)
-                                {
-                                    case Interaction.Normslaskates:
-                                        if (roomUsers.LastRollerDate + 60 < Oblivion.GetUnixTimeStamp())
-                                        {
-                                            Oblivion.GetGame().GetAchievementManager()
-                                                .ProgressUserAchievement(roomUsers.GetClient(), "ACH_RbTagC", 1);
-                                            roomUsers.LastRollerDate = Oblivion.GetUnixTimeStamp();
-                                        }
-
-                                        Oblivion.GetGame().GetAchievementManager()
-                                            .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagB", 1);
-
-                                        break;
-                                    case Interaction.IceSkates:
-                                        if (roomUsers.LastRollerDate + 60 < Oblivion.GetUnixTimeStamp())
-                                        {
-                                            Oblivion.GetGame().GetAchievementManager()
-                                                .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagC", 1);
-                                            roomUsers.LastRollerDate = Oblivion.GetUnixTimeStamp();
-                                        }
-
-                                        Oblivion.GetGame().GetAchievementManager()
-                                            .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagB", 1);
-                                        break;
-
-                                    case Interaction.QuickTeleport:
-                                    case Interaction.GuildGate:
-                                    case Interaction.WalkInternalLink:
-                                    case Interaction.FloorSwitch:
-                                        roomItem.Interactor.OnUserWalk(roomUsers.GetClient(), roomItem, roomUsers);
-                                        break;
-                                    case Interaction.RunWaySage:
-                                    case Interaction.ChairState:
-                                    case Interaction.Shower:
-                                    case Interaction.PressurePad:
-                                    case Interaction.PressurePadBed:
-                                    case Interaction.Guillotine:
-                                        roomItem.ExtraData = "0";
-                                        roomItem.UpdateState();
-                                        break;
-
-                                    case Interaction.Tent:
-                                    case Interaction.BedTent:
-                                        if (!roomUsers.IsBot && roomUsers.OnCampingTent)
-                                        {
-                                            var serverMessage = new ServerMessage();
-                                            serverMessage.Init(
-                                                LibraryParser.OutgoingRequest(
-                                                    "UpdateFloorItemExtraDataMessageComposer"));
-                                            serverMessage.AppendString(roomItem.Id.ToString());
-                                            serverMessage.AppendInteger(0);
-                                            serverMessage.AppendString("0");
-                                            roomUsers.GetClient().SendMessage(serverMessage);
-                                            roomUsers.OnCampingTent = false;
-                                        }
-
-                                        break;
-
-                                    case Interaction.None:
-                                        break;
-                                }
-                            }
-                        }
-                        
-                        // Let's Update user Status..
-                        if (roomUsers.X == _userRoom.GetGameMap().Model.DoorX &&
-                            roomUsers.Y == _userRoom.GetGameMap().Model.DoorY && !roomUsers.IsBot)
-                        {
-                            lock (_removeUsers)
-                            {
-                                if (!_removeUsers.Contains(roomUsers))
-                                    _removeUsers.Add(roomUsers);
-                            }
-
-                            return;
-                        }
-
-                        UpdateUserStatus(roomUsers, true, false);
-                    }
-                    else
-                    {
-                        invalidStep = true;
-                    }
-
+                    // User isn't Anymore Set a Tile to Walk
                     roomUsers.SetStep = false;
                 }
 
-                while (true)
+                // Pet Must Stop Too!
+                if (((roomUsers.GoalX == roomUsers.X) && (roomUsers.GoalY == roomUsers.Y)) &&
+                    (roomUsers.RidingHorse) &&
+                    (!roomUsers.IsPet))
                 {
-                    if (!roomUsers.IsWalking && !roomUsers.SetStep && !roomUsers.PathRecalcNeeded) break;
-                    GenerateNewPath(roomUsers);
+                    var horseStopWalkRidingPet = GetRoomUserByVirtualId(Convert.ToInt32(roomUsers.HorseId));
 
-                    // Pet Must Stop Too!
-                    if ((roomUsers.GoalX == roomUsers.X && roomUsers.GoalY == roomUsers.Y &&
-                        roomUsers.RidingHorse &&
-                        !roomUsers.IsPet) || invalidStep)
+                    if (horseStopWalkRidingPet != null)
                     {
-                        var horseStopWalkRidingPet = GetRoomUserByVirtualId(Convert.ToInt32(roomUsers.HorseId));
+                        var horseStopWalkRidingPetMessage =
+                            new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
+                        horseStopWalkRidingPetMessage.AppendInteger(1);
+                        horseStopWalkRidingPet.SerializeStatus(horseStopWalkRidingPetMessage, "");
+                        _userRoom.SendMessage(horseStopWalkRidingPetMessage);
 
-                        if (horseStopWalkRidingPet != null)
-                        {
-                            var horseStopWalkRidingPetMessage =
-                                new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
-                            horseStopWalkRidingPetMessage.AppendInteger(1);
-                            horseStopWalkRidingPet.SerializeStatus(horseStopWalkRidingPetMessage, "");
-                            _userRoom.SendMessage(horseStopWalkRidingPetMessage);
-
-                            horseStopWalkRidingPet.IsWalking = false;
-                            horseStopWalkRidingPet.ClearMovement();
-                        }
+                        horseStopWalkRidingPet.IsWalking = false;
+                        horseStopWalkRidingPet.ClearMovement();
                     }
+                }
 
+                // User Reached Goal Need Stop.
+                if (((roomUsers.GoalX == roomUsers.X) && (roomUsers.GoalY == roomUsers.Y)) || (roomUsers.Freezed))
+                {
+                    roomUsers.IsWalking = false;
+                    roomUsers.ClearMovement();
+                    roomUsers.SetStep = false;
+                    UpdateUserStatus(roomUsers, false);
+                }
 
-                    if (!roomUsers.IsWalking || roomUsers.Freezed)
+                /*
+                                // Check if Proably the Pathfinder is with Some Errors..
+                                if (roomUsers.PathRecalcNeeded)
+                                {
+                                    roomUsers.Path.Clear();
+                                    roomUsers.Path = PathFinder.FindPath(roomUsers, _userRoom.GetGameMap().DiagonalEnabled,
+                                        _userRoom.GetGameMap(), new Vector2D(roomUsers.X, roomUsers.Y),
+                                        new Vector2D(roomUsers.GoalX, roomUsers.GoalY));
+
+                                    if (roomUsers.Path.Count > 1)
+                                    {
+                                        roomUsers.PathStep = 1;
+                                        roomUsers.IsWalking = true;
+                                        roomUsers.PathRecalcNeeded = false;
+                                    }
+                                    else
+                                    {
+                                        roomUsers.PathRecalcNeeded = false;
+                                        roomUsers.Path.Clear();
+                                    }
+                                }*/
+
+                needrepath:
+                GenerateNewPath(roomUsers);
+                // If user Isn't Walking, Let's go Back..
+                if ((!roomUsers.IsWalking || roomUsers.Freezed))
+                {
+                    if (roomUsers.Statusses.TryRemove("mv", out _))
                     {
-                        if (roomUsers.Statusses.TryRemove("mv", out _))
+                        roomUsers.UpdateNeeded = true;
+                    }
+                }
+                else
+                {
+                    // If he Want's to Walk.. Let's Continue!..
+                    
+
+                    // Let's go to The Tile! And Walk :D
+                    if (UserGoToTile(roomUsers, invalidStep))
+                    {
+                        // If User isn't Riding, Must Update Statusses...
+                       if (!roomUsers.RidingHorse)
                             roomUsers.UpdateNeeded = true;
                     }
                     else
                     {
-                        if (roomUsers.PathStep >= roomUsers.Path.Count ||
-                            roomUsers.GoalX == roomUsers.X && roomUsers.GoalY == roomUsers.Y)
-                        {
-                            // Erase all Movement Data..
-                            roomUsers.ClearMovement();
-                            roomUsers.HandelingBallStatus = 0;
-                            RoomUserBreedInteraction(roomUsers);
-                            // Check if he is in a Horse, and if if Erase Horse and User Movement Data
-                            if (roomUsers.RidingHorse && !roomUsers.IsPet)
-                            {
-                                var horseStopWalkRidingPet = GetRoomUserByVirtualId(Convert.ToInt32(roomUsers.HorseId));
-
-                                if (horseStopWalkRidingPet != null)
-                                {
-                                    var horseStopWalkRidingPetMessage =
-                                        new ServerMessage(
-                                            LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
-                                    horseStopWalkRidingPetMessage.AppendInteger(1);
-                                    horseStopWalkRidingPet.SerializeStatus(horseStopWalkRidingPetMessage, "");
-                                    _userRoom.SendMessage(horseStopWalkRidingPetMessage);
-
-                                    horseStopWalkRidingPet.IsWalking = false;
-                                    horseStopWalkRidingPet.ClearMovement();
-                                }
-                            }
-                            // Finally Update User Status
-                            UpdateUserStatus(roomUsers, false);
-                            break;
-                        }
-
-                        // Region Set Variables
-                        var pathDataCount = roomUsers.Path.Count - roomUsers.PathStep - 1;
-                        var nextStep = roomUsers.Path[pathDataCount];
-
-                        if (!_userRoom.GetGameMap()
-                            .SquareIsOpen(nextStep.X, nextStep.Y, roomUsers.AllowOverride))
-                        {
-                            roomUsers.ClearMovement();
-                            UpdateUserStatus(roomUsers, false);
-                            break;
-                        }
-                        // Increase Step Data...
-                        roomUsers.PathStep++;
-
-                        roomUsers.RemoveStatus("mv");
-                        if (_userRoom.GetGameMap().IsValidStep(roomUsers, new Vector2D(roomUsers.X, roomUsers.Y),
-                            nextStep, roomUsers.GoalX == nextStep.X && roomUsers.GoalY == nextStep.Y,
-                            roomUsers.AllowOverride))
-                        {
-                            if (roomUsers.FastWalking && roomUsers.PathStep < roomUsers.Path.Count)
-                            {
-                                pathDataCount = roomUsers.Path.Count - roomUsers.PathStep - 1;
-                                nextStep = roomUsers.Path[pathDataCount];
-                                roomUsers.PathStep++;
-                            }
-
-                            int nextX = nextStep.X;
-                            int nextY = nextStep.Y;
-
-                            double nextZ = _userRoom.GetGameMap().SqAbsoluteHeight(nextX, nextY);
-                            if (roomUsers.Statusses.TryRemove("lay", out _))
-                            {
-                                roomUsers.IsLyingDown = false;
-                                roomUsers.UpdateNeeded = true;
-                            }
-                            else if (roomUsers.Statusses.TryRemove("sit", out _))
-                            {
-                                roomUsers.IsSitting = false;
-                                roomUsers.UpdateNeeded = true;
-                            }
-
-
-                            int newRot = Rotation.Calculate(roomUsers.X, roomUsers.Y, nextX, nextY,
-                                roomUsers.IsMoonwalking);
-                            roomUsers.RotBody = newRot;
-                            roomUsers.RotHead = newRot;
-
-                            roomUsers.SetStep = true;
-                            roomUsers.SetX = nextX;
-                            roomUsers.SetY = nextY;
-                            roomUsers.SetZ = nextZ;
-
-                            // Check if User is Ridding in Horse, if if Let's Update Ride Data.
-                            if (roomUsers.RidingHorse && !roomUsers.IsPet)
-                            {
-                                var horseRidingPet = GetRoomUserByVirtualId(Convert.ToInt32(roomUsers.HorseId));
-                                if (horseRidingPet != null)
-                                {
-                                    horseRidingPet?.BotAi?.OnTimerTick();
-
-                                    var theUser = "mv " + roomUsers.SetX + "," + roomUsers.SetY + "," +
-                                                  TextHandling.GetString(roomUsers.SetZ);
-                                    var thePet = "mv " + roomUsers.SetX + "," + roomUsers.SetY + "," +
-                                                 TextHandling.GetString(horseRidingPet.SetZ);
-
-                                    var horseRidingPetMessage =
-                                        new ServerMessage(
-                                            LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
-                                    horseRidingPetMessage.AppendInteger(2);
-                                    roomUsers.SerializeStatus(horseRidingPetMessage, theUser);
-                                    horseRidingPet.SerializeStatus(horseRidingPetMessage, thePet);
-                                    _userRoom.SendMessage(horseRidingPetMessage);
-
-                                    horseRidingPet.RotBody = roomUsers.RotBody;
-                                    horseRidingPet.RotHead = roomUsers.RotBody;
-                                    horseRidingPet.SetX = roomUsers.SetX;
-                                    horseRidingPet.SetY = roomUsers.SetY;
-                                    horseRidingPet.SetZ = roomUsers.SetZ - 1;
-                                    horseRidingPet.SetStep = true;
-
-                                    UpdateUserEffect(horseRidingPet, horseRidingPet.SetX, horseRidingPet.SetY);
-                                    UpdateUserStatus(horseRidingPet, false);
-                                }
-                            }
-                            else
-                            {
-//                                                    UserSetPositionData(roomUsers, nextStep);
-//                                                    CheckUserSittableLayable(roomUsers);
-                                roomUsers.AddStatus("mv", nextX + "," + nextY + "," + TextHandling.GetString(nextZ));
-                            }
-
-                            UpdateUserEffect(roomUsers, roomUsers.SetX, roomUsers.SetY);
-
-
-                            // Update Effect if is Ridding
-                            if (roomUsers.RidingHorse)
-                                UpdateUserStatus(roomUsers, false);
-
-                            _userRoom.GetGameMap().GameMap[roomUsers.X, roomUsers.Y] = roomUsers.SqState;
-                            roomUsers.SqState = _userRoom.GetGameMap().GameMap[roomUsers.SetX, roomUsers.SetY];
-
-                            // If user is in soccer proccess.
-                            if (_userRoom.GotSoccer())
-                                _userRoom.GetSoccer().OnUserWalk(roomUsers);
-                           
-
-                        }
-
                         if (roomUsers.PathRecalcNeeded && !roomUsers.SetStep)
-                            continue;
-
-                        // Update Effect if is Ridding
-                        if (!roomUsers.RidingHorse)
-                            roomUsers.UpdateNeeded = true;
-                        
-                        
-
-                        roomUsers.UpdateNeeded = true;
+                        goto needrepath;
                     }
-
-                    break;
                 }
-
 
                 // If is a Bot.. Let's Tick the Time Count of Bot..
                 if (roomUsers.IsBot)
@@ -1887,13 +1676,38 @@ namespace Oblivion.HabboHotel.Rooms.User
                     return;
                 }
 
-//                UpdateUserEffect(roomUsers, roomUsers.X, roomUsers.Y);
+                //                UpdateUserEffect(roomUsers, roomUsers.X, roomUsers.Y);
             }
             catch (Exception e)
             {
                 Logging.HandleException(e, "RoomMgr - Cycle");
             }
         }
+
+
+        public void GenerateNewPath(RoomUser User)
+        {
+            if (User.PathRecalcNeeded || User.IsWalking)
+            {
+                User.Path.Clear();
+                User.Path = PathFinder.FindPath(User, _userRoom.GetGameMap().DiagonalEnabled,
+                    _userRoom.GetGameMap(), new Vector2D(User.X, User.Y),
+                    new Vector2D(User.GoalX, User.GoalY));
+
+                if (User.Path.Count > 1)
+                {
+                    User.PathStep = 1;
+                    User.IsWalking = true;
+                    User.PathRecalcNeeded = false;
+                }
+                else
+                {
+                    User.PathRecalcNeeded = false;
+                    User.Path.Clear();
+                }
+            }
+        }
+
 
         /// <summary>
         ///     Called when [cycle].
@@ -1911,8 +1725,8 @@ namespace Oblivion.HabboHotel.Rooms.User
             try
             {
                 // Check Disco Procedure...
-                if (_userRoom != null && _userRoom.DiscoMode && _userRoom.TonerData != null &&
-                    _userRoom.TonerData.Enabled == 1)
+                if ((_userRoom != null) && (_userRoom.DiscoMode) && (_userRoom.TonerData != null) &&
+                    (_userRoom.TonerData.Enabled == 1))
                 {
                     var tonerItem = _userRoom.GetRoomItemHandler().GetItem(_userRoom.TonerData.ItemId);
 
@@ -1941,7 +1755,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 UserCycleOnRoom(roomUsers);
 
                 // If is a Valid user, We must increase the User Count..
-                if (!roomUsers.IsPet && !roomUsers.IsBot)
+                if ((!roomUsers.IsPet) && (!roomUsers.IsBot))
                 {
                     userInRoomCount++;
                 }
@@ -1970,9 +1784,9 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                 if (userInRoomCount >= 5 && Oblivion.Multipy > 1)
                 {
-                    if (_roomUserCount != userInRoomCount * (uint) Oblivion.Multipy)
+                    if (_roomUserCount != userInRoomCount * (uint)Oblivion.Multipy)
                     {
-                        UpdateUserCount(userInRoomCount * (uint) Oblivion.Multipy);
+                        UpdateUserCount(userInRoomCount * (uint)Oblivion.Multipy);
                     }
                 }
                 else
@@ -2178,8 +1992,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                     client.GetHabbo().GetMessenger().OnStatusChanged(true);
                 client.GetMessageHandler()?.OnRoomUserAdd();
 
-//                    if (client.GetHabbo().HasFuse("fuse_mod"))
-//                        client.GetHabbo().GetAvatarEffectsInventoryComponent()?.ActivateCustomEffect(102);
+                //                    if (client.GetHabbo().HasFuse("fuse_mod"))
+                //                        client.GetHabbo().GetAvatarEffectsInventoryComponent()?.ActivateCustomEffect(102);
                 if (client.GetHabbo().Rank == Convert.ToUInt32(Oblivion.GetDbConfig().DbData["ambassador.minrank"]))
                     client.GetHabbo().GetAvatarEffectsInventoryComponent()?.ActivateCustomEffect(178);
 
@@ -2246,7 +2060,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                 var userOnCurrentItem = _userRoom.GetGameMap().GetCoordinatedItems(new Point(user.X, user.Y));
                 /* TODO CHECK */
-                foreach (var roomItem in userOnCurrentItem)
+                foreach (var roomItem in userOnCurrentItem.ToList())
                 {
                     switch (roomItem.GetBaseItem().InteractionType)
                     {
@@ -2310,9 +2124,9 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="user">The user.</param>
         /// <returns><c>true</c> if the specified user is valid; otherwise, <c>false</c>.</returns>
         private bool IsValid(RoomUser user) => user != null && (user.IsBot ||
-                                                                user.GetClient() != null &&
-                                                                user.GetClient().GetHabbo() != null &&
-                                                                user.GetClient().GetHabbo().CurrentRoomId ==
-                                                                _userRoom.RoomId);
+                                                                (user.GetClient() != null &&
+                                                                 user.GetClient().GetHabbo() != null &&
+                                                                 user.GetClient().GetHabbo().CurrentRoomId ==
+                                                                 _userRoom.RoomId));
     }
 }

@@ -955,7 +955,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <summary>
         ///     Clears the movement.
         /// </summary>
-        internal void ClearMovement()
+        internal void ClearMovement(bool everything = false)
         {
             IsWalking = false;
             GoalX = 0;
@@ -966,6 +966,14 @@ namespace Oblivion.HabboHotel.Rooms.User
             SetY = 0;
             SetZ = 0.0;
 
+
+            if (everything)
+            {
+                Path.Clear();
+                PathRecalcNeeded = false;
+                PathStep = 1;
+                UpdateNeeded = true;
+            }
             if (Statusses == null)
             {
                 return;

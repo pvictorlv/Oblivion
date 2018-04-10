@@ -446,6 +446,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             else
             {
                 var currentUser = clientByUsername.GetHabbo();
+                if (currentUser == null) return false;
                 userId = currentUser.Id;
                 blockForNewFriends = currentUser.HasFriendRequestsDisabled;
             }

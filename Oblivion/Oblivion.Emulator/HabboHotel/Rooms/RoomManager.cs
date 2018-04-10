@@ -87,7 +87,8 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         internal RoomManager()
         {
-            LoadedRooms = new ConcurrentDictionary<uint, Room>();
+            _cachedDefaultModels = new Dictionary<string, RoomModel>();
+           LoadedRooms = new ConcurrentDictionary<uint, Room>();
             LoadedRoomData = new ConcurrentDictionary<uint, RoomData>();
             _votedRooms = new Dictionary<RoomData, int>();
             _activeRooms = new Dictionary<RoomData, uint>();
@@ -289,11 +290,17 @@ namespace Oblivion.HabboHotel.Rooms
             return data;
         }
 
+        private Dictionary<string, RoomModel> _cachedDefaultModels;
         
         internal RoomModel LoadModel(string model, uint roomid)
         {
             try
             {
+                if (model != "custom")
+                {
+                    if (_cachedDefaultModels.TryGetValue(model, out var modelData))
+                        return modelData;
+                }
                 using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
                     if (model == "custom")
@@ -302,27 +309,29 @@ namespace Oblivion.HabboHotel.Rooms
                         dbClient.AddParameter("room", roomid);
                         var row = dbClient.GetRow();
 
-                        if (row == null) return new RoomModel(0, 0, 0, 0, "xxxxxx", false);
+                        if (row == null) return new RoomModel(0, 0, 0, 0, "xxxxxx", false, true);
 
 
                         return new RoomModel((int) row["door_x"], (int) row["door_y"], (double) row["door_z"],
                             (int) row["door_dir"],
-                            (string) row["heightmap"], false);
+                            (string) row["heightmap"], false, true);
                     }
                     dbClient.SetQuery("SELECT * FROM rooms_models WHERE id = @name LIMIT 1");
                     dbClient.AddParameter("name", model);
                     var dataRow = dbClient.GetRow();
-                    if (dataRow == null) return new RoomModel(0, 0, 0, 0, "xxxxxx", false);
-                    return new RoomModel((int) dataRow["door_x"], (int) dataRow["door_y"],
-                        (double) dataRow["door_z"],
-                        (int) dataRow["door_dir"], (string) dataRow["heightmap"],
-                        Oblivion.EnumToBool(dataRow["club_only"].ToString()));
+                    if (dataRow == null) return new RoomModel(0, 0, 0, 0, "xxxxxx", false, true);
+                    var modelData = new RoomModel((int)dataRow["door_x"], (int)dataRow["door_y"],
+                        (double)dataRow["door_z"],
+                        (int)dataRow["door_dir"], (string)dataRow["heightmap"],
+                        Oblivion.EnumToBool(dataRow["club_only"].ToString()), false);
+                    _cachedDefaultModels[model] = modelData;
+                    return modelData;
                 }
             }
             catch (Exception e)
             {
                 Logging.HandleException(e, "loadmodel");
-                return new RoomModel(0, 0, 0, 0, "xxxxxx", false); 
+                return new RoomModel(0, 0, 0, 0, "xxxxxx", false, true); 
             }
 
         }
