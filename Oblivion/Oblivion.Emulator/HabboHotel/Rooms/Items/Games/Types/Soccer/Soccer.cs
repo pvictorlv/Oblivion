@@ -430,7 +430,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
         {
             if (user == null || _room?.GetGameManager() == null) return;
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("RoomUserActionMessageComposer"));
-
+            //todo recode
             if (_room.GetGameManager()
                 .GetItems(Team.Red)
                 .Values.SelectMany(current => current.AffectedTiles.Values)

@@ -974,6 +974,8 @@ namespace Oblivion.HabboHotel.Items.Interactions
 
                 case "totem":
                     return Interaction.Totem;
+                case "near_switch":
+                        return Interaction.NearSwitch;
 
                 case "name_prefix":
                     return Interaction.NamePrefix;

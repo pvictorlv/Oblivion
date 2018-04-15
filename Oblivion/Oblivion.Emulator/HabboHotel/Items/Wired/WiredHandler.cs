@@ -14,6 +14,7 @@ using Oblivion.HabboHotel.Items.Wired.Handlers.Triggers;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.User;
+using Oblivion.HabboHotel.Rooms.User.Path;
 using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Items.Wired
@@ -21,7 +22,7 @@ namespace Oblivion.HabboHotel.Items.Wired
     public class WiredHandler
     {
         private Room _room;
-
+        //todo recode
         private ConcurrentDictionary<long, IWiredItem> _wiredItems;
 
         public WiredHandler(Room room)
@@ -700,10 +701,15 @@ namespace Oblivion.HabboHotel.Items.Wired
             if (Instance == null || Item == null)
                 return false;
 
-            foreach (RoomUser User in Item.GetSides().Select(point => Instance.GetGameMap().GetRoomUsers(point))
-                .Where(users => users.Count > 0).SelectMany(users => users))
+            foreach (var point in Item.GetSides())
             {
-                ExecuteWired(Interaction.TriggerCollision, User, Item);
+                var users = Instance.GetGameMap().GetRoomUsers(point);
+                if (users.Count <= 0) continue;
+                foreach (RoomUser User in users)
+                {
+                    if (Gamemap.TileDistance(point.X,point.Y,User.X,User.Y) <= 1)
+                    ExecuteWired(Interaction.TriggerCollision, User, Item);
+                }
             }
 
             return true;

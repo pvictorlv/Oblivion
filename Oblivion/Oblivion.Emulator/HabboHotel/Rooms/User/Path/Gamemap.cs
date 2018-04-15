@@ -34,7 +34,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <summary>
         ///     The _user map
         /// </summary>
-        private ConcurrentDictionary<int, List<RoomUser>> _userMap;
+        private ConcurrentDictionary<int, ConcurrentList<RoomUser>> _userMap;
 
         /// <summary>
         ///     The diagonal enabled
@@ -74,7 +74,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             CoordinatedItems = new ConcurrentDictionary<Point, ConcurrentList<RoomItem>>();
             GameMap = new byte[Model.MapSizeX, Model.MapSizeY];
             ItemHeightMap = new double[Model.MapSizeX, Model.MapSizeY];
-            _userMap = new ConcurrentDictionary<int, List<RoomUser>>();
+            _userMap = new ConcurrentDictionary<int, ConcurrentList<RoomUser>>();
             WalkableList = GetWalkablePoints();
             GuildGates = new Dictionary<Point, RoomItem>();
         }
@@ -105,6 +105,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 if (!SquareIsOpen(Coord.X, Coord.Y, false))
                     return false;
                 if (!CanRollItemHere(Coord.X, Coord.Y))
+                    return false;
+                if (SquareHasUsers(Coord.X, Coord.Y))
                     return false;
             }
 
@@ -256,7 +258,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             }
             else
             {
-                users = new List<RoomUser> { user };
+                users = new ConcurrentList<RoomUser> { user };
                 _userMap.TryAdd(coordKey, users);
             }
         }
@@ -280,8 +282,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             user.RotHead = item.Rot;
             user.GoalX = user.X;
             user.GoalY = user.Y;
-            _room.GetRoomUserManager().UpdateUserStatus(user, false);
-            user.ClearMovement(true);
+            user.SetStep = false;
+            user.IsWalking = false;
+            user.UpdateNeeded = true;
         }
 
         /// <summary>
@@ -328,7 +331,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// </summary>
         /// <param name="coord">The coord.</param>
         /// <returns>List&lt;RoomUser&gt;.</returns>
-        internal List<RoomUser> GetRoomUsers(Point coord)
+        internal ConcurrentList<RoomUser> GetRoomUsers(Point coord)
         {
             var coordKey = Formatter.PointToInt(coord);
             if (_userMap.TryGetValue(coordKey, out var users))
@@ -336,7 +339,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 return users;
             }
 
-            return new List<RoomUser>();
+            return new ConcurrentList<RoomUser>();
         }
 
         /// <summary>
@@ -626,7 +629,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             double heighest = -1;
 
             /* TODO CHECK */
-            foreach (var i in items.ToList())
+            foreach (var i in items)
             {
                 if (i == null) continue;
                 if (i.TotalHeight > heighest)
@@ -696,6 +699,16 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 AddSpecialItems(item);
                 var interactionType = item.GetBaseItem().InteractionType;
                 if (interactionType != Interaction.Roller)
+                {
+                    if (interactionType == Interaction.FootballGoalGreen || interactionType == Interaction.FootballGoalYellow 
+                                                                         || interactionType == Interaction.FootballGoalBlue
+                                                                         || interactionType == Interaction.FootballGoalRed)
+                    {
+                        if (_room.GotSoccer())
+                        {
+                            _room.GetSoccer().RegisterGate(item);
+                        }
+                    }
                     switch (interactionType)
                     {
                         case Interaction.FootballGoalGreen:
@@ -731,6 +744,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                         case Interaction.BanzaiScoreRed:
                         case Interaction.FreezeRedCounter:
                         case Interaction.FreezeRedGate:
+
                             _room.GetGameManager().AddFurnitureToTeam(item, Team.Red);
                             break;
 
@@ -739,16 +753,17 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                             break;
 
                         case Interaction.GuildGate:
+                        {
+                            if (!GuildGates.ContainsKey(item.Coordinate))
                             {
-                                if (!GuildGates.ContainsKey(item.Coordinate))
-                                {
-                                    GuildGates.Add(item.Coordinate, item);
-                                    GameMap[item.X, item.Y] = 0;
-                                }
-
-                                break;
+                                GuildGates.Add(item.Coordinate, item);
+                                GameMap[item.X, item.Y] = 0;
                             }
+
+                            break;
+                        }
                     }
+                }
                 else
                 {
                     if (!_room.GetRoomItemHandler().Rollers.Contains(item))
@@ -1092,7 +1107,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     return false;
             }
 
-            if (pX >= Model.SqState.GetLength(0))
+            if (pX >= Model.SqState.Length)
             {
                 return false;
             }

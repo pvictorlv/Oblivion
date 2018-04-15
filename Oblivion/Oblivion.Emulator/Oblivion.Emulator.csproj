@@ -249,6 +249,7 @@
     <Compile Include="HabboHotel\Commands\Controllers\WhisperRoom.cs" />
     <Compile Include="HabboHotel\Items\Datas\HighscoreData.cs" />
     <Compile Include="HabboHotel\Items\Handlers\RandomRewardFurniHandler.cs" />
+    <Compile Include="HabboHotel\Items\Interactions\Controllers\InteractorNearSwitch.cs" />
     <Compile Include="HabboHotel\Items\Interactions\Controllers\InteractorTotem.cs" />
     <Compile Include="HabboHotel\Items\Interactions\Controllers\InteractorWalkSwitch.cs" />
     <Compile Include="HabboHotel\Items\Interactions\Enums\GlobalInteractions.cs" />

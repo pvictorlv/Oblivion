@@ -101,36 +101,14 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     continue;
 
                 var Point = HandleMovement(item.Coordinate, movement, item.Rot);
+                
+                
 
-                if (Point == item.Coordinate)
-                    continue;
-
-                if (!Room.GetGameMap().ItemCanMove(item, Point))
-                    continue;
-
-                if (Room.GetGameMap().CanRollItemHere(Point.X, Point.Y) &&
-                    !Room.GetGameMap().SquareHasUsers(Point.X, Point.Y))
+                if (Room.GetGameMap().ItemCanMove(item, Point))
                 {
-                    var NewZ = item.Z;
-                    var CanBePlaced = true;
+                    var NewZ = Room.GetGameMap().SqAbsoluteHeight(Point.X, Point.Y);
 
-                    var Items = Room.GetGameMap().GetCoordinatedItems(Point);
-                    foreach (var IItem in Items.Where(IItem => IItem != null && IItem.Id != item.Id))
-                    {
-                        if (!IItem.GetBaseItem().Walkable)
-                        {
-                            CanBePlaced = false;
-                            break;
-                        }
-
-                        if (IItem.TotalHeight > NewZ)
-                            NewZ = IItem.TotalHeight;
-
-                        if (CanBePlaced && !IItem.GetBaseItem().Stackable)
-                            CanBePlaced = false;
-                    }
-
-                    if (CanBePlaced && Point != item.Coordinate)
+                    if (Point != item.Coordinate)
                     {
                         var serverMessage =
                             new ServerMessage(

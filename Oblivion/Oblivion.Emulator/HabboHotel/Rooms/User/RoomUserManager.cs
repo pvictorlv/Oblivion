@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Oblivion.Collections;
 using Oblivion.Configuration;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -33,7 +34,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <summary>
         ///     The _to remove
         /// </summary>
-        private readonly List<RoomUser> _removeUsers;
+        private readonly ConcurrentList<RoomUser> _removeUsers;
 
 
         /// <summary>
@@ -97,7 +98,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             UsersByUserId = new HybridDictionary();
             _primaryPrivateUserId = 0;
             _secondaryPrivateUserId = 0;
-            _removeUsers = new List<RoomUser>((int)room.RoomData.UsersMax);
+            _removeUsers = new ConcurrentList<RoomUser>((int)room.RoomData.UsersMax);
             PetCount = 0;
             _roomUserCount = 0;
         }
@@ -1215,7 +1216,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                 // Region Set Variables
                 var pathDataCount = ((roomUsers.Path.Count - roomUsers.PathStep) - 1);
-                if (roomUsers.Path.Count < pathDataCount || pathDataCount < 0)
+                if (roomUsers.Path.Count <= pathDataCount || pathDataCount < 0)
                     return false;
                 var nextStep = roomUsers.Path[pathDataCount];
 
@@ -1227,6 +1228,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (roomUsers.FastWalking)
                 {
                     pathDataCount = (roomUsers.Path.Count - roomUsers.PathStep) - 1;
+                    if (roomUsers.Path.Count <= pathDataCount || pathDataCount < 0)
+                        return false;
                     nextStep = roomUsers.Path[pathDataCount];
                     roomUsers.PathStep++;
                 }
@@ -1487,14 +1490,11 @@ namespace Oblivion.HabboHotel.Rooms.User
 
 
                 // Region Check User Remove Unlocking
-                lock (_removeUsers)
-                {
                     if (roomUsers.NeedsAutokick && !_removeUsers.Contains(roomUsers))
                     {
                         _removeUsers.Add(roomUsers);
                         return;
                     }
-                }
 
                 // Region Idle and Room Tiem Check
                 roomUsers.IdleTime++;
@@ -1536,16 +1536,14 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (roomUsers.SetStep)
                 {
                     // Check if User is Going to the Door.
-                    lock (_removeUsers)
+
+                    if ((roomUsers.SetX == _userRoom.GetGameMap().Model.DoorX) &&
+                        (roomUsers.SetY == _userRoom.GetGameMap().Model.DoorY) &&
+                        (!_removeUsers.Contains(roomUsers)) &&
+                        (!roomUsers.IsBot) && (!roomUsers.IsPet))
                     {
-                        if ((roomUsers.SetX == _userRoom.GetGameMap().Model.DoorX) &&
-                            (roomUsers.SetY == _userRoom.GetGameMap().Model.DoorY) &&
-                            (!_removeUsers.Contains(roomUsers)) &&
-                            (!roomUsers.IsBot) && (!roomUsers.IsPet))
-                        {
-                            _removeUsers.Add(roomUsers);
-                            return;
-                        }
+                        _removeUsers.Add(roomUsers);
+                        return;
                     }
 
                     _userRoom.GetGameMap().GameMap[roomUsers.X, roomUsers.Y] = roomUsers.SqState;
@@ -1672,8 +1670,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                     {
                         Logging.HandleException(e, "RoomUsers - BotAi - OnTimerTick");
                     }
-
-                    return;
                 }
 
                 //                UpdateUserEffect(roomUsers, roomUsers.X, roomUsers.Y);
@@ -1719,8 +1715,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             uint userInRoomCount = 0;
 
             // Clear RemoveUser's List.
-            lock (_removeUsers)
-                _removeUsers.Clear();
+            _removeUsers.Clear();
 
             try
             {
@@ -1762,39 +1757,37 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
 
             // Region: Check Removable Users and Users in Room Count
-            lock (_removeUsers)
+
+            // Check Users to be Removed from Room
+            foreach (var userToRemove in _removeUsers)
             {
-                // Check Users to be Removed from Room
-                foreach (var userToRemove in _removeUsers)
-                {
-                    var userRemovableClient = Oblivion.GetGame().GetClientManager()
-                        .GetClientByUserId(userToRemove.HabboId);
+                var userRemovableClient = Oblivion.GetGame().GetClientManager()
+                    .GetClientByUserId(userToRemove.HabboId);
 
-                    // Remove User from Room..
-                    if (userRemovableClient != null)
-                        RemoveUserFromRoom(userToRemove, true, false);
-                    else
-                        RemoveRoomUser(userToRemove);
-                }
-
-                if (userInRoomCount == 0)
-                {
-                    idleCount++;
-                }
-
-                if (userInRoomCount >= 5 && Oblivion.Multipy > 1)
-                {
-                    if (_roomUserCount != userInRoomCount * (uint)Oblivion.Multipy)
-                    {
-                        UpdateUserCount(userInRoomCount * (uint)Oblivion.Multipy);
-                    }
-                }
+                // Remove User from Room..
+                if (userRemovableClient != null)
+                    RemoveUserFromRoom(userToRemove, true, false);
                 else
+                    RemoveRoomUser(userToRemove);
+            }
+
+            if (userInRoomCount == 0)
+            {
+                idleCount++;
+            }
+
+            if (userInRoomCount >= 5 && Oblivion.Multipy > 1)
+            {
+                if (_roomUserCount != userInRoomCount * (uint) Oblivion.Multipy)
                 {
-                    if (_roomUserCount != userInRoomCount)
-                    {
-                        UpdateUserCount(userInRoomCount);
-                    }
+                    UpdateUserCount(userInRoomCount * (uint) Oblivion.Multipy);
+                }
+            }
+            else
+            {
+                if (_roomUserCount != userInRoomCount)
+                {
+                    UpdateUserCount(userInRoomCount);
                 }
             }
         }

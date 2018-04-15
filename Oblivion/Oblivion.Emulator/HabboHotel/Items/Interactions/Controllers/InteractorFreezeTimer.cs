@@ -72,7 +72,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
                     if (item.UpdateNeeded)
                         item.GetRoom().GetFreeze().StartGame();
-
+//                    item.GetRoom().GetSoccer().StartGame();
                     item.PendingReset = true;
                 }
             }

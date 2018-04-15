@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Oblivion.Configuration;
 using Oblivion.HabboHotel.Rooms.User;
 using Oblivion.HabboHotel.Rooms.User.Path;
 
@@ -75,82 +76,90 @@ namespace Oblivion.HabboHotel.PathFinding
         /// <returns>PathFinderNode.</returns>
         public static PathFinderNode FindPathReversed(RoomUser roomUserable, bool whatIsDiag, Gamemap gameLocalMap, Vector2D startMap, Vector2D endMap)
         {
-            var minSpanTreeCost = new MinHeap<PathFinderNode>(256);
-            var pathFinderMap = new PathFinderNode[gameLocalMap.Model.MapSizeX, gameLocalMap.Model.MapSizeY];
-            var pathFinderStart = new PathFinderNode(startMap) {Cost = 0};
-            var pathFinderEnd = new PathFinderNode(endMap);
-            if (pathFinderMap.GetLength(0) <= pathFinderStart.Position.X ||
-                pathFinderMap.GetLength(1) <= pathFinderStart.Position.Y) return null;
-            pathFinderMap[pathFinderStart.Position.X, pathFinderStart.Position.Y] = pathFinderStart;
-            minSpanTreeCost.Add(pathFinderStart);
-
-            while (minSpanTreeCost.Count > 0)
+            try
             {
-                pathFinderStart = minSpanTreeCost.ExtractFirst();
-                pathFinderStart.InClosed = true;
+                var minSpanTreeCost = new MinHeap<PathFinderNode>(256);
+                var pathFinderMap = new PathFinderNode[gameLocalMap.Model.MapSizeX, gameLocalMap.Model.MapSizeY];
+                var pathFinderStart = new PathFinderNode(startMap) {Cost = 0};
+                var pathFinderEnd = new PathFinderNode(endMap);
+                if (pathFinderMap.GetLength(0) <= pathFinderStart.Position.X ||
+                    pathFinderMap.GetLength(1) <= pathFinderStart.Position.Y) return null;
+                pathFinderMap[pathFinderStart.Position.X, pathFinderStart.Position.Y] = pathFinderStart;
+                minSpanTreeCost.Add(pathFinderStart);
 
-                for (var index = 0;
-                    (whatIsDiag
-                        ? (index < DiagMovePoints.Length ? 1 : 0)
-                        : (index < NoDiagMovePoints.Length ? 1 : 0)) != 0;
-                    index++)
+                while (minSpanTreeCost.Count > 0)
                 {
-                    var realEndPosition = pathFinderStart.Position +
-                                          (whatIsDiag ? DiagMovePoints[index] : NoDiagMovePoints[index]);
+                    pathFinderStart = minSpanTreeCost.ExtractFirst();
+                    pathFinderStart.InClosed = true;
 
-                    var isEndOfPath = ((realEndPosition.X == endMap.X) && (realEndPosition.Y == endMap.Y));
-
-                    if (gameLocalMap.IsValidStep(roomUserable,
-                        new Vector2D(pathFinderStart.Position.X, pathFinderStart.Position.Y), realEndPosition,
-                        isEndOfPath, roomUserable.AllowOverride, true, true))
+                    for (var index = 0;
+                        (whatIsDiag
+                            ? (index < DiagMovePoints.Length ? 1 : 0)
+                            : (index < NoDiagMovePoints.Length ? 1 : 0)) != 0;
+                        index++)
                     {
-                        PathFinderNode pathFinderSecondNodeCalculation =
-                            pathFinderMap[realEndPosition.X, realEndPosition.Y];
+                        var realEndPosition = pathFinderStart.Position +
+                                              (whatIsDiag ? DiagMovePoints[index] : NoDiagMovePoints[index]);
 
-                        if (pathFinderSecondNodeCalculation == null)
+                        var isEndOfPath = ((realEndPosition.X == endMap.X) && (realEndPosition.Y == endMap.Y));
+
+                        if (gameLocalMap.IsValidStep(roomUserable,
+                            new Vector2D(pathFinderStart.Position.X, pathFinderStart.Position.Y), realEndPosition,
+                            isEndOfPath, roomUserable.AllowOverride, true, true))
                         {
-                            pathFinderSecondNodeCalculation = new PathFinderNode(realEndPosition);
-                            pathFinderMap[realEndPosition.X, realEndPosition.Y] = pathFinderSecondNodeCalculation;
-                        }
+                            PathFinderNode pathFinderSecondNodeCalculation =
+                                pathFinderMap[realEndPosition.X, realEndPosition.Y];
 
-                        if (!pathFinderSecondNodeCalculation.InClosed)
-                        {
-                            var internalSpanTreeCost = 0;
-
-                            if (pathFinderStart.Position.X != pathFinderSecondNodeCalculation.Position.X)
-                                internalSpanTreeCost++;
-
-                            if (pathFinderStart.Position.Y != pathFinderSecondNodeCalculation.Position.Y)
-                                internalSpanTreeCost++;
-
-                            var loopTotalCost = pathFinderStart.Cost + internalSpanTreeCost +
-                                                pathFinderSecondNodeCalculation.Position.GetDistanceSquared(endMap);
-
-                            if (loopTotalCost < pathFinderSecondNodeCalculation.Cost)
+                            if (pathFinderSecondNodeCalculation == null)
                             {
-                                pathFinderSecondNodeCalculation.Cost = loopTotalCost;
-                                pathFinderSecondNodeCalculation.Next = pathFinderStart;
+                                pathFinderSecondNodeCalculation = new PathFinderNode(realEndPosition);
+                                pathFinderMap[realEndPosition.X, realEndPosition.Y] = pathFinderSecondNodeCalculation;
                             }
 
-                            if (!pathFinderSecondNodeCalculation.InOpen)
+                            if (!pathFinderSecondNodeCalculation.InClosed)
                             {
-                                if (pathFinderSecondNodeCalculation.Equals(pathFinderEnd))
-                                {
-                                    pathFinderSecondNodeCalculation.Next = pathFinderStart;
+                                var internalSpanTreeCost = 0;
 
-                                    return pathFinderSecondNodeCalculation;
+                                if (pathFinderStart.Position.X != pathFinderSecondNodeCalculation.Position.X)
+                                    internalSpanTreeCost++;
+
+                                if (pathFinderStart.Position.Y != pathFinderSecondNodeCalculation.Position.Y)
+                                    internalSpanTreeCost++;
+
+                                var loopTotalCost = pathFinderStart.Cost + internalSpanTreeCost +
+                                                    pathFinderSecondNodeCalculation.Position.GetDistanceSquared(endMap);
+
+                                if (loopTotalCost < pathFinderSecondNodeCalculation.Cost)
+                                {
+                                    pathFinderSecondNodeCalculation.Cost = loopTotalCost;
+                                    pathFinderSecondNodeCalculation.Next = pathFinderStart;
                                 }
 
-                                pathFinderSecondNodeCalculation.InOpen = true;
+                                if (!pathFinderSecondNodeCalculation.InOpen)
+                                {
+                                    if (pathFinderSecondNodeCalculation.Equals(pathFinderEnd))
+                                    {
+                                        pathFinderSecondNodeCalculation.Next = pathFinderStart;
 
-                                minSpanTreeCost.Add(pathFinderSecondNodeCalculation);
+                                        return pathFinderSecondNodeCalculation;
+                                    }
+
+                                    pathFinderSecondNodeCalculation.InOpen = true;
+
+                                    minSpanTreeCost.Add(pathFinderSecondNodeCalculation);
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            return null;
+                return null;
+            }
+            catch (Exception e)
+            {
+                Logging.HandleException(e, "FindPathReversed");
+                return null;
+            }
         }
 
         /// <summary>

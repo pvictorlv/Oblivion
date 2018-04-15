@@ -513,6 +513,7 @@
         /// </summary>
         ColorWheel,
 
+        NearSwitch,
         /// <summary>
         ///     The floor switch1
         /// </summary>

@@ -97,10 +97,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
         internal void AddPointToTeam(Team team, int points, RoomUser user)
         {
             var num = (TeamPoints[(int) team] += points);
-
-            if (num < 0) num = 0;
-
-            TeamPoints[(int) team] = num;
 //            OnScoreChanged?.Invoke(null, new TeamScoreChangedArgs(num, team, user));
             /* TODO CHECK */ foreach (
                 var current in
