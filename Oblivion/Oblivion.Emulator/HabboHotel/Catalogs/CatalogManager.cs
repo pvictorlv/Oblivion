@@ -399,11 +399,18 @@ namespace Oblivion.HabboHotel.Catalogs
             bool isGift, string giftUser, string giftMessage, int giftSpriteId, int giftLazo, int giftColor, bool undef,
             uint theGroup)
         {
+            if (Oblivion.GetUnixTimeStamp() - session.GetHabbo().LastSqlQuery <= 3)
+            {
+                session.SendNotif("Espere um pouco");
+                return;
+            }
+
             if (session.GetHabbo().GetInventoryComponent().TotalItems >= 4500)
             {
                 session.SendNotif("Você chegou ao limite de mobis, retire alguns antes de continuar!");
                 return;
             }
+
 
             priceAmount = (priceAmount < 1 || priceAmount > 100) ? 1 : priceAmount;
 
@@ -574,6 +581,8 @@ namespace Oblivion.HabboHotel.Catalogs
                 session.GetHabbo().Emeralds -= item.EmeraldsCost * totalPrice;
                 session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
             }
+
+            session.GetHabbo().LastSqlQuery = Oblivion.GetUnixTimeStamp();
 
             /* TODO CHECK */
             foreach (var baseItem in item.Items.Keys)

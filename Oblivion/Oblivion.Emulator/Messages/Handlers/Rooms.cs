@@ -1126,10 +1126,9 @@ namespace Oblivion.Messages.Handlers
 
             if (room.RoomData.Owner != Session.GetHabbo().UserName && Session.GetHabbo().Rank <= 6u)
                 return;
-            if (Session.GetHabbo().GetInventoryComponent() != null)
-                Session.GetHabbo()
-                    .GetInventoryComponent()
-                    .AddItemArray(room.GetRoomItemHandler().RemoveAllFurniture(Session));
+
+            room.GetRoomItemHandler().RemoveAllFurniture(Session);
+
             var roomData = room.RoomData;
             Oblivion.GetGame().GetRoomManager().UnloadRoom(room, "Delete room");
             Oblivion.GetGame().GetRoomManager().QueueVoteRemove(roomData);

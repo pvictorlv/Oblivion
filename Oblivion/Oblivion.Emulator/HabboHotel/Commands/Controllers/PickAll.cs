@@ -25,13 +25,9 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             Task.Factory.StartNew(() =>
             {
                 var room = session.GetHabbo().CurrentRoom;
-                var roomItemList = room.GetRoomItemHandler().RemoveAllFurniture(session);
-                if (session.GetHabbo().GetInventoryComponent() == null)
-                {
-                    return true;
-                }
-                room.GetWiredHandler().CleanUp();
-                room.GetRoomItemHandler().RemoveItemsByOwner(ref roomItemList, ref session);
+                room.GetRoomItemHandler().RemoveAllFurniture(session);
+               
+//                room.GetRoomItemHandler().RemoveItemsByOwner(ref roomItemList, ref session);
                 return true;
             });
 

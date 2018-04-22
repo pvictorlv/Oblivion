@@ -545,8 +545,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// </summary>
         internal void Stop()
         {
-            if (GetHabbo() != null)
-                GetHabbo().OnDisconnect("disconnect");
+            _habbo?.OnDisconnect("disconnect");
 
             if (GetMessageHandler() != null)
                 GetMessageHandler().Destroy();

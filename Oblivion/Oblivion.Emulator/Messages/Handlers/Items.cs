@@ -937,26 +937,24 @@ namespace Oblivion.Messages.Handlers
                             current => current.GetBaseItem().InteractionType == Interaction.Dimmer))
                     room.MoodlightData = new MoodlightData(current.Id);
 
-            if (room.MoodlightData == null)
+            if (room.MoodlightData?.Presets == null)
                 return;
             Response.Init(LibraryParser.OutgoingRequest("DimmerDataMessageComposer"));
             Response.AppendInteger(room.MoodlightData.Presets.Count);
             Response.AppendInteger(room.MoodlightData.CurrentPreset);
             var num = 0;
-
+            /* TODO CHECK */
+            foreach (var current2 in room.MoodlightData.Presets)
             {
-                /* TODO CHECK */
-                foreach (var current2 in room.MoodlightData.Presets)
-                {
-                    num++;
-                    Response.AppendInteger(num);
-                    Response.AppendInteger(
-                        int.Parse(Oblivion.BoolToEnum(current2.BackgroundOnly)) + 1);
-                    Response.AppendString(current2.ColorCode);
-                    Response.AppendInteger(current2.ColorIntensity);
-                }
-                SendResponse();
+                num++;
+                Response.AppendInteger(num);
+                Response.AppendInteger(
+                    int.Parse(Oblivion.BoolToEnum(current2.BackgroundOnly)) + 1);
+                Response.AppendString(current2.ColorCode);
+                Response.AppendInteger(current2.ColorIntensity);
             }
+
+            SendResponse();
         }
 
         internal void UpdateMoodlight()
@@ -2176,6 +2174,7 @@ namespace Oblivion.Messages.Handlers
             var item = Oblivion.GetGame().GetCatalog().GetItem(itemId);
             if (actualRoom == null || item == null)
                 return;
+            if (!actualRoom.CheckRights(Session, true)) return;
             Session.GetHabbo().BuildersItemsUsed++;
             BuildersClubUpdateFurniCount();
             var z = actualRoom.GetGameMap().SqAbsoluteHeight(x, y);
@@ -2217,6 +2216,7 @@ namespace Oblivion.Messages.Handlers
             var actualRoom = Session.GetHabbo().CurrentRoom;
             var item = Oblivion.GetGame().GetCatalog().GetItem(itemId);
             if (actualRoom == null || item == null) return;
+            if (!actualRoom.CheckRights(Session, true)) return;
 
             Session.GetHabbo().BuildersItemsUsed++;
             BuildersClubUpdateFurniCount();

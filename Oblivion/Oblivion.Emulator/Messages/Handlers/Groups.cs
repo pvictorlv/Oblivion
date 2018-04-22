@@ -1548,8 +1548,8 @@ namespace Oblivion.Messages.Handlers
                 deleteGroup.AppendInteger(groupId);
                 room.SendMessage(deleteGroup);
 
-                var roomItemList = room.GetRoomItemHandler().RemoveAllFurniture(Session);
-                room.GetRoomItemHandler().RemoveItemsByOwner(ref roomItemList, ref Session);
+                room.GetRoomItemHandler().RemoveAllFurniture(Session);
+                
                 var roomData = room.RoomData;
                 var roomId = room.RoomData.Id;
 

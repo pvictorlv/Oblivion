@@ -72,9 +72,9 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     await Task.Delay(1000);
                     fuckerUser.Chat(client, "*Desmoronei no chão, de tanto cansaço e dor. Que dlç*", false, 0);
                 });
-                fuckedUser.Statusses.TryAdd("lay", "0.1");
-                fuckedUser.IsLyingDown = true;
-                fuckedUser.UpdateNeeded = true;
+//                fuckedUser.Statusses.TryAdd("lay", "0.1");
+//                fuckedUser.IsLyingDown = true;
+//                fuckedUser.UpdateNeeded = true;
             }
             else
             {

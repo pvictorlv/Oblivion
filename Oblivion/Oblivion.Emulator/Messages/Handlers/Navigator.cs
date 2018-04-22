@@ -80,7 +80,9 @@ namespace Oblivion.Messages.Handlers
 
             string name = Request.GetString();
             string junk = Request.GetString();
-            Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializeNewNavigator(name, junk, Session));
+            var rooms = Oblivion.GetGame().GetNavigator().SerializeNewNavigator(name, junk, Session);
+            if (rooms == null) return;
+            Session.SendMessage(rooms);
         }
 
         /// <summary>

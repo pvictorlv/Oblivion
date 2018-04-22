@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -70,7 +69,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <summary>
         ///     The users by user identifier
         /// </summary>
-        internal HybridDictionary UsersByUserId;
+        internal Dictionary<uint,RoomUser> UsersByUserId;
 
         /// <summary>
         ///     The users by user name
@@ -95,7 +94,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             _pets = new Dictionary<uint, RoomUser>();
             Bots = new Dictionary<uint, RoomUser>();
             UsersByUserName = new Dictionary<string, RoomUser>();
-            UsersByUserId = new HybridDictionary();
+            UsersByUserId = new Dictionary<uint, RoomUser>();
             _primaryPrivateUserId = 0;
             _secondaryPrivateUserId = 0;
             _removeUsers = new ConcurrentList<RoomUser>((int)room.RoomData.UsersMax);
@@ -120,8 +119,8 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         /// <param name="pId">The p identifier.</param>
         /// <returns>RoomUser.</returns>
-        public RoomUser GetRoomUserByHabbo(uint pId) => UsersByUserId.Contains(pId)
-            ? (RoomUser)UsersByUserId[pId]
+        public RoomUser GetRoomUserByHabbo(uint pId) => UsersByUserId.TryGetValue(pId, out var usr)
+            ? usr
             : null;
 
         /// <summary>
@@ -1608,33 +1607,37 @@ namespace Oblivion.HabboHotel.Rooms.User
                                     }
                                 }*/
 
-                needrepath:
-                GenerateNewPath(roomUsers);
-                // If user Isn't Walking, Let's go Back..
-                if ((!roomUsers.IsWalking || roomUsers.Freezed))
+                while (true)
                 {
-                    if (roomUsers.Statusses.TryRemove("mv", out _))
+                    GenerateNewPath(roomUsers);
+                    // If user Isn't Walking, Let's go Back..
+                    if ((!roomUsers.IsWalking || roomUsers.Freezed))
                     {
-                        roomUsers.UpdateNeeded = true;
-                    }
-                }
-                else
-                {
-                    // If he Want's to Walk.. Let's Continue!..
-                    
-
-                    // Let's go to The Tile! And Walk :D
-                    if (UserGoToTile(roomUsers, invalidStep))
-                    {
-                        // If User isn't Riding, Must Update Statusses...
-                       if (!roomUsers.RidingHorse)
+                        if (roomUsers.Statusses.TryRemove("mv", out _))
+                        {
                             roomUsers.UpdateNeeded = true;
+                        }
                     }
                     else
                     {
-                        if (roomUsers.PathRecalcNeeded && !roomUsers.SetStep)
-                        goto needrepath;
+                        // If he Want's to Walk.. Let's Continue!..
+
+
+                        // Let's go to The Tile! And Walk :D
+                        if (UserGoToTile(roomUsers, invalidStep))
+                        {
+                            // If User isn't Riding, Must Update Statusses...
+                            if (!roomUsers.RidingHorse)
+                                roomUsers.UpdateNeeded = true;
+                        }
+                        else
+                        {
+                            if (roomUsers.PathRecalcNeeded && !roomUsers.SetStep)
+                                continue;
+                        }
                     }
+
+                    break;
                 }
 
                 // If is a Bot.. Let's Tick the Time Count of Bot..

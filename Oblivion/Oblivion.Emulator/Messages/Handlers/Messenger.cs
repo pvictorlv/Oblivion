@@ -95,7 +95,8 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void RequestBuddy()
         {
-            if (Session.GetHabbo().GetMessenger() == null) return;
+            if (Session?.GetHabbo()?.GetMessenger() == null) return;
+
             if (Session.GetHabbo().GetMessenger().RequestBuddy(Request.GetString()))
                 Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.SocialFriend);
         }

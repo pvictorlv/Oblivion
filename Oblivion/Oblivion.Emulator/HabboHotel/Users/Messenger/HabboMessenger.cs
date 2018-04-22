@@ -415,6 +415,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             GetClient().GetMessageHandler().SendResponse();
         }
 
+        private int _lastRequest;
         /// <summary>
         ///     Requests the buddy.
         /// </summary>
@@ -422,6 +423,14 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool RequestBuddy(string userQuery)
         {
+            if (_lastRequest + 3000 >= Oblivion.GetUnixTimeStamp())
+            {
+                GetClient().SendNotif("Espere um pouco!");
+                return false;
+            }
+
+            _lastRequest = Oblivion.GetUnixTimeStamp();
+
             var clientByUsername = Oblivion.GetGame().GetClientManager().GetClientByUserName(userQuery);
             uint userId;
             bool blockForNewFriends;

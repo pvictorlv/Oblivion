@@ -13,7 +13,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public Lay()
         {
-            MinRank = 1;
+            MinRank = 11;
             Description = "Makes you lay.";
             Usage = ":lay";
             MinParams = 0;

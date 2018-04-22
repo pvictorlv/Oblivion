@@ -1315,23 +1315,27 @@ namespace Oblivion.HabboHotel.Rooms
             InitUserBots();
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery($"SELECT word FROM rooms_wordfilter WHERE room_id = {id}");
-                var tableFilter = queryReactor.GetTable();
+                if (roomData?.WordFilter != null)
+                {
+                    queryReactor.SetQuery($"SELECT word FROM rooms_wordfilter WHERE room_id = {id}");
+                    var tableFilter = queryReactor.GetTable();
 
-                /* TODO CHECK */
-                foreach (DataRow dataRow in tableFilter.Rows)
-                    roomData.WordFilter.Add(dataRow["word"].ToString());
+                    foreach (DataRow dataRow in tableFilter.Rows)
+                        roomData.WordFilter.Add(dataRow["word"].ToString());
 
-                queryReactor.SetQuery(
-                    $"SELECT command_name FROM room_blockcmd WHERE room_id = '{id}'");
-                var tableCmd = queryReactor.GetTable();
-                /* TODO CHECK */
-                foreach (DataRow data in tableCmd.Rows)
-                    roomData.BlockedCommands.Add(data["command_name"].ToString());
+                }
+
+                if (roomData.BlockedCommands != null)
+                {
+                    queryReactor.SetQuery(
+                        $"SELECT command_name FROM room_blockcmd WHERE room_id = '{id}'");
+                    var tableCmd = queryReactor.GetTable();
+                    foreach (DataRow data in tableCmd.Rows)
+                        roomData.BlockedCommands.Add(data["command_name"].ToString());
+                }
             }
             if (!forceLoad)
             {
-                //todo: task canc. token and remove timer.
                 _roomThread = new Task(StartRoomProcessing, TaskCreationOptions.LongRunning);
                 _roomThread.Start();
             }

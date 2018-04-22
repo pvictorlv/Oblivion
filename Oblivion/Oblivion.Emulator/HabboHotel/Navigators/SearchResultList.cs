@@ -80,10 +80,10 @@ namespace Oblivion.HabboHotel.Navigators
         /// <param name="direct">if set to <c>true</c> [direct].</param>
         /// <param name="message">The message.</param>
         /// <param name="session">The session.</param>
-        internal static void SerializeSearchResultListStatics(string staticId, bool direct, ServerMessage message,
+        internal static bool SerializeSearchResultListStatics(string staticId, bool direct, ServerMessage message,
             GameClient session)
         {
-            if (message == null || session == null) return;
+            if (message == null || session == null) return false;
 
             if (string.IsNullOrEmpty(staticId) || staticId == "official") staticId = "official_view";
             if (staticId != "hotel_view" && staticId != "roomads_view" && staticId != "myworld_view" &&
@@ -101,7 +101,7 @@ namespace Oblivion.HabboHotel.Navigators
             {
                 case "hotel_view":
                     {
-                        SerializeSearchResultListStatics("popular", false, message, session);
+                        if (!SerializeSearchResultListStatics("popular", false, message, session)) return false;
                         /* TODO CHECK */
                         foreach (FlatCat flat in Oblivion.GetGame().GetNavigator().PrivateCategories.Values)
                             SerializeSearchResultListFlatcats(flat.Id, false, message);
@@ -109,11 +109,11 @@ namespace Oblivion.HabboHotel.Navigators
                     }
                 case "myworld_view":
                     {
-                        SerializeSearchResultListStatics("my", false, message, session);
-                        SerializeSearchResultListStatics("favorites", false, message, session);
-                        SerializeSearchResultListStatics("my_groups", false, message, session);
-                        SerializeSearchResultListStatics("history", false, message, session);
-                        SerializeSearchResultListStatics("friends_rooms", false, message, session);
+                        if (!SerializeSearchResultListStatics("my", false, message, session)) return false;
+                        if (!SerializeSearchResultListStatics("favorites", false, message, session)) return false;
+                        if (!SerializeSearchResultListStatics("my_groups", false, message, session)) return false;
+                        if (!SerializeSearchResultListStatics("history", false, message, session)) return false;
+                        if (!SerializeSearchResultListStatics("friends_rooms", false, message, session)) return false;
                         break;
                     }
                 case "roomads_view":
@@ -121,13 +121,13 @@ namespace Oblivion.HabboHotel.Navigators
                         /* TODO CHECK */
                         foreach (FlatCat flat in Oblivion.GetGame().GetNavigator().PrivateCategories.Values)
                             SerializePromotionsResultListFlatcats(flat.Id, false, message);
-                        SerializeSearchResultListStatics("top_promotions", false, message, session);
+                        if (!SerializeSearchResultListStatics("top_promotions", false, message, session)) return false;
                         break;
                     }
                 case "official_view":
                     {
-                        SerializeSearchResultListStatics("official-root", false, message, session);
-                        SerializeSearchResultListStatics("staffpicks", false, message, session);
+                        if(!SerializeSearchResultListStatics("official-root", false, message, session)) return false;
+                        if (!SerializeSearchResultListStatics("staffpicks", false, message, session)) return false;
                         break;
                     }
                 case "official-root":
@@ -143,7 +143,7 @@ namespace Oblivion.HabboHotel.Navigators
                 case "my":
                     {
                         var i = 0;
-						if (session?.GetHabbo()?.Data?.Rooms == null) return;
+						if (session?.GetHabbo()?.Data?.Rooms == null) return false;
                         message.StartArray();
                         /* TODO CHECK */
                         foreach (var data in session.GetHabbo().Data.Rooms)
@@ -164,7 +164,7 @@ namespace Oblivion.HabboHotel.Navigators
                         if (session.GetHabbo().Data.FavouritedRooms == null)
                         {
                             message.AppendInteger(0);
-                            return;
+                            return false;
                         }
 
                         var i = 0;
@@ -191,7 +191,7 @@ namespace Oblivion.HabboHotel.Navigators
                         if (session?.GetHabbo() == null || session.GetHabbo().GetMessenger() == null || session.GetHabbo().GetMessenger().GetActiveFriendsRooms() == null)
                         {
                             message.AppendInteger(0);
-                            return;
+                            return false;
                         }
                         var roomsFriends =
                             session.GetHabbo()
@@ -223,7 +223,7 @@ namespace Oblivion.HabboHotel.Navigators
                             if (rooms == null)
                             {
                                 message.AppendInteger(0);
-                                break;
+                                return false;
                             }
                             message.AppendInteger(rooms.Length);
                             /* TODO CHECK */
@@ -233,6 +233,7 @@ namespace Oblivion.HabboHotel.Navigators
                         {
                             Writer.Writer.LogException(e.ToString());
                             message.AppendInteger(0);
+                            return false;
                         }
                         break;
                     }
@@ -304,6 +305,8 @@ namespace Oblivion.HabboHotel.Navigators
                         break;
                     }
             }
+
+            return true;
         }
 
         /// <summary>

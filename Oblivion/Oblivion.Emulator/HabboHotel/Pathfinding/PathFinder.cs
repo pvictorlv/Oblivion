@@ -48,21 +48,28 @@ namespace Oblivion.HabboHotel.PathFinding
         /// <returns>List&lt;Vector2D&gt;.</returns>
         public static List<Vector2D> FindPath(RoomUser user, bool diag, Gamemap map, Vector2D start, Vector2D end)
         {
-            var list = new List<Vector2D>();
-            var pathFinderNode = FindPathReversed(user, diag, map, start, end);
-
-            if (pathFinderNode != null)
+            try
             {
-                list.Add(end);
+                var list = new List<Vector2D>();
+                var pathFinderNode = FindPathReversed(user, diag, map, start, end);
 
-                while (pathFinderNode.Next != null)
+                if (pathFinderNode != null)
                 {
-                    list.Add(pathFinderNode.Next.Position);
-                    pathFinderNode = pathFinderNode.Next;
-                }
-            }
+                    list.Add(end);
 
-            return list;
+                    while (pathFinderNode.Next != null)
+                    {
+                        list.Add(pathFinderNode.Next.Position);
+                        pathFinderNode = pathFinderNode.Next;
+                    }
+                }
+
+                return list;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -155,9 +162,8 @@ namespace Oblivion.HabboHotel.PathFinding
 
                 return null;
             }
-            catch (Exception e)
+            catch
             {
-                Logging.HandleException(e, "FindPathReversed");
                 return null;
             }
         }

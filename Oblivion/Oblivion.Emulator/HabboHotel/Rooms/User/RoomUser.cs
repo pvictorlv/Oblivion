@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Oblivion.Configuration;
 using Oblivion.HabboHotel.Camera;
 using Oblivion.HabboHotel.Commands;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -718,7 +719,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         internal string GetUserName()
         {
             if (!IsBot)
-                return GetClient() != null ? GetClient().GetHabbo().UserName : string.Empty;
+                return GetClient()?.GetHabbo() != null ? GetClient().GetHabbo().UserName : string.Empty;
             if (!IsPet)
                 return BotData == null ? string.Empty : BotData.Name;
             return PetData.Name;
@@ -730,8 +731,16 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <returns><c>true</c> if this instance is owner; otherwise, <c>false</c>.</returns>
         internal bool IsOwner()
         {
-            var currentRoom = GetRoom();
-            return !IsBot && currentRoom != null && GetUserName() == currentRoom.RoomData.Owner;
+            try
+            {
+                var currentRoom = GetRoom();
+                return !IsBot && currentRoom != null && GetUserName() == currentRoom.RoomData.Owner;
+            }
+            catch (Exception e)
+            {
+                Logging.HandleException(e, "IsOwner");
+                return false;
+            }
         }
 
         /// <summary>
