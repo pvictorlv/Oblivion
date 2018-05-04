@@ -212,6 +212,7 @@
     <Compile Include="HabboHotel\Commands\Controllers\SendBubble.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\SetHeight.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\Sex.cs" />
+    <Compile Include="HabboHotel\Commands\Controllers\SuperBanId.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\ViewClones.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\Weapon.cs" />
     <Compile Include="HabboHotel\Commands\Interfaces\Command.cs" />

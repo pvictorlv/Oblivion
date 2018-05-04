@@ -230,6 +230,7 @@ namespace Oblivion.Messages.Handlers
                     .StopEffect(Session.GetHabbo().GetAvatarEffectsInventoryComponent().CurrentEffect);
                 return;
             }
+
             Session.GetHabbo().GetAvatarEffectsInventoryComponent().ActivateEffect(num);
         }
 
@@ -244,7 +245,7 @@ namespace Oblivion.Messages.Handlers
             var currentRoom = Session.GetHabbo().CurrentRoom;
             if (currentRoom == null ||
                 (currentRoom.RoomData.WhoCanBan == 0 && !currentRoom.CheckRights(Session, true) ||
-                currentRoom.RoomData.WhoCanBan == 1 && !currentRoom.CheckRights(Session)) && Session.GetHabbo().Rank <
+                 currentRoom.RoomData.WhoCanBan == 1 && !currentRoom.CheckRights(Session)) && Session.GetHabbo().Rank <
                 Convert.ToUInt32(Oblivion.GetDbConfig().DbData["ambassador.minrank"]))
                 return;
             var roomUserByHabbo = currentRoom.GetRoomUserManager()
@@ -259,6 +260,7 @@ namespace Oblivion.Messages.Handlers
                     return;
                 currentRoom.MutedUsers.Remove(num);
             }
+
             currentRoom.MutedUsers.Add(num,
                 uint.Parse(
                     ((Oblivion.GetUnixTimeStamp()) + checked(num2 * 60u)).ToString()));
@@ -393,6 +395,7 @@ namespace Oblivion.Messages.Handlers
                     queryreactor2.RunQuery();
                 }
             }
+
             Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.ProfileBadge);
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UserBadgesMessageComposer"));
             serverMessage.AppendInteger(Session.GetHabbo().Id);
@@ -422,6 +425,7 @@ namespace Oblivion.Messages.Handlers
                     .SendMessage(serverMessage);
                 return;
             }
+
             Session.SendMessage(serverMessage);
         }
 
@@ -459,6 +463,7 @@ namespace Oblivion.Messages.Handlers
                 Session.SendNotif(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return;
             }
+
             var createTime = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(habbo.CreateDate);
 
             var msg = new ServerMessage(LibraryParser.OutgoingRequest("UserProfileMessageComposer"));
@@ -483,8 +488,9 @@ namespace Oblivion.Messages.Handlers
 
             var groups = habbo.UserGroups;
             msg.AppendInteger(groups.Count);
-            
-            foreach (var group in groups.Select(groupUs => Oblivion.GetGame().GetGroupManager().GetGroup(groupUs.GroupId)))
+
+            foreach (var group in groups.Select(groupUs =>
+                Oblivion.GetGame().GetGroupManager().GetGroup(groupUs.GroupId)))
             {
                 if (group != null)
                 {
@@ -524,7 +530,7 @@ namespace Oblivion.Messages.Handlers
 
             var msg2 = new ServerMessage(LibraryParser.OutgoingRequest("UserBadgesMessageComposer"));
             msg2.AppendInteger(habbo.Id);
-            
+
             msg2.StartArray();
             foreach (var badge in habbo.GetBadgeComponent().BadgeList.Values.Where(badge => badge.Slot > 0))
             {
@@ -532,8 +538,9 @@ namespace Oblivion.Messages.Handlers
                 msg2.AppendString(badge.Code);
                 msg2.SaveArray();
             }
+
             msg2.EndArray();
-            
+
             Session.SendMessage(msg2);
         }
 
@@ -557,6 +564,7 @@ namespace Oblivion.Messages.Handlers
                 queryReactor.AddParameter("gender", text);
                 queryReactor.RunQuery();
             }
+
             Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_AvatarLooks", 1);
             if (Session.GetHabbo().Look.Contains("ha-1006"))
                 Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.WearHat);
@@ -601,12 +609,13 @@ namespace Oblivion.Messages.Handlers
             var text = Request.GetString();
             if (text == Session.GetHabbo().Motto)
                 return;
-            
+
 
             if (!BobbaFilter.CanTalk(Session, text))
             {
                 return;
             }
+
             Session.GetHabbo().Motto = text;
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -632,6 +641,7 @@ namespace Oblivion.Messages.Handlers
                 serverMessage.AppendInteger(Session.GetHabbo().AchievementPoints);
                 currentRoom.SendMessage(serverMessage);
             }
+
             Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_Motto", 1);
         }
 
@@ -660,6 +670,7 @@ namespace Oblivion.Messages.Handlers
                         GetResponse().AppendString(dataRow["gender"].ToString().ToUpper());
                     }
                 }
+
                 SendResponse();
             }
         }
@@ -700,6 +711,7 @@ namespace Oblivion.Messages.Handlers
                     queryReactor.RunQuery();
                 }
             }
+
             Oblivion.GetGame()
                 .GetQuestManager()
                 .ProgressUserQuest(Session, QuestType.ProfileChangeLook);
@@ -724,6 +736,7 @@ namespace Oblivion.Messages.Handlers
             SendResponse();
         }
 
+
         /// <summary>
         /// Checks the name.
         /// </summary>
@@ -739,6 +752,7 @@ namespace Oblivion.Messages.Handlers
                 SendResponse();
                 return;
             }
+
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery("SELECT username FROM users WHERE username=@name LIMIT 1");
@@ -747,8 +761,7 @@ namespace Oblivion.Messages.Handlers
                 var lower = text.ToLower();
                 var array = lower.ToCharArray();
                 const string source = "abcdefghijklmnopqrstuvwxyz1234567890.,_-;:?!@";
-                var array2 = array;
-                if (array2.Any(c => !source.Contains(char.ToLower(c))))
+                if (array.Any(c => !source.Contains(char.ToLower(c))))
                 {
                     Response.Init(LibraryParser.OutgoingRequest("NameChangedUpdatesMessageComposer"));
                     Response.AppendInteger(4);
@@ -757,7 +770,8 @@ namespace Oblivion.Messages.Handlers
                     SendResponse();
                     return;
                 }
-                if (lower.Contains("mod") || lower.Contains("m0d")||
+
+                if (lower.Contains("mod") || lower.Contains("m0d") ||
                     lower.Contains("admin"))
                 {
                     Response.Init(LibraryParser.OutgoingRequest("NameChangedUpdatesMessageComposer"));
@@ -816,6 +830,14 @@ namespace Oblivion.Messages.Handlers
             var userName = Session.GetHabbo().UserName;
             if (Session?.GetHabbo()?.CurrentRoom == null) return;
 
+            var lower = text.ToLower();
+            var array = lower.ToCharArray();
+            const string source = "abcdefghijklmnopqrstuvwxyz1234567890.,_-;:?!@";
+            if (array.Any(c => !source.Contains(char.ToLower(c))))
+            {
+                return;
+            }
+
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery("SELECT username FROM users WHERE username=@name LIMIT 1");
@@ -859,6 +881,7 @@ namespace Oblivion.Messages.Handlers
                     Response.AppendInteger(Session.GetHabbo().CurrentRoom.RoomId);
                     Response.AppendString(text);
                 }
+
                 /* TODO CHECK */
                 foreach (var data in Session.GetHabbo().Data.Rooms.ToList())
                 {
@@ -869,6 +892,7 @@ namespace Oblivion.Messages.Handlers
                     if (room != null)
                         room.RoomData.Owner = text;
                 }
+
                 /* TODO CHECK */
                 foreach (MessengerBuddy current2 in Session.GetHabbo().GetMessenger().Friends.Values.ToList())
                 {
@@ -910,24 +934,23 @@ namespace Oblivion.Messages.Handlers
             var num3 = 0;
             foreach (var x in habboForId.Data.Relations)
             {
-                if (!habboForId.GetMessenger().FriendshipExists((uint)x.Value.UserId))
+                if (!habboForId.GetMessenger().FriendshipExists((uint) x.Value.UserId))
                     continue;
 
                 if (x.Value.Type == 1) num++;
                 else if (x.Value.Type == 2) num2++;
                 else if (x.Value.Type == 3) num3++;
-
             }
-            
+
             Response.Init(LibraryParser.OutgoingRequest("RelationshipMessageComposer"));
             Response.AppendInteger(habboForId.Id);
 
             Response.StartArray();
 //            Response.AppendInteger(habboForId.Data.Relations.Count);
-           
+
             foreach (var current in habboForId.Data.Relations.Values.OrderBy(x => rand.Next()))
             {
-                if (!habboForId.GetMessenger().FriendshipExists((uint)current.UserId))
+                if (!habboForId.GetMessenger().FriendshipExists((uint) current.UserId))
                     continue;
 
                 var habboForId2 = Oblivion.GetHabboById(Convert.ToUInt32(current.UserId));
@@ -947,8 +970,10 @@ namespace Oblivion.Messages.Handlers
                     Response.AppendString(habboForId2.UserName);
                     Response.AppendString(habboForId2.Look);
                 }
+
                 Response.SaveArray();
             }
+
             Response.EndArray();
             SendResponse();
         }
@@ -996,6 +1021,7 @@ namespace Oblivion.Messages.Handlers
                             if (Session.GetHabbo().Data.Relations.ContainsKey(integer2))
                                 Session.GetHabbo().Data.Relations.Remove(integer2);
                         }
+
                         queryReactor.SetQuery(
                             "INSERT INTO users_relationships (user_id, target, type) VALUES (@id, @target, @type)");
                         queryReactor.AddParameter("id", Session.GetHabbo().Id);
@@ -1004,6 +1030,7 @@ namespace Oblivion.Messages.Handlers
                         var num3 = (int) queryReactor.InsertQuery();
                         Session.GetHabbo().Data.Relations.Add(num3, new Relationship(num3, (int) num, num2));
                     }
+
                     var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(num);
                     Session.GetHabbo().GetMessenger().UpdateFriend(num, clientByUserId, true);
                 }
@@ -1058,12 +1085,14 @@ namespace Oblivion.Messages.Handlers
                 roomData = Oblivion.GetGame().GetRoomManager().GetActiveRooms()
                     .FirstOrDefault(x => x.Key.UsersNow > 0 && x.Key.State == 0).Key;
             }
+
             if (roomData != null)
             {
                 roomData.SerializeRoomData(Response, Session, true);
                 Session.GetMessageHandler().PrepareRoomForUser(roomData.Id, "");
                 return;
             }
+
             Session.SendNotif(Oblivion.GetLanguage().GetVar("start_quest_need_room"));
         }
 
@@ -1077,6 +1106,7 @@ namespace Oblivion.Messages.Handlers
                 Session.SendNotif(Oblivion.GetLanguage().GetVar("nieuwe_gebruiker_kado_error_1"));
                 return;
             }
+
             if (Session.GetHabbo().Vip)
             {
                 Session.SendNotif(Oblivion.GetLanguage().GetVar("nieuwe_gebruiker_kado_error_2"));
@@ -1263,6 +1293,7 @@ namespace Oblivion.Messages.Handlers
                     Session.SendMessage(success);
                     return;
                 }
+
                 success.AppendBool(true);
                 Session.SendMessage(success);
                 var roomFwd = new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
@@ -1308,6 +1339,7 @@ namespace Oblivion.Messages.Handlers
                 rank++;
                 GetResponse().SaveArray();
             }
+
             GetResponse().EndArray();
             SendResponse();
         }
