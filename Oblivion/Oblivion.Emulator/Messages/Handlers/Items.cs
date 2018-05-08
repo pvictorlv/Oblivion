@@ -4,6 +4,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using Oblivion.HabboHotel.Catalogs;
+using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items;
 using Oblivion.HabboHotel.Items.Datas;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -290,7 +291,7 @@ namespace Oblivion.Messages.Handlers
                 if (room == null || Oblivion.GetDbConfig().DbData["placing_enabled"] != "1")
                     return;
 
-                if (!room.CheckRights(Session, false, true))
+                if (!room.CheckRights(Session, true, true, true))
                 {
                     Session.SendMessage(StaticMessage.ErrorCantSetNotOwner);
                     return;
@@ -560,12 +561,24 @@ namespace Oblivion.Messages.Handlers
             }
             else
             {
-                room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
-                Session.GetHabbo()
-                    .GetInventoryComponent()
-                    .AddNewItem(item.Id, item.BaseItem, item.ExtraData, item.GroupId, true, true, 0, 0);
-                //                Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
-                Session.GetHabbo().GetInventoryComponent().AddItemToItemInventory(item, false);
+                var owner = item.UserId != Session.GetHabbo().Id ? Oblivion.GetGame().GetClientManager().GetClientByUserId(item.UserId) : Session;
+                if (owner != null)
+                {
+                    room.GetRoomItemHandler().RemoveFurniture(owner, item.Id);
+                    owner.GetHabbo()
+                        .GetInventoryComponent()
+                        .AddNewItem(item.Id, item.BaseItem, item.ExtraData, item.GroupId, true, true, 0, 0);
+                    owner.GetHabbo().GetInventoryComponent().AddItemToItemInventory(item, false);
+                }
+                else
+                {
+                    using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    {
+                        room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
+
+                        adapter.RunFastQuery($"UPDATE items_rooms SET room_id = '0' WHERE id = '{item.Id}'");
+                    }
+                }
             }
         }
 

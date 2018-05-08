@@ -1284,6 +1284,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             WallItems.Clear();
             _removedItems.Clear();
             _updatedItems.Clear();
+            if (_roomItemUpdateQueue?.Count > 0)
             lock (_roomItemUpdateQueue.SyncRoot)
             {
                 _roomItemUpdateQueue.Clear();

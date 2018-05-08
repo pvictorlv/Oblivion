@@ -24,13 +24,13 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         {
             if (!uint.TryParse(pms[0], out var userId)) return true;
 
-            var client = Oblivion.GetGame().GetClientManager().GetClient(userId);
+            var client = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
             if (client == null)
             {
                 session.SendNotif(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
-
+            
             if (client.GetHabbo().Rank >= session.GetHabbo().Rank)
             {
                 session.SendNotif(Oblivion.GetLanguage().GetVar("user_is_higher_rank"));

@@ -830,6 +830,9 @@ namespace Oblivion.Messages.Handlers
             var userName = Session.GetHabbo().UserName;
             if (Session?.GetHabbo()?.CurrentRoom == null) return;
 
+            if (string.IsNullOrWhiteSpace(text) || text.Length < 3 || text.Length > 15)
+                return;
+
             var lower = text.ToLower();
             var array = lower.ToCharArray();
             const string source = "abcdefghijklmnopqrstuvwxyz1234567890.,_-;:?!@";

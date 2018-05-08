@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 
 namespace Oblivion.HabboHotel.Users.Messenger
 {
@@ -27,7 +26,8 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <returns>List&lt;SearchResult&gt;.</returns>
         internal static List<SearchResult> GetSearchResult(string query)
         {
-            if (_lastQuery == query) return _lastResult;
+            if (_lastQuery == query)
+                return _lastResult;
 
             _lastQuery = query;
 
@@ -41,15 +41,22 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 table = queryReactor.GetTable();
             }
 
-            _lastResult = (from DataRow dataRow in table.Rows
-                let userId = Convert.ToUInt32(dataRow[0])
-                let userName = (string) dataRow[1]
-                let motto = (string) dataRow[2]
-                let look = (string) dataRow[3]
-                let lastOnline = dataRow[4].ToString()
-                select new SearchResult(userId, userName, motto, look, lastOnline)).ToList();
-            return _lastResult;
+            if (table == null) return new List<SearchResult>();
 
+            List<SearchResult> list = new List<SearchResult>();
+            foreach (DataRow dataRow in table.Rows)
+            {
+                uint userId = Convert.ToUInt32(dataRow[0]);
+                string userName = dataRow[1].ToString();
+                string motto = dataRow[2].ToString();
+                string look = dataRow[3].ToString();
+                string lastOnline = dataRow[4].ToString();
+                list.Add(new SearchResult(userId, userName, motto, look, lastOnline));
+            }
+
+            _lastResult = list;
+
+            return _lastResult;
         }
     }
 }
