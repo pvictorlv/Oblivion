@@ -841,7 +841,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <summary>
         ///     Destroys this instance.
         /// </summary>
-        internal void Destroy()
+        internal void Dispose()
         {
             Oblivion.GetGame().GetItemManager().RemoveVirtualItem(Id);
             _mBaseItem = null;
@@ -1294,8 +1294,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                     case Interaction.FreezeTimer:
                     {
                         if (string.IsNullOrEmpty(ExtraData)) return;
-                        var num5 = 0;
-                        int.TryParse(ExtraData, out num5);
+                        int.TryParse(ExtraData, out var num5);
                         if (num5 > 0)
                         {
                             if (InteractionCountHelper == 1)
@@ -1488,7 +1487,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         internal void UpdateState(bool inDb, bool inRoom)
         {
             //todo: recode to new inventory system :)
-            if (GetRoom() == null) return;
+            if (_mRoom == null) return;
             var s = ExtraData;
             if (GetBaseItem().InteractionType == Interaction.MysteryBox)
             {
@@ -1783,7 +1782,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                         break;
 
                     case Interaction.RoomBg:
-                        if (_mRoom.TonerData == null) _mRoom.TonerData = new TonerData(Id);
+                        if (_mRoom.TonerData == null)
+                            _mRoom.TonerData = new TonerData(Id);
                         _mRoom.TonerData.GenerateExtraData(message);
                         break;
 

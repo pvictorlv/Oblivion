@@ -15,10 +15,17 @@ namespace Oblivion.Database.Manager.Database.Session_Details
         protected IDatabaseClient Client;
         protected MySqlCommand CommandMySql;
 
+        private bool _disposed;
         public void Dispose()
         {
-            CommandMySql.Dispose();
-            Client.ReportDone();
+            if (_disposed) return;
+            _disposed = true;
+            CommandMySql?.Dispose();
+            CommandMySql = null;
+
+            Client?.ReportDone();
+            
+            Client = null;
             GC.SuppressFinalize(this);
         }
 

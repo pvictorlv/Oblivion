@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.ServiceModel.Channels;
 using Oblivion.Configuration;
 using Oblivion.Connection.Connection;
@@ -154,6 +155,19 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
                 if (errorCode == 1 || errorCode == 2 || userData?.User == null)
                     return false;
+
+                var text = userData.User.UserName;
+
+                if (string.IsNullOrWhiteSpace(text) || text.Length < 3 || text.Length > 15)
+                    return false;
+
+                var lower = text.ToLower();
+                var array = lower.ToCharArray();
+                const string source = "abcdefghijklmnopqrstuvwxyz1234567890.,_-;:?!@";
+                if (array.Any(c => !source.Contains(char.ToLower(c))))
+                {
+                    return false;
+                }
 
                 Oblivion.GetGame().GetClientManager().RegisterClient(this, userData.UserId, userData.User.UserName);
                 _habbo = userData.User;
@@ -551,12 +565,15 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 GetMessageHandler().Destroy();
 
             CurrentRoomUserId = -1;
+            _messageHandler?.Dispose();
             _messageHandler = null;
             _habbo = null;
 
             _connection?.Dispose();
 
             _connection = null;
+            PacketParser?.Dispose();
+            PacketParser = null;
         }
 
 
@@ -592,12 +609,12 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             if (message == null)
                 return;
 
-            if (GetConnection() == null)
+            if (_connection == null)
                 return;
 
             var bytes = message.GetReversedBytes();
 
-            GetConnection().SendData(bytes);
+            _connection.SendData(bytes);
         }
 
         /// <summary>
@@ -606,10 +623,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <param name="bytes">The bytes.</param>
         internal void SendMessage(byte[] bytes)
         {
-            if (GetConnection() == null)
-                return;
-
-            GetConnection().SendData(bytes);
+            _connection?.SendData(bytes);
         }
 
         /// <summary>
@@ -618,10 +632,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <param name="type">The type.</param>
         internal void SendMessage(StaticMessage type)
         {
-            if (GetConnection() == null)
-                return;
-
-            GetConnection().SendData(StaticMessagesManager.Get(type));
+            _connection?.SendData(StaticMessagesManager.Get(type));
         }
 
         /// <summary>

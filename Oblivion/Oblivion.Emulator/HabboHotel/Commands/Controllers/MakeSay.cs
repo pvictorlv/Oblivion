@@ -8,7 +8,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
     {
         public MakeSay()
         {
-            MinRank = 7;
+            MinRank = 9;
             Description = "Makes a selected user shout.";
             Usage = ":makesay [USERNAME] [MESSAGE]";
             MinParams = -1;
@@ -24,6 +24,11 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var msg = string.Join(" ", pms.Skip(1));
 
             if (string.IsNullOrEmpty(msg)) return true;
+
+            if (msg.StartsWith(":"))
+            {
+                return true;
+            }
 
             user.Chat(user.GetClient(), msg, false, 0);
             return true;

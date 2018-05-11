@@ -243,7 +243,7 @@ namespace Oblivion.HabboHotel.Commands
 
                 if (client?.GetHabbo()?.CurrentRoom?.RoomData == null) return false;
 
-                if (string.IsNullOrEmpty(str) || client?.GetHabbo() == null || !client.GetHabbo().InRoom) return false;
+                if (string.IsNullOrEmpty(str) || client.GetHabbo() == null || !client.GetHabbo().InRoom) return false;
 
 
                 var pms = str.Split(' ');
@@ -283,7 +283,13 @@ namespace Oblivion.HabboHotel.Commands
                 if (command.MinParams == -2 || (command.MinParams == -1 && pms.Length > 1) ||
                     command.MinParams != -1 && command.MinParams == pms.Length - 1)
                 {
-                    return command.Execute(client, pms.Skip(1).ToArray());
+                    if (command.Execute(client, pms.Skip(1).ToArray()))
+                    {
+                        client.GetHabbo().CurrentRoom.AddChatlog(client.GetHabbo().Id, $"Executou o comando: {commandName}", false);
+                        return true;
+                    }
+
+                    return false;
                 }
 
                 client.SendWhisper(Oblivion.GetLanguage().GetVar("use_the_command_as") + command.Usage);

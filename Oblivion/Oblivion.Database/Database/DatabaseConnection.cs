@@ -11,8 +11,8 @@ namespace Oblivion.Database
 {
     public class DatabaseConnection : IDatabaseClient
     {
-        private readonly MySqlConnection _mysqlConnection;
-        private readonly IQueryAdapter _adapter;
+        private MySqlConnection _mysqlConnection;
+        private IQueryAdapter _adapter;
 
         public DatabaseConnection(string connectionStr)
         {
@@ -32,13 +32,20 @@ namespace Oblivion.Database
                 _mysqlConnection.Close();
         }
 
+        private bool _disposed;
         public void Dispose()
         {
+            if (_disposed) return;
+            _disposed = true;
+
             if (_mysqlConnection.State == ConnectionState.Open)
             {
                 _mysqlConnection.Close();
             }
             _mysqlConnection.Dispose();
+            _mysqlConnection = null;
+            _adapter.Dispose();
+            _adapter = null;
         }
 
         public void Connect()

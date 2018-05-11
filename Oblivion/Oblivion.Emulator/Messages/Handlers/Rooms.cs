@@ -18,7 +18,6 @@ using Oblivion.HabboHotel.Polls.Enums;
 using Oblivion.HabboHotel.Quests;
 using Oblivion.HabboHotel.RoomBots;
 using Oblivion.HabboHotel.Rooms;
-using Oblivion.HabboHotel.Users.Badges;
 using Oblivion.Messages.Parsers;
 using Oblivion.Security;
 using Oblivion.Util;
@@ -202,7 +201,7 @@ namespace Oblivion.Messages.Handlers
 
         internal void OnRoomUserAdd()
         {
-            if (Session == null || GetResponse() == null)
+            if (Session == null || Response == null)
                 return;
 //            var queuedServerMessage = new QueuedServerMessage(Session.GetConnection());
             if (CurrentLoadingRoom?.GetRoomUserManager() == null ||
@@ -1215,7 +1214,7 @@ namespace Oblivion.Messages.Handlers
             var msg2 = new ServerMessage(LibraryParser.OutgoingRequest("UserBadgesMessageComposer"));
             msg2.AppendInteger(habbo.Id);
 
-            var badges = habbo.GetBadgeComponent().BadgeList.Values.Cast<Badge>().Where(badge => badge.Slot > 0)
+            var badges = habbo.GetBadgeComponent().BadgeList.Values.Where(badge => badge.Slot > 0)
                 .ToList();
             msg2.AppendInteger(badges.Count);
             foreach (
@@ -2185,8 +2184,9 @@ namespace Oblivion.Messages.Handlers
                 roomFull.AppendInteger(1);
                 return;
             }
-            var array = CurrentLoadingRoom.GetRoomItemHandler().FloorItems.Values.ToList();
-            var array2 = CurrentLoadingRoom.GetRoomItemHandler().WallItems.Values.ToList();
+
+            var array = CurrentLoadingRoom.GetRoomItemHandler().FloorItems.Values;
+            var array2 = CurrentLoadingRoom.GetRoomItemHandler().WallItems.Values;
             Response.Init(LibraryParser.OutgoingRequest("RoomFloorItemsMessageComposer"));
 
 
@@ -2212,8 +2212,7 @@ namespace Oblivion.Messages.Handlers
                 roomItem2.Serialize(Response);
 
             SendResponse();
-            array.Clear();
-            array2.Clear();
+
             CurrentLoadingRoom.GetRoomUserManager().AddUserToRoom(Session, Session.GetHabbo().SpectatorMode);
             Session.GetHabbo().SpectatorMode = false;
             
@@ -2584,7 +2583,7 @@ namespace Oblivion.Messages.Handlers
             }
             else
             {
-                var coords = room.GetGameMap().CoordinatedItems.Keys.ToList();
+                var coords = room.GetGameMap().CoordinatedItems.Keys;
                 Response.AppendInteger(coords.Count);
 
                 /* TODO CHECK */

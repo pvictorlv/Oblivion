@@ -45,12 +45,7 @@ namespace Oblivion.Messages.Handlers
             Session = session;
             Response = new ServerMessage();
         }
-
-        /// <summary>
-        ///     Gets the session.
-        /// </summary>
-        /// <returns>GameClient.</returns>
-        internal GameClient GetSession() => Session;
+        
 
         /// <summary>
         ///     Gets the response.
@@ -119,7 +114,7 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void DisconnectEvent()
         {
-            Session.Disconnect("close window");
+            Session.Stop();
         }
 
         /// <summary>
@@ -587,7 +582,7 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
                 Session.GetHabbo().GetInventoryComponent().SendNewItems(item.VirtualId);
 
-
+                
                 var thumb = new ServerMessage(LibraryParser.OutgoingRequest("ThumbnailSuccessMessageComposer"));
                 thumb.AppendBool(true);
                 thumb.AppendBool(false);
@@ -598,5 +593,22 @@ namespace Oblivion.Messages.Handlers
                 Session.SendNotif("Por favor tente novamente, a área da foto possui muitos itens.");
             }
         }
+
+        private bool _disposed;
+        public void Dispose()
+        {
+            if (_disposed) return;
+            _disposed = true;
+
+            CurrentLoadingRoom = null;
+            Response?.Dispose();
+            Response = null;
+            Session = null;
+            Request?.Dispose();
+            Request = null;
+        }
+
     }
+
+
 }
