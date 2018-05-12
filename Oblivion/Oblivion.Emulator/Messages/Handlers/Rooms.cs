@@ -2360,8 +2360,13 @@ namespace Oblivion.Messages.Handlers
 
                 answered.AppendInteger(Session.GetHabbo().Id);
                 answered.AppendString(text);
-                answered.AppendInteger(0);
-                Session.SendMessage(answered);
+                answered.AppendInteger(2);
+                answered.AppendString("0");
+                answered.AppendInteger(poll.AnswersNegative);
+                answered.AppendString("1");
+                answered.AppendInteger(poll.AnswersPositive);
+
+                Session.GetHabbo().CurrentRoom.SendMessage(answered);
                 Session.GetHabbo().AnsweredPool = true;
 
                 return;

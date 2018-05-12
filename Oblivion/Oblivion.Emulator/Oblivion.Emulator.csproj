@@ -208,6 +208,7 @@
     <Compile Include="HabboHotel\Commands\Controllers\GiveRadioPoints.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\Multiply.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\Pet.cs" />
+    <Compile Include="HabboHotel\Commands\Controllers\StartPoll.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\RefreshVirtual.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\SellRoom.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\SendBubble.cs" />

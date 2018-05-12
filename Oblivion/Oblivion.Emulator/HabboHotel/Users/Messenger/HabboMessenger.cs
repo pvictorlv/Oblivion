@@ -423,7 +423,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool RequestBuddy(string userQuery)
         {
-            if (_lastRequest + 1000 >= Oblivion.GetUnixTimeStamp())
+            if (_lastRequest + 3 >= Oblivion.GetUnixTimeStamp())
             {
                 GetClient().SendNotif("Espere um pouco!");
                 return false;

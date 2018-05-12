@@ -399,7 +399,7 @@ namespace Oblivion.HabboHotel.Catalogs
             bool isGift, string giftUser, string giftMessage, int giftSpriteId, int giftLazo, int giftColor, bool undef,
             uint theGroup)
         {
-            if (Oblivion.GetUnixTimeStamp() - session.GetHabbo().LastSqlQuery <= 3)
+            if (session.GetHabbo().LastSqlQuery + 3 >= Oblivion.GetUnixTimeStamp())
             {
                 session.SendNotif("Espere um pouco");
                 return;
@@ -424,7 +424,7 @@ namespace Oblivion.HabboHotel.Catalogs
             if (!Categories.TryGetValue(pageId, out var catalogPage))
                 return;
 
-            if (catalogPage == null || !catalogPage.Enabled || !catalogPage.Visible || session?.GetHabbo() == null)
+            if (catalogPage == null || !catalogPage.Enabled || !catalogPage.Visible)
                 return;
 
             if (catalogPage.MinRank > session.GetHabbo().Rank || catalogPage.Layout == "sold_ltd_items")
@@ -493,14 +493,12 @@ namespace Oblivion.HabboHotel.Catalogs
                 return;
             if (item.GetFirstBaseItem().InteractionType == Interaction.NamePrefix)
             {
-
                 if (!BobbaFilter.CanUsePrefix(session, extraData))
                 {
                     session.SendNotif("Prefixo inválido, tente outro!");
 
                     return;
                 }
-
             }
 
             if (item.ClubOnly && !session.GetHabbo().GetSubscriptionManager().HasSubscription)

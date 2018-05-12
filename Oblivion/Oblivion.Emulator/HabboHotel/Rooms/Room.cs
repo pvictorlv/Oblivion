@@ -789,10 +789,12 @@ namespace Oblivion.HabboHotel.Rooms
             try
             {
                 if (_roomUserManager?.UserList != null)
-                    foreach (var user in _roomUserManager.UserList.Values.Where(user =>
-                        user?.GetClient()?.GetConnection() != null && !user.IsBot))
+                    foreach (var user in _roomUserManager.UserList.Values)
                     {
-                        user.GetClient().SendMessage(message);
+                        if (user?.GetClient() != null && !user.IsBot)
+                        {
+                            user.GetClient().SendMessage(message);
+                        }
                     }
             }
             catch (Exception e)
@@ -811,14 +813,14 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 var data = message.GetReversedBytes();
                 if (_roomUserManager?.UserList == null) return;
-                foreach (var user in from user in _roomUserManager.UserList.Values
-                    where user?.GetClient()?.GetConnection() != null && !user.IsBot
-                    let userCoord = new Vector2D(user.X, user.Y)
-                    where userCoord.GetDistanceSquared(userCoord) <=
-                          RoomData.ChatMaxDistance * RoomData.ChatMaxDistance * 2
-                    select user)
+                foreach (var user in _roomUserManager.UserList.Values)
                 {
-                    user.GetClient().SendMessage(data);
+                    if (user?.GetClient() != null && !user.IsBot)
+                    {
+                        Vector2D userCoord = new Vector2D(user.X, user.Y);
+                        if (userCoord.GetDistanceSquared(userCoord) <= RoomData.ChatMaxDistance * RoomData.ChatMaxDistance * 2)
+                            user.GetClient().SendMessage(data);
+                    }
                 }
             }
             catch (Exception e)
@@ -947,8 +949,8 @@ namespace Oblivion.HabboHotel.Rooms
                     if (user.IsBot)
                         continue;
 
-                    var usersClient = user.GetClient();
-                    if (usersClient?.GetConnection() == null)
+                    var usersClient = user?.GetClient();
+                    if (usersClient == null)
                         continue;
 
                     if (!CheckRights(usersClient))

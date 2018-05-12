@@ -89,6 +89,6 @@ namespace Oblivion.HabboHotel.Polls
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns>Poll.</returns>
-        internal Poll TryGetPollById(uint id) => Polls.Values.FirstOrDefault(current => current.Id == id);
+        internal Poll TryGetPollById(uint id) => Polls.TryGetValue(id, out var poll) ? poll : null;
     }
 }
