@@ -13,12 +13,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinRank = -1;
             Description = "Start a quick question in room";
             Usage = ":poll [text]";
-            MinParams = 1;
+            MinParams = -1;
         }
 
         public override bool Execute(GameClient client, string[] pms)
         {
-            var title = pms[0];
+            var title = string.Join(" ", pms);
 
             var room = client.GetHabbo().CurrentRoom;
 

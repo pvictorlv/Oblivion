@@ -814,6 +814,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
             }
 
+            if (GetRoom() == null) return;
 
             if (session?.GetHabbo() == null)
                 return;
@@ -839,7 +840,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 if (msg.StartsWith(":") && CommandsManager.TryExecute(msg.Substring(1), session))
                 {
-                    if (_mRoom != null && GetRoom().GotWireds())
+                    if (_mRoom != null && _mRoom.GotWireds())
                         GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSayCommand, this, msg);
 
                     return;

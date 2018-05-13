@@ -2228,11 +2228,26 @@ namespace Oblivion.Messages.Handlers
             if (!Oblivion.GetGame().GetPollManager().TryGetPoll(CurrentLoadingRoom.RoomId, out var poll) ||
                 Session.GetHabbo().GotPollData(poll.Id))
                 return;
-
-            Response.Init(LibraryParser.OutgoingRequest("SuggestPollMessageComposer"));
-            poll.Serialize(Response);
+            if (poll.Type == PollType.Matching)
+            {
+                Response.Init(LibraryParser.OutgoingRequest("MatchingPollMessageComposer"));
+                Response.AppendString("MATCHING_POLL");
+                Response.AppendInteger(poll.RoomId);
+                Response.AppendInteger(poll.RoomId);
+                Response.AppendInteger(1);
+                Response.AppendInteger(poll.RoomId);
+                Response.AppendInteger(120);
+                Response.AppendInteger(3);
+                Response.AppendString(poll.PollName);
+            }
+            else
+            {
+                Response.Init(LibraryParser.OutgoingRequest("SuggestPollMessageComposer"));
+                poll.Serialize(Response);
+            }
 
             SendResponse();
+
         }
 
         internal void WidgetContainers()
@@ -2298,7 +2313,8 @@ namespace Oblivion.Messages.Handlers
         internal void AcceptPoll()
         {
             var key = Request.GetUInteger();
-            var poll = Oblivion.GetGame().GetPollManager().Polls[key];
+            if (!Oblivion.GetGame().GetPollManager().Polls.TryGetValue(key, out var poll))
+             return;
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("PollQuestionsMessageComposer"));
 

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using Oblivion.Util;
@@ -8,12 +10,13 @@ namespace Oblivion.Connection.Net
     public class MusSocket
     {
         private static Socket _handler;
-
-        internal MusSocket(int port)
+        private static List<string> _allowedIps;
+        internal MusSocket(int port, string allowedIps)
         {
             _handler = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-
+            _allowedIps = allowedIps.Split(';').ToList();
+           
             Out.WriteLine(
                 "Starting up asynchronous sockets server for MUS connections for port " +
                 port, "Server.AsyncSocketMusListener");
@@ -39,12 +42,13 @@ namespace Oblivion.Connection.Net
             try
             {
                 var nSocket = ((Socket) iAr.AsyncState).EndAccept(iAr);
-                //if (nSocket.RemoteEndPoint.ToString().Split(':')[0] != _MusHost) // Don't allow remote IP!
-               /* var ip = nSocket.RemoteEndPoint.ToString().Split(':')[0];
-                if (ip != _MusHost)
+                var ip = nSocket.RemoteEndPoint.ToString().Split(':')[0];
+                if (!_allowedIps.Contains(ip))
                 {
                     Out.WriteLine("The ip " + ip + " are trying to send mus request");
-                }*/
+                    nSocket.Close();
+                    return;
+                }
                 new MusConnection(nSocket);
             }
             catch (Exception e)

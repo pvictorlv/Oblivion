@@ -19,6 +19,9 @@ namespace Oblivion.HabboHotel.Items.Wired
 
             var room = item.GetRoom();
 
+            if (room == null) return;
+            if (!room.CheckRights(session, false, true)) return;
+
             var wiredHandler = room?.GetWiredHandler();
 
             var wired = wiredHandler?.GetWired(item);

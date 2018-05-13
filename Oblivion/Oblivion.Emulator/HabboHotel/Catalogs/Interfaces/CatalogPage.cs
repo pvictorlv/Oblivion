@@ -112,14 +112,14 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
 
             Items = new Dictionary<uint, CatalogItem>();
             FlatOffers = new Dictionary<int, uint>();
-            /* TODO CHECK */ foreach (
-                var catalogItem in
-                    cataItems.Values.Where(x => x.PageId == id && x.GetFirstBaseItem() != null))
+            /* TODO CHECK */
+            foreach (var catalogItem in cataItems.Values)
             {
+                if (catalogItem.PageId != id || catalogItem.GetFirstBaseItem() == null)
+                    continue;
                 Items.Add(catalogItem.Id, catalogItem);
                 var flatId = catalogItem.GetFirstBaseItem().FlatId;
-                if (flatId != -1 && !FlatOffers.ContainsKey(flatId))
-                    FlatOffers.Add(catalogItem.GetFirstBaseItem().FlatId, catalogItem.Id);
+                if (flatId != -1 && !FlatOffers.ContainsKey(flatId)) FlatOffers.Add(catalogItem.GetFirstBaseItem().FlatId, catalogItem.Id);
             }
 
 //            CachedContentsMessage = CatalogPageComposer.ComposePage(this);

@@ -181,7 +181,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
 
             message.AppendInteger(habboClubItems.Count);
             
-            foreach (var item in habboClubItems)
+            foreach (var item in habboClubItems.Values)
             {
                 message.AppendInteger(item.Id);
                 message.AppendString(item.Name);

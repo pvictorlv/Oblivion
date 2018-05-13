@@ -380,7 +380,7 @@ namespace Oblivion
                     "Server.AsyncSocketListener");
 
 
-                new MusSocket(int.Parse(ConfigurationData.Data["mus.tcp.port"]));
+                new MusSocket(int.Parse(ConfigurationData.Data["mus.tcp.port"]), ConfigurationData.Data["mus.tcp.allowedaddr"]);
 
                 LibraryParser.Initialize();
                 Console.WriteLine();

@@ -162,6 +162,7 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("poll", new StartPoll());
             CommandsDictionary.Add("dc", new DisconnectUser());
             CommandsDictionary.Add("hal", new HotelAlertLink());
+            CommandsDictionary.Add("linkalert", new HotelAlertLink());
             CommandsDictionary.Add("redeemcredits", new RedeemCredits());
             CommandsDictionary.Add("flood", new FloodUser());
             CommandsDictionary.Add("invisible", new GoInvisible());

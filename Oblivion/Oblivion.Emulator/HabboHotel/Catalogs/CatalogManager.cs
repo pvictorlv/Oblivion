@@ -56,7 +56,7 @@ namespace Oblivion.HabboHotel.Catalogs
         /// <summary>
         ///     The habbo club items
         /// </summary>
-        internal List<CatalogItem> HabboClubItems;
+        internal Dictionary<uint, CatalogItem> HabboClubItems;
 
         /// <summary>
         ///     The offers
@@ -245,7 +245,7 @@ namespace Oblivion.HabboHotel.Catalogs
                 FlatOffers = new Dictionary<int, uint>();
                 EcotronRewards = new List<EcotronReward>();
                 EcotronLevels = new List<int>();
-                HabboClubItems = new List<CatalogItem>();
+                HabboClubItems = new Dictionary<uint, CatalogItem>();
                 IndexText = new List<DataRow>();
 
                 dbClient.SetQuery("SELECT * FROM catalog_items ORDER BY id ASC");
@@ -349,7 +349,10 @@ namespace Oblivion.HabboHotel.Catalogs
                 {
                     /* TODO CHECK */
                     foreach (DataRow row in table4.Rows)
-                        HabboClubItems.Add(new CatalogItem(row, row["item_names"].ToString()));
+                    {
+                        var it = new CatalogItem(row, row["item_names"].ToString());
+                        HabboClubItems.Add(it.Id, it);
+                    }
                 }
 
                 if (table5 != null)
@@ -433,9 +436,13 @@ namespace Oblivion.HabboHotel.Catalogs
             var item = catalogPage.GetItem(itemId);
 
             if (item == null)
+            {
+                if (!Oblivion.GetGame().GetCatalog().HabboClubItems.TryGetValue(itemId, out item))
                 return;
+            }
+        
 
-            if (catalogPage.Layout == "vip_buy" || catalogPage.Layout == "club_buy" || HabboClubItems.Contains(item))
+        if (catalogPage.Layout == "vip_buy" || catalogPage.Layout == "club_buy" || HabboClubItems.ContainsKey(itemId))
             {
                 if (session.GetHabbo().Credits < item.CreditsCost)
                     return;
