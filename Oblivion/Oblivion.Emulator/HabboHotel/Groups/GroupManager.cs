@@ -223,14 +223,12 @@ namespace Oblivion.HabboHotel.Groups
 
                     var membGroup = new GroupMember(userId, dataRow["username"].ToString(), dataRow["look"].ToString(),
                         groupId, rank, (int) dataRow["date_join"], true);
-
-                    if (!members.ContainsKey(userId))
-                        members.Add(userId, membGroup);
+                    
+                    members[userId] = membGroup;
 
                     if (rank >= 1)
                     {
-                        if (!admins.ContainsKey(userId))
-                            admins.Add(userId, membGroup);
+                        admins[userId] = membGroup;
                     }
                 }
 
@@ -241,9 +239,9 @@ namespace Oblivion.HabboHotel.Groups
 
                     var membGroup = new GroupMember(userId, dataRow["username"].ToString(), dataRow["look"].ToString(),
                         groupId, 0, Oblivion.GetUnixTimeStamp(), true);
+                    
+                    requests[userId] = membGroup;
 
-                    if (!requests.ContainsKey(userId))
-                        requests.Add(userId, membGroup);
                 }
 
                 var group = new Guild((uint) row[0], row[1].ToString(), row[2].ToString(), (uint) row[6],
@@ -256,8 +254,7 @@ namespace Oblivion.HabboHotel.Groups
                     (int) row["who_can_read"], (int) row["who_can_post"], (int) row["who_can_thread"],
                     (int) row["who_can_mod"], Oblivion.EnumToBool(row["has_chat"].ToString()));
 
-                if (!Groups.ContainsKey((uint) row[0]))
-                    Groups.Add((uint) row[0], group);
+                    Groups[(uint) row[0]] = group;
 
                 return group;
             }

@@ -370,6 +370,8 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void ModBanUser()
         {
+            if (Session?.GetHabbo() == null) return;
+
             if (!Session.GetHabbo().HasFuse("fuse_ban"))
                 return;
 

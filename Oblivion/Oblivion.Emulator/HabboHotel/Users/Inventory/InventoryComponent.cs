@@ -831,7 +831,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             try
             {
                 if (_items != null)
-                    foreach (var item in _items.Values.ToList())
+                    foreach (var item in _items.Values)
                     {
                         item?.Dispose();
                     }

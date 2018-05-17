@@ -625,7 +625,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="groupMembers"></param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool CheckRights(GameClient session, bool requireOwnerShip = false, bool checkForGroups = false,
-            bool groupMembers = false, bool adminOnly = false)
+            bool groupMembers = false, bool adminOnly = false, bool groupOverrideOwner = false)
         {
             try
             {
@@ -642,7 +642,8 @@ namespace Oblivion.HabboHotel.Rooms
                     if (EveryoneGotRights ||
                         (UsersWithRights != null && UsersWithRights.Contains(session.GetHabbo().Id))) return true;
                 }
-                else return false;
+                else
+                    if (!checkForGroups) return false;
 
                 if (RoomData.Group == null) return false;
 

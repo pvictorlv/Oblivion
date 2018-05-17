@@ -325,7 +325,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             session.CurrentRoomUserId = num;
             habbo.CurrentRoomId = _userRoom.RoomId;
             habbo.CurrentRoom = _userRoom;
-            UserList.TryAdd(num, roomUser);
+            UserList[num] = roomUser;
             OnUserAdd(roomUser);
 
             habbo.LoadingRoom = 0;

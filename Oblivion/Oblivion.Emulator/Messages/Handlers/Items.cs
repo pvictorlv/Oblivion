@@ -291,7 +291,7 @@ namespace Oblivion.Messages.Handlers
                 if (room == null || Oblivion.GetDbConfig().DbData["placing_enabled"] != "1")
                     return;
 
-                if (!room.CheckRights(Session, true, true, true))
+                if (!room.CheckRights(Session, false, true, true))
                 {
                     Session.SendMessage(StaticMessage.ErrorCantSetNotOwner);
                     return;
@@ -365,23 +365,6 @@ namespace Oblivion.Messages.Handlers
                                         room.GetRoomItemHandler().BreedingTerrier.Add(roomItemBreed.Id, roomItemBreed);
                                     else if (!room.GetRoomItemHandler().BreedingBear.ContainsKey(roomItemBreed.Id))
                                         room.GetRoomItemHandler().BreedingBear.Add(roomItemBreed.Id, roomItemBreed);
-                                goto PlaceFloor;
-                            }
-                            case Interaction.Alert:
-                            case Interaction.VendingMachine:
-                            case Interaction.ScoreBoard:
-                            case Interaction.Bed:
-                            case Interaction.PressurePadBed:
-                            case Interaction.Trophy:
-                            case Interaction.RoomEffect:
-                            case Interaction.PostIt:
-                            case Interaction.Gate:
-                            case Interaction.None:
-                            case Interaction.HcGate:
-                            case Interaction.Teleport:
-                            case Interaction.QuickTeleport:
-                            case Interaction.Guillotine:
-                            {
                                 goto PlaceFloor;
                             }
                             case Interaction.Hopper:

@@ -149,7 +149,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         {
             try
             {
-                var ip = GetConnection().GetIp();
+                var ip = GetConnection()?.GetIp();
                 if (ip == null) return false;
                 var userData = UserDataFactory.GetUserData(authTicket, out var errorCode);
 
@@ -574,6 +574,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             _connection = null;
             PacketParser?.Dispose();
             PacketParser = null;
+            _disconnected = true;
         }
 
 
@@ -591,6 +592,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                     return;
 
                 _connection?.Dispose();
+                _connection = null;
                 _disconnected = true;
             }
             catch (Exception e)

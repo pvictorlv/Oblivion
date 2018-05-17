@@ -906,14 +906,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                     GetBaseItem().VendingIds[
                                         Oblivion.GetRandomNumber(0, (GetBaseItem().VendingIds.Count - 1))];
                                 user.CarryItem(drink);
-
-                                /*if (GetBaseItem().VendingIds.Count > 0)
-                                {
-                                    var item =
-                                        GetBaseItem().VendingIds[RandomNumber.Get(0, GetBaseItem().VendingIds.Count - 1)];
-                                    roomUser2.CarryItem(item);
-                                }
-                                */
+                                
                             }
                             InteractingUser = 0u;
                             ExtraData = "0";
@@ -1098,7 +1091,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                             if (item == null)
                                             {
                                                 user.UnlockWalking();
-                                            }
+                                                _mRoom.GetGameMap().GameMap[X, Y] = 1;
+                                                }
                                             else
                                             {
                                                 user.SetPos(item.X, item.Y, item.Z);
@@ -1106,7 +1100,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                                 item.ExtraData = "2";
                                                 item.UpdateState(false, true);
                                                 item.InteractingUser2 = InteractingUser;
-                                            }
+                                                _mRoom.GetGameMap().GameMap[X, Y] = 1;
+                                                }
                                         }
                                         else
                                         {
@@ -1119,7 +1114,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                                 user.GetClient()
                                                     .GetMessageHandler()
                                                     .PrepareRoomForUser(teleRoomId, string.Empty);
-                                            }
+                                                _mRoom.GetGameMap().GameMap[X, Y] = 1;
+                                                }
                                             InteractingUser = 0u;
                                         }
                                     }
@@ -1133,12 +1129,14 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                 {
                                     user.AllowOverride = true;
                                     keepDoorOpen = true;
-                                    if (user.IsWalking && (user.GoalX != X || user.GoalY != Y)) user.ClearMovement();
+                                    if (user.IsWalking && (user.GoalX != X || user.GoalY != Y))
+                                            user.ClearMovement();
 
                                     user.CanWalk = false;
                                     user.AllowOverride = true;
+                                    _mRoom.GetGameMap().GameMap[X, Y] = 1;
 
-                                    user.MoveTo(Coordinate.X, Coordinate.Y, true);
+                                    user.MoveTo(X, Y, true);
                                 }
                                 else
                                 {
@@ -1151,6 +1149,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                 InteractingUser = 0;
                             }
                         }
+
                         if (InteractingUser2 > 0)
                         {
                             var user2 = GetRoom().GetRoomUserManager().GetRoomUserByHabbo(InteractingUser2);

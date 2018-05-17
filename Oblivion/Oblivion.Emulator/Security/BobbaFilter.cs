@@ -95,6 +95,8 @@ namespace Oblivion.Security
                     DateTime now = DateTime.Now;
                     TimeSpan timeStillBanned = now - Oblivion.UnixToDateTime(muted);
 
+                    session.GetHabbo().BobbaFiltered = 0;
+
                     session.SendNotif("Damn! you can't talk for " +
                                       timeStillBanned.Minutes.ToString().Replace("-", "") + " minutes and " +
                                       timeStillBanned.Seconds.ToString().Replace("-", "") + " seconds.");

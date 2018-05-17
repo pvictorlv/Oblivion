@@ -1122,8 +1122,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
                                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                                     queryReactor.RunFastQuery(
-                                        $"INSERT INTO items_teleports (tele_one_id,tele_two_id) VALUES ('{id}','{id2}');" +
-                                        $"INSERT INTO items_teleports (tele_one_id,tele_two_id) VALUES ('{id2}','{id}')");
+                                        $"INSERT INTO items_teleports (tele_one_id,tele_two_id) VALUES ('{id}','{id2}'), ('{id2}','{id}');");
 
                                 break;
 

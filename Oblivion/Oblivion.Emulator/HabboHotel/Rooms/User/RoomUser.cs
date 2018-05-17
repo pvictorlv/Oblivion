@@ -814,7 +814,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
             }
 
-            if (GetRoom() == null) return;
 
             if (session?.GetHabbo() == null)
                 return;
@@ -840,13 +839,13 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 if (msg.StartsWith(":") && CommandsManager.TryExecute(msg.Substring(1), session))
                 {
-                    if (_mRoom != null && _mRoom.GotWireds())
+                    if (GetRoom() != null && GetRoom().GotWireds())
                         GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSayCommand, this, msg);
 
                     return;
                 }
 
-                if (_mRoom.Disposed) return;
+                if (GetRoom() == null || GetRoom().Disposed) return;
 
                 var habbo = GetClient().GetHabbo();
 
@@ -854,17 +853,17 @@ namespace Oblivion.HabboHotel.Rooms.User
                     if (GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSay, this, msg))
                         return;
 
-                _mRoom.AddChatlog(session.GetHabbo().Id, msg, true);
+                GetRoom().AddChatlog(session.GetHabbo().Id, msg, true);
 
                 uint rank = 1;
 
                 if (session.GetHabbo() != null)
                     rank = session.GetHabbo().Rank;
 
-                if (_mRoom?
-                        .RoomData?.WordFilter != null && _mRoom
+                if (GetRoom()?
+                        .RoomData?.WordFilter != null && GetRoom()
                         .RoomData.WordFilter.Count > 0)
-                    msg = _mRoom
+                    msg = GetRoom()
                         .RoomData.WordFilter.Aggregate(msg,
                             (current, s) => Regex.Replace(current, Regex.Escape(s), "bobba", RegexOptions.IgnoreCase));
 
@@ -1015,11 +1014,11 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (TeleportEnabled)
             {
                 UnIdle();
-                _mRoom
-                    .SendMessage(_mRoom
+                GetRoom()
+                    .SendMessage(GetRoom()
                         .GetRoomItemHandler()
                         .UpdateUserOnRoller(this, new Point(x, y), 0u,
-                            _mRoom.GetGameMap().SqAbsoluteHeight(GoalX, GoalY)));
+                            GetRoom().GetGameMap().SqAbsoluteHeight(GoalX, GoalY)));
                 if (Statusses.ContainsKey("sit")) Z -= 0.35;
                 UpdateNeeded = true;
                 GetRoom().GetRoomUserManager().UpdateUserStatus(this, false);

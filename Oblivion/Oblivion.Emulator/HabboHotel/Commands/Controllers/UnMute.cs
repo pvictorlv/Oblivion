@@ -32,10 +32,15 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 session.SendWhisper("You are not allowed to mute that user.");
             }
 
+            client.GetHabbo().BobbaFiltered = 0;
+
             Oblivion.GetGame()
                 .GetModerationTool().LogStaffEntry(session.GetHabbo().UserName, client.GetHabbo().UserName,
                     "Unmute", "Unmuted user");
             client.GetHabbo().UnMute();
+
+            Oblivion.MutedUsersByFilter.Remove(session.GetHabbo().Id);
+
             return true;
         }
     }

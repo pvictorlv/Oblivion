@@ -285,6 +285,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             user.SetStep = false;
             user.IsWalking = false;
             user.UpdateNeeded = true;
+            item.UserWalksOnFurni(user);
+
         }
 
         /// <summary>
@@ -876,7 +878,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="pOverride">if set to <c>true</c> [p override].</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool SquareIsOpen(int x, int y, bool pOverride) =>
-            (Model.MapSizeX - 1 >= x && Model.MapSizeY - 1 >= y) && CanWalk(GameMap[x, y], pOverride) && (_room.RoomData.AllowWalkThrough || GetRoomUsers(new Point(x, y)).Count <= 0);
+            (Model.MapSizeX - 1 >= x && Model.MapSizeY - 1 >= y) && CanWalk(GameMap[x, y], pOverride) && (pOverride || _room.RoomData.AllowWalkThrough || GetRoomUsers(new Point(x, y)).Count <= 0);
 
 
         /// <summary>

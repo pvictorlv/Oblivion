@@ -1,4 +1,5 @@
 using Oblivion.HabboHotel.GameClients.Interfaces;
+using Oblivion.HabboHotel.Items.Handlers;
 using Oblivion.HabboHotel.Items.Interactions.Models;
 using Oblivion.HabboHotel.Items.Interfaces;
 
@@ -13,13 +14,13 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             if (item.InteractingUser != 0)
             {
-                var user = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(item.InteractingUser);
+                var user1 = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(item.InteractingUser);
 
-                if (user != null)
+                if (user1 != null)
                 {
-                    user.ClearMovement();
-                    user.AllowOverride = false;
-                    user.CanWalk = true;
+                    user1.ClearMovement();
+                    user1.AllowOverride = false;
+                    user1.CanWalk = true;
                 }
 
                 item.InteractingUser = 0;
@@ -27,17 +28,20 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             if (item.InteractingUser2 != 0)
             {
-                var user = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(item.InteractingUser2);
+                var user2 = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(item.InteractingUser2);
 
-                if (user != null)
+                if (user2 != null)
                 {
-                    user.ClearMovement();
-                    user.AllowOverride = false;
-                    user.CanWalk = true;
+                    user2.ClearMovement();
+                    user2.AllowOverride = false;
+                    user2.CanWalk = true;
                 }
 
                 item.InteractingUser2 = 0;
             }
+
+            
+
         }
 
         public override void OnRemove(GameClient session, RoomItem item)
@@ -83,6 +87,8 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 else if (user.CanWalk)
                     user.MoveTo(item.SquareInFront);
             }
+            
+
         }
     }
 }

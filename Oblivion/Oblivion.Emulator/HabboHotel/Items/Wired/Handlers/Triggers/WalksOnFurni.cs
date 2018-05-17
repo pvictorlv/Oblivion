@@ -80,10 +80,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 userPosition == lastUserPosition)
                 return false;
 
-            if (Room
-                    .GetRoomItemHandler().FloorItems.Values
-                    .Any(i => i.X == roomItem.X && i.Y == roomItem.Y && i.Z > roomItem.Z))
+            if (Room.GetRoomItemHandler().FloorItems.Values.Where(i => i != null).Any(i => i.X == roomItem.X && i.Y == roomItem.Y && i.Z > roomItem.Z))
+            {
                 return false;
+            }
 
 
             var conditions = Room.GetWiredHandler().GetConditions(this);

@@ -830,6 +830,7 @@ namespace Oblivion.HabboHotel.Items.Interactions
                     return Interaction.ConditionUserIsNotInTeam;
 
                 case "conditionactorinteam":
+                case "wf_cnd_actor_in_team":
                     return Interaction.ConditionUserIsInTeam;
 
                 case "conditionitemsdontmatch":

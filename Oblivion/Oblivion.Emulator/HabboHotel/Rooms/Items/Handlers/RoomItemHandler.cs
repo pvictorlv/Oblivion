@@ -34,12 +34,13 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// <summary>
         ///     The _roller items moved
         /// </summary>
-        private readonly List<long> _rollerItemsMoved, _rollerUsersMoved;
+        private List<long> _rollerItemsMoved;
 
+        private List<uint> _rollerUsersMoved;
         /// <summary>
         ///     The _roller messages
         /// </summary>
-        private readonly List<ServerMessage> _rollerMessages;
+        private List<ServerMessage> _rollerMessages;
 
         /// <summary>
         ///     The _roller speed
@@ -56,7 +57,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// </summary>
         private Queue _roomItemUpdateQueue;
 
-        private List<long> _updatedItems, _removedItems;
+        private ConcurrentList<long> _updatedItems, _removedItems;
 
         /// <summary>
         ///     The breeding terrier
@@ -85,8 +86,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         public RoomItemHandler(Room room)
         {
             _room = room;
-            _removedItems = new List<long>();
-            _updatedItems = new List<long>();
+            _removedItems = new ConcurrentList<long>();
+            _updatedItems = new ConcurrentList<long>();
             Rollers = new ConcurrentList<RoomItem>();
             WallItems = new ConcurrentDictionary<long, RoomItem>();
             FloorItems = new ConcurrentDictionary<long, RoomItem>();
@@ -98,7 +99,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             _rollerSpeed = 4;
             HopperCount = 0;
             _rollerItemsMoved = new List<long>();
-            _rollerUsersMoved = new List<long>();
+            _rollerUsersMoved = new List<uint>();
             _rollerMessages = new List<ServerMessage>();
         }
 
@@ -181,7 +182,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
                 if (_removedItems.Count > 0)
                 {
-                    var list = _removedItems.ToList();
+                    var list = _removedItems;
                     var builder = new StringBuilder();
                     builder.Append("UPDATE items_rooms SET room_id='0', x='0', y='0', z='0', rot='0' WHERE id IN (");
                     var i = 0;
@@ -201,7 +202,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
                 if (_updatedItems.Count > 0)
                 {
-                    foreach (var it in _updatedItems.ToList())
+                    foreach (var it in _updatedItems)
                     {
                         var roomItem = GetItem(it);
                         if (roomItem == null) continue;
@@ -1236,7 +1237,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     try
                     {
                         var roller = CycleRollers();
-                        if (roller == null) return;
+                        if (roller == null)
+                            return;
                         _room.SendMessage(roller);
                     }
                     catch (Exception ex)
@@ -1290,7 +1292,14 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 _roomItemUpdateQueue.Clear();
                 _roomItemUpdateQueue = null;
             }
-
+            Rollers?.Clear();
+            _rollerMessages?.Clear();
+            _rollerItemsMoved?.Clear();
+            _rollerUsersMoved?.Clear();
+            _rollerUsersMoved = null;
+            _rollerItemsMoved = null;
+            _rollerMessages = null;
+            Rollers = null;
             _room = null;
             FloorItems = null;
             WallItems = null;
@@ -1299,8 +1308,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             BreedingBear.Clear();
             BreedingTerrier.Clear();
             WallItems = null;
-            BreedingBear.Clear();
-            BreedingTerrier.Clear();
+            BreedingBear = null;
+            BreedingTerrier = null;
         }
 
         /// <summary>
@@ -1313,18 +1322,17 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 return new List<ServerMessage>();
             if (_roolerCycle >= _rollerSpeed || _rollerSpeed <= 0)
             {
-                var list = Rollers.ToList();
 
-                if (list.Count <= 0)
+                if (Rollers.Count <= 0)
                 {
-                    list.Clear();
+                    Rollers.Clear();
                     return new List<ServerMessage>();
                 }
 
                 _rollerItemsMoved.Clear();
                 _rollerUsersMoved.Clear();
                 _rollerMessages.Clear();
-                foreach (var current in list)
+                foreach (var current in Rollers)
                 {
                     if (current == null) continue;
                     var squareInFront = current.SquareInFront;
@@ -1387,7 +1395,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 }
 
                 _roolerCycle = 0;
-                list.Clear();
                 return _rollerMessages;
             }
 
