@@ -31,11 +31,11 @@ namespace Oblivion.HabboHotel.Items.Wired
             }
             switch (item.GetBaseItem().InteractionType)
             {
-                case Interaction.TriggerTimer:
                 case Interaction.ActionLeaveTeam:
+                case Interaction.TriggerTimer:
                 {
                     request.GetInteger();
-                    var delay = (request.GetInteger() / 2);
+                    var delay = (request.GetInteger() * 500);
                     wired.Delay = delay;
                     wiredHandler.ReloadWired(wired);
                     break;
@@ -382,7 +382,20 @@ namespace Oblivion.HabboHotel.Items.Wired
                 }
                 case Interaction.ConditionFurnisHaveUsers:
                 case Interaction.ConditionFurnisHaveNotUsers:
+                {
+                    request.GetInteger();
+                    request.GetString();
+
+                    var furniItems = GetFurniItems(request, room);
+
+
+                    wired.Items = furniItems;
+                    wiredHandler.ReloadWired(wired);
+                    break;
+                }
+
                 case Interaction.ConditionFurniHasFurni:
+
                 case Interaction.ConditionFurniHasNotFurni:
                 {
                     request.GetInteger();
@@ -397,6 +410,8 @@ namespace Oblivion.HabboHotel.Items.Wired
                     wiredHandler.ReloadWired(wired);
                     break;
                 }
+
+
                 case Interaction.ActionGiveScore:
                 {
                     request.GetInteger();

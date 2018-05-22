@@ -1266,17 +1266,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
             return list;
         }
-
-        public List<RoomItem> GetRoomItemForMinZ(int pX, int pY, double pZ)
-        {
-            var coord = new Point(pX, pY);
-            if (CoordinatedItems.TryGetValue(coord, out var itemsFromSquare))
-            {
-                return itemsFromSquare.Where(item => pZ <= item.Z).ToList();
-            }
-
-            return null;
-        }
+        
 
         /// <summary>
         ///     Squares the has furni.

@@ -594,7 +594,10 @@ namespace Oblivion.HabboHotel.Rooms
                 return;
             /* TODO CHECK */
             foreach (DataRow dataRow in dataTable.Rows)
-                UsersWithRights.Add(Convert.ToUInt32(dataRow["user_id"]));
+            {
+                var userId = Convert.ToUInt32(dataRow["user_id"]);
+                UsersWithRights.Add(userId);
+            }
         }
 
         /// <summary>

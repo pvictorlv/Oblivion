@@ -479,8 +479,8 @@ namespace Oblivion.HabboHotel.Rooms.Data
 
             if (sendRoom.Value)
             {
-                if (Oblivion.GetGame().GetRoomManager().GetRoom(Id) != null)
-                    Oblivion.GetGame().GetRoomManager().GetRoom(Id).SendMessage(message);
+                room = Oblivion.GetGame().GetRoomManager().GetRoom(Id);
+                room?.SendMessage(message);
             }
             else session.SendMessage(message);
         }

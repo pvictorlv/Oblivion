@@ -402,7 +402,7 @@ namespace Oblivion.HabboHotel.Catalogs
             bool isGift, string giftUser, string giftMessage, int giftSpriteId, int giftLazo, int giftColor, bool undef,
             uint theGroup)
         {
-            if (session.GetHabbo().LastSqlQuery + 3 >= Oblivion.GetUnixTimeStamp())
+            if (session.GetHabbo().LastSqlQuery + 2 >= Oblivion.GetUnixTimeStamp())
             {
                 session.SendNotif("Espere um pouco");
                 return;

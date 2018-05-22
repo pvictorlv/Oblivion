@@ -36,25 +36,6 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             switch (item.GetBaseItem().InteractionType)
             {
-                case Interaction.ActionLeaveTeam:
-                case Interaction.TriggerTimer:
-                    {
-                        var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("WiredTriggerMessageComposer"));
-                        serverMessage.AppendBool(false);
-                        serverMessage.AppendInteger(5);
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage.AppendInteger(item.VirtualId);
-                        serverMessage.AppendString(extraInfo);
-                        serverMessage.AppendInteger(1);
-                        serverMessage.AppendInteger(delay * 2);
-                        serverMessage.AppendInteger(1);
-                        serverMessage.AppendInteger(3);
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendInteger(0);
-                        session.SendMessage(serverMessage);
-                        return;
-                    }
                 case Interaction.TriggerRoomEnter:
                     {
                         var serverMessage2 =
@@ -131,8 +112,9 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage.AppendInteger(0);
                         session.SendMessage(serverMessage);
                         return;
-                    }
-
+            }
+                case Interaction.ActionLeaveTeam:
+                case Interaction.TriggerTimer:
                 case Interaction.TriggerRepeater:
                     {
                         var serverMessage5 =
@@ -715,8 +697,6 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         return;
                     }
 
-                case Interaction.ConditionFurnisHaveNotUsers:
-                case Interaction.ConditionFurnisHaveUsers:
 
                 case Interaction.ConditionFurniHasNotFurni:
                 case Interaction.ConditionFurniHasFurni:
@@ -739,6 +719,28 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         session.SendMessage(serverMessage);
                         return;
                     }
+
+                case Interaction.ConditionFurnisHaveUsers:
+
+                case Interaction.ConditionFurnisHaveNotUsers:
+                {
+                    var serverMessage =
+                        new ServerMessage(LibraryParser.OutgoingRequest("WiredConditionMessageComposer"));
+                    serverMessage.AppendBool(false);
+                    serverMessage.AppendInteger(15);
+                    serverMessage.AppendInteger(list.Count);
+                    foreach (var current18 in list) serverMessage.AppendInteger(current18.VirtualId);
+                    serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
+                    serverMessage.AppendInteger(item.VirtualId);
+                    serverMessage.AppendString(string.Empty);
+                    serverMessage.AppendInteger(0); //bool
+                    serverMessage.AppendInteger(0);
+                    serverMessage.AppendInteger(14);
+                    session.SendMessage(serverMessage);
+                    return;
+                }
+                    
+
                 case Interaction.ConditionTimeLessThan:
                 case Interaction.ConditionTimeMoreThan:
                     {

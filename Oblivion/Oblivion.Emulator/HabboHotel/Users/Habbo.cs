@@ -516,6 +516,8 @@ namespace Oblivion.HabboHotel.Users
             AchievementsToUpdate = new ConcurrentDictionary<string, KeyValuePair<int, int>>();
         }
 
+        public Guid WebSocketConnId;
+
         internal int Diamonds { get; set; }
 
         internal int Emeralds { get; set; }

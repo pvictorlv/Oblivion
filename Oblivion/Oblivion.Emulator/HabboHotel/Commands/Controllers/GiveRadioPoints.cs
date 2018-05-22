@@ -38,6 +38,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 dbClient.RunFastQuery($"UPDATE users SET rpoints = rpoints + 1 WHERE id = '{targetUser.UserId}'");
             }
 
+            client.GetHabbo().Diamonds += 5;
+            client.GetHabbo().UpdateSeasonalCurrencyBalance();
             client.SendWhisper("Enviado com sucesso!");
             targetUser.GetClient().SendWhisper("Você ganhou um ponto de rádio!");
             return true;

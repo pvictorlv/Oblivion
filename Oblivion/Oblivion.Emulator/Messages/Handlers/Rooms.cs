@@ -18,6 +18,7 @@ using Oblivion.HabboHotel.Polls.Enums;
 using Oblivion.HabboHotel.Quests;
 using Oblivion.HabboHotel.RoomBots;
 using Oblivion.HabboHotel.Rooms;
+using Oblivion.HabboHotel.Users;
 using Oblivion.Messages.Parsers;
 using Oblivion.Security;
 using Oblivion.Util;
@@ -236,6 +237,8 @@ namespace Oblivion.Messages.Handlers
             /* TODO CHECK */
             foreach (var habbo in CurrentLoadingRoom.UsersWithRights.Select(Oblivion.GetHabboById))
             {
+                if (habbo == null) continue;
+
                 Response.Init(LibraryParser.OutgoingRequest("GiveRoomRightsMessageComposer"));
                 Response.AppendInteger(CurrentLoadingRoom.RoomId);
                 Response.AppendInteger(habbo.Id);
@@ -752,17 +755,18 @@ namespace Oblivion.Messages.Handlers
             if (Session?.GetHabbo() == null)
                 return;
 
-            room.RoomData.SerializeRoomData(GetResponse(), Session, true, null, show);
+            room.RoomData.SerializeRoomData(Response, Session, true, show, show);
             SendResponse();
 
-
+            
             Response.Init(LibraryParser.OutgoingRequest("LoadRoomRightsListMessageComposer"));
             GetResponse().AppendInteger(room.RoomData.Id);
-            GetResponse().AppendInteger(room.UsersWithRights.Count);
 
-            /* TODO CHECK */
-            foreach (var habboForId in room.UsersWithRights
-                .Select(Oblivion.GetHabboById).Where(habboForId => habboForId != null))
+            var list = room.UsersWithRights.Select(Oblivion.GetHabboById).Where(habboForId => habboForId != null).ToList();
+
+            GetResponse().AppendInteger(list.Count);
+            
+            foreach (var habboForId in list)
             {
                 GetResponse().AppendInteger(habboForId.Id);
                 GetResponse().AppendString(habboForId.UserName);

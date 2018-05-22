@@ -304,7 +304,8 @@ namespace Oblivion
                     ConvertZeroDateTime = true,
                     DefaultCommandTimeout = 300,
                     Logging = false,
-                    ConnectionTimeout = 10
+                    ConnectionTimeout = 10,
+                    SslMode = MySqlSslMode.None
                 };
 
                 Handler.Initialize(CryptoKeys.N, CryptoKeys.D, CryptoKeys.E);
