@@ -755,7 +755,7 @@ namespace Oblivion.Messages.Handlers
             if (Session?.GetHabbo() == null)
                 return;
 
-            room.RoomData.SerializeRoomData(Response, Session, true, show, show);
+            room.RoomData.SerializeRoomData(Response, Session, true, false, show);
             SendResponse();
 
             

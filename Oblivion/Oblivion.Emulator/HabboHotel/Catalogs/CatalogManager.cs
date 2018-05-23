@@ -415,15 +415,6 @@ namespace Oblivion.HabboHotel.Catalogs
             }
 
 
-            priceAmount = (priceAmount < 1 || priceAmount > 100) ? 1 : priceAmount;
-
-            var totalPrice = priceAmount;
-            var limitedId = 0;
-            var limtot = 0;
-
-            if (priceAmount >= 6)
-                totalPrice -= Convert.ToInt32(Math.Ceiling(Convert.ToDouble(priceAmount) / 6)) * 2 - 1;
-
             if (!Categories.TryGetValue(pageId, out var catalogPage))
                 return;
 
@@ -438,8 +429,27 @@ namespace Oblivion.HabboHotel.Catalogs
             if (item == null)
             {
                 if (!Oblivion.GetGame().GetCatalog().HabboClubItems.TryGetValue(itemId, out item))
-                return;
+                    return;
             }
+
+            if (item.HaveOffer)
+            {
+                priceAmount = (priceAmount < 1 || priceAmount > 100) ? 1 : priceAmount;
+            }
+            else
+            {
+                priceAmount = 1;
+            }
+
+            var totalPrice = priceAmount;
+            var limitedId = 0;
+            var limtot = 0;
+
+            if (priceAmount >= 6)
+                totalPrice -= Convert.ToInt32(Math.Ceiling(Convert.ToDouble(priceAmount) / 6)) * 2 - 1;
+
+
+
         
 
         if (catalogPage.Layout == "vip_buy" || catalogPage.Layout == "club_buy" || HabboClubItems.ContainsKey(itemId))

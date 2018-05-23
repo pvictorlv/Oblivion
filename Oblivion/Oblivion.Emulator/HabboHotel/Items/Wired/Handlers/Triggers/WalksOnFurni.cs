@@ -1,3 +1,4 @@
+using System.Drawing;
 using System.Threading.Tasks;
 using System.Linq;
 using Oblivion.Collections;
@@ -11,7 +12,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 {
     internal class WalksOnFurni : IWiredItem
     {
-
         public WalksOnFurni(RoomItem item, Room room)
         {
             Item = item;
@@ -64,7 +64,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
         public bool Execute(params object[] stuff)
         {
             var roomUser = (RoomUser) stuff[0];
-            if (roomUser == null || roomUser.IsBot|| roomUser.IsPet)
+            if (roomUser == null || roomUser.IsBot || roomUser.IsPet)
                 return false;
             var roomItem = (RoomItem) stuff[1];
             if (roomItem == null)
@@ -80,11 +80,11 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 userPosition == lastUserPosition)
                 return false;
 
-            if (Room.GetRoomItemHandler().FloorItems.Values.Where(i => i != null).Any(i => i.X == roomItem.X && i.Y == roomItem.Y && i.Z > roomItem.Z))
+            if (Room.GetGameMap().HasHeightestItem(new Point(roomItem.X, roomItem.Y), roomItem.Z))
             {
                 return false;
             }
-
+            
 
             var conditions = Room.GetWiredHandler().GetConditions(this);
             var effects = Room.GetWiredHandler().GetEffects(this);
@@ -98,6 +98,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
                     WiredHandler.OnEvent(current);
                 }
+
             if (effects.Count > 0)
             {
                 var specials = Room.GetWiredHandler().GetSpecials(this);

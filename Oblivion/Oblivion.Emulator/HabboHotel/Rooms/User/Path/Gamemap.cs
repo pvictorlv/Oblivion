@@ -647,6 +647,28 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             return returnItems;
         }
 
+        internal bool HasHeightestItem(Point coord, double itemZ)
+        {
+            if (!CoordinatedItems.TryGetValue(coord, out var items))
+            {
+                return false;
+            }
+
+
+            if (items.Count == 1)
+                return false;
+
+            foreach (var item in items)
+            {
+                if (item.Z > itemZ)
+                    return true;
+            }
+
+            return false;
+        }
+
+
+
         internal bool RemoveFromMap(RoomItem item, bool handleGameItem)
         {
             RemoveSpecialItem(item);
