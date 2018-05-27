@@ -291,7 +291,7 @@ namespace Oblivion.Messages.Handlers
                 if (room == null || Oblivion.GetDbConfig().DbData["placing_enabled"] != "1")
                     return;
 
-                if (!room.CheckRights(Session, false, true, true))
+                if (!room.CheckRights(Session, false, true))
                 {
                     Session.SendMessage(StaticMessage.ErrorCantSetNotOwner);
                     return;

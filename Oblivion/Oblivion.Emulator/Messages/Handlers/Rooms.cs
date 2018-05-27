@@ -467,9 +467,16 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().LoadingChecksPassed = true;
                 LoadRoomForUser();
 
+                if (!string.IsNullOrEmpty(room.RoomVideo))
+                {
+                    Oblivion.GetWebSocket().SendMessage(Session.GetHabbo().WebSocketConnId, $"2|{room.RoomVideo}");
+                }
+
                 if (Session.GetHabbo().RecentlyVisitedRooms.Contains(room.RoomId))
                     Session.GetHabbo().RecentlyVisitedRooms.Remove(room.RoomId);
                 Session.GetHabbo().RecentlyVisitedRooms.AddFirst(room.RoomId);
+
+
             }
             catch (Exception e)
             {
@@ -1242,8 +1249,7 @@ namespace Oblivion.Messages.Handlers
             roomUserByHabbo.UnIdle();
             var x = Request.GetInteger();
             var y = Request.GetInteger();
-            if (x == roomUserByHabbo.X && y == roomUserByHabbo.Y)
-                return;
+
             var rotation = PathFinder.CalculateRotation(roomUserByHabbo.X, roomUserByHabbo.Y, x, y);
             roomUserByHabbo.SetRot(rotation, false);
             roomUserByHabbo.UpdateNeeded = true;

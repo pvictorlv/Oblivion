@@ -32,7 +32,7 @@ namespace Oblivion.Configuration
         /// <summary>
         /// The youtub e_ thumbnai l_ suburl
         /// </summary>
-        internal static string YoutubeThumbnailSuburl = "youtubethumbnail.php?Video";
+        internal static string WebSocketAddr = "";
 
         /// <summary>
         /// The diamond s_ loo p_ enabled
@@ -133,8 +133,8 @@ namespace Oblivion.Configuration
                         CurrencyLoopEnabled = theParams[1] == "true";
                         break;
 
-                    case "youtube.thumbnail.suburl":
-                        YoutubeThumbnailSuburl = theParams[1];
+                    case "websocket.server":
+                        WebSocketAddr = theParams[1];
                         break;
 
                     case "gamecenter.basejump.url":

@@ -514,6 +514,7 @@ namespace Oblivion.HabboHotel.Users
             DailyCompetitionVotes = dailyCompetitionVotes;
             DisableEventAlert = disableAlert;
             AchievementsToUpdate = new ConcurrentDictionary<string, KeyValuePair<int, int>>();
+            WebSocketConnId = Guid.Empty;
         }
 
         public Guid WebSocketConnId;
@@ -787,6 +788,8 @@ namespace Oblivion.HabboHotel.Users
             if (Disconnected)
                 return;
             Disconnected = true;
+
+            WebSocketConnId = Guid.Empty;
 
             if (AchievementsToUpdate?.Count > 0)
             {

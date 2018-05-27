@@ -1565,7 +1565,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                         serverMessage.AppendInteger(1);
                         serverMessage.AppendInteger(1);
                         serverMessage.AppendString("THUMBNAIL_URL");
-                        serverMessage.AppendString(ExtraSettings.YoutubeThumbnailSuburl + s);
+                        serverMessage.AppendString(ExtraSettings.WebSocketAddr + s);
                         break;
 
                     default:
@@ -1642,7 +1642,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             message.AppendInteger(1);
                             message.AppendInteger(1);
                             message.AppendString("THUMBNAIL_URL");
-                            message.AppendString(ExtraSettings.YoutubeThumbnailSuburl + ExtraData);
+                            message.AppendString(ExtraSettings.WebSocketAddr + ExtraData);
                         }
                         break;
 

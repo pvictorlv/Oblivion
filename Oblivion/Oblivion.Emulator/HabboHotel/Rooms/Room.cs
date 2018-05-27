@@ -227,6 +227,8 @@ namespace Oblivion.HabboHotel.Rooms
         internal RoomData RoomData { get; private set; }
 
 
+        internal string RoomVideo;
+
         internal void Start(RoomData data, bool forceLoad = false)
         {
             InitializeFromRoomData(data, forceLoad);
@@ -628,7 +630,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="groupMembers"></param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool CheckRights(GameClient session, bool requireOwnerShip = false, bool checkForGroups = false,
-            bool groupMembers = false, bool adminOnly = false, bool groupOverrideOwner = false)
+            bool groupMembers = false, bool adminOnly = false)
         {
             try
             {
@@ -784,6 +786,18 @@ namespace Oblivion.HabboHotel.Rooms
             }
         }
 
+
+        internal void SendWebSocketMessage(string message)
+        {
+            foreach (var user in _roomUserManager.UserList.Values)
+            {
+                var connId = user?.GetClient()?.GetHabbo()?.WebSocketConnId;
+                if (connId != null && connId != Guid.Empty)
+                {
+                    Oblivion.GetWebSocket().SendMessage((Guid)connId, message);
+                }
+            }
+        }
         /// <summary>
         ///     Sends the message.
         /// </summary>

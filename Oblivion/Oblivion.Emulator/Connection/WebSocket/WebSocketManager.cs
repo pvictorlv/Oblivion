@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Fleck;
+using Oblivion.Util;
 
 namespace Oblivion.Connection.WebSocket
 {
@@ -17,51 +18,71 @@ namespace Oblivion.Connection.WebSocket
             {
                 FleckLog.Level = LogLevel.Error;
                 _connections = new ConcurrentDictionary<Guid, IWebSocketConnection>();
-                
+
                 _server = new WebSocketServer(socketUrl);
                 _server.Start(socket =>
                 {
                     socket.OnClose = () => { _connections.TryRemove(socket.ConnectionInfo.Id, out var _); };
                     socket.OnMessage = message =>
                     {
-                        var msg = message;
-                        int pId;
-                        if (!int.TryParse(msg.Split('|')[0], out pId))
-                            return;
-                        if (msg.Length > 1024)
+                        var msg = message.Split('|');
+
+                        if (msg.Length == 0 || msg.Length > 2048) return;
+
+                        if (!int.TryParse(msg[0], out var pId))
                             return;
 
-                        if (msg.StartsWith("1|"))
+
+                        switch (pId)
                         {
-                            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                            case 1:
                             {
-                                dbClient.SetQuery("SELECT username FROM users WHERE auth_ticket= @auth LIMIT 1");
-                                dbClient.AddParameter("auth", msg.Substring(2));
-                                dbClient.RunQuery();
-                                var drow = dbClient.GetRow();
-                                if (drow == null)
+                                uint userId;
+                                if (msg.Length < 2) return;
+
+                                var sso = msg[1];
+                                if (sso.Length < 3) return;
+
+                                using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                                 {
-                                    return;
+                                    dbClient.SetQuery(
+                                        "SELECT id FROM users WHERE auth_ticket= @auth LIMIT 1");
+                                    dbClient.AddParameter("auth", sso);
+                                    dbClient.RunQuery();
+                                    var drow = dbClient.GetRow();
+                                    if (drow == null)
+                                    {
+                                        return;
+                                    }
+
+                                    userId = (uint) drow["id"];
                                 }
 
-                                var username = drow["username"].ToString();
+                                if (userId == 0) return;
 
-                                var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(username)?.GetHabbo();
+                                var client = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId)
+                                    ?.GetHabbo();
                                 if (client == null) return;
 
+                                if (client.WebSocketConnId != Guid.Empty) return;
+
+                                socket.Send("1");
                                 client.WebSocketConnId = socket.ConnectionInfo.Id;
                                 _connections[socket.ConnectionInfo.Id] = socket;
-
                             }
+                                break;
                         }
                     };
                 });
             }, TaskCreationOptions.LongRunning).Start();
+
+            Out.WriteLine($"Loaded WebSocket Manager at {socketUrl}", "Server.AsyncWebSocketListener");
+
         }
 
 
-
-        public bool IsValidConnection(Guid connGuid) => _connections.TryGetValue(connGuid, out var conn) && conn.IsAvailable;
+        public bool IsValidConnection(Guid connGuid) =>
+            _connections.TryGetValue(connGuid, out var conn) && conn.IsAvailable;
 
         public void SendMessage(Guid userId, string message)
         {
@@ -73,7 +94,7 @@ namespace Oblivion.Connection.WebSocket
 
             conn.Send(message);
         }
-        
+
         public void SendMessageToEveryConnection(string message)
         {
             foreach (var iwsc in _connections.Values)
@@ -97,6 +118,7 @@ namespace Oblivion.Connection.WebSocket
                 catch
                 {
                 }
+
             _server.Dispose();
         }
 

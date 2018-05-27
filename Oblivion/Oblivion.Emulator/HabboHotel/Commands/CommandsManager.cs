@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Oblivion.Configuration;
 using Oblivion.HabboHotel.Commands.Controllers;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -183,6 +184,11 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("disco", new Disco());
             CommandsDictionary.Add("block", new BlockCommand());
 
+            if (ExtraSettings.WebSocketAddr.Length > 10)
+            {
+                CommandsDictionary.Add("roomvideo", new RoomVideo());
+
+            }
             //CommandsDictionary.Add("test", new Test());
             UpdateInfo();
         }

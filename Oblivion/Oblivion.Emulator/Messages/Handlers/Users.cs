@@ -122,13 +122,20 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session?.GetHabbo() == null) return;
 
+
             var room = Session.GetHabbo().CurrentRoom;
             var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Request.GetUInteger());
             if (roomUserByHabbo != null && !roomUserByHabbo.IsBot && roomUserByHabbo.GetClient() != null &&
                 roomUserByHabbo.GetClient().GetHabbo() != null)
             {
+
+
                 Session.GetHabbo().LastSelectedUser = roomUserByHabbo.UserId;
 
+                if (Session.GetHabbo().WebSocketConnId != Guid.Empty)
+                {
+                    Oblivion.GetWebSocket().SendMessage(Session.GetHabbo().WebSocketConnId, $"3|{roomUserByHabbo.GetUserName()}|{roomUserByHabbo.GetClient().GetHabbo().Gender}|{roomUserByHabbo.GetClient().GetHabbo().Look}");
+                }
 
                 var msg = new ServerMessage(LibraryParser.OutgoingRequest("UserBadgesMessageComposer"));
                 msg.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Id);
@@ -463,6 +470,13 @@ namespace Oblivion.Messages.Handlers
                 Session.SendNotif(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return;
             }
+
+            if (Session.GetHabbo().WebSocketConnId != Guid.Empty)
+            {
+                Oblivion.GetWebSocket().SendMessage(Session.GetHabbo().WebSocketConnId, $"3|{habbo.UserName}|{habbo.Gender}|{habbo.Look}");
+            }
+
+
 
             var createTime = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(habbo.CreateDate);
 
