@@ -1794,7 +1794,24 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             var arrayData = ExtraData.Split((char) 9);
                             message.AppendInteger(arrayData.Length / 2);
                             /* TODO CHECK */
-                            foreach (var dataStr in arrayData) message.AppendString(dataStr);
+                            bool next = false;
+                            foreach (var dataStr in arrayData)
+                            {
+
+                                var bgData = dataStr;
+                                if (bgData == "offsetZ")
+                                {
+                                    next = true;
+                                }
+                                //todo: remove this hardcode in future!
+                                if (next)
+                                {
+                                    if (!short.TryParse(bgData, out _))
+                                        bgData = "0";
+                                }
+
+                                message.AppendString(bgData);
+                            }
                         }
                         else message.AppendInteger(0);
                         break;

@@ -193,7 +193,18 @@ namespace Oblivion.Messages.Handlers
 
             var extraData = $"state{Convert.ToChar(9)}0";
             for (uint i = 1; i <= countBrand; i++)
-                extraData = $"{extraData}{Convert.ToChar(9)}{Request.GetString()}";
+            {
+                var data = Request.GetString();
+                if (data == "offsetZ")
+                {
+                    if (!short.TryParse(Request.GetString(), out var zVal))
+                        zVal = 0;
+
+                    data = $"offsetZ\t{zVal}";
+                }
+
+                extraData = $"{extraData}{Convert.ToChar(9)}{data}";
+            }
 
             item.ExtraData = extraData;
             room.GetRoomItemHandler()

@@ -14,70 +14,66 @@ namespace Oblivion.Connection.WebSocket
 
         public WebSocketManager(string socketUrl)
         {
-            new Task(() =>
+            FleckLog.Level = LogLevel.Error;
+            _connections = new ConcurrentDictionary<Guid, IWebSocketConnection>();
+
+            _server = new WebSocketServer(socketUrl);
+            _server.Start(socket =>
             {
-                FleckLog.Level = LogLevel.Error;
-                _connections = new ConcurrentDictionary<Guid, IWebSocketConnection>();
-
-                _server = new WebSocketServer(socketUrl);
-                _server.Start(socket =>
+                socket.OnClose = () => { _connections.TryRemove(socket.ConnectionInfo.Id, out var _); };
+                socket.OnMessage = message =>
                 {
-                    socket.OnClose = () => { _connections.TryRemove(socket.ConnectionInfo.Id, out var _); };
-                    socket.OnMessage = message =>
+                    var msg = message.Split('|');
+
+                    if (msg.Length == 0 || msg.Length > 2048) return;
+
+                    if (!int.TryParse(msg[0], out var pId))
+                        return;
+
+
+                    switch (pId)
                     {
-                        var msg = message.Split('|');
-
-                        if (msg.Length == 0 || msg.Length > 2048) return;
-
-                        if (!int.TryParse(msg[0], out var pId))
-                            return;
-
-
-                        switch (pId)
+                        case 1:
                         {
-                            case 1:
+                            uint userId;
+                            if (msg.Length < 2) return;
+
+                            var sso = msg[1];
+                            if (sso.Length < 3) return;
+
+                            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                             {
-                                uint userId;
-                                if (msg.Length < 2) return;
-
-                                var sso = msg[1];
-                                if (sso.Length < 3) return;
-
-                                using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                                dbClient.SetQuery(
+                                    "SELECT id FROM users WHERE auth_ticket= @auth LIMIT 1");
+                                dbClient.AddParameter("auth", sso);
+                                dbClient.RunQuery();
+                                var drow = dbClient.GetRow();
+                                if (drow == null)
                                 {
-                                    dbClient.SetQuery(
-                                        "SELECT id FROM users WHERE auth_ticket= @auth LIMIT 1");
-                                    dbClient.AddParameter("auth", sso);
-                                    dbClient.RunQuery();
-                                    var drow = dbClient.GetRow();
-                                    if (drow == null)
-                                    {
-                                        return;
-                                    }
-
-                                    userId = (uint) drow["id"];
+                                    return;
                                 }
 
-                                if (userId == 0) return;
-
-                                var client = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId)
-                                    ?.GetHabbo();
-                                if (client == null) return;
-
-                                if (client.WebSocketConnId != Guid.Empty) return;
-
-                                socket.Send("1");
-                                client.WebSocketConnId = socket.ConnectionInfo.Id;
-                                _connections[socket.ConnectionInfo.Id] = socket;
+                                userId = (uint) drow["id"];
                             }
-                                break;
+
+                            if (userId == 0) return;
+
+                            var client = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId)
+                                ?.GetHabbo();
+                            if (client == null) return;
+
+                            if (client.WebSocketConnId != Guid.Empty) return;
+
+                            socket.Send("1");
+                            client.WebSocketConnId = socket.ConnectionInfo.Id;
+                            _connections[socket.ConnectionInfo.Id] = socket;
                         }
-                    };
-                });
-            }, TaskCreationOptions.LongRunning).Start();
+                            break;
+                    }
+                };
+            });
 
             Out.WriteLine($"Loaded WebSocket Manager at {socketUrl}", "Server.AsyncWebSocketListener");
-
         }
 
 
