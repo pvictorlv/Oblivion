@@ -192,6 +192,7 @@ namespace Oblivion.Messages.Handlers
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UniqueMachineIDMessageComposer"));
             serverMessage.AppendString(machineId);
             Session.SendMessage(serverMessage);
+            
         }
 
         /// <summary>

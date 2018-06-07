@@ -24,7 +24,7 @@ namespace Oblivion.HabboHotel.Users
             Rankings.Clear();
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery("SELECT id,username,look,diamonds FROM users WHERE rank < 3 ORDER BY diamonds DESC LIMIT 10");
+                queryReactor.SetQuery($"SELECT id,username,look,{ExtraSettings.HallCurrency} FROM users WHERE rank < 3 ORDER BY {ExtraSettings.HallCurrency} DESC LIMIT 10");
                 var table = queryReactor.GetTable();
 
                 if (table == null)
@@ -34,7 +34,7 @@ namespace Oblivion.HabboHotel.Users
                 {
                     try
                     {
-                        if (!int.TryParse(row["diamonds"].ToString(), out var diamonds))
+                        if (!int.TryParse(row[ExtraSettings.HallCurrency].ToString(), out var diamonds))
                         {
                             Out.WriteLine($"User {row["id"]} has invalid diamond amount");
                             continue;

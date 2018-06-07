@@ -82,7 +82,7 @@ namespace Oblivion.Configuration
         /// <summary>
         /// The ServerCamera from Stories
         /// </summary>
-        internal static string StoriesApiHost = "";
+        internal static string HallCurrency = "diamonds";
 
         /// <summary>
         /// The enabl e_ bet a_ camera
@@ -148,9 +148,9 @@ namespace Oblivion.Configuration
                     case "gamecenter.basejump.port":
                         BaseJumpPort = theParams[1];
                         break;
-
-                    case "stories.api.host":
-                        StoriesApiHost = theParams[1];
+                        
+                    case "hall.currency":
+                        HallCurrency = theParams[1];
                         break;
 
 
