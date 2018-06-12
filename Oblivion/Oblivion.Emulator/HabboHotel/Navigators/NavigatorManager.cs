@@ -488,9 +488,9 @@ namespace Oblivion.HabboHotel.Navigators
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("OfficialRoomsMessageComposer"));
             var rooms = _publicItems.Values.Where(current => current.ParentId <= 0 && current.RoomData != null)
-                .ToArray();
+                .ToList();
 
-            serverMessage.AppendInteger(rooms.Length);
+            serverMessage.AppendInteger(rooms.Count);
 
             /* TODO CHECK */
             foreach (var current in rooms)

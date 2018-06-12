@@ -30,6 +30,8 @@ using Oblivion.Connection.Net;
 using Oblivion.Connection.WebSocket;
 using Timer = System.Timers.Timer;
 using Oblivion.Encryption.Encryption;
+using SuperSocket.SocketBase;
+using SuperSocket.SocketBase.Protocol;
 
 namespace Oblivion
 {
@@ -384,11 +386,13 @@ namespace Oblivion
                     "Starting up asynchronous sockets server for game connections for port " +
                     int.Parse(ConfigurationData.Data["game.tcp.port"]), "Server.AsyncSocketListener");
 
-                _connectionManager = new ConnectionHandling(int.Parse(ConfigurationData.Data["game.tcp.port"]),
-                    int.Parse(ConfigurationData.Data["game.tcp.conlimit"]),
-                    int.Parse(ConfigurationData.Data["game.tcp.conperip"]),
-                    ConfigurationData.Data["game.tcp.antiddos"].ToLower() == "true",
-                    ConfigurationData.Data["game.tcp.enablenagles"].ToLower() == "true");
+                                _connectionManager = new ConnectionHandling(int.Parse(ConfigurationData.Data["game.tcp.port"]),
+                                    int.Parse(ConfigurationData.Data["game.tcp.conlimit"]),
+                                    int.Parse(ConfigurationData.Data["game.tcp.conperip"]),
+                                    ConfigurationData.Data["game.tcp.antiddos"].ToLower() == "true",
+                                    ConfigurationData.Data["game.tcp.enablenagles"].ToLower() == "true");
+
+                
 
                 Console.WriteLine();
 
@@ -452,7 +456,7 @@ namespace Oblivion
                 }
             }
         }
-
+        
 
         public static string GetLocalIPAddress()
         {

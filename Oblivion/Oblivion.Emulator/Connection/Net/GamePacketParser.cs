@@ -1,6 +1,7 @@
 using System;
 using Oblivion.Configuration;
 using Oblivion.Connection.Connection;
+using Oblivion.Connection.SuperSocket;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages;
 using Oblivion.Messages.Factorys;
@@ -59,12 +60,14 @@ namespace Oblivion.Connection.Net
         /// <summary>
         /// Sets the connection.
         /// </summary>
-        /// <param name="con">The con.</param>
         /// <param name="me">Me.</param>
-        public void SetConnection(ConnectionInformation con, GameClient me)
+        public void SetConnection( GameClient me)
         {
+            Console.WriteLine("\n\rsetted!");
             _currentClient = me;
         }
+
+        
 
         /// <summary>
         /// Handles the packet data.
@@ -73,7 +76,6 @@ namespace Oblivion.Connection.Net
         /// <param name="length">The length.</param>
         public void HandlePacketData(byte[] data, int length)
         {
-            if (length <= 0 || _currentClient == null) return;
             short messageId = 0;
 
             try
@@ -195,6 +197,22 @@ namespace Oblivion.Connection.Net
             {
                 Logging.HandleException(e, "HandleMessage");
             }
+        }
+
+        public void SuperHandle(ClientMessage message, Session<GameClient> userSocket)
+        {
+            Console.WriteLine("\n\rcalled!");
+
+            var client = userSocket.UserData;
+            if (client == null)
+                return;
+            if (client.GetMessageHandler() == null)
+            {
+                client.StartConnection();
+                
+            }
+            if (message != null) 
+                client.GetMessageHandler().HandleRequest(message);
         }
 
         /// <summary>

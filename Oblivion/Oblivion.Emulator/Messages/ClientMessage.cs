@@ -42,6 +42,12 @@ namespace Oblivion.Messages
             Init(messageId, body, position, packetLength);
         }
 
+        internal ClientMessage(byte[] body)
+        {
+            _body = body;
+            Id = GetInteger16();
+        }
+
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>

@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
-using System.ServiceModel.Channels;
 using Oblivion.Configuration;
 using Oblivion.Connection.Connection;
 using Oblivion.Connection.Net;
+using Oblivion.Connection.SuperSocket;
 using Oblivion.HabboHotel.Misc;
 using Oblivion.HabboHotel.Users;
 using Oblivion.HabboHotel.Users.UserDataManagement;
@@ -22,7 +22,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <summary>
         ///     The _connection
         /// </summary>
-        private ConnectionInformation _connection;
+        private Session<GameClient> _connection;
 
         /// <summary>
         ///     The _disconnected
@@ -70,7 +70,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// </summary>
         /// <param name="clientId">The client identifier.</param>
         /// <param name="connection">The connection.</param>
-        internal GameClient(uint clientId, ConnectionInformation connection)
+        internal GameClient(uint clientId, Session<GameClient> connection)
         {
             ConnectionId = clientId;
             _connection = connection;
@@ -97,7 +97,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         ///     Gets the connection.
         /// </summary>
         /// <returns>ConnectionInformation.</returns>
-        internal ConnectionInformation GetConnection() => _connection;
+        internal Session<GameClient> GetConnection() => _connection;
 
         /// <summary>
         ///     Gets the message handler.
@@ -117,19 +117,20 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// </summary>
         internal void StartConnection()
         {
-            if (_connection == null)
-                return;
 
+            if (_messageHandler == null)
+                InitHandler();
+
+            PacketParser.SetConnection(this);
 
             TimePingedReceived = DateTime.Now;
 
-            if (_connection.Parser is InitialPacketParser packetParser)
-                packetParser.PolicyRequest += PolicyRequest;
+//            if (_connection.Parser is InitialPacketParser packetParser)
+//                packetParser.PolicyRequest += PolicyRequest;
 
-            if (_connection.Parser is InitialPacketParser initialPacketParser)
-                initialPacketParser.SwitchParserRequest += SwitchParserRequest;
-
-            _connection.StartPacketProcessing();
+//            if (_connection.Parser is InitialPacketParser initialPacketParser)
+//                initialPacketParser.SwitchParserRequest += SwitchParserRequest;
+//            _connection.StartPacketProcessing();
         }
 
         /// <summary>
@@ -149,7 +150,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         {
             try
             {
-                var ip = GetConnection()?.GetIp();
+                var ip = GetConnection()?.RemoteEndPoint.Address.ToString();
                 if (ip == null) return false;
                 var userData = UserDataFactory.GetUserData(authTicket, out var errorCode);
 
@@ -591,7 +592,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 if (_disconnected)
                     return;
 
-                _connection?.Dispose();
+//                _connection?.Dispose();
                 _connection = null;
                 _disconnected = true;
             }
@@ -616,7 +617,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
             var bytes = message.GetReversedBytes();
 
-            _connection.SendData(bytes);
+            _connection.Send(bytes);
         }
 
         /// <summary>
@@ -625,7 +626,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <param name="bytes">The bytes.</param>
         internal void SendMessage(byte[] bytes)
         {
-            _connection?.SendData(bytes);
+            _connection?.Send(bytes);
         }
 
         /// <summary>
@@ -634,7 +635,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <param name="type">The type.</param>
         internal void SendMessage(StaticMessage type)
         {
-            _connection?.SendData(StaticMessagesManager.Get(type));
+            _connection?.Send(StaticMessagesManager.Get(type));
         }
 
         /// <summary>
@@ -647,10 +648,6 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 if (_connection == null)
                     return;
 
-                if (_messageHandler == null)
-                    InitHandler();
-
-                PacketParser.SetConnection(_connection, this);
 
                 _connection.Parser.Dispose();
                 _connection.Parser = PacketParser;
@@ -667,7 +664,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// </summary>
         private void PolicyRequest()
         {
-            _connection.SendData(CrossDomainPolicy.XmlPolicyBytes);
+            _connection.Send(CrossDomainPolicy.XmlPolicyBytes);
         }
     }
 }

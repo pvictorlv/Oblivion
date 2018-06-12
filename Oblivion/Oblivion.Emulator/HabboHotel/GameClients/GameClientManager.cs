@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Oblivion.Configuration;
 using Oblivion.Connection.Connection;
+using Oblivion.Connection.SuperSocket;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Users.Messenger;
 using Oblivion.Messages;
@@ -205,7 +206,7 @@ namespace Oblivion.HabboHotel.GameClients
 
             foreach (var current in Clients.Values.Where(current => current?.GetHabbo() != null).Where(current =>
                 (current.GetHabbo().Rank == 4u || current.GetHabbo().Rank == 5u) || current.GetHabbo().Rank == 6u))
-                current.GetConnection().SendData(bytes);
+                current.GetConnection().Send(bytes);
         }
 
         /// <summary>
@@ -213,10 +214,10 @@ namespace Oblivion.HabboHotel.GameClients
         /// </summary>
         /// <param name="clientId">The client identifier.</param>
         /// <param name="connection">The connection.</param>
-        internal void CreateAndStartClient(uint clientId, ConnectionInformation connection)
+        internal void CreateAndStartClient(uint clientId, Session<GameClient> connection)
         {
             var gameClient = new GameClient(clientId, connection);
-
+            connection.UserData = gameClient;
             Clients.AddOrUpdate(clientId, gameClient, (key, value) => gameClient);
             gameClient.StartConnection();
         }
@@ -228,7 +229,8 @@ namespace Oblivion.HabboHotel.GameClients
         internal void DisposeConnection(uint clientId)
         {
             var client = GetClient(clientId);
-            if (client == null) return;
+            if (client == null)
+                return;
             client.Stop();
             Clients.TryRemove(client.ConnectionId, out client);
         }
@@ -251,7 +253,7 @@ namespace Oblivion.HabboHotel.GameClients
                     if (!Client.GetHabbo().HasFuse(fuse))
                         continue;
 
-                Client.GetConnection().SendData(bytes);
+                Client.GetConnection().Send(bytes);
             }
         }
 

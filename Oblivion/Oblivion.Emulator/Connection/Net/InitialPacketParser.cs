@@ -1,3 +1,6 @@
+using Oblivion.Connection.SuperSocket;
+using Oblivion.HabboHotel.GameClients.Interfaces;
+using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
 
 namespace Oblivion.Connection.Net
@@ -43,6 +46,11 @@ namespace Oblivion.Connection.Net
                 PolicyRequest();
             else if (packet[0] != 67 || SwitchParserRequest == null)
                 SwitchParserRequest?.Invoke(packet, amountOfBytes);
+        }
+
+        public void SuperHandle(ClientMessage message, Session<GameClient> userSocket)
+        {
+            throw new System.NotImplementedException();
         }
 
         /// <summary>

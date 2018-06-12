@@ -171,7 +171,7 @@ namespace Oblivion.Messages.Handlers
 
                 Array.Reverse(data, 0, data.Length);
 
-                Session.GetConnection().Arc4ServerSide = new ARC4(data);
+                Session.GetConnection().ServerRc4 = new ARC4(data);
             }
         }
 

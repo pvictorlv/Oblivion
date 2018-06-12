@@ -23,7 +23,23 @@ namespace Oblivion.Messages
 
             return (v[position++] << 24) + (v[position++] << 16) + (v[position++] << 8) + v[position++];
         }
+        public static int ToInt(byte[] data, int offset = 0)
+        {
+            CheckRange(data, offset, 4);
 
+            return (data[offset] << 24) | (data[offset + 1] << 16) | (data[offset + 2] << 8) | (data[offset + 3]);
+        }
+
+        private static void CheckRange(byte[] data, int offset, int count)
+        {
+            if (offset + count > data.Length || offset < 0)
+            {
+                throw new ArgumentOutOfRangeException("offset", "Index was"
+                                                                +
+                                                                " out of range. Must be non-negative and less than the"
+                                                                + " size of the collection.");
+            }
+        }
         /// <summary>
         /// Decodes the int16.
         /// </summary>
