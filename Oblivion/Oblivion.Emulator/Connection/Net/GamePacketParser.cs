@@ -1,6 +1,5 @@
 using System;
 using Oblivion.Configuration;
-using Oblivion.Connection.Connection;
 using Oblivion.Connection.SuperSocket;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages;
@@ -24,18 +23,22 @@ namespace Oblivion.Connection.Net
         /// The int size
         /// </summary>
         private const int IntSize = sizeof(int);
+
         /// <summary>
         /// The memory container
         /// </summary>
         private static readonly MemoryContainer MemoryContainer = new MemoryContainer(10, 4072);
+
         /// <summary>
         /// The _buffered data
         /// </summary>
         private readonly byte[] _bufferedData;
+
         /// <summary>
         /// The _buffer position
         /// </summary>
         private int _bufferPos;
+
         /// <summary>
         /// The _current packet length
         /// </summary>
@@ -61,13 +64,11 @@ namespace Oblivion.Connection.Net
         /// Sets the connection.
         /// </summary>
         /// <param name="me">Me.</param>
-        public void SetConnection( GameClient me)
+        public void SetConnection(GameClient me)
         {
-            Console.WriteLine("\n\rsetted!");
             _currentClient = me;
         }
 
-        
 
         /// <summary>
         /// Handles the packet data.
@@ -88,7 +89,7 @@ namespace Oblivion.Connection.Net
                     {
                         if (length < IntSize)
                         {
-                            BufferCopy(data, length); 
+                            BufferCopy(data, length);
                             break;
                         }
 
@@ -99,12 +100,12 @@ namespace Oblivion.Connection.Net
                     {
                         _currentPacketLength = -1;
 
-                        break; 
+                        break;
                     }
 
-                    if (_currentPacketLength == ((length - pos) + _bufferPos)) 
+                    if (_currentPacketLength == ((length - pos) + _bufferPos))
                     {
-                        if (_bufferPos != 0) 
+                        if (_bufferPos != 0)
                         {
                             BufferCopy(data, length, pos);
 
@@ -116,14 +117,14 @@ namespace Oblivion.Connection.Net
                         }
                         else
                         {
-                            messageId = HabboEncoding.DecodeInt16(data, ref pos); 
+                            messageId = HabboEncoding.DecodeInt16(data, ref pos);
                             HandleMessage(messageId, data, pos, _currentPacketLength);
                         }
 
                         pos = length;
                         _currentPacketLength = -1;
                     }
-                    else 
+                    else
                     {
                         int remainder = ((length - pos)) - (_currentPacketLength - _bufferPos);
 
@@ -136,13 +137,13 @@ namespace Oblivion.Connection.Net
                             int zero = 0;
 
                             messageId = HabboEncoding.DecodeInt16(_bufferedData, ref zero);
- 
-                            HandleMessage(messageId, _bufferedData, 2, _currentPacketLength); 
+
+                            HandleMessage(messageId, _bufferedData, 2, _currentPacketLength);
                         }
                         else
                         {
                             messageId = HabboEncoding.DecodeInt16(data, ref pos);
-                                
+
                             HandleMessage(messageId, data, pos, _currentPacketLength);
 
 //                            pos -= 2; 
@@ -175,7 +176,8 @@ namespace Oblivion.Connection.Net
                 if (_currentClient.IsAir)
                     messageId = AirPacketTranslator.ReplaceIncomingHeader((short) messageId);
 
-                using (var clientMessage = ClientMessageFactory.GetClientMessage(messageId, packetContent, position, packetLength))
+                using (var clientMessage =
+                    ClientMessageFactory.GetClientMessage(messageId, packetContent, position, packetLength))
                 {
                     if (messageId == 0 && _currentClient.IsAir)
                     {
@@ -186,6 +188,7 @@ namespace Oblivion.Connection.Net
                             Console.ResetColor();
                             Console.WriteLine($"{oldHeader} => " + clientMessage);
                         }
+
                         return;
                     }
 
@@ -201,18 +204,15 @@ namespace Oblivion.Connection.Net
 
         public void SuperHandle(ClientMessage message, Session<GameClient> userSocket)
         {
-            Console.WriteLine("\n\rcalled!");
-
             var client = userSocket.UserData;
             if (client == null)
                 return;
             if (client.GetMessageHandler() == null)
             {
                 client.StartConnection();
-                
             }
-            if (message != null) 
-                client.GetMessageHandler().HandleRequest(message);
+
+            client.GetMessageHandler().HandleRequest(message);
         }
 
         /// <summary>

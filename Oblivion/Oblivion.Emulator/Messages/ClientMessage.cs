@@ -84,19 +84,12 @@ namespace Oblivion.Messages
             _length = packetLength;
         }
 
-        /// <summary>
-        /// Reads the bytes.
-        /// </summary>
-        /// <param name="len">The bytes length.</param>
-        /// <returns>System.Byte[].</returns>
-        internal byte[] ReadBytes(int len)
+        internal void Init(byte[] body)
         {
-            byte[] arrayBytes = new byte[len];
-
-            for (int i = 0; i < len; i++)
-                arrayBytes[i] = _body[_position++];
-
-            return arrayBytes;
+            _body = body;
+            Id = GetInteger16();
+            _position = 0;
+            _length = 0;
         }
 
         /// <summary>

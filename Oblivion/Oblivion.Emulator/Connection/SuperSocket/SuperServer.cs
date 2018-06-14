@@ -59,7 +59,7 @@ namespace Oblivion.Connection.SuperSocket
                 ReceiveBufferSize = 4096,
                 SendBufferSize = 4096,
                 ListenBacklog = 150,
-                
+                SendTimeOut = 10000,
                 MaxConnectionNumber = maxConn
             };
 

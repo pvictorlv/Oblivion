@@ -1,6 +1,5 @@
 ﻿using System;
 using Oblivion.Encryption.Encryption.Hurlant.Crypto.Prng;
-using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages.Parsers;
 using SuperSocket.SocketBase;
 
@@ -31,7 +30,8 @@ namespace Oblivion.Connection.SuperSocket
 
         public void Send(byte[] data)
         {
-            Send(new ArraySegment<byte>(data));
+            if (_disposed) return;
+            TrySend(new ArraySegment<byte>(data));
         }
 
 

@@ -24,6 +24,17 @@ namespace Oblivion.Messages.Factorys
             return new ClientMessage(messageId, body, position, packetLength);
         }
 
+        internal static ClientMessage GetClientMessage(byte[] body)
+        {
+            if (_freeObjects.Count > 0 && _freeObjects.TryDequeue(out var message))
+            {
+                message.Init( body);
+                return message;
+            }
+
+            return new ClientMessage(body);
+        }
+
         internal static void ObjectCallback(ClientMessage message)
         {
             _freeObjects.Enqueue(message);

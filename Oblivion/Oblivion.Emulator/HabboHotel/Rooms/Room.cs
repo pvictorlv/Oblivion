@@ -809,7 +809,7 @@ namespace Oblivion.HabboHotel.Rooms
                 if (_roomUserManager?.UserList != null)
                     foreach (var user in _roomUserManager.UserList.Values)
                     {
-                        if (user?.GetClient() != null && !user.IsBot)
+                        if (user?.GetClient()?.GetConnection() != null && !user.IsBot)
                         {
                             user.GetClient().SendMessage(message);
                         }

@@ -1,12 +1,8 @@
 using System;
-using System.Net;
-using Oblivion.Connection.Connection;
 using Oblivion.Connection.Net;
 using Oblivion.Connection.SuperSocket;
 using Oblivion.HabboHotel.GameClients.Interfaces;
-using Oblivion.HabboHotel.Users;
 using Oblivion.Messages;
-using Oblivion.Util;
 
 namespace Oblivion.Configuration
 {
@@ -35,17 +31,18 @@ namespace Oblivion.Configuration
 //            Manager.OnConnectionOpened += OnClientConnected;
             Manager.OnConnectionClosed += (session) => OnClientDisconnected(session, null);
 
-           Manager.OnMessageReceived += (session, body) =>
-           {
-               var message = new ClientMessage(body);
-               session.Parser.SuperHandle(message, session);
-           };
+            Manager.OnMessageReceived += (session, body) =>
+            {
+                using (var clientMessage = new ClientMessage(body))
+                {
+                    session.Parser.SuperHandle(clientMessage, session);
+                }
+            };
 
             Manager.NewSessionConnected += session =>
             {
-                Manager.AcceptedConnections++;
                 session.Parser = new GamePacketParser();
-                session.ConnId = Manager.AcceptedConnections;
+                session.ConnId = ++Manager.AcceptedConnections;
                 Oblivion.GetGame().GetClientManager().CreateAndStartClient(session.ConnId, session);
             };
 
@@ -82,7 +79,7 @@ namespace Oblivion.Configuration
         {
             try
             {
-                Oblivion.GetGame().GetClientManager().DisposeConnection((uint)connection.ConnId);
+                Oblivion.GetGame().GetClientManager().DisposeConnection((uint) connection.ConnId);
             }
             catch (Exception ex)
             {
