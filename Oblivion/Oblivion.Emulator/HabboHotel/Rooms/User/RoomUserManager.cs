@@ -731,11 +731,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                 /* TODO CHECK */
                 foreach (var item in allRoomItemForSquare)
                 {
-                    /*if (item.GetBaseItem().InteractionType == Interaction.QuickTeleport ||
-                        item.GetBaseItem().InteractionType == Interaction.GuildGate ||
-                        item.GetBaseItem().InteractionType == Interaction.WalkInternalLink ||
-                        item.GetBaseItem().InteractionType == Interaction.FloorSwitch)
-                        item.Interactor.OnUserWalk(user.GetClient(), item, user);*/
 
                     if (cycleGameItems)
                     {
@@ -895,7 +890,11 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                         case Interaction.Tent:
                         case Interaction.BedTent:
-                            if (user.LastItem == item.Id) break;
+                            if (user.LastItem == item.Id)
+                            {
+                                user.OnCampingTent = true;
+                                break;
+                            }
                             if (!user.IsBot && !user.OnCampingTent)
                             {
                                 var serverMessage22 = new ServerMessage();
@@ -908,7 +907,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                                 user.OnCampingTent = true;
                                 user.LastItem = item.Id;
                             }
-
+                            user.OnCampingTent = true;
                             break;
 
                         case Interaction.RunWaySage:
@@ -973,10 +972,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                                 break;
                             }
                     }
-
-                    if (item.GetBaseItem().InteractionType == Interaction.BedTent)
-                        user.OnCampingTent = true;
-
+                    
                     user.LastItem = item.Id;
                 }
 

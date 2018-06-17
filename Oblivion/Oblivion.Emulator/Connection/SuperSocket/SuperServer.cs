@@ -9,6 +9,7 @@ namespace Oblivion.Connection.SuperSocket
 {
     public class SuperServer<T> : AppServer<Session<T>, RequestInfo>, IServer<T>
     {
+
         #region Events
 
         public event ConnectionClosed<T> OnConnectionClosed;

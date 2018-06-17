@@ -18,7 +18,6 @@ using Oblivion.HabboHotel.Polls.Enums;
 using Oblivion.HabboHotel.Quests;
 using Oblivion.HabboHotel.RoomBots;
 using Oblivion.HabboHotel.Rooms;
-using Oblivion.HabboHotel.Users;
 using Oblivion.Messages.Parsers;
 using Oblivion.Security;
 using Oblivion.Util;

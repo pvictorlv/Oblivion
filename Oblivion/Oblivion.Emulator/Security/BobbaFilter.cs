@@ -42,6 +42,7 @@ namespace Oblivion.Security
 
             return true;
         }
+
         /// <summary>
         /// Determines whether this instance can talk the specified session.
         /// </summary>
@@ -153,9 +154,8 @@ namespace Oblivion.Security
                 var table = adapter.GetTable();
 
                 if (table != null)
-                foreach (DataRow row in table.Rows)
-                    Word.Add(row[0].ToString().ToLower());
-
+                    foreach (DataRow row in table.Rows)
+                        Word.Add(row[0].ToString().ToLower());
 
 
                 adapter.SetQuery("SELECT `prefix`,`rank` FROM server_prefixes");
@@ -168,7 +168,6 @@ namespace Oblivion.Security
                 {
                     Prefixes.Add(row[0].ToString(), Convert.ToInt32(row[1]));
                 }
-
             }
 
             Out.WriteLine("Loaded " + Word.Count + " Bobba Filters", "Oblivion.Security.BobbaFilter");
@@ -179,8 +178,8 @@ namespace Oblivion.Security
         /// <summary>
         /// Checks for banned phrases.
         /// </summary>
-        /// <param name="message">The message.</param>
-        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        /// <param name="str">The message.</param>
+        /// <returns><c>true</c> if message contains blackword, <c>false</c> otherwise.</returns>
         internal static bool CheckForBannedPhrases(string str)
         {
             var oldStr = str;
@@ -190,21 +189,124 @@ namespace Oblivion.Security
             if (str.Contains("s2.vc") || str.Contains("abre.ai"))
                 return true;
 
-            str = Regex.Replace(str, "[àâäàáâãäåÀÁÂÃÄÅ@4ª]", "a");
-            str = Regex.Replace(str, "[ß8∞]", "b");
-            str = Regex.Replace(str, "[©çÇ¢]", "c");
-            str = Regex.Replace(str, "[éèëêðÉÈËÊ£3∑]", "e");
-            str = Regex.Replace(str, "[ìíîïÌÍÎÏ1]", "i");
-            str = Regex.Replace(str, "[ñÑ]", "n");
-            str = Regex.Replace(str, "[òóôõöøÒÓÔÕÖØ0|ºΩ]", "o");
-            str = Regex.Replace(str, "[$5§2]", "s");
-            str = Regex.Replace(str, "[ùúûüµÙÚÛÜ]", "u");
-            str = Regex.Replace(str, "[ÿ¥]", "y");
-            str = Regex.Replace(str, @"[—•∂∫šŠŸžŽ™ ',-_¹²³.?´` ƒ()*/\\]", "");
-            str = str.Replace("æ", "ae");
-            str = str.Replace("π", "p");
-            str = str.Replace("Ð", "d");
-            str = str.Replace("\"", "");
+
+
+            str = Regex.Replace(str, @"[àâäáãå@4ªß8∞©ç¢éèëêð£3∑Ðìíîï1òóôõöøØ0|ºΩñ$5§2ùúûüµÿ¥ý—•∂∫šŠžŽ™ ',-_¹²³\.?´` ƒ()*/\\πæ\""]", match =>
+            {
+                switch (match.Value)
+                {
+                    case "à":
+                    case "â":
+                    case "ä":
+                    case "á":
+                    case "ã":
+                    case "å":
+                    case "@":
+                    case "4":
+                        return "a";
+
+                    case "ß":
+                    case "8":
+                    case "∞":
+                        return "b";
+
+                    case "ç":
+                    case "¢":
+                        return "c";
+
+                    case "Ð":
+                        return "d";
+
+                    case "e":
+                    case "3":
+                    case "ê":
+                    case "ë":
+                    case "è":
+                    case "é":
+                        return "£";
+
+                    case "ª":
+                    case "-":
+                    case "—":
+                    case "∑":
+                    case "º":
+                    case "•":
+                    case "∂":
+                    case "∫":
+                    case "š":
+                    case "™":
+                    case "ž":
+                    case "'":
+                    case ",":
+                    case "¹":
+                    case "²":
+                    case "³":
+                    case ".":
+                    case "?":
+                    case "´":
+                    case "`":
+                    case "_":
+                    case " ":
+                    case "ƒ":
+                    case "(":
+                    case ")":
+                    case "*":
+                    case "/":
+                    case "\"":
+                    case "\\":
+                        return "";
+
+                    case "ï":
+                    case "ì":
+                    case "î":
+                    case "1":
+                    case "í":
+                        return "i";
+
+                    case "ñ":
+                        return "n";
+
+                    case "|":
+                    case "ð":
+                    case "ò":
+                    case "ó":
+                    case "ô":
+                    case "õ":
+                    case "ö":
+                    case "Ø":
+                    case "ø":
+                    case "0":
+                    case "Ω":
+                        return "o";
+                    case "π":
+                        return "p";
+
+                    case "§":
+                    case "2":
+                    case "5":
+                    case "$":
+                        return "s";
+
+                    case "ù":
+                    case "ú":
+                    case "û":
+                    case "ü":
+                    case "µ":
+                        return "u";
+
+                    case "ÿ":
+                    case "¥":
+                    case "ý":
+                        return "y";
+
+                    case "æ":
+                        return "ae";
+
+                    default:
+                        return match.Value;
+                }
+            });
+
 
             foreach (var mWord in Word)
             {
