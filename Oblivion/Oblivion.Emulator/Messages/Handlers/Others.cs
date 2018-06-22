@@ -45,7 +45,7 @@ namespace Oblivion.Messages.Handlers
             Session = session;
             Response = new ServerMessage();
         }
-        
+
 
         /// <summary>
         ///     Gets the response.
@@ -192,7 +192,6 @@ namespace Oblivion.Messages.Handlers
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UniqueMachineIDMessageComposer"));
             serverMessage.AppendString(machineId);
             Session.SendMessage(serverMessage);
-            
         }
 
         /// <summary>
@@ -205,11 +204,23 @@ namespace Oblivion.Messages.Handlers
 
             var sso = Request.GetString();
 
+
+#if DEBUG
+        if (string.IsNullOrEmpty(sso) || string.IsNullOrWhiteSpace(sso) || !Session.TryLogin(sso))
+            {
+                Session?.Disconnect("Invalid sso or banned");
+                return;
+            }
+#else
+
             if (string.IsNullOrEmpty(sso) || string.IsNullOrWhiteSpace(sso) || sso.Length < 5 || !Session.TryLogin(sso))
             {
                 Session?.Disconnect("Invalid sso or banned");
                 return;
             }
+#endif
+
+
             if (Session == null) return;
             Session.TimePingedReceived = DateTime.Now;
         }
@@ -311,6 +322,7 @@ namespace Oblivion.Messages.Handlers
                 Oblivion.GetGame().GetTargetedOfferManager().GenerateMessage(GetResponse());
                 SendResponse();
             }
+
             if (Session.GetHabbo().CurrentQuestId != 0)
             {
                 var quest = Oblivion.GetGame().GetQuestManager().GetQuest(Session.GetHabbo().CurrentQuestId);
@@ -440,6 +452,7 @@ namespace Oblivion.Messages.Handlers
             {
                 return 0;
             }
+
             return client.GetMessenger().Friends.Count;
         }
 
@@ -493,6 +506,7 @@ namespace Oblivion.Messages.Handlers
                         roomId = rooms.First().Id;
                         break;
                     }
+
                     roomId = rooms[Oblivion.GetRandomNumber(0, rooms.Count)].Id;
                     break;
             }
@@ -583,7 +597,7 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
                 Session.GetHabbo().GetInventoryComponent().SendNewItems(item.VirtualId);
 
-                
+
                 var thumb = new ServerMessage(LibraryParser.OutgoingRequest("ThumbnailSuccessMessageComposer"));
                 thumb.AppendBool(true);
                 thumb.AppendBool(false);
@@ -596,6 +610,7 @@ namespace Oblivion.Messages.Handlers
         }
 
         private bool _disposed;
+
         public void Dispose()
         {
             if (_disposed) return;
@@ -606,8 +621,5 @@ namespace Oblivion.Messages.Handlers
             Response = null;
             Session = null;
         }
-
     }
-
-
 }

@@ -22,7 +22,7 @@ namespace Oblivion.Messages
         /// <summary>
         /// The length
         /// </summary>
-        internal int _length;
+        private int _length;
 
         /// <summary>
         /// Gets the identifier.
@@ -53,8 +53,11 @@ namespace Oblivion.Messages
         /// </summary>
         public void Dispose()
         {
-            ClientMessageFactory.ObjectCallback(this);
-            GC.SuppressFinalize(this);
+            if (_body != null)
+            {
+                Array.Clear(_body, 0, _body.Length);
+                _body = null;
+            }
         }
 
         /// <summary>
@@ -68,7 +71,7 @@ namespace Oblivion.Messages
             stringValue += Encoding.Default.GetString(_body);
 
             for (int i = 0; i < 13; i++)
-                stringValue = stringValue.Replace(char.ToString((char)(i)), $"[{i}]");
+                stringValue = stringValue.Replace(char.ToString((char) (i)), $"[{i}]");
 
             return stringValue;
         }
@@ -181,13 +184,13 @@ namespace Oblivion.Messages
         internal uint GetUInteger()
         {
             int value = GetInteger();
-            return (value < 0 ? 0 : (uint)value);
+            return (value < 0 ? 0 : (uint) value);
         }
 
         /// <summary>
         /// Gets the integer16.
         /// </summary>
         /// <returns>System.UInt16.</returns>
-        internal ushort GetUInteger16() => (ushort)GetInteger16();
+        internal ushort GetUInteger16() => (ushort) GetInteger16();
     }
 }

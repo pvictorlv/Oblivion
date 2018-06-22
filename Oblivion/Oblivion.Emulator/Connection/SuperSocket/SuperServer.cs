@@ -41,10 +41,11 @@ namespace Oblivion.Connection.SuperSocket
             Setup(rootConfig, config, logFactory: new Log4NetLogFactory());
 
             base.NewRequestReceived += HandleRequest;
-
-           
-
             
+
+
+
+
         }
 
         #endregion Constructors
@@ -73,10 +74,11 @@ namespace Oblivion.Connection.SuperSocket
             {
                 session.Send(CrossDomainPolicy.XmlPolicyBytes);
                 session.Disconnect();
+
             }
             else
             {
-                OnMessageReceived(session, requestInfo.Body);
+                OnMessageReceived(session, requestInfo.Body, requestInfo.Transfered);
 
             }
         }

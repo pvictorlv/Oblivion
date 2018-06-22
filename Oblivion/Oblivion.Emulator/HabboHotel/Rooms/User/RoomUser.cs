@@ -30,7 +30,6 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         private int _floodCount;
 
-        public int ClickIndex;
         /// <summary>
         ///     The _m client
         /// </summary>

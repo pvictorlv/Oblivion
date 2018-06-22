@@ -154,6 +154,8 @@ namespace Oblivion.Connection.Net
                         pos = (length - remainder);
                     }
                 }
+
+                Console.Write("");
             }
             catch (Exception exception)
             {

@@ -10,7 +10,7 @@ namespace Oblivion.Connection.SuperSocket
 
     public delegate void ConnectionOpened<T>(Session<T> session);
 
-    public delegate void MessageReceived<T>(Session<T> session, byte[] body);
+    public delegate void MessageReceived<T>(Session<T> session, byte[] body, int bytes);
 
     #endregion Delegates
 

@@ -31,7 +31,7 @@ namespace Oblivion.Connection.SuperSocket
         public void Send(byte[] data)
         {
             if (_disposed) return;
-            TrySend(new ArraySegment<byte>(data));
+            Send(new ArraySegment<byte>(data));
         }
 
 

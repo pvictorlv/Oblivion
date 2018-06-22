@@ -18,6 +18,7 @@ using Oblivion.HabboHotel.Polls.Enums;
 using Oblivion.HabboHotel.Quests;
 using Oblivion.HabboHotel.RoomBots;
 using Oblivion.HabboHotel.Rooms;
+using Oblivion.HabboHotel.Users;
 using Oblivion.Messages.Parsers;
 using Oblivion.Security;
 using Oblivion.Util;
@@ -613,13 +614,7 @@ namespace Oblivion.Messages.Handlers
             var roomUserByVirtualId = currentRoom.GetRoomUserManager()
                 .GetRoomUserByVirtualId((int) roomUserByHabbo.HorseId);
 
-            if (currentRoom.GetRoomUserManager().LastClickIndex >= int.MaxValue - 10)
-            {
-                currentRoom.GetRoomUserManager().LastClickIndex = 0;
-            }
-
-            currentRoom.GetRoomUserManager().LastClickIndex++;
-            roomUserByHabbo.ClickIndex = currentRoom.GetRoomUserManager().LastClickIndex;
+           
 
 
             roomUserByVirtualId.MoveTo(targetX, targetY);
@@ -781,21 +776,25 @@ namespace Oblivion.Messages.Handlers
             room.RoomData.SerializeRoomData(Response, Session, true, false, show);
             SendResponse();
 
+            if (room.UsersWithRights == null) return;
 
             Response.Init(LibraryParser.OutgoingRequest("LoadRoomRightsListMessageComposer"));
-            GetResponse().AppendInteger(room.RoomData.Id);
+            Response.AppendInteger(room.RoomData.Id);
 
-            var list = room.UsersWithRights.Select(Oblivion.GetHabboById).Where(habboForId => habboForId != null)
-                .ToList();
-
-            GetResponse().AppendInteger(list.Count);
-
-            foreach (var habboForId in list)
+            Response.StartArray();
+            foreach (var id in room.UsersWithRights)
             {
-                GetResponse().AppendInteger(habboForId.Id);
-                GetResponse().AppendString(habboForId.UserName);
-            }
+                var habboForId = Oblivion.GetHabboById(id);
 
+                if (habboForId == null) continue;
+
+                Response.AppendInteger(habboForId.Id);
+                Response.AppendString(habboForId.UserName);
+                Response.SaveArray();
+
+            }
+            Response.EndArray();
+            
             SendResponse();
         }
 

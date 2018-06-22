@@ -213,7 +213,6 @@ namespace Oblivion.HabboHotel.Rooms.User
             return roomUser;
         }
 
-        public int LastClickIndex;
 
         /// <summary>
         ///     Updates the bot.
@@ -1743,7 +1742,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
 
             // Region: Main User Procedure... Really Main..
-            foreach (var roomUsers in UserList.Values.OrderBy(x => x.ClickIndex))
+            foreach (var roomUsers in UserList.Values)
             {
                 // User Main OnCycle
                 UserCycleOnRoom(roomUsers);

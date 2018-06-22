@@ -1090,34 +1090,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 }
             }
 
-            var squaseHasUser = GetRoomUsers(new Point(to.X, to.Y)).Count > 0;
-
-            if (squaseHasUser && endOfPath && !_room.RoomData.AllowWalkThrough)
-            {
-                user.Path.Clear();
-                user.IsWalking = false;
-                user.RemoveStatus("mv");
-                _room.GetRoomUserManager().UpdateUserStatus(user, false);
-                if (!user.RidingHorse || user.IsPet || user.IsBot)
-                    return true;
-                var roomUserByVirtualId =
-                    _room.GetRoomUserManager().GetRoomUserByVirtualId(Convert.ToInt32(user.HorseId));
-
-                var message = new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
-                message.AppendInteger(1);
-                if (roomUserByVirtualId != null)
-                {
-                    roomUserByVirtualId.IsWalking = false;
-                    roomUserByVirtualId.ClearMovement();
-                    roomUserByVirtualId.SerializeStatus(message, "");
-                }
-
-                user.GetClient().GetHabbo().CurrentRoom.SendMessage(message);
-            }
-            else if (squaseHasUser && !_room.RoomData.AllowWalkThrough)
-            {
-                return false;
-            }
+            
 
             return SqAbsoluteHeight(to.X, to.Y) - SqAbsoluteHeight(from.X, from.Y) <= 1.5;
         }

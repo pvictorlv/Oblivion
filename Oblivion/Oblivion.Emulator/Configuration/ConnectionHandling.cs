@@ -31,12 +31,16 @@ namespace Oblivion.Configuration
 //            Manager.OnConnectionOpened += OnClientConnected;
             Manager.OnConnectionClosed += (session) => OnClientDisconnected(session, null);
 
-            Manager.OnMessageReceived += (session, body) =>
+            Manager.OnMessageReceived += (session, body, bytes) =>
             {
-                using (var clientMessage = new ClientMessage(body))
-                {
-                    session.Parser.SuperHandle(clientMessage, session);
-                }
+                if (session?.Parser == null) return;
+
+                //                session.Parser.HandlePacketData(body, bytes);
+                var clientMessage = new ClientMessage(body);
+//                using (var clientMessage = new ClientMessage(body))
+//                {
+                session.Parser.SuperHandle(clientMessage, session);
+//                }
             };
 
             Manager.NewSessionConnected += session =>
