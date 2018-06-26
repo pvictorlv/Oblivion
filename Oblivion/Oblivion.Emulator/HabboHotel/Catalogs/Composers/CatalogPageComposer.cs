@@ -16,23 +16,27 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
     /// </summary>
     internal static class CatalogPageComposer
     {
-        internal static ServerMessage ComposeIndex(uint rank, string type, GameClient session) => ComposeIndex(rank, type, null, session);
+        internal static ServerMessage ComposeIndex(uint rank, string type, GameClient session) =>
+            ComposeIndex(rank, type, null, session);
 
         internal static ServerMessage ComposeIndex(uint rank, string type, string[] allowedPages, GameClient session)
         {
             var mgr = Oblivion.GetGame().GetCatalog();
 
-            if (session.GetHabbo().Rank <= 1)
-            {
-                if (mgr.IndexMessage != null) return mgr.IndexMessage;
-            }
+            if (mgr.IndexMessages.TryGetValue(session.GetHabbo().Rank, out var indexMessage))
+                return indexMessage;
+
 
             var pages =
                 Oblivion.GetGame().GetCatalog().Categories.Values.ToList();
 
             int parentIdType = (type == "NORMAL" ? -1 : -2);
 
-            var sortedPages = allowedPages != null ? pages.Where(page => page.ParentId == parentIdType && page.MinRank <= rank && allowedPages.Contains(page.Layout)).OrderBy(x => x.OrderNum) : pages.Where(page => page.ParentId == parentIdType && page.MinRank <= rank).OrderBy(x => x.OrderNum);
+            var sortedPages = allowedPages != null
+                ? pages.Where(page =>
+                        page.ParentId == parentIdType && page.MinRank <= rank && allowedPages.Contains(page.Layout))
+                    .OrderBy(x => x.OrderNum)
+                : pages.Where(page => page.ParentId == parentIdType && page.MinRank <= rank).OrderBy(x => x.OrderNum);
 
             var message =
                 new ServerMessage(LibraryParser.OutgoingRequest("CatalogueIndexMessageComposer"));
@@ -55,7 +59,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
 
                 foreach (var i in cat.FlatOffers.Keys)
                     message.AppendInteger(i);
-                message.AppendInteger(CalcTreeSize(session, pages, (int)cat.PageId));
+                message.AppendInteger(CalcTreeSize(session, pages, (int) cat.PageId));
 
 
                 var sortedSubPages =
@@ -73,7 +77,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                     foreach (var i2 in child.FlatOffers.Keys)
                         message.AppendInteger(i2);
 
-                    message.AppendInteger(CalcTreeSize(session, pages, (int)child.PageId));
+                    message.AppendInteger(CalcTreeSize(session, pages, (int) child.PageId));
                     foreach (var subCat in pages.Where(baby => baby.ParentId == child.PageId && baby.MinRank <= rank))
                     {
                         message.AppendBool(subCat.Visible);
@@ -89,15 +93,14 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                         message.AppendInteger(0);
                     }
                 }
-
             }
 
             message.AppendBool(false);
             message.AppendString(type);
-            if (session.GetHabbo().Rank <= 1)
-            {
-                mgr.IndexMessage = message;
-            }
+
+            if (allowedPages != null)
+                mgr.IndexMessages[session.GetHabbo().Rank] = message;
+
 
             return message;
         }
@@ -114,10 +117,11 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
         /// <returns>ServerMessage.</returns>
         internal static ServerMessage ComposePage(GameClient session, CatalogPage page, string mode)
         {
-            if (page.PageMessage != null)
+            if (page.PageMessages.TryGetValue(session.GetHabbo().Rank, out var pageMessage))
             {
-                return page.PageMessage;
+                return pageMessage;
             }
+
             var message =
                 new ServerMessage(LibraryParser.OutgoingRequest("CataloguePageMessageComposer"));
 
@@ -130,12 +134,14 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
             {
                 message.AppendString(str);
             }
+
             message.AppendInteger(page.PageString2.Count);
             /* TODO CHECK */
             foreach (var str in page.PageString2)
             {
                 message.AppendString(str);
             }
+
             if (!page.Layout.Contains("frontpage") && !page.Layout.Equals("recycler"))
             {
                 message.AppendInteger(page.Items.Count);
@@ -146,13 +152,14 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
             {
                 message.AppendInteger(0);
             }
+
             message.AppendInteger(-1);
             message.AppendBool(false);
 
             if (page.Layout.Equals("frontpage4"))
             {
                 List<DataRow> list = Oblivion.GetGame().GetCatalog().IndexText;
-                message.AppendInteger(list.Count); 
+                message.AppendInteger(list.Count);
                 foreach (var Catalog in list)
                 {
                     message.AppendInteger(1); // id
@@ -164,7 +171,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                 }
             }
 
-            page.PageMessage = message;
+            page.PageMessages[session.GetHabbo().Rank] = message;
             return message;
         }
 
@@ -180,7 +187,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
             var habboClubItems = Oblivion.GetGame().GetCatalog().HabboClubItems;
 
             message.AppendInteger(habboClubItems.Count);
-            
+
             foreach (var item in habboClubItems.Values)
             {
                 message.AppendInteger(item.Id);
@@ -224,12 +231,13 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
 
                 if (session.GetHabbo().GetSubscriptionManager().HasSubscription)
                     newExpiryDate =
-                        Oblivion.UnixToDateTime(session.GetHabbo().GetSubscriptionManager().GetSubscription().ExpireTime)
+                        Oblivion.UnixToDateTime(
+                                session.GetHabbo().GetSubscriptionManager().GetSubscription().ExpireTime)
                             .AddDays(dayTime);
-                message.AppendInteger((int)dayTime / 31);
-                message.AppendInteger((int)dayTime);
+                message.AppendInteger((int) dayTime / 31);
+                message.AppendInteger((int) dayTime);
                 message.AppendBool(false);
-                message.AppendInteger((int)dayTime);
+                message.AppendInteger((int) dayTime);
                 message.AppendInteger(newExpiryDate.Year);
                 message.AppendInteger(newExpiryDate.Month);
                 message.AppendInteger(newExpiryDate.Day);
@@ -240,7 +248,8 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
         }
 
         internal static ServerMessage PurchaseOk(CatalogItem itemCatalog, Dictionary<Item, uint> items,
-            int clubLevel = 1) => PurchaseOk(itemCatalog.Id, itemCatalog.Name, itemCatalog.CreditsCost, items, clubLevel,
+            int clubLevel = 1) => PurchaseOk(itemCatalog.Id, itemCatalog.Name, itemCatalog.CreditsCost, items,
+            clubLevel,
             itemCatalog.DiamondsCost,
             itemCatalog.DucketsCost, itemCatalog.IsLimited, itemCatalog.LimitedStack, itemCatalog.LimitedSelled);
 
@@ -349,8 +358,10 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                         message.AppendString("b");
                         message.AppendString(item.Badge);
                     }
+
                     break;
             }
+
             /* TODO CHECK */
             foreach (var baseItem in item.Items)
             {
@@ -369,6 +380,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                     {
                         message.AppendString(baseItem.Key.Name);
                     }
+
                     message.AppendInteger(baseItem.Key.SpriteId);
 
                     if (item.Name.Contains("wallpaper_single") || item.Name.Contains("floor_single") ||
@@ -404,6 +416,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                     }
                 }
             }
+
             message.AppendInteger(item.ClubOnly ? 1 : 0);
 
             if (item.IsLimited || item.FirstAmount != 1)

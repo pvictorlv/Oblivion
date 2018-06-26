@@ -244,7 +244,7 @@ namespace Oblivion.HabboHotel.GameClients
         public void SendMessage(ServerMessage Packet, string fuse = "")
         {
             var bytes = Packet.GetReversedBytes();
-
+            var data = new ArraySegment<byte>(bytes);
 
             foreach (var Client in Clients.Values)
             {
@@ -253,7 +253,7 @@ namespace Oblivion.HabboHotel.GameClients
                     if (!Client.GetHabbo().HasFuse(fuse))
                         continue;
 
-                Client.GetConnection().Send(bytes);
+                Client.GetConnection().SendArray(data);
             }
         }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Net.Sockets;
 using Oblivion.Connection.Net;
 using Oblivion.Connection.SuperSocket;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -26,7 +27,7 @@ namespace Oblivion.Configuration
         /// <param name="enabeNagles">if set to <c>true</c> [enabe nagles].</param>
         public ConnectionHandling(int port, int maxConnections, int connectionsPerIp, bool antiDdoS, bool enabeNagles)
         {
-            Manager = new SuperServer<GameClient>(port, maxConnections, new GamePacketParser());
+            Manager = new SuperServer<GameClient>(port, maxConnections);
 
 //            Manager.OnConnectionOpened += OnClientConnected;
             Manager.OnConnectionClosed += (session) => OnClientDisconnected(session, null);
@@ -45,6 +46,10 @@ namespace Oblivion.Configuration
 
             Manager.NewSessionConnected += session =>
             {
+                session.SocketSession.Client
+                    .SetSocketOption(SocketOptionLevel.Socket,
+                        SocketOptionName.NoDelay, !enabeNagles);
+                
                 session.Parser = new GamePacketParser();
                 session.ConnId = ++Manager.AcceptedConnections;
                 Oblivion.GetGame().GetClientManager().CreateAndStartClient(session.ConnId, session);

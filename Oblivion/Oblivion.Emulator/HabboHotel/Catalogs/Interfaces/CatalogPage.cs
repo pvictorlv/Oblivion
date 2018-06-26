@@ -67,7 +67,7 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
         /// </summary>
         internal int ParentId;
 
-        internal ServerMessage PageMessage;
+        internal Dictionary<uint, ServerMessage> PageMessages;
         /// <summary>
         ///     The visible
         /// </summary>
@@ -94,6 +94,7 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
             bool comingSoon, uint minRank, int iconImage, string layout, string strings1, string strings2,
             int orderNum, ref Dictionary<uint, CatalogItem> cataItems)
         {
+            PageMessages = new Dictionary<uint, ServerMessage>();
             PageId = id;
             ParentId = parentId;
             CodeName = codeName;

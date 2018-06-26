@@ -1001,8 +1001,10 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             try
             {
-                await Task.Yield();
+                if (roomUsers == null) return;
 
+                await Task.Yield();
+                
                 if (!roomUsers.IsOwner() && roomUsers.LastHostingDate + 60 < Oblivion.GetUnixTimeStamp())
                 {
                     var roomOwner = (uint)roomUsers.GetRoom().RoomData.OwnerId;

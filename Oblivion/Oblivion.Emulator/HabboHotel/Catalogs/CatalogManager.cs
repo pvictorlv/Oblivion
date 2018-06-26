@@ -201,7 +201,7 @@ namespace Oblivion.HabboHotel.Catalogs
                 Oblivion.UnixToDateTime((int) mRow["untilgrown_stamp"]), moplaBreed);
         }
 
-        public ServerMessage IndexMessage;
+        public Dictionary<uint, ServerMessage> IndexMessages;
 
         /// <summary>
         ///     Gets the item from offer.
@@ -239,6 +239,7 @@ namespace Oblivion.HabboHotel.Catalogs
         {
             try
             {
+                IndexMessages = new Dictionary<uint, ServerMessage>();
                 _marketplace = new MarketplaceManager();
                 Categories = new Dictionary<int, CatalogPage>();
                 Offers = new Dictionary<uint, CatalogItem>();

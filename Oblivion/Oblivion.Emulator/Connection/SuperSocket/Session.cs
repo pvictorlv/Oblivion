@@ -1,4 +1,6 @@
 ﻿using System;
+using Oblivion.Configuration;
+using Oblivion.Connection.Connection;
 using Oblivion.Encryption.Encryption.Hurlant.Crypto.Prng;
 using Oblivion.Messages.Parsers;
 using SuperSocket.SocketBase;
@@ -24,6 +26,7 @@ namespace Oblivion.Connection.SuperSocket
 
         public void Disconnect()
         {
+//            SocketConnectionCheck.FreeConnection(GetIp());
             Close();
             Dispose();
         }
@@ -31,7 +34,26 @@ namespace Oblivion.Connection.SuperSocket
         public void Send(byte[] data)
         {
             if (_disposed) return;
-            Send(new ArraySegment<byte>(data));
+            try
+            {
+                Send(data, 0, data.Length);
+            }
+            catch (Exception e)
+            {
+                HandleException(e);
+            }
+        }
+        public void SendArray(ArraySegment<byte> data)
+        {
+            if (_disposed) return;
+            try
+            {
+                Send(data);
+            }
+            catch (Exception e)
+            {
+                HandleException(e);
+            }
         }
 
 

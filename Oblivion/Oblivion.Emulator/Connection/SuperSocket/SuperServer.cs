@@ -1,5 +1,4 @@
 ﻿using Oblivion.HabboHotel.Misc;
-using Oblivion.Messages.Parsers;
 using SuperSocket.SocketBase;
 using SuperSocket.SocketBase.Config;
 using SuperSocket.SocketBase.Logging;
@@ -9,7 +8,6 @@ namespace Oblivion.Connection.SuperSocket
 {
     public class SuperServer<T> : AppServer<Session<T>, RequestInfo>, IServer<T>
     {
-
         #region Events
 
         public event ConnectionClosed<T> OnConnectionClosed;
@@ -18,8 +16,6 @@ namespace Oblivion.Connection.SuperSocket
 
         public event MessageReceived<T> OnMessageReceived;
 
-
-      
         #endregion Events
 
         #region Constructors
@@ -27,42 +23,44 @@ namespace Oblivion.Connection.SuperSocket
         public uint AcceptedConnections;
 
 
-        public SuperServer(int port, int maxConn, IDataParser parser)
+        public SuperServer(int port, int maxConn)
             : base(new DefaultReceiveFilterFactory<FlashReceiveFilter, RequestInfo>())
         {
             OnConnectionClosed = delegate { };
             OnConnectionOpened = delegate { };
             OnMessageReceived = delegate { };
 
-            IRootConfig rootConfig = new RootConfig();
-            
+            IRootConfig rootConfig = new RootConfig
+            {
+                DisablePerformanceDataCollector = true
+            };
+
             IServerConfig config = CreateServerConfig(port, maxConn);
 
             Setup(rootConfig, config, logFactory: new Log4NetLogFactory());
 
             base.NewRequestReceived += HandleRequest;
-            
-
-
-
-
         }
 
         #endregion Constructors
 
         #region Methods
-        
 
         private IServerConfig CreateServerConfig(int port, int maxConn)
         {
-            ServerConfig config = new ServerConfig
+            var config = new ServerConfig
             {
                 Port = port,
-                ReceiveBufferSize = 4096,
-                SendBufferSize = 4096,
-                ListenBacklog = 150,
-                SendTimeOut = 10000,
-                MaxConnectionNumber = maxConn
+                ReceiveBufferSize = 8192,
+                SendBufferSize = 8192,
+                ListenBacklog = 250,
+                MaxConnectionNumber = maxConn,
+                KeepAliveTime = 1200,
+                IdleSessionTimeOut = 900,
+                LogBasicSessionActivity = false,
+                SendingQueueSize = maxConn/10,
+                
+
             };
 
             return config;
@@ -74,12 +72,10 @@ namespace Oblivion.Connection.SuperSocket
             {
                 session.Send(CrossDomainPolicy.XmlPolicyBytes);
                 session.Disconnect();
-
             }
             else
             {
                 OnMessageReceived(session, requestInfo.Body, requestInfo.Transfered);
-
             }
         }
 

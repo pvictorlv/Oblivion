@@ -58,7 +58,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         ///     The packet parser
         /// </summary>
         internal GamePacketParser PacketParser;
-        
+
 
         /// <summary>
         ///     The time pinged received
@@ -117,7 +117,6 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// </summary>
         internal void StartConnection()
         {
-
             if (_messageHandler == null)
                 InitHandler();
 
@@ -627,6 +626,11 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         internal void SendMessage(byte[] bytes)
         {
             _connection?.Send(bytes);
+        }
+
+        internal void SendMessage(ArraySegment<byte> bytes)
+        {
+            _connection?.SendArray(bytes);
         }
 
         /// <summary>

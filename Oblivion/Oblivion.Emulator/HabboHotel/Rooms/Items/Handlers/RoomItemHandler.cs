@@ -233,7 +233,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         if (!string.IsNullOrEmpty(roomItem.ExtraData))
                         {
                             query += ", extra_data = @extraData";
-                            dbClient.AddParameter("extraData", roomItem.ExtraData);
+                            query += $", extra_data = @extraData{roomItem.Id}";
+                            dbClient.AddParameter($"extraData{roomItem.Id}", roomItem.ExtraData);
                         }
 
                         if (roomItem.IsFloorItem)

@@ -806,12 +806,13 @@ namespace Oblivion.HabboHotel.Rooms
         {
             try
             {
+                var data = new ArraySegment<byte>(message);
                 if (_roomUserManager?.UserList != null)
                     foreach (var user in _roomUserManager.UserList.Values)
                     {
                         if (user?.GetClient()?.GetConnection() != null && !user.IsBot)
                         {
-                            user.GetClient().SendMessage(message);
+                            user.GetClient().SendMessage(data);
                         }
                     }
             }
@@ -830,6 +831,8 @@ namespace Oblivion.HabboHotel.Rooms
             try
             {
                 var data = message.GetReversedBytes();
+                var arrayData = new ArraySegment<byte>(data);
+
                 if (_roomUserManager?.UserList == null) return;
                 foreach (var user in _roomUserManager.UserList.Values)
                 {
@@ -837,7 +840,7 @@ namespace Oblivion.HabboHotel.Rooms
                     {
                         Vector2D userCoord = new Vector2D(user.X, user.Y);
                         if (userCoord.GetDistanceSquared(userCoord) <= RoomData.ChatMaxDistance * RoomData.ChatMaxDistance * 2)
-                            user.GetClient().SendMessage(data);
+                            user.GetClient().SendMessage(arrayData);
                     }
                 }
             }
@@ -954,7 +957,7 @@ namespace Oblivion.HabboHotel.Rooms
         internal void SendMessageToUsersWithRights(ServerMessage message)
         {
             var messagebytes = message.GetReversedBytes();
-
+            var data = new ArraySegment<byte>(messagebytes);
             try
             {
                 /* TODO CHECK */
@@ -974,7 +977,7 @@ namespace Oblivion.HabboHotel.Rooms
                     if (!CheckRights(usersClient))
                         continue;
 
-                    usersClient.SendMessage(messagebytes);
+                    usersClient.SendMessage(data);
                 }
             }
             catch (Exception e)

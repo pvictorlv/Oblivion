@@ -275,14 +275,10 @@ namespace Oblivion.HabboHotel.Achievements
                 Session.SendMessage(AchievementScoreUpdateComposer.Compose(Session.GetHabbo().AchievementPoints));
 
                 var NewLevelData = AchievementData.Levels[NewTarget];
-//                if (NewLevelData != null)
-//                {
+
                 Session.SendMessage(AchievementProgressComposer.Compose(AchievementData, NewTarget, NewLevelData,
                     TotalLevels, Session.GetHabbo().GetAchievementData(AchievementGroup)));
-                //                }
-                //                Session.SendMessage(new AchievementProgressedComposer(AchievementData, NewTarget, NewLevelData,
-                //                    TotalLevels, Session.GetHabbo().GetAchievementData(AchievementGroup)));
-
+          
                 if (!talentComplete &&
                     Oblivion.GetGame().GetTalentManager().TryGetTalent(AchievementGroup, out var talent))
                     Oblivion.GetGame().GetTalentManager().CompleteUserTalent(Session, talent);
@@ -291,25 +287,13 @@ namespace Oblivion.HabboHotel.Achievements
 
             UserData.Level = NewLevel;
             UserData.Progress = NewProgress;
-            /* using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
-             {
-                 dbClient.SetQuery("REPLACE INTO `users_achievements` VALUES ('" + Session.GetHabbo().Id +
-                                   "', @group, '" +
-                                   NewLevel + "', '" + NewProgress + "')");
-                 dbClient.AddParameter("group", AchievementGroup);
-                 dbClient.RunQuery();
-             }*/
             var levelsN = new KeyValuePair<int, int>(NewLevel, NewProgress);
 
             Session.GetHabbo().AchievementsToUpdate[AchievementGroup] = levelsN;
 
-            //            UserAchievement? achievementData = user.GetAchievementData(achievementGroup);
-
             Session.SendMessage(AchievementProgressComposer.Compose(AchievementData, TargetLevel, TargetLevelData,
                 TotalLevels, Session.GetHabbo().GetAchievementData(AchievementGroup)));
-
-//            Session.SendMessage(new AchievementProgressedComposer(AchievementData, TargetLevel, TargetLevelData,
-//                TotalLevels, Session.GetHabbo().GetAchievementData(AchievementGroup)));
+            
             return false;
         }
 
