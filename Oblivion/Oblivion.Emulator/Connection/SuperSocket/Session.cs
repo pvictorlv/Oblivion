@@ -1,6 +1,5 @@
 ﻿using System;
-using Oblivion.Configuration;
-using Oblivion.Connection.Connection;
+using System.Threading.Tasks;
 using Oblivion.Encryption.Encryption.Hurlant.Crypto.Prng;
 using Oblivion.Messages.Parsers;
 using SuperSocket.SocketBase;
@@ -43,6 +42,23 @@ namespace Oblivion.Connection.SuperSocket
                 HandleException(e);
             }
         }
+
+        public void SendAsync(byte[] data)
+        {
+            if (_disposed) return;
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    Send(data, 0, data.Length);
+                }
+                catch (Exception e)
+                {
+                    HandleException(e);
+                }
+            });
+        }
+
         public void SendArray(ArraySegment<byte> data)
         {
             if (_disposed) return;

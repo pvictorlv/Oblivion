@@ -279,30 +279,14 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 }
             }
 
-            switch (_mBaseItem.InteractionType)
+            
+            IsWallItem = (_mBaseItem.Type.ToString().ToLower() == "i");
+            IsFloorItem = (_mBaseItem.Type.ToString().ToLower() == "s");
+            AffectedTiles = Gamemap.GetAffectedTiles(_mBaseItem.Length, _mBaseItem.Width, X, Y, rot);
+
+            Interactor = GetInteractor();
+            switch (GetBaseItem().InteractionType)
             {
-                case Interaction.PressurePadBed:
-                case Interaction.Bed:
-                    pRoom.ContainsBeds++;
-                    break;
-
-                case Interaction.Hopper:
-                    IsTrans = true;
-                    ReqUpdate(0, true);
-                    break;
-
-                case Interaction.Teleport:
-                case Interaction.QuickTeleport:
-                    TeleporterId = TeleHandler.GetLinkedTele(id, pRoom);
-                    IsTrans = true;
-                    ReqUpdate(0, true);
-                    break;
-
-                case Interaction.Roller:
-                    IsRoller = true;
-                    pRoom.GetRoomItemHandler().GotRollers = true;
-                    break;
-
                 case Interaction.FootballCounterGreen:
                 case Interaction.BanzaiGateGreen:
                 case Interaction.BanzaiScoreGreen:
@@ -334,37 +318,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 case Interaction.FreezeRedGate:
                     Team = Team.Red;
                     break;
-
-                case Interaction.BanzaiFloor:
-                case Interaction.BanzaiCounter:
-                case Interaction.BanzaiPuck:
-                case Interaction.BanzaiPyramid:
-                case Interaction.FreezeTimer:
-                case Interaction.FreezeExit:
-                    break;
-
-                case Interaction.BanzaiTele:
-                    ExtraData = string.Empty;
-                    break;
-
-                case Interaction.BreedingTerrier:
-                    if (!pRoom.GetRoomItemHandler().BreedingTerrier.ContainsKey(Id))
-                        pRoom.GetRoomItemHandler().BreedingTerrier.Add(Id, this);
-                    break;
-
-                case Interaction.BreedingBear:
-                    if (!pRoom.GetRoomItemHandler().BreedingBear.ContainsKey(Id))
-                        pRoom.GetRoomItemHandler().BreedingBear.Add(Id, this);
-                    break;
-
-                case Interaction.VikingCotie:
-                    if (int.TryParse(extraData, out var num) && num >= 1 && num < 5) VikingCotieBurning = true;
-                    break;
             }
-
-            IsWallItem = (_mBaseItem.Type.ToString().ToLower() == "i");
-            IsFloorItem = (_mBaseItem.Type.ToString().ToLower() == "s");
-            AffectedTiles = Gamemap.GetAffectedTiles(_mBaseItem.Length, _mBaseItem.Width, X, Y, rot);
         }
 
         /// <summary>
@@ -414,6 +368,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             IsFloorItem = false;
             AffectedTiles = new Dictionary<int, ThreeDCoord>();
             SongCode = string.Empty;
+            Interactor = GetInteractor();
+
         }
 
         /// <summary>
@@ -465,7 +421,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         ///     Gets a value indicating whether this instance is roller.
         /// </summary>
         /// <value><c>true</c> if this instance is roller; otherwise, <c>false</c>.</value>
-        internal bool IsRoller { get; }
+        internal bool IsRoller { get; private set;  }
 
         /// <summary>
         ///     Gets the coordinate.
@@ -670,142 +626,199 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             }
         }
 
+
+        private IFurniInteractor GetInteractor()
+        {
+            if (IsWired) return new InteractorWired();
+
+            if (GetBaseItem().IsSeat) return new InteractorChair();
+
+            var interactionType = GetBaseItem().InteractionType;
+            switch (interactionType)
+            {
+                
+                case Interaction.Roller:
+                    IsRoller = true;
+                    _mRoom.GetRoomItemHandler().GotRollers = true;
+                    return new InteractorRoller();
+
+                case Interaction.Gate:
+                    return new InteractorGate();
+
+                case Interaction.GuildGate:
+                    return new InteractorGroupGate();
+                    
+                case Interaction.VendingMachine:
+                    return new InteractorVendor();
+
+                case Interaction.Alert:
+                    return new InteractorAlert();
+
+                case Interaction.OneWayGate:
+                    return new InteractorOneWayGate();
+
+                case Interaction.LoveShuffler:
+                    return new InteractorLoveShuffler();
+
+                case Interaction.HabboWheel:
+                    return new InteractorHabboWheel();
+
+                case Interaction.Dice:
+                    return new InteractorDice();
+
+                case Interaction.Bottle:
+                    return new InteractorSpinningBottle();
+
+                case Interaction.Hopper:
+                    IsTrans = true;
+                    ReqUpdate(0, true);
+                    return new InteractorHopper();
+
+                case Interaction.Teleport:
+                    TeleporterId = TeleHandler.GetLinkedTele(Id, _mRoom);
+                    IsTrans = true;
+                    ReqUpdate(0, true);
+                    return new InteractorTeleport();
+
+                case Interaction.Football:
+                    return new InteractorFootball();
+
+                case Interaction.FootballCounterGreen:
+                case Interaction.FootballCounterYellow:
+                case Interaction.FootballCounterBlue:
+                case Interaction.FootballCounterRed:
+                case Interaction.ScoreBoard:
+                    return new InteractorScoreCounter();
+
+                case Interaction.BanzaiScoreBlue:
+                case Interaction.BanzaiScoreRed:
+                case Interaction.BanzaiScoreYellow:
+                case Interaction.BanzaiScoreGreen:
+                    return new InteractorBanzaiScoreCounter();
+
+                case Interaction.BanzaiCounter:
+                    return new InteractorBanzaiTimer();
+
+                case Interaction.BanzaiTele:
+                    ExtraData = string.Empty;
+                    return new InteractorBanzaiTele();
+
+                case Interaction.BanzaiGateBlue:
+                case Interaction.BanzaiGateRed:
+                case Interaction.BanzaiGateYellow:
+                case Interaction.BanzaiGateGreen:
+                    return new InteractorBanzaiGate();
+                case Interaction.BreedingTerrier:
+                    if (!_mRoom.GetRoomItemHandler().BreedingTerrier.ContainsKey(Id))
+                        _mRoom.GetRoomItemHandler().BreedingTerrier.Add(Id, this);
+                    break;
+                case Interaction.BreedingBear:
+                    if (!_mRoom.GetRoomItemHandler().BreedingBear.ContainsKey(Id))
+                        _mRoom.GetRoomItemHandler().BreedingBear.Add(Id, this);
+                    break;
+
+
+                case Interaction.FreezeYellowGate:
+                case Interaction.FreezeRedGate:
+                case Interaction.FreezeGreenGate:
+                case Interaction.FreezeBlueGate:
+                    return new InteractorFreezeGate();
+
+                case Interaction.FreezeTimer:
+                    return new InteractorFreezeTimer();
+
+                case Interaction.FreezeYellowCounter:
+                case Interaction.FreezeRedCounter:
+                case Interaction.FreezeBlueCounter:
+                case Interaction.FreezeGreenCounter:
+                    return new InteractorFreezeScoreCounter();
+
+                case Interaction.FreezeTileBlock:
+                case Interaction.FreezeTile:
+                    return new InteractorFreezeTile();
+
+                case Interaction.JukeBox:
+                    return new InteractorJukebox();
+
+                case Interaction.PuzzleBox:
+                    return new InteractorPuzzleBox();
+
+                case Interaction.Mannequin:
+                    return new InteractorMannequin();
+
+                case Interaction.Fireworks:
+                    return new InteractorFireworks();
+
+                case Interaction.GroupForumTerminal:
+                    return new InteractorGroupForumTerminal();
+
+                case Interaction.VikingCotie:
+                    if (int.TryParse(ExtraData, out var num) && num >= 1 && num < 5) VikingCotieBurning = true;
+
+                    return new InteractorVikingCotie();
+
+                case Interaction.Cannon:
+                    return new InteractorCannon();
+
+                case Interaction.FxBox:
+                    return new InteractorFxBox();
+
+                case Interaction.HcGate:
+                    return new InteractorHcGate();
+
+                case Interaction.QuickTeleport:
+                    TeleporterId = TeleHandler.GetLinkedTele(Id, _mRoom);
+                    IsTrans = true;
+                    ReqUpdate(0, true);
+                    return new InteractorQuickTeleport();
+
+                case Interaction.CrackableEgg:
+                    return new InteractorCrackableEgg();
+
+                case Interaction.FloorSwitch1:
+                case Interaction.FloorSwitch2:
+                    return new InteractorSwitch();
+
+                case Interaction.PressurePadBed:
+                case Interaction.Bed:
+                    _mRoom.ContainsBeds++;
+                    return new InteractorBed();
+
+
+                case Interaction.Tent:
+                case Interaction.BedTent:
+                    return new InteractorTent();
+
+                case Interaction.Pinata:
+                    return new InteractorCrackableEgg();
+
+                case Interaction.WalkInternalLink:
+                    return new InteractorWalkInternalLink();
+
+                case Interaction.Shower:
+                case Interaction.ChairState:
+                case Interaction.PressurePad:
+                case Interaction.FloorSwitch:
+                    return new InteractorWalkSwitch();
+
+                case Interaction.Totem:
+                    return new InteractorTotem();
+
+
+                case Interaction.NearSwitch:
+                    return new InteractorNearSwitch();
+
+                default:
+                    return new InteractorGenericSwitch();
+            }
+            return new InteractorGenericSwitch();
+        }
+
         /// <summary>
         ///     Gets the interactor.
         /// </summary>
         /// <value>The interactor.</value>
-        internal IFurniInteractor Interactor
-        {
-            get
-            {
-                if (IsWired) return new InteractorWired();
-                var interactionType = GetBaseItem().InteractionType;
-                switch (interactionType)
-                {
-                    case Interaction.Roller:
-                        return new InteractorRoller();
-
-                    case Interaction.Gate:
-                        return new InteractorGate();
-
-                    case Interaction.GuildGate:
-                        return new InteractorGroupGate();
-
-//                    case Interaction.ScoreBoard:
-//                        return new InteractorScoreboard();
-
-                    case Interaction.VendingMachine:
-                        return new InteractorVendor();
-
-                    case Interaction.Alert:
-                        return new InteractorAlert();
-
-                    case Interaction.OneWayGate:
-                        return new InteractorOneWayGate();
-
-                    case Interaction.LoveShuffler:
-                        return new InteractorLoveShuffler();
-
-                    case Interaction.HabboWheel:
-                        return new InteractorHabboWheel();
-
-                    case Interaction.Dice:
-                        return new InteractorDice();
-
-                    case Interaction.Bottle:
-                        return new InteractorSpinningBottle();
-
-                    case Interaction.Hopper:
-                        return new InteractorHopper();
-
-                    case Interaction.Teleport:
-                        return new InteractorTeleport();
-
-                    case Interaction.Football:
-                        return new InteractorFootball();
-
-                    case Interaction.FootballCounterGreen:
-                    case Interaction.FootballCounterYellow:
-                    case Interaction.FootballCounterBlue:
-                    case Interaction.FootballCounterRed:
-                    case Interaction.ScoreBoard:
-                        return new InteractorScoreCounter();
-
-                    case Interaction.BanzaiScoreBlue:
-                    case Interaction.BanzaiScoreRed:
-                    case Interaction.BanzaiScoreYellow:
-                    case Interaction.BanzaiScoreGreen:
-                        return new InteractorBanzaiScoreCounter();
-
-                    case Interaction.BanzaiCounter:
-                        return new InteractorBanzaiTimer();
-
-                    case Interaction.FreezeTimer:
-                        return new InteractorFreezeTimer();
-
-                    case Interaction.FreezeYellowCounter:
-                    case Interaction.FreezeRedCounter:
-                    case Interaction.FreezeBlueCounter:
-                    case Interaction.FreezeGreenCounter:
-                        return new InteractorFreezeScoreCounter();
-
-                    case Interaction.FreezeTileBlock:
-                    case Interaction.FreezeTile:
-                        return new InteractorFreezeTile();
-
-                    case Interaction.JukeBox:
-                        return new InteractorJukebox();
-
-                    case Interaction.PuzzleBox:
-                        return new InteractorPuzzleBox();
-
-                    case Interaction.Mannequin:
-                        return new InteractorMannequin();
-
-                    case Interaction.Fireworks:
-                        return new InteractorFireworks();
-
-                    case Interaction.GroupForumTerminal:
-                        return new InteractorGroupForumTerminal();
-
-                    case Interaction.VikingCotie:
-                        return new InteractorVikingCotie();
-
-                    case Interaction.Cannon:
-                        return new InteractorCannon();
-
-                    case Interaction.FxBox:
-                        return new InteractorFxBox();
-
-                    case Interaction.HcGate:
-                        return new InteractorHcGate();
-
-                    case Interaction.QuickTeleport:
-                        return new InteractorQuickTeleport();
-
-                    case Interaction.CrackableEgg:
-                        return new InteractorCrackableEgg();
-
-                    case Interaction.FloorSwitch1:
-                    case Interaction.FloorSwitch2:
-                        return new InteractorSwitch();
-
-                    case Interaction.WalkInternalLink:
-                        return new InteractorWalkInternalLink();
-
-                    case Interaction.FloorSwitch:
-                        return new InteractorWalkSwitch();
-                    case Interaction.Totem:
-                        return new InteractorTotem();
-
-                    case Interaction.NearSwitch:
-                        return new InteractorNearSwitch();
-
-                    default:
-                        return new InteractorGenericSwitch();
-                }
-            }
-        }
+        internal IFurniInteractor Interactor;
 
         /// <summary>
         ///     Equalses the specified compared item.

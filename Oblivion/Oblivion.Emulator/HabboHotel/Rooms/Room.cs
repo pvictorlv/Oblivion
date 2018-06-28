@@ -400,6 +400,7 @@ namespace Oblivion.HabboHotel.Rooms
 
                         continue;
                     }
+
                     var roomBot = BotManager.GenerateBotFromRow(dataRow);
                     _roomUserManager.DeployBot(roomBot, null);
                 }
@@ -467,20 +468,9 @@ namespace Oblivion.HabboHotel.Rooms
             if (GotWireds())
                 GetWiredHandler().ExecuteWired(Interaction.TriggerRoomEnter, user);
 
-            //int count = 0;
-
-
-            /* TODO CHECK */
             foreach (var current in _roomUserManager.Bots.Values)
             {
-                if (current.IsBot || current.IsPet)
-                {
-                    current.BotAi.OnUserEnterRoom(user);
-                    //count++;
-                }
-
-                //if (count >= 3)
-                //    break;
+                current.BotAi.OnUserEnterRoom(user);
             }
         }
 
@@ -549,10 +539,12 @@ namespace Oblivion.HabboHotel.Rooms
                 {
                     num = 0;
                 }
+
                 if (!int.TryParse(dataRow[2].ToString(), out var baseItem))
                 {
                     continue;
                 }
+
 //                var num = Convert.ToUInt32(dataRow[1]);
 //                var baseItem = Convert.ToInt32(dataRow[2]);
                 var songCode = string.Empty;
@@ -592,6 +584,7 @@ namespace Oblivion.HabboHotel.Rooms
                 queryReactor.SetQuery($"SELECT rooms_rights.user_id FROM rooms_rights WHERE room_id = {RoomId}");
                 dataTable = queryReactor.GetTable();
             }
+
             if (dataTable == null)
                 return;
             /* TODO CHECK */
@@ -614,6 +607,7 @@ namespace Oblivion.HabboHotel.Rooms
                 queryReactor.SetQuery($"SELECT user_id, expire FROM rooms_bans WHERE room_id = {RoomId}");
                 table = queryReactor.GetTable();
             }
+
             if (table == null)
                 return;
             /* TODO CHECK */
@@ -647,8 +641,7 @@ namespace Oblivion.HabboHotel.Rooms
                     if (EveryoneGotRights ||
                         (UsersWithRights != null && UsersWithRights.Contains(session.GetHabbo().Id))) return true;
                 }
-                else
-                    if (!checkForGroups) return false;
+                else if (!checkForGroups) return false;
 
                 if (RoomData.Group == null) return false;
 
@@ -670,6 +663,7 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 Logging.HandleException(e, "Room.CheckRights");
             }
+
             return false;
         }
 
@@ -714,12 +708,14 @@ namespace Oblivion.HabboHotel.Rooms
                             RoomData.Group.Members.ContainsKey(session.GetHabbo().Id)) return true;
                     }
                 }
+
                 return false;
             }
             catch (Exception e)
             {
                 Logging.HandleException(e, "Room.CheckRights");
             }
+
             return false;
         }
 
@@ -740,6 +736,7 @@ namespace Oblivion.HabboHotel.Rooms
                     {
                         GetRoomItemHandler().OnCycle();
                     }
+
                     GetRoomUserManager().OnCycle(ref idle);
 
                     if (idle > 0)
@@ -754,6 +751,7 @@ namespace Oblivion.HabboHotel.Rooms
                             Oblivion.GetGame().GetRoomManager().UnloadRoom(this, "No users");
                             return;
                         }
+
                         var serverMessage = GetRoomUserManager().SerializeStatusUpdates(false);
                         if (serverMessage != null)
                             SendMessage(serverMessage);
@@ -768,10 +766,12 @@ namespace Oblivion.HabboHotel.Rooms
                     {
                         GetRoomMusicController().Update(this);
                     }
+
                     if (GotWireds())
                     {
                         StartWiredProcessing();
                     }
+
                     WorkRoomKickQueue();
                 }
                 catch (Exception e)
@@ -794,10 +794,11 @@ namespace Oblivion.HabboHotel.Rooms
                 var connId = user?.GetClient()?.GetHabbo()?.WebSocketConnId;
                 if (connId != null && connId != Guid.Empty)
                 {
-                    Oblivion.GetWebSocket().SendMessage((Guid)connId, message);
+                    Oblivion.GetWebSocket().SendMessage((Guid) connId, message);
                 }
             }
         }
+
         /// <summary>
         ///     Sends the message.
         /// </summary>
@@ -839,7 +840,8 @@ namespace Oblivion.HabboHotel.Rooms
                     if (user?.GetClient() != null && !user.IsBot)
                     {
                         Vector2D userCoord = new Vector2D(user.X, user.Y);
-                        if (userCoord.GetDistanceSquared(userCoord) <= RoomData.ChatMaxDistance * RoomData.ChatMaxDistance * 2)
+                        if (userCoord.GetDistanceSquared(userCoord) <=
+                            RoomData.ChatMaxDistance * RoomData.ChatMaxDistance * 2)
                             user.GetClient().SendMessage(arrayData);
                     }
                 }
@@ -1040,6 +1042,7 @@ namespace Oblivion.HabboHotel.Rooms
                 var table = queryReactor.GetTable();
                 list.AddRange(from DataRow dataRow in table.Rows select (uint) dataRow[0]);
             }
+
             return list;
         }
 
@@ -1154,6 +1157,7 @@ namespace Oblivion.HabboHotel.Rooms
                             if (user.Y == goalY)
                                 return false;
                         }
+
                         /* TODO CHECK */
                         foreach (var casella in furno.GetCoords())
                         {
@@ -1167,20 +1171,24 @@ namespace Oblivion.HabboHotel.Rooms
                                         goalY = furno.Y;
                                         return true;
                                     }
+
                                     return false;
                                 }
+
                                 if (GetGameMap().CanWalk(furno.X, casella.Y, false))
                                 {
                                     goalX = furno.X;
                                     goalY = casella.Y;
                                     return true;
                                 }
+
                                 return false;
                             }
                         }
                     }
                 }
             }
+
             return true;
         }
 
@@ -1230,6 +1238,7 @@ namespace Oblivion.HabboHotel.Rooms
                 roomItem.Serialize(serverMessage);
                 list.Add(serverMessage);
             }
+
             /* TODO CHECK */
             foreach (var roomItem2 in GetRoomItemHandler().WallItems.Values.ToList())
             {
@@ -1238,6 +1247,7 @@ namespace Oblivion.HabboHotel.Rooms
                 roomItem2.Serialize(serverMessage2);
                 list.Add(serverMessage2);
             }
+
             SendMessage(list);
         }
 
@@ -1274,6 +1284,7 @@ namespace Oblivion.HabboHotel.Rooms
                 if (toRemove == null) return;
                 RoomData.RoomChat.Remove(toRemove);
             }
+
             RoomData.RoomChat.Add(new Chatlog(id, message, DateTime.Now, globalMessage));
         }
 
@@ -1345,7 +1356,6 @@ namespace Oblivion.HabboHotel.Rooms
 
                     foreach (DataRow dataRow in tableFilter.Rows)
                         roomData.WordFilter.Add(dataRow["word"].ToString());
-
                 }
 
                 if (roomData.BlockedCommands != null)
@@ -1357,6 +1367,7 @@ namespace Oblivion.HabboHotel.Rooms
                         roomData.BlockedCommands.Add(data["command_name"].ToString());
                 }
             }
+
             if (!forceLoad)
             {
                 _roomThread = new Task(StartRoomProcessing, TaskCreationOptions.LongRunning);
@@ -1418,26 +1429,31 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 GetRoomItemHandler().SaveFurniture(queryReactor);
             }
+
             if (GotSoccer())
             {
                 _soccer.Destroy();
                 _soccer = null;
             }
+
             if (GotBanzai())
             {
                 _banzai.Destroy();
                 _banzai = null;
             }
+
             if (GotFreeze())
             {
                 _freeze.Destroy();
                 _freeze = null;
             }
+
             if (GotWireds())
             {
                 _wiredHandler.Destroy();
                 _wiredHandler = null;
             }
+
             if (GotMusicController())
             {
                 _musicController.Destroy();
@@ -1464,14 +1480,17 @@ namespace Oblivion.HabboHotel.Rooms
                             dbClient.AddParameter("message" + i, chat.Message);
                             break;
                         }
+
                         builder.Append(
                             $"('{chat.UserId}', '{RoomId}', '{Oblivion.DateTimeToUnix(chat.TimeStamp)}', @message{i}),");
                         dbClient.AddParameter("message" + i, chat.Message);
 
 //                        chat.Save(RoomId, dbClient);
                     }
+
                     dbClient.RunQuery(builder.ToString());
                 }
+
                 RoomData.RoomChat.Clear();
             }
 
@@ -1485,6 +1504,7 @@ namespace Oblivion.HabboHotel.Rooms
                 _gameMap.StaticModel?.Destroy();
                 _gameMap.Destroy();
             }
+
             _gameMap = null;
             _processTimer?.Dispose();
             _processTimer = null;
@@ -1502,6 +1522,7 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 current.Dispose();
             }
+
             ActiveTrades.Clear();
             ActiveTrades = null;
             _roomItemHandler.Destroy();

@@ -1,6 +1,5 @@
 using System;
 using System.Text;
-using Oblivion.Messages.Factorys;
 
 namespace Oblivion.Messages
 {

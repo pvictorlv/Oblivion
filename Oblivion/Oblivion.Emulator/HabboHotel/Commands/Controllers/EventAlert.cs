@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
@@ -41,7 +40,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             message.AppendString("linkTitle");
             message.AppendString("Ir para o Evento");
 
-            foreach (var client in Oblivion.GetGame().GetClientManager().Clients.Values.ToList())
+            foreach (var client in Oblivion.GetGame().GetClientManager().Clients.Values)
             {
                 if (client?.GetHabbo() == null)
                     continue;
@@ -54,7 +53,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
                 if (!client.GetHabbo().DisableEventAlert)
                 {
-                    client.SendMessage(message);
+                    client.SendMessageAsync(message);
                     continue;
                 }
                 client.SendWhisper(

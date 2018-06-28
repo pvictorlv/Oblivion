@@ -232,7 +232,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         var query = "UPDATE items_rooms SET room_id = " + roomItem.RoomId;
                         if (!string.IsNullOrEmpty(roomItem.ExtraData))
                         {
-                            query += ", extra_data = @extraData";
                             query += $", extra_data = @extraData{roomItem.Id}";
                             dbClient.AddParameter($"extraData{roomItem.Id}", roomItem.ExtraData);
                         }
@@ -291,7 +290,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             var items = new List<GameClient>();
             var roomGamemap = _room.GetGameMap();
             var isOwner = _room.CheckRights(session, true);
-            foreach (var item in FloorItems.Values.ToList())
+            foreach (var item in FloorItems.Values)
             {
                 if (item.UserId == 0)
                     item.UserId = session.GetHabbo().Id;
@@ -336,7 +335,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     items.Add(client);
             }
 
-            foreach (var item in WallItems.Values.ToList())
+            foreach (var item in WallItems.Values)
             {
                 if (item.UserId == 0)
                     item.UserId = session.GetHabbo().Id;
@@ -1403,105 +1402,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             return new List<ServerMessage>();
         }
 
-        /*    private List<ServerMessage> CycleRollers()
-            {
-                if (GotRollers)
-                {
-                    if (_roolerCycle >= _rollerSpeed || _rollerSpeed == 0)
-                    {
-                        _rollerItemsMoved.Clear();
-                        _rollerUsersMoved.Clear();
-                        _rollerMessages.Clear();
-    
-                        foreach (var Item in Rollers)
-                        {
-                            // Obtenemos la baldosa siguiente donde se movera el item/user.
-                            Point NextCoord = Item.SquareInFront;
-    
-                            // Obtenemos el Usuario que será movido si este existe.
-                            RoomUser UserOnRoller = _room.GetRoomUserManager().GetUserForSquare(Item.X, Item.Y);
-    
-                            // Obtenemos los items que están encima del roller los cuales se moverán.
-                            List<RoomItem> ItemsOnRoller = _room.GetGameMap().GetRoomItemForMinZ(Item.X, Item.Y, Item.TotalHeight);
-    
-                            if (ItemsOnRoller.Count > 0 || UserOnRoller != null)
-                            {
-                                // Obtenemos los items que están en la baldosa destino.
-                                List<RoomItem> ItemsOnNext = _room.GetGameMap().GetCoordinatedItems(NextCoord);
-    
-                                var NextRoller = false;
-    
-                                var NextRollerZ = 0.0;
-                                var NextRollerClear = true;
-    
-                                foreach (RoomItem tItem in ItemsOnNext)
-                                {
-                                    // Si en la siguiente baldosa hay un roller:
-                                    if (tItem.IsRoller)
-                                    {
-                                        NextRoller = true;
-                                        if (tItem.TotalHeight > NextRollerZ)
-                                            NextRollerZ = tItem.TotalHeight;
-                                    }
-                                    else if (tItem.GetBaseItem().Name.Contains("doormat_"))
-                                    {
-                                        NextRollerClear = false;
-                                    }
-                                    else if (NextRoller)
-                                    {
-                                        // En el caso que exista, comprueba si hay un item encima
-                                        if (tItem.TotalHeight > NextRollerZ)
-                                            NextRollerClear = false;
-    
-                                        break;
-                                    }
-                                }
-    
-                                // Comprueba si hay un usuario en el siguiente roller.
-                                bool userOnNext = _room.GetGameMap().SquareHasUsers(NextCoord.X, NextCoord.Y);
-    
-                                if (ItemsOnRoller.Count > 0)
-                                {
-                                    foreach (RoomItem tItem in ItemsOnRoller)
-                                    {
-                                        double NextZ = tItem.Z + (!NextRoller ? -Item.TotalHeight : 0);
-                                        if (_room.GetGameMap().CanRollItemHere(NextCoord.X, NextCoord.Y, tItem.Z, false))
-                                        {
-                                            if (!_rollerItemsMoved.Contains(tItem.Id) && NextRollerClear && !userOnNext)
-                                            {
-                                                if (tItem.Z - _room.GetGameMap().ItemHeightMap[NextCoord.X, NextCoord.Y] <= 1.5)
-                                                    NextZ = _room.GetGameMap().ItemHeightMap[NextCoord.X, NextCoord.Y];
-    
-                                                _rollerMessages.Add(UpdateItemOnRoller(tItem, NextCoord, Item.VirtualId, NextZ));
-                                                SetFloorItem(tItem, NextCoord.X, NextCoord.Y, NextZ);
-                                                //                                            ItemCoords.ModifyGamemapTiles(room, Item.GetAffectedTiles, Item.GetBackupAffectedTiles);
-                                                _rollerItemsMoved.Add(tItem.Id);
-                                            }
-                                        }
-                                    }
-                                }
-    
-                                if (UserOnRoller != null && !UserOnRoller.Statusses.ContainsKey("sit") && !UserOnRoller.SetStep && NextRollerClear && !userOnNext && _room.GetGameMap().CanRollItemHere(NextCoord.X, NextCoord.Y, UserOnRoller.Z, true))
-                                {
-                                    if (!_rollerUsersMoved.Contains(UserOnRoller.HabboId))
-                                    {
-                                        _rollerMessages.Add(UpdateUserOnRoller(UserOnRoller, NextCoord, Item.VirtualId));
-                                        
-                                        _rollerUsersMoved.Add(UserOnRoller.HabboId);
-                                    }
-                                }
-                            }
-                        }
-    
-                        _roolerCycle = 0;
-                        return _rollerMessages;
-                    }
-                        _roolerCycle++;
-                }
-    
-                return new List<ServerMessage>();
-            }
-    */
         internal bool HasFurniByItemName(string name)
         {
             var element = FloorItems.Values.Where(i => i.GetBaseItem().Name == name);

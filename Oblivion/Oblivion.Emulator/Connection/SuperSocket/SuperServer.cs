@@ -30,11 +30,8 @@ namespace Oblivion.Connection.SuperSocket
             OnConnectionOpened = delegate { };
             OnMessageReceived = delegate { };
 
-            IRootConfig rootConfig = new RootConfig
-            {
-                DisablePerformanceDataCollector = true
-            };
-
+            IRootConfig rootConfig = new RootConfig();
+            
             IServerConfig config = CreateServerConfig(port, maxConn);
 
             Setup(rootConfig, config, logFactory: new Log4NetLogFactory());
@@ -57,9 +54,9 @@ namespace Oblivion.Connection.SuperSocket
                 MaxConnectionNumber = maxConn,
                 KeepAliveTime = 1200,
                 IdleSessionTimeOut = 900,
-                LogBasicSessionActivity = false,
-                SendingQueueSize = maxConn/10,
-                
+                SendTimeOut = 3000,
+                SendingQueueSize = maxConn/5,
+                MaxRequestLength = 8192
 
             };
 

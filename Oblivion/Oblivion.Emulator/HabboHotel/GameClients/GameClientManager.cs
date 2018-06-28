@@ -4,10 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Oblivion.Configuration;
-using Oblivion.Connection.Connection;
 using Oblivion.Connection.SuperSocket;
 using Oblivion.HabboHotel.GameClients.Interfaces;
-using Oblivion.HabboHotel.Users.Messenger;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
 using Oblivion.Util;
@@ -175,7 +173,7 @@ namespace Oblivion.HabboHotel.GameClients
 
             if (broadCast)
             {
-                SendMessage(serverMessage);
+                SendMessageAsync(serverMessage);
                 return;
             }
 
@@ -254,6 +252,21 @@ namespace Oblivion.HabboHotel.GameClients
                         continue;
 
                 Client.GetConnection().SendArray(data);
+            }
+        }
+
+        public void SendMessageAsync(ServerMessage Packet, string fuse = "")
+        {
+            var bytes = Packet.GetReversedBytes();
+
+            foreach (var Client in Clients.Values)
+            {
+                if (Client?.GetHabbo() == null) continue;
+                if (!string.IsNullOrEmpty(fuse))
+                    if (!Client.GetHabbo().HasFuse(fuse))
+                        continue;
+
+                Client.GetConnection().SendAsync(bytes);
             }
         }
 

@@ -26,7 +26,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var str = string.Join(" ", pms);
             var message = new ServerMessage(LibraryParser.OutgoingRequest("BroadcastNotifMessageComposer"));
             message.AppendString($"{str}\r\n- {session.GetHabbo().UserName}");
-            Oblivion.GetGame().GetClientManager().SendMessage(message);
+            Oblivion.GetGame().GetClientManager().SendMessageAsync(message);
 
             return true;
         }

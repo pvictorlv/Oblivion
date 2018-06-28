@@ -618,6 +618,18 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
             _connection.Send(bytes);
         }
+         internal void SendMessageAsync(ServerMessage message)
+        {
+            if (message == null)
+                return;
+
+            if (_connection == null)
+                return;
+
+            var bytes = message.GetReversedBytes();
+
+            _connection.SendAsync(bytes);
+        }
 
         /// <summary>
         ///     Sends the message.

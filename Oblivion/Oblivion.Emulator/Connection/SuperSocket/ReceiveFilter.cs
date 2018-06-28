@@ -31,7 +31,10 @@ namespace Oblivion.Connection.SuperSocket
             int length)
         {
       
-            return new RequestInfo(data.CloneRange(offset, length), false, length);
+            var d = new RequestInfo(data.CloneRange(offset, length), false, length);
+            
+            return d;
+
         }
         
         #endregion Methods

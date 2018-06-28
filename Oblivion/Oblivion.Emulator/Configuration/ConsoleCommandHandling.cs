@@ -102,7 +102,7 @@ namespace Oblivion.Configuration
                         var message = new ServerMessage(LibraryParser.OutgoingRequest("BroadcastNotifMessageComposer"));
                         message.AppendString(str);
                         message.AppendString(string.Empty);
-                        GetGame().GetClientManager().SendMessage(message);
+                        GetGame().GetClientManager().SendMessageAsync(message);
                         Console.WriteLine("[{0}] was sent!", str);
                         return;
                     }

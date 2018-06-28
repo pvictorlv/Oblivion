@@ -1,5 +1,6 @@
 using System;
 using Oblivion.HabboHotel.GameClients.Interfaces;
+using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interactions.Models;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Rooms.User;
@@ -56,6 +57,29 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 room.GetRoomItemHandler().DeleteRoomItem(item);
                 session.GetHabbo().GetInventoryComponent().AddNewItem(0, prize, "", 0, true, false, 0, 0);
                 session.GetHabbo().GetInventoryComponent().UpdateItems(true);
+            }
+        }
+
+        public override void OnUserWalk(GameClient session, RoomItem item, RoomUser user)
+        {
+            if (item.GetBaseItem().InteractionType == Interaction.Pinata)
+            {
+                if (!user.IsWalking || item.ExtraData.Length <= 0) return;
+                var num5 = int.Parse(item.ExtraData);
+                if (num5 >= 100 || user.CurrentEffect != 158) return;
+                var num6 = num5 + 1;
+                item.ExtraData = num6.ToString();
+                item.UpdateState();
+                Oblivion.GetGame()
+                    .GetAchievementManager()
+                    .ProgressUserAchievement(user.GetClient(), "ACH_PinataWhacker", 1);
+                if (num6 == 100)
+                {
+                    Oblivion.GetGame().GetPinataHandler().DeliverRandomPinataItem(user, item.GetRoom(), item);
+                    Oblivion.GetGame()
+                        .GetAchievementManager()
+                        .ProgressUserAchievement(user.GetClient(), "ACH_PinataBreaker", 1);
+                }
             }
         }
     }

@@ -101,7 +101,7 @@ namespace Oblivion.Connection.Net
                         hotelAlert.AppendString($"{param}\r\n- Hotel Management");
                         Oblivion.GetGame().GetClientManager().SendMessage(hotelAlert);
                         break;
-
+                        
                     case "alert":
                         var pUserId = param[0];
                         var pMessage = param[1];

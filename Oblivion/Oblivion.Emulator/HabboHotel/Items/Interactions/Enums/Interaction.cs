@@ -1015,12 +1015,12 @@
         ActionChase,
         ActionInverseChase,
 
-        // New InteractionTypes by Claudio
         QuickTeleport,
 
         HcGate,
 
         ChairState,
+
 
         /// <summary>
         ///     The condition bot has handitem

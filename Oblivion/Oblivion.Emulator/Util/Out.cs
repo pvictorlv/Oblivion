@@ -4,6 +4,7 @@ namespace Oblivion.Util
 {
     internal class Out
     {
+
         /// <summary>
         /// Writes the line.
         /// </summary>

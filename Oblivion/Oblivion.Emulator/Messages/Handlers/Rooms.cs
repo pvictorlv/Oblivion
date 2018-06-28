@@ -18,7 +18,6 @@ using Oblivion.HabboHotel.Polls.Enums;
 using Oblivion.HabboHotel.Quests;
 using Oblivion.HabboHotel.RoomBots;
 using Oblivion.HabboHotel.Rooms;
-using Oblivion.HabboHotel.Users;
 using Oblivion.Messages.Parsers;
 using Oblivion.Security;
 using Oblivion.Util;
@@ -199,8 +198,23 @@ namespace Oblivion.Messages.Handlers
                 extraData = $"{extraData}{Convert.ToChar(9)}{data}";
             }
 
-            var strings = extraData.Split('\t')[11];
-            if (!ushort.TryParse(strings, out _)) return;
+            var strings = extraData.Split('\t');
+            bool found = false;
+            foreach (var str in strings)
+            {
+                if (str == "offsetZ")
+                {
+                    found = true;
+                    continue;
+                }
+
+                if (found)
+                {
+                    if (!ushort.TryParse(str, out _))
+                        return;
+                    break;
+                }
+            }
 
             item.ExtraData = extraData;
             room.GetRoomItemHandler()
@@ -306,7 +320,8 @@ namespace Oblivion.Messages.Handlers
                     {
                         if (current4.GetClient() != null && current4.GetClient().GetHabbo() != null)
                         {
-                            if (current4.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent() != null && current4.CurrentEffect >= 1)
+                            if (current4.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent() != null &&
+                                current4.CurrentEffect >= 1)
                             {
                                 Response.Init(LibraryParser.OutgoingRequest("ApplyEffectMessageComposer"));
                                 Response.AppendInteger(current4.VirtualId);
@@ -315,7 +330,8 @@ namespace Oblivion.Messages.Handlers
                                 SendResponse();
                             }
 
-                            var serverMessage2 = new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
+                            var serverMessage2 =
+                                new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
                             serverMessage2.AppendInteger(current4.VirtualId);
                             serverMessage2.AppendString(current4.GetClient().GetHabbo().Look);
                             serverMessage2.AppendString(current4.GetClient().GetHabbo().Gender.ToLower());
@@ -614,8 +630,6 @@ namespace Oblivion.Messages.Handlers
             var roomUserByVirtualId = currentRoom.GetRoomUserManager()
                 .GetRoomUserByVirtualId((int) roomUserByHabbo.HorseId);
 
-           
-
 
             roomUserByVirtualId.MoveTo(targetX, targetY);
         }
@@ -791,10 +805,10 @@ namespace Oblivion.Messages.Handlers
                 Response.AppendInteger(habboForId.Id);
                 Response.AppendString(habboForId.UserName);
                 Response.SaveArray();
-
             }
+
             Response.EndArray();
-            
+
             SendResponse();
         }
 
