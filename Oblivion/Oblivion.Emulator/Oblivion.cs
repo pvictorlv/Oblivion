@@ -708,20 +708,21 @@ namespace Oblivion
                 Cache.StopProcess();
 
                 ShutdownStarted = true;
-
-                var serverMessage =
-                    new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
-                serverMessage.AppendString("disconnection");
-                serverMessage.AppendInteger(2);
-                serverMessage.AppendString("title");
-                serverMessage.AppendString("HEY EVERYONE!");
-                serverMessage.AppendString("message");
-                serverMessage.AppendString(
-                    restart
-                        ? "<b>The hotel is shutting down for a break.<)/b>\nYou may come back later.\r\n<b>So long!</b>"
-                        : "<b>The hotel is shutting down for a break.</b><br />You may come back soon. Don't worry, everything's going to be saved..<br /><b>So long!</b>\r\n~ This session was powered by OblivionEmulator");
-                GetGame().GetClientManager().SendMessageAsync(serverMessage);
-
+                Task.Factory.StartNew(() =>
+                {
+                    var serverMessage =
+                        new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
+                    serverMessage.AppendString("disconnection");
+                    serverMessage.AppendInteger(2);
+                    serverMessage.AppendString("title");
+                    serverMessage.AppendString("HEY EVERYONE!");
+                    serverMessage.AppendString("message");
+                    serverMessage.AppendString(
+                        restart
+                            ? "<b>The hotel is shutting down for a break.<)/b>\nYou may come back later.\r\n<b>So long!</b>"
+                            : "<b>The hotel is shutting down for a break.</b><br />You may come back soon. Don't worry, everything's going to be saved..<br /><b>So long!</b>\r\n~ This session was powered by OblivionEmulator");
+                    GetGame().GetClientManager().SendMessageAsync(serverMessage);
+                });
                 Console.Title = "Oblivion Emulator | Shutting down...";
 
                 _game.StopGameLoop();

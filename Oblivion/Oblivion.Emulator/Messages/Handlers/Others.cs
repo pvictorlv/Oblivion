@@ -204,21 +204,11 @@ namespace Oblivion.Messages.Handlers
 
             var sso = Request.GetString();
 
-
-#if DEBUG
-        if (string.IsNullOrEmpty(sso) || string.IsNullOrWhiteSpace(sso) || !Session.TryLogin(sso))
-            {
-                Session?.Disconnect("Invalid sso or banned");
-                return;
-            }
-#else
-
             if (string.IsNullOrEmpty(sso) || string.IsNullOrWhiteSpace(sso) || sso.Length < 5 || !Session.TryLogin(sso))
             {
                 Session?.Disconnect("Invalid sso or banned");
                 return;
             }
-#endif
 
 
             if (Session == null) return;

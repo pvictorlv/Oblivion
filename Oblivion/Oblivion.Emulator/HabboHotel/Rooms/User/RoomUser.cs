@@ -1031,11 +1031,10 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
 
             var coord = new Point(x, y);
-            var allRoomItemForSquare = GetRoom().GetGameMap().GetCoordinatedHeighestItems(coord);
-            if (RidingHorse && !IsBot && allRoomItemForSquare.Any() || IsPet && allRoomItemForSquare.Any())
-                if (
-                    allRoomItemForSquare.Any(
-                        current =>
+            if (RidingHorse && !IsBot || IsPet)
+            {
+                var allRoomItemForSquare = GetRoom().GetGameMap().GetCoordinatedHeighestItems(coord);
+                if (allRoomItemForSquare.Any(current =>
                             current.GetBaseItem().IsSeat ||
                             current.GetBaseItem().InteractionType == Interaction.LowPool ||
                             current.GetBaseItem().InteractionType == Interaction.Pool ||
@@ -1044,6 +1043,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             current.GetBaseItem().InteractionType == Interaction.PressurePadBed ||
                             current.GetBaseItem().InteractionType == Interaction.Guillotine))
                     return;
+            }
 
             UnIdle();
             GoalX = x;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Oblivion.Configuration;
 using Oblivion.Encryption.Encryption.Hurlant.Crypto.Prng;
 using Oblivion.Messages.Parsers;
 using SuperSocket.SocketBase;
@@ -90,7 +91,7 @@ namespace Oblivion.Connection.SuperSocket
 
         protected override void HandleException(Exception e)
         {
-            Logger.Warn("A networking error occured", e);
+            Logging.HandleException(e, "Connection - Session.cs");
             Disconnect();
         }
 

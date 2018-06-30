@@ -9,6 +9,7 @@ using Oblivion.Configuration;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
+using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Navigators.Interfaces;
 using Oblivion.HabboHotel.Pathfinding;
 using Oblivion.HabboHotel.PathFinding;
@@ -692,7 +693,8 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="cycleGameItems">if set to <c>true</c> [cyclegameitems].</param>
         internal void UpdateUserStatus(RoomUser user, bool cycleGameItems, bool removeStatusses = true)
         {
-            if (user?.Statusses == null) return;
+            if (user?.Statusses == null)
+                return;
 
             if (removeStatusses)
             {
@@ -709,7 +711,6 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 var roomMap = _userRoom.GetGameMap();
                 var userPoint = new Point(user.X, user.Y);
-                var allRoomItemForSquare = roomMap.GetCoordinatedHeighestItems(userPoint);
                 var itemsOnSquare = roomMap.GetCoordinatedItems(userPoint);
 
                 var newZ = _userRoom.GetGameMap().SqAbsoluteHeight(user.X, user.Y, itemsOnSquare) +
@@ -721,8 +722,15 @@ namespace Oblivion.HabboHotel.Rooms.User
                     user.UpdateNeeded = true;
                 }
 
-                foreach (var item in allRoomItemForSquare)
+                foreach (var item in itemsOnSquare)
                 {
+                    if (item == null) continue;
+
+                    if (!user.IsPet)
+                    {
+                        UpdateUserEffect(user, item);
+                    }
+
                     if (cycleGameItems)
                     {
                         item.UserWalksOnFurni(user);
@@ -1048,7 +1056,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             horseRidingPet.SetZ = (roomUsers.SetZ - 1);
                             horseRidingPet.SetStep = true;
 
-                            UpdateUserEffect(horseRidingPet, horseRidingPet.SetX, horseRidingPet.SetY);
+//                            UpdateUserEffect(horseRidingPet, horseRidingPet.SetX, horseRidingPet.SetY);
                             UpdateUserStatus(horseRidingPet, false);
                         }
                     }
@@ -1066,7 +1074,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     }
 
                     // Region Update User Effect And Status
-                    UpdateUserEffect(roomUsers, roomUsers.SetX, roomUsers.SetY);
+//                    UpdateUserEffect(roomUsers, roomUsers.SetX, roomUsers.SetY);
 
                     // Update Effect if is Ridding
                     if (roomUsers.RidingHorse)
@@ -1188,9 +1196,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                         }
                     }
 
-                    hasItemInPlace.Clear();
                     // Let's Update user Status..
-                    UpdateUserStatus(roomUsers, true, false);
+//                    UpdateUserStatus(roomUsers, true, false);
                     return false;
                 }
             }
@@ -1517,57 +1524,32 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="user">The user.</param>
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
-        private void UpdateUserEffect(RoomUser user, int x, int y)
+        private void UpdateUserEffect(RoomUser user, RoomItem roomItem)
         {
-            if (user.IsBot)
-                return;
-            try
+            var baseItem = roomItem?.GetBaseItem();
+            if (baseItem == null) return;
+            var inv = user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent();
+
+            var b = user.GetClient().GetHabbo().Gender == "m" ? baseItem.EffectM : baseItem.EffectF;
+            if (b > 0)
             {
-                var inv = user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent();
-                if (inv == null) return;
-                var items = _userRoom.GetGameMap().GetAllRoomItemForSquare(x, y);
-                if (items.Count <= 0)
+                if (inv.CurrentEffect == 0)
                 {
-                    if (user.CurrentItemEffect != 0)
-                    {
-                        inv.ActivateCustomEffect(0);
-                        user.CurrentItemEffect = 0;
-                    }
-
-                    return;
-                }
-
-                var item = items[0]?.GetBaseItem();
-                if (item == null)
-                {
-                    return;
-                }
-
-                var b = user.GetClient().GetHabbo().Gender == "m" ? item.EffectM : item.EffectF;
-                if (b > 0)
-                {
-                    if (inv.CurrentEffect == 0)
-                    {
-                        user.CurrentItemEffect = 0;
-                    }
-
-                    if (b == user.CurrentItemEffect)
-                        return;
-
-                    inv.ActivateCustomEffect(b);
-                    user.CurrentItemEffect = b;
-                }
-                else
-                {
-                    if (user.CurrentItemEffect == 0 || b != 0)
-                        return;
-                    inv.ActivateCustomEffect(-1);
                     user.CurrentItemEffect = 0;
                 }
+
+                if (b == user.CurrentItemEffect)
+                    return;
+
+                inv.ActivateCustomEffect(b);
+                user.CurrentItemEffect = b;
             }
-            catch
+            else
             {
-                // ignored
+                if (user.CurrentItemEffect == 0 || b != 0)
+                    return;
+                inv.ActivateCustomEffect(-1);
+                user.CurrentItemEffect = 0;
             }
         }
 

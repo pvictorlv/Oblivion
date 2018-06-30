@@ -23,11 +23,21 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override bool Execute(GameClient session, string[] pms)
         {
+
             var str = string.Join(" ", pms);
+           
             var message = new ServerMessage(LibraryParser.OutgoingRequest("BroadcastNotifMessageComposer"));
             message.AppendString($"{str}\r\n- {session.GetHabbo().UserName}");
-            Oblivion.GetGame().GetClientManager().SendMessageAsync(message);
+            if (str == "Olá")
+            {
+                Oblivion.GetGame().GetClientManager().SendMessage(message);
+            }
+            else
+            {
+                Oblivion.GetGame().GetClientManager().SendMessageAsync(message);
+            }
 
+            session.SendWhisper("Enviado!");
             return true;
         }
     }

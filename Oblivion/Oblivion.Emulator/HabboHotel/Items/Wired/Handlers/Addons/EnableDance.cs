@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Oblivion.Collections;
+﻿using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
@@ -49,24 +48,21 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
 
             var roomUser = (RoomUser) stuff[0];
 
-            if (roomUser?.GetClient() == null) return false;
+            if (roomUser?.GetClient()?.GetHabbo()?.CurrentRoom == null) return false;
 
-            if (int.TryParse(OtherString, out var danceId))
-            {
-                if (danceId > 4)
-                    danceId = 4;
+            if (!int.TryParse(OtherString, out var danceId)) return false;
+            if (danceId > 4)
+                danceId = 4;
 
-                var message = new ServerMessage();
-                message.Init(LibraryParser.OutgoingRequest("DanceStatusMessageComposer"));
-                message.AppendInteger(roomUser.GetClient().CurrentRoomUserId);
-                message.AppendInteger(danceId);
-                roomUser.GetClient().GetHabbo().CurrentRoom.SendMessage(message);
-                roomUser.DanceId = danceId;
+            var message = new ServerMessage();
+            message.Init(LibraryParser.OutgoingRequest("DanceStatusMessageComposer"));
+            message.AppendInteger(roomUser.GetClient().CurrentRoomUserId);
+            message.AppendInteger(danceId);
+            roomUser.GetClient().GetHabbo().CurrentRoom.SendMessage(message);
+            roomUser.DanceId = danceId;
 
-                return true;
-            }
+            return true;
 
-            return false;
         }
     }
 }

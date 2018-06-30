@@ -699,6 +699,8 @@ namespace Oblivion.HabboHotel.Users
         internal void SerializeClub()
         {
             var client = GetClient();
+            if (client?.GetHabbo()?.GetSubscriptionManager() == null) return;
+
             var serverMessage = new ServerMessage();
             serverMessage.Init(LibraryParser.OutgoingRequest("SubscriptionStatusMessageComposer"));
             serverMessage.AppendString("club_habbo");

@@ -226,47 +226,35 @@ namespace Oblivion.HabboHotel.GameClients
         /// <param name="clientId">The client identifier.</param>
         internal void DisposeConnection(uint clientId)
         {
-            var client = GetClient(clientId);
-            if (client == null)
+            if (!Clients.TryRemove(clientId, out var client))
                 return;
             client.Stop();
-            Clients.TryRemove(client.ConnectionId, out client);
+            
         }
 
 
         /// <summary>
         /// Send message for all users
         /// </summary>
-        /// <param name="Packet"></param>
-        /// <param name="fuse"></param>
-        public void SendMessage(ServerMessage Packet, string fuse = "")
+        /// <param name="packet"></param>
+        public void SendMessage(ServerMessage packet)
         {
-            var bytes = Packet.GetReversedBytes();
-            var data = new ArraySegment<byte>(bytes);
+            var bytes = packet.GetReversedBytes();
 
-            foreach (var Client in Clients.Values)
+            foreach (var client in Clients.Values)
             {
-                if (Client?.GetHabbo() == null) continue;
-                if (!string.IsNullOrEmpty(fuse))
-                    if (!Client.GetHabbo().HasFuse(fuse))
-                        continue;
-
-                Client.GetConnection().SendArray(data);
+                client?.GetConnection()?.Send(bytes);
             }
         }
 
-        public void SendMessageAsync(ServerMessage Packet, string fuse = "")
+        public void SendMessageAsync(ServerMessage packet)
         {
-            var bytes = Packet.GetReversedBytes();
+            var bytes = packet.GetReversedBytes();
 
-            foreach (var Client in Clients.Values)
+            foreach (var client in Clients.Values)
             {
-                if (Client?.GetHabbo() == null) continue;
-                if (!string.IsNullOrEmpty(fuse))
-                    if (!Client.GetHabbo().HasFuse(fuse))
-                        continue;
-
-                Client.GetConnection().SendAsync(bytes);
+                
+                client?.GetConnection()?.SendAsync(bytes);
             }
         }
 

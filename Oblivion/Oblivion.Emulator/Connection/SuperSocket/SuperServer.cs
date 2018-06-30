@@ -54,7 +54,7 @@ namespace Oblivion.Connection.SuperSocket
                 MaxConnectionNumber = maxConn,
                 KeepAliveTime = 1200,
                 IdleSessionTimeOut = 900,
-                SendTimeOut = 3000,
+                SendTimeOut = 2500,
                 SendingQueueSize = maxConn/5,
                 MaxRequestLength = 8192
 

@@ -1340,8 +1340,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     var userForSquare = _room.GetRoomUserManager().GetUserForSquare(current.X, current.Y);
                     if ((roomItemForSquare == null || !roomItemForSquare.Any()) && userForSquare == null)
                         continue;
-                    var coordinatedItems = _room.GetGameMap().GetCoordinatedItems(squareInFront)
-                        .Where(current2 => current2.IsRoller).ToList();
+                    var coordinatedItems = new List<RoomItem>();
+//                    var coordinatedItems = _room.GetGameMap().GetCoordinatedItems(squareInFront)
+//                        .Where(current2 => current2.IsRoller).ToList();
                     var flag = false;
                     var num2 = 0.0;
                     var flag2 = true;

@@ -139,6 +139,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                     }
                 }
             }
+
             HeightmapSerialized = false;
         }
 
@@ -170,6 +171,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                     }
                 }
             }
+
             SqState = newSqState;
             SqFloorHeight = newSqFloorHeight;
             SqSeatRot = newSqSeatRot;
@@ -201,10 +203,8 @@ namespace Oblivion.HabboHotel.Rooms.Data
         /// </summary>
         internal void AddX()
         {
-            {
-                MapSizeX++;
-                RefreshArrays();
-            }
+            MapSizeX++;
+            RefreshArrays();
         }
 
         /// <summary>
@@ -217,7 +217,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         {
             if (z > 9.0) z = 9.0;
             if (z < 0.0) z = 0.0;
-            SqFloorHeight[x][y] = ((short)z);
+            SqFloorHeight[x][y] = ((short) z);
 
             SqState[x][y] = SquareState.Open;
         }
@@ -277,7 +277,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 {
                     if (x == DoorX && y == DoorY)
                     {
-                        FloorMap.Append(DoorZ > 9 ? ((char)(87 + DoorZ)).ToString() : DoorZ.ToString());
+                        FloorMap.Append(DoorZ > 9 ? ((char) (87 + DoorZ)).ToString() : DoorZ.ToString());
                         continue;
                     }
 
@@ -288,9 +288,10 @@ namespace Oblivion.HabboHotel.Rooms.Data
                     }
 
                     double Height = SqFloorHeight[x][y];
-                    var Val = Height > 9 ? ((char)(87 + Height)).ToString() : Height.ToString();
+                    var Val = Height > 9 ? ((char) (87 + Height)).ToString() : Height.ToString();
                     FloorMap.Append(Val);
                 }
+
                 FloorMap.Append(Convert.ToChar(13));
             }
 

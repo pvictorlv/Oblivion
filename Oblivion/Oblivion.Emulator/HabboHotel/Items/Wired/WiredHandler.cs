@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -29,9 +30,9 @@ namespace Oblivion.HabboHotel.Items.Wired
         {
             //todo: change _wiredItems to cyclers only
             _wiredItems = new ConcurrentDictionary<long, IWiredItem>();
-            Effects = new ConcurrentDictionary<int, List<IWiredItem>>();
-            Specials = new ConcurrentDictionary<int, List<IWiredItem>>();
-            Conditions = new ConcurrentDictionary<int, List<IWiredItem>>();
+            Effects = new ConcurrentDictionary<int, ConcurrentList<IWiredItem>>();
+            Specials = new ConcurrentDictionary<int, ConcurrentList<IWiredItem>>();
+            Conditions = new ConcurrentDictionary<int, ConcurrentList<IWiredItem>>();
             _room = room;
         }
 
@@ -45,10 +46,10 @@ namespace Oblivion.HabboHotel.Items.Wired
             item.Item.ReqUpdate(1, true);
         }
 
-        public IWiredItem GetRandomEffect(List<IWiredItem> EffectList) =>
+        public IWiredItem GetRandomEffect(IList<IWiredItem> EffectList) =>
             EffectList[Oblivion.GetRandomNumber(0, EffectList.Count - 1)];
 
-        public IWiredItem GetRandomUnseenEffect(List<IWiredItem> EffectList)
+        public IWiredItem GetRandomUnseenEffect(IList<IWiredItem> EffectList)
         {
             if (_executedEffects == null)
             {
@@ -283,7 +284,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 }
                 else
                 {
-                    items = new List<IWiredItem> {item};
+                    items = new ConcurrentList<IWiredItem> {item};
                     Effects.TryAdd(point, items);
                 }
             }
@@ -297,7 +298,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 }
                 else
                 {
-                    items = new List<IWiredItem> {item};
+                    items = new ConcurrentList<IWiredItem> {item};
                     Conditions.TryAdd(point, items);
                 }
             }
@@ -310,7 +311,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 }
                 else
                 {
-                    items = new List<IWiredItem> {item};
+                    items = new ConcurrentList<IWiredItem> {item};
                     Specials.TryAdd(point, items);
                 }
             }
@@ -677,24 +678,24 @@ namespace Oblivion.HabboHotel.Items.Wired
             return null;
         }
 
-        public List<IWiredItem> GetConditions(IWiredItem item)
+        public ConcurrentList<IWiredItem> GetConditions(IWiredItem item)
         {
             var point = new Point(item.Item.X, item.Item.Y);
             var coord = Formatter.PointToInt(point);
             if (!Conditions.TryGetValue(coord, out var items))
             {
-                return new List<IWiredItem>();
+                return new ConcurrentList<IWiredItem>();
             }
 
             return items;
         }
 
-        public ConcurrentDictionary<int, List<IWiredItem>> Effects;
+        public ConcurrentDictionary<int, ConcurrentList<IWiredItem>> Effects;
 
-        public ConcurrentDictionary<int, List<IWiredItem>> Conditions;
+        public ConcurrentDictionary<int, ConcurrentList<IWiredItem>> Conditions;
 
 //        public ConcurrentDictionary<long, IWiredItem> Triggers;
-        public ConcurrentDictionary<int, List<IWiredItem>> Specials;
+        public ConcurrentDictionary<int, ConcurrentList<IWiredItem>> Specials;
 
         public bool OnUserFurniCollision(Room Instance, RoomItem Item)
         {
@@ -715,27 +716,27 @@ namespace Oblivion.HabboHotel.Items.Wired
             return true;
         }
 
-        public List<IWiredItem> GetEffects(IWiredItem item)
+        public ConcurrentList<IWiredItem> GetEffects(IWiredItem item)
         {
             var point = new Point(item.Item.X, item.Item.Y);
             var coord = Formatter.PointToInt(point);
 
             if (!Effects.TryGetValue(coord, out var items))
             {
-                return new List<IWiredItem>();
+                return new ConcurrentList<IWiredItem>();
             }
 
             return items;
         }
 
-        public List<IWiredItem> GetSpecials(IWiredItem item)
+        public ConcurrentList<IWiredItem> GetSpecials(IWiredItem item)
         {
             var point = new Point(item.Item.X, item.Item.Y);
             var coord = Formatter.PointToInt(point);
 
             if (!Specials.TryGetValue(coord, out var items))
             {
-                return new List<IWiredItem>();
+                return new ConcurrentList<IWiredItem>();
             }
 
             return items;

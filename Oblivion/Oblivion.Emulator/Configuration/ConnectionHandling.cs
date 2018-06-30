@@ -36,7 +36,6 @@ namespace Oblivion.Configuration
             {
                 if (session?.Parser == null) return;
 
-                //                session.Parser.HandlePacketData(body, bytes);
                 var clientMessage = new ClientMessage(body);
 //                using (var clientMessage = new ClientMessage(body))
 //                {

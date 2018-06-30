@@ -11,24 +11,27 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
     {
         public override void OnUserWalk(GameClient session, RoomItem item, RoomUser user)
         {
-            if (item.GetBaseItem().StackMultipler && !string.IsNullOrWhiteSpace(item.ExtraData))
-                if (item.ExtraData != "0")
-                {
-                    var num2 = Convert.ToInt32(item.ExtraData);
-                    user.Statusses["sit"] = item.GetBaseItem().ToggleHeight[num2].ToString(CultureInfo.InvariantCulture)
-                        .Replace(',', '.');
-                }
+            if (!user.Statusses.ContainsKey("sit"))
+            {
+                if (item.GetBaseItem().StackMultipler && !string.IsNullOrWhiteSpace(item.ExtraData))
+                    if (item.ExtraData != "0")
+                    {
+                        var num2 = Convert.ToInt32(item.ExtraData);
+                        user.Statusses.TryAdd("sit",
+                            item.GetBaseItem().ToggleHeight[num2].ToString(CultureInfo.InvariantCulture)
+                                .Replace(',', '.'));
+                    }
+                    else
+                    {
+                        user.Statusses.TryAdd("sit",
+                            Convert.ToString(item.GetBaseItem().Height, CultureInfo.InvariantCulture));
+                    }
                 else
                 {
-                    user.Statusses["sit"] =
-                        Convert.ToString(item.GetBaseItem().Height, CultureInfo.InvariantCulture);
+                    user.Statusses.TryAdd("sit",
+                        Convert.ToString(item.GetBaseItem().Height, CultureInfo.InvariantCulture));
                 }
-            else
-            {
-                user.Statusses["sit"] =
-                    Convert.ToString(item.GetBaseItem().Height, CultureInfo.InvariantCulture);
             }
-
 
             if (Math.Abs(user.Z - item.Z) > 0 || user.RotBody != item.Rot)
             {
