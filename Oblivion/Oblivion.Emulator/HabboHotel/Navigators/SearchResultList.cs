@@ -149,7 +149,8 @@ namespace Oblivion.HabboHotel.Navigators
                         foreach (var data in session.GetHabbo().Data.Rooms)
                         {
                             var current = Oblivion.GetGame().GetRoomManager().GenerateRoomData(data);
-
+                            if (current == null) continue;
+                            
                             current.Serialize(message);
                                 message.SaveArray();
                                 if (i++ == (direct ? 100 : 20)) break;

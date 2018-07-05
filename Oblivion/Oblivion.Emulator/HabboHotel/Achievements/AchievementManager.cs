@@ -58,10 +58,12 @@ namespace Oblivion.HabboHotel.Achievements
                 AchievementDataCached.AppendString(ach.GroupName.Replace("ACH_", string.Empty));
                 AchievementDataCached.AppendInteger(ach.Levels.Count);
 
-                for (var i = 1; i < ach.Levels.Count + 1; i++)
+                var i = 1;
+                foreach (var level in ach.Levels.Values)
                 {
                     AchievementDataCached.AppendInteger(i);
-                    AchievementDataCached.AppendInteger(ach.Levels[i].Requirement);
+                    AchievementDataCached.AppendInteger(level.Requirement);
+                    i++;
                 }
             }
 

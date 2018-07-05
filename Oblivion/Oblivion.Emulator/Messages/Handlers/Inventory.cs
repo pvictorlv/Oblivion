@@ -1,5 +1,4 @@
-﻿
-namespace Oblivion.Messages.Handlers
+﻿namespace Oblivion.Messages.Handlers
 {
     /// <summary>
     /// Class GameClientMessageHandler.
@@ -11,17 +10,9 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void GetInventory()
         {
-
-//            StackTrace stackTrace = new StackTrace();
-
-            // Get calling method name
-//            Out.WriteLine(stackTrace.GetFrame(1).GetMethod().Name);
-            var msg = Session.GetHabbo().GetInventoryComponent().SerializeFloorItemInventory();
+            var msg = Session?.GetHabbo()?.GetInventoryComponent()?.SerializeFloorItemInventory();
             if (msg == null) return;
             Session.SendMessage(msg);
-//            var queuedServerMessage = new QueuedServerMessage(Session.GetConnection());
-//            queuedServerMessage.AppendResponse(msg);
-//            queuedServerMessage.SendResponse();
         }
     }
 }

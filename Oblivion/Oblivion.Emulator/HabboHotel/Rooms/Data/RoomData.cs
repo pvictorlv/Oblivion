@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Groups.Interfaces;
@@ -375,8 +376,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 if (row.IsNull("tags") || string.IsNullOrEmpty(row["tags"].ToString()))
                     return;
 
-                /* TODO CHECK */ foreach (var item in row["tags"].ToString().Split(','))
-                    Tags.Add(item);
+                Tags = row["tags"].ToString().Split(',').ToList();
             }
             catch (Exception ex)
             {

@@ -96,7 +96,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
 
         internal void AddPointToTeam(Team team, int points, RoomUser user)
         {
-            var num = (TeamPoints[(int) team] += points);
+//            var num = (TeamPoints[(int) team] += points);
 //            OnScoreChanged?.Invoke(null, new TeamScoreChangedArgs(num, team, user));
             /* TODO CHECK */ foreach (
                 var current in
@@ -279,10 +279,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             GetRoom().GetWiredHandler().ResetExtraString(Interaction.ActionGiveScore);
         }
 
-        internal Room GetRoom()
-        {
-            return _room;
-        }
+        internal Room GetRoom() => _room;
 
         internal void Destroy()
         {
@@ -299,16 +296,10 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             _room = null;
         }
 
-        private static bool IsSoccerGoal(Interaction type)
-        {
-            return type == Interaction.FootballGoalBlue || type == Interaction.FootballGoalGreen ||
-                   type == Interaction.FootballGoalRed || type == Interaction.FootballGoalYellow;
-        }
+        private static bool IsSoccerGoal(Interaction type) => type == Interaction.FootballGoalBlue || type == Interaction.FootballGoalGreen ||
+                                                              type == Interaction.FootballGoalRed || type == Interaction.FootballGoalYellow;
 
-        private int GetScoreForTeam(Team team)
-        {
-            return TeamPoints[(int) team];
-        }
+        private int GetScoreForTeam(Team team) => TeamPoints[(int) team];
 
         private QueuedDictionary<long, RoomItem> GetFurniItems(Team team)
         {

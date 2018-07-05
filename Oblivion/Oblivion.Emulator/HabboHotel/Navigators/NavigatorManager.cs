@@ -190,8 +190,7 @@ namespace Oblivion.HabboHotel.Navigators
                 pair.Key.Serialize(reply);
                 reply.SaveArray();
                 i++;
-                if (i >= (direct ? 40 : 10))
-                    break;
+                if (i >= (direct ? 40 : 10)) break;
             }
 
             reply.EndArray();

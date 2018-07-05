@@ -1197,7 +1197,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     }
 
                     // Let's Update user Status..
-//                    UpdateUserStatus(roomUsers, true, false);
+                    UpdateUserStatus(roomUsers, true, false);
                     return false;
                 }
             }
@@ -1521,14 +1521,13 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <summary>
         ///     Updates the user effect.
         /// </summary>
-        /// <param name="user">The user.</param>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
-        private void UpdateUserEffect(RoomUser user, RoomItem roomItem)
+        private static void UpdateUserEffect(RoomUser user, RoomItem roomItem)
         {
             var baseItem = roomItem?.GetBaseItem();
             if (baseItem == null) return;
-            var inv = user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent();
+            var inv = user?.GetClient()?.GetHabbo()?.GetAvatarEffectsInventoryComponent();
+
+            if (inv == null) return;
 
             var b = user.GetClient().GetHabbo().Gender == "m" ? baseItem.EffectM : baseItem.EffectF;
             if (b > 0)
@@ -1751,25 +1750,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (user?.GetClient() == null) return;
                 var client = user.GetClient();
                 var list = Bots.Values;
-
-                var userOnCurrentItem = _userRoom.GetGameMap().GetCoordinatedItems(new Point(user.X, user.Y));
-                /* TODO CHECK */
-                foreach (var roomItem in userOnCurrentItem.ToList())
-                {
-                    switch (roomItem.GetBaseItem().InteractionType)
-                    {
-                        case Interaction.RunWaySage:
-                        case Interaction.ChairState:
-                        case Interaction.Shower:
-                        case Interaction.PressurePad:
-                        case Interaction.PressurePadBed:
-                        case Interaction.Guillotine:
-                            roomItem.ExtraData = "0";
-                            roomItem.UpdateState();
-                            break;
-                    }
-                }
-
+                
                 foreach (var bot in list)
                 {
                     bot.BotAi.OnUserLeaveRoom(client);

@@ -463,6 +463,8 @@ namespace Oblivion.Messages.Handlers
             var userId = Request.GetUInteger();
             Request.GetBool();
 
+            if (Session?.GetHabbo()?.GetMessenger() == null) return;
+
             var habbo = Oblivion.GetHabboById(userId);
             if (habbo?.GetMessenger() == null)
             {
@@ -470,12 +472,12 @@ namespace Oblivion.Messages.Handlers
                 return;
             }
 
+
             if (Session.GetHabbo().WebSocketConnId != Guid.Empty)
             {
                 Oblivion.GetWebSocket().SendMessage(Session.GetHabbo().WebSocketConnId,
                     $"3|{habbo.UserName}|{habbo.Gender}|{habbo.Look}");
             }
-
 
             var createTime = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(habbo.CreateDate);
 

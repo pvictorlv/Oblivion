@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Fleck;
 using Oblivion.Util;
@@ -18,6 +19,10 @@ namespace Oblivion.Connection.WebSocket
             _connections = new ConcurrentDictionary<Guid, IWebSocketConnection>();
 
             _server = new WebSocketServer(socketUrl);
+            if (socketUrl.StartsWith("wss://"))
+            {
+                _server.Certificate = new X509Certificate2("ca.crt");
+            }
             _server.Start(socket =>
             {
                 socket.OnClose = () => { _connections.TryRemove(socket.ConnectionInfo.Id, out var _); };

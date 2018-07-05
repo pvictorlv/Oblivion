@@ -31,7 +31,7 @@ namespace Oblivion.Configuration
                 if (table == null)
                     return;
 
-                /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
+                foreach (DataRow dataRow in table.Rows)
                 {
                     var name = dataRow["name"].ToString();
                     var text = dataRow["text"].ToString();

@@ -91,7 +91,7 @@ namespace Oblivion.Connection.SuperSocket
 
         protected override void HandleException(Exception e)
         {
-            Logging.HandleException(e, "Connection - Session.cs");
+//            Logging.HandleException(e, "Connection - Session.cs");
             Disconnect();
         }
 

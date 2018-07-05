@@ -325,10 +325,7 @@ namespace Oblivion.HabboHotel.Pets
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns><c>true</c> if the specified command has command; otherwise, <c>false</c>.</returns>
-        internal bool HasCommand(short command)
-        {
-            return PetCommands.ContainsKey(command) && PetCommands[command];
-        }
+        internal bool HasCommand(short command) => PetCommands.TryGetValue(command, out var cmd) && cmd;
 
         /// <summary>
         ///     Called when [respect].
@@ -404,15 +401,17 @@ namespace Oblivion.HabboHotel.Pets
                 var availableCommands = new List<short>();
 
                 tp.AppendInteger(PetCommands.Count);
-                /* TODO CHECK */ foreach (var sh in PetCommands.Keys)
+                
+                foreach (var sh in PetCommands)
                 {
-                    tp.AppendInteger(sh);
-                    if (PetCommands[sh])
-                        availableCommands.Add(sh);
+                    tp.AppendInteger(sh.Key);
+                    if (sh.Value)
+                        availableCommands.Add(sh.Key);
                 }
 
                 tp.AppendInteger(availableCommands.Count);
-                /* TODO CHECK */ foreach (var sh in availableCommands)
+                
+                foreach (var sh in availableCommands)
                     tp.AppendInteger(sh);
                 ownerSession.SendMessage(tp);
             }
@@ -476,7 +475,7 @@ namespace Oblivion.HabboHotel.Pets
             if (Type == 16u && MoplaBreed != null)
             {
                 var array = MoplaBreed.PlantData.Substring(12).Split(' ');
-                /* TODO CHECK */ foreach (var s in array)
+                foreach (var s in array)
                     message.AppendInteger(int.Parse(s));
                 message.AppendInteger(MoplaBreed.GrowingStatus);
                 return;

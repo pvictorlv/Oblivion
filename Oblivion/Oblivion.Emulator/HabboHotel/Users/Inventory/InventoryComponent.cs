@@ -741,11 +741,13 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     {
                         using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                         {
-                            foreach (var room in from item in removed
-                                where item.RoomId > 0
-                                select Oblivion.GetGame().GetRoomManager().GetRoom(item.RoomId))
+                            foreach (var item in removed)
                             {
-                                room?.GetRoomItemHandler().SaveFurniture(queryReactor);
+                                if (item.RoomId > 0)
+                                {
+                                    var room = Oblivion.GetGame().GetRoomManager().GetRoom(item.RoomId);
+                                    room?.GetRoomItemHandler().SaveFurniture(queryReactor);
+                                }
                             }
                         }
                     }

@@ -2669,7 +2669,7 @@ namespace Oblivion.Messages.Handlers
             var bubble = Request.GetInteger();
 
             if (!roomUserByHabbo.IsBot)
-                if (bubble == 2 || bubble == 23 && !Session.GetHabbo().HasFuse("fuse_mod") || bubble < 0 || bubble > 29)
+                if (bubble == 2 || bubble >= 23 && !Session.GetHabbo().HasFuse("fuse_mod") || bubble < 0 || bubble > 29)
                     bubble = roomUserByHabbo.LastBubble;
 
             roomUserByHabbo.Chat(Session, msg, true, -1, bubble);
