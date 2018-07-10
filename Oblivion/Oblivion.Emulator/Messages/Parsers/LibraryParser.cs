@@ -23,7 +23,6 @@ namespace Oblivion.Messages.Parsers
         private static List<uint> _registeredOutoings;
 
         internal static int CountReleases;
-//        internal static string ReleaseName;
 
         public delegate void ParamLess();
 

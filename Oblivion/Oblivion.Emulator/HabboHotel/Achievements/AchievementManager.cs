@@ -77,7 +77,7 @@ namespace Oblivion.HabboHotel.Achievements
         /// <param name="message">The message.</param>
         internal void GetList(GameClient session, ClientMessage message)
         {
-            session.SendMessage(AchievementListComposer.Compose(session, Achievements.Values.ToList()));
+            session.SendMessage(AchievementListComposer.Compose(session, Achievements.Values));
         }
 
         /// <summary>

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Oblivion.HabboHotel.Users
 {
@@ -68,10 +67,16 @@ namespace Oblivion.HabboHotel.Users
         /// <returns></returns>
         public static int GetEmotionsForText(string text)
         {
-            return
-                (from kvp in _mEmotions
-                    where text.ToLower().Contains(kvp.Key.ToLower())
-                    select GetEmoticonPacketNum(kvp.Value)).FirstOrDefault();
+            text = text.ToLower();
+            foreach (var kvp in _mEmotions)
+            {
+                if (text.Contains(kvp.Key))
+                {
+                    return GetEmoticonPacketNum(kvp.Value);
+                }
+            }
+
+            return 0;
         }
 
         /// <summary>

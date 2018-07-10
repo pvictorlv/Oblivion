@@ -768,6 +768,8 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 if (roomUsers == null) return;
 
+                if (!roomUsers.IsPet && !roomUsers.IsPet) return;
+
                 await Task.Yield();
 
                 if (!roomUsers.IsOwner() && roomUsers.LastHostingDate + 60 < Oblivion.GetUnixTimeStamp())
@@ -783,7 +785,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     roomUsers.LastHostingDate = Oblivion.GetUnixTimeStamp();
                 }
 
-                if ((!roomUsers.IsAsleep) && (roomUsers.IdleTime >= 600) && (!roomUsers.IsBot) && (!roomUsers.IsPet))
+                if ((!roomUsers.IsAsleep) && (roomUsers.IdleTime >= 600))
                 {
                     roomUsers.IsAsleep = true;
 
@@ -793,24 +795,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                     sleepEffectMessage.AppendBool(true);
                     _userRoom.SendMessage(sleepEffectMessage);
                     roomUsers.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateEffect(517);
-                }
-
-                if ((!roomUsers.IsOwner()) && (roomUsers.IdleTime >= 300) && (!roomUsers.IsBot) && (!roomUsers.IsPet))
-                {
-                    try
-                    {
-                        var ownerAchievementMessage =
-                            Oblivion.GetGame().GetClientManager().GetClientByUserId((uint) _userRoom.RoomData.OwnerId);
-
-                        if (ownerAchievementMessage != null)
-                            Oblivion.GetGame()
-                                .GetAchievementManager()
-                                .ProgressUserAchievement(ownerAchievementMessage, "ACH_RoomDecoHosting", 1, true);
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
                 }
             }
             catch (Exception e)
@@ -1084,7 +1068,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     // If user is in soccer proccess.
                     if (_userRoom.GotSoccer())
                         _userRoom.GetSoccer().OnUserWalk(roomUsers);
-                    
+
 
                     return true;
                 }
@@ -1121,7 +1105,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                     _userRoom.GetGameMap()
                         .UpdateUserMovement(new Point(roomUsers.Coordinate.X, roomUsers.Coordinate.Y),
                             new Point(roomUsers.SetX, roomUsers.SetY), roomUsers);
-                    var hasItemInPlace = _userRoom.GetGameMap().GetCoordinatedItems(new Point(roomUsers.X, roomUsers.Y));
+                    var hasItemInPlace =
+                        _userRoom.GetGameMap().GetCoordinatedItems(new Point(roomUsers.X, roomUsers.Y));
 
                     // Set His Actual X,Y,Z Position...
                     roomUsers.X = roomUsers.SetX;
@@ -1750,7 +1735,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (user?.GetClient() == null) return;
                 var client = user.GetClient();
                 var list = Bots.Values;
-                
+
                 foreach (var bot in list)
                 {
                     bot.BotAi.OnUserLeaveRoom(client);

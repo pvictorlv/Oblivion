@@ -34,7 +34,7 @@ namespace Oblivion.Messages
         {
             if (offset + count > data.Length || offset < 0)
             {
-                throw new ArgumentOutOfRangeException("offset", "Index was"
+                throw new ArgumentOutOfRangeException(nameof(offset), "Index was"
                                                                 +
                                                                 " out of range. Must be non-negative and less than the"
                                                                 + " size of the collection.");

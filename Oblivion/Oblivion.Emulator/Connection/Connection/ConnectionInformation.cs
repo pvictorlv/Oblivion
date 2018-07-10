@@ -295,7 +295,9 @@ namespace Oblivion.Connection.Connection
             if (IsAir)
             {
                 newHeader = AirPacketTranslator.ReplaceOutgoingHeader(packet, out var oldHeader);
-                string packetName = LibraryParser.TryGetOutgoingName(oldHeader);
+                string packetName = "";
+                if (Oblivion.DebugMode)
+                     packetName = LibraryParser.TryGetOutgoingName(oldHeader);
                 if (newHeader == null)
                 {
                     if (Oblivion.DebugMode)

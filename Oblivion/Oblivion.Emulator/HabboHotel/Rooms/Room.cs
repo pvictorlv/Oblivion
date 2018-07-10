@@ -376,7 +376,7 @@ namespace Oblivion.HabboHotel.Rooms
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery($"SELECT * FROM bots WHERE room_id = {RoomId}");
+                queryReactor.SetQuery($"SELECT * FROM bots WHERE room_id = {RoomId} LIMIT 20");
                 var table = queryReactor.GetTable();
                 if (table == null)
                     return;
@@ -1224,32 +1224,7 @@ namespace Oblivion.HabboHotel.Rooms
             InitializeFromRoomData(data, false);
         }
 
-        /// <summary>
-        ///     Updates the furniture.
-        /// </summary>
-        internal void UpdateFurniture()
-        {
-            var list = new List<ServerMessage>();
-
-            /* TODO CHECK */
-            foreach (var roomItem in GetRoomItemHandler().FloorItems.Values.ToList())
-            {
-                var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer"));
-                roomItem.Serialize(serverMessage);
-                list.Add(serverMessage);
-            }
-
-            /* TODO CHECK */
-            foreach (var roomItem2 in GetRoomItemHandler().WallItems.Values.ToList())
-            {
-                var serverMessage2 =
-                    new ServerMessage(LibraryParser.OutgoingRequest("UpdateRoomWallItemMessageComposer"));
-                roomItem2.Serialize(serverMessage2);
-                list.Add(serverMessage2);
-            }
-
-            SendMessage(list);
-        }
+     
 
         /// <summary>
         ///     Checks the mute.
@@ -1280,7 +1255,7 @@ namespace Oblivion.HabboHotel.Rooms
 
             if (RoomData.RoomChat.Count >= 200)
             {
-                var toRemove = RoomData.RoomChat.FirstOrDefault();
+                var toRemove = RoomData.RoomChat[0];
                 if (toRemove == null) return;
                 RoomData.RoomChat.Remove(toRemove);
             }

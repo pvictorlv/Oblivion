@@ -1919,7 +1919,11 @@ namespace Oblivion.Messages.Handlers
             if (room == null || !room.RoomData.AllowPets && !room.CheckRights(Session, true) ||
                 !room.CheckRights(Session, true))
                 return;
-
+            if (room.GetRoomUserManager().GetPets().Count >= 10)
+            {
+                Session.SendWhisper("Apenas 10 pets por sala!");
+                return;
+            }
             var petId = Request.GetUInteger();
             var pet = Session.GetHabbo().GetInventoryComponent().GetPet(petId);
 

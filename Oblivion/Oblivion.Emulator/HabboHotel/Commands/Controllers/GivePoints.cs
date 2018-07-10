@@ -31,10 +31,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
 
             client.GetHabbo().Emeralds++;
-            client.GetHabbo().Diamonds += 3;
-            client.GetHabbo().Credits += 500;
-            client.GetHabbo().ActivityPoints += 500;
-            client.SendWhisper("Você recebeu 3 diamantes, 500 moedas e 500 duckets!");
+            client.GetHabbo().Diamonds += 100;
+            client.SendWhisper("Você recebeu 100 diamantes!");
             client.GetHabbo().UpdateCreditsBalance();
             client.GetHabbo().UpdateSeasonalCurrencyBalance(true);
 

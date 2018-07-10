@@ -18,10 +18,7 @@ namespace Oblivion.HabboHotel.Polls
         /// <summary>
         ///     Initializes a new instance of the <see cref="PollManager" /> class.
         /// </summary>
-        internal PollManager()
-        {
-            Polls = new Dictionary<uint, Poll>();
-        }
+        internal PollManager() => Polls = new Dictionary<uint, Poll>();
 
         /// <summary>
         ///     Initializes the specified database client.
@@ -73,15 +70,10 @@ namespace Oblivion.HabboHotel.Polls
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool TryGetPoll(uint roomId, out Poll poll)
         {
-            /* TODO CHECK */ foreach (var current in Polls.Values.Where(current => current.RoomId == roomId))
-            {
-                poll = current;
-                return true;
-            }
-
-            poll = null;
-
-            return false;
+            poll = Polls.Values.FirstOrDefault(x => x.RoomId == roomId);
+            if (poll == null) return false;
+            
+            return true;
         }
 
         /// <summary>

@@ -17,12 +17,13 @@ namespace Oblivion.HabboHotel.Achievements.Composers
         /// <param name="session">The session.</param>
         /// <param name="achievements">The achievements.</param>
         /// <returns>ServerMessage.</returns>
-        internal static ServerMessage Compose(GameClient session, List<Achievement> achievements)
+        internal static ServerMessage Compose(GameClient session, ICollection<Achievement> achievements)
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("AchievementListMessageComposer"));
             serverMessage.AppendInteger(achievements.Count);
 
-            /* TODO CHECK */ foreach (var achievement in achievements)
+            /* TODO CHECK */
+            foreach (var achievement in achievements)
             {
                 var achievementData = session.GetHabbo().GetAchievementData(achievement.GroupName);
 

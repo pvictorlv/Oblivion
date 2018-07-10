@@ -2084,6 +2084,13 @@ namespace Oblivion.Messages.Handlers
             var room = Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CheckRights(Session, true))
                 return;
+
+            if (room.GetRoomUserManager().Bots.Count >= 10)
+            {
+                Session.SendWhisper("Apenas 10 bots por sala!");
+                return;
+            }
+
             var num = Request.GetUInteger();
             var bot = Session.GetHabbo().GetInventoryComponent().GetBot(num);
             if (bot == null)

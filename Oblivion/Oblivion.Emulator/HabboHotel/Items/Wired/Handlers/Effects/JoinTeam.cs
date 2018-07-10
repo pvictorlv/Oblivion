@@ -27,7 +27,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public ConcurrentList<RoomItem> Items
         {
-            get { return new ConcurrentList<RoomItem>(); }
+            get { return null; }
             set { }
         }
 
@@ -49,11 +49,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool Execute(params object[] stuff)
         {
-            
-
-            if (stuff[0] == null)
-                return false;
-
             var roomUser = (RoomUser) stuff[0];
             if (roomUser?.GetClient()?.GetHabbo()?.CurrentRoom == null) return false;
             var furni = (Interaction) stuff[1];

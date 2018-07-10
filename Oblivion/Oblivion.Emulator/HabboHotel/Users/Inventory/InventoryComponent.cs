@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -34,12 +33,12 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <summary>
         ///     The _inventory bots
         /// </summary>
-        private HybridDictionary _inventoryBots;
+        private ConcurrentDictionary<uint, RoomBot> _inventoryBots;
 
         /// <summary>
         ///     The _inventory pets
         /// </summary>
-        private HybridDictionary _inventoryPets;
+        private ConcurrentDictionary<uint, Pet> _inventoryPets;
 
         /// <summary>
         ///     The _m added items
@@ -75,8 +74,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
             _items = new ConcurrentDictionary<long, UserItem>();
 
 
-            _inventoryPets = new HybridDictionary();
-            _inventoryBots = new HybridDictionary();
+            _inventoryPets = new ConcurrentDictionary<uint, Pet>();
+            _inventoryBots = new ConcurrentDictionary<uint, RoomBot>();
             _mAddedItems = new HashSet<long>();
             _mRemovedItems = new HashSet<UserItem>();
 
@@ -186,7 +185,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns>Pet.</returns>
-        internal Pet GetPet(uint id) => _inventoryPets.Contains(id) ? _inventoryPets[id] as Pet : null;
+        internal Pet GetPet(uint id) => _inventoryPets.TryGetValue(id, out var pet) ? pet : null;
 
         /// <summary>
         ///     Removes the pet.
@@ -198,7 +197,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("RemovePetFromInventoryComposer"));
             serverMessage.AppendInteger(petId);
             GetClient().SendMessage(serverMessage);
-            _inventoryPets.Remove(petId);
+            _inventoryPets.TryRemove(petId, out _);
             return true;
         }
 
@@ -217,13 +216,11 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <param name="pet">The pet.</param>
         internal void AddPet(Pet pet)
         {
-            if (pet == null || _inventoryPets.Contains(pet.PetId))
+            if (pet == null || !_inventoryPets.TryAdd(pet.PetId, pet))
                 return;
 
             pet.PlacedInRoom = false;
             pet.RoomId = 0u;
-
-            _inventoryPets.Add(pet.PetId, pet);
 
             SerializePetInventory();
         }
@@ -304,11 +301,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
                             continue;
 
                         var pet = CatalogManager.GeneratePetFromRow(botRow, row);
-
-                        if (_inventoryPets.Contains(pet.PetId))
-                            _inventoryPets.Remove(pet.PetId);
-
-                        _inventoryPets.Add(pet.PetId, pet);
+                        
+                        _inventoryPets[pet.PetId]= pet;
                     }
                     else if ((string) botRow["ai_type"] == "generic")
                         AddBot(BotManager.GenerateBotFromRow(botRow));
@@ -354,43 +348,25 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <param name="bot">The bot.</param>
         internal void AddBot(RoomBot bot)
         {
-            if (bot == null || _inventoryBots.Contains(bot.BotId))
+            if (bot == null || !_inventoryBots.TryAdd(bot.BotId, bot))
                 return;
 
             bot.RoomId = 0u;
-
-            _inventoryBots.Add(bot.BotId, bot);
         }
-
-        internal void AddPets(Pet bot)
-        {
-            if (bot == null || _inventoryPets.Contains(bot.PetId))
-                return;
-
-            bot.RoomId = 0u;
-
-            _inventoryPets.Add(bot.PetId, bot);
-        }
-
+        
         /// <summary>
         ///     Gets the bot.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns>RoomBot.</returns>
-        internal RoomBot GetBot(uint id) => _inventoryBots.Contains(id) ? _inventoryBots[id] as RoomBot : null;
+        internal RoomBot GetBot(uint id) => _inventoryBots.TryGetValue(id, out var bot) ? bot : null;
 
         /// <summary>
         ///     Removes the bot.
         /// </summary>
         /// <param name="petId">The pet identifier.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool RemoveBot(uint petId)
-        {
-            if (_inventoryBots.Contains(petId))
-                _inventoryBots.Remove(petId);
-
-            return true;
-        }
+        internal bool RemoveBot(uint petId) => _inventoryBots.TryRemove(petId, out _);
 
         /// <summary>
         ///     Moves the bot to room.
@@ -464,6 +440,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="placedInroom">if set to <c>true</c> [placed inroom].</param>
+        /// <param name="roomId">the room who is placed the item</param>
         internal void RemoveItem(long id, bool placedInroom, uint roomId)
         {
             GetClient()
@@ -652,9 +629,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("PetInventoryMessageComposer"));
             serverMessage.AppendInteger(1);
             serverMessage.AppendInteger(1);
-            var list = _inventoryPets.Values.Cast<Pet>().ToList();
+            var list = _inventoryPets.Values;
             serverMessage.AppendInteger(list.Count);
-            /* TODO CHECK */
             foreach (var current in list)
                 current.SerializeInventory(serverMessage);
             return serverMessage;
@@ -669,9 +645,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
             var serverMessage = new ServerMessage();
             serverMessage.Init(LibraryParser.OutgoingRequest("BotInventoryMessageComposer"));
 
-            var list = _inventoryBots.Values.OfType<RoomBot>().ToList();
+            var list = _inventoryBots.Values;
             serverMessage.AppendInteger(list.Count);
-            /* TODO CHECK */
             foreach (var current in list)
             {
                 serverMessage.AppendInteger(current.BotId);
@@ -684,15 +659,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             return serverMessage;
         }
 
-        /// <summary>
-        ///     Adds the item array.
-        /// </summary>
-        /// <param name="roomItemList">The room item list.</param>
-        internal void AddItemArray(List<RoomItem> roomItemList)
-        {
-            foreach (var current in roomItemList)
-                AddItem(current);
-        }
+       
 
         /// <summary>
         ///     Adds the item.
