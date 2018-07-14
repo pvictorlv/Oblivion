@@ -751,6 +751,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (!IsAsleep)
                 return;
             IsAsleep = false;
+            ApplyEffect(0);
             var sleep = new ServerMessage(LibraryParser.OutgoingRequest("RoomUserIdleMessageComposer"));
             sleep.AppendInteger(VirtualId);
             sleep.AppendBool(false);
@@ -911,12 +912,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     habbo.SpamFloodTime = DateTime.Now;
                     _floodCount++;
                 }
-
-                if (habbo.Preferences.ChatColor != textColor)
-                {
-                    habbo.Preferences.ChatColor = textColor;
-                    habbo.Preferences.Save();
-                }
+                habbo.Preferences.ChatColor = textColor;
             }
             else if (!IsPet)
                 textColor = 2;

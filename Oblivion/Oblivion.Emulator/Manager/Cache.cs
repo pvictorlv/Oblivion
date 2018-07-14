@@ -73,8 +73,10 @@ namespace Oblivion.Manager
 
         private static void RemoveUser(uint user)
         {
-            Oblivion.UsersCached.TryRemove(user, out var removedUser);
-//                removedUser.RemoveCached();
+            if (Oblivion.UsersCached.TryRemove(user, out var removedUser))
+            {
+                removedUser?.Dispose();
+            }
         }
 
         private static void ClearRoomsCache()
@@ -89,8 +91,9 @@ namespace Oblivion.Manager
                 {
                     if (((DateTime.Now - roomData.LastUsed).TotalMilliseconds >= 1800000))
                     {
-                        Oblivion.GetGame().GetRoomManager().LoadedRoomData.TryRemove(roomData.Id, out var unloadedRoom);
-                        unloadedRoom.Dispose();
+                        if (Oblivion.GetGame().GetRoomManager().LoadedRoomData
+                            .TryRemove(roomData.Id, out var unloadedRoom))
+                            unloadedRoom.Dispose();
                     }
                 }
             }

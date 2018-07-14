@@ -342,7 +342,6 @@ namespace Oblivion.Messages.Handlers
             var num2 = Request.GetInteger();
             var num3 = Request.GetInteger();
             Session.GetHabbo().Preferences.Volume = num + "," + num2 + "," + num3;
-            Session.GetHabbo().Preferences.Save();
         }
 
         /// <summary>
@@ -352,21 +351,18 @@ namespace Oblivion.Messages.Handlers
         {
             bool enable = Request.GetBool();
             Session.GetHabbo().Preferences.PreferOldChat = enable;
-            Session.GetHabbo().Preferences.Save();
         }
 
         internal void SetInvitationsPreference()
         {
             bool enable = Request.GetBool();
             Session.GetHabbo().Preferences.IgnoreRoomInvite = enable;
-            Session.GetHabbo().Preferences.Save();
         }
 
         internal void SetRoomCameraPreferences()
         {
             bool enable = Request.GetBool();
             Session.GetHabbo().Preferences.DisableCameraFollow = enable;
-            Session.GetHabbo().Preferences.Save();
         }
 
         /// <summary>

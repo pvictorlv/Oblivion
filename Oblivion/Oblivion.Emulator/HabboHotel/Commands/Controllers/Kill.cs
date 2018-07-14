@@ -1,5 +1,4 @@
-﻿using System;
-using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.PathFinding;
 
@@ -32,6 +31,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
+
             if (session.GetHabbo().LastCustomCommand + 30 >= Oblivion.GetUnixTimeStamp())
             {
                 session.SendWhisper("Espere um pouco!");
@@ -52,19 +52,20 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("kil_command_error_2"));
                 return true;
             }
-            if (!string.Equals(user2.GetUserName(), session.GetHabbo().UserName,
-                    StringComparison.CurrentCultureIgnoreCase))
+
+            user.ApplyEffect(585);
+
+            if (!user2.Statusses.ContainsKey("lay"))
             {
-                if (!user2.Statusses.ContainsKey("lay"))
-                {
-                    user2.Statusses.TryAdd("lay", "0.55");
-                    user2.IsLyingDown = true;
-                    user2.UpdateNeeded = true;
-                }
-                user.Chat(user.GetClient(), $"Eu te matei {user2.GetUserName()}!", true, 0, 3);
-                user2.Chat(user2.GetClient(), "Estou morto :(", true, 0,
-                    3);
+                user2.Statusses.TryAdd("lay", "0.55");
+                user2.IsLyingDown = true;
+                user2.UpdateNeeded = true;
             }
+
+            user.Chat(user.GetClient(), $"Eu te matei {user2.GetUserName()}!", true, 0, 3);
+            user2.Chat(user2.GetClient(), "Estou morto :(", true, 0,
+                3);
+
 
             session.GetHabbo().LastCustomCommand = Oblivion.GetUnixTimeStamp();
             return true;

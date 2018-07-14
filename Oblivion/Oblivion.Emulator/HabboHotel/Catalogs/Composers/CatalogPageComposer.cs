@@ -129,14 +129,14 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
             message.AppendString(mode);
             message.AppendString(page.Layout);
             message.AppendInteger(page.PageString1.Count);
-            /* TODO CHECK */
+            
             foreach (var str in page.PageString1)
             {
                 message.AppendString(str);
             }
 
             message.AppendInteger(page.PageString2.Count);
-            /* TODO CHECK */
+            
             foreach (var str in page.PageString2)
             {
                 message.AppendString(str);

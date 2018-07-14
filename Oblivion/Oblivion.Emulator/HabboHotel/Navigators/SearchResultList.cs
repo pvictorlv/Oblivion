@@ -342,11 +342,12 @@ namespace Oblivion.HabboHotel.Navigators
             var rooms = new List<RoomData>();
             if (!containsOwner)
             {
+                var activeRooms = Oblivion.GetGame().GetRoomManager().GetActiveRooms();
                 var initforeach = false;
                 try
                 {
-                    if (Oblivion.GetGame().GetRoomManager().GetActiveRooms() != null &&
-                        Oblivion.GetGame().GetRoomManager().GetActiveRooms().Any())
+                    if (activeRooms != null &&
+                        activeRooms.Length > 0)
                         initforeach = true;
                 }
                 catch
@@ -355,11 +356,10 @@ namespace Oblivion.HabboHotel.Navigators
                 }
                 if (initforeach)
                 {
-                    /* TODO CHECK */ foreach (var rms in Oblivion.GetGame().GetRoomManager().GetActiveRooms())
+                    /* TODO CHECK */
+                    foreach (var rms in activeRooms.TakeWhile(rms => rooms.Count < 50).Where(rms => rms.Key.Name.ToLower().Contains(searchQuery.ToLower())))
                     {
-                        if (rms.Key.Name.ToLower().Contains(searchQuery.ToLower()) && rooms.Count <= 50)
-                            rooms.Add(rms.Key);
-                        else break;
+                        rooms.Add(rms.Key);
                     }
                 }
             }
@@ -378,7 +378,7 @@ namespace Oblivion.HabboHotel.Navigators
                     else if (containsGroup)
                     {
                         dbClient.SetQuery(
-                            "SELECT * FROM rooms_data JOIN groups_data ON rooms_data.id = groups_data.room_id WHERE groups_data.name LIKE @query AND roomtype = 'private' LIMIT 50");
+                            $"SELECT * FROM rooms_data JOIN groups_data ON rooms_data.id = groups_data.room_id WHERE groups_data.name LIKE @query AND roomtype = 'private' LIMIT 50");
                         dbClient.AddParameter("query", $"%{searchQuery}%");
                         dTable = dbClient.GetTable();
                     }

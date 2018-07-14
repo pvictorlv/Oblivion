@@ -64,7 +64,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <summary>
         ///     The _room
         /// </summary>
-        private Room _userRoom;
+        private Room _room;
 
         /// <summary>
         ///     The users by user identifier
@@ -89,7 +89,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="room">The room.</param>
         public RoomUserManager(Room room)
         {
-            _userRoom = room;
+            _room = room;
             UserList = new ConcurrentDictionary<int, RoomUser>();
             _pets = new Dictionary<uint, RoomUser>();
             Bots = new Dictionary<uint, RoomUser>();
@@ -145,17 +145,17 @@ namespace Oblivion.HabboHotel.Rooms.User
         internal RoomUser DeployBot(RoomBot bot, Pet petData)
         {
             var virtualId = _primaryPrivateUserId++;
-            var roomUser = new RoomUser(0u, _userRoom.RoomId, virtualId, _userRoom, false);
+            var roomUser = new RoomUser(0u, _room.RoomId, virtualId, _room, false);
             var num = _secondaryPrivateUserId++;
             roomUser.InternalRoomId = num;
             UserList.TryAdd(num, roomUser);
             OnUserAdd(roomUser);
 
-            var model = _userRoom.GetGameMap().Model;
+            var model = _room.GetGameMap().Model;
             var coord = new Point(bot.X, bot.Y);
             if ((bot.X > 0) && (bot.Y >= 0) && (bot.X < model.MapSizeX) && (bot.Y < model.MapSizeY))
             {
-                _userRoom.GetGameMap().AddUserToMap(roomUser, coord);
+                _room.GetGameMap().AddUserToMap(roomUser, coord);
                 roomUser.SetPos(bot.X, bot.Y, bot.Z);
                 roomUser.SetRot(bot.Rot, false);
             }
@@ -173,13 +173,13 @@ namespace Oblivion.HabboHotel.Rooms.User
             roomUser.BotAi = bot.GenerateBotAi(roomUser.VirtualId, (int) bot.BotId);
             if (roomUser.IsPet)
             {
-                roomUser.BotAi.Init(bot.BotId, roomUser.VirtualId, _userRoom.RoomId, roomUser, _userRoom);
+                roomUser.BotAi.Init(bot.BotId, roomUser.VirtualId, _room.RoomId, roomUser, _room);
                 roomUser.PetData = petData;
                 roomUser.PetData.VirtualId = roomUser.VirtualId;
             }
             else
             {
-                roomUser.BotAi.Init(bot.BotId, roomUser.VirtualId, _userRoom.RoomId, roomUser, _userRoom);
+                roomUser.BotAi.Init(bot.BotId, roomUser.VirtualId, _room.RoomId, roomUser, _room);
             }
 
             UpdateUserStatus(roomUser, false);
@@ -188,7 +188,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer"));
             serverMessage.AppendInteger(1);
             roomUser.Serialize(serverMessage);
-            _userRoom.SendMessage(serverMessage);
+            _room.SendMessage(serverMessage);
             roomUser.BotAi.OnSelfEnterRoom();
             if (roomUser.IsPet)
             {
@@ -207,7 +207,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             serverMessage.Init(LibraryParser.OutgoingRequest("DanceStatusMessageComposer"));
             serverMessage.AppendInteger(roomUser.VirtualId);
             serverMessage.AppendInteger(roomUser.BotData.DanceId);
-            _userRoom.SendMessage(serverMessage);
+            _room.SendMessage(serverMessage);
             PetCount++;
 
             return roomUser;
@@ -273,7 +273,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             roomUserByVirtualId.BotAi.OnSelfLeaveRoom(kicked);
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UserLeftRoomMessageComposer"));
             serverMessage.AppendString(roomUserByVirtualId.VirtualId.ToString());
-            _userRoom.SendMessage(serverMessage);
+            _room.SendMessage(serverMessage);
 
             UserList.TryRemove(roomUserByVirtualId.InternalRoomId, out _);
         }
@@ -286,7 +286,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <returns>RoomUser.</returns>
         internal RoomUser GetUserForSquare(int x, int y)
         {
-            var users = _userRoom.GetGameMap().GetRoomUsers(new Point(x, y));
+            var users = _room.GetGameMap().GetRoomUsers(new Point(x, y));
             if (users.Count > 0)
             {
                 return users[0];
@@ -307,9 +307,9 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (Disposed) return;
             var habbo = session?.GetHabbo();
 
-            if (habbo == null || _userRoom == null)
+            if (habbo == null || _room == null)
                 return;
-            var roomUser = new RoomUser(habbo.Id, _userRoom.RoomId, _primaryPrivateUserId++, _userRoom,
+            var roomUser = new RoomUser(habbo.Id, _room.RoomId, _primaryPrivateUserId++, _room,
                     spectator)
                 {UserId = habbo.Id};
 
@@ -322,15 +322,15 @@ namespace Oblivion.HabboHotel.Rooms.User
             var num = _secondaryPrivateUserId++;
             roomUser.InternalRoomId = num;
             session.CurrentRoomUserId = num;
-            habbo.CurrentRoomId = _userRoom.RoomId;
-            habbo.CurrentRoom = _userRoom;
+            habbo.CurrentRoomId = _room.RoomId;
+            habbo.CurrentRoom = _room;
             UserList[num] = roomUser;
             OnUserAdd(roomUser);
 
             habbo.LoadingRoom = 0;
 
-            if (Oblivion.GetGame().GetNavigator().PrivateCategories.Contains(_userRoom.RoomData.Category))
-                ((FlatCat) Oblivion.GetGame().GetNavigator().PrivateCategories[_userRoom.RoomData.Category]).UsersNow++;
+            if (Oblivion.GetGame().GetNavigator().PrivateCategories.Contains(_room.RoomData.Category))
+                ((FlatCat) Oblivion.GetGame().GetNavigator().PrivateCategories[_room.RoomData.Category]).UsersNow++;
         }
 
         /// <summary>
@@ -383,7 +383,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 var userId = habbo.Id;
                 habbo.CurrentRoom = null;
                 habbo.GetAvatarEffectsInventoryComponent()?.OnRoomExit();
-                var room = _userRoom;
+                var room = _room;
 
                 if (notifyKick)
                 {
@@ -483,12 +483,12 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (!UserList.TryRemove(user.InternalRoomId, out _)) return;
 
             user.InternalRoomId = -1;
-            _userRoom.GetGameMap().GameMap[user.X, user.Y] = user.SqState;
-            _userRoom.GetGameMap().RemoveUserFromMap(user, new Point(user.X, user.Y));
+            _room.GetGameMap().GameMap[user.X, user.Y] = user.SqState;
+            _room.GetGameMap().RemoveUserFromMap(user, new Point(user.X, user.Y));
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UserLeftRoomMessageComposer"));
             serverMessage.AppendString(user.VirtualId.ToString());
-            _userRoom.SendMessage(serverMessage);
+            _room.SendMessage(serverMessage);
 
             OnRemove(user);
         }
@@ -520,12 +520,12 @@ namespace Oblivion.HabboHotel.Rooms.User
         internal void UpdateUserCount(uint count)
         {
             _roomUserCount = count;
-            if (_userRoom?.RoomData == null)
+            if (_room?.RoomData == null)
                 return;
 
-            _userRoom.RoomData.UsersNow = count;
+            _room.RoomData.UsersNow = count;
 
-            Oblivion.GetGame().GetRoomManager().QueueActiveRoomUpdate(_userRoom.RoomData);
+            Oblivion.GetGame().GetRoomManager().QueueActiveRoomUpdate(_room.RoomData);
         }
 
         /// <summary>
@@ -578,7 +578,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
             catch (Exception ex)
             {
-                Logging.LogCriticalException(string.Concat("Error during saving furniture for room ", _userRoom.RoomId,
+                Logging.LogCriticalException(string.Concat("Error during saving furniture for room ", _room.RoomId,
                     ". Stack: ", ex.ToString()));
             }
         }
@@ -709,11 +709,11 @@ namespace Oblivion.HabboHotel.Rooms.User
 
             try
             {
-                var roomMap = _userRoom.GetGameMap();
+                var roomMap = _room.GetGameMap();
                 var userPoint = new Point(user.X, user.Y);
                 var itemsOnSquare = roomMap.GetCoordinatedItems(userPoint);
 
-                var newZ = _userRoom.GetGameMap().SqAbsoluteHeight(user.X, user.Y, itemsOnSquare) +
+                var newZ = _room.GetGameMap().SqAbsoluteHeight(user.X, user.Y, itemsOnSquare) +
                            ((user.RidingHorse && user.IsPet == false) ? 1 : 0);
 
                 if (Math.Abs(newZ - user.Z) > 0)
@@ -748,12 +748,12 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                 if (cycleGameItems)
                 {
-                    if (_userRoom.GotSoccer())
-                        _userRoom.GetSoccer().OnUserWalk(user);
-                    if (_userRoom.GotBanzai())
-                        _userRoom.GetBanzai().OnUserWalk(user);
-                    if (_userRoom.GotFreeze())
-                        _userRoom.GetFreeze().OnUserWalk(user);
+                    if (_room.GotSoccer())
+                        _room.GetSoccer().OnUserWalk(user);
+                    if (_room.GotBanzai())
+                        _room.GetBanzai().OnUserWalk(user);
+                    if (_room.GotFreeze())
+                        _room.GetFreeze().OnUserWalk(user);
                 }
             }
             catch (Exception e)
@@ -785,6 +785,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                     roomUsers.LastHostingDate = Oblivion.GetUnixTimeStamp();
                 }
 
+                if (_room == null) return;
+
                 if ((!roomUsers.IsAsleep) && (roomUsers.IdleTime >= 600))
                 {
                     roomUsers.IsAsleep = true;
@@ -793,8 +795,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                         new ServerMessage(LibraryParser.OutgoingRequest("RoomUserIdleMessageComposer"));
                     sleepEffectMessage.AppendInteger(roomUsers.VirtualId);
                     sleepEffectMessage.AppendBool(true);
-                    _userRoom.SendMessage(sleepEffectMessage);
-                    roomUsers.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateEffect(517);
+                    _room.SendMessage(sleepEffectMessage);
+                    roomUsers.ApplyEffect(517);
                 }
             }
             catch (Exception e)
@@ -811,22 +813,22 @@ namespace Oblivion.HabboHotel.Rooms.User
                  (roomUsers.PetData.BreadingTile.Y == roomUsers.Y)))
             {
                 roomUsers.Freezed = true;
-                _userRoom.GetGameMap().RemoveUserFromMap(roomUsers, roomUsers.Coordinate);
+                _room.GetGameMap().RemoveUserFromMap(roomUsers, roomUsers.Coordinate);
 
                 switch (roomUsers.PetData.Type)
                 {
                     case 3:
                         if (
-                            _userRoom.GetRoomItemHandler().BreedingTerrier[roomUsers.PetData.WaitingForBreading]
+                            _room.GetRoomItemHandler().BreedingTerrier[roomUsers.PetData.WaitingForBreading]
                                 .PetsList.Count == 2)
                         {
                             var petBreedOwner =
                                 Oblivion.GetGame().GetClientManager().GetClientByUserId(roomUsers.PetData.OwnerId);
 
                             petBreedOwner?.SendMessage(PetBreeding.GetMessage(roomUsers.PetData.WaitingForBreading,
-                                _userRoom.GetRoomItemHandler().BreedingTerrier[roomUsers.PetData.WaitingForBreading]
+                                _room.GetRoomItemHandler().BreedingTerrier[roomUsers.PetData.WaitingForBreading]
                                     .PetsList[0],
-                                _userRoom.GetRoomItemHandler().BreedingTerrier[roomUsers.PetData.WaitingForBreading]
+                                _room.GetRoomItemHandler().BreedingTerrier[roomUsers.PetData.WaitingForBreading]
                                     .PetsList[1]));
                         }
 
@@ -834,16 +836,16 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                     case 4:
                         if (
-                            _userRoom.GetRoomItemHandler().BreedingBear[roomUsers.PetData.WaitingForBreading].PetsList
+                            _room.GetRoomItemHandler().BreedingBear[roomUsers.PetData.WaitingForBreading].PetsList
                                 .Count == 2)
                         {
                             var petBreedOwner =
                                 Oblivion.GetGame().GetClientManager().GetClientByUserId(roomUsers.PetData.OwnerId);
 
                             petBreedOwner?.SendMessage(PetBreeding.GetMessage(roomUsers.PetData.WaitingForBreading,
-                                _userRoom.GetRoomItemHandler().BreedingBear[roomUsers.PetData.WaitingForBreading]
+                                _room.GetRoomItemHandler().BreedingBear[roomUsers.PetData.WaitingForBreading]
                                     .PetsList[0],
-                                _userRoom.GetRoomItemHandler().BreedingBear[roomUsers.PetData.WaitingForBreading]
+                                _room.GetRoomItemHandler().BreedingBear[roomUsers.PetData.WaitingForBreading]
                                     .PetsList[1]));
                         }
 
@@ -880,11 +882,11 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                     roomUsers.SetX = nextStep.X;
                     roomUsers.SetY = nextStep.Y;
-                    roomUsers.SetZ = (_userRoom.GetGameMap().SqAbsoluteHeight(nextStep.X, nextStep.Y) + 1);
+                    roomUsers.SetZ = (_room.GetGameMap().SqAbsoluteHeight(nextStep.X, nextStep.Y) + 1);
 
                     horseRidingPet.SetX = roomUsers.SetX;
                     horseRidingPet.SetY = roomUsers.SetY;
-                    horseRidingPet.SetZ = _userRoom.GetGameMap().SqAbsoluteHeight(roomUsers.SetX, roomUsers.SetY);
+                    horseRidingPet.SetZ = _room.GetGameMap().SqAbsoluteHeight(roomUsers.SetX, roomUsers.SetY);
                 }
             }
             else
@@ -898,7 +900,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                 roomUsers.SetX = nextStep.X;
                 roomUsers.SetY = nextStep.Y;
-                roomUsers.SetZ = _userRoom.GetGameMap().SqAbsoluteHeight(nextStep.X, nextStep.Y);
+                roomUsers.SetZ = _room.GetGameMap().SqAbsoluteHeight(nextStep.X, nextStep.Y);
             }
         }
 
@@ -945,7 +947,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
                         horseStopWalkRidingPetMessage.AppendInteger(1);
                         horseStopWalkRidingPet.SerializeStatus(horseStopWalkRidingPetMessage, "");
-                        _userRoom.SendMessage(horseStopWalkRidingPetMessage);
+                        _room.SendMessage(horseStopWalkRidingPetMessage);
 
                         horseStopWalkRidingPet.IsWalking = false;
                         horseStopWalkRidingPet.ClearMovement();
@@ -982,7 +984,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                 // Check Against if is a Valid Step...
 
-                if (_userRoom.GetGameMap()
+                if (_room.GetGameMap()
                     .IsValidStep(roomUsers, new Vector2D(roomUsers.X, roomUsers.Y),
                         new Vector2D(nextStep.X, nextStep.Y),
                         ((roomUsers.GoalX == nextStep.X) && (roomUsers.GoalY == nextStep.Y)), roomUsers.AllowOverride,
@@ -1031,7 +1033,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             horseRidingPetMessage.AppendInteger(2);
                             roomUsers.SerializeStatus(horseRidingPetMessage, theUser);
                             horseRidingPet.SerializeStatus(horseRidingPetMessage, thePet);
-                            _userRoom.SendMessage(horseRidingPetMessage);
+                            _room.SendMessage(horseRidingPetMessage);
 
                             horseRidingPet.RotBody = roomUsers.RotBody;
                             horseRidingPet.RotHead = roomUsers.RotBody;
@@ -1066,8 +1068,8 @@ namespace Oblivion.HabboHotel.Rooms.User
 
 
                     // If user is in soccer proccess.
-                    if (_userRoom.GotSoccer())
-                        _userRoom.GetSoccer().OnUserWalk(roomUsers);
+                    if (_room.GotSoccer())
+                        _room.GetSoccer().OnUserWalk(roomUsers);
 
 
                     return true;
@@ -1086,7 +1088,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 var hasGroup = false;
                 if (!roomUsers.IsBot && !roomUsers.IsPet)
-                    if (_userRoom.GetGameMap().GuildGates
+                    if (_room.GetGameMap().GuildGates
                         .TryGetValue(new Point(roomUsers.SetX, roomUsers.SetY), out var guild))
                     {
                         var guildId = guild.GroupId;
@@ -1098,15 +1100,15 @@ namespace Oblivion.HabboHotel.Rooms.User
                     }
 
                 // Check if User CanWalk...
-                if ((_userRoom.GetGameMap().SquareIsOpen(roomUsers.SetX, roomUsers.SetY, roomUsers.AllowOverride)) ||
+                if ((_room.GetGameMap().SquareIsOpen(roomUsers.SetX, roomUsers.SetY, roomUsers.AllowOverride)) ||
                     (roomUsers.RidingHorse) || hasGroup)
                 {
                     // Let's Update his Movement...
-                    _userRoom.GetGameMap()
+                    _room.GetGameMap()
                         .UpdateUserMovement(new Point(roomUsers.Coordinate.X, roomUsers.Coordinate.Y),
                             new Point(roomUsers.SetX, roomUsers.SetY), roomUsers);
                     var hasItemInPlace =
-                        _userRoom.GetGameMap().GetCoordinatedItems(new Point(roomUsers.X, roomUsers.Y));
+                        _room.GetGameMap().GetCoordinatedItems(new Point(roomUsers.X, roomUsers.Y));
 
                     // Set His Actual X,Y,Z Position...
                     roomUsers.X = roomUsers.SetX;
@@ -1191,7 +1193,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 Logging.HandleException(e, "UserCanWalkInTile");
             }
 
-            return !_userRoom.RoomData.AllowWalkThrough;
+            return !_room.RoomData.AllowWalkThrough;
         }
 
 
@@ -1251,7 +1253,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
 
                 // Region Check User Got Freezed
-                if (_userRoom.GotFreeze())
+                if (_room.GotFreeze())
                 {
                     Freeze.CycleUser(roomUsers);
                 }
@@ -1263,8 +1265,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                 {
                     // Check if User is Going to the Door.
 
-                    if ((roomUsers.SetX == _userRoom.GetGameMap().Model.DoorX) &&
-                        (roomUsers.SetY == _userRoom.GetGameMap().Model.DoorY) &&
+                    if ((roomUsers.SetX == _room.GetGameMap().Model.DoorX) &&
+                        (roomUsers.SetY == _room.GetGameMap().Model.DoorY) &&
                         (!_removeUsers.Contains(roomUsers)) &&
                         (!roomUsers.IsBot) && (!roomUsers.IsPet))
                     {
@@ -1272,8 +1274,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                         return;
                     }
 
-                    _userRoom.GetGameMap().GameMap[roomUsers.X, roomUsers.Y] = roomUsers.SqState;
-                    roomUsers.SqState = _userRoom.GetGameMap().GameMap[roomUsers.SetX, roomUsers.SetY];
+                    _room.GetGameMap().GameMap[roomUsers.X, roomUsers.Y] = roomUsers.SqState;
+                    roomUsers.SqState = _room.GetGameMap().GameMap[roomUsers.SetX, roomUsers.SetY];
 
 
                     // Check Elegibility of Walk In Tile
@@ -1296,7 +1298,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
                         horseStopWalkRidingPetMessage.AppendInteger(1);
                         horseStopWalkRidingPet.SerializeStatus(horseStopWalkRidingPetMessage, "");
-                        _userRoom.SendMessage(horseStopWalkRidingPetMessage);
+                        _room.SendMessage(horseStopWalkRidingPetMessage);
 
                         horseStopWalkRidingPet.IsWalking = false;
                         horseStopWalkRidingPet.ClearMovement();
@@ -1353,25 +1355,25 @@ namespace Oblivion.HabboHotel.Rooms.User
                 {
                     try
                     {
-                        if (_userRoom.GotWireds())
+                        if (_room.GotWireds())
                         {
                             if (roomUsers.FollowingOwner != null)
                             {
-                                roomUsers.MoveTo(_userRoom.GetGameMap()
+                                roomUsers.MoveTo(_room.GetGameMap()
                                     .SquareIsOpen(roomUsers.FollowingOwner.SquareInFront.X,
                                         roomUsers.FollowingOwner.SquareInFront.Y, false)
                                     ? roomUsers.FollowingOwner.SquareInFront
                                     : roomUsers.FollowingOwner.SquareBehind);
                             }
 
-                            var users = _userRoom.GetGameMap()
+                            var users = _room.GetGameMap()
                                 .GetRoomUsers(roomUsers.SquareInFront);
 
                             if (users != null && users.Count > 0)
                             {
                                 var user = users[0];
 
-                                _userRoom.GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedAvatar, user);
+                                _room.GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedAvatar, user);
                             }
                         }
 
@@ -1397,8 +1399,8 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (User.PathRecalcNeeded || User.IsWalking)
             {
                 User.Path.Clear();
-                User.Path = PathFinder.FindPath(User, _userRoom.GetGameMap().DiagonalEnabled,
-                    _userRoom.GetGameMap(), new Vector2D(User.X, User.Y),
+                User.Path = PathFinder.FindPath(User, _room.GetGameMap().DiagonalEnabled,
+                    _room.GetGameMap(), new Vector2D(User.X, User.Y),
                     new Vector2D(User.GoalX, User.GoalY));
 
                 if (User.Path.Count > 1)
@@ -1431,21 +1433,21 @@ namespace Oblivion.HabboHotel.Rooms.User
             try
             {
                 // Check Disco Procedure...
-                if ((_userRoom != null) && (_userRoom.DiscoMode) && (_userRoom.TonerData != null) &&
-                    (_userRoom.TonerData.Enabled == 1))
+                if ((_room != null) && (_room.DiscoMode) && (_room.TonerData != null) &&
+                    (_room.TonerData.Enabled == 1))
                 {
-                    var tonerItem = _userRoom.GetRoomItemHandler().GetItem(_userRoom.TonerData.ItemId);
+                    var tonerItem = _room.GetRoomItemHandler().GetItem(_room.TonerData.ItemId);
 
                     if (tonerItem != null)
                     {
-                        _userRoom.TonerData.Data1 = Oblivion.GetRandomNumber(0, 255);
-                        _userRoom.TonerData.Data2 = Oblivion.GetRandomNumber(0, 255);
-                        _userRoom.TonerData.Data3 = Oblivion.GetRandomNumber(0, 255);
+                        _room.TonerData.Data1 = Oblivion.GetRandomNumber(0, 255);
+                        _room.TonerData.Data2 = Oblivion.GetRandomNumber(0, 255);
+                        _room.TonerData.Data3 = Oblivion.GetRandomNumber(0, 255);
 
                         var tonerComposingMessage =
                             new ServerMessage(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer"));
                         tonerItem.Serialize(tonerComposingMessage);
-                        _userRoom.SendMessage(tonerComposingMessage);
+                        _room.SendMessage(tonerComposingMessage);
                     }
                 }
             }
@@ -1547,24 +1549,24 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 var client = user?.GetClient();
 
-                if (client?.GetHabbo() == null || _userRoom?.RoomData == null)
+                if (client?.GetHabbo() == null || _room?.RoomData == null)
                     return;
                 if (client.IsAir)
                 {
                     var msg = new ServerMessage();
-                    _userRoom.RoomData.SerializeRoomData(msg, client, true);
+                    _room.RoomData.SerializeRoomData(msg, client, true);
                     client.SendMessage(msg);
                 }
 
                 if (!user.IsSpectator)
                 {
-                    var model = _userRoom.GetGameMap().Model;
+                    var model = _room.GetGameMap().Model;
                     if (model == null) return;
                     user.SetPos(model.DoorX, model.DoorY, model.DoorZ);
                     user.SetRot(model.DoorOrientation, false);
 
                     var session = user.GetClient();
-                    if (_userRoom.CheckRights(session, true))
+                    if (_room.CheckRights(session, true))
                     {
                         var msg = new ServerMessage(
                             LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
@@ -1574,7 +1576,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         session.SendMessage(msg);
                         user.AddStatus("flatctrl 4", string.Empty);
                     }
-                    else if (_userRoom.CheckRights(session, false, true))
+                    else if (_room.CheckRights(session, false, true))
                     {
                         var msg = new ServerMessage(
                             LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
@@ -1600,7 +1602,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         client.GetHabbo().IsTeleporting = false;
                         client.GetHabbo().TeleportingRoomId = 0;
 
-                        var item = _userRoom.GetRoomItemHandler().GetItem(client.GetHabbo().TeleporterId);
+                        var item = _room.GetRoomItemHandler().GetItem(client.GetHabbo().TeleporterId);
 
                         if (item != null)
                         {
@@ -1619,7 +1621,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         client.GetHabbo().IsHopping = false;
                         client.GetHabbo().HopperId = 0;
 
-                        var item2 = _userRoom.GetRoomItemHandler().GetItem(client.GetHabbo().HopperId);
+                        var item2 = _room.GetRoomItemHandler().GetItem(client.GetHabbo().HopperId);
 
                         if (item2 != null)
                         {
@@ -1640,7 +1642,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer"));
                         serverMessage.AppendInteger(1);
                         if (!user.Serialize(serverMessage)) return;
-                        _userRoom.SendMessage(serverMessage);
+                        _room.SendMessage(serverMessage);
                     }
 
                     if (!user.IsBot)
@@ -1652,10 +1654,10 @@ namespace Oblivion.HabboHotel.Rooms.User
                         serverMessage2.AppendString(client.GetHabbo().Gender.ToLower());
                         serverMessage2.AppendString(client.GetHabbo().Motto);
                         serverMessage2.AppendInteger(client.GetHabbo().AchievementPoints);
-                        _userRoom.SendMessage(serverMessage2);
+                        _room.SendMessage(serverMessage2);
                     }
 
-                    if (_userRoom.RoomData.Owner != client.GetHabbo().UserName)
+                    if (_room.RoomData.Owner != client.GetHabbo().UserName)
                     {
                         Oblivion.GetGame()
                             .GetQuestManager()
@@ -1675,9 +1677,9 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (client.GetHabbo().Rank == Convert.ToUInt32(Oblivion.GetDbConfig().DbData["ambassador.minrank"]))
                     client.GetHabbo().GetAvatarEffectsInventoryComponent()?.ActivateCustomEffect(178);
 
-                if (_userRoom.GotMusicController())
-                    _userRoom.GetRoomMusicController().OnNewUserEnter(user);
-                _userRoom.OnUserEnter(user);
+                if (_room.GotMusicController())
+                    _room.GetRoomMusicController().OnNewUserEnter(user);
+                _room.OnUserEnter(user);
             }
             catch (Exception ex)
             {
@@ -1696,11 +1698,11 @@ namespace Oblivion.HabboHotel.Rooms.User
                 {
                     if (user == null) continue;
                     var userClient = user.GetClient()?.GetHabbo();
-                    if (userClient != null && userClient.CurrentRoomId == _userRoom.RoomId)
+                    if (userClient != null && userClient.CurrentRoomId == _room.RoomId)
                     {
                         userClient.CurrentRoomId = 0u;
                         userClient.CurrentRoom = null;
-                        userClient.GetMessenger().DisposeRoom(_userRoom.RoomId);
+                        userClient.GetMessenger().DisposeRoom(_room.RoomId);
                     }
 
                     user.Dispose();
@@ -1711,7 +1713,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 Logging.HandleException(e, "dipose roomusermanager");
             }
 
-            _userRoom = null;
+            _room = null;
             UsersByUserName.Clear();
             UsersByUserName = null;
             UsersByUserId.Clear();
@@ -1740,7 +1742,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 {
                     bot.BotAi.OnUserLeaveRoom(client);
                     if (bot.IsPet && bot.PetData.OwnerId == user.UserId &&
-                        !_userRoom.CheckRights(client, true))
+                        !_room.CheckRights(client, true))
                     {
                         if (user.GetClient()?.GetHabbo()?.GetInventoryComponent() != null)
                         {
@@ -1750,7 +1752,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     }
                 }
 
-                _userRoom.GetGameMap().RemoveUserFromMap(user, new Point(user.X, user.Y));
+                _room.GetGameMap().RemoveUserFromMap(user, new Point(user.X, user.Y));
             }
             catch (Exception ex)
             {
@@ -1774,7 +1776,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         public void OnUserUpdateStatus(int x, int y)
         {
-            foreach (var current in _userRoom.GetGameMap().GetRoomUsers(new Point(x, y)))
+            foreach (var current in _room.GetGameMap().GetRoomUsers(new Point(x, y)))
                 UpdateUserStatus(current, false);
         }
 
@@ -1787,6 +1789,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                                                                 (user.GetClient() != null &&
                                                                  user.GetClient().GetHabbo() != null &&
                                                                  user.GetClient().GetHabbo().CurrentRoomId ==
-                                                                 _userRoom.RoomId));
+                                                                 _room.RoomId));
     }
 }

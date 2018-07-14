@@ -290,7 +290,7 @@ namespace Oblivion.HabboHotel
         ///     Gets the game loop sleep time ext.
         /// </summary>
         /// <value>The game loop sleep time ext.</value>
-        internal int GameLoopSleepTimeExt => 25;
+        internal int GameLoopSleepTimeExt => 100;
 
         /// <summary>
         ///     Progresses the specified bar.
@@ -385,12 +385,6 @@ namespace Oblivion.HabboHotel
         internal RoomManager GetRoomManager() => _roomManager;
 
         /// <summary>
-        ///     Gets the pixel manager.
-        /// </summary>
-        /// <returns>CoinsManager.</returns>
-        internal CoinsManager GetPixelManager() => _pixelManager;
-
-        /// <summary>
         ///     Gets the hotel view.
         /// </summary>
         /// <returns>HotelView.</returns>
@@ -474,7 +468,7 @@ namespace Oblivion.HabboHotel
         internal void StartGameLoop()
         {
             GameLoopActiveExt = true;
-            _gameLoop = new Thread(MainGameLoop, 15000000);
+            _gameLoop = new Thread(MainGameLoop);
             _gameLoop.Start();
         }
 

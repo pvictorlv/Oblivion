@@ -591,7 +591,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 if (_disconnected)
                     return;
 
-//                _connection?.Dispose();
+                _connection?.Dispose();
                 _connection = null;
                 _disconnected = true;
             }

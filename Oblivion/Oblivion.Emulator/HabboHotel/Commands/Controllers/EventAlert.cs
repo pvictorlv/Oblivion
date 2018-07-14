@@ -59,10 +59,6 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 client.SendWhisper(
                     $"Um novo evento está acontecendo! Procure por {session.GetHabbo().CurrentRoom.RoomData.Owner} e venha ao evento!");
             }
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
-            {
-                dbClient.RunFastQuery("UPDATE `users` SET `mod_points` = mod_points + 1 WHERE `id` = '" + session.GetHabbo().Id + "' LIMIT 1");
-            }
             return true;
         }
     }

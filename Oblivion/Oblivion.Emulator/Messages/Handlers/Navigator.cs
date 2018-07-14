@@ -138,7 +138,6 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().Preferences.NewnaviY = y;
             Session.GetHabbo().Preferences.NewnaviWidth = width;
             Session.GetHabbo().Preferences.NewnaviHeight = height;
-            Session.GetHabbo().Preferences.Save();
         }
 
         /// <summary>

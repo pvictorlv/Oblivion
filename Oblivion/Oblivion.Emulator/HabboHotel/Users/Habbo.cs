@@ -113,6 +113,7 @@ namespace Oblivion.HabboHotel.Users
         /// Specify if the user allow commands like :sex
         /// </summary>
         internal bool AllowCustomCommands;
+
         /// <summary>
         ///     The create date
         /// </summary>
@@ -362,7 +363,7 @@ namespace Oblivion.HabboHotel.Users
         /// Specify if the user has radio rights
         /// </summary>
         internal int RadioRank;
-        
+
         /// <summary>
         ///     The user groups
         /// </summary>
@@ -377,6 +378,7 @@ namespace Oblivion.HabboHotel.Users
         /// Specify when user executed an custom command
         /// </summary>
         internal int LastCustomCommand;
+
         ///<summary>
         /// User blockeds commands
         /// </summary>
@@ -570,7 +572,8 @@ namespace Oblivion.HabboHotel.Users
         {
             _habboinfoSaved = true;
             return string.Concat("UPDATE users SET online='0', last_online = '", Oblivion.GetUnixTimeStamp(),
-                "', activity_points = '", ActivityPoints, "', ", Oblivion.GetDbConfig().DbData["emerald.column"], " = '", Emeralds, "', diamonds = '", Diamonds,
+                "', activity_points = '", ActivityPoints, "', ", Oblivion.GetDbConfig().DbData["emerald.column"],
+                " = '", Emeralds, "', diamonds = '", Diamonds,
                 "', credits = '", Credits,
                 "' WHERE id = '", Id, "'; UPDATE users_stats SET achievement_score = ", AchievementPoints,
                 " WHERE id=", Id, " LIMIT 1; ");
@@ -766,19 +769,79 @@ namespace Oblivion.HabboHotel.Users
         }
 
 
-        internal void RemoveCached()
+        internal void Dispose()
         {
             _myGroups?.Clear();
             _myGroups = null;
+
+            _avatarEffectsInventoryComponent?.Dispose();
+            _avatarEffectsInventoryComponent = null;
+
+            if (_badgeComponent?.BadgeList != null)
+            {
+                _badgeComponent.BadgeList.Clear();
+                _badgeComponent.BadgeList = null;
+            }
+
+
+            try
+            {
+                if (_inventoryComponent != null)
+                {
+                    _inventoryComponent.RunDbUpdate();
+                    _inventoryComponent.Dispose();
+                    _inventoryComponent = null;
+                }
+            }
+            catch (Exception e)
+            {
+                _inventoryComponent?.Dispose();
+                _inventoryComponent = null;
+
+                Logging.HandleException(e, "User Inventory Dispose (habbo.cs)");
+            }
+
+            if (_messenger != null)
+            {
+                _messenger.AppearOffline = true;
+                _messenger.Destroy();
+                _messenger = null;
+            }
+
+            _subscriptionManager?.Dispose();
+            _subscriptionManager = null;
+
+            if (Prefixes != null)
+            {
+                Array.Clear(Prefixes, 0, Prefixes.Length);
+                Prefixes = null;
+            }
+
+            NavigatorLogs?.Clear();
+            NavigatorLogs = null;
+
+            RatedRooms?.Clear();
+            RatedRooms = null;
+
+            RecentlyVisitedRooms?.Clear();
+            RecentlyVisitedRooms = null;
+            UserGroups?.Clear();
+            UserGroups = null;
+
             Data?.Dispose();
             Data = null;
-            _badgeComponent?.BadgeList?.Clear();
-            _badgeComponent = null;
+
+            AchievementsToUpdate?.Clear();
             AchievementsToUpdate = null;
-            RatedRooms = null;
-            RecentlyVisitedRooms = null;
-            _messenger?.Destroy();
-            _messenger = null;
+
+            Preferences = null;
+
+
+            GuideOtherUser = null;
+            _mClient = null;
+
+
+            CurrentRoom = null;
         }
 
         /// <summary>
@@ -816,9 +879,7 @@ namespace Oblivion.HabboHotel.Users
                     dbClient.RunFastQuery(queryBuilder.ToString());
                 }
             }
-
-            AchievementsToUpdate?.Clear();
-            AchievementsToUpdate = null;
+            
 
             var navilogs = string.Empty;
 
@@ -869,43 +930,8 @@ namespace Oblivion.HabboHotel.Users
             if (CurrentRoom?.GetRoomUserManager() != null && _mClient != null)
                 CurrentRoom?.GetRoomUserManager()?.RemoveUserFromRoom(_mClient, false, false);
 
-            CurrentRoom = null;
-            if (_messenger != null)
-            {
-                _messenger.AppearOffline = true;
-                _messenger.Destroy();
-                _messenger = null;
-            }
-
-            GuideOtherUser = null;
-            _subscriptionManager?.Dispose();
-            _subscriptionManager = null;
-
-            _avatarEffectsInventoryComponent?.Dispose();
-            _avatarEffectsInventoryComponent = null;
-            _badgeComponent = null;
-            _myGroups?.Clear();
-            _myGroups = null;
-            Data?.Dispose();
-            Data = null;
-            _mClient = null;
-
-            try
-            {
-                if (_inventoryComponent != null)
-                {
-                    _inventoryComponent.RunDbUpdate();
-                    _inventoryComponent.Dispose();
-                    _inventoryComponent = null;
-                }
-            }
-            catch (Exception e)
-            {
-                _inventoryComponent?.Dispose();
-                _inventoryComponent = null;
-
-                Logging.HandleException(e, "User Inventory Dispose (habbo.cs)");
-            }
+           
+            Dispose();
         }
 
         internal uint LastBellId;

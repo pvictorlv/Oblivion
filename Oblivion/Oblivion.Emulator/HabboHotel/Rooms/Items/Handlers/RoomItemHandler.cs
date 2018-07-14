@@ -140,6 +140,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             var rand = new Random();
             var randomKey = keys[rand.Next(size)];
 
+
             BreedingBear[randomKey].PetsList.Add(pet);
             pet.WaitingForBreading = BreedingBear[randomKey].VirtualId;
             pet.BreadingTile = BreedingBear[randomKey].Coordinate;
@@ -1337,49 +1338,49 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     if (current == null) continue;
                     var squareInFront = current.SquareInFront;
                     var roomItemForSquare = _room.GetGameMap().GetRoomItemForSquare(current.X, current.Y);
-                    var userForSquare = _room.GetRoomUserManager().GetUserForSquare(current.X, current.Y);
-                    if ((roomItemForSquare == null || !roomItemForSquare.Any()) && userForSquare == null)
-                        continue;
-                    var coordinatedItems = new List<RoomItem>();
-//                    var coordinatedItems = _room.GetGameMap().GetCoordinatedItems(squareInFront)
-//                        .Where(current2 => current2.IsRoller).ToList();
+                   
                     var flag = false;
-                    var num2 = 0.0;
+                    var nextZ = 0.0;
                     var flag2 = true;
                     var frontHasItem = false;
-                    foreach (var current2 in coordinatedItems)
+
+                    var userInFront = _room.GetRoomUserManager().GetUserForSquare(squareInFront.X, squareInFront.Y) !=
+                                      null;
+                    if (roomItemForSquare != null)
                     {
-                        flag = true;
-                        if (current2.TotalHeight > num2)
-                            num2 = current2.TotalHeight;
-                        if (!current2.GetBaseItem().Stackable)
-                            frontHasItem = true;
-                        if (current2.TotalHeight > num2)
-                            flag2 = false;
+                        foreach (var current2 in roomItemForSquare)
+                        {
+                            if (!current2.IsRoller) continue;
+
+                            flag = true;
+                            if (current2.TotalHeight > nextZ)
+                                nextZ = current2.TotalHeight;
+                            if (!current2.GetBaseItem().Stackable)
+                                frontHasItem = true;
+                            if (current2.TotalHeight > nextZ)
+                                flag2 = false;
+                        }
+
+                        if (!flag)
+                            nextZ += _room.GetGameMap().GetHeightForSquareFromData(squareInFront);
+
+                       
+                        foreach (var current4 in roomItemForSquare)
+                        {
+                            var num3 = current4.Z - current.TotalHeight;
+                            if (_rollerItemsMoved.Contains(current4.Id) || frontHasItem ||
+                                !_room.GetGameMap().CanRollItemHere(squareInFront.X, squareInFront.Y) || !flag2 ||
+                                !(current.Z < current4.Z) || userInFront)
+                                continue;
+                            _rollerMessages.Add(UpdateItemOnRoller(current4, squareInFront, current.VirtualId,
+                                nextZ + num3));
+                            _rollerItemsMoved.Add(current4.Id);
+                        }
                     }
+                    var userForSquare = _room.GetRoomUserManager().GetUserForSquare(current.X, current.Y);
+                    
 
-                    if (flag)
-                        goto IL_192;
-
-                    goto IL_17C;
-                    IL_192:
-                    var nextZ = num2;
-                    var flag3 = _room.GetRoomUserManager().GetUserForSquare(squareInFront.X, squareInFront.Y) != null;
-                    if (roomItemForSquare == null) continue;
-                    foreach (var current4 in roomItemForSquare)
-                    {
-                        var num3 = current4.Z - current.TotalHeight;
-                        if (_rollerItemsMoved.Contains(current4.Id) || frontHasItem ||
-                            !_room.GetGameMap().CanRollItemHere(squareInFront.X, squareInFront.Y) || !flag2 ||
-                            !(current.Z < current4.Z) ||
-                            _room.GetRoomUserManager().GetUserForSquare(squareInFront.X, squareInFront.Y) != null)
-                            continue;
-                        _rollerMessages.Add(UpdateItemOnRoller(current4, squareInFront, current.VirtualId,
-                            num2 + num3));
-                        _rollerItemsMoved.Add(current4.Id);
-                    }
-
-                    if (userForSquare != null && !userForSquare.IsWalking && flag2 && !flag3 &&
+                    if (userForSquare != null && !userForSquare.IsWalking && flag2 && !userInFront &&
                         _room.GetGameMap().CanRollItemHere(squareInFront.X, squareInFront.Y) &&
                         _room.GetGameMap().GetFloorStatus(squareInFront) != 0 &&
                         !_rollerUsersMoved.Contains(userForSquare.HabboId))
@@ -1388,11 +1389,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         _rollerUsersMoved.Add(userForSquare.HabboId);
                         _room.GetRoomUserManager().UpdateUserStatus(userForSquare, true);
                     }
-
-                    continue;
-                    IL_17C:
-                    num2 += _room.GetGameMap().GetHeightForSquareFromData(squareInFront);
-                    goto IL_192;
+                    
                 }
 
                 _roolerCycle = 0;

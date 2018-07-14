@@ -141,14 +141,14 @@ namespace Oblivion.HabboHotel.Rooms
         /// <returns>RoomData.</returns>
         internal RoomData GenerateNullableRoomData(uint roomId)
         {
-            if (GenerateRoomData(roomId) != null)
-                return GenerateRoomData(roomId);
-            var roomData = new RoomData();
-            roomData.FillNull(roomId);
-            return roomData;
-        }
+            var data = GenerateRoomData(roomId);
+            if (data != null)
+                return data;
 
-        private bool IsRoomLoaded(uint roomId) => LoadedRooms.ContainsKey(roomId);
+            data = new RoomData();
+            data.FillNull(roomId);
+            return data;
+        }
 
         /// <summary>
         ///     Generates the room data.
@@ -354,7 +354,7 @@ namespace Oblivion.HabboHotel.Rooms
                 if (sinceBallLastTime.TotalMilliseconds >= 145)
                 {
                     _cycleBallLastExecution = DateTime.Now;
-                    /* TODO CHECK */ foreach (var Room in LoadedBallRooms.ToList())
+                    foreach (var Room in LoadedBallRooms)
                     {
                         try
                         {
