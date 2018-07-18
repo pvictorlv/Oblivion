@@ -452,6 +452,7 @@ namespace Oblivion.HabboHotel.Items.Wired
             RemoveWired(current);
 
             current.Items.Clear();
+            current.Items.Dispose();
             current.Items = null;
             current.Item = null;
             current.Room = null;
@@ -759,6 +760,7 @@ namespace Oblivion.HabboHotel.Items.Wired
             {
                 if (current == null || current.Disposed) continue;
                 current.Items?.Clear();
+                current.Items?.Dispose();
                 current.Items = null;
                 current.Item = null;
                 current.Room = null;

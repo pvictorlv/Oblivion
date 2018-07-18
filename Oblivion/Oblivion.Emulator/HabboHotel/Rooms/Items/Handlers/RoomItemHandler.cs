@@ -183,12 +183,11 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
                 if (_removedItems.Count > 0)
                 {
-                    var list = _removedItems;
                     var builder = new StringBuilder();
                     builder.Append("UPDATE items_rooms SET room_id='0', x='0', y='0', z='0', rot='0' WHERE id IN (");
                     var i = 0;
-                    var count = list.Count;
-                    foreach (var itemId in list)
+                    var count = _removedItems.Count;
+                    foreach (var itemId in _removedItems)
                     {
                         i++;
                         builder.Append(i >= count ? $"{itemId}" : $"{itemId},");
@@ -197,7 +196,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     builder.Append(");");
 
                     dbClient.RunFastQuery(builder.ToString());
-                    list.Clear();
                     _removedItems.Clear();
                 }
 
@@ -1286,7 +1284,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             FloorItems.Clear();
             WallItems.Clear();
             _removedItems.Clear();
+            _removedItems.Dispose();
             _updatedItems.Clear();
+            _updatedItems.Dispose();
             if (_roomItemUpdateQueue?.Count > 0)
             lock (_roomItemUpdateQueue.SyncRoot)
             {
@@ -1294,6 +1294,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 _roomItemUpdateQueue = null;
             }
             Rollers?.Clear();
+            Rollers?.Dispose();
             _rollerMessages?.Clear();
             _rollerItemsMoved?.Clear();
             _rollerUsersMoved?.Clear();
@@ -1326,7 +1327,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
                 if (Rollers.Count <= 0)
                 {
-                    Rollers.Clear();
                     return new List<ServerMessage>();
                 }
 

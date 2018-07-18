@@ -22,7 +22,6 @@ namespace Oblivion.Collections
             public void Dispose()
             {
                 readerWriterLock.ExitReadLock();
-                GC.SuppressFinalize(this);
             }
         }
 
@@ -39,7 +38,6 @@ namespace Oblivion.Collections
             public void Dispose()
             {
                 readerWriterLock.ExitWriteLock();
-                GC.SuppressFinalize(this);
             }
         }
     }

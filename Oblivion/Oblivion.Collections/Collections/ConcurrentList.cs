@@ -9,8 +9,8 @@ namespace Oblivion.Collections
 {
     public sealed class ConcurrentList<T> : IList<T>
     {
-        private readonly List<T> _inner;
-        private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
+        private List<T> _inner;
+        private ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
 
         public ConcurrentList() => _inner = new List<T>();
 
@@ -141,6 +141,8 @@ namespace Oblivion.Collections
         public void Dispose()
         {
             _lock.Dispose();
+            _lock = null;
+            _inner = null;
         }
 
         public ReadOnlyCollection<T> AsReadOnly()
@@ -155,7 +157,7 @@ namespace Oblivion.Collections
         {
             using (_lock.WriteLock())
             {
-               foreach (var item in _inner)
+                foreach (var item in _inner)
                     action(item);
             }
         }
@@ -170,6 +172,21 @@ namespace Oblivion.Collections
 
             return false;
         }
-    }
 
+        public T FirstOrDefault()
+        {
+            using (_lock.ReadLock())
+            {
+                return _inner.FirstOrDefault();
+            }
+        }
+
+        public T FirstOrDefault(Func<T, bool> action)
+        {
+            using (_lock.ReadLock())
+            {
+                return _inner.FirstOrDefault(action);
+            }
+        }
+    }
 }

@@ -356,6 +356,7 @@ namespace Oblivion.Messages
             _arrayCurrentBuffer?.Dispose();
             _arrayCurrentBuffer = null;
             _disposed = true;
+            GC.SuppressFinalize(this);
         }
     }
 }
