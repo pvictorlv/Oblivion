@@ -22,6 +22,8 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         private readonly uint _userId;
 
+        private uint _floodCount;
+
         /// <summary>
         ///     The appear offline
         /// </summary>
@@ -416,6 +418,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         }
 
         private int _lastRequest;
+
         /// <summary>
         ///     Requests the buddy.
         /// </summary>
@@ -534,6 +537,11 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             var sender = GetClient().GetHabbo();
 
+            if (!sender.CanTalk())
+            {
+                DeliverInstantMessageError(4, gp.Id);
+            }
+
             /* TODO CHECK */
             foreach (var usr in gp.Members.Values.ToList())
             {
@@ -545,6 +553,31 @@ namespace Oblivion.HabboHotel.Users.Messenger
                         .DeliverInstantMessage((int) gp.Id, message, (int) sender.Id, sender.UserName, sender.Look);
             }
         }
+
+
+        /// <summary>
+        /// send the instant invite for everyone
+        /// </summary>
+        internal void SendInstantInviteForAll(string msg)
+        {
+            var session = GetClient();
+            if (session?.GetHabbo() == null)
+                return;
+
+            if (!session.GetHabbo().CanTalk()) return;
+
+            if (!BobbaFilter.CanTalk(session, msg)) return;
+
+            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleInvitationMessageComposer"));
+            serverMessage.AppendInteger(session.GetHabbo().Id);
+            serverMessage.AppendString(msg);
+            foreach (var friend in Friends.Values)
+            {
+                friend?.Client?.SendMessage(serverMessage);
+
+            }
+        }
+
 
         /// <summary>
         ///     Sends the instant message.
@@ -564,6 +597,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 DeliverInstantMessageError(6, toId);
                 return;
             }
+
 
             var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(toId);
             if (clientByUserId?.GetHabbo().GetMessenger() == null)
@@ -599,6 +633,15 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             if (message == "")
                 return;
+
+            var sender = GetClient();
+            var habbo = sender.GetHabbo();
+
+            if (!habbo.CanTalk())
+            {
+                DeliverInstantMessageError(4, toId);
+            }
+
 
             clientByUserId.GetHabbo().GetMessenger().DeliverInstantMessage(message, _userId);
         }

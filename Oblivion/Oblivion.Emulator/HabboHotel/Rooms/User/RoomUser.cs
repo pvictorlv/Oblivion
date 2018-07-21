@@ -25,10 +25,6 @@ namespace Oblivion.HabboHotel.Rooms.User
 {
     public class RoomUser
     {
-        /// <summary>
-        ///     The _flood count
-        /// </summary>
-        private int _floodCount;
 
         /// <summary>
         ///     The _m client
@@ -54,6 +50,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// The interacting user id used in custom commands like :sex
         /// </summary>
         internal uint InteractingUser;
+
         /// <summary>
         ///     The banzai power up
         /// </summary>
@@ -99,10 +96,6 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         internal bool FastWalking;
 
-        /// <summary>
-        ///     The flood expiry time
-        /// </summary>
-        internal int FloodExpiryTime;
 
         /// <summary>
         ///     The following owner
@@ -196,10 +189,6 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         internal bool IsAsleep;
 
-        /// <summary>
-        ///     The is flooded
-        /// </summary>
-        internal bool IsFlooded;
 
         /// <summary>
         ///     The is lying down
@@ -821,18 +810,17 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (msg.Length > 100)
                 return;
 
-            if (!((msg.StartsWith(":deleteblackword ") || msg.Contains("ban")) && session.GetHabbo().Rank > 4) &&
+            if (!((msg.StartsWith(":deleteblackword ") || msg.StartsWith("ban")) && session.GetHabbo().Rank > 4) &&
                 !BobbaFilter.CanTalk(session, msg))
                 return;
 
 
-            if (!IsBot && IsFlooded && FloodExpiryTime <= Oblivion.GetUnixTimeStamp())
-                IsFlooded = false;
-            else if (!IsBot && IsFlooded)
-                return; // ciao flooders!
-
+           
             if (session.GetHabbo().Rank < 4 && GetRoom().CheckMute(session))
                 return;
+
+            if (!session.GetHabbo().CanTalk(true)) return;
+
 
             UnIdle();
             if (!IsPet && !IsBot)
@@ -854,12 +842,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         return;
 
                 GetRoom().AddChatlog(session.GetHabbo().Id, msg, true);
-
-                uint rank = 1;
-
-                if (session.GetHabbo() != null)
-                    rank = session.GetHabbo().Rank;
-
+                
                 if (GetRoom()?
                         .RoomData?.WordFilter != null && GetRoom()
                         .RoomData.WordFilter.Count > 0)
@@ -867,51 +850,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         .RoomData.WordFilter.Aggregate(msg,
                             (current, s) => Regex.Replace(current, Regex.Escape(s), "bobba", RegexOptions.IgnoreCase));
 
-                if (rank < 4)
-                {
-                    var span = DateTime.Now - habbo.SpamFloodTime;
-                    if (span.TotalSeconds > habbo.SpamProtectionTime && habbo.SpamProtectionBol)
-                    {
-                        _floodCount = 0;
-                        habbo.SpamProtectionBol = false;
-                        habbo.SpamProtectionAbuse = 0;
-                    }
-                    else if (span.TotalSeconds > 4.0)
-                        _floodCount = 0;
 
-                    ServerMessage message;
-                    if (span.TotalSeconds < habbo.SpamProtectionTime && habbo.SpamProtectionBol)
-                    {
-                        message = new ServerMessage(LibraryParser.OutgoingRequest("FloodFilterMessageComposer"));
-                        var i = habbo.SpamProtectionTime - span.Seconds;
-                        message.AppendInteger(i);
-                        IsFlooded = true;
-                        FloodExpiryTime = Oblivion.GetUnixTimeStamp() + i;
-                        GetClient().SendMessage(message);
-                        return;
-                    }
-
-                    if (span.TotalSeconds < 4.0 && _floodCount > 5 * (_mRoom.RoomData.ChatFloodProtection + 1) &&
-                        rank < 5)
-                    {
-                        message = new ServerMessage(LibraryParser.OutgoingRequest("FloodFilterMessageComposer"));
-                        habbo.SpamProtectionCount++;
-                        if (habbo.SpamProtectionCount % 2 == 0)
-                            habbo.SpamProtectionTime = 10 * habbo.SpamProtectionCount;
-                        else
-                            habbo.SpamProtectionTime = 10 * (habbo.SpamProtectionCount - 1);
-                        habbo.SpamProtectionBol = true;
-                        var j = habbo.SpamProtectionTime - span.Seconds;
-                        message.AppendInteger(j);
-                        IsFlooded = true;
-                        FloodExpiryTime = Oblivion.GetUnixTimeStamp() + j;
-                        GetClient().SendMessage(message);
-                        return;
-                    }
-
-                    habbo.SpamFloodTime = DateTime.Now;
-                    _floodCount++;
-                }
                 habbo.Preferences.ChatColor = textColor;
             }
             else if (!IsPet)
@@ -945,6 +884,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 ChangeName(GetUserName());
             }
+
             GetRoom().OnUserSay(this, msg, shout);
         }
 
@@ -956,6 +896,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             message.AppendString(name);
             GetRoom().SendMessage(message);
         }
+
         /// <summary>
         ///     Clears the movement.
         /// </summary>
@@ -978,6 +919,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 PathStep = 1;
                 UpdateNeeded = true;
             }
+
             if (Statusses == null)
             {
                 return;
@@ -987,7 +929,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                 UpdateNeeded = true;
         }
 
-            
 
         /// <summary>
         ///     Moves to.
@@ -1031,13 +972,13 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 var allRoomItemForSquare = GetRoom().GetGameMap().GetCoordinatedHeighestItems(coord);
                 if (allRoomItemForSquare.Any(current =>
-                            current.GetBaseItem().IsSeat ||
-                            current.GetBaseItem().InteractionType == Interaction.LowPool ||
-                            current.GetBaseItem().InteractionType == Interaction.Pool ||
-                            current.GetBaseItem().InteractionType == Interaction.HaloweenPool ||
-                            current.GetBaseItem().InteractionType == Interaction.Bed ||
-                            current.GetBaseItem().InteractionType == Interaction.PressurePadBed ||
-                            current.GetBaseItem().InteractionType == Interaction.Guillotine))
+                    current.GetBaseItem().IsSeat ||
+                    current.GetBaseItem().InteractionType == Interaction.LowPool ||
+                    current.GetBaseItem().InteractionType == Interaction.Pool ||
+                    current.GetBaseItem().InteractionType == Interaction.HaloweenPool ||
+                    current.GetBaseItem().InteractionType == Interaction.Bed ||
+                    current.GetBaseItem().InteractionType == Interaction.PressurePadBed ||
+                    current.GetBaseItem().InteractionType == Interaction.Guillotine))
                     return;
             }
 
@@ -1142,7 +1083,6 @@ namespace Oblivion.HabboHotel.Rooms.User
             UpdateNeeded = true;
         }
 
-       
 
         /// <summary>
         ///     Adds the status.

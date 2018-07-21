@@ -71,6 +71,7 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("stand", new Stand());
             CommandsDictionary.Add("lay", new Lay());
             CommandsDictionary.Add("dance", new Dance());
+            CommandsDictionary.Add("inviteall", new InviteAll());
             CommandsDictionary.Add("pickall", new PickAll());
             CommandsDictionary.Add("pickpets", new PickPets());
             CommandsDictionary.Add("mutebots", new MuteBots());

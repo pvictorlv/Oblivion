@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Oblivion.HabboHotel.Quests;
 using Oblivion.Messages.Parsers;
+using Oblivion.Security;
 
 namespace Oblivion.Messages.Handlers
 {
@@ -41,6 +41,7 @@ namespace Oblivion.Messages.Handlers
                     Session.SendNotif(Oblivion.GetLanguage().GetVar("buddy_error_1"));
                     return;
                 }
+
                 Session.GetHabbo().GetMessenger().DestroyFriendship(num2);
             }
         }
@@ -87,6 +88,7 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().GetMessenger().HandleRequest(sender);
                 return;
             }
+
             Session.GetHabbo().GetMessenger().HandleAllRequests();
         }
 
@@ -111,54 +113,16 @@ namespace Oblivion.Messages.Handlers
             if (Session.GetHabbo().GetMessenger() == null) return;
             if (!string.IsNullOrWhiteSpace(text))
             {
-                var habbo = Session.GetHabbo();
-                if (habbo.Rank < 4)
-                {
-                    var span = DateTime.Now - habbo.SpamFloodTime;
-                    if ((span.TotalSeconds > habbo.SpamProtectionTime) && habbo.SpamProtectionBol)
-                    {
-                        _floodCount = 0;
-                        habbo.SpamProtectionBol = false;
-                        habbo.SpamProtectionAbuse = 0;
-                    }
-                    else if (span.TotalSeconds > 4.0)
-                        _floodCount = 0;
-                    ServerMessage message;
-                    if ((span.TotalSeconds < habbo.SpamProtectionTime) && habbo.SpamProtectionBol)
-                    {
-                        message = new ServerMessage(LibraryParser.OutgoingRequest("FloodFilterMessageComposer"));
-                        var i = habbo.SpamProtectionTime - span.Seconds;
-                        message.AppendInteger(i);
-                        habbo.GetClient().SendMessage(message);
-                        return;
-                    }
-                    if (((span.TotalSeconds < 4.0) && (_floodCount > 5)) && (habbo.Rank < 5))
-                    {
-                        message = new ServerMessage(LibraryParser.OutgoingRequest("FloodFilterMessageComposer"));
-                        habbo.SpamProtectionCount++;
-                        if ((habbo.SpamProtectionCount % 2) == 0)
-                            habbo.SpamProtectionTime = 10 * habbo.SpamProtectionCount;
-                        else
-                            habbo.SpamProtectionTime = 10 * (habbo.SpamProtectionCount - 1);
-                        habbo.SpamProtectionBol = true;
-                        var j = habbo.SpamProtectionTime - span.Seconds;
-                        message.AppendInteger(j);
-                        habbo.GetClient().SendMessage(message);
-                        return;
-                    }
-                    habbo.SpamFloodTime = DateTime.Now;
-                }
-
                 if (toId > 0)
                 {
-                    Session.GetHabbo().GetMessenger().SendInstantMessage((uint)toId, text);
+                    Session.GetHabbo().GetMessenger().SendInstantMessage((uint) toId, text);
                     return;
                 }
+
                 var gp = Oblivion.GetGame().GetGroupManager().GetGroup((uint) -toId);
                 if (gp == null)
                 {
                     return;
-
                 }
 
                 if (!gp.HasChat)
@@ -168,7 +132,6 @@ namespace Oblivion.Messages.Handlers
                 }
 
                 Session.GetHabbo().GetMessenger().SendInstantMessage(gp, text);
-
             }
         }
 
@@ -192,6 +155,7 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().GetMessenger().UpdateFriend(userId, clientByUserId, true);
                 return;
             }
+
             if (Session.GetHabbo().Rank < 4 && Session.GetHabbo().GetMessenger() != null &&
                 !Session.GetHabbo().GetMessenger().FriendshipExists(userId))
             {
@@ -206,6 +170,7 @@ namespace Oblivion.Messages.Handlers
             Session.SendMessage(roomFwd);
         }
 
+
         /// <summary>
         /// Sends the instant invite.
         /// </summary>
@@ -213,19 +178,26 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session?.GetHabbo() == null)
                 return;
+
+            if (!Session.GetHabbo().CanTalk()) return;
+
             var num = Request.GetInteger();
             var list = new List<uint>();
             for (var i = 0; i < num; i++) list.Add(Request.GetUInteger());
             var s = Request.GetString();
+
+            if (!BobbaFilter.CanTalk(Session, s)) return;
+
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleInvitationMessageComposer"));
             serverMessage.AppendInteger(Session.GetHabbo().Id);
             serverMessage.AppendString(s);
-            /* TODO CHECK */ foreach (var clientByUserId in (from current in list
-                    where Session.GetHabbo().GetMessenger().FriendshipExists(current)
-                    select Oblivion.GetGame().GetClientManager().GetClientByUserId(current))
-                .TakeWhile(
-                    clientByUserId => clientByUserId != null))
-                clientByUserId.SendMessage(serverMessage);
+
+            foreach (var current in list)
+            {
+                if (!Session.GetHabbo().GetMessenger().FriendshipExists(current)) continue;
+                var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(current);
+                clientByUserId?.SendMessage(serverMessage);
+            }
         }
     }
 }

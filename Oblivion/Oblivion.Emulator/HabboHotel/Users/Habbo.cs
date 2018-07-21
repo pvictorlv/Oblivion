@@ -526,6 +526,16 @@ namespace Oblivion.HabboHotel.Users
         internal int Emeralds { get; set; }
 
 
+        /// <summary>
+        ///     The is flooded
+        /// </summary>
+        internal bool IsFlooded;
+
+        /// <summary>
+        ///     The flood expiry time
+        /// </summary>
+        internal int FloodExpiryTime;
+
         public void LoadGroups()
         {
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -611,6 +621,75 @@ namespace Oblivion.HabboHotel.Users
             Data = data;
         }
 
+        private int _floodCount;
+
+        internal bool CanTalk(bool inRoom = false)
+        {
+            if (IsFlooded)
+            {
+                if (FloodExpiryTime <= Oblivion.GetUnixTimeStamp())
+                    IsFlooded = false;
+                else
+                    return false;
+            }
+
+
+            if (Rank < 4)
+            {
+                var span = DateTime.Now - SpamFloodTime;
+                if (span.TotalSeconds > SpamProtectionTime && SpamProtectionBol)
+                {
+                    _floodCount = 0;
+                    SpamProtectionBol = false;
+                    SpamProtectionAbuse = 0;
+                }
+                else if (span.TotalSeconds > 4.0)
+                    _floodCount = 0;
+
+                ServerMessage msg;
+
+                if (span.TotalSeconds < SpamProtectionTime && SpamProtectionBol)
+                {
+                    msg = new ServerMessage(LibraryParser.OutgoingRequest("FloodFilterMessageComposer"));
+                    var i = SpamProtectionTime - span.Seconds;
+                    msg.AppendInteger(i);
+                    IsFlooded = true;
+                    FloodExpiryTime = Oblivion.GetUnixTimeStamp() + i;
+                    GetClient().SendMessage(msg);
+
+                    return false;
+                }
+
+                var floodAddon = 1u;
+                if (inRoom && CurrentRoom?.RoomData != null)
+                {
+                    floodAddon = CurrentRoom.RoomData.ChatFloodProtection + 1;
+                }
+
+                if (span.TotalSeconds < 4.0 && _floodCount >= 5 * floodAddon)
+                {
+                    msg = new ServerMessage(LibraryParser.OutgoingRequest("FloodFilterMessageComposer"));
+                    SpamProtectionCount++;
+                    if (SpamProtectionCount % 2 == 0)
+                        SpamProtectionTime = 10 * SpamProtectionCount;
+                    else
+                        SpamProtectionTime = 10 * (SpamProtectionCount - 1);
+                    SpamProtectionBol = true;
+                    var j = SpamProtectionTime - span.Seconds;
+                    msg.AppendInteger(j);
+                    IsFlooded = true;
+                    FloodExpiryTime = Oblivion.GetUnixTimeStamp() + j;
+                    GetClient().SendMessage(msg);
+
+                    return false;
+                }
+
+                SpamFloodTime = DateTime.Now;
+                _floodCount++;
+            }
+
+            return true;
+        }
         /// <summary>
         ///     Initializes the specified client.
         /// </summary>
