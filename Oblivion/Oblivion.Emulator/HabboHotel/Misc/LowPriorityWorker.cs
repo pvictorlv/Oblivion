@@ -13,7 +13,6 @@ namespace Oblivion.HabboHotel.Misc
         ///     The _user peak
         /// </summary>
         private static int _userPeak;
-        private static int _usersNow;
 
         private static bool _isExecuted;
         private static Stopwatch _lowPriorityStopWatch;
@@ -49,11 +48,7 @@ namespace Oblivion.HabboHotel.Misc
                         "OblivionEmulator v" + Oblivion.Version + "." + Oblivion.Build + " | TIME: ",
                         int.Parse(dateTime.ToString("dd")) - 1 + dateTime.ToString(":HH:mm:ss"), " | ONLINE COUNT: ",
                         clientCount, " | ROOM COUNT: ", loadedRoomsCount);
-
-                    if (clientCount < _userPeak && _usersNow > clientCount)
-                    {
-                        return;
-                    }
+                    
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
                         _userPeak = clientCount;

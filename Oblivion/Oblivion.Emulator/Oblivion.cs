@@ -31,8 +31,6 @@ using Oblivion.Connection.Net;
 using Oblivion.Connection.WebSocket;
 using Timer = System.Timers.Timer;
 using Oblivion.Encryption.Encryption;
-using SuperSocket.SocketBase;
-using SuperSocket.SocketBase.Protocol;
 
 namespace Oblivion
 {

@@ -96,6 +96,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 {
                     foreach (var current3 in effects)
                     {
+                        if (roomUser == null) break;
+
                         if (current3.Type != Interaction.ActionMoveRotate && current3.Type != Interaction.ActionChase &&
                             current3.Type != Interaction.ActionInverseChase)
                         {

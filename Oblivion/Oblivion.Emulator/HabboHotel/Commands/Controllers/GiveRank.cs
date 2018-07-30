@@ -14,7 +14,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public GiveRank()
         {
-            MinRank = 9;
+            MinRank = 11;
             Description = "Dar Rango al Usuario.";
             Usage = ":giverank [USERNAME] [RANK]";
             MinParams = 2;
@@ -22,6 +22,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override bool Execute(GameClient session, string[] pms)
         {
+            var staff = session.GetHabbo().UserName.ToLower();
+            if (staff != "dark" && staff != "roberta" && staff != "crazzyflos")
+            {
+                return false;
+            }
+
             var user = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
 
             if (user == null)
@@ -29,6 +35,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
+
             if (user.GetHabbo().Rank >= session.GetHabbo().Rank)
             {
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("user_is_higher_rank"));
@@ -44,6 +51,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 adapter.AddParameter("rank", rank);
                 adapter.RunQuery();
             }
+
             user.GetHabbo().Rank = Convert.ToUInt32(pms[1]);
             session.SendWhisper(Oblivion.GetLanguage().GetVar("user_rank_update"));
             return true;

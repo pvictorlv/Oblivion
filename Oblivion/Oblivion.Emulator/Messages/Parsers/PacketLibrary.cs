@@ -199,7 +199,7 @@ namespace Oblivion.Messages.Parsers
         /// <param name="handler">The handler.</param>
         internal static void NavigatorGetPopularGroups(GameClientMessageHandler handler)
         {
-            handler.GetPopularGroups();
+            //
         }
 
         /// <summary>
@@ -838,7 +838,7 @@ namespace Oblivion.Messages.Parsers
         /// <param name="handler">The handler.</param>
         internal static void GetPopularRooms(GameClientMessageHandler handler)
         {
-            handler.GetPopularRooms();
+            //
         }
 
         /// <summary>
@@ -847,7 +847,7 @@ namespace Oblivion.Messages.Parsers
         /// <param name="handler">The handler.</param>
         internal static void GetRecommendedRooms(GameClientMessageHandler handler)
         {
-            handler.GetRecommendedRooms();
+            //
         }
 
         /// <summary>
@@ -856,7 +856,7 @@ namespace Oblivion.Messages.Parsers
         /// <param name="handler">The handler.</param>
         internal static void GetHighRatedRooms(GameClientMessageHandler handler)
         {
-            handler.GetHighRatedRooms();
+            //
         }
 
         /// <summary>
@@ -865,7 +865,7 @@ namespace Oblivion.Messages.Parsers
         /// <param name="handler">The handler.</param>
         internal static void GetFriendsRooms(GameClientMessageHandler handler)
         {
-            handler.GetFriendsRooms();
+            //
         }
 
         /// <summary>
@@ -874,7 +874,7 @@ namespace Oblivion.Messages.Parsers
         /// <param name="handler">The handler.</param>
         internal static void GetRoomsWithFriends(GameClientMessageHandler handler)
         {
-            handler.GetRoomsWithFriends();
+            //
         }
 
         /// <summary>
@@ -883,7 +883,7 @@ namespace Oblivion.Messages.Parsers
         /// <param name="handler">The handler.</param>
         internal static void GetOwnRooms(GameClientMessageHandler handler)
         {
-            handler.GetOwnRooms();
+            //
         }
 
         /// <summary>

@@ -263,83 +263,8 @@ namespace Oblivion.Messages.Handlers
             SendResponse();
         }
 
-        /// <summary>
-        /// Gets the popular rooms.
-        /// </summary>
-        internal void GetPopularRooms()
-        {
-            if (Session.GetHabbo() == null)
-                return;
-            Session.SendMessage(Oblivion.GetGame().GetNavigator()
-                .SerializeNavigator(Session, int.Parse(Request.GetString())));
-        }
-
-        /// <summary>
-        /// Gets the recommended rooms.
-        /// </summary>
-        internal void GetRecommendedRooms()
-        {
-            if (Session.GetHabbo() == null)
-                return;
-            Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializeNavigator(Session, -1));
-        }
-
-        /// <summary>
-        /// Gets the popular groups.
-        /// </summary>
-        internal void GetPopularGroups()
-        {
-            if (Session.GetHabbo() == null)
-                return;
-            Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializeNavigator(Session, -2));
-        }
-
-        /// <summary>
-        /// Gets the high rated rooms.
-        /// </summary>
-        internal void GetHighRatedRooms()
-        {
-            if (Session.GetHabbo() == null)
-                return;
-            Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializeNavigator(Session, -2));
-        }
-
-        /// <summary>
-        /// Gets the friends rooms.
-        /// </summary>
-        internal void GetFriendsRooms()
-        {
-            if (Session.GetHabbo() == null)
-                return;
-            Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializeNavigator(Session, -4));
-        }
-
-        /// <summary>
-        /// Gets the rooms with friends.
-        /// </summary>
-        internal void GetRoomsWithFriends()
-        {
-            if (Session.GetHabbo() == null)
-                return;
-            Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializeNavigator(Session, -5));
-        }
-
-        /// <summary>
-        /// Gets the own rooms.
-        /// </summary>
-        internal void GetOwnRooms()
-        {
-            if (Session?.GetHabbo() == null)
-                return;
-
-            if (Session.GetHabbo().OwnRoomsSerialized == false)
-            {
-                Session.GetHabbo().UpdateRooms();
-                Session.GetHabbo().OwnRoomsSerialized = true;
-            }
-
-            Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializeNavigator(Session, -3));
-        }
+       
+        
 
         /// <summary>
         /// News the navigator flat cats.

@@ -82,6 +82,8 @@ namespace Oblivion.Messages.Parsers
                     Console.WriteLine();
                 }
 
+                if (handler.GetResponse() == null) return;
+
                 staticRequestHandler(handler);
             }
             else if (Oblivion.DebugMode)

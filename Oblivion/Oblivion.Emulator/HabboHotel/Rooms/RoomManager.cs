@@ -39,24 +39,6 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         private readonly EventManager _eventManager;
 
-        /// <summary>
-        ///     The _room models
-        /// </summary>
-//        private readonly HybridDictionary _roomModels;
-        /// <summary>
-        ///     The _voted rooms
-        /// </summary>
-        private readonly Dictionary<RoomData, int> _votedRooms;
-
-        /// <summary>
-        ///     The _voted rooms add queue
-        /// </summary>
-        private readonly Queue _votedRoomsAddQueue;
-
-        /// <summary>
-        ///     The _voted rooms remove queue
-        /// </summary>
-        private readonly Queue _votedRoomsRemoveQueue;
 
         internal readonly ConcurrentDictionary<uint, RoomData> LoadedRoomData;
 
@@ -66,11 +48,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     The _ordered active rooms
         /// </summary>
         private IEnumerable<KeyValuePair<RoomData, uint>> _orderedActiveRooms;
-
-        /// <summary>
-        ///     The _ordered voted rooms
-        /// </summary>
-        private IEnumerable<KeyValuePair<RoomData, int>> _orderedVotedRooms;
+        
 
         /// <summary>
         ///     The active rooms remove queue
@@ -88,12 +66,9 @@ namespace Oblivion.HabboHotel.Rooms
         internal RoomManager()
         {
             _cachedDefaultModels = new Dictionary<string, RoomModel>();
-           LoadedRooms = new ConcurrentDictionary<uint, Room>();
+            LoadedRooms = new ConcurrentDictionary<uint, Room>();
             LoadedRoomData = new ConcurrentDictionary<uint, RoomData>();
-            _votedRooms = new Dictionary<RoomData, int>();
             _activeRooms = new Dictionary<RoomData, uint>();
-            _votedRoomsRemoveQueue = new Queue();
-            _votedRoomsAddQueue = new Queue();
             ActiveRoomsRemoveQueue = new Queue();
             _activeRoomsUpdateQueue = new Queue();
             _activeRoomsAddQueue = new Queue();
@@ -119,13 +94,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         /// <returns>KeyValuePair&lt;RoomData, System.UInt32&gt;[].</returns>
         internal KeyValuePair<RoomData, uint>[] GetActiveRooms() => _orderedActiveRooms?.ToArray();
-
-        /// <summary>
-        ///     Gets the voted rooms.
-        /// </summary>
-        /// <returns>KeyValuePair&lt;RoomData, System.Int32&gt;[].</returns>
-        internal KeyValuePair<RoomData, int>[] GetVotedRooms() => _orderedVotedRooms?.ToArray();
-
+        
         /// <summary>
         ///     Gets the model.
         /// </summary>
@@ -224,7 +193,6 @@ namespace Oblivion.HabboHotel.Rooms
                 Logging.HandleException(e, "RoomLoad");
                 return null;
             }
-        
         }
 
         internal void RemoveRoomData(uint id) => LoadedRoomData.TryRemove(id, out _);
@@ -242,7 +210,8 @@ namespace Oblivion.HabboHotel.Rooms
                 roomData.LastUsed = DateTime.Now;
                 return roomData;
             }
-             roomData = new RoomData();
+
+            roomData = new RoomData();
 
             roomData.Fill(dRow, user);
             LoadedRoomData.TryAdd(roomId, roomData);
@@ -284,6 +253,7 @@ namespace Oblivion.HabboHotel.Rooms
                 dbClient.AddParameter("tstate", tradeState.ToString());
                 roomId = (uint) dbClient.InsertQuery();
             }
+
             var data = GenerateRoomData(roomId);
 
             session.GetHabbo().Data.Rooms.Add(roomId);
@@ -291,7 +261,7 @@ namespace Oblivion.HabboHotel.Rooms
         }
 
         private Dictionary<string, RoomModel> _cachedDefaultModels;
-        
+
         internal RoomModel LoadModel(string model, uint roomid)
         {
             try
@@ -301,6 +271,7 @@ namespace Oblivion.HabboHotel.Rooms
                     if (_cachedDefaultModels.TryGetValue(model, out var modelData))
                         return modelData;
                 }
+
                 using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
                     if (model == "custom")
@@ -316,13 +287,14 @@ namespace Oblivion.HabboHotel.Rooms
                             (int) row["door_dir"],
                             (string) row["heightmap"], false, true);
                     }
+
                     dbClient.SetQuery("SELECT * FROM rooms_models WHERE id = @name LIMIT 1");
                     dbClient.AddParameter("name", model);
                     var dataRow = dbClient.GetRow();
                     if (dataRow == null) return new RoomModel(0, 0, 0, 0, "xxxxxx", false, true);
-                    var modelData = new RoomModel((int)dataRow["door_x"], (int)dataRow["door_y"],
-                        (double)dataRow["door_z"],
-                        (int)dataRow["door_dir"], (string)dataRow["heightmap"],
+                    var modelData = new RoomModel((int) dataRow["door_x"], (int) dataRow["door_y"],
+                        (double) dataRow["door_z"],
+                        (int) dataRow["door_dir"], (string) dataRow["heightmap"],
                         Oblivion.EnumToBool(dataRow["club_only"].ToString()), false);
                     _cachedDefaultModels[model] = modelData;
                     return modelData;
@@ -331,13 +303,11 @@ namespace Oblivion.HabboHotel.Rooms
             catch (Exception e)
             {
                 Logging.HandleException(e, "loadmodel");
-                return new RoomModel(0, 0, 0, 0, "xxxxxx", false, true); 
+                return new RoomModel(0, 0, 0, 0, "xxxxxx", false, true);
             }
-
         }
 
 
-       
         public ConcurrentList<Room> LoadedBallRooms;
 
         private DateTime _cycleBallLastExecution;
@@ -348,6 +318,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         internal void OnCycle()
         {
+            //todo recode
             if (LoadedBallRooms.Count > 0)
             {
                 var sinceBallLastTime = DateTime.Now - _cycleBallLastExecution;
@@ -377,9 +348,6 @@ namespace Oblivion.HabboHotel.Rooms
                 var flag2 = WorkActiveRoomsRemoveQueue();
                 var flag3 = WorkActiveRoomsUpdateQueue();
                 if (flag || flag2 || flag3) SortActiveRooms();
-                var flag4 = WorkVotedRoomsAddQueue();
-                var flag5 = WorkVotedRoomsRemoveQueue();
-                if (flag4 || flag5) SortVotedRooms();
 
                 Oblivion.GetGame().RoomManagerCycleEnded = true;
             }
@@ -388,30 +356,7 @@ namespace Oblivion.HabboHotel.Rooms
                 Logging.LogThreadException(ex.ToString(), "RoomManager.OnCycle Exception --> Not inclusive");
             }
         }
-
-        /// <summary>
-        ///     Queues the vote add.
-        /// </summary>
-        /// <param name="data">The data.</param>
-        internal void QueueVoteAdd(RoomData data)
-        {
-            lock (_votedRoomsAddQueue.SyncRoot)
-            {
-                _votedRoomsAddQueue.Enqueue(data);
-            }
-        }
-
-        /// <summary>
-        ///     Queues the vote remove.
-        /// </summary>
-        /// <param name="data">The data.</param>
-        internal void QueueVoteRemove(RoomData data)
-        {
-            lock (_votedRoomsRemoveQueue.SyncRoot)
-            {
-                _votedRoomsRemoveQueue.Enqueue(data);
-            }
-        }
+        
 
         /// <summary>
         ///     Queues the active room update.
@@ -465,6 +410,7 @@ namespace Oblivion.HabboHotel.Rooms
                     Out.WriteLine("Error unloading room");
                 }
             }
+
             Out.WriteLine("RoomManager Destroyed", "Oblivion.RoomManager", ConsoleColor.DarkYellow);
         }
 
@@ -481,11 +427,11 @@ namespace Oblivion.HabboHotel.Rooms
             room.Disposed = true;
 
             if (Oblivion.GetGame().GetNavigator().PrivateCategories.Contains(room.RoomData.Category))
-            if (Oblivion.GetGame().GetNavigator().PrivateCategories.Contains(room.RoomData.Category))
-            {
-                ((FlatCat) Oblivion.GetGame().GetNavigator().PrivateCategories[room.RoomData.Category]).UsersNow -=
-                    room.UserCount;
-            }
+                if (Oblivion.GetGame().GetNavigator().PrivateCategories.Contains(room.RoomData.Category))
+                {
+                    ((FlatCat) Oblivion.GetGame().GetNavigator().PrivateCategories[room.RoomData.Category]).UsersNow -=
+                        room.UserCount;
+                }
 
             room.RoomData.UsersNow = 0;
             var state = "open";
@@ -503,6 +449,7 @@ namespace Oblivion.HabboHotel.Rooms
                 {
                     room.RoomData.Tags = new List<string>();
                 }
+
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
                     queryReactor.SetQuery(
@@ -542,7 +489,7 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                   foreach (var current in room.GetRoomUserManager().UserList.Values.Where(current => current != null))
+                    foreach (var current in room.GetRoomUserManager().UserList.Values.Where(current => current != null))
                     {
                         if (current.IsPet)
                         {
@@ -604,15 +551,7 @@ namespace Oblivion.HabboHotel.Rooms
         {
             _orderedActiveRooms = _activeRooms.OrderByDescending(t => t.Value).Take(40);
         }
-
-        /// <summary>
-        ///     Sorts the voted rooms.
-        /// </summary>
-        private void SortVotedRooms()
-        {
-            _orderedVotedRooms = _votedRooms.OrderByDescending(t => t.Value).Take(40);
-        }
-
+        
         /// <summary>
         ///     Works the active rooms update queue.
         /// </summary>
@@ -632,12 +571,11 @@ namespace Oblivion.HabboHotel.Rooms
                     }
                     else
                     {
-                        if (_activeRooms.ContainsKey(roomData))
-                            _activeRooms.Remove(roomData);
-
+                        _activeRooms.Remove(roomData);
                     }
                 }
             }
+
             return true;
         }
 
@@ -657,6 +595,7 @@ namespace Oblivion.HabboHotel.Rooms
                         _activeRooms.Add(roomData, roomData.UsersNow);
                 }
             }
+
             return true;
         }
 
@@ -675,44 +614,9 @@ namespace Oblivion.HabboHotel.Rooms
                     _activeRooms.Remove(key);
                 }
             }
+
             return true;
         }
 
-        /// <summary>
-        ///     Works the voted rooms add queue.
-        /// </summary>
-        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        private bool WorkVotedRoomsAddQueue()
-        {
-            if (_votedRoomsAddQueue.Count <= 0) return false;
-            lock (_votedRoomsAddQueue.SyncRoot)
-            {
-                while (_votedRoomsAddQueue.Count > 0)
-                {
-                    var roomData = (RoomData) _votedRoomsAddQueue.Dequeue();
-                    _votedRooms[roomData] = roomData.Score;
-                }
-            }
-            return true;
-        }
-
-        /// <summary>
-        ///     Works the voted rooms remove queue.
-        /// </summary>
-        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        private bool WorkVotedRoomsRemoveQueue()
-        {
-            if (_votedRoomsRemoveQueue.Count <= 0) return false;
-            lock (_votedRoomsRemoveQueue.SyncRoot)
-            {
-                while (_votedRoomsRemoveQueue.Count > 0)
-                {
-                    var key = (RoomData) _votedRoomsRemoveQueue.Dequeue();
-                    if (key == null) continue;
-                    _votedRooms.Remove(key);
-                }
-            }
-            return true;
-        }
     }
 }

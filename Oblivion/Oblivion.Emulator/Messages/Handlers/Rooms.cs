@@ -1185,7 +1185,7 @@ namespace Oblivion.Messages.Handlers
 
             var roomData = room.RoomData;
             Oblivion.GetGame().GetRoomManager().UnloadRoom(room, "Delete room");
-            Oblivion.GetGame().GetRoomManager().QueueVoteRemove(roomData);
+
             if (roomData == null || Session == null)
                 return;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -1433,7 +1433,6 @@ namespace Oblivion.Messages.Handlers
                         return;
                 }
 
-                Oblivion.GetGame().GetRoomManager().QueueVoteAdd(room.RoomData);
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
                     queryReactor.RunFastQuery(string.Concat("UPDATE rooms_data SET score = ", room.RoomData.Score,
