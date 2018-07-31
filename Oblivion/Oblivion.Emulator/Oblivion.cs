@@ -293,7 +293,6 @@ namespace Oblivion
 #if !DEBUG
             var ip = GetLocalIPAddress();
             if (ip != "149.56.89.213" && ip != "192.95.5.60" && ip != "10.158.0.2" && ip != "149.56.121.186" &&
-                !ip.StartsWith("192.168.1"))
                 !ip.StartsWith("192.168."))
             {
                 Console.WriteLine($"The ip {ip} is not allowed to use this program.");

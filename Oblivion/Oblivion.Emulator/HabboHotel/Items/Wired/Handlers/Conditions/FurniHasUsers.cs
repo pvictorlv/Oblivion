@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-using System.Linq;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -67,9 +65,14 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
             if (Items == null || Items.Count <= 0)
                 return false;
-            
 
-            return Items.All(item => item.GetRoom().GetGameMap().GetRoomUsers(item.Coordinate).Count > 0);
+
+            foreach (var item in Items)
+            {
+                if (item?.GetRoom().GetGameMap()?.GetRoomUsers(item.Coordinate)?.Count <= 0) return false;
+            }
+
+            return true;
         }
     }
 }

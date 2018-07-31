@@ -773,7 +773,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         internal bool SetFloorItem(GameClient session, RoomItem item, int newX, int newY, int newRot, bool newItem,
             bool onRoller, bool sendMessage, bool updateRoomUserStatuses, bool specialMove, double? customHeight = null)
         {
-            if (item == null) return false;
+            if (item?.GetBaseItem() == null) return false;
             var flag = false;
             if (_room?.GetGameMap() == null) return false;
 

@@ -194,15 +194,6 @@ namespace Oblivion.Messages.Parsers
         }
 
         /// <summary>
-        /// Navigators the get popular groups.
-        /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void NavigatorGetPopularGroups(GameClientMessageHandler handler)
-        {
-            //
-        }
-
-        /// <summary>
         /// Loads the club gifts.
         /// </summary>
         /// <param name="handler">The handler.</param>
@@ -831,61 +822,8 @@ namespace Oblivion.Messages.Parsers
         {
             handler.GetRoomInfo();
         }
-
-        /// <summary>
-        /// Gets the popular rooms.
-        /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetPopularRooms(GameClientMessageHandler handler)
-        {
-            //
-        }
-
-        /// <summary>
-        /// Gets the recommended rooms.
-        /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetRecommendedRooms(GameClientMessageHandler handler)
-        {
-            //
-        }
-
-        /// <summary>
-        /// Gets the high rated rooms.
-        /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetHighRatedRooms(GameClientMessageHandler handler)
-        {
-            //
-        }
-
-        /// <summary>
-        /// Gets the friends rooms.
-        /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetFriendsRooms(GameClientMessageHandler handler)
-        {
-            //
-        }
-
-        /// <summary>
-        /// Gets the rooms with friends.
-        /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetRoomsWithFriends(GameClientMessageHandler handler)
-        {
-            //
-        }
-
-        /// <summary>
-        /// Gets the own rooms.
-        /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetOwnRooms(GameClientMessageHandler handler)
-        {
-            //
-        }
-
+        
+        
         /// <summary>
         /// News the navigator flat cats.
         /// </summary>

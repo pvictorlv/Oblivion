@@ -962,10 +962,10 @@ namespace Oblivion.HabboHotel.Users
 
             var navilogs = string.Empty;
 
-            if (NavigatorLogs?.Count > 0)
+            if (NavigatorLogs != null && NavigatorLogs.Count > 0)
             {
-                navilogs = NavigatorLogs.Values.Aggregate(navilogs,
-                    (current, navi) => current + $"{navi.Id},{navi.Value1},{navi.Value2};");
+                foreach (var value in NavigatorLogs.Values) navilogs = navilogs + $"{value.Id},{value.Value1},{value.Value2};";
+                
                 navilogs = navilogs.Remove(navilogs.Length - 1);
             }
 

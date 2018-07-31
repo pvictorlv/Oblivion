@@ -352,8 +352,9 @@ namespace Oblivion.HabboHotel.Rooms
         }
 
         private bool _processingWireds;
+        private bool _processingBall;
 
-        internal void StartWiredProcessing()
+        internal void StartWiredsProcess()
         {
             if (_processingWireds) return;
 
@@ -368,6 +369,39 @@ namespace Oblivion.HabboHotel.Rooms
                 }
             }, TaskCreationOptions.LongRunning).Start();
         }
+
+        internal void StopSoccer()
+        {
+            _soccer = null;
+            _processingBall = false;
+        }
+
+        internal void StartBallProcess()
+        {
+            if (_processingBall) return;
+
+            _processingBall = true;
+
+            new Task(async () =>
+            {
+                while (GotSoccer())
+                {
+                    try
+                    {
+                        GetSoccer().OnCycle();
+                    }
+                    catch (Exception e)
+                    {
+                        Logging.LogCriticalException("INVALID MARIO BUG IN BALLMOVEMENT: <" + RoomData.Id +
+                                                     "> :" +
+                                                     e);
+                    }
+
+                    await Task.Delay(150);
+                }
+            }, TaskCreationOptions.LongRunning).Start();
+        }
+
 
         /// <summary>
         ///     Initializes the user bots.
@@ -769,7 +803,12 @@ namespace Oblivion.HabboHotel.Rooms
 
                     if (GotWireds())
                     {
-                        StartWiredProcessing();
+                        StartWiredsProcess();
+                    }
+
+                    if (GotSoccer())
+                    {
+                        StartBallProcess();
                     }
 
                     WorkRoomKickQueue();
@@ -1224,7 +1263,6 @@ namespace Oblivion.HabboHotel.Rooms
             InitializeFromRoomData(data, false);
         }
 
-     
 
         /// <summary>
         ///     Checks the mute.
@@ -1411,6 +1449,12 @@ namespace Oblivion.HabboHotel.Rooms
                 _soccer = null;
             }
 
+            if (GotWireds())
+            {
+                _wiredHandler.Destroy();
+                _wiredHandler = null;
+            }
+
             if (GotBanzai())
             {
                 _banzai.Destroy();
@@ -1423,11 +1467,6 @@ namespace Oblivion.HabboHotel.Rooms
                 _freeze = null;
             }
 
-            if (GotWireds())
-            {
-                _wiredHandler.Destroy();
-                _wiredHandler = null;
-            }
 
             if (GotMusicController())
             {

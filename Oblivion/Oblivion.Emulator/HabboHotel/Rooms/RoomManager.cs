@@ -4,7 +4,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using Oblivion.Collections;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.Events;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -48,7 +47,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     The _ordered active rooms
         /// </summary>
         private IEnumerable<KeyValuePair<RoomData, uint>> _orderedActiveRooms;
-        
+
 
         /// <summary>
         ///     The active rooms remove queue
@@ -73,7 +72,6 @@ namespace Oblivion.HabboHotel.Rooms
             _activeRoomsUpdateQueue = new Queue();
             _activeRoomsAddQueue = new Queue();
             _eventManager = new EventManager();
-            LoadedBallRooms = new ConcurrentList<Room>();
         }
 
         /// <summary>
@@ -94,7 +92,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         /// <returns>KeyValuePair&lt;RoomData, System.UInt32&gt;[].</returns>
         internal KeyValuePair<RoomData, uint>[] GetActiveRooms() => _orderedActiveRooms?.ToArray();
-        
+
         /// <summary>
         ///     Gets the model.
         /// </summary>
@@ -308,9 +306,7 @@ namespace Oblivion.HabboHotel.Rooms
         }
 
 
-        public ConcurrentList<Room> LoadedBallRooms;
-
-        private DateTime _cycleBallLastExecution;
+        private DateTime _cycleRoomLastExecution;
 
 
         /// <summary>
@@ -318,36 +314,19 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         internal void OnCycle()
         {
-            //todo recode
-            if (LoadedBallRooms.Count > 0)
-            {
-                var sinceBallLastTime = DateTime.Now - _cycleBallLastExecution;
-                if (sinceBallLastTime.TotalMilliseconds >= 145)
-                {
-                    _cycleBallLastExecution = DateTime.Now;
-                    foreach (var Room in LoadedBallRooms)
-                    {
-                        try
-                        {
-                            if (Room.GotSoccer())
-                                Room.GetSoccer().OnCycle();
-                        }
-                        catch (Exception e)
-                        {
-                            Logging.LogCriticalException("INVALID MARIO BUG IN BALLMOVEMENT: <" + Room.RoomData.Id +
-                                                         "> :" +
-                                                         e);
-                        }
-                    }
-                }
-            }
-
             try
             {
-                var flag = WorkActiveRoomsAddQueue();
-                var flag2 = WorkActiveRoomsRemoveQueue();
-                var flag3 = WorkActiveRoomsUpdateQueue();
-                if (flag || flag2 || flag3) SortActiveRooms();
+                var sinceCycleLastTime = DateTime.Now - _cycleRoomLastExecution;
+                if (sinceCycleLastTime.TotalMilliseconds >= 500)
+                {
+                    _cycleRoomLastExecution = DateTime.Now;
+
+                    var flag = WorkActiveRoomsAddQueue();
+                    var flag2 = WorkActiveRoomsRemoveQueue();
+                    var flag3 = WorkActiveRoomsUpdateQueue();
+                    if (flag || flag2 || flag3)
+                        SortActiveRooms();
+                }
 
                 Oblivion.GetGame().RoomManagerCycleEnded = true;
             }
@@ -356,7 +335,7 @@ namespace Oblivion.HabboHotel.Rooms
                 Logging.LogThreadException(ex.ToString(), "RoomManager.OnCycle Exception --> Not inclusive");
             }
         }
-        
+
 
         /// <summary>
         ///     Queues the active room update.
@@ -539,7 +518,6 @@ namespace Oblivion.HabboHotel.Rooms
             }
 
             LoadedRooms.TryRemove(room.RoomId, out var _);
-            LoadedBallRooms.Remove(room);
             room.Destroy();
             room = null;
         }
@@ -551,7 +529,7 @@ namespace Oblivion.HabboHotel.Rooms
         {
             _orderedActiveRooms = _activeRooms.OrderByDescending(t => t.Value).Take(40);
         }
-        
+
         /// <summary>
         ///     Works the active rooms update queue.
         /// </summary>
@@ -617,6 +595,5 @@ namespace Oblivion.HabboHotel.Rooms
 
             return true;
         }
-
     }
 }

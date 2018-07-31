@@ -60,9 +60,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
         internal void AddBall(RoomItem item)
         {
             _ball = item;
-            var manager = Oblivion.GetGame().GetRoomManager();
-            if (!manager.LoadedBallRooms.Contains(_room))
-                manager.LoadedBallRooms.Add(_room);
         }
 
         internal void Destroy()
@@ -71,17 +68,14 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             _gates = null;
             _room = null;
 //            _balls.Clear();
-            Oblivion.GetGame().GetRoomManager().LoadedBallRooms.Remove(_room);
             lock (_ball)
                 _ball = null;
         }
 
-        internal async void OnCycle()
+        internal void OnCycle()
         {
             try
             {
-                await Task.Yield();
-
                 if (_ball == null)
                     return;
 
@@ -404,13 +398,12 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
         internal void RemoveBall()
         {
             if (_room == null) return;
-            var manager = Oblivion.GetGame().GetRoomManager();
-            if (manager.LoadedBallRooms.Contains(_room))
-                manager.LoadedBallRooms.Remove(_room);
-
             if (_ball == null) return;
+
+
             lock (_ball)
             {
+                _room.StopSoccer();
                 _ball.BallIsMoving = false;
                 _ball = null;
             }
