@@ -15,6 +15,7 @@ using Oblivion.HabboHotel.Pets;
 using Oblivion.HabboHotel.RoomBots;
 using Oblivion.HabboHotel.Rooms.Items.Games.Teams.Enums;
 using Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze.Enum;
+using Oblivion.HabboHotel.Rooms.User.Path;
 using Oblivion.HabboHotel.Users;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
@@ -961,7 +962,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
             }
 
-            if (GetRoom().GetGameMap().SquareHasUsers(x, y) && !pOverride) return;
+            if (!Gamemap.CanWalk(GetRoom().GetGameMap().GameMap[x, y], pOverride))
+                return;
             if (Frozen)
             {
                 return;

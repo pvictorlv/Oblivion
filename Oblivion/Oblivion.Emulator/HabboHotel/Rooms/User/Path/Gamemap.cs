@@ -1099,7 +1099,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 user.RemoveStatus("mv");
                 _room.GetRoomUserManager().UpdateUserStatus(user, false);
                 if (!user.RidingHorse || user.IsPet || user.IsBot)
-                    return true;
+                    return generating;
                 var roomUserByVirtualId =
                     _room.GetRoomUserManager().GetRoomUserByVirtualId(Convert.ToInt32(user.HorseId));
 

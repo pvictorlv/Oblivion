@@ -902,6 +902,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 roomUsers.SetY = nextStep.Y;
                 roomUsers.SetZ = _room.GetGameMap().SqAbsoluteHeight(nextStep.X, nextStep.Y);
             }
+
         }
 
         internal void CheckUserSittableLayable(RoomUser roomUsers)
@@ -980,7 +981,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 }
 
                 roomUsers.RemoveStatus("mv");
-
+                
 
                 // Check Against if is a Valid Step...
 
@@ -1251,41 +1252,45 @@ namespace Oblivion.HabboHotel.Rooms.User
                     roomUsers.SetStep = false;
                     UpdateUserStatus(roomUsers, false);
                 }
-
-                while (true)
+                else
                 {
-                    if (roomUsers.Statusses == null) break;
 
-                    GenerateNewPath(roomUsers);
-
-                    // If user Isn't Walking, Let's go Back..
-                    if ((!roomUsers.IsWalking || roomUsers.Freezed))
+                    while (roomUsers.PathRecalcNeeded || roomUsers.IsWalking || roomUsers.SetStep)
                     {
-                        if (roomUsers.Statusses.TryRemove("mv", out _))
-                        {
-                            roomUsers.UpdateNeeded = true;
-                        }
-                    }
-                    else
-                    {
-                        // If he Want's to Walk.. Let's Continue!..
+                        if (roomUsers.Statusses == null) break;
 
+                        GenerateNewPath(roomUsers);
 
-                        // Let's go to The Tile! And Walk :D
-                        if (UserGoToTile(roomUsers, invalidStep))
+                        // If user Isn't Walking, Let's go Back..
+                        if ((!roomUsers.IsWalking || roomUsers.Freezed))
                         {
-                            // If User isn't Riding, Must Update Statusses...
-                            if (!roomUsers.RidingHorse)
+                            if (roomUsers.Statusses.TryRemove("mv", out _))
+                            {
                                 roomUsers.UpdateNeeded = true;
+                            }
                         }
                         else
                         {
-                            if (roomUsers.PathRecalcNeeded && !roomUsers.SetStep)
-                                continue;
-                        }
-                    }
+                            // If he Want's to Walk.. Let's Continue!..
 
-                    break;
+
+                            // Let's go to The Tile! And Walk :D
+                            if (UserGoToTile(roomUsers, invalidStep))
+                            {
+                                // If User isn't Riding, Must Update Statusses...
+                                if (!roomUsers.RidingHorse)
+                                    roomUsers.UpdateNeeded = true;
+
+                            }
+                            else
+                            {
+                                if (roomUsers.PathRecalcNeeded && !roomUsers.SetStep)
+                                    continue;
+                            }
+                        }
+
+                        break;
+                    }
                 }
 
                 // If is a Bot.. Let's Tick the Time Count of Bot..

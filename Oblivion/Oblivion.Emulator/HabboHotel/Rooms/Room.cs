@@ -348,7 +348,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         internal void StartRoomProcessing()
         {
-            _processTimer = new Timer(ProcessRoom, null, 500, 500);
+            _processTimer = new Timer(ProcessRoom, null, 0, 450);
         }
 
         private bool _processingWireds;

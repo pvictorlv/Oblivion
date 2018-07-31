@@ -619,8 +619,6 @@ namespace Oblivion.Messages.Handlers
             var targetX = Request.GetInteger();
             var targetY = Request.GetInteger();
 
-            if (targetX == roomUserByHabbo.X && targetY == roomUserByHabbo.Y)
-                return;
 
             roomUserByHabbo.MoveTo(targetX, targetY);
 
