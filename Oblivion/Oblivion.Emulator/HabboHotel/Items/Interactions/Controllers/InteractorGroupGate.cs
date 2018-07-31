@@ -8,6 +8,10 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorGroupGate : FurniInteractorModel
     {
+        public override void OnUserWalkOff(GameClient session, RoomItem item, RoomUser user)
+        {
+            OnUserWalk(session, item, user);
+        }
         public override void OnUserWalk(GameClient session, RoomItem item, RoomUser user)
         {
             if (session == null || item == null || user == null)

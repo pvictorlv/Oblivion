@@ -67,7 +67,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             Array.Clear(_gates, 0, _gates.Length);
             _gates = null;
             _room = null;
-//            _balls.Clear();
+
+            if (_ball == null) return;
             lock (_ball)
                 _ball = null;
         }

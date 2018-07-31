@@ -23,6 +23,10 @@ namespace Oblivion.HabboHotel.Items.Interactions.Models
         {
         }
 
+        public virtual void OnUserWalkOff(GameClient session, RoomItem item, RoomUser user)
+        {
+        }
+
         public virtual void OnWiredTrigger(RoomItem item)
         {
         }

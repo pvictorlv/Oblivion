@@ -620,7 +620,7 @@ namespace Oblivion.HabboHotel.Navigators
         {
             var dictionary = new Dictionary<string, uint>();
 
-            var table = Oblivion.GetGame().GetRoomManager().GetActiveRooms().Where(x => x.Key.UsersNow > 0);
+            var table = Oblivion.GetGame().GetRoomManager().GetActiveRooms();
 
             /* TODO CHECK */
             foreach (var room in table)
@@ -852,9 +852,10 @@ namespace Oblivion.HabboHotel.Navigators
                 if (initforeach)
                 {
                     /* TODO CHECK */
+                    var lowerQuery = searchQuery.ToLower();
                     foreach (var rms in activeRooms)
                     {
-                        if (rms.Key.Name.ToLower().Contains(searchQuery.ToLower()) && rooms.Count <= 50)
+                        if (rms.Key.Name.ToLower().Contains(lowerQuery) && rooms.Count <= 50)
                             rooms.Add(rms.Key);
                         else
                             break;

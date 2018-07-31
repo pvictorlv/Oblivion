@@ -279,7 +279,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 }
             }
 
-            
+
             IsWallItem = (_mBaseItem.Type.ToString().ToLower() == "i");
             IsFloorItem = (_mBaseItem.Type.ToString().ToLower() == "s");
             AffectedTiles = Gamemap.GetAffectedTiles(_mBaseItem.Length, _mBaseItem.Width, X, Y, rot);
@@ -369,7 +369,6 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             AffectedTiles = new Dictionary<int, ThreeDCoord>();
             SongCode = string.Empty;
             Interactor = GetInteractor();
-
         }
 
         /// <summary>
@@ -421,7 +420,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         ///     Gets a value indicating whether this instance is roller.
         /// </summary>
         /// <value><c>true</c> if this instance is roller; otherwise, <c>false</c>.</value>
-        internal bool IsRoller { get; private set;  }
+        internal bool IsRoller { get; private set; }
 
         /// <summary>
         ///     Gets the coordinate.
@@ -536,6 +535,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             result.X--;
                             break;
                     }
+
                     return result;
                 }
             }
@@ -569,6 +569,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             result.X++;
                             break;
                     }
+
                     return result;
                 }
             }
@@ -622,6 +623,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                         Sq.Y--;
                         break;
                 }
+
                 return Sq;
             }
         }
@@ -636,18 +638,23 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             var interactionType = GetBaseItem().InteractionType;
             switch (interactionType)
             {
-                
                 case Interaction.Roller:
                     IsRoller = true;
                     _mRoom.GetRoomItemHandler().GotRollers = true;
                     return new InteractorRoller();
+
+
+                case Interaction.Normslaskates:
+                    return new InteractorRollerSkates();
+                case Interaction.IceSkates:
+                    return new InteractorIceSkates();
 
                 case Interaction.Gate:
                     return new InteractorGate();
 
                 case Interaction.GuildGate:
                     return new InteractorGroupGate();
-                    
+
                 case Interaction.VendingMachine:
                     return new InteractorVendor();
 
@@ -811,6 +818,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 default:
                     return new InteractorGenericSwitch();
             }
+
             return new InteractorGenericSwitch();
         }
 
@@ -903,6 +911,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                         {
                             UpdateCounter = 0;
                         }
+
                         break;
                     }
                     case Interaction.VendingMachine:
@@ -919,12 +928,13 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                     GetBaseItem().VendingIds[
                                         Oblivion.GetRandomNumber(0, (GetBaseItem().VendingIds.Count - 1))];
                                 user.CarryItem(drink);
-                                
                             }
+
                             InteractingUser = 0u;
                             ExtraData = "0";
                             UpdateState(false, true);
                         }
+
                         break;
 
                     case Interaction.Alert:
@@ -933,6 +943,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             ExtraData = "0";
                             UpdateState(false, true);
                         }
+
                         break;
 
                     case Interaction.OneWayGate:
@@ -963,6 +974,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             ExtraData = "0";
                             UpdateState(false, true);
                         }
+
                         if (roomUser3 == null) InteractingUser = 0u;
                         break;
                     }
@@ -973,6 +985,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             ReqUpdate(20, false);
                         }
                         else ExtraData = "-1";
+
                         UpdateState(false, true);
                         return;
 
@@ -1041,6 +1054,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             }
                             else InteractingUser = 0u;
                         }
+
                         if (InteractingUser2 > 0u)
                         {
                             var roomUserByHabbo = GetRoom().GetRoomUserManager().GetRoomUserByHabbo(InteractingUser2);
@@ -1050,8 +1064,10 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                 roomUserByHabbo.UnlockWalking();
                                 roomUserByHabbo.MoveTo(SquareInFront);
                             }
+
                             InteractingUser2 = 0u;
                         }
+
                         if (flag2)
                         {
                             if (ExtraData != "1")
@@ -1077,6 +1093,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             }
                             else num2--;
                         }
+
                         ReqUpdate(1, false);
                         return;
                     }
@@ -1105,7 +1122,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                             {
                                                 user.UnlockWalking();
                                                 _mRoom.GetGameMap().GameMap[X, Y] = 1;
-                                                }
+                                            }
                                             else
                                             {
                                                 user.SetPos(item.X, item.Y, item.Z);
@@ -1114,7 +1131,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                                 item.UpdateState(false, true);
                                                 item.InteractingUser2 = InteractingUser;
                                                 _mRoom.GetGameMap().GameMap[X, Y] = 1;
-                                                }
+                                            }
                                         }
                                         else
                                         {
@@ -1128,7 +1145,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                                     .GetMessageHandler()
                                                     .PrepareRoomForUser(teleRoomId, string.Empty);
                                                 _mRoom.GetGameMap().GameMap[X, Y] = 1;
-                                                }
+                                            }
+
                                             InteractingUser = 0u;
                                         }
                                     }
@@ -1143,7 +1161,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                     user.AllowOverride = true;
                                     keepDoorOpen = true;
                                     if (user.IsWalking && (user.GoalX != X || user.GoalY != Y))
-                                            user.ClearMovement();
+                                        user.ClearMovement();
 
                                     user.CanWalk = false;
                                     user.AllowOverride = true;
@@ -1155,7 +1173,6 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                 {
                                     InteractingUser = 0;
                                 }
-
                             }
                             else
                             {
@@ -1172,8 +1189,10 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                 user2.UnlockWalking();
                                 user2.MoveTo(SquareInFront);
                             }
+
                             InteractingUser2 = 0;
                         }
+
                         if (keepDoorOpen)
                         {
                             if (ExtraData != "1")
@@ -1195,6 +1214,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             ExtraData = "0";
                             UpdateState(false, true);
                         }
+
                         ReqUpdate(1, false);
                     }
 
@@ -1230,6 +1250,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                 ExtraData = string.Empty;
                                 InteractionCountHelper += 1;
                             }
+
                             UpdateState();
                             InteractionCount += 1;
                             if (InteractionCount < 16)
@@ -1237,8 +1258,10 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                 UpdateCounter = 1;
                                 return;
                             }
+
                             UpdateCounter = 0;
                         }
+
                         break;
 
                     case Interaction.BanzaiScoreBlue:
@@ -1280,9 +1303,11 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                 UpdateState();
                             }
                             else InteractionCountHelper += 1;
+
                             UpdateCounter = 1;
                             return;
                         }
+
                         UpdateCounter = 0;
                         GetRoom().GetBanzai().BanzaiEnd();
                         return;
@@ -1299,6 +1324,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             UpdateCounter = 1;
                             return;
                         }
+
                         InteractionCount = 0;
                         UpdateCounter = 0;
                         return;
@@ -1318,9 +1344,11 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                 UpdateState();
                             }
                             else InteractionCountHelper += 1;
+
                             UpdateCounter = 1;
                             return;
                         }
+
                         UpdateNeeded = false;
                         GetRoom().GetFreeze().StopGame();
                         return;
@@ -1334,6 +1362,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             InteractingUser = 0u;
                             InteractionCountHelper = 0;
                         }
+
                         break;
 
                     case Interaction.WearItem:
@@ -1357,6 +1386,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                     text = $"{text}{str}.";
                                 }
                             }
+
                             if (text.EndsWith(".")) text = text.TrimEnd('.');
                             clientByUserId.GetHabbo().Look = text;
                             clientByUserId.GetMessageHandler()
@@ -1508,6 +1538,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                     queryReactor.SetQuery($"SELECT extra_data FROM items_rooms WHERE id={Id} LIMIT 1");
                     ExtraData = queryReactor.GetString();
                 }
+
                 if (ExtraData.Contains(Convert.ToChar(5).ToString()))
                 {
                     int num = int.Parse(ExtraData.Split(Convert.ToChar(5))[0]),
@@ -1515,13 +1546,14 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                     s = (3 * num - num2).ToString();
                 }
             }
+
             if (inDb)
                 GetRoom().GetRoomItemHandler().AddOrUpdateItem(Id);
             if (!inRoom) return;
-            var serverMessage = new ServerMessage(0);
+            ServerMessage serverMessage;
             if (IsFloorItem)
             {
-                serverMessage.Init(LibraryParser.OutgoingRequest("UpdateFloorItemExtraDataMessageComposer"));
+                serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UpdateFloorItemExtraDataMessageComposer"));
                 serverMessage.AppendString(VirtualId.ToString());
                 switch (GetBaseItem().InteractionType)
                 {
@@ -1547,6 +1579,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             serverMessage.AppendString("OUTFIT_NAME");
                             serverMessage.AppendString("");
                         }
+
                         break;
 
                     case Interaction.Pinata:
@@ -1563,6 +1596,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             serverMessage.AppendInteger(int.Parse(ExtraData));
                             serverMessage.AppendInteger(100);
                         }
+
                         break;
 
                     case Interaction.WiredHighscore:
@@ -1589,9 +1623,10 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             }
             else
             {
-                serverMessage.Init(LibraryParser.OutgoingRequest("UpdateRoomWallItemMessageComposer"));
+                serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UpdateRoomWallItemMessageComposer"));
                 Serialize(serverMessage);
             }
+
             GetRoom().SendMessage(serverMessage);
         }
 
@@ -1657,6 +1692,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             message.AppendString("THUMBNAIL_URL");
                             message.AppendString(ExtraSettings.WebSocketAddr + ExtraData);
                         }
+
                         break;
 
                     case Interaction.MusicDisc:
@@ -1676,6 +1712,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                 message.AppendString(ExtraData.Split(Convert.ToChar(9))[i]);
                         }
                         else message.AppendInteger(0);
+
                         break;
 
                     case Interaction.Gift:
@@ -1701,6 +1738,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                         catch
                         {
                         }
+
                         var ribbonAndColor = (giftRibbon * 1000) + giftColor;
                         message.AppendInteger(ribbonAndColor);
                         message.AppendInteger(1);
@@ -1716,6 +1754,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             message.AppendString("PURCHASER_FIGURE");
                             message.AppendString(giverLook);
                         }
+
                         message.AppendString("PRODUCT_CODE");
                         message.AppendString(product);
                         message.AppendString("state");
@@ -1737,6 +1776,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             message.AppendInteger(int.Parse(ExtraData));
                             message.AppendInteger(100);
                         }
+
                         break;
 
                     case Interaction.Mannequin:
@@ -1762,6 +1802,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             message.AppendString("OUTFIT_NAME");
                             message.AppendString("");
                         }
+
                         break;
 
                     case Interaction.BadgeDisplay:
@@ -1813,6 +1854,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             }
                         }
                         else message.AppendInteger(0);
+
                         break;
 
                     case Interaction.MysteryBox:
@@ -1829,6 +1871,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             ExtraData = $"0{Convert.ToChar(5)}0";
                             message.AppendString("0");
                         }
+
                         break;
 
                     case Interaction.WiredHighscore:
@@ -1859,6 +1902,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             message.AppendInteger(0);
                             message.AppendString(ExtraData);
                         }
+
                         break;
                 }
 
@@ -1923,6 +1967,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerWalkOnFurni, user, this);
                 GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedStuff, this);
             }
+
             user.LastItem = Id;
         }
 
@@ -1932,6 +1977,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="user">The user.</param>
         internal void UserWalksOffFurni(RoomUser user)
         {
+            Interactor.OnUserWalk(user.GetClient(), this, user);
+
             if (GetRoom().GotWireds())
                 GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerWalkOffFurni, user, this);
         }

@@ -365,7 +365,7 @@ namespace Oblivion.HabboHotel.Rooms
                 while (GotWireds() && !Disposed)
                 {
                     _wiredHandler.OnCycle();
-                    await Task.Delay(250);
+                    await Task.Delay(150);
                 }
             }, TaskCreationOptions.LongRunning).Start();
         }
@@ -384,7 +384,7 @@ namespace Oblivion.HabboHotel.Rooms
 
             new Task(async () =>
             {
-                while (GotSoccer())
+                while (GotSoccer() && !Disposed)
                 {
                     try
                     {
@@ -397,7 +397,7 @@ namespace Oblivion.HabboHotel.Rooms
                                                      e);
                     }
 
-                    await Task.Delay(150);
+                    await Task.Delay(175);
                 }
             }, TaskCreationOptions.LongRunning).Start();
         }

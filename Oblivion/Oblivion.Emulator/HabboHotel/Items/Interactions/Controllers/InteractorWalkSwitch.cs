@@ -8,6 +8,12 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorWalkSwitch : FurniInteractorModel
     {
+        public override void OnUserWalkOff(GameClient session, RoomItem item, RoomUser user)
+        {
+            item.ExtraData = "0";
+            item.UpdateState();
+        }
+
         public override void OnUserWalk(GameClient session, RoomItem item, RoomUser user)
         {
             var num = item.GetBaseItem().Modes - 1;

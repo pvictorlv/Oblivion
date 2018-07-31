@@ -7,6 +7,11 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorQuickTeleport : FurniInteractorModel
     {
+        public override void OnUserWalkOff(GameClient session, RoomItem item, RoomUser user)
+        {
+            OnUserWalk(session, item, user);
+        }
+
         public override void OnPlace(GameClient session, RoomItem item)
         {
             item.ExtraData = "0";

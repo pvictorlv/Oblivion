@@ -108,7 +108,7 @@
     <OutputPath>..\bin\Release\x64\</OutputPath>
     <DefineConstants>
     </DefineConstants>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <FileAlignment>4096</FileAlignment>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -287,7 +287,9 @@
     <Compile Include="HabboHotel\Items\Interactions\Controllers\InteractorBed.cs" />
     <Compile Include="HabboHotel\Items\Interactions\Controllers\InteractorChair.cs" />
     <Compile Include="HabboHotel\Items\Interactions\Controllers\InteractorFreezeGate.cs" />
+    <Compile Include="HabboHotel\Items\Interactions\Controllers\InteractorIceSkates.cs" />
     <Compile Include="HabboHotel\Items\Interactions\Controllers\InteractorNearSwitch.cs" />
+    <Compile Include="HabboHotel\Items\Interactions\Controllers\InteractorRollerSkates.cs" />
     <Compile Include="HabboHotel\Items\Interactions\Controllers\InteractorTent.cs" />
     <Compile Include="HabboHotel\Items\Interactions\Controllers\InteractorTotem.cs" />
     <Compile Include="HabboHotel\Items\Interactions\Controllers\InteractorWalkSwitch.cs" />

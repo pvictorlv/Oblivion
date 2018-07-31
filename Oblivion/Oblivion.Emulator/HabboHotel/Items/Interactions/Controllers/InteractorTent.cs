@@ -9,6 +9,21 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorTent : FurniInteractorModel
     {
+        public override void OnUserWalkOff(GameClient session, RoomItem item, RoomUser user)
+        {
+            if (!user.IsBot && user.OnCampingTent)
+            {
+                var serverMessage = new ServerMessage();
+                serverMessage.Init(
+                    LibraryParser.OutgoingRequest("UpdateFloorItemExtraDataMessageComposer"));
+                serverMessage.AppendString(item.Id.ToString());
+                serverMessage.AppendInteger(0);
+                serverMessage.AppendString("0");
+                user.GetClient().SendMessage(serverMessage);
+                user.OnCampingTent = false;
+            }
+        }
+
         public override void OnUserWalk(GameClient session, RoomItem item, RoomUser user)
         {
             if (user.LastItem == item.Id)
@@ -28,10 +43,8 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 user.GetClient().SendMessage(serverMessage22);
                 user.OnCampingTent = true;
                 user.LastItem = item.Id;
+                user.OnCampingTent = true;
             }
-
-            user.OnCampingTent = true;
         }
-
     }
 }

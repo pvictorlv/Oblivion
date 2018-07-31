@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -30,6 +29,7 @@ namespace Oblivion.HabboHotel.Items.Wired
         {
             //todo: change _wiredItems to cyclers only
             _wiredItems = new ConcurrentDictionary<long, IWiredItem>();
+
             Effects = new ConcurrentDictionary<int, ConcurrentList<IWiredItem>>();
             Specials = new ConcurrentDictionary<int, ConcurrentList<IWiredItem>>();
             Conditions = new ConcurrentDictionary<int, ConcurrentList<IWiredItem>>();
@@ -194,14 +194,13 @@ namespace Oblivion.HabboHotel.Items.Wired
                     return false;
 
                 var b = false;
-                foreach (var current in _wiredItems.Values.ToList())
+                foreach (var current in _wiredItems.Values)
                 {
-                    if (current != null && current.Type == type)
+                    if (current == null || current.Type != type) continue;
+
+                    if (current.Execute(stuff))
                     {
-                        if (current.Execute(stuff))
-                        {
-                            b = true;
-                        }
+                        b = true;
                     }
                 }
                 return b;
@@ -222,13 +221,14 @@ namespace Oblivion.HabboHotel.Items.Wired
                 if (_wiredItems == null || _wiredItems.Count <= 0 || _room == null)
                     return;
 
-                var wireds = _wiredItems.Values.ToList();
-                foreach (var item in wireds)
+                foreach (var item in _wiredItems.Values)
                 {
                     try
                     {
                         if (item?.Item == null)
                             continue;
+
+                        if (_room == null) return;
 
 
                         var selectedItem = _room.GetRoomItemHandler().GetItem(item.Item.Id);
@@ -238,7 +238,6 @@ namespace Oblivion.HabboHotel.Items.Wired
                             RemoveWired(item);
                             continue;
                         }
-
 
                         if (!(item is IWiredCycler cycle)) continue;
 
@@ -260,7 +259,6 @@ namespace Oblivion.HabboHotel.Items.Wired
                         }
                     }
                 }
-                wireds.Clear();
             }
             catch (Exception e)
             {
@@ -434,7 +432,7 @@ namespace Oblivion.HabboHotel.Items.Wired
         }
 
 
-        private List<IWiredItem> GetAllWireds() => _wiredItems.Values.ToList();
+        private IEnumerable<IWiredItem> GetAllWireds() => _wiredItems.Values.ToList();
 
 
         public IWiredItem GetWired(RoomItem item)

@@ -9,6 +9,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorSwitch : FurniInteractorModel
     {
+        
         public override void OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             RoomUser roomUser = null;

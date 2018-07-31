@@ -10,6 +10,10 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorWalkInternalLink : FurniInteractorModel
     {
+        public override void OnUserWalkOff(GameClient session, RoomItem item, RoomUser user)
+        {
+            OnUserWalk(session, item, user);
+        }
         public override void OnUserWalk(GameClient session, RoomItem item, RoomUser user)
         {
             if (item == null || user == null)

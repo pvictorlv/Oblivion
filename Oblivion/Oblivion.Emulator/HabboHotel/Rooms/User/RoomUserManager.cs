@@ -1116,71 +1116,9 @@ namespace Oblivion.HabboHotel.Rooms.User
                     roomUsers.Z = roomUsers.SetZ;
 
                     // Check Sub Items Interactionables
-                    /* TODO RECODE THIS SHIT */
                     foreach (var roomItem in hasItemInPlace)
                     {
                         roomItem.UserWalksOffFurni(roomUsers);
-                        switch (roomItem.GetBaseItem().InteractionType)
-                        {
-                            case Interaction.Normslaskates:
-                                if (roomUsers.LastRollerDate + 60 < Oblivion.GetUnixTimeStamp())
-                                {
-                                    Oblivion.GetGame().GetAchievementManager()
-                                        .ProgressUserAchievement(roomUsers.GetClient(), "ACH_RbTagC", 1);
-                                    roomUsers.LastRollerDate = Oblivion.GetUnixTimeStamp();
-                                }
-
-                                Oblivion.GetGame().GetAchievementManager()
-                                    .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagB", 1);
-
-                                break;
-                            case Interaction.IceSkates:
-                                if (roomUsers.LastRollerDate + 60 < Oblivion.GetUnixTimeStamp())
-                                {
-                                    Oblivion.GetGame().GetAchievementManager()
-                                        .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagC", 1);
-                                    roomUsers.LastRollerDate = Oblivion.GetUnixTimeStamp();
-                                }
-
-                                Oblivion.GetGame().GetAchievementManager()
-                                    .ProgressUserAchievement(roomUsers.GetClient(), "ACH_TagB", 1);
-                                break;
-
-                            case Interaction.QuickTeleport:
-                            case Interaction.GuildGate:
-                            case Interaction.WalkInternalLink:
-                            case Interaction.FloorSwitch:
-                                roomItem.Interactor.OnUserWalk(roomUsers.GetClient(), roomItem, roomUsers);
-                                break;
-                            case Interaction.RunWaySage:
-                            case Interaction.ChairState:
-                            case Interaction.Shower:
-                            case Interaction.PressurePad:
-                            case Interaction.PressurePadBed:
-                            case Interaction.Guillotine:
-                                roomItem.ExtraData = "0";
-                                roomItem.UpdateState();
-                                break;
-
-                            case Interaction.Tent:
-                            case Interaction.BedTent:
-                                if (!roomUsers.IsBot && roomUsers.OnCampingTent)
-                                {
-                                    var serverMessage = new ServerMessage();
-                                    serverMessage.Init(
-                                        LibraryParser.OutgoingRequest("UpdateFloorItemExtraDataMessageComposer"));
-                                    serverMessage.AppendString(roomItem.Id.ToString());
-                                    serverMessage.AppendInteger(0);
-                                    serverMessage.AppendString("0");
-                                    roomUsers.GetClient().SendMessage(serverMessage);
-                                    roomUsers.OnCampingTent = false;
-                                }
-
-                                break;
-
-                            case Interaction.None:
-                                break;
-                        }
                     }
 
                     // Let's Update user Status..
