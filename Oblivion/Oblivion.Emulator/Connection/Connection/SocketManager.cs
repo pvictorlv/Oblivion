@@ -76,7 +76,8 @@ namespace Oblivion.Connection.Connection
         /// <param name="antiDdoS">The antiDDoS status</param>
         /// <param name="parser">The parser.</param>
         /// <param name="disableNaglesAlgorithm">if set to <c>true</c> [disable nagles algorithm].</param>
-        public void Init(int portId, int maxConnections, int connectionsPerIp, bool antiDdoS, IDataParser parser, bool disableNaglesAlgorithm)
+        public void Init(int portId, int maxConnections, int connectionsPerIp, bool antiDdoS, IDataParser parser,
+            bool disableNaglesAlgorithm)
         {
             _parser = parser;
             _disableNagleAlgorithm = disableNaglesAlgorithm;
@@ -98,25 +99,18 @@ namespace Oblivion.Connection.Connection
         /// <exception cref="SocketInitializationException"></exception>
         private void PrepareConnectionDetails()
         {
-            try
-            {
-                //                _socketSystem = new SocketSystem<SessionBase>("0.0.0.0", _portInformation, 150, 30000, _parser);
+            //                _socketSystem = new SocketSystem<SessionBase>("0.0.0.0", _portInformation, 150, 30000, _parser);
 
-                SocketConnectionCheck.SetupTcpAuthorization(20000);
-                IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, _portInformation);
+            SocketConnectionCheck.SetupTcpAuthorization(20000);
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, _portInformation);
 
-                _listener = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                _listener.Bind(endPoint);
-                _listener.Listen(150);
+            _listener = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            _listener.Bind(endPoint);
+            _listener.Listen(150);
 
-                //                _listener = new TcpListener(IPAddress.Any, _portInformation);
-                //                _listener.Start();
-                _listener.BeginAccept(OnAcceptSocket, _listener);
-            }
-            catch (SocketException ex)
-            {
-                throw new SocketInitializationException(ex.Message);
-            }
+            //                _listener = new TcpListener(IPAddress.Any, _portInformation);
+            //                _listener.Start();
+            _listener.BeginAccept(OnAcceptSocket, _listener);
         }
 
         private void OnChannelDisconnect(ConnectionInformation connection, Exception exception)

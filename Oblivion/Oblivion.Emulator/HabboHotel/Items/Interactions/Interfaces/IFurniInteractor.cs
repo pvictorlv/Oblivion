@@ -13,6 +13,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Interfaces
         void OnTrigger(GameClient session, RoomItem item, int request, bool hasRights);
 
         void OnUserWalk(GameClient session, RoomItem item, RoomUser user);
+        void OnUserWalkOff(GameClient session, RoomItem item, RoomUser user);
 
         void OnWiredTrigger(RoomItem item);
     }

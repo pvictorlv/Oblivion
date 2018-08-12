@@ -1977,7 +1977,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="user">The user.</param>
         internal void UserWalksOffFurni(RoomUser user)
         {
-            Interactor.OnUserWalk(user.GetClient(), this, user);
+            Interactor.OnUserWalkOff(user.GetClient(), this, user);
 
             if (GetRoom().GotWireds())
                 GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerWalkOffFurni, user, this);

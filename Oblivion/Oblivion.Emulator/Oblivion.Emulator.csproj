@@ -120,6 +120,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -568,7 +569,6 @@
     <Compile Include="Messages\Handlers\Navigator.cs" />
     <Compile Include="Messages\Handlers\Rooms.cs" />
     <Compile Include="Messages\Handlers\Users.cs" />
-    <Compile Include="Connection\Connection\SocketInitializationException.cs" />
     <Compile Include="Messages\Parsers\LibraryParser.cs" />
     <Compile Include="Messages\Enums\StaticMessages.cs" />
     <Compile Include="Security\BobbaFilter.cs" />
@@ -681,7 +681,6 @@
     <Compile Include="HabboHotel\Users\Subscriptions\SubscriptionManager.cs" />
     <Compile Include="HabboHotel\Users\UserDataManagement\UserData.cs" />
     <Compile Include="HabboHotel\Users\UserDataManagement\UserDataFactory.cs" />
-    <Compile Include="HabboHotel\Users\UserDataManagement\UserDataNotFoundException.cs" />
     <Compile Include="Oblivion.cs" />
     <Compile Include="Messages\ClientMessage.cs" />
     <Compile Include="Messages\Handlers\Others.cs" />
@@ -690,7 +689,6 @@
     <Compile Include="Messages\ServerMessage.cs" />
     <Compile Include="Messages\Parsers\PacketLibrary.cs" />
     <Compile Include="Connection\Net\GamePacketParser.cs" />
-    <Compile Include="Connection\Net\InitialPacketParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.cs" />

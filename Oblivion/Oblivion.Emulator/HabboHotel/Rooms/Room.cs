@@ -1362,7 +1362,7 @@ namespace Oblivion.HabboHotel.Rooms
             InitUserBots();
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                if (roomData?.WordFilter != null)
+                if (roomData.WordFilter != null)
                 {
                     queryReactor.SetQuery($"SELECT word FROM rooms_wordfilter WHERE room_id = {id}");
                     var tableFilter = queryReactor.GetTable();

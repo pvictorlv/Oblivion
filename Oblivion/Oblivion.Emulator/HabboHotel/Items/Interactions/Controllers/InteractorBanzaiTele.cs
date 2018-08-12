@@ -13,5 +13,6 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 user.GetRoom().GetGameItemHandler().OnTeleportRoomUserEnter(user, item);
         }
 
+
     }
 }
