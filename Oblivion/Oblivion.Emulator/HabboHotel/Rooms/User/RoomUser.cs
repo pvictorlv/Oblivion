@@ -26,7 +26,6 @@ namespace Oblivion.HabboHotel.Rooms.User
 {
     public class RoomUser
     {
-
         /// <summary>
         ///     The _m client
         /// </summary>
@@ -594,58 +593,6 @@ namespace Oblivion.HabboHotel.Rooms.User
             return new Point(x, y);
         }
 
-        internal Point SquareInFrontSet
-        {
-            get
-            {
-                var x = SetX + 1;
-                var y = 0;
-                switch (RotBody)
-                {
-                    case 0:
-                        x = SetX;
-                        y = SetY - 1;
-                        break;
-
-                    case 1:
-                        x = SetX + 1;
-                        y = SetY - 1;
-                        break;
-
-                    case 2:
-                        x = SetX + 1;
-                        y = SetY;
-                        break;
-
-                    case 3:
-                        x = SetX + 1;
-                        y = Y + 1;
-                        break;
-
-                    case 4:
-                        x = SetX;
-                        y = SetY + 1;
-                        break;
-
-                    case 5:
-                        x = SetX - 1;
-                        y = SetY + 1;
-                        break;
-
-                    case 6:
-                        x = SetX - 1;
-                        y = SetY;
-                        break;
-
-                    case 7:
-                        x = SetX - 1;
-                        y = SetY - 1;
-                        break;
-                }
-
-                return new Point(x, y);
-            }
-        }
 
         /// <summary>
         ///     Gets a value indicating whether this instance is pet.
@@ -694,12 +641,6 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <value><c>true</c> if this instance is bot; otherwise, <c>false</c>.</value>
         internal bool IsBot => BotData != null;
 
-        /// <summary>
-        ///     Equalses the specified compared user.
-        /// </summary>
-        /// <param name="comparedUser">The compared user.</param>
-        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public bool Equals(RoomUser comparedUser) => comparedUser?.HabboId == HabboId;
 
         /// <summary>
         ///     Gets the name of the user.
@@ -742,10 +683,12 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
             IsAsleep = false;
             ApplyEffect(0);
-            var sleep = new ServerMessage(LibraryParser.OutgoingRequest("RoomUserIdleMessageComposer"));
-            sleep.AppendInteger(VirtualId);
-            sleep.AppendBool(false);
-            GetRoom().SendMessage(sleep);
+            using (var sleep = new ServerMessage(LibraryParser.OutgoingRequest("RoomUserIdleMessageComposer")))
+            {
+                sleep.AppendInteger(VirtualId);
+                sleep.AppendBool(false);
+                GetRoom().SendMessage(sleep);
+            }
         }
 
         private bool _disposed;
@@ -787,23 +730,23 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 if (!IsPet)
                     textColor = 2;
+                using (var botChatmsg = new ServerMessage())
+                {
+                    botChatmsg.Init(shout
+                        ? LibraryParser.OutgoingRequest("ShoutMessageComposer")
+                        : LibraryParser.OutgoingRequest("ChatMessageComposer"));
+                    botChatmsg.AppendInteger(VirtualId);
+                    botChatmsg.AppendString(msg);
+                    botChatmsg.AppendInteger(0);
+                    botChatmsg.AppendInteger(textColor);
+                    botChatmsg.AppendInteger(0);
+                    botChatmsg.AppendInteger(count);
 
-                var botChatmsg = new ServerMessage();
-                botChatmsg.Init(shout
-                    ? LibraryParser.OutgoingRequest("ShoutMessageComposer")
-                    : LibraryParser.OutgoingRequest("ChatMessageComposer"));
-                botChatmsg.AppendInteger(VirtualId);
-                botChatmsg.AppendString(msg);
-                botChatmsg.AppendInteger(0);
-                botChatmsg.AppendInteger(textColor);
-                botChatmsg.AppendInteger(0);
-                botChatmsg.AppendInteger(count);
-
-                var location = new Vector2D(X, Y);
-                GetRoom().SendMessageWithRange(location, botChatmsg);
-                return;
+                    var location = new Vector2D(X, Y);
+                    GetRoom().SendMessageWithRange(location, botChatmsg);
+                    return;
+                }
             }
-
 
             if (session?.GetHabbo() == null)
                 return;
@@ -816,7 +759,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
 
 
-           
             if (session.GetHabbo().Rank < 4 && GetRoom().CheckMute(session))
                 return;
 
@@ -843,7 +785,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         return;
 
                 GetRoom().AddChatlog(session.GetHabbo().Id, msg, true);
-                
+
                 if (GetRoom()?
                         .RoomData?.WordFilter != null && GetRoom()
                         .RoomData.WordFilter.Count > 0)
@@ -870,23 +812,25 @@ namespace Oblivion.HabboHotel.Rooms.User
                 needReChange = true;
             }
 
-            var chatMsg = new ServerMessage();
-            chatMsg.Init(shout
-                ? LibraryParser.OutgoingRequest("ShoutMessageComposer")
-                : LibraryParser.OutgoingRequest("ChatMessageComposer"));
-            chatMsg.AppendInteger(VirtualId);
-            chatMsg.AppendString(msg);
-            chatMsg.AppendInteger(ChatEmotions.GetEmotionsForText(msg));
-            chatMsg.AppendInteger(textColor);
-            chatMsg.AppendInteger(0);
-            chatMsg.AppendInteger(count);
-            GetRoom().BroadcastChatMessageWithRange(chatMsg, this, session.GetHabbo().Id);
-            if (needReChange)
+            using (var chatMsg = new ServerMessage())
             {
-                ChangeName(GetUserName());
-            }
+                chatMsg.Init(shout
+                    ? LibraryParser.OutgoingRequest("ShoutMessageComposer")
+                    : LibraryParser.OutgoingRequest("ChatMessageComposer"));
+                chatMsg.AppendInteger(VirtualId);
+                chatMsg.AppendString(msg);
+                chatMsg.AppendInteger(ChatEmotions.GetEmotionsForText(msg));
+                chatMsg.AppendInteger(textColor);
+                chatMsg.AppendInteger(0);
+                chatMsg.AppendInteger(count);
+                GetRoom().BroadcastChatMessageWithRange(chatMsg, this, session.GetHabbo().Id);
+                if (needReChange)
+                {
+                    ChangeName(GetUserName());
+                }
 
-            GetRoom().OnUserSay(this, msg, shout);
+                GetRoom().OnUserSay(this, msg, shout);
+            }
         }
 
         private void ChangeName(string name)
@@ -951,11 +895,16 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (TeleportEnabled)
             {
                 UnIdle();
-                GetRoom()
-                    .SendMessage(GetRoom()
-                        .GetRoomItemHandler()
-                        .UpdateUserOnRoller(this, new Point(x, y), 0u,
-                            GetRoom().GetGameMap().SqAbsoluteHeight(GoalX, GoalY)));
+                using (var msg = GetRoom()
+                    .GetRoomItemHandler()
+                    .UpdateUserOnRoller(this, new Point(x, y), 0u,
+                        GetRoom().GetGameMap().SqAbsoluteHeight(GoalX, GoalY)))
+                {
+                    GetRoom()
+                        .SendMessage(msg);
+                }
+
+
                 if (Statusses.ContainsKey("sit")) Z -= 0.35;
                 UpdateNeeded = true;
                 GetRoom().GetRoomUserManager().UpdateUserStatus(this, false);
@@ -1034,10 +983,12 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             CarryItemId = item;
             CarryTimer = item > 0 ? 240 : 0;
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ApplyHanditemMessageComposer"));
-            serverMessage.AppendInteger(VirtualId);
-            serverMessage.AppendInteger(item);
-            GetRoom().SendMessage(serverMessage);
+            using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ApplyHanditemMessageComposer")))
+            {
+                serverMessage.AppendInteger(VirtualId);
+                serverMessage.AppendInteger(item);
+                GetRoom().SendMessage(serverMessage);
+            }
         }
 
         /// <summary>

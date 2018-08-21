@@ -984,7 +984,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 
 
                 // Check Against if is a Valid Step...
-
+                if (_room?.GetGameMap() == null) return false;
                 if (_room.GetGameMap()
                     .IsValidStep(roomUsers, new Vector2D(roomUsers.X, roomUsers.Y),
                         new Vector2D(nextStep.X, nextStep.Y),

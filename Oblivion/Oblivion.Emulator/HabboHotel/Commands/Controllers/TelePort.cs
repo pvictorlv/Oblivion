@@ -13,7 +13,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public TelePort()
         {
-            MinRank = 2;
+            MinRank = -4;
             Description = "Teleport around the room, like a kingorooo.";
             Usage = ":teleport";
             MinParams = 0;

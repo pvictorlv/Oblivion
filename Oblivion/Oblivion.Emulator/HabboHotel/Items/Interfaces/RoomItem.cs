@@ -788,7 +788,6 @@ namespace Oblivion.HabboHotel.Items.Interfaces
 
                 case Interaction.PressurePadBed:
                 case Interaction.Bed:
-                    _mRoom.ContainsBeds++;
                     return new InteractorBed();
 
 
@@ -827,13 +826,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// </summary>
         /// <value>The interactor.</value>
         internal IFurniInteractor Interactor;
-
-        /// <summary>
-        ///     Equalses the specified compared item.
-        /// </summary>
-        /// <param name="comparedItem">The compared item.</param>
-        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public bool Equals(RoomItem comparedItem) => comparedItem?.Id == Id;
+        
 
 
         internal void SetState(int x, int y, double z)
@@ -1026,11 +1019,15 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                         {
                                             roomUser4.GetClient().GetHabbo().IsHopping = true;
                                             roomUser4.GetClient().GetHabbo().HopperId = hopperId;
-                                            var roomFwd =
+
+                                            using (var roomFwd =
                                                 new ServerMessage(
-                                                    LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
-                                            roomFwd.AppendInteger(aHopper);
-                                            roomUser4.GetClient().SendMessage(roomFwd);
+                                                    LibraryParser.OutgoingRequest("RoomForwardMessageComposer")))
+                                            {
+                                                roomFwd.AppendInteger(aHopper);
+                                                roomUser4.GetClient().SendMessage(roomFwd);
+                                            }
+
                                             InteractingUser = 0u;
                                         }
                                     }
@@ -1406,14 +1403,18 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                 .GetResponse()
                                 .AppendInteger(clientByUserId.GetHabbo().AchievementPoints);
                             clientByUserId.GetMessageHandler().SendResponse();
-                            var serverMessage = new ServerMessage();
-                            serverMessage.Init(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
-                            serverMessage.AppendInteger(InteractingUser2);
-                            serverMessage.AppendString(clientByUserId.GetHabbo().Look);
-                            serverMessage.AppendString(clientByUserId.GetHabbo().Gender.ToLower());
-                            serverMessage.AppendString(clientByUserId.GetHabbo().Motto);
-                            serverMessage.AppendInteger(clientByUserId.GetHabbo().AchievementPoints);
-                            GetRoom().SendMessage(serverMessage);
+
+                            using (var serverMessage = new ServerMessage())
+                            {
+                                serverMessage.Init(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
+                                serverMessage.AppendInteger(InteractingUser2);
+                                serverMessage.AppendString(clientByUserId.GetHabbo().Look);
+                                serverMessage.AppendString(clientByUserId.GetHabbo().Gender.ToLower());
+                                serverMessage.AppendString(clientByUserId.GetHabbo().Motto);
+                                serverMessage.AppendInteger(clientByUserId.GetHabbo().AchievementPoints);
+                                GetRoom().SendMessage(serverMessage);
+                            }
+
                             return;
                         }
                     }
@@ -1505,14 +1506,6 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             return toReturn;
         }
 
-        public void UserFurniCollision(RoomUser user)
-        {
-            if (user?.GetClient() == null || user.GetClient().GetHabbo() == null)
-                return;
-
-            GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerCollision, user.GetClient().GetHabbo(), this);
-        }
-
         /// <summary>
         ///     Updates the state.
         /// </summary>
@@ -1600,7 +1593,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                         break;
 
                     case Interaction.WiredHighscore:
-                        if (HighscoreData == null) HighscoreData = new HighscoreData(this);
+                        if (HighscoreData == null)
+                            HighscoreData = new HighscoreData(this);
                         HighscoreData.GenerateExtraData(this, serverMessage);
                         break;
 

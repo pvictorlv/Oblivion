@@ -36,11 +36,11 @@ namespace Oblivion.Configuration
             {
                 if (session?.Parser == null) return;
 
-                var clientMessage = new ClientMessage(body);
-//                using (var clientMessage = new ClientMessage(body))
-//                {
+//                var clientMessage = new ClientMessage(body);
+                using (var clientMessage = new ClientMessage(body))
+                {
                 session.Parser.SuperHandle(clientMessage, session);
-//                }
+                }
             };
 
             Manager.NewSessionConnected += session =>

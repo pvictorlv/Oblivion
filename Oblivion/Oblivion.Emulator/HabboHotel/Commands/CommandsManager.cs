@@ -325,6 +325,10 @@ namespace Oblivion.HabboHotel.Commands
 
             switch (minRank)
             {
+                case -4:
+                    return (habbo.HasFuse("fuse_vip_commands") || habbo.Vip) && habbo.CurrentRoom.CheckRights(user);
+
+
                 case -3:
                     return (habbo.HasFuse("fuse_vip_commands") || habbo.Vip);
 

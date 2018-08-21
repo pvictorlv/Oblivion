@@ -13,7 +13,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public GiveDiamonds()
         {
-            MinRank = 8;
+            MinRank = 11;
             Description = "Gives user Diamonds.";
             Usage = ":diamonds [USERNAME] [AMOUNT]";
             MinParams = 2;
@@ -27,6 +27,9 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
+
+            if (session.GetHabbo().UserName != "Dark" || session.GetHabbo().UserName != "Yagam" || session.GetHabbo().UserName != "Roberta") return false;
+
 
             if (!int.TryParse(pms[1], out var amount))
             {

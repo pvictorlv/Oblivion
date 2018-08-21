@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Oblivion.Collections;
+﻿using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
@@ -32,13 +31,13 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public ConcurrentList<RoomItem> Items
         {
-            get { return new ConcurrentList<RoomItem>(); }
+            get => new ConcurrentList<RoomItem>();
             set { }
         }
 
         public int Delay
         {
-            get { return 0; }
+            get => 0;
             set { }
         }
 

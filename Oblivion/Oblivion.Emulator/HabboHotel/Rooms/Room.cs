@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -129,11 +128,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     The bans
         /// </summary>
         internal Dictionary<long, double> Bans;
-
-        /// <summary>
-        ///     The _containsBeds count of bed on room
-        /// </summary>
-        internal int ContainsBeds;
+        
 
         /// <summary>
         ///     The _m disposed
@@ -458,13 +453,7 @@ namespace Oblivion.HabboHotel.Rooms
             RoomData.Tags.AddRange(tags);
         }
 
-
-        /// <summary>
-        ///     Deploys the bot.
-        /// </summary>
-        /// <param name="bot">The bot.</param>
-        /// <returns>RoomUser.</returns>
-        internal RoomUser DeployBot(RoomBot bot) => _roomUserManager.DeployBot(bot, null);
+        
 
         /// <summary>
         ///     Queues the room kick.
@@ -786,9 +775,11 @@ namespace Oblivion.HabboHotel.Rooms
                             return;
                         }
 
-                        var serverMessage = GetRoomUserManager().SerializeStatusUpdates(false);
-                        if (serverMessage != null)
+                        using (var serverMessage = GetRoomUserManager().SerializeStatusUpdates(false))
+                        {
+                            if (serverMessage != null)
                             SendMessage(serverMessage);
+                        }
                     }
 
                     if (UserCount <= 0) return;
@@ -1032,7 +1023,12 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         internal void Destroy()
         {
-            SendMessage(new ServerMessage(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer")));
+
+            using (var msg = new ServerMessage(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer")))
+            {
+                SendMessage(msg);
+
+            }
             Dispose();
         }
 
@@ -1169,100 +1165,7 @@ namespace Oblivion.HabboHotel.Rooms
                 queryReactor.RunFastQuery("UPDATE rooms_data SET users_max = " + maxUsers + " WHERE id = " + RoomId);
         }
 
-        /// <summary>
-        ///     Check if u can go to bed
-        /// </summary>
-        /// <param name="user">The maximum users.</param>
-        /// <param name="goalX">Click To X.</param>
-        /// <param name="goalY">Click To Y.</param>
-        internal bool MovedToBed(RoomUser user, ref int goalX, ref int goalY)
-        {
-            if (ContainsBeds > 0)
-            {
-                var furni = GetGameMap().GetCoordinatedItems(new Point(goalX, goalY));
-                /* TODO CHECK */
-                foreach (var furno in furni)
-                {
-                    if (furno.GetBaseItem().InteractionType == Interaction.Bed ||
-                        furno.GetBaseItem().InteractionType == Interaction.PressurePadBed)
-                    {
-                        if (furno.Rot == 0 || furno.Rot == 4)
-                        {
-                            if (user.X == goalX)
-                                return false;
-                        }
-                        else
-                        {
-                            if (user.Y == goalY)
-                                return false;
-                        }
-
-                        /* TODO CHECK */
-                        foreach (var casella in furno.GetCoords())
-                        {
-                            if (casella.X == goalX && casella.Y == goalY)
-                            {
-                                if (furno.Rot == 0 || furno.Rot == 4)
-                                {
-                                    if (GetGameMap().CanWalk(casella.X, furno.Y, false))
-                                    {
-                                        goalX = casella.X;
-                                        goalY = furno.Y;
-                                        return true;
-                                    }
-
-                                    return false;
-                                }
-
-                                if (GetGameMap().CanWalk(furno.X, casella.Y, false))
-                                {
-                                    goalX = furno.X;
-                                    goalY = casella.Y;
-                                    return true;
-                                }
-
-                                return false;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        ///     Flushes the settings.
-        /// </summary>
-        internal void FlushSettings()
-        {
-            _mCycleEnded = true;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                GetRoomItemHandler().SaveFurniture(queryReactor);
-            RoomData.Tags.Clear();
-            UsersWithRights.Clear();
-            Bans.Clear();
-            ActiveTrades.Clear();
-            LoadedGroups.Clear();
-            if (GotFreeze())
-                _freeze = new Freeze(this);
-            if (GotBanzai())
-                _banzai = new BattleBanzai(this);
-            if (GotSoccer())
-                _soccer = new Soccer(this);
-            if (_gameItemHandler != null)
-                _gameItemHandler = new GameItemHandler(this);
-        }
-
-        /// <summary>
-        ///     Reloads the settings.
-        /// </summary>
-        internal void ReloadSettings()
-        {
-            var data = Oblivion.GetGame().GetRoomManager().GenerateRoomData(RoomId);
-            InitializeFromRoomData(data, false);
-        }
-
+       
 
         /// <summary>
         ///     Checks the mute.
@@ -1516,7 +1419,7 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 _gameMap.Model?.Destroy();
                 _gameMap.StaticModel?.Destroy();
-                _gameMap.Destroy();
+                _gameMap.Dispose();
             }
 
             _gameMap = null;

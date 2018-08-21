@@ -610,6 +610,9 @@ namespace Oblivion.Messages.Handlers
             Response?.Dispose();
             Response = null;
             Session = null;
+
+            Request?.Dispose();
+            Request = null;
         }
     }
 }

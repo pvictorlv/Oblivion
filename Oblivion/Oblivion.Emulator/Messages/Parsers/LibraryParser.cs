@@ -24,8 +24,6 @@ namespace Oblivion.Messages.Parsers
 
         internal static int CountReleases;
 
-        public delegate void ParamLess();
-
         internal delegate void StaticRequestHandler(GameClientMessageHandler handler);
 
         public static int OutgoingRequest(string packetName)

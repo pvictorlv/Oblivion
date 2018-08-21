@@ -383,46 +383,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
         public IEnumerable<RoomItem> GetWallAndFloor => FloorItems.Values.Concat(WallItems.Values);
 
-        /// <summary>
-        ///     Remove Items On Room GroupBy Username
-        /// </summary>
-        /// <param name="roomItemList"></param>
-        /// <param name="session"></param>
-        internal void RemoveItemsByOwner(ref List<RoomItem> roomItemList, ref GameClient session)
-        {
-            var update = new List<GameClient>();
-
-            foreach (var item in roomItemList)
-            {
-                if (item.UserId == 0)
-                    item.UserId = session.GetHabbo().Id;
-
-                var client = Oblivion.GetGame().GetClientManager().GetClientByUserId(item.UserId);
-
-                if (item.GetBaseItem().InteractionType != Interaction.PostIt)
-                {
-                    if (client?.GetHabbo() == null)
-                    {
-                        using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
-                            dbClient.RunFastQuery("UPDATE items_rooms SET room_id = '0' WHERE id = " + item.Id);
-                        continue;
-                    }
-
-                    if (!update.Contains(client))
-                    {
-                        update.Add(client);
-                    }
-
-                    client.GetHabbo().GetInventoryComponent().AddItem(item);
-                }
-            }
-
-            foreach (var user in update)
-            {
-                user.GetHabbo().GetInventoryComponent().UpdateItems(true);
-            }
-        }
-
+       
         /// <summary>
         ///     Sets the speed.
         /// </summary>
@@ -581,9 +542,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 _room.GetSoccer().UnRegisterGate(item);
             if (item.GetBaseItem().InteractionType != Interaction.Gift)
                 item.Interactor.OnRemove(session, item);
-            if (item.GetBaseItem().InteractionType == Interaction.Bed ||
-                item.GetBaseItem().InteractionType == Interaction.PressurePadBed)
-                _room.ContainsBeds--;
+
             if (item.IsWired)
             {
                 _room.GetWiredHandler().RemoveWired(item);

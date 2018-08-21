@@ -7,7 +7,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
     {
         public RoomAlert()
         {
-            MinRank = -2;
+            MinRank = -3;
             Description = "Alerts the Room.";
             Usage = ":roomalert [MESSAGE]";
             MinParams = -1;
