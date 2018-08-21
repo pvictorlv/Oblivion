@@ -546,26 +546,7 @@ namespace Oblivion
         /// <returns>System.Int64.</returns>
         internal static long Now() => (long) (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds;
 
-        internal static int DifferenceInMilliSeconds(DateTime time, DateTime tFrom)
-        {
-            var time1 = tFrom.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
-            var time2 = time.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
-
-            if (time1 >= double.MaxValue || time1 <= double.MinValue || time1 <= 0.0)
-                time1 = 0.0;
-
-            if (time2 >= double.MaxValue || time2 <= double.MinValue || time2 <= 0.0)
-                time2 = 0.0;
-
-            return Convert.ToInt32(time1 - time2);
-        }
-
-        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
-        {
-            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            return dtDateTime;
-        }
+      
 
         /// <summary>
         ///     Filter's the Habbo Avatars Figure

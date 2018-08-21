@@ -95,8 +95,6 @@ namespace Oblivion.Connection.Connection
             }
         }
 
-        internal ARC4 Arc4ServerSide;
-
         /// <summary>
         /// Reads the asynchronous.
         /// </summary>
@@ -280,7 +278,7 @@ namespace Oblivion.Connection.Connection
         /// <param name="bytesReceived"></param>
         private void HandlePacketData(byte[] packet, int bytesReceived)
         {
-            Arc4ServerSide?.Parse(ref packet);
+//            Arc4ServerSide?.Parse(ref packet);
             Parser?.HandlePacketData(packet, bytesReceived);
         }
 

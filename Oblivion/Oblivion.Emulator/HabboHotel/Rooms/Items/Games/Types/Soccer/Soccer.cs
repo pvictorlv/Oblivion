@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -32,28 +31,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
 //            _balls = new List<RoomItem>();
         }
 
-        public static int GetThreadTime(int i)
-        {
-            switch (i)
-            {
-                case 1:
-                    return 75;
-
-                case 2:
-                    return 100;
-
-                case 3:
-                    return 125;
-
-                case 4:
-                    return 150;
-
-                default:
-                    if (i != 5)
-                        return ((i != 6) ? 200 : 350);
-                    return 200;
-            }
-        }
 
         internal bool GotBall() => _ball != null;
 
@@ -70,7 +47,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
 
             if (_ball == null) return;
             lock (_ball)
+            {
                 _ball = null;
+            }
         }
 
         internal void OnCycle()
@@ -82,7 +61,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
 
                 lock (_ball)
                 {
-                    if (!_ball.BallIsMoving) return;
+                    if (!_ball.BallIsMoving || _ball?.InteractingBallUser == null) return;
 
                     MoveBallProcess(_ball, _ball.InteractingBallUser);
                 }
@@ -235,36 +214,39 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             var itemIsOnGameItem = GameItemOverlaps(item);
 //            double  = _room.GetGameMap().Model.SqFloorHeight[newX][newY];
             var newZ = _room.GetGameMap().SqAbsoluteHeight(newX, newY);
-            var mMessage = new ServerMessage();
-            mMessage.Init(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer")); // Cf
-            mMessage.AppendInteger(item.VirtualId);
-            mMessage.AppendInteger(item.BaseItem);
-            mMessage.AppendInteger(newX);
-            mMessage.AppendInteger(newY);
-            mMessage.AppendInteger(4);
-            mMessage.AppendString(TextHandling.GetString(item.Z));
-            mMessage.AppendString(TextHandling.GetString(newZ));
-            mMessage.AppendInteger(0);
-            mMessage.AppendInteger(0);
-            mMessage.AppendString(item.ExtraData);
-            mMessage.AppendInteger(-1);
-            mMessage.AppendInteger(0);
-            mMessage.AppendInteger(_room.RoomData.OwnerId);
-            mMessage.AppendInteger(item.VirtualId);
-            _room.SendMessage(mMessage);
+            using (var mMessage = new ServerMessage())
+            {
+                mMessage.Init(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer")); // Cf
+                mMessage.AppendInteger(item.VirtualId);
+                mMessage.AppendInteger(item.BaseItem);
+                mMessage.AppendInteger(newX);
+                mMessage.AppendInteger(newY);
+                mMessage.AppendInteger(4);
+                mMessage.AppendString(TextHandling.GetString(item.Z));
+                mMessage.AppendString(TextHandling.GetString(newZ));
+                mMessage.AppendInteger(0);
+                mMessage.AppendInteger(0);
+                mMessage.AppendString(item.ExtraData);
+                mMessage.AppendInteger(-1);
+                mMessage.AppendInteger(0);
+                mMessage.AppendInteger(_room.RoomData.OwnerId);
+                mMessage.AppendInteger(item.VirtualId);
+                _room.SendMessage(mMessage);
 
-            if (oldRoomCoord.X == newX && oldRoomCoord.Y == newY)
-                return false;
+                if (oldRoomCoord.X == newX && oldRoomCoord.Y == newY)
+                    return false;
 
 //            _room.GetGameMap().SquareIsOpen();
-            item.SetState(newX, newY, newZ,
-                Gamemap.GetAffectedTiles(item.GetBaseItem().Length, item.GetBaseItem().Width, newX, newY, item.Rot));
+                item.SetState(newX, newY, newZ,
+                    Gamemap.GetAffectedTiles(item.GetBaseItem().Length, item.GetBaseItem().Width, newX, newY,
+                        item.Rot));
 //            _room.GetGameMap().Model.SqFloorHeight[item.X][item.Y] = item.Z;
-            if (itemIsOnGameItem || mover?.GetHabbo() == null)
+                if (itemIsOnGameItem || mover?.GetHabbo() == null)
+                    return false;
+                HandleFootballGameItems(new Point(newX, newY),
+                    _room.GetRoomUserManager().GetRoomUserByHabbo(mover.GetHabbo().Id));
                 return false;
-            HandleFootballGameItems(new Point(newX, newY),
-                _room.GetRoomUserManager().GetRoomUserByHabbo(mover.GetHabbo().Id));
-            return false;
+            }
         }
 
         internal void MoveBall(RoomItem item, GameClient client, Point user)
@@ -276,8 +258,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                 if (item.ComeDirection != IComeDirection.Null)
                     MoveBallProcess(item, client);
             }
-            catch
+            catch (Exception e)
             {
+                Logging.HandleException(e, "MoveBall");
             }
         }
 
@@ -438,34 +421,54 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
         private void HandleFootballGameItems(Point ballItemCoord, RoomUser user)
         {
             if (user == null || _room?.GetGameManager() == null) return;
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("RoomUserActionMessageComposer"));
-            //todo recode
-            if (_room.GetGameManager()
-                .GetItems(Team.Red)
-                .Values.SelectMany(current => current.AffectedTiles.Values)
-                .Any(current2 => current2.X == ballItemCoord.X && current2.Y == ballItemCoord.Y))
-                _room.GetGameManager().AddPointToTeam(Team.Red, user);
-            if (
-                _room.GetGameManager()
-                    .GetItems(Team.Green)
-                    .Values.SelectMany(current3 => current3.AffectedTiles.Values)
-                    .Any(current4 => current4.X == ballItemCoord.X && current4.Y == ballItemCoord.Y))
-                _room.GetGameManager().AddPointToTeam(Team.Green, user);
-            if (
-                _room.GetGameManager()
-                    .GetItems(Team.Blue)
-                    .Values.SelectMany(current5 => current5.AffectedTiles.Values)
-                    .Any(current6 => current6.X == ballItemCoord.X && current6.Y == ballItemCoord.Y))
-                _room.GetGameManager().AddPointToTeam(Team.Blue, user);
-            if (!_room.GetGameManager()
-                .GetItems(Team.Yellow)
-                .Values.SelectMany(current7 => current7.AffectedTiles.Values)
-                .Any(current8 => current8.X == ballItemCoord.X && current8.Y == ballItemCoord.Y))
-                _room.GetGameManager().AddPointToTeam(Team.Yellow, user);
+            using (var serverMessage =
+                new ServerMessage(LibraryParser.OutgoingRequest("RoomUserActionMessageComposer")))
+            {
+                //todo recode
+                foreach (var current in _room.GetGameManager()
+                    .GetItems(Team.Red)
+                    .Values)
+                foreach (var value in current.AffectedTiles.Values)
+                    if (value.X == ballItemCoord.X && value.Y == ballItemCoord.Y)
+                    {
+                        _room.GetGameManager().AddPointToTeam(Team.Red, user);
+                        break;
+                    }
 
-            serverMessage.AppendInteger(user.VirtualId);
-            serverMessage.AppendInteger(0);
-            user.GetClient().GetHabbo().CurrentRoom.SendMessage(serverMessage);
+                foreach (var current3 in _room.GetGameManager()
+                    .GetItems(Team.Green)
+                    .Values)
+                foreach (var value in current3.AffectedTiles.Values)
+                {
+                    if (value.X != ballItemCoord.X || value.Y != ballItemCoord.Y) continue;
+                    _room.GetGameManager().AddPointToTeam(Team.Green, user);
+                    break;
+                }
+
+                foreach (var current5 in _room.GetGameManager()
+                    .GetItems(Team.Blue)
+                    .Values)
+                foreach (var value in current5.AffectedTiles.Values)
+                    if (value.X == ballItemCoord.X && value.Y == ballItemCoord.Y)
+                    {
+                        _room.GetGameManager().AddPointToTeam(Team.Blue, user);
+                        break;
+                    }
+
+                foreach (var current5 in _room.GetGameManager()
+                    .GetItems(Team.Yellow)
+                    .Values)
+                foreach (var value in current5.AffectedTiles.Values)
+                    if (value.X == ballItemCoord.X && value.Y == ballItemCoord.Y)
+                    {
+                        _room.GetGameManager().AddPointToTeam(Team.Yellow, user);
+                        break;
+                    }
+
+                serverMessage.AppendInteger(user.VirtualId);
+                serverMessage.AppendInteger(0);
+                user.GetClient().GetHabbo().CurrentRoom.SendMessage(serverMessage);
+            }
         }
     }
 }

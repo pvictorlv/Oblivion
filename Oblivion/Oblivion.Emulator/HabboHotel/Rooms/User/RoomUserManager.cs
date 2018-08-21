@@ -184,33 +184,34 @@ namespace Oblivion.HabboHotel.Rooms.User
 
             UpdateUserStatus(roomUser, false);
             roomUser.UpdateNeeded = true;
-
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer"));
-            serverMessage.AppendInteger(1);
-            roomUser.Serialize(serverMessage);
-            _room.SendMessage(serverMessage);
-            roomUser.BotAi.OnSelfEnterRoom();
-            if (roomUser.IsPet)
+            using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer")))
             {
-                _pets[roomUser.PetData.PetId] = roomUser;
+                serverMessage.AppendInteger(1);
+                roomUser.Serialize(serverMessage);
+                _room.SendMessage(serverMessage);
+                roomUser.BotAi.OnSelfEnterRoom();
+                if (roomUser.IsPet)
+                {
+                    _pets[roomUser.PetData.PetId] = roomUser;
 
+                    PetCount++;
+                }
+
+                roomUser.BotAi.Modified();
+
+                if (roomUser.BotData.AiType != AiType.Generic)
+                    return roomUser;
+
+                Bots[roomUser.BotData.BotId] = roomUser;
+
+                serverMessage.Init(LibraryParser.OutgoingRequest("DanceStatusMessageComposer"));
+                serverMessage.AppendInteger(roomUser.VirtualId);
+                serverMessage.AppendInteger(roomUser.BotData.DanceId);
+                _room.SendMessage(serverMessage);
                 PetCount++;
-            }
 
-            roomUser.BotAi.Modified();
-
-            if (roomUser.BotData.AiType != AiType.Generic)
                 return roomUser;
-
-            Bots[roomUser.BotData.BotId] = roomUser;
-
-            serverMessage.Init(LibraryParser.OutgoingRequest("DanceStatusMessageComposer"));
-            serverMessage.AppendInteger(roomUser.VirtualId);
-            serverMessage.AppendInteger(roomUser.BotData.DanceId);
-            _room.SendMessage(serverMessage);
-            PetCount++;
-
-            return roomUser;
+            }
         }
 
 
@@ -902,7 +903,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                 roomUsers.SetY = nextStep.Y;
                 roomUsers.SetZ = _room.GetGameMap().SqAbsoluteHeight(nextStep.X, nextStep.Y);
             }
-
         }
 
         internal void CheckUserSittableLayable(RoomUser roomUsers)
@@ -944,14 +944,16 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                     if (horseStopWalkRidingPet != null)
                     {
-                        var horseStopWalkRidingPetMessage =
-                            new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
-                        horseStopWalkRidingPetMessage.AppendInteger(1);
-                        horseStopWalkRidingPet.SerializeStatus(horseStopWalkRidingPetMessage, "");
-                        _room.SendMessage(horseStopWalkRidingPetMessage);
+                        using (var horseStopWalkRidingPetMessage =
+                            new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer")))
+                        {
+                            horseStopWalkRidingPetMessage.AppendInteger(1);
+                            horseStopWalkRidingPet.SerializeStatus(horseStopWalkRidingPetMessage, "");
+                            _room.SendMessage(horseStopWalkRidingPetMessage);
 
-                        horseStopWalkRidingPet.IsWalking = false;
-                        horseStopWalkRidingPet.ClearMovement();
+                            horseStopWalkRidingPet.IsWalking = false;
+                            horseStopWalkRidingPet.ClearMovement();
+                        }
                     }
                 }
 
@@ -981,7 +983,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 }
 
                 roomUsers.RemoveStatus("mv");
-                
+
 
                 // Check Against if is a Valid Step...
                 if (_room?.GetGameMap() == null) return false;
@@ -1254,7 +1256,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                 }
                 else
                 {
-
                     while (roomUsers.PathRecalcNeeded || roomUsers.IsWalking || roomUsers.SetStep)
                     {
                         if (roomUsers.Statusses == null) break;
@@ -1280,7 +1281,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                                 // If User isn't Riding, Must Update Statusses...
                                 if (!roomUsers.RidingHorse)
                                     roomUsers.UpdateNeeded = true;
-
                             }
                             else
                             {
@@ -1386,11 +1386,12 @@ namespace Oblivion.HabboHotel.Rooms.User
                         _room.TonerData.Data1 = Oblivion.GetRandomNumber(0, 255);
                         _room.TonerData.Data2 = Oblivion.GetRandomNumber(0, 255);
                         _room.TonerData.Data3 = Oblivion.GetRandomNumber(0, 255);
-
-                        var tonerComposingMessage =
-                            new ServerMessage(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer"));
-                        tonerItem.Serialize(tonerComposingMessage);
-                        _room.SendMessage(tonerComposingMessage);
+                        using (var tonerComposingMessage =
+                            new ServerMessage(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer")))
+                        {
+                            tonerItem.Serialize(tonerComposingMessage);
+                            _room.SendMessage(tonerComposingMessage);
+                        }
                     }
                 }
             }
@@ -1581,23 +1582,27 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                     if (!user.IsSpectator)
                     {
-                        var serverMessage =
-                            new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer"));
-                        serverMessage.AppendInteger(1);
-                        if (!user.Serialize(serverMessage)) return;
-                        _room.SendMessage(serverMessage);
+                        using (var serverMessage =
+                            new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer")))
+                        {
+                            serverMessage.AppendInteger(1);
+                            if (!user.Serialize(serverMessage)) return;
+                            _room.SendMessage(serverMessage);
+                        }
                     }
 
                     if (!user.IsBot)
                     {
-                        var serverMessage2 = new ServerMessage();
-                        serverMessage2.Init(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
-                        serverMessage2.AppendInteger(user.VirtualId);
-                        serverMessage2.AppendString(client.GetHabbo().Look);
-                        serverMessage2.AppendString(client.GetHabbo().Gender.ToLower());
-                        serverMessage2.AppendString(client.GetHabbo().Motto);
-                        serverMessage2.AppendInteger(client.GetHabbo().AchievementPoints);
-                        _room.SendMessage(serverMessage2);
+                        using (var serverMessage2 = new ServerMessage())
+                        {
+                            serverMessage2.Init(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
+                            serverMessage2.AppendInteger(user.VirtualId);
+                            serverMessage2.AppendString(client.GetHabbo().Look);
+                            serverMessage2.AppendString(client.GetHabbo().Gender.ToLower());
+                            serverMessage2.AppendString(client.GetHabbo().Motto);
+                            serverMessage2.AppendInteger(client.GetHabbo().AchievementPoints);
+                            _room.SendMessage(serverMessage2);
+                        }
                     }
 
                     if (_room.RoomData.Owner != client.GetHabbo().UserName)

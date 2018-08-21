@@ -22,7 +22,6 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         private readonly uint _userId;
 
-        private uint _floodCount;
 
         /// <summary>
         ///     The appear offline
@@ -176,27 +175,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             client2?.SendMessage(SerializeUpdate(friend));
         }
 
-        /// <summary>
-        ///     Serializes the messenger action.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <param name="name">The name.</param>
-        internal void SerializeMessengerAction(int type, string name)
-        {
-            if (GetClient() == null)
-                return;
-
-            var serverMessage = new ServerMessage();
-            serverMessage.Init(LibraryParser.OutgoingRequest("ConsoleMessengerActionMessageComposer"));
-            serverMessage.AppendString(GetClient().GetHabbo().Id.ToString());
-            serverMessage.AppendInteger(type);
-            serverMessage.AppendString(name);
-
-            foreach (var current in Friends.Values)
-            {
-                current?.Client?.SendMessage(serverMessage);
-            }
-        }
+    
 
         /// <summary>
         ///     Handles all requests.
@@ -398,24 +377,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             GetClient().GetMessageHandler().SendResponse();
         }
 
-        /// <summary>
-        ///     Called when [destroy friendship].
-        /// </summary>
-        /// <param name="friend">The friend.</param>
-        internal void OnDestroyFriendship(int friend)
-        {
-            GetClient()
-                .GetMessageHandler()
-                .GetResponse()
-                .Init(LibraryParser.OutgoingRequest("FriendUpdateMessageComposer"));
-            GetClient().GetMessageHandler().GetResponse().AppendInteger(1); //count
-            GetClient().GetMessageHandler().GetResponse().AppendInteger(2); //id
-            GetClient().GetMessageHandler().GetResponse().AppendString("Grupos"); //id
-            GetClient().GetMessageHandler().GetResponse().AppendInteger(1);
-            GetClient().GetMessageHandler().GetResponse().AppendInteger(-1);
-            GetClient().GetMessageHandler().GetResponse().AppendInteger(friend);
-            GetClient().GetMessageHandler().SendResponse();
-        }
+    
 
         private int _lastRequest;
 
@@ -653,11 +615,13 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="convoId">The convo identifier.</param>
         internal void DeliverInstantMessage(string message, uint convoId)
         {
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleChatMessageComposer"));
-            serverMessage.AppendInteger(convoId);
+            using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleChatMessageComposer")))
+            {
+                serverMessage.AppendInteger(convoId);
             serverMessage.AppendString(message);
             serverMessage.AppendInteger(0);
             GetClient().SendMessage(serverMessage);
+            }
         }
 
         /// <summary>
@@ -668,12 +632,14 @@ namespace Oblivion.HabboHotel.Users.Messenger
         internal void DeliverInstantMessage(int GroupId, string message, int UserId, string Username,
             string figure)
         {
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleChatMessageComposer"));
-            serverMessage.AppendInteger(-GroupId);
+            using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleChatMessageComposer")))
+            {
+                serverMessage.AppendInteger(-GroupId);
             serverMessage.AppendString(message);
             serverMessage.AppendInteger(0);
             serverMessage.AppendString(Username + "/" + figure + "/" + UserId);
             GetClient().SendMessage(serverMessage);
+            }
         }
 
         /// <summary>
@@ -683,11 +649,13 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="conversationId">The conversation identifier.</param>
         internal void DeliverInstantMessageError(int errorId, uint conversationId)
         {
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleChatErrorMessageComposer"));
-            serverMessage.AppendInteger(errorId);
+            using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleChatErrorMessageComposer")))
+            {
+                serverMessage.AppendInteger(errorId);
             serverMessage.AppendInteger(conversationId);
             serverMessage.AppendString("");
             GetClient().SendMessage(serverMessage);
+            }
         }
 
         /// <summary>

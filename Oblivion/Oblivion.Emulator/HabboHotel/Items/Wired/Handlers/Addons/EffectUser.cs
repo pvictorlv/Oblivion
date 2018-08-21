@@ -47,6 +47,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
             if (!int.TryParse(OtherString, out var effectId)) return false;
 
             var session = roomUser.GetClient();
+
+            if (session?.GetHabbo() == null) return false;
+
             if (effectId == 178 && session.GetHabbo().Rank < 4) return true;
             if ((effectId == 23 || effectId == 24 || effectId == 25 || effectId == 26 || effectId == 102) &&
                 !session.GetHabbo().HasFuse("fuse_mod")) return true;
