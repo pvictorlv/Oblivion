@@ -272,11 +272,13 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
 
             roomUserByVirtualId.BotAi.OnSelfLeaveRoom(kicked);
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UserLeftRoomMessageComposer"));
-            serverMessage.AppendString(roomUserByVirtualId.VirtualId.ToString());
-            _room.SendMessage(serverMessage);
+            using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UserLeftRoomMessageComposer")))
+            {
+                serverMessage.AppendString(roomUserByVirtualId.VirtualId.ToString());
+                _room.SendMessage(serverMessage);
 
-            UserList.TryRemove(roomUserByVirtualId.InternalRoomId, out _);
+                UserList.TryRemove(roomUserByVirtualId.InternalRoomId, out _);
+            }
         }
 
         /// <summary>
@@ -407,15 +409,17 @@ namespace Oblivion.HabboHotel.Rooms.User
                 }
                 else if (notifyClient)
                 {
-                    var serverMessage =
-                        new ServerMessage(LibraryParser.OutgoingRequest("UserIsPlayingFreezeMessageComposer"));
-                    serverMessage.AppendBool(user.Team != Team.None);
-                    client.SendMessage(serverMessage);
-                    client.GetMessageHandler()
-                        .GetResponse()
-                        .Init(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer"));
-                    client.GetMessageHandler().GetResponse().AppendShort(2);
-                    client.GetMessageHandler().SendResponse();
+                    using (var serverMessage =
+                        new ServerMessage(LibraryParser.OutgoingRequest("UserIsPlayingFreezeMessageComposer")))
+                    {
+                        serverMessage.AppendBool(user.Team != Team.None);
+                        client.SendMessage(serverMessage);
+                        client.GetMessageHandler()
+                            .GetResponse()
+                            .Init(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer"));
+                        client.GetMessageHandler().GetResponse().AppendShort(2);
+                        client.GetMessageHandler().SendResponse();
+                    }
                 }
 
                 if (user.Team != Team.None)
@@ -486,12 +490,13 @@ namespace Oblivion.HabboHotel.Rooms.User
             user.InternalRoomId = -1;
             _room.GetGameMap().GameMap[user.X, user.Y] = user.SqState;
             _room.GetGameMap().RemoveUserFromMap(user, new Point(user.X, user.Y));
+            using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UserLeftRoomMessageComposer")))
+            {
+                serverMessage.AppendString(user.VirtualId.ToString());
+                _room.SendMessage(serverMessage);
 
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UserLeftRoomMessageComposer"));
-            serverMessage.AppendString(user.VirtualId.ToString());
-            _room.SendMessage(serverMessage);
-
-            OnRemove(user);
+                OnRemove(user);
+            }
         }
 
         /// <summary>

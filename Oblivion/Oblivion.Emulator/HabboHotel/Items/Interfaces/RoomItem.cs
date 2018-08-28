@@ -826,7 +826,6 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// </summary>
         /// <value>The interactor.</value>
         internal IFurniInteractor Interactor;
-        
 
 
         internal void SetState(int x, int y, double z)
@@ -855,9 +854,10 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <summary>
         ///     Destroys this instance.
         /// </summary>
-        internal void Dispose()
+        internal void Dispose(bool removeVirtual)
         {
-            Oblivion.GetGame().GetItemManager().RemoveVirtualItem(Id);
+            if (removeVirtual)
+                Oblivion.GetGame().GetItemManager().RemoveVirtualItem(Id);
             _mBaseItem = null;
             _mRoom = null;
             AffectedTiles.Clear();
@@ -1546,7 +1546,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             ServerMessage serverMessage;
             if (IsFloorItem)
             {
-                serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UpdateFloorItemExtraDataMessageComposer"));
+                serverMessage =
+                    new ServerMessage(LibraryParser.OutgoingRequest("UpdateFloorItemExtraDataMessageComposer"));
                 serverMessage.AppendString(VirtualId.ToString());
                 switch (GetBaseItem().InteractionType)
                 {

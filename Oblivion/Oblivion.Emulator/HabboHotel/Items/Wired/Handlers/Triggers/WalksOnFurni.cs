@@ -67,7 +67,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             if (roomUser == null || roomUser.IsBot || roomUser.IsPet)
                 return false;
             var roomItem = (RoomItem) stuff[1];
-            if (roomItem == null)
+            if (roomItem == null || Items == null)
                 return false;
 
             if (!Items.Contains(roomItem)) return false;

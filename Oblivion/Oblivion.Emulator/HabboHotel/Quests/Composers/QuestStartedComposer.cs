@@ -17,9 +17,10 @@ namespace Oblivion.HabboHotel.Quests.Composer
         /// <returns>ServerMessage.</returns>
         internal static ServerMessage Compose(GameClient session, Quest quest)
         {
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("QuestStartedMessageComposer"));
-            QuestListComposer.SerializeQuest(serverMessage, session, quest, quest.Category);
-            return serverMessage;
+            var msg = session.GetMessageHandler().GetResponse();
+            msg.Init(LibraryParser.OutgoingRequest("QuestStartedMessageComposer"));
+            QuestListComposer.SerializeQuest(msg, session, quest, quest.Category);
+            return msg;
         }
     }
 }

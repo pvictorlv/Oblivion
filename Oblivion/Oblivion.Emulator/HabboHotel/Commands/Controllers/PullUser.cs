@@ -86,6 +86,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     user2.MoveTo(user2.X + 1, user2.Y + 1);
                     break;
             }
+            user.Chat(session, $"Eu puxei {user2.GetUserName()}!", true, -1);
+
             return true;
         }
     }

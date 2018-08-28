@@ -273,12 +273,7 @@ namespace Oblivion.Messages
 
             CurrentMessage.Write(b, 0, b.Length);
         }
-
-        internal void AddBytes(List<byte[]> bytes)
-        {
-            foreach (byte[] byteArray in bytes)
-                AppendBytes(byteArray, false);
-        }
+        
 
         /// <summary>
         /// Appends the byted.
@@ -356,7 +351,6 @@ namespace Oblivion.Messages
             _arrayCurrentBuffer?.Dispose();
             _arrayCurrentBuffer = null;
             _disposed = true;
-            GC.SuppressFinalize(this);
         }
     }
 }

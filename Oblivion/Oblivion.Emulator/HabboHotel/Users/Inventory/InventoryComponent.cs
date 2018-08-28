@@ -518,9 +518,9 @@ namespace Oblivion.HabboHotel.Users.Inventory
         {
             var userItem = new UserItem(item.Id, item.BaseItem, item.ExtraData, item.GroupId, item.SongCode,
                 item.LimitedNo, item.LimitedTot);
-
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FurniListAddMessageComposer"));
-            serverMessage.AppendInteger(item.VirtualId);
+            using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FurniListAddMessageComposer")))
+            {
+                serverMessage.AppendInteger(item.VirtualId);
             serverMessage.AppendString(item.GetBaseItem().Type.ToString().ToUpper());
             serverMessage.AppendInteger(item.VirtualId);
             serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
@@ -566,12 +566,14 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 _mAddedItems.Add(id);
 
             _mClient.SendMessage(serverMessage);
+            }
         }
 
         internal void AddItemToItemInventory(UserItem userItem)
         {
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FurniListAddMessageComposer"));
-            serverMessage.AppendInteger(userItem.VirtualId);
+            using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FurniListAddMessageComposer")))
+            {
+                serverMessage.AppendInteger(userItem.VirtualId);
             serverMessage.AppendString(userItem.BaseItem.Type.ToString().ToUpper());
             serverMessage.AppendInteger(userItem.VirtualId);
             serverMessage.AppendInteger(userItem.BaseItem.SpriteId);
@@ -617,6 +619,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 _mAddedItems.Add(id);
 
             _mClient.SendMessage(serverMessage);
+            }
         }
 
 

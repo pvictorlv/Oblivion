@@ -53,19 +53,7 @@ namespace Oblivion.HabboHotel.Items
             _lengthY = TextHandling.Parse(lenD[1]);
         }
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="WallCoordinate" /> class.
-        /// </summary>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
-        /// <param name="n">The n.</param>
-        public WallCoordinate(double x, double y, sbyte n)
-        {
-            TextHandling.Split(x, out _widthX, out _widthY);
-            TextHandling.Split(y, out _lengthX, out _lengthY);
-
-            _side = n == 7 ? 'r' : 'l';
-        }
+        
 
         /// <summary>
         ///     Returns a <see cref="string" /> that represents this instance.
@@ -73,28 +61,6 @@ namespace Oblivion.HabboHotel.Items
         /// <returns>A <see cref="string" /> that represents this instance.</returns>
         public override string ToString() => ":w=" + _widthX + "," + _widthY + " " + "l=" + _lengthX + "," + _lengthY + " " + _side;
 
-        /// <summary>
-        ///     Generates the database shit.
-        /// </summary>
-        /// <returns>System.String.</returns>
-        internal string GenerateDbShit() => "x: " + TextHandling.Combine(_widthX, _widthY) + " y: " + TextHandling.Combine(_lengthX, _lengthY);
-
-        /// <summary>
-        ///     Gets the x value.
-        /// </summary>
-        /// <returns>System.Double.</returns>
-        internal double GetXValue() => TextHandling.Combine(_widthX, _widthY);
-
-        /// <summary>
-        ///     Gets the y value.
-        /// </summary>
-        /// <returns>System.Double.</returns>
-        internal double GetYValue() => TextHandling.Combine(_lengthX, _lengthY);
-
-        /// <summary>
-        ///     ns this instance.
-        /// </summary>
-        /// <returns>System.Int32.</returns>
-        internal int N() => _side == 'l' ? 8 : 7;
+      
     }
 }

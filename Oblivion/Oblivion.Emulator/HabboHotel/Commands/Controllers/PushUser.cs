@@ -89,7 +89,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     user2.MoveTo(user2.X- 1, user2.Y - 1);
                     break;
             }
-
+            user.Chat(session, $"Eu empurrei {user2.GetUserName()}!", true, -1);
             user2.UpdateNeeded = true;
             user2.SetRot(PathFinder.CalculateRotation(user2.X, user2.Y, user.GoalX, user.GoalY));
             return true;

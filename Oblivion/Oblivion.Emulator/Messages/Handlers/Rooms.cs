@@ -18,6 +18,7 @@ using Oblivion.HabboHotel.Polls.Enums;
 using Oblivion.HabboHotel.Quests;
 using Oblivion.HabboHotel.RoomBots;
 using Oblivion.HabboHotel.Rooms;
+using Oblivion.HabboHotel.Users.Badges;
 using Oblivion.Messages.Parsers;
 using Oblivion.Security;
 using Oblivion.Util;
@@ -34,7 +35,8 @@ namespace Oblivion.Messages.Handlers
             var type = Request.GetString();
             var petId = PetRace.GetPetId(type, out var petType);
             var races = PetRace.GetRacesForRaceId(petId);
-            var message = new ServerMessage(LibraryParser.OutgoingRequest("SellablePetBreedsMessageComposer"));
+            var message = Response;
+            message.Init(LibraryParser.OutgoingRequest("SellablePetBreedsMessageComposer"));
             message.AppendString(petType);
             message.AppendInteger(races.Count);
             foreach (var current in races)
@@ -46,7 +48,7 @@ namespace Oblivion.Messages.Handlers
                 message.AppendBool(current.Has2Color);
             }
 
-            Session.SendMessage(message);
+            SendResponse();
         }
 
         internal void GoRoom()
@@ -411,12 +413,14 @@ namespace Oblivion.Messages.Handlers
 //                    ClearRoomLoading();
 //                    return;
 
-                    var serverMessage =
-                        new ServerMessage(LibraryParser.OutgoingRequest("RoomEnterErrorMessageComposer"));
-                    serverMessage.AppendInteger(1);
-                    Session.SendMessage(serverMessage);
-                    var message = new ServerMessage(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer"));
-                    Session.SendMessage(message);
+
+                    Response.Init(LibraryParser.OutgoingRequest("RoomEnterErrorMessageComposer"));
+
+                    Response.AppendInteger(1);
+                    SendResponse();
+
+                    Response.Init(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer"));
+                    SendResponse();
 
                     ClearRoomLoading();
                     return;
@@ -1083,7 +1087,7 @@ namespace Oblivion.Messages.Handlers
                     continue;
                 Response.Init(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
                 Response.AppendInteger(0);
-                roomUserByHabbo.GetClient().SendMessage(GetResponse());
+                roomUserByHabbo.GetClient().SendMessage(Response);
                 roomUserByHabbo.RemoveStatus("flatctrl 1");
                 roomUserByHabbo.UpdateNeeded = true;
             }
@@ -1232,9 +1236,11 @@ namespace Oblivion.Messages.Handlers
             var groups = habbo.UserGroups;
             msg.AppendInteger(groups.Count);
             /* TODO CHECK */
-            foreach (var group in groups.Select(groupUs => Oblivion.GetGame().GetGroupManager()
-                .GetGroup(groupUs.GroupId))
-            )
+            foreach (var groupUs in groups)
+            {
+                var group = Oblivion.GetGame()
+                    .GetGroupManager()
+                    .GetGroup(groupUs.GroupId);
                 if (group != null)
                 {
                     msg.AppendInteger(group.Id);
@@ -1257,6 +1263,7 @@ namespace Oblivion.Messages.Handlers
                     msg.AppendInteger(-1);
                     msg.AppendBool(false);
                 }
+            }
 
             if (habbo.PreviousOnline == 0)
                 msg.AppendInteger(-1);
@@ -1273,15 +1280,19 @@ namespace Oblivion.Messages.Handlers
             var msg2 = new ServerMessage(LibraryParser.OutgoingRequest("UserBadgesMessageComposer"));
             msg2.AppendInteger(habbo.Id);
 
-            var badges = habbo.GetBadgeComponent().BadgeList.Values.Where(badge => badge.Slot > 0)
-                .ToList();
-            msg2.AppendInteger(badges.Count);
-            foreach (
-                var badge in badges)
+
+            msg2.StartArray();
+            foreach (var badge in habbo.GetBadgeComponent().BadgeList.Values)
             {
+                if (badge.Slot <= 0) continue;
+
                 msg2.AppendInteger(badge.Slot);
                 msg2.AppendString(badge.Code);
+
+                msg2.SaveArray();
             }
+
+            msg2.EndArray();
 
             Session.SendMessage(msg2);
         }
@@ -1553,7 +1564,9 @@ namespace Oblivion.Messages.Handlers
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(roomId);
             if (room == null || !room.CheckRights(Session, true))
                 return;
-            var serverMessage = new ServerMessage();
+
+            var serverMessage = Response;
+
             serverMessage.Init(LibraryParser.OutgoingRequest("RoomLoadFilterMessageComposer"));
             serverMessage.AppendInteger(room.RoomData.WordFilter.Count);
             /* TODO CHECK */
@@ -2490,7 +2503,7 @@ namespace Oblivion.Messages.Handlers
                 queryReactor.RunQuery();
             }
         }
-        
+
 
         internal void Sit()
         {
@@ -2688,17 +2701,7 @@ namespace Oblivion.Messages.Handlers
 
             SendResponse();
         }
-
-        public Image Base64ToImage(string base64String)
-        {
-            var imageBytes = Convert.FromBase64String(base64String);
-
-            using (var ms = new MemoryStream(imageBytes, 0, imageBytes.Length))
-            {
-                var image = Image.FromStream(ms, true);
-                return image;
-            }
-        }
+        
 
         public void EnterRoomQueue()
         {
@@ -2734,6 +2737,7 @@ namespace Oblivion.Messages.Handlers
                 return;
 
             user.LastPhotoPreview = preview;
+
             var messageBuffer = new ServerMessage(LibraryParser.OutgoingRequest("CameraStorageUrlMessageComposer"));
 
             messageBuffer.AppendString(Oblivion.GetGame()
@@ -2799,11 +2803,13 @@ namespace Oblivion.Messages.Handlers
                     queryReactor.AddParameter("roomid", room.RoomId);
                     queryReactor.RunQuery();
                     roomData.CompetitionStatus = 3;
+
+
                     using (var message = new ServerMessage())
                     {
                         competition.AppendEntrySubmitMessage(message, 0);
 
-                    Session.SendMessage(message);
+                        Session.SendMessage(message);
                     }
                 }
             }

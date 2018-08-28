@@ -4,7 +4,6 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using Oblivion.HabboHotel.Catalogs;
-using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items;
 using Oblivion.HabboHotel.Items.Datas;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -548,9 +547,10 @@ namespace Oblivion.Messages.Handlers
                 if (owner != null)
                 {
                     room.GetRoomItemHandler().RemoveFurniture(owner, item.Id);
-                    owner.GetHabbo()
+                    /*owner.GetHabbo()
                         .GetInventoryComponent()
                         .AddNewItem(item.Id, item.BaseItem, item.ExtraData, item.GroupId, true, true, 0, 0);
+                    */
                     owner.GetHabbo().GetInventoryComponent().AddItemToItemInventory(item, false);
                 }
                 else
@@ -563,6 +563,7 @@ namespace Oblivion.Messages.Handlers
                     }
                 }
             }
+
         }
 
         internal void MoveItem()
@@ -2488,9 +2489,9 @@ namespace Oblivion.Messages.Handlers
             if (clientByUserId != null)
             {
                 room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
-                clientByUserId.GetHabbo()
-                    .GetInventoryComponent()
-                    .AddNewItem(item.Id, item.BaseItem, item.ExtraData, item.GroupId, true, true, 0, 0);
+//                clientByUserId.GetHabbo()
+//                    .GetInventoryComponent()
+//                    .AddNewItem(item.Id, item.BaseItem, item.ExtraData, item.GroupId, true, true, 0, 0);
                 //                clientByUserId.GetHabbo().GetInventoryComponent().UpdateItems(true);
                 clientByUserId.GetHabbo().GetInventoryComponent().AddItemToItemInventory(item, true);
                 return;
@@ -2500,6 +2501,7 @@ namespace Oblivion.Messages.Handlers
             {
                 queryReactor.RunFastQuery($"UPDATE items_rooms SET room_id='0' WHERE id='{item.Id}' LIMIT 1");
             }
+
         }
 
         internal void UsePurchasableClothing()

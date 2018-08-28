@@ -36,10 +36,9 @@ namespace Oblivion.Configuration
             {
                 if (session?.Parser == null) return;
 
-//                var clientMessage = new ClientMessage(body);
                 using (var clientMessage = new ClientMessage(body))
                 {
-                session.Parser.SuperHandle(clientMessage, session);
+                    session.Parser.SuperHandle(clientMessage, session);
                 }
             };
 
@@ -48,7 +47,7 @@ namespace Oblivion.Configuration
                 session.SocketSession.Client
                     .SetSocketOption(SocketOptionLevel.Socket,
                         SocketOptionName.NoDelay, !enabeNagles);
-                
+
                 session.Parser = new GamePacketParser();
                 session.ConnId = ++Manager.AcceptedConnections;
                 Oblivion.GetGame().GetClientManager().CreateAndStartClient(session.ConnId, session);

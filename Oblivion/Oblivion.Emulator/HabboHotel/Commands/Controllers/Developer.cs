@@ -86,7 +86,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     queryReactor.RunFastQuery("DELETE FROM items_rooms WHERE id = " + item.Id);
 
                     room.GetRoomItemHandler().RemoveRoomItem(item, false);
-                    item.Dispose();
+                    item.Dispose(true);
                 }
             }
 

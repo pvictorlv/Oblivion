@@ -80,13 +80,6 @@ namespace Oblivion.Messages.Handlers
                 Session.SendMessage(Response.GetReversedBytes());
         }
 
-        /// <summary>
-        ///     Adds the staff pick.
-        /// </summary>
-        internal void AddStaffPick()
-        {
-            Session.SendNotif(Oblivion.GetLanguage().GetVar("addstaffpick_error_1"));
-        }
 
         /// <summary>
         ///     Gets the client version message event.
@@ -189,9 +182,9 @@ namespace Oblivion.Messages.Handlers
             var machineId = Request.GetString();
             Session.MachineId = machineId;
 
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UniqueMachineIDMessageComposer"));
-            serverMessage.AppendString(machineId);
-            Session.SendMessage(serverMessage);
+            Response.Init(LibraryParser.OutgoingRequest("UniqueMachineIDMessageComposer"));
+            Response.AppendString(machineId);
+            SendResponse();
         }
 
         /// <summary>
@@ -357,11 +350,12 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().GetInventoryComponent().AddNewItem(0, itemId, "", 0, true, false, 0, 0);
             Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
 
-            var message = new ServerMessage(LibraryParser.OutgoingRequest("CampaignCalendarGiftMessageComposer"));
-            message.AppendBool(true);
-            message.AppendString(newItem.Name);
-            message.AppendString("");
-            message.AppendString(newItem.Name);
+            Response.Init(LibraryParser.OutgoingRequest("CampaignCalendarGiftMessageComposer"));
+            Response.AppendBool(true);
+            Response.AppendString(newItem.Name);
+            Response.AppendString("");
+            Response.AppendString(newItem.Name);
+            SendResponse();
         }
 
         /// <summary>
@@ -418,8 +412,8 @@ namespace Oblivion.Messages.Handlers
 
             Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_CameraPhotoCount", 1);
 
-            var message = new ServerMessage(LibraryParser.OutgoingRequest("CameraPurchaseOk"));
-            Session.SendMessage(message);
+            Response.Init(LibraryParser.OutgoingRequest("CameraPurchaseOk"));
+            SendResponse();
         }
 
         /// <summary>
@@ -503,9 +497,10 @@ namespace Oblivion.Messages.Handlers
 
             if (roomId == 0)
                 return;
-            var roomFwd = new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
-            roomFwd.AppendInteger(roomId);
-            Session.SendMessage(roomFwd);
+
+            Response.Init(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
+            Response.AppendInteger(roomId);
+            SendResponse();
         }
 
         /// <summary>

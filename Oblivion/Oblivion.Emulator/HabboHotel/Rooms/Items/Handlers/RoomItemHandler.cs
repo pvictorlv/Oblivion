@@ -335,9 +335,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     var client = Oblivion.GetGame().GetClientManager().GetClientByUserId(item.UserId);
                     if (client != null)
                         items.Add(client);
+                    item.Dispose(client == null);
                 }
-
-                item.Dispose();
             }
 
             foreach (var item in WallItems.Values)
@@ -370,9 +369,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     var client = Oblivion.GetGame().GetClientManager().GetClientByUserId(item.UserId);
                     if (client != null)
                         items.Add(client);
-                }
 
-                item.Dispose();
+                    item.Dispose(client == null);
+                }
             }
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -559,6 +558,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             }
 
             RemoveRoomItem(item, wasPicked);
+
+            item.Dispose(false);
         }
 
 
@@ -584,7 +585,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 _room.GetRoomUserManager().OnUserUpdateStatus(item.X, item.Y);
 
                 FloorItems.TryRemove(item.Id, out _);
-                item.Dispose();
+                item.Dispose(true);
             }
         }
 
@@ -624,8 +625,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
             RemoveItem(item.Id);
             _room.GetRoomUserManager().OnUserUpdateStatus(item.X, item.Y);
-
-            item.Dispose();
         }
 
         /// <summary>

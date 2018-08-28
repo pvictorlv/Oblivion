@@ -34,7 +34,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             try
             {
-                user.Stop();
+                user.Dispose();
                 Oblivion.GetGame()
                     .GetModerationTool()
                     .LogStaffEntry(session.GetHabbo().UserName, user.GetHabbo().UserName, "dc",

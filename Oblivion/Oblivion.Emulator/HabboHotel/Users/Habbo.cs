@@ -740,7 +740,8 @@ namespace Oblivion.HabboHotel.Users
         {
             try
             {
-                if (GetSubscriptionManager()?.GetSubscription() == null) return false;
+                if (GetSubscriptionManager()?.GetSubscription() == null)
+                    return false;
 
                 return Oblivion.GetGame().GetRoleManager().RankHasRight(Rank, fuse) ||
                        (GetSubscriptionManager().HasSubscription &&
@@ -1054,15 +1055,14 @@ namespace Oblivion.HabboHotel.Users
         /// </summary>
         internal void UpdateCreditsBalance(bool inDb = false)
         {
-            using (var msg = _mClient.GetMessageHandler().GetResponse())
-            {
-                if (_mClient?.GetMessageHandler() == null || msg == null)
-                    return;
+            if (_mClient?.GetMessageHandler()?.GetResponse() == null)
+                return;
 
-                msg.Init(LibraryParser.OutgoingRequest("CreditsBalanceMessageComposer"));
-                msg.AppendString($"{Credits}.0");
-                _mClient.GetMessageHandler().SendResponse();
-            }
+            _mClient.GetMessageHandler().GetResponse()
+                .Init(LibraryParser.OutgoingRequest("CreditsBalanceMessageComposer"));
+            _mClient.GetMessageHandler().GetResponse().AppendString($"{Credits}.0");
+            _mClient.GetMessageHandler().SendResponse();
+
 
             if (inDb)
             {
@@ -1075,21 +1075,20 @@ namespace Oblivion.HabboHotel.Users
         /// </summary>
         internal void UpdateActivityPointsBalance(bool inDb = false)
         {
-            using (var msg = _mClient.GetMessageHandler().GetResponse())
-            {
-                if (_mClient?.GetMessageHandler() == null || msg == null)
-                    return;
+            if (_mClient?.GetMessageHandler()?.GetResponse() == null)
+                return;
 
-                msg.Init(LibraryParser.OutgoingRequest("ActivityPointsMessageComposer"));
-                msg.AppendInteger(3);
-                msg.AppendInteger(0);
-                msg.AppendInteger(ActivityPoints);
-                msg.AppendInteger(5);
-                msg.AppendInteger(Diamonds);
-                msg.AppendInteger(102);
-                msg.AppendInteger(Emeralds);
-                _mClient.GetMessageHandler().SendResponse();
-            }
+            _mClient.GetMessageHandler().GetResponse()
+                .Init(LibraryParser.OutgoingRequest("ActivityPointsMessageComposer"));
+            _mClient.GetMessageHandler().GetResponse().AppendInteger(3);
+            _mClient.GetMessageHandler().GetResponse().AppendInteger(0);
+            _mClient.GetMessageHandler().GetResponse().AppendInteger(ActivityPoints);
+            _mClient.GetMessageHandler().GetResponse().AppendInteger(5);
+            _mClient.GetMessageHandler().GetResponse().AppendInteger(Diamonds);
+            _mClient.GetMessageHandler().GetResponse().AppendInteger(102);
+            _mClient.GetMessageHandler().GetResponse().AppendInteger(Emeralds);
+            _mClient.GetMessageHandler().SendResponse();
+
 
             if (inDb)
             {
@@ -1102,21 +1101,20 @@ namespace Oblivion.HabboHotel.Users
         /// </summary>
         internal void UpdateSeasonalCurrencyBalance(bool inDb = false)
         {
-            using (var msg = _mClient.GetMessageHandler().GetResponse())
-            {
-                if (_mClient?.GetMessageHandler() == null || msg == null)
-                    return;
+            if (_mClient?.GetMessageHandler()?.GetResponse() == null)
+                return;
 
-                msg.Init(LibraryParser.OutgoingRequest("ActivityPointsMessageComposer"));
-                msg.AppendInteger(3);
-                msg.AppendInteger(0);
-                msg.AppendInteger(ActivityPoints);
-                msg.AppendInteger(5);
-                msg.AppendInteger(Diamonds);
-                msg.AppendInteger(102);
-                msg.AppendInteger(Emeralds);
-                _mClient.GetMessageHandler().SendResponse();
-            }
+            _mClient.GetMessageHandler().GetResponse()
+                .Init(LibraryParser.OutgoingRequest("ActivityPointsMessageComposer"));
+            _mClient.GetMessageHandler().GetResponse().AppendInteger(3);
+            _mClient.GetMessageHandler().GetResponse().AppendInteger(0);
+            _mClient.GetMessageHandler().GetResponse().AppendInteger(ActivityPoints);
+            _mClient.GetMessageHandler().GetResponse().AppendInteger(5);
+            _mClient.GetMessageHandler().GetResponse().AppendInteger(Diamonds);
+            _mClient.GetMessageHandler().GetResponse().AppendInteger(102);
+            _mClient.GetMessageHandler().GetResponse().AppendInteger(Emeralds);
+            _mClient.GetMessageHandler().SendResponse();
+
 
             if (inDb)
             {

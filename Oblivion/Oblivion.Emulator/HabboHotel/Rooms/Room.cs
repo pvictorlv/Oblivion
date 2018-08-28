@@ -1437,7 +1437,7 @@ namespace Oblivion.HabboHotel.Rooms
             MoodlightData = null;
             foreach (var current in _roomItemHandler.GetWallAndFloor)
             {
-                current.Dispose();
+                current.Dispose(true); //unloaded :p
             }
 
             ActiveTrades.Clear();

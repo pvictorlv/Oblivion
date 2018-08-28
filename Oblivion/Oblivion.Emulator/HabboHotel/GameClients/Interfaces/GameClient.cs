@@ -1,10 +1,8 @@
 using System;
 using System.Linq;
 using Oblivion.Configuration;
-using Oblivion.Connection.Connection;
 using Oblivion.Connection.Net;
 using Oblivion.Connection.SuperSocket;
-using Oblivion.HabboHotel.Misc;
 using Oblivion.HabboHotel.Users;
 using Oblivion.HabboHotel.Users.UserDataManagement;
 using Oblivion.Messages;
@@ -43,11 +41,6 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         ///     The current room user identifier
         /// </summary>
         internal int CurrentRoomUserId;
-
-        /// <summary>
-        ///     The designed handler
-        /// </summary>
-        internal int DesignedHandler = 1;
 
         /// <summary>
         ///     The machine identifier
@@ -205,210 +198,207 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                         $"UPDATE users SET ip_last='{ip}', online = '1' WHERE id={GetHabbo().Id}");
 
                 _habbo.Init(this, userData);
+                using (var msg =
+                    new ServerMessage(LibraryParser.OutgoingRequest("AuthenticationOKMessageComposer")))
+                {
+                    SendMessage(msg);
+                }
 
-//                    var queuedServerMessage = new QueuedServerMessage(_connection);
+                using (var serverMessage = new ServerMessage())
+                {
+                    serverMessage.Init(LibraryParser.OutgoingRequest("HomeRoomMessageComposer"));
+                    serverMessage.AppendInteger(_habbo.HomeRoom);
+                    serverMessage.AppendInteger(_habbo.HomeRoom);
+                    SendMessage(serverMessage);
 
-                var msg =
-                    new ServerMessage(LibraryParser.OutgoingRequest("AuthenticationOKMessageComposer"));
-                SendMessage(msg);
-                var serverMessage2 = new ServerMessage(LibraryParser.OutgoingRequest("HomeRoomMessageComposer"));
 
-                serverMessage2.AppendInteger(_habbo.HomeRoom);
-                serverMessage2.AppendInteger(_habbo.HomeRoom);
-                SendMessage(serverMessage2);
+                    serverMessage.Init(LibraryParser.OutgoingRequest("FavouriteRoomsMessageComposer"));
+                    serverMessage.AppendInteger(30);
 
-                var serverMessage =
-                    new ServerMessage(LibraryParser.OutgoingRequest("FavouriteRoomsMessageComposer"));
+                    if (_habbo.Data.FavouritedRooms == null || _habbo.Data.FavouritedRooms.Count <= 0)
+                        serverMessage.AppendInteger(0);
+                    else
+                    {
+                        serverMessage.AppendInteger(_habbo.Data.FavouritedRooms.Count);
 
-                serverMessage.AppendInteger(30);
+                        /* TODO CHECK */
+                        foreach (var i in _habbo.Data.FavouritedRooms)
+                            serverMessage.AppendInteger(i);
+                    }
 
-                if (_habbo.Data.FavouritedRooms == null || _habbo.Data.FavouritedRooms.Count <= 0)
+                    SendMessage(serverMessage);
+
+                    serverMessage.Init(LibraryParser.OutgoingRequest("UserClubRightsMessageComposer"));
+                    serverMessage.AppendInteger(_habbo.GetSubscriptionManager().HasSubscription ? 2 : 0);
+                    serverMessage.AppendInteger(_habbo.Rank);
                     serverMessage.AppendInteger(0);
-                else
-                {
-                    serverMessage.AppendInteger(_habbo.Data.FavouritedRooms.Count);
+                    SendMessage(serverMessage);
 
-                    /* TODO CHECK */
-                    foreach (var i in _habbo.Data.FavouritedRooms)
-                        serverMessage.AppendInteger(i);
+                    serverMessage.Init(LibraryParser.OutgoingRequest("EnableNotificationsMessageComposer"));
+                    serverMessage.AppendBool(true);
+                    serverMessage.AppendBool(false);
+                    serverMessage.AppendBool(true);
+                    SendMessage(serverMessage);
+
+                    /*var xmasGift =
+       new ServerMessage(LibraryParser.OutgoingRequest("CampaignCalendarDataMessageComposer"));
+    
+    xmasGift.AppendString("xmas16"); //eventTrigger
+    //                    xmasGift.AppendString(""); //idk? same as habbo ;P
+    xmasGift.AppendBool(false);
+    xmasGift.AppendBool(false);
+    xmasGift.AppendInteger(DateTime.Now.Day - 1); //currentDate
+    xmasGift.AppendInteger(25); //totalAmountOfDays
+    
+    xmasGift.AppendInteger(_habbo.Data.OpenedGifts.Count); //countOpenGifts
+    
+    foreach (var opened in _habbo.Data.OpenedGifts)
+    {
+       xmasGift.AppendInteger(opened);
+    }
+    
+    
+    var MissedGifts = new List<int>();
+    foreach (var day in Enumerable.Range(0, DateTime.Now.Day - 3))
+    {
+       if (!_habbo.Data.OpenedGifts.Contains(day))
+           MissedGifts.Add(day);
+    }
+    
+    
+    xmasGift.AppendInteger(MissedGifts.Count);
+    foreach (int Missed in MissedGifts)
+    {
+       xmasGift.AppendInteger(Missed); //giftDay
+    
+       queuedServerMessage.AppendResponse(xmasGift);
+    }*/
+
+                    serverMessage.Init(LibraryParser.OutgoingRequest("CfhTopicsInitMessageComposer"));
+                    serverMessage.AppendInteger(6);
+                    serverMessage.AppendString("sexual_content");
+                    serverMessage.AppendInteger(8);
+                    serverMessage.AppendString("pii_meeting_irl");
+                    serverMessage.AppendInteger(1);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("sexual_webcam_images_auto");
+                    serverMessage.AppendInteger(2);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("explicit_sexual_talk");
+                    serverMessage.AppendInteger(3);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("cybersex");
+                    serverMessage.AppendInteger(4);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("cybersex_auto");
+                    serverMessage.AppendInteger(5);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("meet_some");
+                    serverMessage.AppendInteger(6);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("meet_irl");
+                    serverMessage.AppendInteger(7);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("email_or_phone");
+                    serverMessage.AppendInteger(8);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("scamming");
+                    serverMessage.AppendInteger(3);
+                    serverMessage.AppendString("stealing");
+                    serverMessage.AppendInteger(9);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("scamsites");
+                    serverMessage.AppendInteger(10);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("selling_buying_accounts_or_furni");
+                    serverMessage.AppendInteger(11);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("trolling_bad_behavior");
+                    serverMessage.AppendInteger(11);
+                    serverMessage.AppendString("hate_speech");
+                    serverMessage.AppendInteger(12);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("violent_roleplay");
+                    serverMessage.AppendInteger(13);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("swearing");
+                    serverMessage.AppendInteger(14);
+                    serverMessage.AppendString("auto_reply");
+                    serverMessage.AppendString("drugs");
+                    serverMessage.AppendInteger(15);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("gambling");
+                    serverMessage.AppendInteger(16);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("self_threatening");
+                    serverMessage.AppendInteger(17);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("mild_staff_impersonation");
+                    serverMessage.AppendInteger(18);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("severe_staff_impersonation");
+                    serverMessage.AppendInteger(19);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("habbo_name");
+                    serverMessage.AppendInteger(20);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("minors_access");
+                    serverMessage.AppendInteger(21);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("bullying");
+                    serverMessage.AppendInteger(22);
+                    serverMessage.AppendString("guardians");
+                    serverMessage.AppendString("game_interruption");
+                    serverMessage.AppendInteger(2);
+                    serverMessage.AppendString("flooding");
+                    serverMessage.AppendInteger(23);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("doors");
+                    serverMessage.AppendInteger(24);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("room");
+                    serverMessage.AppendInteger(1);
+                    serverMessage.AppendString("room_report");
+                    serverMessage.AppendInteger(25);
+                    serverMessage.AppendString("mods");
+                    serverMessage.AppendString("help");
+                    serverMessage.AppendInteger(2);
+                    serverMessage.AppendString("help_habbo");
+                    serverMessage.AppendInteger(26);
+                    serverMessage.AppendString("auto_reply");
+                    serverMessage.AppendString("help_payments");
+                    serverMessage.AppendInteger(27);
+                    serverMessage.AppendString("auto_reply");
+                    SendMessage(serverMessage);
+
+                    _habbo.UpdateCreditsBalance();
+
+                    serverMessage.Init(LibraryParser.OutgoingRequest("ActivityPointsMessageComposer"));
+                    serverMessage.AppendInteger(2);
+                    serverMessage.AppendInteger(0);
+                    serverMessage.AppendInteger(_habbo.ActivityPoints);
+                    serverMessage.AppendInteger(5);
+                    serverMessage.AppendInteger(_habbo.Diamonds);
+
+                    serverMessage.AppendInteger(102);
+                    serverMessage.AppendInteger(_habbo.Emeralds);
+
+                    SendMessage(serverMessage);
+
+
+                    if (_habbo.HasFuse("fuse_mod"))
+                        SendMessage(Oblivion.GetGame().GetModerationTool()
+                            .SerializeTool(this));
+
+                    SendMessage(Oblivion.GetGame().GetAchievementManager()
+                        .AchievementDataCached);
+
+                    if (!GetHabbo().Vip && ExtraSettings.NewUsersGiftsEnabled)
+                    {
+                        serverMessage.Init(LibraryParser.OutgoingRequest("NuxSuggestFreeGiftsMessageComposer"));
+                        SendMessage(serverMessage);
+                    }
                 }
-
-                SendMessage(serverMessage);
-
-                var rightsMessage =
-                    new ServerMessage(LibraryParser.OutgoingRequest("UserClubRightsMessageComposer"));
-
-                rightsMessage.AppendInteger(_habbo.GetSubscriptionManager().HasSubscription ? 2 : 0);
-                rightsMessage.AppendInteger(_habbo.Rank);
-                rightsMessage.AppendInteger(0);
-                SendMessage(rightsMessage);
-
-
-                serverMessage =
-                    new ServerMessage(LibraryParser.OutgoingRequest("EnableNotificationsMessageComposer"));
-                serverMessage.AppendBool(true);
-                serverMessage.AppendBool(false);
-                serverMessage.AppendBool(true);
-                SendMessage(serverMessage);
-
-                /*var xmasGift =
-                    new ServerMessage(LibraryParser.OutgoingRequest("CampaignCalendarDataMessageComposer"));
-
-                xmasGift.AppendString("xmas16"); //eventTrigger
-//                    xmasGift.AppendString(""); //idk? same as habbo ;P
-                xmasGift.AppendBool(false);
-                xmasGift.AppendBool(false);
-                xmasGift.AppendInteger(DateTime.Now.Day - 1); //currentDate
-                xmasGift.AppendInteger(25); //totalAmountOfDays
-
-                xmasGift.AppendInteger(_habbo.Data.OpenedGifts.Count); //countOpenGifts
-
-                foreach (var opened in _habbo.Data.OpenedGifts)
-                {
-                    xmasGift.AppendInteger(opened);
-                }
-
-
-                var MissedGifts = new List<int>();
-                foreach (var day in Enumerable.Range(0, DateTime.Now.Day - 3))
-                {
-                    if (!_habbo.Data.OpenedGifts.Contains(day))
-                        MissedGifts.Add(day);
-                }
-
-
-                xmasGift.AppendInteger(MissedGifts.Count);
-                foreach (int Missed in MissedGifts)
-                {
-                    xmasGift.AppendInteger(Missed); //giftDay
-
-                    queuedServerMessage.AppendResponse(xmasGift);
-                }*/
-
-                serverMessage =
-                    new ServerMessage(LibraryParser.OutgoingRequest("CfhTopicsInitMessageComposer"));
-                serverMessage.AppendInteger(6);
-                serverMessage.AppendString("sexual_content");
-                serverMessage.AppendInteger(8);
-                serverMessage.AppendString("pii_meeting_irl");
-                serverMessage.AppendInteger(1);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("sexual_webcam_images_auto");
-                serverMessage.AppendInteger(2);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("explicit_sexual_talk");
-                serverMessage.AppendInteger(3);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("cybersex");
-                serverMessage.AppendInteger(4);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("cybersex_auto");
-                serverMessage.AppendInteger(5);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("meet_some");
-                serverMessage.AppendInteger(6);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("meet_irl");
-                serverMessage.AppendInteger(7);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("email_or_phone");
-                serverMessage.AppendInteger(8);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("scamming");
-                serverMessage.AppendInteger(3);
-                serverMessage.AppendString("stealing");
-                serverMessage.AppendInteger(9);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("scamsites");
-                serverMessage.AppendInteger(10);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("selling_buying_accounts_or_furni");
-                serverMessage.AppendInteger(11);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("trolling_bad_behavior");
-                serverMessage.AppendInteger(11);
-                serverMessage.AppendString("hate_speech");
-                serverMessage.AppendInteger(12);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("violent_roleplay");
-                serverMessage.AppendInteger(13);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("swearing");
-                serverMessage.AppendInteger(14);
-                serverMessage.AppendString("auto_reply");
-                serverMessage.AppendString("drugs");
-                serverMessage.AppendInteger(15);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("gambling");
-                serverMessage.AppendInteger(16);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("self_threatening");
-                serverMessage.AppendInteger(17);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("mild_staff_impersonation");
-                serverMessage.AppendInteger(18);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("severe_staff_impersonation");
-                serverMessage.AppendInteger(19);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("habbo_name");
-                serverMessage.AppendInteger(20);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("minors_access");
-                serverMessage.AppendInteger(21);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("bullying");
-                serverMessage.AppendInteger(22);
-                serverMessage.AppendString("guardians");
-                serverMessage.AppendString("game_interruption");
-                serverMessage.AppendInteger(2);
-                serverMessage.AppendString("flooding");
-                serverMessage.AppendInteger(23);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("doors");
-                serverMessage.AppendInteger(24);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("room");
-                serverMessage.AppendInteger(1);
-                serverMessage.AppendString("room_report");
-                serverMessage.AppendInteger(25);
-                serverMessage.AppendString("mods");
-                serverMessage.AppendString("help");
-                serverMessage.AppendInteger(2);
-                serverMessage.AppendString("help_habbo");
-                serverMessage.AppendInteger(26);
-                serverMessage.AppendString("auto_reply");
-                serverMessage.AppendString("help_payments");
-                serverMessage.AppendInteger(27);
-                serverMessage.AppendString("auto_reply");
-                SendMessage(serverMessage);
-
-                _habbo.UpdateCreditsBalance();
-
-                serverMessage =
-                    new ServerMessage(LibraryParser.OutgoingRequest("ActivityPointsMessageComposer"));
-                serverMessage.AppendInteger(2);
-                serverMessage.AppendInteger(0);
-                serverMessage.AppendInteger(_habbo.ActivityPoints);
-                serverMessage.AppendInteger(5);
-                serverMessage.AppendInteger(_habbo.Diamonds);
-
-                serverMessage.AppendInteger(102);
-                serverMessage.AppendInteger(_habbo.Emeralds);
-
-                SendMessage(serverMessage);
-
-
-                if (_habbo.HasFuse("fuse_mod"))
-                    SendMessage(Oblivion.GetGame().GetModerationTool()
-                        .SerializeTool(this));
-
-                SendMessage(Oblivion.GetGame().GetAchievementManager()
-                    .AchievementDataCached);
-
-                if (!GetHabbo().Vip && ExtraSettings.NewUsersGiftsEnabled)
-                    SendMessage(
-                        new ServerMessage(LibraryParser.OutgoingRequest("NuxSuggestFreeGiftsMessageComposer")));
 
                 SendMessage(GetHabbo().GetAvatarEffectsInventoryComponent().GetPacket());
 //                    queuedServerMessage.SendResponse();
@@ -438,24 +428,13 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <param name="message">The message.</param>
         internal void SendNotifWithScroll(string message)
         {
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("MOTDNotificationMessageComposer"));
-
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendString(message);
-            SendMessage(serverMessage);
-        }
-
-        /// <summary>
-        ///     Sends the broadcast message.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        internal void SendBroadcastMessage(string message)
-        {
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("BroadcastNotifMessageComposer"));
-
-            serverMessage.AppendString(message);
-            serverMessage.AppendString(string.Empty);
-            SendMessage(serverMessage);
+            using (var serverMessage =
+                new ServerMessage(LibraryParser.OutgoingRequest("MOTDNotificationMessageComposer")))
+            {
+                serverMessage.AppendInteger(1);
+                serverMessage.AppendString(message);
+                SendMessage(serverMessage);
+            }
         }
 
         /// <summary>
@@ -464,11 +443,13 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <param name="message">The message.</param>
         internal void SendModeratorMessage(string message)
         {
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("AlertNotificationMessageComposer"));
-
-            serverMessage.AppendString(message);
-            serverMessage.AppendString(string.Empty);
-            SendMessage(serverMessage);
+            using (var serverMessage =
+                new ServerMessage(LibraryParser.OutgoingRequest("AlertNotificationMessageComposer")))
+            {
+                serverMessage.AppendString(message);
+                serverMessage.AppendString(string.Empty);
+                SendMessage(serverMessage);
+            }
         }
 
         /// <summary>
@@ -486,16 +467,17 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             if (roomUserByHabbo == null)
                 return;
 
-            var whisp = new ServerMessage(LibraryParser.OutgoingRequest("WhisperMessageComposer"));
+            using (var whisp = new ServerMessage(LibraryParser.OutgoingRequest("WhisperMessageComposer")))
+            {
+                whisp.AppendInteger(roomUserByHabbo.VirtualId);
+                whisp.AppendString(message);
+                whisp.AppendInteger(0);
+                whisp.AppendInteger(fromWired ? 34 : roomUserByHabbo.LastBubble);
+                whisp.AppendInteger(0);
+                whisp.AppendInteger(fromWired);
 
-            whisp.AppendInteger(roomUserByHabbo.VirtualId);
-            whisp.AppendString(message);
-            whisp.AppendInteger(0);
-            whisp.AppendInteger(fromWired ? 34 : roomUserByHabbo.LastBubble);
-            whisp.AppendInteger(0);
-            whisp.AppendInteger(fromWired);
-
-            SendMessage(whisp);
+                SendMessage(whisp);
+            }
         }
 
         /// <summary>
@@ -557,7 +539,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <summary>
         ///     Stops this instance.
         /// </summary>
-        internal void Stop()
+        internal void Dispose()
         {
             _habbo?.OnDisconnect("disconnect");
 
@@ -618,7 +600,8 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
             _connection.Send(bytes);
         }
-         internal void SendMessageAsync(ServerMessage message)
+
+        internal void SendMessageAsync(ServerMessage message)
         {
             if (message == null)
                 return;
@@ -652,35 +635,6 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         internal void SendMessage(StaticMessage type)
         {
             _connection?.Send(StaticMessagesManager.Get(type));
-        }
-
-        /// <summary>
-        ///     Switches the parser request.
-        /// </summary>
-        private void SwitchParserRequest(byte[] data, int amountOfBytes)
-        {
-            try
-            {
-                if (_connection == null)
-                    return;
-
-
-                _connection.Parser.Dispose();
-                _connection.Parser = PacketParser;
-                _connection.Parser.HandlePacketData(data, amountOfBytes);
-            }
-            catch (Exception e)
-            {
-                Logging.HandleException(e, "Handle packet");
-            }
-        }
-
-        /// <summary>
-        ///     Policies the request.
-        /// </summary>
-        private void PolicyRequest()
-        {
-            _connection.Send(CrossDomainPolicy.XmlPolicyBytes);
         }
     }
 }

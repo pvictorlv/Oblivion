@@ -762,7 +762,6 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (session.GetHabbo().Rank < 4 && GetRoom().CheckMute(session))
                 return;
 
-            if (!session.GetHabbo().CanTalk(true)) return;
 
 
             UnIdle();
@@ -779,6 +778,10 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (GetRoom() == null || GetRoom().Disposed) return;
 
                 var habbo = GetClient().GetHabbo();
+
+
+                if (!habbo.CanTalk(true)) return;
+
 
                 if (GetRoom().GotWireds())
                     if (GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSay, this, msg))
@@ -835,11 +838,14 @@ namespace Oblivion.HabboHotel.Rooms.User
 
         private void ChangeName(string name)
         {
-            var message = new ServerMessage(LibraryParser.OutgoingRequest("UserUpdateNameInRoomMessageComposer"));
-            message.AppendInteger(RoomId);
-            message.AppendInteger(VirtualId);
-            message.AppendString(name);
-            GetRoom().SendMessage(message);
+            using (var message =
+                new ServerMessage(LibraryParser.OutgoingRequest("UserUpdateNameInRoomMessageComposer")))
+            {
+                message.AppendInteger(RoomId);
+                message.AppendInteger(VirtualId);
+                message.AppendString(name);
+                GetRoom().SendMessage(message);
+            }
         }
 
         /// <summary>
