@@ -1388,7 +1388,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
                 case Interaction.FreezeExit:
                     var exitTeleport = _room.GetFreeze().ExitTeleport;
-                    if (exitTeleport == null || (int) item.Id != (int) exitTeleport.Id)
+                    if (exitTeleport == null ||  item.Id != exitTeleport.Id)
                         break;
                     _room.GetFreeze().ExitTeleport = null;
                     break;

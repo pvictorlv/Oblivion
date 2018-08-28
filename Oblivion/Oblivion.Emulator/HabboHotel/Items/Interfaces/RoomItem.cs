@@ -94,7 +94,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <summary>
         ///     The identifier
         /// </summary>
-        internal long Id;
+        internal string Id;
 
         /// <summary>
         /// the virtual id
@@ -176,7 +176,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <summary>
         /// The tele link
         /// </summary>
-        internal long TeleporterId;
+        internal string TeleporterId = "0";
 
         /// <summary>
         ///     The rot
@@ -235,7 +235,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="eGroup">The group.</param>
         /// <param name="songCode">The song code.</param>
         /// <param name="isBuilder">if set to <c>true</c> [is builder].</param>
-        internal RoomItem(long id, uint roomId, uint baseItem, string extraData, int x, int y, double z, int rot,
+        internal RoomItem(string id, uint roomId, uint baseItem, string extraData, int x, int y, double z, int rot,
             Room pRoom, uint userid, uint eGroup, string songCode, bool isBuilder, int limNo, int limStack)
         {
             Id = id;
@@ -333,7 +333,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="userid">The userid.</param>
         /// <param name="eGroup">The group.</param>
         /// <param name="isBuilder">if set to <c>true</c> [is builder].</param>
-        internal RoomItem(long id, uint roomId, uint baseItem, string extraData, WallCoordinate wallCoord, Room pRoom,
+        internal RoomItem(string id, uint roomId, uint baseItem, string extraData, WallCoordinate wallCoord, Room pRoom,
             uint userid, uint eGroup, bool isBuilder)
         {
             BaseItem = baseItem;
@@ -716,12 +716,12 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 case Interaction.BanzaiGateGreen:
                     return new InteractorBanzaiGate();
                 case Interaction.BreedingTerrier:
-                    if (!_mRoom.GetRoomItemHandler().BreedingTerrier.ContainsKey(Id))
-                        _mRoom.GetRoomItemHandler().BreedingTerrier.Add(Id, this);
+                    if (!_mRoom.GetRoomItemHandler().BreedingTerrier.ContainsKey(VirtualId))
+                        _mRoom.GetRoomItemHandler().BreedingTerrier.Add(VirtualId, this);
                     break;
                 case Interaction.BreedingBear:
-                    if (!_mRoom.GetRoomItemHandler().BreedingBear.ContainsKey(Id))
-                        _mRoom.GetRoomItemHandler().BreedingBear.Add(Id, this);
+                    if (!_mRoom.GetRoomItemHandler().BreedingBear.ContainsKey(VirtualId))
+                        _mRoom.GetRoomItemHandler().BreedingBear.Add(VirtualId, this);
                     break;
 
 
@@ -949,7 +949,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             ExtraData = "1";
                             roomUser3.MoveTo(SquareBehind);
                             roomUser3.InteractingGate = false;
-                            roomUser3.GateId = 0u;
+                            roomUser3.GateId = "0u";
                             ReqUpdate(1, false);
                             UpdateState(false, true);
                         }
@@ -959,7 +959,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             ExtraData = "0";
                             InteractingUser = 0u;
                             roomUser3.InteractingGate = false;
-                            roomUser3.GateId = 0u;
+                            roomUser3.GateId = "0u";
                             UpdateState(false, true);
                         }
                         else if (ExtraData == "1")

@@ -32,7 +32,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <summary>
         ///     The identifier
         /// </summary>
-        internal long Id;
+        internal string Id;
 
         /// <summary>
         ///     The is wall item
@@ -60,7 +60,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="extraData">The extra data.</param>
         /// <param name="group">The group.</param>
         /// <param name="songCode">The song code.</param>
-        internal UserItem(long id, uint baseItemId, string extraData, uint group, string songCode, int limitedSell,
+        internal UserItem(string id, uint baseItemId, string extraData, uint group, string songCode, int limitedSell,
             int limitedStack)
         {
             Id = id;

@@ -558,10 +558,8 @@ namespace Oblivion.HabboHotel.Rooms
             foreach (DataRow dataRow in table.Rows)
             {
                 var songId = (uint) dataRow[0];
-                if (!int.TryParse(dataRow[1].ToString(), out var num))
-                {
-                    num = 0;
-                }
+                var num = dataRow[1].ToString();
+                
 
                 if (!int.TryParse(dataRow[2].ToString(), out var baseItem))
                 {

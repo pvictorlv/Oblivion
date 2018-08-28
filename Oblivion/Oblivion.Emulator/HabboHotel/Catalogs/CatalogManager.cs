@@ -20,6 +20,7 @@ using Oblivion.HabboHotel.SoundMachine;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
 using Oblivion.Security;
+using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Catalogs
 {
@@ -972,14 +973,14 @@ namespace Oblivion.HabboHotel.Catalogs
 
                     if (itemBySprite?.InteractionType != Interaction.Gift) return;
 
-                    long insertId;
+                    var guidId = Guid.NewGuid();
+                    ShortGuid insertId = guidId;
 
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
                         queryReactor.SetQuery("INSERT INTO items_rooms (base_item,user_id) VALUES (" +
                                               itemBySprite.ItemId + ", " + toUserId + ")");
 
-                        insertId = queryReactor.InsertQuery();
 
                         queryReactor.SetQuery(string.Concat(
                             "INSERT INTO users_gifts (gift_id,item_id,extradata,giver_name,Message,ribbon,color,gift_sprite,show_sender,rare_id) VALUES (",
@@ -1007,7 +1008,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
                     if (clientByUserId != null)
                     {
-                        clientByUserId.GetHabbo().GetInventoryComponent().AddNewItem((uint) insertId,
+                        clientByUserId.GetHabbo().GetInventoryComponent().AddNewItem( insertId,
                             itemBySprite.ItemId,
                             string.Concat(session.GetHabbo().Id, (char) 9, giftMessage, (char) 9, giftLazo, (char) 9,
                                 giftColor, (char) 9, ((undef) ? "1" : "0"), (char) 9, session.GetHabbo().UserName,
@@ -1086,7 +1087,7 @@ namespace Oblivion.HabboHotel.Catalogs
                         {
                             case Interaction.Dimmer:
                                 var userItem33 = session.GetHabbo().GetInventoryComponent()
-                                    .AddNewItem(0u, item.ItemId, extraData, 0u, true, false, 0, 0);
+                                    .AddNewItem("0u", item.ItemId, extraData, 0u, true, false, 0, 0);
                                 var id33 = userItem33.Id;
 
                                 list.Add(userItem33);
@@ -1116,16 +1117,16 @@ namespace Oblivion.HabboHotel.Catalogs
                             case Interaction.Roller:
                             case Interaction.FootballGate:
                                 list.Add(session.GetHabbo().GetInventoryComponent()
-                                    .AddNewItem(0u, item.ItemId, extraData, 0u, true, false, limno, limtot));
+                                    .AddNewItem("0u", item.ItemId, extraData, 0u, true, false, limno, limtot));
                                 break;
 
                             case Interaction.Teleport:
                             case Interaction.QuickTeleport:
                                 var userItem = session.GetHabbo().GetInventoryComponent()
-                                    .AddNewItem(0u, item.ItemId, "0", 0u, true, false, 0, 0);
+                                    .AddNewItem("0u", item.ItemId, "0", 0u, true, false, 0, 0);
                                 var id = userItem.Id;
                                 var userItem2 = session.GetHabbo().GetInventoryComponent()
-                                    .AddNewItem(0u, item.ItemId, "0", 0u, true, false, 0, 0);
+                                    .AddNewItem("0u", item.ItemId, "0", 0u, true, false, 0, 0);
                                 var id2 = userItem2.Id;
 
                                 list.Add(userItem);
@@ -1179,22 +1180,22 @@ namespace Oblivion.HabboHotel.Catalogs
                                 session.GetHabbo().GetInventoryComponent().AddPet(generatedPet);
 
                                 list.Add(session.GetHabbo().GetInventoryComponent()
-                                    .AddNewItem(0, 1534, "0", 0u, true, false, 0, 0, string.Empty));
+                                    .AddNewItem("0", 1534, "0", 0u, true, false, 0, 0, string.Empty));
                                 break;
 
                             case Interaction.MusicDisc:
                                 list.Add(session.GetHabbo().GetInventoryComponent()
-                                    .AddNewItem(0u, item.ItemId, extraData, 0u, true, false, 0, 0, songCode));
+                                    .AddNewItem("0u", item.ItemId, extraData, 0u, true, false, 0, 0, songCode));
                                 break;
 
                             case Interaction.PuzzleBox:
                                 list.Add(session.GetHabbo().GetInventoryComponent()
-                                    .AddNewItem(0u, item.ItemId, extraData, 0u, true, false, limno, limtot));
+                                    .AddNewItem("0u", item.ItemId, extraData, 0u, true, false, limno, limtot));
                                 break;
 
                             case Interaction.RoomBg:
                                 var userItem44 = session.GetHabbo().GetInventoryComponent()
-                                    .AddNewItem(0u, item.ItemId, extraData, 0u, true, false, 0, 0, string.Empty);
+                                    .AddNewItem("0u", item.ItemId, extraData, 0u, true, false, 0, 0, string.Empty);
                                 var id44 = userItem44.Id;
 
                                 list.Add(userItem44);
@@ -1207,7 +1208,7 @@ namespace Oblivion.HabboHotel.Catalogs
                             case Interaction.GuildItem:
                             case Interaction.GuildGate:
                             case Interaction.GroupForumTerminal:
-                                list.Add(session.GetHabbo().GetInventoryComponent().AddNewItem(0u, item.ItemId, "0",
+                                list.Add(session.GetHabbo().GetInventoryComponent().AddNewItem("0u", item.ItemId, "0",
                                     Convert.ToUInt32(extraData), true, false, 0, 0, string.Empty));
                                 break;
 
@@ -1241,13 +1242,13 @@ namespace Oblivion.HabboHotel.Catalogs
                                         session.SendNotif(Oblivion.GetLanguage().GetVar("user_group_owner_error"));
                                 }
 
-                                list.Add(session.GetHabbo().GetInventoryComponent().AddNewItem(0u, item.ItemId, "0",
+                                list.Add(session.GetHabbo().GetInventoryComponent().AddNewItem("0u", item.ItemId, "0",
                                     Convert.ToUInt32(extraData), true, false, 0, 0, string.Empty));
                                 break;
 
                             default:
                                 list.Add(session.GetHabbo().GetInventoryComponent()
-                                    .AddNewItem(0u, item.ItemId, extraData, 0u, true, false, limno, limtot));
+                                    .AddNewItem("0u", item.ItemId, extraData, 0u, true, false, limno, limtot));
                                 break;
                         }
 

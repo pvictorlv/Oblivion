@@ -477,7 +477,6 @@
     <Compile Include="HabboHotel\Rooms\Chat\Enums\SquareState.cs" />
     <Compile Include="HabboHotel\Rooms\Items\Games\Teams\TeamScoreChangedArgs.cs" />
     <Compile Include="HabboHotel\Rooms\Items\Games\Teams\TeamScoreChangedDelegate.cs" />
-    <Compile Include="HabboHotel\Rooms\Items\Teleports\TeleUserData.cs" />
     <Compile Include="HabboHotel\Rooms\User\Trade\Trade.cs" />
     <Compile Include="HabboHotel\Rooms\User\Trade\TradeUser.cs" />
     <Compile Include="HabboHotel\Rooms\Chat\UserSaysArgs.cs" />
@@ -697,6 +696,7 @@
     <Compile Include="Util\MemoryContainer.cs" />
     <Compile Include="Util\Out.cs" />
     <Compile Include="Util\Formatter.cs" />
+    <Compile Include="Util\ShortGuid.cs" />
     <Compile Include="Util\TextHandling.cs" />
     <Compile Include="Util\EndingType.cs" />
     <Compile Include="Util\QueryChunk.cs" />
@@ -762,7 +762,9 @@
       <Name>Oblivion.Encryption</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="HabboHotel\Rooms\Items\Teleports\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

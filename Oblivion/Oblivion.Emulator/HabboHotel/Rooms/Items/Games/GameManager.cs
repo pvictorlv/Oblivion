@@ -15,20 +15,20 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
 {
     internal class GameManager
     {
-        private QueuedDictionary<long, RoomItem> _blueTeamItems;
-        private QueuedDictionary<long, RoomItem> _greenTeamItems;
-        private QueuedDictionary<long, RoomItem> _redTeamItems;
+        private QueuedDictionary<string, RoomItem> _blueTeamItems;
+        private QueuedDictionary<string, RoomItem> _greenTeamItems;
+        private QueuedDictionary<string, RoomItem> _redTeamItems;
         private Room _room;
-        private QueuedDictionary<long, RoomItem> _yellowTeamItems;
+        private QueuedDictionary<string, RoomItem> _yellowTeamItems;
         internal int[] TeamPoints;
 
         public GameManager(Room room)
         {
             TeamPoints = new int[5];
-            _redTeamItems = new QueuedDictionary<long, RoomItem>();
-            _blueTeamItems = new QueuedDictionary<long, RoomItem>();
-            _greenTeamItems = new QueuedDictionary<long, RoomItem>();
-            _yellowTeamItems = new QueuedDictionary<long, RoomItem>();
+            _redTeamItems = new QueuedDictionary<string, RoomItem>();
+            _blueTeamItems = new QueuedDictionary<string, RoomItem>();
+            _greenTeamItems = new QueuedDictionary<string, RoomItem>();
+            _yellowTeamItems = new QueuedDictionary<string, RoomItem>();
             _room = room;
         }
 
@@ -55,7 +55,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             }
         }
 
-        internal QueuedDictionary<long, RoomItem> GetItems(Team team)
+        internal QueuedDictionary<string, RoomItem> GetItems(Team team)
         {
             switch (team)
             {
@@ -72,7 +72,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
                     return _yellowTeamItems;
 
                 default:
-                    return new QueuedDictionary<long, RoomItem>();
+                    return new QueuedDictionary<string, RoomItem>();
             }
         }
 
@@ -301,7 +301,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
 
         private int GetScoreForTeam(Team team) => TeamPoints[(int) team];
 
-        private QueuedDictionary<long, RoomItem> GetFurniItems(Team team)
+        private QueuedDictionary<string, RoomItem> GetFurniItems(Team team)
         {
             switch (team)
             {
@@ -318,7 +318,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
                     return _yellowTeamItems;
 
                 default:
-                    return new QueuedDictionary<long, RoomItem>();
+                    return new QueuedDictionary<string, RoomItem>();
             }
         }
 

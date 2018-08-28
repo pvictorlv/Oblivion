@@ -23,7 +23,7 @@ namespace Oblivion.HabboHotel.Items.Datas
         /// <summary>
         ///     The item identifier
         /// </summary>
-        internal long ItemId;
+        internal string ItemId;
 
         /// <summary>
         ///     The presets
@@ -35,7 +35,7 @@ namespace Oblivion.HabboHotel.Items.Datas
         /// </summary>
         /// <param name="itemId">The item identifier.</param>
         /// <exception cref="System.NullReferenceException">No moodlightdata found in the database</exception>
-        internal MoodlightData(long itemId)
+        internal MoodlightData(string itemId)
         {
             ItemId = itemId;
             DataRow row;

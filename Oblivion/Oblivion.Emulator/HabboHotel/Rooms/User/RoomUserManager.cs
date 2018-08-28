@@ -861,7 +861,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 UpdateUserStatus(roomUsers, false);
             }
             else if ((roomUsers.IsPet) && ((roomUsers.PetData.Type == 3) || (roomUsers.PetData.Type == 4)) &&
-                     (roomUsers.PetData.WaitingForBreading > 0) &&
+                     (roomUsers.PetData.WaitingForBreading  > 0) &&
                      ((roomUsers.PetData.BreadingTile.X != roomUsers.X) &&
                       (roomUsers.PetData.BreadingTile.Y != roomUsers.Y)))
             {
@@ -1568,7 +1568,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     if (!user.IsBot && client.GetHabbo().IsHopping)
                     {
                         client.GetHabbo().IsHopping = false;
-                        client.GetHabbo().HopperId = 0;
+                        client.GetHabbo().HopperId = "0u";
 
                         var item2 = _room.GetRoomItemHandler().GetItem(client.GetHabbo().HopperId);
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -107,11 +108,14 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                /* TODO CHECK */ foreach (
+              foreach (
                     var item in
                         room.GetGameMap()
                             .GetAllRoomItemForSquare(user.CopyX, user.CopyY))
-                {
+              {
+                  var itemId = Guid.NewGuid();
+                  ShortGuid insertId = itemId;
+
                     queryReactor.SetQuery(
                         "INSERT INTO items_rooms (base_item, user_id, room_id, extra_data, x, y, z, rot, group_id) VALUES (" +
                         item.GetBaseItem().ItemId + ", " + user.UserId + ", " + user.RoomId + ", @extraData, " +
@@ -120,7 +124,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     queryReactor.AddParameter("extraData", item.ExtraData);
                     queryReactor.AddParameter("height", TextHandling.GetString(item.Z));
 
-                    var insertId = (uint)queryReactor.InsertQuery();
+//                    var insertId = (uint)queryReactor.InsertQuery();
 
                     var roomItem = new RoomItem(insertId, user.RoomId, item.GetBaseItem().ItemId, item.ExtraData,
                         user.LastSelectedX, user.LastSelectedY, item.Z, item.Rot, session.GetHabbo().CurrentRoom,
@@ -151,6 +155,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var type = pms[0];
             var id = uint.Parse(pms[1]);
 
+            var itemId = Oblivion.GetGame().GetItemManager().GetRealId(id);
             switch (type.ToLower())
             {
                 case "item":
@@ -161,7 +166,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                             break;
                         }
 
-                        var item = session.GetHabbo().CurrentRoom.GetRoomItemHandler().GetItem(id);
+                        var item = session.GetHabbo().CurrentRoom.GetRoomItemHandler().GetItem(itemId);
                         if (item == null)
                         {
                             session.SendWhisper("Item no encontrado");

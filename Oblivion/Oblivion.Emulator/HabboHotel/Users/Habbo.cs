@@ -189,7 +189,7 @@ namespace Oblivion.HabboHotel.Users
         /// <summary>
         ///     The hopper identifier
         /// </summary>
-        internal uint HopperId;
+        internal string HopperId;
 
         /// <summary>
         ///     The identifier
@@ -328,7 +328,7 @@ namespace Oblivion.HabboHotel.Users
         /// <summary>
         ///     The teleporter identifier
         /// </summary>
-        internal long TeleporterId;
+        internal string TeleporterId;
 
         /// <summary>
         ///     The teleporting room identifier
@@ -487,7 +487,7 @@ namespace Oblivion.HabboHotel.Users
             DailyRespectPoints = dailyRespectPoints;
             DailyPetRespectPoints = dailyPetRespectPoints;
             IsTeleporting = false;
-            TeleporterId = 0u;
+            TeleporterId = "0";
             HasFriendRequestsDisabled = hasFriendRequestsDisabled;
             LastOnline = Oblivion.GetUnixTimeStamp();
             PreviousOnline = lastOnline;

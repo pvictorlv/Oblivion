@@ -34,7 +34,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// <summary>
         ///     The _roller items moved
         /// </summary>
-        private List<long> _rollerItemsMoved;
+        private List<string> _rollerItemsMoved;
 
         private List<uint> _rollerUsersMoved;
 
@@ -58,17 +58,17 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// </summary>
         private Queue _roomItemUpdateQueue;
 
-        private ConcurrentList<long> _updatedItems, _removedItems;
+        private ConcurrentList<string> _updatedItems, _removedItems;
 
         /// <summary>
         ///     The breeding terrier
         /// </summary>
-        internal Dictionary<long, RoomItem> BreedingTerrier, BreedingBear;
+        internal Dictionary<uint, RoomItem> BreedingTerrier, BreedingBear;
 
         /// <summary>
         ///     The items
         /// </summary>
-        internal ConcurrentDictionary<long, RoomItem> FloorItems, WallItems;
+        internal ConcurrentDictionary<string, RoomItem> FloorItems, WallItems;
 
         /// <summary>
         /// The rollers in room
@@ -87,19 +87,19 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         public RoomItemHandler(Room room)
         {
             _room = room;
-            _removedItems = new ConcurrentList<long>();
-            _updatedItems = new ConcurrentList<long>();
+            _removedItems = new ConcurrentList<string>();
+            _updatedItems = new ConcurrentList<string>();
             Rollers = new ConcurrentList<RoomItem>();
-            WallItems = new ConcurrentDictionary<long, RoomItem>();
-            FloorItems = new ConcurrentDictionary<long, RoomItem>();
+            WallItems = new ConcurrentDictionary<string, RoomItem>();
+            FloorItems = new ConcurrentDictionary<string, RoomItem>();
             _roomItemUpdateQueue = new Queue();
-            BreedingBear = new Dictionary<long, RoomItem>();
-            BreedingTerrier = new Dictionary<long, RoomItem>();
+            BreedingBear = new Dictionary<uint, RoomItem>();
+            BreedingTerrier = new Dictionary<uint, RoomItem>();
             GotRollers = false;
             _roolerCycle = 0;
             _rollerSpeed = 4;
             HopperCount = 0;
-            _rollerItemsMoved = new List<long>();
+            _rollerItemsMoved = new List<string>();
             _rollerUsersMoved = new List<uint>();
             _rollerMessages = new List<ServerMessage>();
         }
@@ -121,7 +121,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// <value><c>true</c> if [got rollers]; otherwise, <c>false</c>.</value>
         internal bool GotRollers { get; set; }
 
-        internal RoomItem GetItem(long itemId)
+        internal RoomItem GetItem(string itemId)
         {
             if (FloorItems.TryGetValue(itemId, out var item)) return item;
             return WallItems.TryGetValue(itemId, out item) ? item : null;
@@ -136,7 +136,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         {
             if (!BreedingBear.Any())
                 return new Point();
-            var keys = new List<long>(BreedingBear.Keys);
+            var keys = new List<uint>(BreedingBear.Keys);
             var size = BreedingBear.Count;
             var rand = new Random();
             var randomKey = keys[rand.Next(size)];
@@ -158,7 +158,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         {
             if (!BreedingTerrier.Any())
                 return new Point();
-            var keys = new List<long>(BreedingTerrier.Keys);
+            var keys = new List<uint>(BreedingTerrier.Keys);
             var size = BreedingTerrier.Count;
             var rand = new Random();
             var randomKey = keys[rand.Next(size)];
@@ -404,10 +404,10 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// </summary>
         internal void LoadFurniture()
         {
-            if (FloorItems == null) FloorItems = new ConcurrentDictionary<long, RoomItem>();
+            if (FloorItems == null) FloorItems = new ConcurrentDictionary<string, RoomItem>();
             else FloorItems.Clear();
 
-            if (WallItems == null) WallItems = new ConcurrentDictionary<long, RoomItem>();
+            if (WallItems == null) WallItems = new ConcurrentDictionary<string, RoomItem>();
             else WallItems.Clear();
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -432,7 +432,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 {
                     try
                     {
-                        var id = Convert.ToUInt32(dataRow["id"]);
+                        var id = Convert.ToString(dataRow["id"]);
                         var x = Convert.ToInt32(dataRow["x"]);
                         var y = Convert.ToInt32(dataRow["y"]);
                         var z = Convert.ToDouble(dataRow["z"]);
@@ -542,7 +542,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// <param name="session">The session.</param>
         /// <param name="id">The identifier.</param>
         /// <param name="wasPicked">if set to <c>true</c> [was picked].</param>
-        internal void RemoveFurniture(GameClient session, long id, bool wasPicked = true)
+        internal void RemoveFurniture(GameClient session, string id, bool wasPicked = true)
         {
             var item = GetItem(id);
             if (item == null)
@@ -1164,7 +1164,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         ///     Updates the item.
         /// </summary>
         /// <param name="itemId">The item.</param>
-        internal void AddOrUpdateItem(long itemId)
+        internal void AddOrUpdateItem(string itemId)
         {
             if (_removedItems.Contains(itemId))
                 _removedItems.Remove(itemId);
@@ -1178,7 +1178,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         ///     Removes the item.
         /// </summary>
         /// <param name="itemId"></param>
-        internal void RemoveItem(long itemId)
+        internal void RemoveItem(string itemId)
         {
             if (_updatedItems.Contains(itemId))
                 _updatedItems.Remove(itemId);

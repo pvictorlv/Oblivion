@@ -206,7 +206,7 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().UpdateSeasonalCurrencyBalance();
 
 
-            Session.GetHabbo().GetInventoryComponent().AddNewItem(0, Item.ItemId,
+            Session.GetHabbo().GetInventoryComponent().AddNewItem("0", Item.ItemId,
                 Convert.ToString(Row["extra_data"]), 0, true, false, Convert.ToInt32(Row["limited_number"]),
                 Convert.ToInt32(Row["limited_stack"]));
             Session.GetHabbo().GetInventoryComponent().UpdateItems(true);
@@ -398,7 +398,7 @@ namespace Oblivion.Messages.Handlers
                 return;
             }
 
-            var userItem = Session.GetHabbo().GetInventoryComponent().AddNewItem(0, item.ItemId,
+            var userItem = Session.GetHabbo().GetInventoryComponent().AddNewItem("0", item.ItemId,
                 Convert.ToString(row["extra_data"]), 0, true, false, Convert.ToInt32(row["limited_number"]),
                 Convert.ToInt32(row["limited_stack"]));
             Session.GetHabbo().GetInventoryComponent().AddItemToItemInventory(userItem);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -8,6 +9,7 @@ using Oblivion.HabboHotel.SoundMachine;
 using Oblivion.HabboHotel.SoundMachine.Composers;
 using Oblivion.HabboHotel.SoundMachine.Songs;
 using Oblivion.Messages.Parsers;
+using Oblivion.Util;
 
 namespace Oblivion.Messages.Handlers
 {
@@ -120,7 +122,9 @@ namespace Oblivion.Messages.Handlers
 
             songItem.RemoveFromDatabase();
 
-            Session.GetHabbo().GetInventoryComponent().AddNewItem(songItem.ItemId, songItem.BaseItem.ItemId, songItem.ExtraData, 0u, false, true, 0, 0, songItem.SongCode);
+            var guid = Guid.NewGuid();
+            ShortGuid itemId = guid;
+            Session.GetHabbo().GetInventoryComponent().AddNewItem(itemId, songItem.BaseItem.ItemId, songItem.ExtraData, 0u, false, true, 0, 0, songItem.SongCode);
             Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
 
             using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())

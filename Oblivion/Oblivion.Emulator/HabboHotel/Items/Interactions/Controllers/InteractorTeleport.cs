@@ -46,7 +46,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
         public override void OnRemove(GameClient session, RoomItem item)
         {
-            item.TeleporterId = 0;
+            item.TeleporterId = "0";
             item.ExtraData = "0";
 
             if (item.InteractingUser != 0)

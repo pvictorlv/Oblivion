@@ -55,7 +55,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 var prize = crackableHandler.GetRandomPrize(0, maxCracks);
                 if (prize == 0) return;
                 room.GetRoomItemHandler().DeleteRoomItem(item);
-                session.GetHabbo().GetInventoryComponent().AddNewItem(0, prize, "", 0, true, false, 0, 0);
+                session.GetHabbo().GetInventoryComponent().AddNewItem("0", prize, "", 0, true, false, 0, 0);
                 session.GetHabbo().GetInventoryComponent().UpdateItems(true);
             }
         }

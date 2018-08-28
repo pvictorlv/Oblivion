@@ -16,6 +16,7 @@ using Oblivion.HabboHotel.Quests;
 using Oblivion.HabboHotel.RoomBots;
 using Oblivion.Messages.Enums;
 using Oblivion.Messages.Parsers;
+using Oblivion.Util;
 
 namespace Oblivion.Messages.Handlers
 {
@@ -166,15 +167,15 @@ namespace Oblivion.Messages.Handlers
             switch (item.GetBaseItem().InteractionType)
             {
                 case Interaction.BreedingTerrier:
-                    if (room.GetRoomItemHandler().BreedingTerrier.ContainsKey(item.Id))
-                        room.GetRoomItemHandler().BreedingTerrier.Remove(item.Id);
+                    if (room.GetRoomItemHandler().BreedingTerrier.ContainsKey(item.VirtualId))
+                        room.GetRoomItemHandler().BreedingTerrier.Remove(item.VirtualId);
                     Oblivion.GetGame().GetAchievementManager()
                         .ProgressUserAchievement(Session, "ACH_TerrierBreeder", 1);
                     break;
 
                 case Interaction.BreedingBear:
-                    if (room.GetRoomItemHandler().BreedingBear.ContainsKey(item.Id))
-                        room.GetRoomItemHandler().BreedingBear.Remove(item.Id);
+                    if (room.GetRoomItemHandler().BreedingBear.ContainsKey(item.VirtualId))
+                        room.GetRoomItemHandler().BreedingBear.Remove(item.VirtualId);
                     Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_BearBreeder", 1);
                     break;
             }
@@ -360,10 +361,10 @@ namespace Oblivion.Messages.Handlers
                                     x, y, z, rot, room, Session.GetHabbo().Id, 0, string.Empty, false, (int)item.LimitedSellId, (int)item.LimitedStack);
 
                                 if (item.BaseItem.InteractionType == Interaction.BreedingTerrier)
-                                    if (!room.GetRoomItemHandler().BreedingTerrier.ContainsKey(roomItemBreed.Id))
-                                        room.GetRoomItemHandler().BreedingTerrier.Add(roomItemBreed.Id, roomItemBreed);
-                                    else if (!room.GetRoomItemHandler().BreedingBear.ContainsKey(roomItemBreed.Id))
-                                        room.GetRoomItemHandler().BreedingBear.Add(roomItemBreed.Id, roomItemBreed);
+                                    if (!room.GetRoomItemHandler().BreedingTerrier.ContainsKey(roomItemBreed.VirtualId))
+                                        room.GetRoomItemHandler().BreedingTerrier.Add(roomItemBreed.VirtualId, roomItemBreed);
+                                    else if (!room.GetRoomItemHandler().BreedingBear.ContainsKey(roomItemBreed.VirtualId))
+                                        room.GetRoomItemHandler().BreedingBear.Add(roomItemBreed.VirtualId, roomItemBreed);
                                 goto PlaceFloor;
                             }
                             case Interaction.Hopper:
@@ -492,8 +493,8 @@ namespace Oblivion.Messages.Handlers
             switch (item.GetBaseItem().InteractionType)
             {
                 case Interaction.BreedingTerrier:
-                    if (room.GetRoomItemHandler().BreedingTerrier.ContainsKey(item.Id))
-                        room.GetRoomItemHandler().BreedingTerrier.Remove(item.Id);
+                    if (room.GetRoomItemHandler().BreedingTerrier.ContainsKey(item.VirtualId))
+                        room.GetRoomItemHandler().BreedingTerrier.Remove(item.VirtualId);
                     /* TODO CHECK */
                     foreach (var pet in item.PetsList)
                     {
@@ -512,8 +513,8 @@ namespace Oblivion.Messages.Handlers
                     break;
 
                 case Interaction.BreedingBear:
-                    if (room.GetRoomItemHandler().BreedingBear.ContainsKey(item.Id))
-                        room.GetRoomItemHandler().BreedingBear.Remove(item.Id);
+                    if (room.GetRoomItemHandler().BreedingBear.ContainsKey(item.VirtualId))
+                        room.GetRoomItemHandler().BreedingBear.Remove(item.VirtualId);
                     /* TODO CHECK */
                     foreach (var pet in item.PetsList)
                     {
@@ -1415,15 +1416,18 @@ namespace Oblivion.Messages.Handlers
             room.GetRoomUserManager().RemoveBot(pet.VirtualId, false);
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
+                var guidId = Guid.NewGuid();
+                ShortGuid itemId = guidId;
+
                 dbClient.SetQuery(
-                    "INSERT INTO items_rooms (user_id, room_id, base_item, extra_data, x, y, z) VALUES (@uid, @rid, @bit, '0', @ex, @wai, @zed)");
+                    "INSERT INTO items_rooms (id, user_id, room_id, base_item, extra_data, x, y, z) VALUES (@itemId, @uid, @rid, @bit, '0', @ex, @wai, @zed)");
+                dbClient.AddParameter("itemId", itemId);
                 dbClient.AddParameter("uid", Session.GetHabbo().Id);
                 dbClient.AddParameter("rid", room.RoomId);
                 dbClient.AddParameter("bit", compostItem.ItemId);
                 dbClient.AddParameter("ex", x);
                 dbClient.AddParameter("wai", y);
                 dbClient.AddParameter("zed", z);
-                var itemId = (uint) dbClient.InsertQuery();
                 var roomItem = new RoomItem(itemId, room.RoomId, compostItem.ItemId, "0", x, y, z, 0, room,
                     Session.GetHabbo().Id, 0, "", false, 0, 0);
                 if (!room.GetRoomItemHandler().SetFloorItem(Session, roomItem, x, y, 0, true, false, true))
@@ -1787,9 +1791,12 @@ namespace Oblivion.Messages.Handlers
             pet.PetData.HaveSaddle = false;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
+                var guidId = Guid.NewGuid();
+                ShortGuid id = guidId;
+
                 queryReactor.RunFastQuery($"UPDATE pets_data SET have_saddle = 0 WHERE id = {pet.PetData.PetId}");
                 queryReactor.RunFastQuery(
-                    $"INSERT INTO items_rooms (user_id, base_item) VALUES ({Session.GetHabbo().Id}, 4221);");
+                    $"INSERT INTO items_rooms (id, user_id, base_item) VALUES ('{id}', {Session.GetHabbo().Id}, 4221);");
             }
             Session.GetHabbo().GetInventoryComponent().UpdateItems(true);
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer"));
@@ -2036,7 +2043,7 @@ namespace Oblivion.Messages.Handlers
             var num = Request.GetUInteger();
             var video = Request.GetString();
 
-            var item = Session.GetHabbo().CurrentRoom.GetRoomItemHandler().GetItem(num);
+            var item = Session.GetHabbo().CurrentRoom.GetRoomItemHandler().GetItem(Oblivion.GetGame().GetItemManager().GetRealId(num));
 
             if (item.GetBaseItem().InteractionType != Interaction.YoutubeTv)
                 return;
@@ -2060,7 +2067,7 @@ namespace Oblivion.Messages.Handlers
         internal void GetTvPlayer()
         {
             var itemId = Request.GetUInteger();
-            var item = Session.GetHabbo().CurrentRoom.GetRoomItemHandler().GetItem(itemId);
+            var item = Session.GetHabbo().CurrentRoom.GetRoomItemHandler().GetItem(Oblivion.GetGame().GetItemManager().GetRealId(itemId));
             if (item == null) return;
             var serverMessage = new ServerMessage();
             serverMessage.Init(LibraryParser.OutgoingRequest("YouTubeLoadVideoMessageComposer"));
@@ -2141,31 +2148,7 @@ namespace Oblivion.Messages.Handlers
             Session.SendMessage(Session.GetHabbo().GetInventoryComponent().SerializeBotInventory());
         }
 
-        internal void CancelMysteryBox()
-        {
-            Request.GetUInteger();
-            var roomUserByHabbo =
-                Session.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
-            var item = Session.GetHabbo().CurrentRoom.GetRoomItemHandler().GetItem(roomUserByHabbo.GateId);
-            if (item == null)
-                return;
-            if (item.InteractingUser == Session.GetHabbo().Id)
-                item.InteractingUser = 0u;
-            else if (item.InteractingUser2 == Session.GetHabbo().Id)
-                item.InteractingUser2 = 0u;
-            roomUserByHabbo.GateId = 0u;
-            var text = item.ExtraData.Split(Convert.ToChar(5))[0];
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-            {
-                queryReactor.SetQuery("UPDATE items_rooms SET extra_data = @extraData WHERE id = " + item.Id);
-                queryReactor.AddParameter("extraData", text + Convert.ToChar(5) + "2");
-                queryReactor.RunQuery();
-            }
-            item.ExtraData = text + Convert.ToChar(5) + "2";
-            item.UpdateNeeded = true;
-            item.UpdateState(true, true);
-        }
-
+       
         internal void PlaceBuildersFurniture()
         {
             Request.GetInteger();
@@ -2184,16 +2167,21 @@ namespace Oblivion.Messages.Handlers
             var z = actualRoom.GetGameMap().SqAbsoluteHeight(x, y);
             using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
+
+                var guidId = Guid.NewGuid();
+                ShortGuid insertId = guidId;
+
                 adapter.SetQuery(
-                    "INSERT INTO items_rooms (user_id,room_id,base_item,x,y,z,rot,builders) VALUES (@userId,@roomId,@baseItem,@x,@y,@z,@rot,'1')");
+                    "INSERT INTO items_rooms (id, user_id,room_id,base_item,x,y,z,rot,builders) VALUES (@insertId, @userId,@roomId,@baseItem,@x,@y,@z,@rot,'1')");
                 adapter.AddParameter("userId", Session.GetHabbo().Id);
+                adapter.AddParameter("insertId", insertId);
                 adapter.AddParameter("roomId", actualRoom.RoomId);
                 adapter.AddParameter("baseItem", item.BaseId);
                 adapter.AddParameter("x", x);
                 adapter.AddParameter("y", y);
                 adapter.AddParameter("z", z);
                 adapter.AddParameter("rot", dir);
-                var insertId = (uint) adapter.InsertQuery();
+
                 var newItem = new RoomItem(insertId, actualRoom.RoomId, item.BaseId, extradata, x, y, z, dir,
                     actualRoom,
                     Session.GetHabbo().Id, 0, "", true, 0, 0);
@@ -2226,14 +2214,18 @@ namespace Oblivion.Messages.Handlers
             BuildersClubUpdateFurniCount();
             using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
+
+                var guidId = Guid.NewGuid();
+                ShortGuid insertId = guidId;
                 adapter.SetQuery(
-                    "INSERT INTO items_rooms (user_id,room_id,base_item,wall_pos,builders) VALUES (@userId,@roomId,@baseItem,@wallpos,'1')");
+                    "INSERT INTO items_rooms (id,user_id,room_id,base_item,wall_pos,builders) VALUES (@insertId, @userId,@roomId,@baseItem,@wallpos,'1')");
                 adapter.AddParameter("userId", Session.GetHabbo().Id);
+                adapter.AddParameter("insertId", insertId);
+
                 adapter.AddParameter("roomId", actualRoom.RoomId);
                 adapter.AddParameter("baseItem", item.BaseId);
                 adapter.AddParameter("wallpos", wallcoords);
 
-                var insertId = (uint) adapter.InsertQuery();
                 var newItem = new RoomItem(insertId, actualRoom.RoomId, item.BaseId, extradata,
                     new WallCoordinate(wallcoords), actualRoom, Session.GetHabbo().Id, 0,
                     true);
@@ -2506,7 +2498,7 @@ namespace Oblivion.Messages.Handlers
 
         internal void UsePurchasableClothing()
         {
-            var furniId = Request.GetUInteger();
+            var furniId = Oblivion.GetGame().GetItemManager().GetRealId(Request.GetUInteger());
             var room = Session.GetHabbo().CurrentRoom;
             var item = room?.GetRoomItemHandler().GetItem(furniId);
             if (item?.GetBaseItem().InteractionType != Interaction.Clothing) return;

@@ -107,7 +107,7 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void DisconnectEvent()
         {
-            Session.Stop();
+            Session.Dispose();
         }
 
         /// <summary>
@@ -347,7 +347,7 @@ namespace Oblivion.Messages.Handlers
             }
 
 
-            Session.GetHabbo().GetInventoryComponent().AddNewItem(0, itemId, "", 0, true, false, 0, 0);
+            Session.GetHabbo().GetInventoryComponent().AddNewItem("0", itemId, "", 0, true, false, 0, 0);
             Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
 
             Response.Init(LibraryParser.OutgoingRequest("CampaignCalendarGiftMessageComposer"));
@@ -406,7 +406,7 @@ namespace Oblivion.Messages.Handlers
 
             var item = Session.GetHabbo()
                 .GetInventoryComponent()
-                .AddNewItem(0, Oblivion.GetGame().GetCameraManager().PhotoPoster.ItemId, data, 0, true, false, 0, 0);
+                .AddNewItem("0", Oblivion.GetGame().GetCameraManager().PhotoPoster.ItemId, data, 0, true, false, 0, 0);
             Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
             Session.GetHabbo().GetInventoryComponent().SendNewItems(item.VirtualId);
 
@@ -577,7 +577,7 @@ namespace Oblivion.Messages.Handlers
 
                 var item = Session.GetHabbo()
                     .GetInventoryComponent()
-                    .AddNewItem(0, Oblivion.GetGame().GetCameraManager().PhotoPoster.ItemId, data, 0, true, false, 0,
+                    .AddNewItem("0", Oblivion.GetGame().GetCameraManager().PhotoPoster.ItemId, data, 0, true, false, 0,
                         0);
                 Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
                 Session.GetHabbo().GetInventoryComponent().SendNewItems(item.VirtualId);

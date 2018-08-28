@@ -58,7 +58,6 @@ namespace Oblivion.HabboHotel.Pets
         internal static ServerMessage GetMessage(uint furniId, Pet pet1, Pet pet2)
         {
             var message = new ServerMessage(LibraryParser.OutgoingRequest("PetBreedMessageComposer"));
-
             message.AppendInteger(furniId);
             message.AppendInteger(pet1.PetId);
             message.AppendString(pet1.Name);

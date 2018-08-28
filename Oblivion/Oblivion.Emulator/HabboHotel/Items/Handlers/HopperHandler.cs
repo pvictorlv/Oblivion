@@ -33,9 +33,9 @@ namespace Oblivion.HabboHotel.Items.Handlers
         /// </summary>
         /// <param name="nextRoom">The next room.</param>
         /// <returns>System.UInt32.</returns>
-        internal static uint GetHopperId(uint nextRoom)
+        internal static string GetHopperId(uint nextRoom)
         {
-            uint result;
+            string result;
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
@@ -44,7 +44,7 @@ namespace Oblivion.HabboHotel.Items.Handlers
 
                 var theString = queryReactor.GetString();
 
-                result = theString == null ? 0u : Convert.ToUInt32(theString);
+                result = theString ?? "0u";
             }
 
             return result;

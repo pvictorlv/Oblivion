@@ -103,7 +103,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     if (innerData.Length < 4)
                         continue;
 
-                    var itemId = uint.Parse(innerData[0]);
+                    var itemId = innerData[0];
 
                     var fItem = Room.GetRoomItemHandler().GetItem(itemId);
 

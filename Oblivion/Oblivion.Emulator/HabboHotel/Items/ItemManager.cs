@@ -5,7 +5,6 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
-using Oblivion.Collections;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Catalogs.Wrappers;
 using Oblivion.HabboHotel.Items.Interactions;
@@ -27,8 +26,8 @@ namespace Oblivion.HabboHotel.Items
 
         private int _itemIdCounter = 1;
 
-        private ConcurrentDictionary<uint, long> _itemsByVirtualId;
-        private ConcurrentDictionary<long, uint> _itemsByRealId;
+        private ConcurrentDictionary<uint, string> _itemsByVirtualId;
+        private ConcurrentDictionary<string, uint> _itemsByRealId;
 //        private ConcurrentList<uint> _virtualAddedItems;
 
         /// <summary>
@@ -52,23 +51,13 @@ namespace Oblivion.HabboHotel.Items
         {
             LoadItems(dbClient);
             itemLoaded = (uint) _items.Count;
-            _itemsByVirtualId = new ConcurrentDictionary<uint, long>();
-            _itemsByRealId = new ConcurrentDictionary<long, uint>();
+            _itemsByVirtualId = new ConcurrentDictionary<uint, string>();
+            _itemsByRealId = new ConcurrentDictionary<string, uint>();
 //            _virtualAddedItems = new ConcurrentList<uint>();
         }
 
-        public uint GenerateVirtualId()
-        {
-            Interlocked.Increment(ref _itemIdCounter);
-
-            var newId = Convert.ToUInt32(_itemIdCounter);
-
-//            _virtualAddedItems.Add(newId);
-
-            return newId;
-        }
-        
-        public uint GetVirtualId(long realId)
+     
+        public uint GetVirtualId(string realId)
         {
             if (_itemsByRealId.TryGetValue(realId, out var virtualId))
             {
@@ -92,13 +81,13 @@ namespace Oblivion.HabboHotel.Items
                 _itemIdCounter = _itemsByVirtualId.Count;
             }
         }
-        public void RemoveVirtualItem(long itemId)
+        public void RemoveVirtualItem(string itemId)
         {
             _itemsByRealId.TryRemove(itemId, out var virtualId);
             _itemsByVirtualId.TryRemove(virtualId, out _);
         }
 
-        public long GetRealId(uint virtualId)
+        public string GetRealId(uint virtualId)
         {
             if (_itemsByVirtualId.TryGetValue(virtualId, out var realId))
             {
@@ -106,7 +95,7 @@ namespace Oblivion.HabboHotel.Items
             }
             
 
-            return 0;
+            return "";
         }
 
         public int CountItems() => _items.Count;

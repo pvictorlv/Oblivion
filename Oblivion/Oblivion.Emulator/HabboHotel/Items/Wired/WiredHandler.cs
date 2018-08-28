@@ -23,12 +23,12 @@ namespace Oblivion.HabboHotel.Items.Wired
     {
         private Room _room;
         //todo recode
-        private ConcurrentDictionary<long, IWiredItem> _wiredItems;
+        private ConcurrentDictionary<string, IWiredItem> _wiredItems;
 
         public WiredHandler(Room room)
         {
             //todo: change _wiredItems to cyclers only
-            _wiredItems = new ConcurrentDictionary<long, IWiredItem>();
+            _wiredItems = new ConcurrentDictionary<string, IWiredItem>();
 
             Effects = new ConcurrentDictionary<int, ConcurrentList<IWiredItem>>();
             Specials = new ConcurrentDictionary<int, ConcurrentList<IWiredItem>>();
@@ -107,10 +107,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 /* TODO CHECK */
                 foreach (var s in array)
                 {
-                    if (!int.TryParse(s, out var value))
-                        continue;
-
-                    var item = _room.GetRoomItemHandler().GetItem(Convert.ToUInt32(value));
+                    var item = _room.GetRoomItemHandler().GetItem(s);
 
                     fItem.Items.Add(item);
                 }

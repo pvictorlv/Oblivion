@@ -127,7 +127,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <summary>
         ///     The gate identifier
         /// </summary>
-        internal uint GateId;
+        internal string GateId;
 
         /// <summary>
         ///     The goal x
@@ -228,7 +228,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <summary>
         ///     The last item
         /// </summary>
-        internal long LastItem;
+        internal string LastItem = "0";
 
         /// <summary>
         ///     The locked tiles count
@@ -417,7 +417,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             CurrentItemEffect = 0;
             FreezeLives = 0;
             InteractingGate = false;
-            GateId = 0u;
+            GateId = "0";
             LastInteraction = 0;
             LockedTilesCount = 0;
         }

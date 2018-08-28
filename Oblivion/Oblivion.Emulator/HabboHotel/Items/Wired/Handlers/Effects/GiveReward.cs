@@ -141,7 +141,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     else
                     {
                         user.GetClient().GetHabbo().GetInventoryComponent()
-                            .AddNewItem(0u, roomItem.ItemId, "0", 0u, true, false, 0, 0);
+                            .AddNewItem("0u", roomItem.ItemId, "0", 0u, true, false, 0, 0);
                         user.GetClient()
                             .SendMessage(new ServerMessage(
                                 LibraryParser.OutgoingRequest("UpdateInventoryMessageComposer")));

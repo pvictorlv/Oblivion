@@ -1129,7 +1129,7 @@ namespace Oblivion.Messages.Handlers
             }
 
             var item = Session.GetHabbo().GetInventoryComponent()
-                .AddNewItem(0, ExtraSettings.NewUserGiftYttv2Id, "", 0, true, false, 0, 0);
+                .AddNewItem("0", ExtraSettings.NewUserGiftYttv2Id, "", 0, true, false, 0, 0);
             Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
 
             Session.GetHabbo().Diamonds += 25;

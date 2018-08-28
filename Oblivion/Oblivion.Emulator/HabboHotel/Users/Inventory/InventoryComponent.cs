@@ -28,7 +28,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <summary>
         ///     The _floor items
         /// </summary>
-        private ConcurrentDictionary<long, UserItem> _items;
+        private ConcurrentDictionary<string, UserItem> _items;
 
         /// <summary>
         ///     The _inventory bots
@@ -43,7 +43,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <summary>
         ///     The _m added items
         /// </summary>
-        private HashSet<long> _mAddedItems;
+        private HashSet<string> _mAddedItems;
 
         /// <summary>
         ///     The _m removed items
@@ -71,12 +71,12 @@ namespace Oblivion.HabboHotel.Users.Inventory
         {
             _mClient = client;
             UserId = userId;
-            _items = new ConcurrentDictionary<long, UserItem>();
+            _items = new ConcurrentDictionary<string, UserItem>();
 
 
             _inventoryPets = new ConcurrentDictionary<uint, Pet>();
             _inventoryBots = new ConcurrentDictionary<uint, RoomBot>();
-            _mAddedItems = new HashSet<long>();
+            _mAddedItems = new HashSet<string>();
             _mRemovedItems = new HashSet<UserItem>();
 
 
@@ -145,7 +145,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
                 foreach (DataRow dataRow in table.Rows)
                 {
-                    var item = GetItem(Convert.ToUInt32(dataRow[0]));
+                    var item = GetItem(Convert.ToString(dataRow[0]));
 
                     if (item == null || (!item.BaseItem.Name.StartsWith("DFD_") &&
                                          !item.BaseItem.Name.StartsWith("CF_") &&
@@ -245,7 +245,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             foreach (DataRow dataRow in table.Rows)
             {
-                var id = Convert.ToUInt32(dataRow[0]);
+                var id = Convert.ToString(dataRow[0]);
                 var itemId = Convert.ToUInt32(dataRow[1]);
 
                 if (!Oblivion.GetGame().GetItemManager().ContainsItem(itemId))
@@ -334,7 +334,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns>UserItem.</returns>
-        internal UserItem GetItem(long id) => _items.TryGetValue(id, out var item) ? item : null;
+        internal UserItem GetItem(string id) => _items.TryGetValue(id, out var item) ? item : null;
 
         internal bool HasBaseItem(uint id)
         {
@@ -390,9 +390,14 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <param name="limtot">The limtot.</param>
         /// <param name="songCode">The song code.</param>
         /// <returns>UserItem.</returns>
-        internal UserItem AddNewItem(long id, uint baseItem, string extraData, uint thGroup, bool insert, bool fromRoom,
+        internal UserItem AddNewItem(string id, uint baseItem, string extraData, uint thGroup, bool insert, bool fromRoom,
             int limno, int limtot, string songCode = "")
         {
+            if (id == "0" || id == "0u")
+            {
+                var guidId = Guid.NewGuid();
+                id = (ShortGuid) guidId;
+            }
             if (insert)
             {
                 if (!fromRoom)
@@ -400,19 +405,16 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
                         queryReactor.SetQuery(
-                            $"INSERT INTO items_rooms (base_item, user_id, group_id, extra_data, songcode, limited) VALUES ('{baseItem}', '{UserId}', '{thGroup}', @edata, '{songCode}', '{limno};{limtot}');");
+                            $"INSERT INTO items_rooms (id, base_item, user_id, group_id, extra_data, songcode, limited) VALUES ('{id}', '{baseItem}', '{UserId}', '{thGroup}', @edata, '{songCode}', '{limno};{limtot}');");
                         queryReactor.AddParameter("edata", extraData);
-                        if (id == 0)
-                            id = queryReactor.InsertQuery();
+
                         var virtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(id);
 
                         SendNewItems(virtualId);
                     }
                 }
             }
-
-            if (id == 0)
-                return null;
+            
 
             var userItem = new UserItem(id, baseItem, extraData, thGroup, songCode, limno, limtot);
 
@@ -441,7 +443,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <param name="id">The identifier.</param>
         /// <param name="placedInroom">if set to <c>true</c> [placed inroom].</param>
         /// <param name="roomId">the room who is placed the item</param>
-        internal void RemoveItem(long id, bool placedInroom, uint roomId)
+        internal void RemoveItem(string id, bool placedInroom, uint roomId)
         {
             GetClient()
                 .GetMessageHandler()
@@ -822,7 +824,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// </summary>
         /// <param name="itemId">The item identifier.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        private bool UserHoldsItem(long itemId) => _items.ContainsKey(itemId);
+        private bool UserHoldsItem(string itemId) => _items.ContainsKey(itemId);
 
         /// <summary>
         ///     Gets the client.
