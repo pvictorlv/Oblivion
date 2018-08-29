@@ -301,8 +301,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
                             continue;
 
                         var pet = CatalogManager.GeneratePetFromRow(botRow, row);
-                        
-                        _inventoryPets[pet.PetId]= pet;
+
+                        _inventoryPets[pet.PetId] = pet;
                     }
                     else if ((string) botRow["ai_type"] == "generic")
                         AddBot(BotManager.GenerateBotFromRow(botRow));
@@ -353,7 +353,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             bot.RoomId = 0u;
         }
-        
+
         /// <summary>
         ///     Gets the bot.
         /// </summary>
@@ -390,7 +390,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <param name="limtot">The limtot.</param>
         /// <param name="songCode">The song code.</param>
         /// <returns>UserItem.</returns>
-        internal UserItem AddNewItem(string id, uint baseItem, string extraData, uint thGroup, bool insert, bool fromRoom,
+        internal UserItem AddNewItem(string id, uint baseItem, string extraData, uint thGroup, bool insert,
+            bool fromRoom,
             int limno, int limtot, string songCode = "")
         {
             if (id == "0" || id == "0u")
@@ -398,6 +399,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 var guidId = Guid.NewGuid();
                 id = (ShortGuid) guidId;
             }
+
             if (insert)
             {
                 if (!fromRoom)
@@ -414,7 +416,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     }
                 }
             }
-            
+
 
             var userItem = new UserItem(id, baseItem, extraData, thGroup, songCode, limno, limtot);
 
@@ -436,6 +438,28 @@ namespace Oblivion.HabboHotel.Users.Inventory
             return userItem;
         }
 
+
+        public void AddNewItem(UserItem userItem)
+        {
+            var virtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(userItem.Id);
+            SendNewItems(virtualId);
+
+            var id = userItem.Id;
+
+            if (UserHoldsItem(id))
+                RemoveItem(id, false, 0);
+
+            if (userItem.BaseItem == null) return;
+
+
+            _items.TryAdd(userItem.Id, userItem);
+
+            if (_mRemovedItems.Contains(userItem))
+                _mRemovedItems.Remove(userItem);
+
+            if (!_mAddedItems.Contains(id))
+                _mAddedItems.Add(id);
+        }
 
         /// <summary>
         ///     Removes the item.
@@ -523,51 +547,51 @@ namespace Oblivion.HabboHotel.Users.Inventory
             using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FurniListAddMessageComposer")))
             {
                 serverMessage.AppendInteger(item.VirtualId);
-            serverMessage.AppendString(item.GetBaseItem().Type.ToString().ToUpper());
-            serverMessage.AppendInteger(item.VirtualId);
-            serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(0);
-            if (item.LimitedNo > 0)
-            {
+                serverMessage.AppendString(item.GetBaseItem().Type.ToString().ToUpper());
+                serverMessage.AppendInteger(item.VirtualId);
+                serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
                 serverMessage.AppendInteger(1);
-                serverMessage.AppendInteger(256);
-                serverMessage.AppendString(item.ExtraData);
-                serverMessage.AppendInteger(item.LimitedNo);
-                serverMessage.AppendInteger(item.LimitedTot);
-            }
-            else
-            {
-                serverMessage.AppendString(item.ExtraData);
-            }
-
-            serverMessage.AppendBool(item.GetBaseItem().AllowRecycle);
-            serverMessage.AppendBool(item.GetBaseItem().AllowTrade);
-            serverMessage.AppendBool(item.LimitedNo == 0 && item.GetBaseItem().AllowInventoryStack);
-            serverMessage.AppendBool(true); //can sell in marketplace xD
-            serverMessage.AppendInteger(-1);
-            serverMessage.AppendBool(false);
-            serverMessage.AppendInteger(-1);
-            if (!item.IsWallItem)
-            {
-                serverMessage.AppendString(string.Empty);
                 serverMessage.AppendInteger(0);
-            }
+                if (item.LimitedNo > 0)
+                {
+                    serverMessage.AppendInteger(1);
+                    serverMessage.AppendInteger(256);
+                    serverMessage.AppendString(item.ExtraData);
+                    serverMessage.AppendInteger(item.LimitedNo);
+                    serverMessage.AppendInteger(item.LimitedTot);
+                }
+                else
+                {
+                    serverMessage.AppendString(item.ExtraData);
+                }
 
-            var id = item.Id;
-            if (UserHoldsItem(id))
-                RemoveItem(id, false, 0);
+                serverMessage.AppendBool(item.GetBaseItem().AllowRecycle);
+                serverMessage.AppendBool(item.GetBaseItem().AllowTrade);
+                serverMessage.AppendBool(item.LimitedNo == 0 && item.GetBaseItem().AllowInventoryStack);
+                serverMessage.AppendBool(true); //can sell in marketplace xD
+                serverMessage.AppendInteger(-1);
+                serverMessage.AppendBool(false);
+                serverMessage.AppendInteger(-1);
+                if (!item.IsWallItem)
+                {
+                    serverMessage.AppendString(string.Empty);
+                    serverMessage.AppendInteger(0);
+                }
+
+                var id = item.Id;
+                if (UserHoldsItem(id))
+                    RemoveItem(id, false, 0);
 
 
-            _items.TryAdd(userItem.Id, userItem);
+                _items.TryAdd(userItem.Id, userItem);
 
-            if (_mRemovedItems.Contains(userItem))
-                _mRemovedItems.Remove(userItem);
+                if (_mRemovedItems.Contains(userItem))
+                    _mRemovedItems.Remove(userItem);
 
-            if (!_mAddedItems.Contains(id))
-                _mAddedItems.Add(id);
+                if (!_mAddedItems.Contains(id))
+                    _mAddedItems.Add(id);
 
-            _mClient.SendMessage(serverMessage);
+                _mClient.SendMessage(serverMessage);
             }
         }
 
@@ -576,51 +600,51 @@ namespace Oblivion.HabboHotel.Users.Inventory
             using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FurniListAddMessageComposer")))
             {
                 serverMessage.AppendInteger(userItem.VirtualId);
-            serverMessage.AppendString(userItem.BaseItem.Type.ToString().ToUpper());
-            serverMessage.AppendInteger(userItem.VirtualId);
-            serverMessage.AppendInteger(userItem.BaseItem.SpriteId);
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(0);
-            if (userItem.LimitedSellId > 0)
-            {
+                serverMessage.AppendString(userItem.BaseItem.Type.ToString().ToUpper());
+                serverMessage.AppendInteger(userItem.VirtualId);
+                serverMessage.AppendInteger(userItem.BaseItem.SpriteId);
                 serverMessage.AppendInteger(1);
-                serverMessage.AppendInteger(256);
-                serverMessage.AppendString(userItem.ExtraData);
-                serverMessage.AppendInteger(userItem.LimitedSellId);
-                serverMessage.AppendInteger(userItem.LimitedStack);
-            }
-            else
-            {
-                serverMessage.AppendString(userItem.ExtraData);
-            }
-
-            serverMessage.AppendBool(userItem.BaseItem.AllowRecycle);
-            serverMessage.AppendBool(userItem.BaseItem.AllowTrade);
-            serverMessage.AppendBool(userItem.LimitedSellId == 0 && userItem.BaseItem.AllowInventoryStack);
-            serverMessage.AppendBool(true); //can sell in marketplace xD
-            serverMessage.AppendInteger(-1);
-            serverMessage.AppendBool(false);
-            serverMessage.AppendInteger(-1);
-            if (!userItem.IsWallItem)
-            {
-                serverMessage.AppendString(string.Empty);
                 serverMessage.AppendInteger(0);
-            }
+                if (userItem.LimitedSellId > 0)
+                {
+                    serverMessage.AppendInteger(1);
+                    serverMessage.AppendInteger(256);
+                    serverMessage.AppendString(userItem.ExtraData);
+                    serverMessage.AppendInteger(userItem.LimitedSellId);
+                    serverMessage.AppendInteger(userItem.LimitedStack);
+                }
+                else
+                {
+                    serverMessage.AppendString(userItem.ExtraData);
+                }
 
-            var id = userItem.Id;
-            if (UserHoldsItem(id))
-                RemoveItem(id, false, 0);
+                serverMessage.AppendBool(userItem.BaseItem.AllowRecycle);
+                serverMessage.AppendBool(userItem.BaseItem.AllowTrade);
+                serverMessage.AppendBool(userItem.LimitedSellId == 0 && userItem.BaseItem.AllowInventoryStack);
+                serverMessage.AppendBool(true); //can sell in marketplace xD
+                serverMessage.AppendInteger(-1);
+                serverMessage.AppendBool(false);
+                serverMessage.AppendInteger(-1);
+                if (!userItem.IsWallItem)
+                {
+                    serverMessage.AppendString(string.Empty);
+                    serverMessage.AppendInteger(0);
+                }
+
+                var id = userItem.Id;
+                if (UserHoldsItem(id))
+                    RemoveItem(id, false, 0);
 
 
-            _items.TryAdd(userItem.Id, userItem);
+                _items.TryAdd(userItem.Id, userItem);
 
-            if (_mRemovedItems.Contains(userItem))
-                _mRemovedItems.Remove(userItem);
+                if (_mRemovedItems.Contains(userItem))
+                    _mRemovedItems.Remove(userItem);
 
-            if (!_mAddedItems.Contains(id))
-                _mAddedItems.Add(id);
+                if (!_mAddedItems.Contains(id))
+                    _mAddedItems.Add(id);
 
-            _mClient.SendMessage(serverMessage);
+                _mClient.SendMessage(serverMessage);
             }
         }
 
@@ -664,7 +688,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
             return serverMessage;
         }
 
-       
 
         /// <summary>
         ///     Adds the item.
@@ -778,13 +801,15 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <param name="id">The identifier.</param>
         internal void SendNewItems(uint id)
         {
-            var serverMessage = new ServerMessage();
-            serverMessage.Init(LibraryParser.OutgoingRequest("NewInventoryObjectMessageComposer"));
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(id);
-            _mClient.SendMessage(serverMessage);
+            using (var serverMessage = new ServerMessage())
+            {
+                serverMessage.Init(LibraryParser.OutgoingRequest("NewInventoryObjectMessageComposer"));
+                serverMessage.AppendInteger(1);
+                serverMessage.AppendInteger(1);
+                serverMessage.AppendInteger(1);
+                serverMessage.AppendInteger(id);
+                _mClient.SendMessage(serverMessage);
+            }
         }
 
         internal void Dispose()
