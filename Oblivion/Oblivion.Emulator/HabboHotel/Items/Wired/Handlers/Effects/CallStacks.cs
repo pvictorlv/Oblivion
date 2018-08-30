@@ -1,4 +1,4 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -15,8 +15,20 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             Item = item;
             Room = room;
             Items = new ConcurrentList<RoomItem>();
+            _bannedList = new List<Interaction>
+            {
+                Interaction.ActionCallStacks,
+                Interaction.TriggerLongRepeater,
+                Interaction.TriggerRepeater,
+                Interaction.ActionToggleState,
+                Interaction.TriggerWalkOnFurni,
+                Interaction.TriggerWalkOffFurni
+            };
+
+
         }
 
+        private List<Interaction> _bannedList;
         public Interaction Type => Interaction.ActionCallStacks;
 
         public RoomItem Item { get; set; }
@@ -29,7 +41,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public void Dispose()
         {
-
+            _bannedList.Clear();
+            _bannedList = null;
         }
 
         public bool Disposed { get; set; }
@@ -50,17 +63,11 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             {
                 if (item == null) continue;
 
-                if (item.IsWired && Room.GetRoomItemHandler().FloorItems.Values.Contains(item))
-                {
-                    var wired = Room.GetWiredHandler().GetWired(item);
-                    if (wired != null && wired.Type != Interaction.ActionCallStacks &&
-                        wired.Type != Interaction.TriggerRepeater && wired.Type != Interaction.TriggerLongRepeater &&
-                        wired.Type != Interaction.ActionToggleState)
-                    {
-                        WiredHandler.OnEvent(wired);
-                        wired.Execute(roomUser, Type);
-                    }
-                }
+                if (!item.IsWired || !Room.GetRoomItemHandler().FloorItems.Values.Contains(item)) continue;
+                var wired = Room.GetWiredHandler().GetWired(item);
+                if (wired == null || _bannedList.Contains(wired.Type)) continue;
+                WiredHandler.OnEvent(wired);
+                wired.Execute(roomUser, Type);
 
             }
 

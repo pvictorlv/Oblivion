@@ -849,7 +849,7 @@ namespace Oblivion.HabboHotel.Users
                 _badgeComponent.BadgeList = null;
             }
 
-
+            Look = null;
             try
             {
                 if (_inventoryComponent != null)

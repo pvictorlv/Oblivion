@@ -12,7 +12,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
     {
         public override void OnUserWalk(GameClient session, RoomItem item, RoomUser user)
         {
-            if (session?.GetHabbo() == null || item == null || user == null) return;
+            if (session?.GetHabbo() == null || item?.Team == null || user == null) return;
 
             var effect = (int) item.Team + 32;
             var teamManagerForBanzai =

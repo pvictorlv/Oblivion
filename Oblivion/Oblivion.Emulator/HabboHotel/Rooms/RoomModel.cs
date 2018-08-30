@@ -72,6 +72,7 @@ namespace Oblivion.HabboHotel.Rooms
         internal SquareState[][] SqState;
 
         internal bool IsCustom;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="RoomModel" /> class.
         /// </summary>
@@ -81,7 +82,8 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="doorOrientation">The door orientation.</param>
         /// <param name="heightmap">The heightmap.</param>
         /// <param name="clubOnly">if set to <c>true</c> [club only].</param>
-        internal RoomModel(int doorX, int doorY, double doorZ, int doorOrientation, string heightmap, bool clubOnly, bool isCustom)
+        internal RoomModel(int doorX, int doorY, double doorZ, int doorOrientation, string heightmap, bool clubOnly,
+            bool isCustom)
         {
             try
             {
@@ -122,7 +124,8 @@ namespace Oblivion.HabboHotel.Rooms
 
                 for (var y = 0; y < MapSizeY; y++)
                 {
-                    var text2 = array[y].Replace($"{Convert.ToChar(13)}", string.Empty).Replace($"{Convert.ToChar(10)}", string.Empty);
+                    var text2 = array[y].Replace($"{Convert.ToChar(13)}", string.Empty)
+                        .Replace($"{Convert.ToChar(10)}", string.Empty);
 
                     for (var x = 0; x < MapSizeX; x++)
                     {
@@ -133,7 +136,7 @@ namespace Oblivion.HabboHotel.Rooms
 
                         if (x == doorX && y == doorY)
                         {
-                            SqFloorHeight[x][y] = (short)DoorZ;
+                            SqFloorHeight[x][y] = (short) DoorZ;
                             SqState[x][y] = SquareState.Open;
 
                             if (SqFloorHeight[x][y] > 9)
@@ -172,7 +175,7 @@ namespace Oblivion.HabboHotel.Rooms
         {
             if (!IsCustom) return;
 
-            Heightmap = "";
+            Heightmap = null;
             if (SqChar != null)
             {
                 Array.Clear(SqChar, 0, SqChar.Length);
@@ -182,8 +185,13 @@ namespace Oblivion.HabboHotel.Rooms
             if (SqFloorHeight != null)
             {
                 Array.Clear(SqFloorHeight, 0, SqFloorHeight.Length);
-                SqFloorHeight = null;
+                SqSeatRot = null;
+            }
 
+            if (SqSeatRot != null)
+            {
+                Array.Clear(SqSeatRot, 0, SqSeatRot.Length);
+                SqSeatRot = null;
             }
 
             if (SqState != null)

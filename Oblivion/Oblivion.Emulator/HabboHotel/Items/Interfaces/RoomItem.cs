@@ -239,7 +239,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             Room pRoom, uint userid, uint eGroup, string songCode, bool isBuilder, int limNo, int limStack)
         {
             Id = id;
-
+            
             VirtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(id);
             RoomId = roomId;
             BaseItem = baseItem;

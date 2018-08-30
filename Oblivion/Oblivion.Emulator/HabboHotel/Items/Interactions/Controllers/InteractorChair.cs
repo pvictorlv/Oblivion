@@ -11,6 +11,8 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
     {
         public override void OnUserWalk(GameClient session, RoomItem item, RoomUser user)
         {
+            if (session == null || item == null || user?.Statusses == null) return;
+
             if (!user.Statusses.ContainsKey("sit"))
             {
                 if (item.GetBaseItem().StackMultipler && !string.IsNullOrWhiteSpace(item.ExtraData))

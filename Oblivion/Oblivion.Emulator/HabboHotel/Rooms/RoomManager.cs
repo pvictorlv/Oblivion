@@ -179,11 +179,7 @@ namespace Oblivion.HabboHotel.Rooms
                 LoadedRooms.AddOrUpdate(id, room, (key, value) => room);
 
                 room.Start(roomData, forceLoad);
-
-//                Out.WriteLine($"Room #{id} was loaded", "Oblivion.Room.Manager", ConsoleColor.DarkCyan);
-
-//                room.InitBots();
-//                room.InitPets();
+                
                 return room;
             }
             catch (Exception e)

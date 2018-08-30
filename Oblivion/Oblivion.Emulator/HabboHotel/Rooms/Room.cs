@@ -128,7 +128,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     The bans
         /// </summary>
         internal Dictionary<long, double> Bans;
-        
+
 
         /// <summary>
         ///     The _m disposed
@@ -453,7 +453,6 @@ namespace Oblivion.HabboHotel.Rooms
             RoomData.Tags.AddRange(tags);
         }
 
-        
 
         /// <summary>
         ///     Queues the room kick.
@@ -559,7 +558,7 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 var songId = (uint) dataRow[0];
                 var num = dataRow[1].ToString();
-                
+
 
                 if (!int.TryParse(dataRow[2].ToString(), out var baseItem))
                 {
@@ -776,7 +775,7 @@ namespace Oblivion.HabboHotel.Rooms
                         using (var serverMessage = GetRoomUserManager().SerializeStatusUpdates(false))
                         {
                             if (serverMessage != null)
-                            SendMessage(serverMessage);
+                                SendMessage(serverMessage);
                         }
                     }
 
@@ -865,12 +864,12 @@ namespace Oblivion.HabboHotel.Rooms
                 if (_roomUserManager?.UserList == null) return;
                 foreach (var user in _roomUserManager.UserList.Values)
                 {
-                    if (user?.GetClient() != null && !user.IsBot)
+                    if (user?.GetClient() != null)
                     {
-                        Vector2D userCoord = new Vector2D(user.X, user.Y);
-                        if (userCoord.GetDistanceSquared(userCoord) <=
-                            RoomData.ChatMaxDistance * RoomData.ChatMaxDistance * 2)
-                            user.GetClient().SendMessage(arrayData);
+                        if (Gamemap.TileDistance(currentLocation.X, currentLocation.Y, user.X, user.Y) >
+                            RoomData.ChatMaxDistance) continue;
+
+                        user.GetClient().SendMessage(arrayData);
                     }
                 }
             }
@@ -904,22 +903,21 @@ namespace Oblivion.HabboHotel.Rooms
                     if (usersClient?.GetHabbo()?.Data == null)
                         continue;
 
-                    Vector2D userCoord = new Vector2D(user.X, user.Y);
-                    if (senderCoord.GetDistanceSquared(userCoord) <=
-                        (RoomData.ChatMaxDistance * RoomData.ChatMaxDistance * 2))
+                    if (RoomData.ChatMaxDistance > 0 &&
+                        Gamemap.TileDistance(senderCoord.X, senderCoord.Y, user.X, user.Y) > RoomData.ChatMaxDistance)
+                        continue;
+
+                    try
                     {
-                        try
+                        if (user.OnCampingTent || !roomUser.OnCampingTent)
                         {
-                            if (user.OnCampingTent || !roomUser.OnCampingTent)
-                            {
-                                if (!usersClient.GetHabbo().Data.Ignores.Contains(p))
-                                    usersClient.SendMessage(packetData);
-                            }
+                            if (!usersClient.GetHabbo().Data.Ignores.Contains(p))
+                                usersClient.SendMessage(packetData);
                         }
-                        catch (Exception e)
-                        {
-                            Logging.HandleException(e, "Room.SendMessageToUsersWithRights");
-                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Logging.HandleException(e, "Room.SendMessageToUsersWithRights");
                     }
                 }
             }
@@ -994,17 +992,12 @@ namespace Oblivion.HabboHotel.Rooms
                 foreach (var unit in _roomUserManager.UserList.Values)
                 {
                     var user = unit;
-                    if (user == null)
-                        continue;
-
-                    if (user.IsBot)
-                        continue;
-
+                    
                     var usersClient = user?.GetClient();
                     if (usersClient == null)
                         continue;
 
-                    if (!CheckRights(usersClient))
+                    if (!CheckRights(usersClient, false, true,false,true))
                         continue;
 
                     usersClient.SendMessage(data);
@@ -1021,12 +1014,11 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         internal void Destroy()
         {
-
             using (var msg = new ServerMessage(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer")))
             {
                 SendMessage(msg);
-
             }
+
             Dispose();
         }
 
@@ -1163,7 +1155,6 @@ namespace Oblivion.HabboHotel.Rooms
                 queryReactor.RunFastQuery("UPDATE rooms_data SET users_max = " + maxUsers + " WHERE id = " + RoomId);
         }
 
-       
 
         /// <summary>
         ///     Checks the mute.
