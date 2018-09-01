@@ -61,7 +61,7 @@ namespace Oblivion.AStar.Algorithm
         /// <returns>The smallest object</returns>
         public T Pop()
         {
-            if (!InnerList.Any())
+            if (InnerList.Count <= 0)
                 return default(T);
             var item = InnerList[0];
             InnerList.RemoveAt(0);

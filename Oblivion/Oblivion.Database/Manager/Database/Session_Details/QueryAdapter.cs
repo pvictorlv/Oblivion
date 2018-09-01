@@ -180,6 +180,15 @@ namespace Oblivion.Database.Manager.Database.Session_Details
             RunQuery();
         }
 
+        public void RunNoLockFastQuery(string query)
+        {
+            if (!DbEnabled)
+                return;
+            SetNoLockQuery(query);
+            
+            RunQuery();
+        }
+
         public void RunQuery()
         {
             if (!DbEnabled)
@@ -200,6 +209,22 @@ namespace Oblivion.Database.Manager.Database.Session_Details
             try
             {
 //                Writer.Writer.WriteLine(query);
+                CommandMySql.Parameters.Clear();
+                CommandMySql.CommandText = query;
+            }
+            catch (Exception exception)
+            {
+                Writer.Writer.LogQueryError(exception, CommandMySql?.CommandText);
+
+            }
+        }
+        public void SetNoLockQuery(string query)
+        {
+            try
+            {
+                //                Writer.Writer.WriteLine(query);
+                query = query.Insert(0, "SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;");
+                query += "SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ; ";
                 CommandMySql.Parameters.Clear();
                 CommandMySql.CommandText = query;
             }

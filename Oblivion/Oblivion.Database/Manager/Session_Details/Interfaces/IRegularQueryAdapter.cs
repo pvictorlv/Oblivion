@@ -22,7 +22,9 @@ namespace Oblivion.Database.Manager.Session_Details.Interfaces
         DataTable GetTable();
 
         void RunFastQuery(string query);
+        void RunNoLockFastQuery(string query);
 
         void SetQuery(string query);
+        void SetNoLockQuery(string query);
     }
 }

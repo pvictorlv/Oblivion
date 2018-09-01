@@ -191,7 +191,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     foreach (var itemId in _removedItems)
                     {
                         i++;
-                        builder.Append(i >= count ? $"{itemId}" : $"{itemId},");
+                        builder.Append(i >= count ? $"'{itemId}'" : $"'{itemId}',");
                     }
 
                     builder.Append(");");
@@ -225,7 +225,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                             roomItem.GetBaseItem().Name.Contains("floor_single") ||
                             roomItem.GetBaseItem().Name.Contains("landscape_single"))
                         {
-                            dbClient.RunFastQuery("DELETE FROM items_rooms WHERE id = " + roomItem.Id + " LIMIT 1");
+                            dbClient.RunNoLockFastQuery("DELETE FROM items_rooms WHERE id = '" + roomItem.Id + "' LIMIT 1");
                             continue;
                         }
 
@@ -247,7 +247,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                             dbClient.AddParameter("wallPos", roomItem.WallCoord);
                         }
 
-                        query += " WHERE id = " + roomItem.Id;
+                        query += " WHERE id = '" + roomItem.Id + "'";
                         dbClient.RunQuery(query);
                     }
 
@@ -445,7 +445,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         if (item == null) continue;
 
                         if (ownerId == 0)
-                            queryReactor.RunFastQuery("UPDATE items_rooms SET user_id = " + _room.RoomData.OwnerId +
+                            queryReactor.RunNoLockFastQuery("UPDATE items_rooms SET user_id = " + _room.RoomData.OwnerId +
                                                       " WHERE id = " + id);
 
                         var locationData = item.Type == 'i' && string.IsNullOrWhiteSpace(dataRow["wall_pos"].ToString())
@@ -492,7 +492,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                                 }
 
                                 queryReactor.RunFastQuery(
-                                    "UPDATE items_rooms SET room_id = 0 WHERE id = " + roomItem.Id);
+                                    "UPDATE items_rooms SET room_id = 0 WHERE id = '" + roomItem.Id + "'");
                             }
                             else
                             {
@@ -787,7 +787,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 if (!item.GetBaseItem().IsSeat && !item.IsRoller)
                     if (
                         affectedTiles.Values.Any(
-                            current3 => _room.GetGameMap().GetRoomUsers(new Point(current3.X, current3.Y)).Any()))
+                            current3 => _room.GetGameMap().GetRoomUsers(new Point(current3.X, current3.Y)).Count > 0))
                     {
                         if (!flag) return false;
                         AddOrUpdateItem(item.Id);

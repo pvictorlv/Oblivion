@@ -850,6 +850,7 @@ namespace Oblivion.HabboHotel.Users
             }
 
             Look = null;
+
             try
             {
                 if (_inventoryComponent != null)

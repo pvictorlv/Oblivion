@@ -980,7 +980,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        queryReactor.SetQuery("INSERT INTO items_rooms (base_item,user_id) VALUES (" +
+                        queryReactor.SetNoLockQuery("INSERT INTO items_rooms (base_item,user_id) VALUES (" +
                                               itemBySprite.ItemId + ", " + toUserId + ")");
 
 

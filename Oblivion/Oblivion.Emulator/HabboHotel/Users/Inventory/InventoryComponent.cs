@@ -111,7 +111,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 UpdateItems(true);
 
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                    queryReactor.RunFastQuery($"DELETE FROM items_rooms WHERE room_id='0' AND user_id = {UserId}");
+                    queryReactor.RunNoLockFastQuery($"DELETE FROM items_rooms WHERE room_id='0' AND user_id = {UserId}");
 
                 _mAddedItems.Clear();
                 _mRemovedItems.Clear();
@@ -139,7 +139,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryreactor2.SetQuery(
+                queryreactor2.SetNoLockQuery(
                     $"SELECT id FROM items_rooms WHERE user_id={session.GetHabbo().Id} AND room_id='0'");
                 var table = queryreactor2.GetTable();
 
@@ -155,7 +155,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     var array = item.BaseItem.Name.Split('_');
                     var num = int.Parse(array[1]);
 
-                    queryreactor2.RunFastQuery($"DELETE FROM items_rooms WHERE id={item.Id} LIMIT 1");
+                    queryreactor2.RunNoLockFastQuery($"DELETE FROM items_rooms WHERE id='{item.Id}' LIMIT 1");
 
 
                     currentRoom.GetRoomItemHandler().RemoveItem(item.Id);
@@ -236,7 +236,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery(
+                queryReactor.SetNoLockQuery(
                     "SELECT id,base_item,extra_data,group_id,songcode,limited FROM items_rooms WHERE user_id=@userid AND room_id='0' LIMIT 4500;");
                 queryReactor.AddParameter("userid", ((int) UserId));
 
@@ -406,7 +406,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 {
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        queryReactor.SetQuery(
+                        queryReactor.SetNoLockQuery(
                             $"INSERT INTO items_rooms (id, base_item, user_id, group_id, extra_data, songcode, limited) VALUES ('{id}', '{baseItem}', '{UserId}', '{thGroup}', @edata, '{songCode}', '{limno};{limtot}');");
                         queryReactor.AddParameter("edata", extraData);
 
@@ -714,7 +714,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     foreach (var itemId in added)
                     {
                         i++;
-                        builder.Append(i >= count ? $"{itemId}" : $"{itemId},");
+                        builder.Append(i >= count ? $"'{itemId}'" : $"'{itemId}',");
                     }
 
                     builder.Append(");");
@@ -785,7 +785,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     }
 
                     using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                        queryChunk.Execute(queryreactor2);
+                        queryChunk.ExecuteNoLock(queryreactor2);
                 }
             }
             catch (Exception ex)

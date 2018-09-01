@@ -99,6 +99,23 @@ namespace Oblivion.Util
 
             _queries = _queries.Remove((_queries.Length - 1), 1);
 
+            dbClient.SetNoLockQuery(_queries.ToString());
+
+            /* TODO CHECK */ foreach (var current in _parameters)
+                dbClient.AddParameter(current.Key, current.Value);
+
+            dbClient.RunQuery();
+        }  /// <summary>
+        /// Executes the specified database client with no lock.
+        /// </summary>
+        /// <param name="dbClient">The database client.</param>
+        internal void ExecuteNoLock(IQueryAdapter dbClient)
+        {
+            if (_queryCount == 0)
+                return;
+
+            _queries = _queries.Remove((_queries.Length - 1), 1);
+
             dbClient.SetQuery(_queries.ToString());
 
             /* TODO CHECK */ foreach (var current in _parameters)

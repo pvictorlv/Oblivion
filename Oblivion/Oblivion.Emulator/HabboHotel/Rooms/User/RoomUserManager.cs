@@ -579,7 +579,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             try
             {
-                if (GetPets().Any())
+                if (GetPets().Count > 0)
                     AppendPetsUpdateString(dbClient);
             }
             catch (Exception ex)

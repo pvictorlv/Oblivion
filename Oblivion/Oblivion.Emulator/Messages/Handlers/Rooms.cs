@@ -1198,7 +1198,7 @@ namespace Oblivion.Messages.Handlers
             {
                 queryReactor.RunFastQuery($"DELETE FROM rooms_data WHERE id = {roomId}");
                 queryReactor.RunFastQuery($"DELETE FROM users_favorites WHERE room_id = {roomId}");
-                queryReactor.RunFastQuery($"DELETE FROM items_rooms WHERE room_id = {roomId}");
+                queryReactor.RunNoLockFastQuery($"DELETE FROM items_rooms WHERE room_id = {roomId}");
                 queryReactor.RunFastQuery($"DELETE FROM rooms_rights WHERE room_id = {roomId}");
                 queryReactor.RunFastQuery($"UPDATE users SET home_room = '0' WHERE home_room = {roomId}");
             }
@@ -1638,7 +1638,7 @@ namespace Oblivion.Messages.Handlers
                     room.RoomId));
                 queryReactor.AddParameter("extradata", item.ExtraData);
                 queryReactor.RunQuery();
-                queryReactor.RunFastQuery($"DELETE FROM items_rooms WHERE id={item.Id} LIMIT 1");
+                queryReactor.RunNoLockFastQuery($"DELETE FROM items_rooms WHERE id='{item.Id}' LIMIT 1");
             }
 
             Session.GetHabbo().GetInventoryComponent().RemoveItem(item.Id, false, 0);
@@ -1909,7 +1909,7 @@ namespace Oblivion.Messages.Handlers
 
             using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryreactor2.RunFastQuery($"DELETE FROM items_rooms WHERE id = {mopla.Id}");
+                queryreactor2.RunNoLockFastQuery($"DELETE FROM items_rooms WHERE id = '{mopla.Id}'");
                 room.GetRoomUserManager().SavePets(queryreactor2);
             }
         }
@@ -2601,7 +2601,7 @@ namespace Oblivion.Messages.Handlers
 
             var roomUserByRank = currentRoom.GetRoomUserManager().GetRoomUserByRank(4);
 
-            if (!roomUserByRank.Any())
+            if (roomUserByRank.Count <= 0)
                 return;
 
             /* TODO CHECK */

@@ -572,7 +572,7 @@ namespace Oblivion.HabboHotel.Rooms
 
                 using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    queryreactor2.SetQuery($"SELECT extra_data,songcode FROM items_rooms WHERE id = {num}");
+                    queryreactor2.SetQuery($"SELECT extra_data,songcode FROM items_rooms WHERE id = '{num}'");
                     var row = queryreactor2.GetRow();
 
                     if (row != null)

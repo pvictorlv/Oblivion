@@ -17,7 +17,7 @@ namespace Oblivion.Collections
         public ConcurrentList(int capacity) => _inner = new List<T>(capacity);
 
         public ConcurrentList(IEnumerable<T> original) => _inner = new List<T>(original);
-
+        
         public int Count
         {
             get
