@@ -1198,7 +1198,7 @@ namespace Oblivion.Messages.Handlers
             {
                 queryReactor.RunFastQuery($"DELETE FROM rooms_data WHERE id = {roomId}");
                 queryReactor.RunFastQuery($"DELETE FROM users_favorites WHERE room_id = {roomId}");
-                queryReactor.RunNoLockFastQuery($"DELETE FROM items_rooms WHERE room_id = {roomId}");
+                queryReactor.RunNoLockFastQuery($"DELETE FROM items_rooms WHERE room_id = '{roomId}';");
                 queryReactor.RunFastQuery($"DELETE FROM rooms_rights WHERE room_id = {roomId}");
                 queryReactor.RunFastQuery($"UPDATE users SET home_room = '0' WHERE home_room = {roomId}");
             }
@@ -1638,7 +1638,7 @@ namespace Oblivion.Messages.Handlers
                     room.RoomId));
                 queryReactor.AddParameter("extradata", item.ExtraData);
                 queryReactor.RunQuery();
-                queryReactor.RunNoLockFastQuery($"DELETE FROM items_rooms WHERE id='{item.Id}' LIMIT 1");
+                queryReactor.RunNoLockFastQuery($"DELETE FROM items_rooms WHERE id='{item.Id}' LIMIT 1;");
             }
 
             Session.GetHabbo().GetInventoryComponent().RemoveItem(item.Id, false, 0);
@@ -1873,7 +1873,7 @@ namespace Oblivion.Messages.Handlers
 
         internal void PlantMonsterplant(RoomItem mopla, Room room)
         {
-            int rarity = 0, internalRarity = 0;
+            int rarity = 0;
             if (room == null || mopla == null)
                 return;
 
@@ -1883,7 +1883,7 @@ namespace Oblivion.Messages.Handlers
             if (string.IsNullOrEmpty(mopla.ExtraData) || mopla.ExtraData == "0")
                 rarity = 1;
             if (!string.IsNullOrEmpty(mopla.ExtraData) && mopla.ExtraData != "0")
-                rarity = int.TryParse(mopla.ExtraData, out internalRarity) ? internalRarity : 1;
+                rarity = int.TryParse(mopla.ExtraData, out var internalRarity) ? internalRarity : 1;
 
             var getX = mopla.X;
             var getY = mopla.Y;
@@ -1895,7 +1895,7 @@ namespace Oblivion.Messages.Handlers
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.RunFastQuery(string.Concat("UPDATE bots SET room_id = '", room.RoomId, "', x = '", getX,
-                    "', y = '", getY, "' WHERE id = '", pet.PetId, "'"));
+                    "', y = '", getY, "' WHERE id = '", pet.PetId, "';"));
             }
 
             pet.PlacedInRoom = true;
@@ -1909,7 +1909,7 @@ namespace Oblivion.Messages.Handlers
 
             using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryreactor2.RunNoLockFastQuery($"DELETE FROM items_rooms WHERE id = '{mopla.Id}'");
+                queryreactor2.RunNoLockFastQuery($"DELETE FROM items_rooms WHERE id = '{mopla.Id}';");
                 room.GetRoomUserManager().SavePets(queryreactor2);
             }
         }

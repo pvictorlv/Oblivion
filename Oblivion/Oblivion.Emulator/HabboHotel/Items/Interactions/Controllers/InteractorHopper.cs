@@ -12,7 +12,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetNoLockQuery("INSERT INTO items_hopper (hopper_id, room_id) VALUES (@hopperid, @roomid);");
+                queryReactor.SetQuery("INSERT INTO items_hopper (hopper_id, room_id) VALUES (@hopperid, @roomid);");
                 queryReactor.AddParameter("hopperid", item.Id);
                 queryReactor.AddParameter("roomid", item.RoomId);
                 queryReactor.RunQuery();

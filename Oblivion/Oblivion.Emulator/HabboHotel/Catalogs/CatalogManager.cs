@@ -987,7 +987,7 @@ namespace Oblivion.HabboHotel.Catalogs
                         queryReactor.SetQuery(string.Concat(
                             "INSERT INTO users_gifts (gift_id,item_id,extradata,giver_name,Message,ribbon,color,gift_sprite,show_sender,rare_id) VALUES (",
                             insertId, ", ", baseItem.ItemId, ",@extradata, @name, @Message,", giftLazo, ",", giftColor,
-                            ",", giftSpriteId, ",", undef ? 1 : 0, ",", limitedId, ")"));
+                            ",", giftSpriteId, ",", undef ? 1 : 0, ",", limitedId, ");"));
                         queryReactor.AddParameter("extradata", extraData);
                         queryReactor.AddParameter("name", giftUser);
                         queryReactor.AddParameter("message", giftMessage);
@@ -1226,6 +1226,7 @@ namespace Oblivion.HabboHotel.Catalogs
                 }
 
 
+                if (list.Count <= 0) return list;
                 var query = new StringBuilder();
                 query.Append(
                     "INSERT INTO items_rooms (id, base_item, user_id, group_id, extra_data, songcode, limited) VALUES ");
@@ -1244,7 +1245,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
                 using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    dbClient.SetQuery(query.ToString());
+                    dbClient.SetNoLockQuery(query.ToString());
                     dbClient.AddParameter("edata", extraData);
                     dbClient.RunQuery();
                 }

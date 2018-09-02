@@ -539,7 +539,7 @@ namespace Oblivion.Messages.Handlers
                     Session.GetHabbo().BuildersItemsUsed--;
                     BuildersClubUpdateFurniCount();
 
-                    adapter.RunNoLockFastQuery("DELETE FROM items_rooms WHERE id = '" + item.Id + "'");
+                    adapter.RunNoLockFastQuery("DELETE FROM items_rooms WHERE id = '" + item.Id + "';");
                 }
             }
             else
@@ -863,7 +863,7 @@ namespace Oblivion.Messages.Handlers
                 var extraData = row["extradata"].ToString();
                 var num = uint.Parse(row["item_id"].ToString());
                 queryReactor.RunFastQuery($"UPDATE items_rooms SET base_item='{num}' WHERE id='{item.Id}'");
-                queryReactor.SetNoLockQuery("UPDATE items_rooms SET extra_data = @extraData WHERE id = '" + item.Id+"'");
+                queryReactor.SetNoLockQuery("UPDATE items_rooms SET extra_data = @extraData WHERE id = '" + item.Id+"';");
                 queryReactor.AddParameter("extraData", extraData);
                 queryReactor.RunQuery();
                 queryReactor.RunFastQuery($"DELETE FROM users_gifts WHERE gift_id='{item.Id}'");
@@ -1020,7 +1020,7 @@ namespace Oblivion.Messages.Handlers
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.RunFastQuery(string.Concat("UPDATE items_toners SET enabled = '1', data1=", num,
-                    " ,data2=", num2, ",data3=", num3, " WHERE id=", item.Id, " LIMIT 1"));
+                    " ,data2=", num2, ",data3=", num3, " WHERE id='", item.Id, "' LIMIT 1"));
             }
             room.TonerData.Data1 = num;
             room.TonerData.Data2 = num2;
@@ -1244,9 +1244,11 @@ namespace Oblivion.Messages.Handlers
             uint insertId;
             using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
+                var itemId = (ShortGuid )Guid.NewGuid();
                 queryreactor2.SetNoLockQuery(
-                    "INSERT INTO items_rooms (user_id,base_item,extra_data) VALUES ( @userid , @baseItem, @timestamp)");
+                    "INSERT INTO items_rooms (user_id,base_item,extra_data) VALUES (@itemId, @userid , @baseItem, @timestamp);");
                 queryreactor2.AddParameter("userid", (int) Session.GetHabbo().Id);
+                queryreactor2.AddParameter("itemId", itemId);
                 queryreactor2.AddParameter("timestamp", DateTime.Now.ToLongDateString());
                 queryreactor2.AddParameter("baseItem",
                     Convert.ToUInt32(Oblivion.GetDbConfig().DbData["recycler.box_id"]));
@@ -1888,7 +1890,7 @@ namespace Oblivion.Messages.Handlers
                 using (
                     var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    queryreactor2.SetNoLockQuery("DELETE FROM items_vouchers WHERE voucher = @vou LIMIT 1");
+                    queryreactor2.SetQuery("DELETE FROM items_vouchers WHERE voucher = @vou LIMIT 1");
                     queryreactor2.AddParameter("vou", query);
                     queryreactor2.RunQuery();
                 }
@@ -2329,7 +2331,7 @@ namespace Oblivion.Messages.Handlers
             item.UpdateState(true, false);
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetNoLockQuery("UPDATE items_rooms SET extra_data = @extraData WHERE id = " + item.Id);
+                queryReactor.SetNoLockQuery("UPDATE items_rooms SET extra_data = @extraData WHERE id = '" + item.Id + "';");
                 queryReactor.AddParameter("extraData", item.ExtraData);
                 queryReactor.RunQuery();
             }
@@ -2391,7 +2393,7 @@ namespace Oblivion.Messages.Handlers
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetNoLockQuery("UPDATE items_rooms SET extra_data = @extraData WHERE id = " + item.Id);
+                queryReactor.SetNoLockQuery("UPDATE items_rooms SET extra_data = @extraData WHERE id = '" + item.Id+"';");
                 queryReactor.AddParameter("extraData", item.ExtraData);
                 queryReactor.RunQuery();
             }
@@ -2420,7 +2422,7 @@ namespace Oblivion.Messages.Handlers
             item.UpdateState(true, true);
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetNoLockQuery("UPDATE items_rooms SET extra_data = @extraData WHERE id = '" + item.Id + "'");
+                queryReactor.SetNoLockQuery("UPDATE items_rooms SET extra_data = @extraData WHERE id = '" + item.Id + "';");
                 queryReactor.AddParameter("extraData", item.ExtraData);
                 queryReactor.RunQuery();
             }
@@ -2457,7 +2459,7 @@ namespace Oblivion.Messages.Handlers
             item.UpdateState(true, true);
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetNoLockQuery("UPDATE items_rooms SET extra_data = @extraData WHERE id = '" + item.Id + "'");
+                queryReactor.SetNoLockQuery("UPDATE items_rooms SET extra_data = @extraData WHERE id = '" + item.Id + "';");
                 queryReactor.AddParameter("extraData", item.ExtraData);
                 queryReactor.RunQuery();
             }

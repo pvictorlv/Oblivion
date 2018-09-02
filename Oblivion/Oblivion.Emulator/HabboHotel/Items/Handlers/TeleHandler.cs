@@ -20,7 +20,7 @@ namespace Oblivion.HabboHotel.Items.Handlers
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery($"SELECT tele_two_id FROM items_teleports WHERE tele_one_id = {teleId}");
+                queryReactor.SetQuery($"SELECT tele_two_id FROM items_teleports WHERE tele_one_id = '{teleId}'");
                 queryReactor.RunQuery();
                 var row = queryReactor.GetRow();
 
@@ -45,7 +45,7 @@ namespace Oblivion.HabboHotel.Items.Handlers
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery($"SELECT room_id FROM items_rooms WHERE id = {teleId} LIMIT 1");
+                queryReactor.SetNoLockQuery($"SELECT room_id FROM items_rooms WHERE id = '{teleId}' LIMIT 1;");
                 queryReactor.RunQuery();
                 var row = queryReactor.GetRow();
 

@@ -84,7 +84,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                         room.GetGameMap()
                             .GetAllRoomItemForSquare(user.LastSelectedX, user.LastSelectedY))
                 {
-                    queryReactor.RunNoLockFastQuery("DELETE FROM items_rooms WHERE id = '" + item.Id + "'");
+                    queryReactor.RunNoLockFastQuery("DELETE FROM items_rooms WHERE id = '" + item.Id + "';");
 
                     room.GetRoomItemHandler().RemoveRoomItem(item, false);
                     item.Dispose(true);
@@ -120,7 +120,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                         "INSERT INTO items_rooms (base_item, user_id, room_id, extra_data, x, y, z, rot, group_id) VALUES (" +
                         item.GetBaseItem().ItemId + ", " + user.UserId + ", " + user.RoomId + ", @extraData, " +
                         user.LastSelectedX + ", " + user.LastSelectedY + ", @height, " + item.Rot + ", " + item.GroupId +
-                        ")");
+                        ");");
                     queryReactor.AddParameter("extraData", item.ExtraData);
                     queryReactor.AddParameter("height", TextHandling.GetString(item.Z));
 

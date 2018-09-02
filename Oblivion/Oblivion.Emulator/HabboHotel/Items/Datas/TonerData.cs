@@ -34,7 +34,7 @@ namespace Oblivion.HabboHotel.Items.Datas
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery($"SELECT enabled,data1,data2,data3 FROM items_toners WHERE id={ItemId} LIMIT 1");
+                queryReactor.SetQuery($"SELECT enabled,data1,data2,data3 FROM items_toners WHERE id='{ItemId}' LIMIT 1");
                 row = queryReactor.GetRow();
             }
 

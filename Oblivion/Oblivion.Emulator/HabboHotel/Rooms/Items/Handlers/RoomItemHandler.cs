@@ -202,8 +202,10 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
                 if (_updatedItems.Count > 0)
                 {
+                    var i = 0;
                     foreach (var it in _updatedItems)
                     {
+                        i++;
                         var roomItem = GetItem(it);
                         if (roomItem == null) continue;
                         if (roomItem.GetBaseItem() != null && roomItem.GetBaseItem().IsGroupItem)
@@ -225,15 +227,15 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                             roomItem.GetBaseItem().Name.Contains("floor_single") ||
                             roomItem.GetBaseItem().Name.Contains("landscape_single"))
                         {
-                            dbClient.RunNoLockFastQuery("DELETE FROM items_rooms WHERE id = '" + roomItem.Id + "' LIMIT 1");
+                            dbClient.RunNoLockFastQuery("DELETE FROM items_rooms WHERE id = '" + roomItem.Id + "' LIMIT 1;");
                             continue;
                         }
 
                         var query = "UPDATE items_rooms SET room_id = " + roomItem.RoomId;
                         if (!string.IsNullOrEmpty(roomItem.ExtraData))
                         {
-                            query += $", extra_data = @extraData{roomItem.Id}";
-                            dbClient.AddParameter($"extraData{roomItem.Id}", roomItem.ExtraData);
+                            query += $", extra_data = @extraData{i}";
+                            dbClient.AddParameter($"extraData{i}", roomItem.ExtraData);
                         }
 
                         if (roomItem.IsFloorItem)
@@ -446,7 +448,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
                         if (ownerId == 0)
                             queryReactor.RunNoLockFastQuery("UPDATE items_rooms SET user_id = " + _room.RoomData.OwnerId +
-                                                      " WHERE id = " + id);
+                                                      " WHERE id = '" + id + "';");
 
                         var locationData = item.Type == 'i' && string.IsNullOrWhiteSpace(dataRow["wall_pos"].ToString())
                             ? ":w=0,2 l=11,53 l"

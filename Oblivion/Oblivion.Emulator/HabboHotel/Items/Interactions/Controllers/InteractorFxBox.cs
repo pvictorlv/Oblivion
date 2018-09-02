@@ -59,7 +59,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     room.GetRoomItemHandler().RemoveFurniture(session, item.Id, false);
 
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                        queryReactor.RunNoLockFastQuery("DELETE FROM items_rooms WHERE id = '" + item.Id + "'");
+                        queryReactor.RunNoLockFastQuery("DELETE FROM items_rooms WHERE id = '" + item.Id + "';");
                 }
             }
         }
