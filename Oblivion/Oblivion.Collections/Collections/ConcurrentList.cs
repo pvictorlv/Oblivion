@@ -37,6 +37,9 @@ namespace Oblivion.Collections
             {
                 using (_lock.ReadLock())
                 {
+                    if (index < 0 || index >= _inner.Count)
+                        return default(T);
+
                     return _inner[index];
                 }
             }

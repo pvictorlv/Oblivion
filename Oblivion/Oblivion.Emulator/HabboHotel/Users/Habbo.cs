@@ -56,6 +56,9 @@ namespace Oblivion.HabboHotel.Users
         /// </summary>
         private InventoryComponent _inventoryComponent;
 
+
+        public bool BadStaff = false;
+
         /// <summary>
         ///     The _loaded my groups
         /// </summary>
@@ -350,11 +353,7 @@ namespace Oblivion.HabboHotel.Users
         ///     The trade lock expire
         /// </summary>
         internal int TradeLockExpire;
-
-        /// <summary>
-        /// Specify if the user has radio rights
-        /// </summary>
-        internal int RadioRank;
+        
 
         /// <summary>
         ///     The user groups
@@ -436,7 +435,7 @@ namespace Oblivion.HabboHotel.Users
             List<GroupMember> groups, uint favId, int lastChange, bool tradeLocked, int tradeLockExpire,
             int buildersExpire, int buildersItemsMax, int buildersItemsUsed, bool onDuty,
             Dictionary<int, NaviLogs> naviLogs, int dailyCompetitionVotes, uint dutyLevel, bool disableAlert,
-            int lastTotem, int vipPoints, int radioRank, string prefixes)
+            int lastTotem, int vipPoints, string prefixes, bool badStaff)
         {
             Id = id;
             UserName = userName;
@@ -450,8 +449,7 @@ namespace Oblivion.HabboHotel.Users
             if (rank < 1u)
                 rank = 1u;
 
-            RadioRank = radioRank;
-
+            BadStaff = badStaff;
             Prefixes = prefixes.Split(',');
 
             OnDuty = onDuty;

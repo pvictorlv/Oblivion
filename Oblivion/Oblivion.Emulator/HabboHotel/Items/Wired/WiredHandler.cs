@@ -108,7 +108,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 foreach (var s in array)
                 {
                     var item = _room.GetRoomItemHandler().GetItem(s);
-
+                    if (item == null) continue;
                     fItem.Items.Add(item);
                 }
 

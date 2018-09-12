@@ -17,10 +17,13 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             Description = "Unban a user!";
             Usage = ":unban [USERNAME]";
             MinParams = 1;
+            BlockBad = true;
+
         }
 
         public override bool Execute(GameClient session, string[] pms)
         {
+
             var user = pms[0];
 
             Oblivion.GetGame().GetBanManager().UnbanUser(user);

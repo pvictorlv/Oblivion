@@ -2411,6 +2411,11 @@ namespace Oblivion.Messages.Handlers
             Session.SendMessage(message);
         }
 
+        internal void RefreshCompetition()
+        {
+            //LandingRefreshCompetitionMessageComposer -> type, amount, goal
+        }
+
         internal void AcceptPoll()
         {
             var key = Request.GetUInteger();
@@ -2701,7 +2706,7 @@ namespace Oblivion.Messages.Handlers
 
             SendResponse();
         }
-        
+
 
         public void EnterRoomQueue()
         {

@@ -57,7 +57,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     Adapter.AddParameter("roomid", currentRoom.RoomId);
                     Adapter.RunQuery();
 
-                    Adapter.SetNoLockQuery("UPDATE items_rooms SET user_id = @newowner WHERE room_id = @roomid");
+                    Adapter.SetNoLockQuery("UPDATE items_rooms SET user_id = @newowner WHERE room_id = @roomid;");
                     Adapter.AddParameter("newowner", user.Id);
                     Adapter.AddParameter("roomid", currentRoom.RoomId);
                     Adapter.RunQuery();

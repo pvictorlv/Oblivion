@@ -83,6 +83,7 @@ Request.GetString()
                 return;
 
             var message = CatalogPageComposer.ComposePage(Session, cPage, CataMode);
+            if (message == null) return;
             Session.SendMessage(message);
         }
 

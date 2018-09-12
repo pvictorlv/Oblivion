@@ -12,6 +12,7 @@ namespace Oblivion.HabboHotel.Commands.Interfaces
         /// </summary>
         /// <value>The minimum rank.</value>
         public virtual short MinRank { get; set; }
+        public virtual bool BlockBad { get; set; }
 
         /// <summary>
         ///     Gets or sets the description.

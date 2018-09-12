@@ -254,7 +254,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
             Array.Clear(SqChar, 0, SqChar.Length);
             _staticModel = null;
             _mRoom = null;
-            _serializedHeightmap.Dispose();
+            _serializedHeightmap?.Dispose();
             _serializedHeightmap = null;
             Heightmap = null;
             SqState = null;

@@ -20,6 +20,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             Description = "Shows information about the server.";
             Usage = ":about";
             MinParams = 0;
+            BlockBad = false;
         }
 
         public override bool Execute(GameClient client, string[] pms)

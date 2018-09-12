@@ -29,6 +29,7 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
         ///     The enabled
         /// </summary>
         internal bool Enabled;
+        internal bool BlockBad;
 
         /// <summary>
         ///     The flat offers
@@ -92,8 +93,10 @@ namespace Oblivion.HabboHotel.Catalogs.Interfaces
         /// <param name="cataItems">The cata items.</param>
         internal CatalogPage(uint id, int parentId, string codeName, string caption, bool visible, bool enabled,
             bool comingSoon, uint minRank, int iconImage, string layout, string strings1, string strings2,
-            int orderNum, ref Dictionary<uint, CatalogItem> cataItems)
+            int orderNum, ref Dictionary<uint, CatalogItem> cataItems, bool blockBad)
         {
+            BlockBad = blockBad;
+
             PageMessages = new Dictionary<uint, ServerMessage>();
             PageId = id;
             ParentId = parentId;

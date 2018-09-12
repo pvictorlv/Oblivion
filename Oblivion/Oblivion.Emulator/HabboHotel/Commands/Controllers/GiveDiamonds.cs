@@ -17,6 +17,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             Description = "Gives user Diamonds.";
             Usage = ":diamonds [USERNAME] [AMOUNT]";
             MinParams = 2;
+            BlockBad = true;
+
         }
 
         public override bool Execute(GameClient session, string[] pms)

@@ -17,6 +17,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             Description = "dc user.";
             Usage = ":dc [username]";
             MinParams = 1;
+            BlockBad = true;
+
         }
 
         public override bool Execute(GameClient session, string[] pms)

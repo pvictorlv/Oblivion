@@ -17,6 +17,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             Description = "Mute a selected user.";
             Usage = ":mute [USERNAME]";
             MinParams = 1;
+            BlockBad = true;
+
         }
 
         public override bool Execute(GameClient session, string[] pms)

@@ -80,8 +80,8 @@ namespace Oblivion.HabboHotel.Users.Authenticator
             var disableAlert = Oblivion.EnumToBool(dRow["disabled_alert"].ToString());
             var navilogs = new Dictionary<int, NaviLogs>();
             var navilogstring = (string) dRow["navilogs"];
-            var radioRank = (int) dRow["teamRank"];
             var prefixes = (string) dRow["prefixes"];
+            var badStaff = dRow["badStaff"].ToString() == "1";
 
             if (navilogstring.Length <= 0)
                 return new Habbo(id, userName, ras, motto, look, gender, credits, activityPoints, muted, homeRoom,
@@ -90,7 +90,7 @@ namespace Oblivion.HabboHotel.Users.Authenticator
                     lastOnline, appearOffline, hideInRoom, vip, createDate, citizenship, diamonds, group, favId,
                     lastChange, tradeLocked, tradeLockExpire, buildersExpire, buildersItemsMax,
                     buildersItemsUsed, onDuty, navilogs, dailyCompetitionVotes, dutyLevel, disableAlert, lastTotem,
-                    vipPoints, radioRank, prefixes)
+                    vipPoints, prefixes, badStaff)
                 {
                     LoadedGroups = true
                 };
@@ -112,7 +112,7 @@ namespace Oblivion.HabboHotel.Users.Authenticator
                 lastOnline, appearOffline, hideInRoom, vip, createDate, citizenship, diamonds, group, favId,
                 lastChange, tradeLocked, tradeLockExpire, buildersExpire, buildersItemsMax,
                 buildersItemsUsed, onDuty, navilogs, dailyCompetitionVotes, dutyLevel, disableAlert, lastTotem,
-                vipPoints, radioRank, prefixes)
+                vipPoints, prefixes, badStaff)
             {
                 LoadedGroups = true
             };
@@ -139,7 +139,7 @@ namespace Oblivion.HabboHotel.Users.Authenticator
                 hasFriendRequestsDisabled, 0, achievementPoints,
                 lastOnline, false, false, false, createDate, "citizenship", 0, group, favId,
                 0, false, 0, 0, 0,
-                0, false, null, 0, 0, false, 0, 0, 0, "");
+                0, false, null, 0, 0, false, 0, 0, "", false);
         }
     }
 }

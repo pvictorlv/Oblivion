@@ -47,7 +47,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             msg.AppendString("display");
             msg.AppendString("BUBBLE");
 
-            if (client.GetHabbo().RadioRank < 6 && client.GetHabbo().Rank < 6)
+            
+            if (client.GetHabbo().Rank < 6)
             {
                 if (room.CheckRights(client, true))
                     room.SendMessage(msg);

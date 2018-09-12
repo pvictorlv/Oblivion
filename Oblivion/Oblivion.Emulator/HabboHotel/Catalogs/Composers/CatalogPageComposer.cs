@@ -117,6 +117,8 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
         /// <returns>ServerMessage.</returns>
         internal static ServerMessage ComposePage(GameClient session, CatalogPage page, string mode)
         {
+            if (page.BlockBad && session.GetHabbo().BadStaff) return null;
+
             if (page.PageMessages.TryGetValue(session.GetHabbo().Rank, out var pageMessage))
             {
                 return pageMessage;
@@ -183,6 +185,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
         /// <returns>ServerMessage.</returns>
         internal static ServerMessage ComposeClubPurchasePage(GameClient session, int windowId)
         {
+           
             var message = new ServerMessage(LibraryParser.OutgoingRequest("CatalogueClubPageMessageComposer"));
             var habboClubItems = Oblivion.GetGame().GetCatalog().HabboClubItems;
 

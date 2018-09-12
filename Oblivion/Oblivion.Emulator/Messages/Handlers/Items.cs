@@ -239,11 +239,11 @@ namespace Oblivion.Messages.Handlers
 
             Response.AppendInteger(petData.PetCommands.Count);
             /* TODO CHECK */
-            foreach (var sh in petData.PetCommands.Keys)
+            foreach (var sh in petData.PetCommands)
             {
-                Response.AppendInteger(sh);
-                if (petData.PetCommands[sh])
-                    availableCommands.Add(sh);
+                Response.AppendInteger(sh.Key);
+                if (sh.Value)
+                    availableCommands.Add(sh.Key);
             }
 
             Response.AppendInteger(availableCommands.Count);
@@ -844,7 +844,7 @@ namespace Oblivion.Messages.Handlers
 
             Session.GetHabbo().LastGiftOpenTime = DateTime.Now;
             var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor();
-            queryReactor.SetQuery("SELECT item_id,extradata FROM users_gifts WHERE gift_id = " + item.Id);
+            queryReactor.SetQuery("SELECT item_id,extradata FROM users_gifts WHERE gift_id = '" + item.Id + "';");
             var row = queryReactor.GetRow();
             if (row == null)
             {
@@ -1244,7 +1244,8 @@ namespace Oblivion.Messages.Handlers
             uint insertId;
             using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                var itemId = (ShortGuid )Guid.NewGuid();
+                var itemGuid = Guid.NewGuid();
+                ShortGuid itemId = itemGuid;
                 queryreactor2.SetNoLockQuery(
                     "INSERT INTO items_rooms (user_id,base_item,extra_data) VALUES (@itemId, @userid , @baseItem, @timestamp);");
                 queryreactor2.AddParameter("userid", (int) Session.GetHabbo().Id);

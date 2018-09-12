@@ -13,7 +13,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// </summary>
         public GiveRadioPoints()
         {
-            MinRank = 1;
+            MinRank = 5;
             Description = "Dê pontos a um usuário!";
             Usage = ":rpoints [user]";
             MinParams = 1;
@@ -21,10 +21,6 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override bool Execute(GameClient client, string[] pms)
         {
-            if (client.GetHabbo().RadioRank < 6)
-            {
-                return false;
-            }
 
             var room = client.GetHabbo().CurrentRoom;
             if (room == null) return false;

@@ -802,7 +802,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                     sleepEffectMessage.AppendInteger(roomUsers.VirtualId);
                     sleepEffectMessage.AppendBool(true);
                     _room.SendMessage(sleepEffectMessage);
-                    roomUsers.ApplyEffect(517);
                 }
             }
             catch (Exception e)

@@ -18,10 +18,13 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             Description = "Super ban a user by id!";
             Usage = ":superbanid [USERNAME] [REASON]";
             MinParams = -1;
+            BlockBad = true;
+
         }
 
         public override bool Execute(GameClient session, string[] pms)
         {
+
             if (!uint.TryParse(pms[0], out var userId)) return true;
 
             var client = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);

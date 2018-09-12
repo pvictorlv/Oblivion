@@ -17,6 +17,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             Description = "Destaivar um comando na sala ou de um usuário";
             Usage = ":block room [cmd]";
             MinParams = 2;
+            BlockBad = true;
+
         }
 
         public override bool Execute(GameClient session, string[] pms)

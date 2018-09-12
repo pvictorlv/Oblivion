@@ -200,7 +200,7 @@ namespace Oblivion.HabboHotel.Commands
         {
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                dbClient.SetQuery("SELECT command, description, params, rank, alias FROM server_fuses");
+                dbClient.SetQuery("SELECT command, description, params, rank, alias, blockBad FROM server_fuses");
                 var commandsTable = dbClient.GetTable();
 
                 /* TODO CHECK */ foreach (DataRow commandRow in commandsTable.Rows)
@@ -211,12 +211,17 @@ namespace Oblivion.HabboHotel.Commands
 
                     if (!string.IsNullOrEmpty(commandRow["description"].ToString()))
                         command.Description = commandRow["description"].ToString();
+
+                    if (!string.IsNullOrEmpty(commandRow["blockBad"].ToString()))
+                        command.BlockBad = commandRow["blockBad"].ToString() == "1";
+
                     if (!string.IsNullOrEmpty(commandRow["params"].ToString()))
                         command.Usage = ':' + key + " [" + commandRow["params"] + "]";
                     if (!string.IsNullOrEmpty(commandRow["alias"].ToString()))
                     {
                         var aliasStr = commandRow["alias"].ToString().Replace(" ", "").Replace(";", ",");
-                        /* TODO CHECK */ foreach (var alias in aliasStr.Split(',').Where(alias => !string.IsNullOrEmpty(alias)))
+                        /* TODO CHECK */
+                        foreach (var alias in aliasStr.Split(',').Where(alias => !string.IsNullOrEmpty(alias)))
                         {
                             if (AliasDictionary.ContainsKey(alias))
                             {
@@ -265,6 +270,8 @@ namespace Oblivion.HabboHotel.Commands
                     return false;
                 }
 
+
+
                 var commandName = pms[0];
 
                 if (AliasDictionary.TryGetValue(commandName, out var newName))
@@ -278,6 +285,8 @@ namespace Oblivion.HabboHotel.Commands
                 }
 
                 if (!CommandsDictionary.TryGetValue(commandName, out var command)) return false;
+
+                if (command.BlockBad && client.GetHabbo().BadStaff) return false;
 
                 if (client.GetHabbo().CurrentRoom.RoomData.BlockedCommands.Contains(commandName) ||
                     client.GetHabbo().Data.BlockedCommands.Contains(commandName))

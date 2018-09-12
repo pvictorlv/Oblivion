@@ -1005,9 +1005,14 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             {
                 if (endPath)
                     return false;
+
+                if (_room?.RoomData == null) return false;
+
                 if (!_room.RoomData.AllowWalkThrough)
                     return false;
             }
+
+            if (Model.SqState == null) return false;
 
             if (pX >= Model.SqState.Length)
             {
@@ -1067,6 +1072,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         {
             try
             {
+                if (GameMap == null) return 0;
+
                 if (x >= GameMap.GetUpperBound(0) || y >= GameMap.GetUpperBound(1))
                     return 0;
 

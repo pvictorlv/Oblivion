@@ -425,6 +425,9 @@ namespace Oblivion.Messages.Parsers
         internal static void RefreshPromoEvent(GameClientMessageHandler handler)
         {
             handler.RefreshPromoEvent();
+        }  internal static void RefreshCompetition(GameClientMessageHandler handler)
+        {
+            handler.RefreshCompetition();
         }
 
         /// <summary>

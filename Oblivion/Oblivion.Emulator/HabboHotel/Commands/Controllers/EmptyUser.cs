@@ -17,6 +17,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             Description = "Clears all the items from a users inventory.";
             Usage = ":empty_user [USERNAME]";
             MinParams = -1;
+            BlockBad = true;
+
         }
 
         public override bool Execute(GameClient session, string[] pms)

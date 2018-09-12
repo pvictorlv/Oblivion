@@ -31,15 +31,15 @@ namespace Oblivion.HabboHotel.Items.Datas
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery("SELECT * FROM items_highscores WHERE item_id=" + itemId +
-                                      " ORDER BY score DESC");
+                queryReactor.SetQuery("SELECT * FROM items_highscores WHERE item_id='" + itemId +
+                                      "' ORDER BY score DESC");
 
                 var table = queryReactor.GetTable();
 
                 if (table == null)
                     return;
 
-                /* TODO CHECK */ foreach (DataRow row in table.Rows)
+               foreach (DataRow row in table.Rows)
                 {
                     Lines.Add((int) row["id"], new HighScoreLine((string) row["username"], (int) row["score"]));
                     LastId = (int) row["id"];

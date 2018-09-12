@@ -17,6 +17,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             Description = "Invisible";
             Usage = ":invisible";
             MinParams = 0;
+            BlockBad = true;
+
         }
 
         public override bool Execute(GameClient session, string[] pms)

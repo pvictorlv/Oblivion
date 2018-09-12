@@ -18,10 +18,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             Description = "Ban a user by IP!";
             Usage = ":ipban [USERNAME] [REASON]";
             MinParams = -1;
+            BlockBad = true;
         }
 
         public override bool Execute(GameClient session, string[] pms)
         {
+          
             var user = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
 
             if (user == null)

@@ -331,7 +331,7 @@ namespace Oblivion.HabboHotel.Catalogs
                                 (string) dataRow2["page_link"], (string) dataRow2["caption"], visible, enabled, false,
                                 Convert.ToUInt32(dataRow2["min_rank"]), (int) dataRow2["icon_image"],
                                 (string) dataRow2["page_layout"], (string) dataRow2["page_strings_1"],
-                                (string) dataRow2["page_strings_2"], (int) dataRow2["order_num"], ref Offers));
+                                (string) dataRow2["page_strings_2"], (int) dataRow2["order_num"], ref Offers, dataRow2["blockBad"].ToString() == "1"));
                     }
                 }
 
@@ -980,13 +980,13 @@ namespace Oblivion.HabboHotel.Catalogs
 
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        queryReactor.SetNoLockQuery("INSERT INTO items_rooms (base_item,user_id) VALUES (" +
+                        queryReactor.SetNoLockQuery("INSERT INTO items_rooms (id, base_item,user_id) VALUES ('" + insertId + "',"  +
                                               itemBySprite.ItemId + ", " + toUserId + ")");
 
 
                         queryReactor.SetQuery(string.Concat(
-                            "INSERT INTO users_gifts (gift_id,item_id,extradata,giver_name,Message,ribbon,color,gift_sprite,show_sender,rare_id) VALUES (",
-                            insertId, ", ", baseItem.ItemId, ",@extradata, @name, @Message,", giftLazo, ",", giftColor,
+                            "INSERT INTO users_gifts (gift_id,item_id,extradata,giver_name,Message,ribbon,color,gift_sprite,show_sender,rare_id) VALUES ('",
+                            insertId, "', ", baseItem.ItemId, ",@extradata, @name, @Message,", giftLazo, ",", giftColor,
                             ",", giftSpriteId, ",", undef ? 1 : 0, ",", limitedId, ");"));
                         queryReactor.AddParameter("extradata", extraData);
                         queryReactor.AddParameter("name", giftUser);
@@ -1083,9 +1083,10 @@ namespace Oblivion.HabboHotel.Catalogs
                 {
                     var interactionType = item.InteractionType;
 
-                    var itemId = (ShortGuid) Guid.NewGuid();
+                    var itemGuid= Guid.NewGuid();
+                    ShortGuid itemId =  itemGuid;
 
-
+                    
                     switch (interactionType)
                     {
                         case Interaction.Dimmer:
@@ -1103,7 +1104,8 @@ namespace Oblivion.HabboHotel.Catalogs
                         case Interaction.QuickTeleport:
                             var userItem = new UserItem(itemId, item.ItemId, extraData, 0u, songCode, limno, limtot);
 
-                            var linkedId = (ShortGuid) Guid.NewGuid();
+                            var linkItemGuid = Guid.NewGuid();
+                            ShortGuid linkedId = linkItemGuid;
                             var userItem2 = new UserItem(linkedId, item.ItemId, extraData, 0u, songCode, limno, limtot);
 
 
