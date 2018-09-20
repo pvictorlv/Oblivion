@@ -896,7 +896,7 @@ namespace Oblivion.Messages.Handlers
             else
             {
                 currentRoom.GetRoomItemHandler().RemoveFurniture(Session, item.Id, false);
-                queryReactor.RunFastQuery("DELETE FROM users_gifts WHERE gift_id = " + item.Id);
+                queryReactor.RunFastQuery("DELETE FROM users_gifts WHERE gift_id = '" + item.Id + "'");
                 Response.Init(LibraryParser.OutgoingRequest("NewInventoryObjectMessageComposer"));
                 Response.AppendInteger(1);
                 var i = 2;

@@ -36,6 +36,8 @@ namespace Oblivion.Configuration
             {
                 if (session?.Parser == null) return;
 
+                session.ServerRc4?.Parse(ref body);
+
                 using (var clientMessage = new ClientMessage(body))
                 {
                     session.Parser.SuperHandle(clientMessage, session);

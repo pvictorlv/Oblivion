@@ -30,9 +30,6 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 return true;
             }
 
-            if (session.GetHabbo().UserName != "Dark" && session.GetHabbo().UserName != "Yagam" && session.GetHabbo().UserName != "Roberta") return false;
-
-
             if (!int.TryParse(pms[1], out var amount))
             {
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("enter_numbers"));

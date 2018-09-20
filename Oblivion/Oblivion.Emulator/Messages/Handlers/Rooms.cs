@@ -2447,13 +2447,13 @@ namespace Oblivion.Messages.Handlers
 
             Session.GetHabbo().Data.SuggestedPolls.Add(num);
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            /*using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery("INSERT INTO users_polls VALUES (@userid , @pollid , 0 , '0' , '')");
                 queryReactor.AddParameter("userid", Session.GetHabbo().Id);
                 queryReactor.AddParameter("pollid", num);
                 queryReactor.RunQuery();
-            }
+            }*/
         }
 
         internal void AnswerPoll()
@@ -2496,7 +2496,7 @@ namespace Oblivion.Messages.Handlers
 
             Session.GetHabbo().Data.SuggestedPolls.Add(pollId);
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            /*using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery(
                     "INSERT INTO users_polls VALUES (@userid , @pollid , @questionid , '1' , @answer)");
@@ -2506,7 +2506,7 @@ namespace Oblivion.Messages.Handlers
                 queryReactor.AddParameter("questionid", questionId);
                 queryReactor.AddParameter("answer", text);
                 queryReactor.RunQuery();
-            }
+            }*/
         }
 
 

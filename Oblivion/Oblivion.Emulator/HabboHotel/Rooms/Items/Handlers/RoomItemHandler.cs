@@ -249,8 +249,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                             dbClient.AddParameter("wallPos", roomItem.WallCoord);
                         }
 
-                        query += " WHERE id = '" + roomItem.Id + "'";
-                        dbClient.RunQuery(query);
+                        query += " WHERE id = '" + roomItem.Id + "';";
+                        dbClient.RunNoLockQuery(query);
                     }
 
                     _updatedItems.Clear();

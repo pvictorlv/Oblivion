@@ -126,7 +126,6 @@
     <Compile Include="Manager\Database\Session_Details\QueryAdapter.cs" />
     <Compile Include="Manager\Database\Session_Details\TransactionQueryReactor.cs" />
     <Compile Include="Manager\Managers\Database\DatabaseServer.cs" />
-    <Compile Include="Manager\Session_Details\Interfaces\IRegularQueryAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -138,6 +137,9 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Manager\Session_Details\Interfaces\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
