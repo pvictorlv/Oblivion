@@ -52,7 +52,7 @@
 
         public void Parse(ref byte[] src, int offset)
         {
-            Parse(ref src, offset, src.Length);
+            Parse(ref src, offset, src.Length - offset);
         }
 
         public void Parse(ref byte[] src, int offset, int length)
