@@ -214,6 +214,7 @@
     <Compile Include="Connection\Net\MusSocket.cs" />
     <Compile Include="Connection\SuperSocket\FlashReceiverFilter.cs" />
     <Compile Include="Connection\SuperSocket\IServer.cs" />
+    <Compile Include="Connection\SuperSocket\ReceiveCryptoFilter.cs" />
     <Compile Include="Connection\SuperSocket\ReceiveFilter.cs" />
     <Compile Include="Connection\SuperSocket\RequestInfo.cs" />
     <Compile Include="Connection\SuperSocket\Session.cs" />
@@ -282,6 +283,7 @@
     <Compile Include="HabboHotel\Commands\Controllers\StaffAlert.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\WhisperHotel.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\WhisperRoom.cs" />
+    <Compile Include="HabboHotel\GameClients\Interfaces\IAirHandler.cs" />
     <Compile Include="HabboHotel\Items\Datas\HighscoreData.cs" />
     <Compile Include="HabboHotel\Items\Handlers\RandomRewardFurniHandler.cs" />
     <Compile Include="HabboHotel\Items\Interactions\Controllers\InteractorBanzaiGate.cs" />

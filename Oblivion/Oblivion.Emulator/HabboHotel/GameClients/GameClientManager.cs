@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.Connection.SuperSocket;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -247,7 +248,7 @@ namespace Oblivion.HabboHotel.GameClients
             }
         }
 
-        public void SendMessageAsync(ServerMessage packet)
+        public async Task SendMessageAsync(ServerMessage packet)
         {
             var bytes = packet.GetReversedBytes();
 

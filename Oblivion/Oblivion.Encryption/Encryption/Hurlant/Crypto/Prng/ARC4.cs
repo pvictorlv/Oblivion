@@ -47,7 +47,17 @@
 
         public void Parse(ref byte[] src)
         {
-            for (var k = 0; k < src.Length; k++)
+            Parse(ref src, 0);
+        }
+
+        public void Parse(ref byte[] src, int offset)
+        {
+            Parse(ref src, offset, src.Length);
+        }
+
+        public void Parse(ref byte[] src, int offset, int length)
+        {
+            for (var k = offset; k < (offset + length); k++)
                 src[k] ^= Next();
         }
 

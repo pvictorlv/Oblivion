@@ -41,10 +41,7 @@ namespace Oblivion.HabboHotel.Users
                 // Shocked
                 {":o", ChatEmotion.Shocked},
                 {";o", ChatEmotion.Shocked},
-                {">;o", ChatEmotion.Shocked},
-                {">:o", ChatEmotion.Shocked},
                 {"=o", ChatEmotion.Shocked},
-                {">=o", ChatEmotion.Shocked},
 
                 // Sad
                 {";'(", ChatEmotion.Sad},

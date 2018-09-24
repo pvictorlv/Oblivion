@@ -7,19 +7,20 @@ using System.Threading.Tasks;
 
 namespace Oblivion.Messages
 {
-    internal class AirPacketTranslator
+    internal static class AirPacketTranslator
     {
-        public static int ReplaceIncomingHeader(short messageId)
+        public static bool ReplaceIncomingHeader(ClientMessage clientMessage)
         {
-            if (LibraryParser.IncomingAir.TryGetValue(messageId, out short newMessageId))
+            Console.WriteLine(clientMessage.Id);
+            if (LibraryParser.IncomingAir.TryGetValue((short) clientMessage.Id, out short newMessageId))
             {
                 if (Oblivion.DebugMode)
-                    Console.WriteLine($"[AIR][INCOMING] Changed header {messageId} to {newMessageId}");
-
-                return newMessageId;
+                    Console.WriteLine($"[AIR][INCOMING] Changed header {clientMessage.Id} to {newMessageId}");
+                clientMessage.ReplaceId(newMessageId);
+                return true;
             }
 
-            return 0;
+            return false;
         }
 
         public static byte[] ReplaceOutgoingHeader(byte[] packet, out short oldHeader)
@@ -28,15 +29,14 @@ namespace Oblivion.Messages
             Array.Copy(packet, newArr, packet.Length);
             byte[] oldHeaderBytes =
             {
-                newArr[4], newArr[5]
+                newArr[5], newArr[4]
             };
-            Array.Reverse(oldHeaderBytes);
             oldHeader = BitConverter.ToInt16(oldHeaderBytes, 0);
 
             if (LibraryParser.OutgoingAir.TryGetValue(oldHeader, out short newHeader))
             {
                 if (Oblivion.DebugMode)
-                    Console.WriteLine($"[AIR][INCOMING] Changed header {oldHeader} to {newHeader}");
+                    Console.WriteLine($"[AIR][OUTGOING] Changed header {oldHeader} to {newHeader}");
 
                 byte[] newHeaderReverse = BitConverter.GetBytes(newHeader);
                 newArr[4] = newHeaderReverse[1];

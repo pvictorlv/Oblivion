@@ -2,27 +2,31 @@
 using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.Encryption.Encryption.Hurlant.Crypto.Prng;
+using Oblivion.HabboHotel.GameClients.Interfaces;
+using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
 using SuperSocket.SocketBase;
 
 namespace Oblivion.Connection.SuperSocket
 {
-    public class Session<T> : AppSession<Session<T>, RequestInfo>
+    public class Session<TSession> : AppSession<Session<TSession>, RequestInfo>
+        where TSession: IAirHandler
     {
         #region Properties
-
         public uint ConnId { get; set; }
-
-        public bool IsAir;
         
-
-        public ARC4 ServerRc4 { get; set; }
-
         public IDataParser Parser { get; set; }
+
+        public TSession UserData { get; set; }
 
         #endregion Properties
 
         #region Methods
+
+        public void ActivateRc4Filter()
+        {
+            this.SetNextReceiveFilter(new ReceiveCryptoFilter(UserData));
+        }
 
         public void Disconnect()
         {
@@ -33,10 +37,33 @@ namespace Oblivion.Connection.SuperSocket
 
         public void Send(byte[] data)
         {
-            if (_disposed) return;
+            if (_disposed || data == null) return;
+
+            byte[] newHeader = null;
+
+            if (UserData.IsAir)
+            {
+                newHeader = AirPacketTranslator.ReplaceOutgoingHeader(data, out var oldHeader);
+
+                string packetName = "";
+
+                if (Oblivion.DebugMode)
+                    packetName = LibraryParser.TryGetOutgoingName(oldHeader);
+                if (newHeader == null)
+                {
+                    if (Oblivion.DebugMode)
+                        Console.WriteLine("Header *production* " + oldHeader + " (" + packetName +
+                                          ") wasn't translated to packet air.");
+                    return;
+                }
+                if (Oblivion.DebugMode)
+                    Console.WriteLine("Header *production* " + oldHeader + " (" + packetName +
+                                      ") has been translated to packet air.");
+            }
+
             try
             {
-                Send(data, 0, data.Length);
+                Send(newHeader ?? data, 0, data.Length);
             }
             catch (Exception e)
             {
@@ -44,10 +71,11 @@ namespace Oblivion.Connection.SuperSocket
             }
         }
 
-        public void SendAsync(byte[] data)
+        public async Task SendAsync(byte[] data)
         {
             if (_disposed) return;
-            Task.Factory.StartNew(() =>
+
+            await Task.Run(() =>
             {
                 try
                 {
@@ -79,7 +107,7 @@ namespace Oblivion.Connection.SuperSocket
         {
             if (_disposed) return;
             _disposed = true;
-            UserData = default(T);
+            UserData = default(TSession);
             if (Parser != null)
             {
                 Parser.Dispose();
@@ -87,7 +115,6 @@ namespace Oblivion.Connection.SuperSocket
             }
 
         }
-        public T UserData { get; set; }
 
         protected override void HandleException(Exception e)
         {

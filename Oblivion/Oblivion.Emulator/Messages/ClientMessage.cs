@@ -33,6 +33,11 @@ namespace Oblivion.Messages
 
         public bool BytesAvailable => Length > (_position - 4);
 
+        public void ReplaceId(int id)
+        {
+            Id = id;
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ClientMessage"/> class.
         /// </summary>
@@ -45,6 +50,13 @@ namespace Oblivion.Messages
         {
             _body = body;
             Id = GetInteger16();
+        }
+
+        internal ClientMessage(byte[] body, int position, int packetLength)
+        {
+            _body = body;
+            Id = GetInteger16();
+            Init(Id, body, position, packetLength);
         }
 
         /// <summary>
