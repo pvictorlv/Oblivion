@@ -303,7 +303,7 @@ namespace Oblivion.HabboHotel.Commands
                 {
                     if (command.Execute(client, pms.Skip(1).ToArray()))
                     {
-                        client.GetHabbo().CurrentRoom.AddChatlog(client.GetHabbo().Id, $"Executou o comando: {commandName}", false);
+                        client.GetHabbo().CurrentRoom.AddChatlog(client.VirtualId, $"Executou o comando: {commandName}", false);
                         return true;
                     }
 

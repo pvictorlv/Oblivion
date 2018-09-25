@@ -46,7 +46,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 item.GetRoom()
                     .GetWiredHandler()
                     .ExecuteWired(Interaction.TriggerStateChanged,
-                        item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id), item);
+                        item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.VirtualId), item);
 
 
 

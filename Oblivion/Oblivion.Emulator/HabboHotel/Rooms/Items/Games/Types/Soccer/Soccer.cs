@@ -216,6 +216,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             var newZ = _room.GetGameMap().SqAbsoluteHeight(newX, newY);
             using (var mMessage = new ServerMessage())
             {
+                var virtualId = Oblivion.GetGame().GetClientManager().GetVirtualId(_room.RoomData.OwnerId);
+
                 mMessage.Init(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer")); // Cf
                 mMessage.AppendInteger(item.VirtualId);
                 mMessage.AppendInteger(item.BaseItem);
@@ -229,7 +231,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                 mMessage.AppendString(item.ExtraData);
                 mMessage.AppendInteger(-1);
                 mMessage.AppendInteger(0);
-                mMessage.AppendInteger(_room.RoomData.OwnerId);
+                mMessage.AppendInteger(virtualId);
                 mMessage.AppendInteger(item.VirtualId);
                 _room.SendMessage(mMessage);
 
@@ -244,7 +246,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                 if (itemIsOnGameItem || mover?.GetHabbo() == null)
                     return false;
                 HandleFootballGameItems(new Point(newX, newY),
-                    _room.GetRoomUserManager().GetRoomUserByHabbo(mover.GetHabbo().Id));
+                    _room.GetRoomUserManager().GetRoomUserByHabbo(mover.VirtualId));
                 return false;
             }
         }

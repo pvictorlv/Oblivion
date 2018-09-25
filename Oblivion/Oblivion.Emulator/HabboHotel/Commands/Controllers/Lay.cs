@@ -23,7 +23,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         {
             var currentRoom = session.GetHabbo().CurrentRoom;
 
-            var roomUserByHabbo = currentRoom.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
+            var roomUserByHabbo = currentRoom.GetRoomUserManager().GetRoomUserByHabbo(session.VirtualId);
             if (roomUserByHabbo == null) return true;
 
             if (roomUserByHabbo.IsSitting || roomUserByHabbo.RidingHorse || roomUserByHabbo.IsWalking ||

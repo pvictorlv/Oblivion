@@ -143,7 +143,6 @@ namespace Oblivion.HabboHotel.Items
                     var typeFromString = InteractionTypes.GetTypeFromString((string) dataRow["interaction_type"]);
 
                     var sprite = Convert.ToInt32(dataRow["sprite_id"]);
-                    var isRare = Oblivion.EnumToBool(dataRow["is_rare"].ToString());
 
                     ushort x = Convert.ToUInt16(dataRow["width"]), y = Convert.ToUInt16(dataRow["length"]);
                     var publicName = Convert.ToString(dataRow["public_name"]);
@@ -180,7 +179,7 @@ namespace Oblivion.HabboHotel.Items
                     var value = new Item(id, sprite, publicName, name, type, x, y, stackHeight, stackable, canWalk,
                         canSit, allowRecycle, allowTrade, allowMarketplaceSell, allowGift, allowInventoryStack,
                         typeFromString, modes, vendingIds, sub, stackMultiple,
-                        heights?.ToArray(), flatId, isRare, effectF, effectM);
+                        heights?.ToArray(), flatId, effectF, effectM);
 
                     _items.Add(id, value);
                 }

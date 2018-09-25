@@ -195,7 +195,7 @@ namespace Oblivion.Connection.Net
                         {
                             var room = clientByUserId.GetHabbo().CurrentRoom;
 
-                            var user = room?.GetRoomUserManager().GetRoomUserByHabbo(clientByUserId.GetHabbo().Id);
+                            var user = room?.GetRoomUserManager().GetRoomUserByHabbo(clientByUserId.VirtualId);
                             if (user == null) return;
 
                             var message =

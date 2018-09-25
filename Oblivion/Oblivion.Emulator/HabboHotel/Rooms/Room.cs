@@ -185,7 +185,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <summary>
         ///     The users with rights
         /// </summary>
-        internal List<uint> UsersWithRights;
+        internal List<ulong> UsersWithRights;
 
 
         /// <summary>
@@ -595,7 +595,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         internal void LoadRights()
         {
-            UsersWithRights = new List<uint>();
+            UsersWithRights = new List<ulong>();
             DataTable dataTable;
             if (RoomData.Group != null)
                 return;
@@ -610,7 +610,7 @@ namespace Oblivion.HabboHotel.Rooms
             /* TODO CHECK */
             foreach (DataRow dataRow in dataTable.Rows)
             {
-                var userId = Convert.ToUInt32(dataRow["user_id"]);
+                var userId = Convert.ToUInt64(dataRow["user_id"]);
                 UsersWithRights.Add(userId);
             }
         }
@@ -1095,7 +1095,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         /// <param name="user">The user.</param>
         /// <returns><c>true</c> if [has active trade] [the specified user]; otherwise, <c>false</c>.</returns>
-        internal bool HasActiveTrade(RoomUser user) => !user.IsBot && HasActiveTrade(user.GetClient().GetHabbo().Id);
+        internal bool HasActiveTrade(RoomUser user) => !user.IsBot && HasActiveTrade(user.GetClient().VirtualId);
 
         /// <summary>
         ///     Determines whether [has active trade] [the specified user identifier].
@@ -1128,7 +1128,7 @@ namespace Oblivion.HabboHotel.Rooms
             if (userOne == null || userTwo == null || userOne.IsBot || userTwo.IsBot || userOne.IsTrading ||
                 userTwo.IsTrading || HasActiveTrade(userOne) || HasActiveTrade(userTwo))
                 return;
-            ActiveTrades.Add(new Trade(userOne.GetClient().GetHabbo().Id, userTwo.GetClient().GetHabbo().Id, RoomId));
+            ActiveTrades.Add(new Trade(userOne.GetClient().VirtualId, userTwo.GetClient().VirtualId, RoomId));
         }
 
         /// <summary>
@@ -1165,11 +1165,11 @@ namespace Oblivion.HabboHotel.Rooms
         {
             if (RoomMuted || session.GetHabbo().Muted)
                 return true;
-            if (!MutedUsers.TryGetValue(session.GetHabbo().Id, out var user))
+            if (!MutedUsers.TryGetValue(session.VirtualId, out var user))
                 return false;
             if (user >= Oblivion.GetUnixTimeStamp())
                 return true;
-            MutedUsers.Remove(session.GetHabbo().Id);
+            MutedUsers.Remove(session.VirtualId);
             return false;
         }
 
@@ -1179,7 +1179,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="id">The identifier.</param>
         /// <param name="message">The message.</param>
         /// <param name="globalMessage"></param>
-        internal void AddChatlog(uint id, string message, bool globalMessage)
+        internal void AddChatlog(ulong id, string message, bool globalMessage)
         {
             if (RoomData?.RoomChat == null) return;
 

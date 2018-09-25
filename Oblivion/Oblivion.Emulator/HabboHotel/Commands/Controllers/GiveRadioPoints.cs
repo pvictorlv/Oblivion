@@ -31,7 +31,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                dbClient.RunFastQuery($"UPDATE users SET rpoints = rpoints + 1 WHERE id = '{targetUser.UserId}'");
+                dbClient.RunFastQuery($"UPDATE users SET rpoints = rpoints + 1 WHERE id = '{targetUser.GetClient().GetHabbo().Id}'");
             }
 
             client.GetHabbo().Diamonds += 5;

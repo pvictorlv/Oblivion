@@ -197,7 +197,7 @@ namespace Oblivion.HabboHotel.Users
         /// <summary>
         ///     The identifier
         /// </summary>
-        internal uint Id;
+        internal ulong Id;
 
         /// <summary>
         ///     The is hopping
@@ -1185,7 +1185,7 @@ namespace Oblivion.HabboHotel.Users
 
             Muted = false;
 
-            CurrentRoom?.MutedUsers?.Remove(Id);
+            CurrentRoom?.MutedUsers?.Remove(GetClient().VirtualId);
         }
 
         /// <summary>

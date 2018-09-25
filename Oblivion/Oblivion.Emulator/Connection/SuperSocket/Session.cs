@@ -11,8 +11,6 @@ namespace Oblivion.Connection.SuperSocket
     {
         #region Properties
 
-        public uint ConnId { get; set; }
-
         public bool IsAir;
         
 
@@ -73,11 +71,14 @@ namespace Oblivion.Connection.SuperSocket
             }
         }
 
-
+        public bool Disposed() => _disposed;
         private bool _disposed;
         public void Dispose()
         {
             if (_disposed) return;
+            
+            Oblivion.GetGame().GetClientManager().DisposeConnection(VirtualId);
+
             _disposed = true;
             UserData = default(T);
             if (Parser != null)
@@ -87,6 +88,8 @@ namespace Oblivion.Connection.SuperSocket
             }
 
         }
+
+        public uint VirtualId;
         public T UserData { get; set; }
 
         protected override void HandleException(Exception e)

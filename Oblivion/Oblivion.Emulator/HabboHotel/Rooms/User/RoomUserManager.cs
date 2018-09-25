@@ -314,7 +314,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
             var roomUser = new RoomUser(habbo.Id, _room.RoomId, _primaryPrivateUserId++, _room,
                     spectator)
-                {UserId = habbo.Id};
+                {UserId = habbo.GetClient().VirtualId };
 
 
             var userName = habbo.UserName;
@@ -380,9 +380,10 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             try
             {
-                var client = user.GetClient();
+                var client = user?.GetClient();
+                if (client == null) return;
                 var habbo = user.GetClient().GetHabbo();
-                if (client == null || habbo == null) return;
+                if (habbo == null) return;
                 var userId = habbo.Id;
                 habbo.CurrentRoom = null;
                 habbo.GetAvatarEffectsInventoryComponent()?.OnRoomExit();
@@ -451,8 +452,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                     if (user.CurrentItemEffect != 0)
                         user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().CurrentEffect =
                             -1;
-                    if (room.HasActiveTrade(habbo.Id))
-                        room.TryStopTrade(habbo.Id);
+                    if (room.HasActiveTrade(habbo.GetClient().VirtualId))
+                        room.TryStopTrade(habbo.GetClient().VirtualId);
                     habbo.CurrentRoomId = 0;
                     if (habbo.GetMessenger() != null)
                         habbo.GetMessenger().OnStatusChanged(true);
@@ -1558,7 +1559,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             item.UpdateState(false, true);
                             user.SetPos(item.X, item.Y, item.Z);
                             user.SetRot(item.Rot, false);
-                            item.InteractingUser2 = client.GetHabbo().Id;
+                            item.InteractingUser2 = client.VirtualId;
                             item.ExtraData = "0";
                             item.UpdateState(false, true);
                         }
@@ -1578,7 +1579,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             user.SetPos(item2.X, item2.Y, item2.Z);
                             user.SetRot(item2.Rot, false);
                             user.AllowOverride = false;
-                            item2.InteractingUser2 = client.GetHabbo().Id;
+                            item2.InteractingUser2 = client.VirtualId;
                             item2.ExtraData = "2";
                             item2.UpdateState(false, true);
                         }

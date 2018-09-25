@@ -27,7 +27,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             if (room == null) return true;
 
             var fuckedName = pms[0];
-            var fuckedUser = room.GetRoomUserManager().GetRoomUserByHabbo(client.GetHabbo().Id);
+            var fuckedUser = room.GetRoomUserManager().GetRoomUserByHabbo(client.VirtualId);
             var fuckerUser = room.GetRoomUserManager().GetRoomUserByHabbo(fuckedName);
             if (fuckerUser == null)
             {

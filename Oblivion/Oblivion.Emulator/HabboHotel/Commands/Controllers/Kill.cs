@@ -39,7 +39,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
 
             var user =
-                room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
+                room.GetRoomUserManager().GetRoomUserByHabbo(session.VirtualId);
             if (PathFinder.GetDistance(user.X, user.Y, user2.X, user2.Y) > 1)
             {
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("kil_command_error_1"));

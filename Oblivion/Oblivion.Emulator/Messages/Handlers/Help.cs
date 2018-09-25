@@ -62,11 +62,11 @@ namespace Oblivion.Messages.Handlers
             }
 
 
-            if (Oblivion.GetGame().GetModerationTool().UsersHasPendingTicket(Session.GetHabbo().Id))
+            if (Oblivion.GetGame().GetModerationTool().UsersHasPendingTicket(Session.VirtualId))
             {
                 Response.Init(LibraryParser.OutgoingRequest("TicketUserAlert"));
 
-                SupportTicket ticket = Oblivion.GetGame().GetModerationTool().GetPendingTicketForUser(Session.GetHabbo().Id);
+                SupportTicket ticket = Oblivion.GetGame().GetModerationTool().GetPendingTicketForUser(Session.VirtualId);
                 Response.AppendInteger(1);
                 Response.AppendString(ticket.TicketId.ToString());
                 Response.AppendString(ticket.Timestamp.ToString(CultureInfo.InvariantCulture));
@@ -76,7 +76,7 @@ namespace Oblivion.Messages.Handlers
                 return;
             }
 
-            if (Oblivion.GetGame().GetModerationTool().UsersHasAbusiveCooldown(Session.GetHabbo().Id)) // the previous issue of the user was abusive
+            if (Oblivion.GetGame().GetModerationTool().UsersHasAbusiveCooldown(Session.VirtualId)) // the previous issue of the user was abusive
             {
                 Response.Init(LibraryParser.OutgoingRequest("TicketUserAlert"));
 
@@ -97,10 +97,10 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void DeletePendingCfh()
         {
-            if (!Oblivion.GetGame().GetModerationTool().UsersHasPendingTicket(Session.GetHabbo().Id))
+            if (!Oblivion.GetGame().GetModerationTool().UsersHasPendingTicket(Session.VirtualId))
                 return;
 
-            Oblivion.GetGame().GetModerationTool().DeletePendingTicketForUser(Session.GetHabbo().Id);
+            Oblivion.GetGame().GetModerationTool().DeletePendingTicketForUser(Session.VirtualId);
 
             Response.Init(LibraryParser.OutgoingRequest("OpenHelpToolMessageComposer"));
             Response.AppendInteger(0);

@@ -88,7 +88,7 @@ namespace Oblivion.HabboHotel.Catalogs
         /// <param name="gender">The gender.</param>
         /// <param name="bartender">if set to <c>true</c> [bartender].</param>
         /// <returns>RoomBot.</returns>
-        internal static RoomBot CreateBot(uint userId, string name, string look, string motto, string gender,
+        internal static RoomBot CreateBot(ulong userId, string name, string look, string motto, string gender,
             bool bartender)
         {
             uint botId;
@@ -697,7 +697,7 @@ namespace Oblivion.HabboHotel.Catalogs
                     {
                         queryReactor.SetQuery("UPDATE users SET builders_items_max = @max WHERE id = @userId");
                         queryReactor.AddParameter("max", session.GetHabbo().BuildersItemsMax);
-                        queryReactor.AddParameter("userId", session.GetHabbo().Id);
+                        queryReactor.AddParameter("userId", session.VirtualId);
                         queryReactor.RunQuery();
                     }
 
@@ -727,7 +727,7 @@ namespace Oblivion.HabboHotel.Catalogs
                     {
                         queryReactor.SetQuery("UPDATE users SET builders_expire = @max WHERE id = @userId");
                         queryReactor.AddParameter("max", session.GetHabbo().BuildersExpire);
-                        queryReactor.AddParameter("userId", session.GetHabbo().Id);
+                        queryReactor.AddParameter("userId", session.VirtualId);
                         queryReactor.RunQuery();
                     }
 
@@ -798,7 +798,7 @@ namespace Oblivion.HabboHotel.Catalogs
                         using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                         {
                             dbClient.SetQuery(
-                                $"UPDATE users SET prefixes = @prefixes WHERE id = '{session.GetHabbo().Id}'");
+                                $"UPDATE users SET prefixes = @prefixes WHERE id = '{session.VirtualId}'");
                             dbClient.AddParameter("prefixes", prefixStr);
                             dbClient.RunQuery();
                             session.SendMessage(CatalogPageComposer.PurchaseOk(item, item.Items));
@@ -814,7 +814,7 @@ namespace Oblivion.HabboHotel.Catalogs
                         using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                         {
                             dbClient.SetQuery(
-                                $"UPDATE users SET prefixes = @prefixes WHERE id = '{session.GetHabbo().Id}'");
+                                $"UPDATE users SET prefixes = @prefixes WHERE id = '{session.VirtualId}'");
                             dbClient.AddParameter("prefixes", prefixStr);
                             dbClient.RunQuery();
                             session.SendMessage(CatalogPageComposer.PurchaseOk(item, item.Items));
@@ -831,7 +831,7 @@ namespace Oblivion.HabboHotel.Catalogs
                         using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                         {
                             dbClient.SetQuery(
-                                $"UPDATE users SET prefixes = @prefixes WHERE id = '{session.GetHabbo().Id}'");
+                                $"UPDATE users SET prefixes = @prefixes WHERE id = '{session.VirtualId}'");
                             dbClient.AddParameter("prefixes", prefixStr);
                             dbClient.RunQuery();
                             session.SendMessage(CatalogPageComposer.PurchaseOk(item, item.Items));
@@ -993,7 +993,7 @@ namespace Oblivion.HabboHotel.Catalogs
                         queryReactor.AddParameter("message", giftMessage);
                         queryReactor.RunQuery();
 
-                        if (session.GetHabbo().Id != toUserId)
+                        if (session.VirtualId != toUserId)
                         {
                             Oblivion.GetGame().GetAchievementManager()
                                 .ProgressUserAchievement(session, "ACH_GiftGiver", 1, true);
@@ -1001,7 +1001,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
                             queryReactor.RunFastQuery(
                                 "UPDATE users_stats SET gifts_given = gifts_given + 1 WHERE id = " +
-                                session.GetHabbo().Id +
+                                session.VirtualId +
                                 ";UPDATE users_stats SET gifts_received = gifts_received + 1 WHERE id = " + toUserId);
                         }
                     }
@@ -1012,11 +1012,11 @@ namespace Oblivion.HabboHotel.Catalogs
                     {
                         clientByUserId.GetHabbo().GetInventoryComponent().AddNewItem(insertId,
                             itemBySprite.ItemId,
-                            string.Concat(session.GetHabbo().Id, (char) 9, giftMessage, (char) 9, giftLazo, (char) 9,
+                            string.Concat(session.VirtualId, (char) 9, giftMessage, (char) 9, giftLazo, (char) 9,
                                 giftColor, (char) 9, ((undef) ? "1" : "0"), (char) 9, session.GetHabbo().UserName,
                                 (char) 9, session.GetHabbo().Look, (char) 9, item.Name), 0u, false, false, 0, 0);
 
-                        if (clientByUserId.GetHabbo().Id != session.GetHabbo().Id)
+                        if (clientByUserId.VirtualId != session.VirtualId)
                             Oblivion.GetGame().GetAchievementManager()
                                 .ProgressUserAchievement(clientByUserId, "ACH_GiftReceiver", 1, true);
                     }
@@ -1154,7 +1154,7 @@ namespace Oblivion.HabboHotel.Catalogs
                         case Interaction.Pet34:
                             var petData = extraData.Split('\n');
                             var petId = int.Parse(item.Name.Replace("a0 pet", string.Empty));
-                            var generatedPet = CreatePet(session.GetHabbo().Id, petData[0], petId, petData[1],
+                            var generatedPet = CreatePet(session.VirtualId, petData[0], petId, petData[1],
                                 petData[2]);
 
                             session.GetHabbo().GetInventoryComponent().AddPet(generatedPet);
@@ -1192,7 +1192,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
                             if (group != null)
                             {
-                                if (group.CreatorId == session.GetHabbo().Id)
+                                if (group.CreatorId == session.VirtualId)
                                 {
                                     session.GetMessageHandler().GetResponse()
                                         .Init(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
@@ -1238,8 +1238,8 @@ namespace Oblivion.HabboHotel.Catalogs
                     position++;
                     query.Append(
                         position >= list.Count
-                            ? $"('{addedItem.Id}', '{addedItem.BaseItem.ItemId}', '{session.GetHabbo().Id}', '{addedItem.GroupId}', @edata, '{songCode}', '{limno};{limtot}');"
-                            : $"('{addedItem.Id}', '{addedItem.BaseItem.ItemId}', '{session.GetHabbo().Id}', '{addedItem.GroupId}', @edata, '{songCode}', '{limno};{limtot}'),");
+                            ? $"('{addedItem.Id}', '{addedItem.BaseItem.ItemId}', '{session.VirtualId}', '{addedItem.GroupId}', @edata, '{songCode}', '{limno};{limtot}');"
+                            : $"('{addedItem.Id}', '{addedItem.BaseItem.ItemId}', '{session.VirtualId}', '{addedItem.GroupId}', @edata, '{songCode}', '{limno};{limtot}'),");
 
                     
                     session.GetHabbo().GetInventoryComponent().AddNewItem(addedItem);

@@ -189,7 +189,7 @@ namespace Oblivion.Messages.Handlers
                 ReloadOffers(Session);
                 return;
             }
-            if (Convert.ToInt32(Row["user_id"]) == Session.GetHabbo().Id)
+            if (Convert.ToUInt64(Row["user_id"]) == Session.GetHabbo().Id)
             {
                 Session.SendNotif(
                     "Para evitar o aumento médio você não pode comprar suas próprias ofertas do mercado.");
@@ -376,7 +376,7 @@ namespace Oblivion.Messages.Handlers
                 return;
             }
 
-            if (Convert.ToInt32(row["user_id"]) != Session.GetHabbo().Id)
+            if (Convert.ToUInt64(row["user_id"]) != Session.GetHabbo().Id)
             {
                 var msg = new ServerMessage(
                     LibraryParser.OutgoingRequest("MarketplaceCancelOfferResultMessageComposer"));
@@ -575,7 +575,7 @@ namespace Oblivion.Messages.Handlers
             {
                 dbClient.SetQuery(
                     "INSERT INTO `catalog_marketplace_offers` (`furni_id`,`item_id`,`user_id`,`asking_price`,total_price,public_name,sprite_id,item_type,timestamp,extra_data,limited_number,limited_stack) VALUES ('" +
-                    ItemId + "','" + Item.BaseItem.ItemId + "','" + Session.GetHabbo().Id + "','" + SellingPrice +
+                    ItemId + "','" + Item.BaseItem.ItemId + "','" + Session.VirtualId + "','" + SellingPrice +
                     "','" +
                     TotalPrice + "',@public_name,'" + Item.BaseItem.SpriteId + "','" + ItemType + "','" +
                     Oblivion.GetUnixTimeStamp() + "',@extra_data, '" + Item.LimitedSellId + "', '" + Item.LimitedStack +
@@ -585,7 +585,7 @@ namespace Oblivion.Messages.Handlers
                 dbClient.RunQuery();
 
                 dbClient.RunQuery("DELETE FROM `items_rooms` WHERE `id` = '" + ItemId + "' AND `user_id` = '" +
-                                  Session.GetHabbo().Id + "' LIMIT 1");
+                                  Session.VirtualId + "' LIMIT 1");
             }
 
             Session.GetHabbo().GetInventoryComponent().RemoveItem(ItemId, false, 0);

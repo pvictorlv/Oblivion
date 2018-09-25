@@ -32,7 +32,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 client.SendWhisper("Você deve estar no quarto do grupo para usar esse comando!");
                 return false;
             }
-            if (!gp.Admins.ContainsKey(client.GetHabbo().Id))
+            if (!gp.Admins.ContainsKey(client.VirtualId))
             {
                 client.SendWhisper("Você não tem direitos para isso!");
                 return false;

@@ -23,7 +23,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         {
             var room = session.GetHabbo().CurrentRoom;
 
-            var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
+            var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.VirtualId);
             session.GetHabbo()
                 .GetAvatarEffectsInventoryComponent()
                 .ActivateCustomEffect(user != null && user.CurrentEffect != 140 ? 140 : 0);

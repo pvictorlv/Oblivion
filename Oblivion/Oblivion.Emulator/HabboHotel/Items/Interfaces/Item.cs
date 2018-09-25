@@ -129,10 +129,6 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// </summary>
         internal int Width;
 
-        /// <summary>
-        /// check if item is rare or not
-        /// </summary>
-        internal bool IsRare;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Item" /> class.
@@ -160,7 +156,6 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="stackMultiple">if set to <c>true</c> [stack multiple].</param>
         /// <param name="toggle">The toggle.</param>
         /// <param name="flatId">The flat identifier.</param>
-        /// <param name="isRare">Item is rare or not</param>
         /// <param name="effectF">Female furni effect</param>
         /// <param name="effectM">Male furni effect</param>
         internal Item(uint id, int sprite, string publicName, string name, char type, int width, int length,
@@ -168,9 +163,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             bool allowMarketplaceSell, bool allowGift, bool allowInventoryStack,
             Interaction interactionType,
             uint modes, string vendingIds, bool sub, bool stackMultiple, double[] toggle,
-            int flatId, bool isRare, int effectF, int effectM)
+            int flatId, int effectF, int effectM)
         {
-            IsRare = isRare;
             ItemId = id;
             SpriteId = sprite;
             PublicName = publicName;

@@ -36,7 +36,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// </summary>
         private List<string> _rollerItemsMoved;
 
-        private List<uint> _rollerUsersMoved;
+        private List<ulong> _rollerUsersMoved;
 
         /// <summary>
         ///     The _roller messages
@@ -100,7 +100,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             _rollerSpeed = 4;
             HopperCount = 0;
             _rollerItemsMoved = new List<string>();
-            _rollerUsersMoved = new List<uint>();
+            _rollerUsersMoved = new List<ulong>();
             _rollerMessages = new List<ServerMessage>();
         }
 
@@ -320,7 +320,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 {
                     serverMessage.AppendString(item.VirtualId.ToString());
                     serverMessage.AppendBool(false); //expired
-                    serverMessage.AppendInteger(item.UserId); //pickerId
+                    serverMessage.AppendInteger(Oblivion.GetGame().GetClientManager().GetVirtualId(item.UserId)); //pickerId
                     serverMessage.AppendInteger(0); // delay
                     _room.SendMessage(serverMessage);
                     if (item.IsBuilder)
@@ -354,7 +354,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     new ServerMessage(LibraryParser.OutgoingRequest("PickUpWallItemMessageComposer")))
                 {
                     serverMessage.AppendString(item.VirtualId.ToString());
-                    serverMessage.AppendInteger(item.UserId);
+                    serverMessage.AppendInteger(Oblivion.GetGame().GetClientManager().GetVirtualId(item.UserId));
                     _room.SendMessage(serverMessage);
                     if (item.IsBuilder)
                     {
@@ -439,7 +439,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         var y = Convert.ToInt32(dataRow["y"]);
                         var z = Convert.ToDouble(dataRow["z"]);
                         var rot = Convert.ToSByte(dataRow["rot"]);
-                        var ownerId = Convert.ToUInt32(dataRow["user_id"]);
+                        var ownerId = Convert.ToUInt64(dataRow["user_id"]);
                         var baseItemId = Convert.ToUInt32(dataRow["base_item"]);
                         var limited = dataRow["limited"].ToString().Split(';');
 
@@ -604,7 +604,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     new ServerMessage(LibraryParser.OutgoingRequest("PickUpWallItemMessageComposer")))
                 {
                     serverMessage.AppendString(item.VirtualId.ToString());
-                    serverMessage.AppendInteger(wasPicked ? item.UserId : 0);
+                    serverMessage.AppendInteger(wasPicked ? Oblivion.GetGame().GetClientManager().GetVirtualId(item.UserId) : 0);
                     _room.SendMessage(serverMessage);
                     WallItems.TryRemove(item.Id, out _);
                 }
@@ -616,7 +616,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 {
                     serverMessage.AppendString(item.VirtualId.ToString());
                     serverMessage.AppendBool(false); //expired
-                    serverMessage.AppendInteger(wasPicked ? item.UserId : 0); //pickerId
+                    serverMessage.AppendInteger(wasPicked ? Oblivion.GetGame().GetClientManager().GetVirtualId(item.UserId) : 0); //pickerId
                     serverMessage.AppendInteger(0); // delay
                     _room.SendMessage(serverMessage);
 

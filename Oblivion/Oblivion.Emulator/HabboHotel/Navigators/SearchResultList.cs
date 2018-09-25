@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Oblivion.HabboHotel.GameClients.Interfaces;
+using Oblivion.HabboHotel.Groups.Interfaces;
 using Oblivion.HabboHotel.Navigators.Interfaces;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.Messages;
@@ -83,7 +84,8 @@ namespace Oblivion.HabboHotel.Navigators
         internal static bool SerializeSearchResultListStatics(string staticId, bool direct, ServerMessage message,
             GameClient session)
         {
-            if (message == null || session == null) return false;
+            if (message == null || session == null)
+                return false;
 
             if (string.IsNullOrEmpty(staticId) || staticId == "official") staticId = "official_view";
             if (staticId != "hotel_view" && staticId != "roomads_view" && staticId != "myworld_view" &&
@@ -255,22 +257,28 @@ namespace Oblivion.HabboHotel.Navigators
                     }
                 case "my_groups":
                     {
+                        if (session.GetHabbo().MyGroups == null || session.GetHabbo().MyGroups.Count == 0)
+                        {
+                            message.AppendInteger(0);
+                            break;
+                        }
                         var i = 0;
                         message.StartArray();
-                        /* TODO CHECK */
-                        foreach (var data in from xGroupId in session.GetHabbo().MyGroups
-                                             select Oblivion.GetGame().GetGroupManager().GetGroup(xGroupId)
-           into xGroup
-                                             where xGroup != null
-                                             select Oblivion.GetGame().GetRoomManager().GenerateRoomData(xGroup.RoomId)
-           into data
-                                             where data != null
-                                             select data)
+                        // TODO CHECK #1#
+                        foreach (var xGroupId in session.GetHabbo().MyGroups)
                         {
+                            var xGroup = Oblivion.GetGame().GetGroupManager().GetGroup(xGroupId);
+                            if (xGroup == null)
+                                continue;
+                            var data = Oblivion.GetGame().GetRoomManager().GenerateRoomData(xGroup.RoomId);
+                            if (data == null)
+                                continue;
                             data.Serialize(message);
                             message.SaveArray();
-                            if (i++ == (direct ? 40 : 8)) break;
+                            if (i++ == (direct ? 40 : 8))
+                                break;
                         }
+
                         message.EndArray();
                         break;
                     }

@@ -15,13 +15,13 @@ namespace Oblivion.HabboHotel.Users.Badges
         /// <summary>
         ///     The _user identifier
         /// </summary>
-        private readonly uint _userId;
+        private readonly ulong _userId;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="BadgeComponent" /> class.
         /// </summary>
         /// <param name="userId">The user identifier.</param>
-        internal BadgeComponent(uint userId)
+        internal BadgeComponent(ulong userId)
         {
             BadgeList = new ConcurrentDictionary<string, Badge>();
 

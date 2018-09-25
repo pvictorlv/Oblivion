@@ -47,7 +47,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 if (string.IsNullOrWhiteSpace(message))
                     message = Oblivion.GetLanguage().GetVar("command_ban_user_no_reason") + " (Nothing)";
 
-                ModerationTool.BanUser(session, user.GetHabbo().Id, length, message);
+                ModerationTool.BanUser(session, user.VirtualId, length, message);
                 Oblivion.GetGame()
                     .GetModerationTool()
                     .LogStaffEntry(session.GetHabbo().UserName, user.GetHabbo().UserName, "Ban",

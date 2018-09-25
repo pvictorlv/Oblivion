@@ -192,7 +192,7 @@ namespace Oblivion.Messages.Handlers
                 new ServerMessage(LibraryParser.OutgoingRequest("ChangeFavouriteGroupMessageComposer"));
 
             serverMessage2.AppendInteger(CurrentLoadingRoom.GetRoomUserManager()
-                .GetRoomUserByHabbo(Session.GetHabbo().Id).VirtualId);
+                .GetRoomUserByHabbo(Session.VirtualId).VirtualId);
             serverMessage2.AppendInteger(theGroup.Id);
             serverMessage2.AppendInteger(3);
             serverMessage2.AppendString(theGroup.Name);
@@ -244,17 +244,18 @@ namespace Oblivion.Messages.Handlers
         internal void MakeGroupAdmin()
         {
             uint num = Request.GetUInteger();
-            uint num2 = Request.GetUInteger();
+            uint userId = Request.GetUInteger();
+            var realId = Oblivion.GetGame().GetClientManager().GetRealId(userId);
 
             Guild group = Oblivion.GetGame().GetGroupManager().GetGroup(num);
 
-            if (Session.GetHabbo().Id != group.CreatorId || !group.Members.ContainsKey(num2) ||
-                group.Admins.ContainsKey(num2))
+            if (Session.GetHabbo().Id != group.CreatorId || !group.Members.ContainsKey(realId) ||
+                group.Admins.ContainsKey(realId))
                 return;
 
-            group.Members[num2].Rank = 1;
+            group.Members[realId].Rank = 1;
 
-            group.Admins.Add(num2, group.Members[num2]);
+            group.Admins.Add(realId, group.Members[realId]);
 
             Response.Init(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
             Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 1u, Session);
@@ -264,7 +265,7 @@ namespace Oblivion.Messages.Handlers
             Room room = Oblivion.GetGame().GetRoomManager().GetRoom(group.RoomId);
 
             RoomUser roomUserByHabbo = room?.GetRoomUserManager()
-                .GetRoomUserByHabbo(Oblivion.GetHabboById(num2).UserName);
+                .GetRoomUserByHabbo(Oblivion.GetHabboById(userId).UserName);
 
             if (roomUserByHabbo != null)
             {
@@ -279,7 +280,7 @@ namespace Oblivion.Messages.Handlers
 
             using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.RunFastQuery(string.Concat("UPDATE groups_members SET rank='1' WHERE group_id=", num,
-                    " AND user_id=", num2, " LIMIT 1;"));
+                    " AND user_id=", realId, " LIMIT 1;"));
         }
 
         /// <summary>
@@ -288,16 +289,19 @@ namespace Oblivion.Messages.Handlers
         internal void RemoveGroupAdmin()
         {
             uint num = Request.GetUInteger();
-            uint num2 = Request.GetUInteger();
+            uint userId = Request.GetUInteger();
+
+            var realId = Oblivion.GetGame().GetClientManager().GetRealId(userId);
+
 
             Guild group = Oblivion.GetGame().GetGroupManager().GetGroup(num);
 
-            if (Session.GetHabbo().Id != group.CreatorId || !group.Members.ContainsKey(num2) ||
-                !group.Admins.ContainsKey(num2))
+            if (Session.GetHabbo().Id != group.CreatorId || !group.Members.ContainsKey(realId) ||
+                !group.Admins.ContainsKey(realId))
                 return;
 
-            group.Members[num2].Rank = 0;
-            group.Admins.Remove(num2);
+            group.Members[realId].Rank = 0;
+            group.Admins.Remove(realId);
 
             Response.Init(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
             Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 0u, Session);
@@ -305,7 +309,7 @@ namespace Oblivion.Messages.Handlers
 
             Room room = Oblivion.GetGame().GetRoomManager().GetRoom(group.RoomId);
             RoomUser roomUserByHabbo = room?.GetRoomUserManager()
-                .GetRoomUserByHabbo(Oblivion.GetHabboById(num2).UserName);
+                .GetRoomUserByHabbo(Oblivion.GetHabboById(userId).UserName);
 
             if (roomUserByHabbo != null)
             {
@@ -320,7 +324,7 @@ namespace Oblivion.Messages.Handlers
 
             using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.RunFastQuery(string.Concat("UPDATE groups_members SET rank='0' WHERE group_id=", num,
-                    " AND user_id=", num2, " LIMIT 1;"));
+                    " AND user_id=", realId, " LIMIT 1;"));
         }
 
         /// <summary>
@@ -331,29 +335,31 @@ namespace Oblivion.Messages.Handlers
             uint groupId = Request.GetUInteger();
             uint userId = Request.GetUInteger();
 
+            var realId = Oblivion.GetGame().GetClientManager().GetRealId(userId);
+
             Guild group = Oblivion.GetGame().GetGroupManager().GetGroup(groupId);
 
             if (Session.GetHabbo().Id != group.CreatorId && !group.Admins.ContainsKey(Session.GetHabbo().Id))
                 return;
 
-            if (!group.Requests.TryGetValue(userId, out var member))
+            if (!group.Requests.TryGetValue(realId, out var member))
                 return;
 
-            if (group.Members.ContainsKey(userId))
+            if (group.Members.ContainsKey(realId))
             {
-                group.Requests.Remove(userId);
+                group.Requests.Remove(realId);
 
                 using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     queryReactor.RunFastQuery(
-                        $"DELETE FROM groups_requests WHERE group_id = '{groupId}' AND user_id = '{userId}' LIMIT 1");
+                        $"DELETE FROM groups_requests WHERE group_id = '{groupId}' AND user_id = '{realId}' LIMIT 1");
                 return;
             }
 
 
             member.DateJoin = Oblivion.GetUnixTimeStamp();
-            group.Members.Add(userId, member);
-            group.Requests.Remove(userId);
-            group.Admins.Add(userId, member);
+            group.Members.Add(realId, member);
+            group.Requests.Remove(realId);
+            group.Admins.Add(realId, member);
 
             Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
             Response.Init(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
@@ -362,11 +368,11 @@ namespace Oblivion.Messages.Handlers
 
             using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.RunFastQuery(
-                    $"DELETE FROM groups_requests WHERE group_id = '{groupId}' AND user_id = '{userId}' LIMIT 1");
+                    $"DELETE FROM groups_requests WHERE group_id = '{groupId}' AND user_id = '{realId}' LIMIT 1");
 
             using (IQueryAdapter queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryreactor2.RunFastQuery(
-                    $"INSERT INTO groups_members (group_id, user_id, rank, date_join) VALUES ('{groupId}','{userId}','0','{Oblivion.GetUnixTimeStamp()}')");
+                    $"INSERT INTO groups_members (group_id, user_id, rank, date_join) VALUES ('{groupId}','{realId}','0','{Oblivion.GetUnixTimeStamp()}')");
         }
 
         /// <summary>
@@ -378,12 +384,13 @@ namespace Oblivion.Messages.Handlers
             var userId = Request.GetUInteger();
 
             var group = Oblivion.GetGame().GetGroupManager().GetGroup(groupId);
+            var realId = Oblivion.GetGame().GetClientManager().GetRealId(userId);
 
             if (Session.GetHabbo().Id != group.CreatorId && !group.Admins.ContainsKey(Session.GetHabbo().Id) &&
-                !group.Requests.ContainsKey(userId))
+                !group.Requests.ContainsKey(realId))
                 return;
 
-            group.Requests.Remove(userId);
+            group.Requests.Remove(realId);
 
             Response.Init(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
             Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 2u, Session);
@@ -465,20 +472,23 @@ namespace Oblivion.Messages.Handlers
         internal void RemoveMember()
         {
             uint num = Request.GetUInteger();
-            uint num2 = Request.GetUInteger();
+
+            uint userId = Request.GetUInteger();
+
+            var realId = Oblivion.GetGame().GetClientManager().GetRealId(userId);
 
             Guild group = Oblivion.GetGame().GetGroupManager().GetGroup(num);
 
-            if (num2 == Session.GetHabbo().Id)
+            if (realId == Session.GetHabbo().Id)
             {
-                if (group.Members.ContainsKey(num2))
-                    group.Members.Remove(num2);
+                if (group.Members.ContainsKey(realId))
+                    group.Members.Remove(realId);
 
-                if (group.Admins.ContainsKey(num2))
-                    group.Admins.Remove(num2);
+                if (group.Admins.ContainsKey(realId))
+                    group.Admins.Remove(realId);
 
                 using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                    queryReactor.RunFastQuery(string.Concat("DELETE FROM groups_members WHERE user_id=", num2,
+                    queryReactor.RunFastQuery(string.Concat("DELETE FROM groups_members WHERE user_id=", realId,
                         " AND group_id=", num, " LIMIT 1"));
 
                 Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
@@ -488,10 +498,10 @@ namespace Oblivion.Messages.Handlers
                     Session.GetHabbo().FavouriteGroup = 0u;
 
                     using (IQueryAdapter queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                        queryreactor2.RunFastQuery($"UPDATE users_stats SET favourite_group=0 WHERE id={num2} LIMIT 1");
+                        queryreactor2.RunFastQuery($"UPDATE users_stats SET favourite_group=0 WHERE id={realId} LIMIT 1");
 
                     Response.Init(LibraryParser.OutgoingRequest("FavouriteGroupMessageComposer"));
-                    Response.AppendInteger(Session.GetHabbo().Id);
+                    Response.AppendInteger(Session.VirtualId);
                     Session.GetHabbo().CurrentRoom.SendMessage(Response);
                     Response.Init(LibraryParser.OutgoingRequest("ChangeFavouriteGroupMessageComposer"));
                     Response.AppendInteger(0);
@@ -503,7 +513,7 @@ namespace Oblivion.Messages.Handlers
                     if (group.AdminOnlyDeco == 0u)
                     {
                         RoomUser roomUserByHabbo = Oblivion.GetGame().GetRoomManager().GetRoom(group.RoomId)
-                            .GetRoomUserManager().GetRoomUserByHabbo(Oblivion.GetHabboById(num2).UserName);
+                            .GetRoomUserManager().GetRoomUserByHabbo(Oblivion.GetHabboById(userId).UserName);
 
                         if (roomUserByHabbo == null)
                             return;
@@ -520,13 +530,13 @@ namespace Oblivion.Messages.Handlers
                 return;
             }
 
-            if (Session.GetHabbo().Id != group.CreatorId || !group.Members.ContainsKey(num2))
+            if (Session.GetHabbo().Id != group.CreatorId || !group.Members.ContainsKey(realId))
                 return;
 
-            group.Members.Remove(num2);
+            group.Members.Remove(realId);
 
-            if (group.Admins.ContainsKey(num2))
-                group.Admins.Remove(num2);
+            if (group.Admins.ContainsKey(realId))
+                group.Admins.Remove(realId);
 
             Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
             Response.Init(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
@@ -535,7 +545,7 @@ namespace Oblivion.Messages.Handlers
 
             using (IQueryAdapter queryreactor3 = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryreactor3.RunFastQuery(string.Concat("DELETE FROM groups_members WHERE group_id=", num,
-                    " AND user_id=", num2, " LIMIT 1;"));
+                    " AND user_id=", realId, " LIMIT 1;"));
         }
 
         /// <summary>
@@ -561,7 +571,7 @@ namespace Oblivion.Messages.Handlers
                     " WHERE id=", Session.GetHabbo().Id, " LIMIT 1;"));
 
             Response.Init(LibraryParser.OutgoingRequest("FavouriteGroupMessageComposer"));
-            Response.AppendInteger(Session.GetHabbo().Id);
+            Response.AppendInteger(Session.VirtualId);
             Session.SendMessage(Response);
 
             if (Session.GetHabbo().CurrentRoom != null)
@@ -605,7 +615,7 @@ namespace Oblivion.Messages.Handlers
                     $"UPDATE users_stats SET favourite_group=0 WHERE id={Session.GetHabbo().Id} LIMIT 1;");
 
             Response.Init(LibraryParser.OutgoingRequest("FavouriteGroupMessageComposer"));
-            Response.AppendInteger(Session.GetHabbo().Id);
+            Response.AppendInteger(Session.VirtualId);
             Session.SendMessage(Response);
             Response.Init(LibraryParser.OutgoingRequest("ChangeFavouriteGroupMessageComposer"));
             Response.AppendInteger(0);
@@ -667,7 +677,7 @@ namespace Oblivion.Messages.Handlers
 
             group.ForumScore += 0.25;
             group.ForumLastPosterName = Session.GetHabbo().UserName;
-            group.ForumLastPosterId = Session.GetHabbo().Id;
+            group.ForumLastPosterId = Session.VirtualId;
             group.ForumLastPosterTimestamp = timestamp;
             group.ForumMessagesCount++;
             group.UpdateForum();
@@ -677,7 +687,7 @@ namespace Oblivion.Messages.Handlers
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("GroupForumNewThreadMessageComposer"));
                 message.AppendInteger(groupId);
                 message.AppendInteger(threadId);
-                message.AppendInteger(Session.GetHabbo().Id);
+                message.AppendInteger(Session.VirtualId);
                 message.AppendString(subject);
                 message.AppendString(content);
                 message.AppendBool(false);
@@ -702,7 +712,7 @@ namespace Oblivion.Messages.Handlers
                 message.AppendInteger(threadId);
                 message.AppendInteger(group.ForumMessagesCount);
                 message.AppendInteger(0);
-                message.AppendInteger(Session.GetHabbo().Id);
+                message.AppendInteger(Session.VirtualId);
                 message.AppendString(Session.GetHabbo().UserName);
                 message.AppendString(Session.GetHabbo().Look);
                 message.AppendInteger((Oblivion.GetUnixTimeStamp() - timestamp));
@@ -812,8 +822,8 @@ namespace Oblivion.Messages.Handlers
 
                 if (row != null)
                 {
-                    if ((uint) row["poster_id"] == Session.GetHabbo().Id ||
-                        theGroup.Admins.ContainsKey(Session.GetHabbo().Id))
+                    if ((uint) row["poster_id"] == Session.VirtualId ||
+                        theGroup.Admins.ContainsKey(Session.VirtualId))
                     {
                         dbClient.SetQuery($"UPDATE groups_forums_posts SET hidden = @hid WHERE id = {threadId};");
                         dbClient.AddParameter("hid", (stateToSet == 20) ? "1" : "0");
@@ -1326,7 +1336,7 @@ namespace Oblivion.Messages.Handlers
                 /* TODO CHECK */
                 foreach (RoomUser current in room.GetRoomUserManager().GetRoomUsers())
                 {
-                    if (room.RoomData.OwnerId != current.UserId && !theGroup.Admins.ContainsKey(current.UserId) &&
+                    if (room.RoomData.OwnerId != current.GetClient().GetHabbo().Id && !theGroup.Admins.ContainsKey(current.GetClient().GetHabbo().Id) &&
                         theGroup.Members.ContainsKey(current.UserId))
                     {
                         if (num2 == 1u)
@@ -1360,13 +1370,14 @@ namespace Oblivion.Messages.Handlers
         {
             uint groupId = Request.GetUInteger();
             uint userId = Request.GetUInteger();
+            var realId = Oblivion.GetGame().GetClientManager().GetRealId(userId);
 
             Guild guild = Oblivion.GetGame().GetGroupManager().GetGroup(groupId);
 
-            if (guild == null || guild.CreatorId == userId)
+            if (guild == null || guild.CreatorId == realId)
                 return;
 
-            if (userId == Session.GetHabbo().Id || guild.Admins.ContainsKey(Session.GetHabbo().Id))
+            if (realId == Session.GetHabbo().Id || guild.Admins.ContainsKey(Session.GetHabbo().Id))
             {
                 Response.Init(LibraryParser.OutgoingRequest("GroupAreYouSureMessageComposer"));
                 Response.AppendInteger(userId);
@@ -1382,39 +1393,40 @@ namespace Oblivion.Messages.Handlers
         {
             uint guild = Request.GetUInteger();
             uint userId = Request.GetUInteger();
+            var realId = Oblivion.GetGame().GetClientManager().GetRealId(userId);
 
             Guild byeGuild = Oblivion.GetGame().GetGroupManager().GetGroup(guild);
 
             if (byeGuild == null)
                 return;
 
-            if (byeGuild.CreatorId == userId)
+            if (byeGuild.CreatorId == realId)
             {
                 Session.SendNotif(Oblivion.GetLanguage().GetVar("user_room_video_true"));
                 return;
             }
 
-            if (userId == Session.GetHabbo().Id || byeGuild.Admins.ContainsKey(Session.GetHabbo().Id))
+            if (realId == Session.GetHabbo().Id || byeGuild.Admins.ContainsKey(Session.GetHabbo().Id))
             {
                 int type;
 
-                if (byeGuild.Members.TryGetValue(userId, out var memberShip))
+                if (byeGuild.Members.TryGetValue(realId, out var memberShip))
                 {
                     type = 3;
                     Session.GetHabbo().UserGroups.Remove(memberShip);
-                    byeGuild.Members.Remove(userId);
+                    byeGuild.Members.Remove(realId);
                 }
-                else if (byeGuild.Admins.TryGetValue(userId, out memberShip))
+                else if (byeGuild.Admins.TryGetValue(realId, out memberShip))
                 {
                     type = 1;
                     Session.GetHabbo().UserGroups.Remove(memberShip);
-                    byeGuild.Admins.Remove(userId);
+                    byeGuild.Admins.Remove(realId);
                 }
                 else
                     return;
 
                 using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                    queryReactor.RunFastQuery(string.Concat("DELETE FROM groups_members WHERE user_id=", userId,
+                    queryReactor.RunFastQuery(string.Concat("DELETE FROM groups_members WHERE user_id=", realId,
                         " AND group_id=", guild, " LIMIT 1"));
 
                 Habbo byeUser = Oblivion.GetHabboById(userId);
@@ -1424,7 +1436,7 @@ namespace Oblivion.Messages.Handlers
                     Response.Init(LibraryParser.OutgoingRequest("GroupConfirmLeaveMessageComposer"));
                     Response.AppendInteger(guild);
                     Response.AppendInteger(type);
-                    Response.AppendInteger(byeUser.Id);
+                    Response.AppendInteger(byeUser.GetClient().VirtualId);
                     Response.AppendString(byeUser.UserName);
                     Response.AppendString(byeUser.Look);
                     Response.AppendString(string.Empty);
@@ -1438,12 +1450,12 @@ namespace Oblivion.Messages.Handlers
 
                     using (IQueryAdapter queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
                         queryreactor2.RunFastQuery(
-                            $"UPDATE users_stats SET favourite_group=0 WHERE id={userId} LIMIT 1");
+                            $"UPDATE users_stats SET favourite_group=0 WHERE id={realId} LIMIT 1");
 
                     Room room = Session.GetHabbo().CurrentRoom;
 
                     Response.Init(LibraryParser.OutgoingRequest("FavouriteGroupMessageComposer"));
-                    Response.AppendInteger(byeUser.Id);
+                    Response.AppendInteger(byeUser.GetClient().VirtualId);
 
                     if (room != null)
                         room.SendMessage(Response);

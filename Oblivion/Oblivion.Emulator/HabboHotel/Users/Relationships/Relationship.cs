@@ -18,7 +18,7 @@ namespace Oblivion.HabboHotel.Users.Relationships
         /// <summary>
         ///     The user identifier
         /// </summary>
-        public int UserId;
+        public ulong UserId;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Relationship" /> class.
@@ -26,7 +26,7 @@ namespace Oblivion.HabboHotel.Users.Relationships
         /// <param name="id">The identifier.</param>
         /// <param name="user">The user.</param>
         /// <param name="type">The type.</param>
-        public Relationship(int id, int user, int type)
+        public Relationship(int id, ulong user, int type)
         {
             Id = id;
             UserId = user;

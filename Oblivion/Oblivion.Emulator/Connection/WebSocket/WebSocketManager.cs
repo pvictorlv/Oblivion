@@ -40,7 +40,7 @@ namespace Oblivion.Connection.WebSocket
                     {
                         case 1:
                         {
-                            uint userId;
+                            ulong userId;
                             if (msg.Length < 2) return;
 
                             var sso = msg[1];
@@ -58,7 +58,7 @@ namespace Oblivion.Connection.WebSocket
                                     return;
                                 }
 
-                                userId = (uint) drow["id"];
+                                userId = (ulong) drow["id"];
                             }
 
                             if (userId == 0) return;

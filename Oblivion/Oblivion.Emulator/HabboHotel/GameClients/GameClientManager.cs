@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Oblivion.Configuration;
 using Oblivion.Connection.SuperSocket;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -17,23 +18,59 @@ namespace Oblivion.HabboHotel.GameClients
     /// </summary>
     internal class GameClientManager
     {
-        /// <summary>
-        ///     The _badge queue
-        /// </summary>
-//        private readonly Queue _badgeQueue;
-        /// <summary>
-        ///     The _id user name register
-        /// </summary>
-//        private readonly HybridDictionary _idUserNameRegister;
-        /// <summary>
-        ///     The _user identifier register
-        /// </summary>
-        private readonly ConcurrentDictionary<uint, GameClient> _userIdRegister;
+        private int _userIdCounter = 1;
 
-        /// <summary>
-        ///     The _user name identifier register
-        /// </summary>
-//        private readonly HybridDictionary _userNameIdRegister;
+
+        private ConcurrentDictionary<uint, ulong> _usersByVirtualId;
+        private ConcurrentDictionary<ulong, uint> _usersByRealId;
+
+
+        public uint GetVirtualId(GameClient session)
+        {
+            if (session.GetHabbo() != null)
+            {
+                return GetVirtualId(session.VirtualId);
+            }
+
+            Interlocked.Increment(ref _userIdCounter);
+
+            var newId = Convert.ToUInt32(_userIdCounter);
+            return newId;
+        }
+
+        public void StoreVirtualId(uint virtualId, ulong realId)
+        {
+            _usersByRealId.TryAdd(realId, virtualId);
+            _usersByVirtualId.TryAdd(virtualId, realId);
+        }
+
+        public uint GetVirtualId(ulong realId)
+        {
+            if (_usersByRealId.TryGetValue(realId, out var virtualId))
+            {
+                return virtualId;
+            }
+
+            Interlocked.Increment(ref _userIdCounter);
+
+            var newId = Convert.ToUInt32(_userIdCounter);
+            _usersByRealId.TryAdd(realId, newId);
+            _usersByVirtualId.TryAdd(newId, realId);
+
+            return newId;
+        }
+
+        public ulong GetRealId(uint virtualId)
+        {
+            if (_usersByVirtualId.TryGetValue(virtualId, out var realId))
+            {
+                return realId;
+            }
+
+
+            return 0L;
+        }
+
         /// <summary>
         ///     The _user name register
         /// </summary>
@@ -42,16 +79,17 @@ namespace Oblivion.HabboHotel.GameClients
         /// <summary>
         ///     The clients
         /// </summary>
-        internal ConcurrentDictionary<uint, GameClient> Clients;
+        internal ConcurrentDictionary<ulong, GameClient> Clients;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="GameClientManager" /> class.
         /// </summary>
         internal GameClientManager()
         {
-            Clients = new ConcurrentDictionary<uint, GameClient>();
+            Clients = new ConcurrentDictionary<ulong, GameClient>();
+            _usersByVirtualId = new ConcurrentDictionary<uint, ulong>();
+            _usersByRealId = new ConcurrentDictionary<ulong, uint>();
             _userNameRegister = new ConcurrentDictionary<string, GameClient>();
-            _userIdRegister = new ConcurrentDictionary<uint, GameClient>();
         }
 
         /// <summary>
@@ -65,8 +103,22 @@ namespace Oblivion.HabboHotel.GameClients
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <returns>GameClient.</returns>
-        internal GameClient GetClientByUserId(uint userId) =>
-            _userIdRegister.TryGetValue(userId, out var client) ? client : null;
+        internal GameClient GetClientByUserId(uint userId)
+        {
+            var realId = GetRealId(userId);
+
+            return Clients.TryGetValue(realId, out var client) ? client : null;
+        }
+
+        /// <summary>
+        ///     Gets the client by user identifier.
+        /// </summary>
+        /// <param name="realId">The user identifier.</param>
+        /// <returns>GameClient.</returns>
+        internal GameClient GetClientByUserId(ulong realId)
+        {
+            return Clients.TryGetValue(realId, out var client) ? client : null;
+        }
 
         /// <summary>
         ///     Gets the name of the client by user.
@@ -88,7 +140,7 @@ namespace Oblivion.HabboHotel.GameClients
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns>System.String.</returns>
-        internal string GetNameById(uint id)
+        internal string GetNameById(ulong id)
         {
             var clientByUserId = GetClientByUserId(id);
 
@@ -188,7 +240,7 @@ namespace Oblivion.HabboHotel.GameClients
         internal void StaffAlert(ServerMessage message, uint exclude = 0u)
         {
             var gameClients = Clients.Values.Where(x =>
-                x.GetHabbo() != null && x.GetHabbo().Rank >= Oblivion.StaffAlertMinRank && x.GetHabbo().Id != exclude);
+                x.GetHabbo() != null && x.GetHabbo().Rank >= Oblivion.StaffAlertMinRank && x.VirtualId != exclude);
 
             foreach (var current in gameClients)
                 current.SendMessage(message);
@@ -212,11 +264,14 @@ namespace Oblivion.HabboHotel.GameClients
         /// </summary>
         /// <param name="clientId">The client identifier.</param>
         /// <param name="connection">The connection.</param>
-        internal void CreateAndStartClient(uint clientId, Session<GameClient> connection)
+        internal void CreateAndStartClient(Session<GameClient> connection)
         {
-            var gameClient = new GameClient(clientId, connection);
+            var gameClient = new GameClient(connection);
             connection.UserData = gameClient;
-            Clients.AddOrUpdate(clientId, gameClient, (key, value) => gameClient);
+            var clientId = GetVirtualId(gameClient);
+            gameClient.VirtualId = clientId;
+            connection.VirtualId = clientId;
+
             gameClient.StartConnection();
         }
 
@@ -226,10 +281,11 @@ namespace Oblivion.HabboHotel.GameClients
         /// <param name="clientId">The client identifier.</param>
         internal void DisposeConnection(uint clientId)
         {
-            if (!Clients.TryRemove(clientId, out var client))
+            var realId = GetRealId(clientId);
+
+            if (!Clients.TryRemove(realId, out var client))
                 return;
             client.Dispose();
-            
         }
 
 
@@ -253,7 +309,6 @@ namespace Oblivion.HabboHotel.GameClients
 
             foreach (var client in Clients.Values)
             {
-                
                 client?.GetConnection()?.SendAsync(bytes);
             }
         }
@@ -264,6 +319,7 @@ namespace Oblivion.HabboHotel.GameClients
         /// <param name="userId">The user identifier.</param>
         internal void LogClonesOut(uint userId)
         {
+            //todo
             var clientByUserId = GetClientByUserId(userId);
             clientByUserId?.Disconnect("user null LogClonesOut");
         }
@@ -274,10 +330,13 @@ namespace Oblivion.HabboHotel.GameClients
         /// <param name="client">The client.</param>
         /// <param name="userId">The user identifier.</param>
         /// <param name="userName">Name of the user.</param>
-        internal void RegisterClient(GameClient client, uint userId, string userName)
+        internal void RegisterClient(GameClient client, ulong userId, string userName)
         {
             _userNameRegister[userName.ToLower()] = client;
-            _userIdRegister[userId] = client;
+
+            StoreVirtualId(client.VirtualId, userId);
+
+            Clients[userId] = client;
         }
 
         /// <summary>
@@ -285,9 +344,9 @@ namespace Oblivion.HabboHotel.GameClients
         /// </summary>
         /// <param name="userid">The userid.</param>
         /// <param name="userName">The username.</param>
-        internal void UnregisterClient(uint userid, string userName)
+        internal void UnregisterClient(ulong userid, string userName)
         {
-            _userIdRegister.TryRemove(userid, out _);
+            Clients.TryRemove(userid, out _);
             _userNameRegister.TryRemove(userName.ToLower(), out _);
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())

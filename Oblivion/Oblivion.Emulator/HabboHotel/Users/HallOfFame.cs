@@ -40,7 +40,7 @@ namespace Oblivion.HabboHotel.Users
                             continue;
                         }
 
-                        Rankings.Add(new HallOfFameElement((uint) row["id"], diamonds,
+                        Rankings.Add(new HallOfFameElement((ulong) row["id"], diamonds,
                             row["username"].ToString(), row["look"].ToString()));
                     }
                     catch (Exception e)
@@ -59,11 +59,11 @@ namespace Oblivion.HabboHotel.Users
     internal class HallOfFameElement
     {
         internal int Score;
-        internal uint UserId;
+        internal ulong UserId;
         internal string Username;
         internal string Look;
 
-        internal HallOfFameElement(uint userId, int score, string username, string look)
+        internal HallOfFameElement(ulong userId, int score, string username, string look)
         {
             UserId = userId;
             Score = score;

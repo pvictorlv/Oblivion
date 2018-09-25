@@ -145,7 +145,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <summary>
         ///     The habbo identifier
         /// </summary>
-        internal uint HabboId;
+        internal ulong HabboId;
 
         /// <summary>
         ///     The handeling ball status
@@ -392,7 +392,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="virtualId">The virtual identifier.</param>
         /// <param name="room">The room.</param>
         /// <param name="isSpectator">if set to <c>true</c> [is spectator].</param>
-        internal RoomUser(uint habboId, uint roomId, int virtualId, Room room, bool isSpectator)
+        internal RoomUser(ulong habboId, uint roomId, int virtualId, Room room, bool isSpectator)
         {
             Freezed = false;
             HabboId = habboId;
@@ -682,7 +682,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (!IsAsleep)
                 return;
             IsAsleep = false;
-            ApplyEffect(0);
+
             using (var sleep = new ServerMessage(LibraryParser.OutgoingRequest("RoomUserIdleMessageComposer")))
             {
                 sleep.AppendInteger(VirtualId);
@@ -763,44 +763,37 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
 
 
-
             UnIdle();
-            if (!IsPet && !IsBot)
+            if (msg.StartsWith(":") && CommandsManager.TryExecute(msg.Substring(1), session))
             {
-                if (msg.StartsWith(":") && CommandsManager.TryExecute(msg.Substring(1), session))
-                {
-                    if (GetRoom() != null && GetRoom().GotWireds())
-                        GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSayCommand, this, msg);
+                if (GetRoom() != null && GetRoom().GotWireds())
+                    GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSayCommand, this, msg);
 
-                    return;
-                }
-
-                if (GetRoom() == null || GetRoom().Disposed) return;
-
-                var habbo = GetClient().GetHabbo();
-
-
-                if (!habbo.CanTalk(true)) return;
-
-
-                if (GetRoom().GotWireds())
-                    if (GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSay, this, msg))
-                        return;
-
-                GetRoom().AddChatlog(session.GetHabbo().Id, msg, true);
-
-                if (GetRoom()?
-                        .RoomData?.WordFilter != null && GetRoom()
-                        .RoomData.WordFilter.Count > 0)
-                    msg = GetRoom()
-                        .RoomData.WordFilter.Aggregate(msg,
-                            (current, s) => Regex.Replace(current, Regex.Escape(s), "bobba", RegexOptions.IgnoreCase));
-
-
-                habbo.Preferences.ChatColor = textColor;
+                return;
             }
-            else if (!IsPet)
-                textColor = 2;
+
+            if (GetRoom() == null || GetRoom().Disposed) return;
+
+            var habbo = GetClient().GetHabbo();
+
+
+            if (GetRoom().GotWireds())
+                if (GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSay, this, msg))
+                    return;
+
+            if (!habbo.CanTalk(true)) return;
+
+            GetRoom().AddChatlog(session.GetHabbo().Id, msg, true);
+
+            if (GetRoom()?
+                    .RoomData?.WordFilter != null && GetRoom()
+                    .RoomData.WordFilter.Count > 0)
+                msg = GetRoom()
+                    .RoomData.WordFilter.Aggregate(msg,
+                        (current, s) => Regex.Replace(current, Regex.Escape(s), "bobba", RegexOptions.IgnoreCase));
+
+
+            habbo.Preferences.ChatColor = textColor;
 
             var needReChange = false;
             var colorPrefix = session.GetHabbo().Prefixes[0];
@@ -826,7 +819,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 chatMsg.AppendInteger(textColor);
                 chatMsg.AppendInteger(0);
                 chatMsg.AppendInteger(count);
-                GetRoom().BroadcastChatMessageWithRange(chatMsg, this, session.GetHabbo().Id);
+                GetRoom().BroadcastChatMessageWithRange(chatMsg, this, session.VirtualId);
                 if (needReChange)
                 {
                     ChangeName(GetUserName());
@@ -1096,7 +1089,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (habbo == null)
                     return false;
 
-                message.AppendInteger(habbo.Id);
+                message.AppendInteger(habbo.GetClient().VirtualId);
                 message.AppendString(habbo.UserName);
                 message.AppendString(habbo.Motto);
                 message.AppendString(habbo.Look);
@@ -1155,7 +1148,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (BotData.AiType == AiType.Pet)
             {
                 message.AppendInteger(PetData.Type);
-                message.AppendInteger(PetData.OwnerId);
+                message.AppendInteger(Oblivion.GetGame().GetClientManager().GetVirtualId(PetData.OwnerId));
                 message.AppendString(PetData.OwnerName);
                 message.AppendInteger(PetData.Type == 16u ? 0 : 1);
                 message.AppendBool(PetData.HaveSaddle);
@@ -1167,7 +1160,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
 
             message.AppendString(BotData.Gender.ToLower());
-            message.AppendInteger(BotData.OwnerId);
+            message.AppendInteger(Oblivion.GetGame().GetClientManager().GetVirtualId(BotData.OwnerId));
             message.AppendString(Oblivion.GetGame().GetClientManager().GetNameById(BotData.OwnerId));
             message.AppendInteger(5);
             message.AppendShort(1);

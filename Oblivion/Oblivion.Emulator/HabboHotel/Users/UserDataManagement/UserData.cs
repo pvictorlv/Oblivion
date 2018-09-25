@@ -83,7 +83,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         /// <summary>
         ///     The user identifier
         /// </summary>
-        internal uint UserId;
+        internal ulong UserId;
 
         ///<summary>
         /// User blockeds commands
@@ -115,7 +115,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         /// <param name="relations">The relations.</param>
         /// <param name="suggestedPolls">The suggested polls.</param>
         /// <param name="miniMailCount">The mini mail count.</param>
-        public UserData(uint userId, Dictionary<string, UserAchievement> achievements,
+        public UserData(ulong userId, Dictionary<string, UserAchievement> achievements,
             Dictionary<int, UserTalent> talents, List<uint> favouritedRooms, List<uint> ignores, List<string> tags,
             Subscription sub,
             List<uint> rooms, Dictionary<uint, int> quests, Habbo user,
@@ -152,7 +152,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 {
                     Relations = table.Rows.Cast<DataRow>()
                         .ToDictionary(row => (int) row[0],
-                            row => new Relationship((int) row[0], (int) row[2], Convert.ToInt32(row[3].ToString())));
+                            row => new Relationship((int) row[0], (uint) row[2], Convert.ToInt32(row[3].ToString())));
                 }
             }
             LoadedRelations = true;

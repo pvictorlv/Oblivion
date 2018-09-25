@@ -103,7 +103,7 @@ namespace Oblivion.HabboHotel.RoomBots
         /// <summary>
         ///     The owner identifier
         /// </summary>
-        internal uint OwnerId;
+        internal ulong OwnerId;
 
         /// <summary>
         ///     The random speech
@@ -207,7 +207,7 @@ namespace Oblivion.HabboHotel.RoomBots
         /// <param name="gender">The gender.</param>
         /// <param name="dance">The dance.</param>
         /// <param name="bartender">if set to <c>true</c> [bartender].</param>
-        internal RoomBot(uint botId, uint ownerId, uint roomId, AiType aiType, string walkingMode, string name,
+        internal RoomBot(uint botId, ulong ownerId, uint roomId, AiType aiType, string walkingMode, string name,
             string motto, string look, int x, int y, double z, int rot, int minX, int minY, int maxX, int maxY,
             List<string> speeches, List<string> responses, string gender, int dance, bool bartender)
         {

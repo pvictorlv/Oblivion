@@ -51,7 +51,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="motto">The motto.</param>
         /// <param name="appearOffline">if set to <c>true</c> [appear offline].</param>
         /// <param name="hideInroom">if set to <c>true</c> [hide inroom].</param>
-        internal MessengerBuddy(uint userId, string userName, string look, string motto,
+        internal MessengerBuddy(ulong userId, string userName, string look, string motto,
             bool appearOffline, bool hideInroom)
         {
             Id = userId;
@@ -67,7 +67,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         ///     Gets the identifier.
         /// </summary>
         /// <value>The identifier.</value>
-        internal uint Id { get; set; }
+        internal ulong Id { get; set; }
 
         /// <summary>
         ///     Gets a value indicating whether this instance is online.
@@ -115,11 +115,17 @@ namespace Oblivion.HabboHotel.Users.Messenger
             if (session?.GetHabbo()?.Data?.Relations == null) return;
 
             var value =
-                session.GetHabbo().Data.Relations.FirstOrDefault(x => x.Value.UserId == Convert.ToInt32(Id)).Value;
+                session.GetHabbo().Data.Relations.FirstOrDefault(x => x.Value.UserId == Convert.ToUInt64(Id)).Value;
 
             var i = value?.Type ?? 0;
 
-            message.AppendInteger(Id);
+            var virtualId = 0u;
+            if (Id != 0)
+            {
+                virtualId = Oblivion.GetGame().GetClientManager().GetVirtualId(Id);
+            }
+
+            message.AppendInteger(Id != 0 ? virtualId : 0);
             message.AppendString(UserName);
             message.AppendInteger(1);
 

@@ -45,7 +45,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 if (client?.GetHabbo() == null)
                     continue;
 
-                if (session.GetHabbo().Id == client.GetHabbo().Id)
+                if (session.VirtualId == client.VirtualId)
                 {
                     client.SendWhisper("O Alerta de Evento foi Enviado com Sucesso", true);
                     continue;

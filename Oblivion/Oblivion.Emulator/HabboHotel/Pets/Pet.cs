@@ -105,7 +105,7 @@ namespace Oblivion.HabboHotel.Pets
         /// <summary>
         ///     The owner identifier
         /// </summary>
-        internal uint OwnerId;
+        internal ulong OwnerId;
 
         /// <summary>
         ///     The pet commands
@@ -208,7 +208,7 @@ namespace Oblivion.HabboHotel.Pets
         /// <param name="lastHealth">The last health.</param>
         /// <param name="untilGrown">The until grown.</param>
         /// <param name="moplaBreed">The mopla breed.</param>
-        internal Pet(uint petId, uint ownerId, uint roomId, string name, uint type, string race, string color,
+        internal Pet(uint petId, ulong ownerId, uint roomId, string name, uint type, string race, string color,
             int experience, int energy, int nutrition, int respect, double creationStamp, int x, int y, double z,
             bool havesaddle, int anyoneCanRide, int dye, int petHer, int rarity, DateTime lastHealth,
             DateTime untilGrown, MoplaBreed moplaBreed)
@@ -517,7 +517,7 @@ namespace Oblivion.HabboHotel.Pets
             serverMessage.AppendInteger(Nutrition);
             serverMessage.AppendInteger(MaxNutrition);
             serverMessage.AppendInteger(Respect);
-            serverMessage.AppendInteger(OwnerId);
+            serverMessage.AppendInteger(Oblivion.GetGame().GetClientManager().GetVirtualId(OwnerId));
             serverMessage.AppendInteger(Age);
             serverMessage.AppendString(OwnerName);
             serverMessage.AppendInteger(Type == 16 ? 0 : 1);

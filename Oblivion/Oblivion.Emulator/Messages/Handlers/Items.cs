@@ -145,7 +145,7 @@ namespace Oblivion.Messages.Handlers
                     break;
             }
 
-            var pet = CatalogManager.CreatePet(Session.GetHabbo().Id, petName,
+            var pet = CatalogManager.CreatePet(Session.VirtualId, petName,
                 item.GetBaseItem().InteractionType == Interaction.BreedingTerrier ? 25 : 24, petType.ToString(),
                 "ffffff");
             if (pet == null)
@@ -740,7 +740,7 @@ namespace Oblivion.Messages.Handlers
                 }
             }
             item.Interactor.OnTrigger(Session, item, Request.GetInteger(), hasRightsOne);
-            //Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.ExploreFindItem, item.GetBaseItem().itemId);
+            Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.ExploreFindItem, item.GetBaseItem().ItemId);
             if (!item.GetBaseItem().StackMultipler || !hasRightsOne) return;
             foreach (var current in room.GetGameMap().GetRoomUsers(new Point(item.X, item.Y)))
                 room.GetRoomUserManager().UpdateUserStatus(current, true);
@@ -1059,7 +1059,7 @@ namespace Oblivion.Messages.Handlers
             }
             if (!Session.GetHabbo().CheckTrading())
                 Session.SendNotif(Oblivion.GetLanguage().GetVar("room_trade_disabled_mod"));
-            var roomUserByHabbo = room.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
+            var roomUserByHabbo = room.GetRoomUserManager().GetRoomUserByHabbo(Session.VirtualId);
             var roomUserByVirtualId = room.GetRoomUserManager().GetRoomUserByVirtualId(Request.GetInteger());
             if (roomUserByVirtualId?.GetClient() == null || roomUserByVirtualId.GetClient().GetHabbo() == null)
                 return;
@@ -1113,12 +1113,12 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CanTradeInRoom)
                 return;
-            var userTrade = room.GetUserTrade(Session.GetHabbo().Id);
+            var userTrade = room.GetUserTrade(Session.VirtualId);
             var item = Session.GetHabbo().GetInventoryComponent()
                 .GetItem(Oblivion.GetGame().GetItemManager().GetRealId(Request.GetUInteger()));
             if (userTrade == null || item == null)
                 return;
-            userTrade.OfferItem(Session.GetHabbo().Id, item);
+            userTrade.OfferItem(Session.VirtualId, item);
             userTrade.UpdateTradeWindow();
         }
 
@@ -1130,7 +1130,7 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CanTradeInRoom)
                 return;
-            var userTrade = room.GetUserTrade(Session.GetHabbo().Id);
+            var userTrade = room.GetUserTrade(Session.VirtualId);
             var amount = Request.GetInteger();
 
             var item = Session.GetHabbo().GetInventoryComponent()
@@ -1144,7 +1144,7 @@ namespace Oblivion.Messages.Handlers
             /* TODO CHECK */
             foreach (var it in allItems)
             {
-                userTrade.OfferItem(Session.GetHabbo().Id, it);
+                userTrade.OfferItem(Session.VirtualId, it);
             }
             userTrade.UpdateTradeWindow();
         }
@@ -1157,12 +1157,12 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CanTradeInRoom)
                 return;
-            var userTrade = room.GetUserTrade(Session.GetHabbo().Id);
+            var userTrade = room.GetUserTrade(Session.VirtualId);
             var item = Session.GetHabbo().GetInventoryComponent()
                 .GetItem(Oblivion.GetGame().GetItemManager().GetRealId(Request.GetUInteger()));
             if (userTrade == null || item == null)
                 return;
-            userTrade.TakeBackItem(Session.GetHabbo().Id, item);
+            userTrade.TakeBackItem(Session.VirtualId, item);
         }
 
         internal void StopTrade()
@@ -1173,7 +1173,7 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CanTradeInRoom)
                 return;
-            room.TryStopTrade(Session.GetHabbo().Id);
+            room.TryStopTrade(Session.VirtualId);
         }
 
         internal void AcceptTrade()
@@ -1184,8 +1184,8 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CanTradeInRoom)
                 return;
-            var userTrade = room.GetUserTrade(Session.GetHabbo().Id);
-            userTrade?.Accept(Session.GetHabbo().Id);
+            var userTrade = room.GetUserTrade(Session.VirtualId);
+            userTrade?.Accept(Session.VirtualId);
         }
 
         internal void UnacceptTrade()
@@ -1196,8 +1196,8 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CanTradeInRoom)
                 return;
-            var userTrade = room.GetUserTrade(Session.GetHabbo().Id);
-            userTrade?.Unaccept(Session.GetHabbo().Id);
+            var userTrade = room.GetUserTrade(Session.VirtualId);
+            userTrade?.Unaccept(Session.VirtualId);
         }
 
         internal void CompleteTrade()
@@ -1210,8 +1210,8 @@ namespace Oblivion.Messages.Handlers
             {
                 return;
             }
-            var userTrade = room.GetUserTrade(Session.GetHabbo().Id);
-            userTrade?.CompleteTrade(Session.GetHabbo().Id);
+            var userTrade = room.GetUserTrade(Session.VirtualId);
+            userTrade?.CompleteTrade(Session.VirtualId);
         }
 
         internal void RecycleItems()
@@ -1248,7 +1248,7 @@ namespace Oblivion.Messages.Handlers
                 ShortGuid itemId = itemGuid;
                 queryreactor2.SetNoLockQuery(
                     "INSERT INTO items_rooms (user_id,base_item,extra_data) VALUES (@itemId, @userid , @baseItem, @timestamp);");
-                queryreactor2.AddParameter("userid", (int) Session.GetHabbo().Id);
+                queryreactor2.AddParameter("userid", Session.GetHabbo().Id);
                 queryreactor2.AddParameter("itemId", itemId);
                 queryreactor2.AddParameter("timestamp", DateTime.Now.ToLongDateString());
                 queryreactor2.AddParameter("baseItem",
@@ -1342,7 +1342,7 @@ namespace Oblivion.Messages.Handlers
                 var roomUserOne = loveLock.GetRoom().GetRoomUserManager().GetUserForSquare(pointOne.X, pointOne.Y);
                 var roomUserTwo = loveLock.GetRoom().GetRoomUserManager().GetUserForSquare(pointTwo.X, pointTwo.Y);
 
-                var user = loveLock.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
+                var user = loveLock.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(Session.VirtualId);
 
                 if (roomUserOne == null || roomUserTwo == null)
                 {
@@ -1363,8 +1363,8 @@ namespace Oblivion.Messages.Handlers
                 lockDialogue.AppendInteger(loveLock.VirtualId);
                 lockDialogue.AppendBool(true);
 
-                loveLock.InteractingUser = roomUserOne.GetClient().GetHabbo().Id;
-                loveLock.InteractingUser2 = roomUserTwo.GetClient().GetHabbo().Id;
+                loveLock.InteractingUser = roomUserOne.GetClient().VirtualId;
+                loveLock.InteractingUser2 = roomUserTwo.GetClient().VirtualId;
 
                 roomUserOne.GetClient().SendMessage(lockDialogue);
                 roomUserTwo.GetClient().SendMessage(lockDialogue);
@@ -1559,7 +1559,7 @@ namespace Oblivion.Messages.Handlers
                         var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
                         queryReactor.RunFastQuery(
-                            $"UPDATE users_stats SET daily_pet_respect_points = daily_pet_respect_points - 1 WHERE id = {Session.GetHabbo().Id} LIMIT 1");
+                            $"UPDATE users_stats SET daily_pet_respect_points = daily_pet_respect_points - 1 WHERE id = {Session.VirtualId} LIMIT 1");
                     }
                 }
             }
@@ -1599,7 +1599,7 @@ namespace Oblivion.Messages.Handlers
             serverMessage.AppendInteger(pet.PetData.Nutrition);
             serverMessage.AppendInteger(150);
             serverMessage.AppendInteger(pet.PetData.Respect);
-            serverMessage.AppendInteger(pet.PetData.OwnerId);
+            serverMessage.AppendInteger(Oblivion.GetGame().GetClientManager().GetVirtualId(pet.PetData.OwnerId));
             serverMessage.AppendInteger(pet.PetData.Age);
             serverMessage.AppendString(pet.PetData.OwnerName);
             serverMessage.AppendInteger(1);
@@ -1640,7 +1640,7 @@ namespace Oblivion.Messages.Handlers
                 return;
             var petId = Request.GetUInteger();
             var pet = room.GetRoomUserManager().GetPet(petId);
-            if (pet?.PetData == null || pet.PetData.OwnerId != Session.GetHabbo().Id)
+            if (pet?.PetData == null || pet.PetData.OwnerId != Session.VirtualId)
                 return;
             var isForHorse = true;
             {
@@ -1829,7 +1829,7 @@ namespace Oblivion.Messages.Handlers
         {
             var room =
                 Session.GetHabbo().CurrentRoom;
-            var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
+            var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Session.VirtualId);
             if (roomUserByHabbo == null)
                 return;
             var petId = Request.GetUInteger();
@@ -1851,7 +1851,7 @@ namespace Oblivion.Messages.Handlers
         {
             var room =
                 Session.GetHabbo().CurrentRoom;
-            var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
+            var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Session.VirtualId);
             if (roomUserByHabbo == null)
                 return;
             var roomUserByHabbo2 = room.GetRoomUserManager().GetRoomUserByHabbo(Request.GetUInteger());
@@ -1906,7 +1906,7 @@ namespace Oblivion.Messages.Handlers
         {
             var room =
                 Session.GetHabbo().CurrentRoom;
-            var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
+            var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Session.VirtualId);
             if (roomUserByHabbo?.CarryItemId > 0 && roomUserByHabbo.CarryTimer > 0)
                 roomUserByHabbo.CarryItem(0);
         }
@@ -1915,7 +1915,7 @@ namespace Oblivion.Messages.Handlers
         {
             var room = Session.GetHabbo().CurrentRoom;
 
-            var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
+            var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Session.VirtualId);
 
             if (roomUserByHabbo == null)
                 return;
@@ -1993,8 +1993,8 @@ namespace Oblivion.Messages.Handlers
                 return;
             }
 
-            var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(Session.GetHabbo().Id);
-            if (Session.GetHabbo().Id != pet.PetData.OwnerId)
+            var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(Session.VirtualId);
+            if (Session.VirtualId != pet.PetData.OwnerId)
                 if (clientByUserId != null)
                     Oblivion.GetGame().GetAchievementManager()
                         .ProgressUserAchievement(clientByUserId, "ACH_HorseRent", 1);
@@ -2308,12 +2308,12 @@ namespace Oblivion.Messages.Handlers
             var loock = new ServerMessage(LibraryParser.OutgoingRequest("LoveLockDialogueSetLockedMessageComposer"));
             loock.AppendInteger(item.VirtualId);
 
-            if (userIdOne == Session.GetHabbo().Id)
+            if (userIdOne == Session.VirtualId)
             {
                 userOne.GetClient().SendMessage(loock);
                 userOne.LoveLockPartner = userIdTwo;
             }
-            else if (userIdTwo == Session.GetHabbo().Id)
+            else if (userIdTwo == Session.VirtualId)
             {
                 userTwo.GetClient().SendMessage(loock);
                 userTwo.LoveLockPartner = userIdOne;

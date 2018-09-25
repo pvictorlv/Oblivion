@@ -22,7 +22,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         public override bool Execute(GameClient session, string[] pms)
         {
             var room = session.GetHabbo().CurrentRoom;
-            var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
+            var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.VirtualId);
             if (user == null) return true;
 
             var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
@@ -31,12 +31,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
-            if (client.GetHabbo().Id == session.GetHabbo().Id)
+            if (client.VirtualId == session.VirtualId)
             {
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("command_pull_error_own"));
                 return true;
             }
-            var user2 = room.GetRoomUserManager().GetRoomUserByHabbo(client.GetHabbo().Id);
+            var user2 = room.GetRoomUserManager().GetRoomUserByHabbo(client.VirtualId);
             if (user2 == null) return true;
             if (user2.TeleportEnabled)
             {

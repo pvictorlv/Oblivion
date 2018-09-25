@@ -128,12 +128,12 @@ namespace Oblivion.HabboHotel.Groups
             int colour2, out Guild group)
         {
             Habbo user = session.GetHabbo();
-            Dictionary<uint, GroupMember> emptyDictionary = new Dictionary<uint, GroupMember>();
+            Dictionary<ulong, GroupMember> emptyDictionary = new Dictionary<ulong, GroupMember>();
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery(
-                    $"INSERT INTO groups_data (`name`, `desc`,`badge`,`owner_id`,`created`,`room_id`,`colour1`,`colour2`) VALUES(@name,@desc,@badge,'{session.GetHabbo().Id}',UNIX_TIMESTAMP(),'{roomId}','{colour1}','{colour2}')");
+                    $"INSERT INTO groups_data (`name`, `desc`,`badge`,`owner_id`,`created`,`room_id`,`colour1`,`colour2`) VALUES(@name,@desc,@badge,'{user.Id}',UNIX_TIMESTAMP(),'{roomId}','{colour1}','{colour2}')");
                 queryReactor.AddParameter("name", name);
                 queryReactor.AddParameter("desc", desc);
                 queryReactor.AddParameter("badge", badge);
@@ -144,8 +144,8 @@ namespace Oblivion.HabboHotel.Groups
 
                 var memberGroup = new GroupMember(user.Id, user.UserName, user.Look, id, 2,
                     Oblivion.GetUnixTimeStamp(), true);
-                Dictionary<uint, GroupMember> dictionary =
-                    new Dictionary<uint, GroupMember> {{session.GetHabbo().Id, memberGroup}};
+                Dictionary<ulong, GroupMember> dictionary =
+                    new Dictionary<ulong, GroupMember> {{session.GetHabbo().Id, memberGroup}};
 
                 group = new Guild(id, name, desc, roomId, badge, Oblivion.GetUnixTimeStamp(), user.Id, colour1, colour2,
                     dictionary, emptyDictionary, emptyDictionary, 0, 1, false, name, desc, 0, 0.0, 0, string.Empty, 0,
@@ -188,9 +188,9 @@ namespace Oblivion.HabboHotel.Groups
             if (Groups.TryGetValue(groupId, out Guild grp))
                 return grp;
 
-            var members = new Dictionary<uint, GroupMember>();
-            var admins = new Dictionary<uint, GroupMember>();
-            var requests = new Dictionary<uint, GroupMember>();
+            var members = new Dictionary<ulong, GroupMember>();
+            var admins = new Dictionary<ulong, GroupMember>();
+            var requests = new Dictionary<ulong, GroupMember>();
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
@@ -212,12 +212,12 @@ namespace Oblivion.HabboHotel.Groups
 
                 var groupRequestsTable = queryReactor.GetTable();
 
-                uint userId;
+                ulong userId;
 
                 /* TODO CHECK */
                 foreach (DataRow dataRow in groupMembersTable.Rows)
                 {
-                    userId = (uint) dataRow["user_id"];
+                    userId = (ulong) dataRow["user_id"];
 
                     var rank = int.Parse(dataRow["rank"].ToString());
 
@@ -235,7 +235,7 @@ namespace Oblivion.HabboHotel.Groups
                 /* TODO CHECK */
                 foreach (DataRow dataRow in groupRequestsTable.Rows)
                 {
-                    userId = (uint) dataRow["user_id"];
+                    userId = (ulong) dataRow["user_id"];
 
                     var membGroup = new GroupMember(userId, dataRow["username"].ToString(), dataRow["look"].ToString(),
                         groupId, 0, Oblivion.GetUnixTimeStamp(), true);
@@ -245,7 +245,7 @@ namespace Oblivion.HabboHotel.Groups
                 }
 
                 var group = new Guild((uint) row[0], row[1].ToString(), row[2].ToString(), (uint) row[6],
-                    row[3].ToString(), (int) row[5], (uint) row[4], (int) row[8], (int) row[9], members, requests,
+                    row[3].ToString(), (int) row[5], (ulong) row[4], (int) row[8], (int) row[9], members, requests,
                     admins, Convert.ToUInt16(row[7]), Convert.ToUInt16(row[10]), row["has_forum"].ToString() == "1",
                     row["forum_name"].ToString(), row["forum_description"].ToString(),
                     uint.Parse(row["forum_messages_count"].ToString()), double.Parse(row["forum_score"].ToString()),
@@ -265,7 +265,7 @@ namespace Oblivion.HabboHotel.Groups
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <returns>HashSet&lt;GroupUser&gt;.</returns>
-        internal HashSet<GroupMember> GetUserGroups(uint userId)
+        internal HashSet<GroupMember> GetUserGroups(ulong userId)
         {
             var list = new HashSet<GroupMember>();
 
@@ -288,8 +288,9 @@ namespace Oblivion.HabboHotel.Groups
 
         internal void AddGroupMemberIntoResponse(ServerMessage response, GroupMember member)
         {
+            var virtualId = Oblivion.GetGame().GetClientManager().GetVirtualId(member.Id);
             response.AppendInteger(member.Rank == 2 ? 0 : member.Rank == 1 ? 1 : 2);
-            response.AppendInteger(member.Id);
+            response.AppendInteger(virtualId);
             response.AppendString(member.Name);
             response.AppendString(member.Look);
             response.AppendString(Oblivion.GetGroupDateJoinString(member.DateJoin));
@@ -385,7 +386,9 @@ namespace Oblivion.HabboHotel.Groups
 
                             if (current != null)
                             {
-                                response.AppendInteger(current.Id);
+                                var virtualId  = Oblivion.GetGame().GetClientManager().GetVirtualId(current.Id);
+
+                                response.AppendInteger(virtualId);
                                 response.AppendString(current.Name);
                                 response.AppendString(current.Look);
                             }
@@ -492,7 +495,7 @@ namespace Oblivion.HabboHotel.Groups
             response.AppendString($"{dateTime2.Day:00}-{dateTime2.Month:00}-{dateTime2.Year}");
             response.AppendBool(group.CreatorId == session.GetHabbo().Id);
             response.AppendBool(group.Admins.ContainsKey(session.GetHabbo().Id));
-            var habbo = Oblivion.GetHabboById(group.CreatorId);
+            var habbo = Oblivion.GetHabboById(Oblivion.GetGame().GetClientManager().GetVirtualId(group.CreatorId));
             response.AppendString((habbo == null)
                 ? string.Empty
                 : habbo.UserName);
@@ -542,9 +545,9 @@ namespace Oblivion.HabboHotel.Groups
             response.AppendString($"{dateTime2.Day:00}-{dateTime2.Month:00}-{dateTime2.Year}");
             response.AppendBool(group.CreatorId == session.GetHabbo().Id);
             response.AppendBool(group.Admins.ContainsKey(session.GetHabbo().Id));
-            response.AppendString((Oblivion.GetHabboById(group.CreatorId) == null)
+            response.AppendString((Oblivion.GetHabboById(Oblivion.GetGame().GetClientManager().GetVirtualId(group.CreatorId)) == null)
                 ? string.Empty
-                : Oblivion.GetHabboById(group.CreatorId).UserName);
+                : Oblivion.GetHabboById(Oblivion.GetGame().GetClientManager().GetVirtualId(group.CreatorId)).UserName);
             response.AppendBool(newWindow);
             response.AppendBool(group.AdminOnlyDeco == 0u);
             response.AppendInteger(group.Requests.Count);

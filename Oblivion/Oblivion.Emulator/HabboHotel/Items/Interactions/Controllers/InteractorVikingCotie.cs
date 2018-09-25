@@ -11,7 +11,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
         public override void OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
-            var user = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
+            var user = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.VirtualId);
 
             if (user == null)
                 return;

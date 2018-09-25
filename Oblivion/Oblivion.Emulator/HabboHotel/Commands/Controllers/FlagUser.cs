@@ -26,7 +26,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var habbo = user.GetHabbo();
             var response = new ServerMessage();
             response.Init(LibraryParser.OutgoingRequest("UserObjectMessageComposer"));
-            response.AppendInteger(habbo.Id);
+            response.AppendInteger(Oblivion.GetGame().GetClientManager().GetVirtualId(habbo.Id));
             response.AppendString(habbo.UserName);
             response.AppendString(habbo.Look);
             response.AppendString(habbo.Gender.ToUpper());

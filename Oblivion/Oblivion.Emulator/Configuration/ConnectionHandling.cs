@@ -36,7 +36,6 @@ namespace Oblivion.Configuration
             {
                 if (session?.Parser == null) return;
 
-                session.ServerRc4?.Parse(ref body);
 
                 using (var clientMessage = new ClientMessage(body))
                 {
@@ -51,8 +50,7 @@ namespace Oblivion.Configuration
                         SocketOptionName.NoDelay, !enabeNagles);
 
                 session.Parser = new GamePacketParser();
-                session.ConnId = ++Manager.AcceptedConnections;
-                Oblivion.GetGame().GetClientManager().CreateAndStartClient(session.ConnId, session);
+                Oblivion.GetGame().GetClientManager().CreateAndStartClient(session);
             };
 
 
@@ -88,7 +86,8 @@ namespace Oblivion.Configuration
         {
             try
             {
-                Oblivion.GetGame().GetClientManager().DisposeConnection((uint) connection.ConnId);
+                if (connection.Disposed()) return;
+                Oblivion.GetGame().GetClientManager().DisposeConnection(connection.UserData.VirtualId);
             }
             catch (Exception ex)
             {

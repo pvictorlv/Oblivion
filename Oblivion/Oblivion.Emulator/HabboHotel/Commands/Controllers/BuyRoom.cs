@@ -71,7 +71,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     Oblivion.GetGame().GetGroupManager().DeleteGroup(currentRoom.RoomData.Group.Id);
                 }
                 //Change Room Owners
-                currentRoom.RoomData.OwnerId = (int)user.Id;
+                currentRoom.RoomData.OwnerId = user.Id;
                 currentRoom.RoomData.Owner = user.UserName;
 
                 //Change Item Owners

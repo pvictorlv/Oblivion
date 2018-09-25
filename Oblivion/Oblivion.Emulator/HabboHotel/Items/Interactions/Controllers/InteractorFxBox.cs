@@ -16,7 +16,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             if (!hasRights)
                 return;
 
-            RoomUser user = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
+            RoomUser user = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.VirtualId);
 
             if (user == null)
                 return;

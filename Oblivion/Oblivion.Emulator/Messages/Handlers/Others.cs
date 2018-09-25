@@ -217,7 +217,7 @@ namespace Oblivion.Messages.Handlers
                 return;
             var habbo = Session.GetHabbo();
             Response.Init(LibraryParser.OutgoingRequest("UserObjectMessageComposer"));
-            Response.AppendInteger(habbo.Id);
+            Response.AppendInteger(Session.VirtualId);
             Response.AppendString(habbo.UserName);
             Response.AppendString(habbo.Look);
             Response.AppendString(habbo.Gender.ToUpper());
@@ -342,7 +342,7 @@ namespace Oblivion.Messages.Handlers
             {
                 dbClient.SetQuery("UPDATE `user_stats` SET `calendar_gifts` = @giftData WHERE `id` = @habboId LIMIT 1");
                 dbClient.AddParameter("giftData", string.Join(",", data.OpenedGifts));
-                dbClient.AddParameter("habboId", Session.GetHabbo().Id);
+                dbClient.AddParameter("habboId", Session.VirtualId);
                 dbClient.RunQuery();
             }
 
@@ -370,7 +370,7 @@ namespace Oblivion.Messages.Handlers
 
             var Room = Session.GetHabbo().CurrentRoom;
 
-            var User = Room?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
+            var User = Room?.GetRoomUserManager().GetRoomUserByHabbo(Session.VirtualId);
 
             if (User?.LastPhotoPreview == null)
                 return;
@@ -402,7 +402,7 @@ namespace Oblivion.Messages.Handlers
                                .GetCameraManager()
                                .GetPath(CameraPhotoType.PURCHASED, preview.Id, preview.CreatorId)) + "\", \"n\":\"" +
                        Oblivion.EscapeJSONString(Session.GetHabbo().UserName) + "\", \"s\":\"" +
-                       Session.GetHabbo().Id + "\", \"u\":\"" + preview.Id + "\", \"t\":\"" + preview.CreatedAt + "\"}";
+                       Session.VirtualId + "\", \"u\":\"" + preview.Id + "\", \"t\":\"" + preview.CreatedAt + "\"}";
 
             var item = Session.GetHabbo()
                 .GetInventoryComponent()
@@ -551,7 +551,7 @@ namespace Oblivion.Messages.Handlers
 
                 var Room = Session.GetHabbo().CurrentRoom;
 
-                var User = Room?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
+                var User = Room?.GetRoomUserManager().GetRoomUserByHabbo(Session.VirtualId);
 
                 if (User?.LastPhotoPreview == null)
                     return;
@@ -572,7 +572,7 @@ namespace Oblivion.Messages.Handlers
                                    .GetPath(CameraPhotoType.PURCHASED, preview.Id, preview.CreatorId)) +
                            "\", \"n\":\"" +
                            Oblivion.EscapeJSONString(Session.GetHabbo().UserName) + "\", \"s\":\"" +
-                           Session.GetHabbo().Id + "\", \"u\":\"" + preview.Id + "\", \"t\":\"" + preview.CreatedAt +
+                           Session.VirtualId + "\", \"u\":\"" + preview.Id + "\", \"t\":\"" + preview.CreatedAt +
                            "\"}";
 
                 var item = Session.GetHabbo()

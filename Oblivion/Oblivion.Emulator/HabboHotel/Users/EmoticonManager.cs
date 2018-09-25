@@ -4,10 +4,10 @@ namespace Oblivion.HabboHotel.Users
 {
     internal enum ChatEmotion
     {
-        Smile,
-        Angry,
-        Sad,
-        Shocked,
+        Smile = 1,
+        Angry = 2,
+        Sad =4,
+        Shocked = 3,
         None
     }
 
@@ -72,37 +72,12 @@ namespace Oblivion.HabboHotel.Users
             {
                 if (text.Contains(kvp.Key))
                 {
-                    return GetEmoticonPacketNum(kvp.Value);
+                    return (int) kvp.Value;
                 }
             }
 
             return 0;
         }
 
-        /// <summary>
-        ///     Trys to get the packet number for the provided chat emotion.
-        /// </summary>
-        /// <param name="e">Chat Emotion</param>
-        /// <returns></returns>
-        private static int GetEmoticonPacketNum(ChatEmotion e)
-        {
-            switch (e)
-            {
-                case ChatEmotion.Smile:
-                    return 1;
-
-                case ChatEmotion.Angry:
-                    return 2;
-
-                case ChatEmotion.Shocked:
-                    return 3;
-
-                case ChatEmotion.Sad:
-                    return 4;
-
-                default:
-                    return 0;
-            }
-        }
     }
 }

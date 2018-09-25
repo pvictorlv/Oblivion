@@ -17,7 +17,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             if (session == null)
                 return;
 
-            var roomUserByHabbo = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
+            var roomUserByHabbo = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.VirtualId);
 
             if (roomUserByHabbo == null)
                 return;

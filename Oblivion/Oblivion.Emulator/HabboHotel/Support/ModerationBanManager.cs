@@ -244,7 +244,7 @@ namespace Oblivion.HabboHotel.Support
 
             using (var queryreactor5 = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryreactor5.RunFastQuery(
-                    $"UPDATE users_info SET bans = bans + 1 WHERE user_id = {client.GetHabbo().Id}");
+                    $"UPDATE users_info SET bans = bans + 1 WHERE user_id = {client.VirtualId}");
 
             client.Disconnect("banned");
         }
