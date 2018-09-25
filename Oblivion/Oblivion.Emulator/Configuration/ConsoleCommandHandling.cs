@@ -6,6 +6,7 @@ using System.Runtime;
 using System.Threading;
 using System.Threading.Tasks;
 using Oblivion.Connection.Connection;
+using Oblivion.Encryption.Encryption;
 using Oblivion.HabboHotel;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
@@ -152,6 +153,12 @@ namespace Oblivion.Configuration
                         Logging.DisabledState = !Logging.DisabledState;
                         break;
                     }
+                    case "crypto":
+                        {
+                            Handler.Initialize(CryptoKeys.N, CryptoKeys.D, CryptoKeys.E);
+                            Out.WriteLine("Crypto keys has been reseted.", "Oblivion.Crypto");
+                            break;
+                        }
                     case "lag":
                         if (Oblivion.DebugMode)
                         {

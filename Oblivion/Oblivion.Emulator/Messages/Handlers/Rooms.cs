@@ -77,7 +77,7 @@ namespace Oblivion.Messages.Handlers
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.RunFastQuery("INSERT INTO users_favorites (user_id,room_id) VALUES (" +
-                                          Session.VirtualId + "," + roomId + ")");
+                                          Session.GetHabbo().Id + "," + roomId + ")");
             }
         }
 

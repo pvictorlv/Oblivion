@@ -6,15 +6,19 @@ namespace Oblivion.Connection.SuperSocket
 
     #region Delegates
 
-    public delegate void ConnectionClosed<T>(Session<T> session);
+    public delegate void ConnectionClosed<T>(Session<T> session)
+        where T: IAirHandler;
 
-    public delegate void ConnectionOpened<T>(Session<T> session);
+    public delegate void ConnectionOpened<T>(Session<T> session)
+        where T : IAirHandler;
 
-    public delegate void MessageReceived<T>(Session<T> session, byte[] body, int bytes);
+    public delegate void MessageReceived<T>(Session<T> session, byte[] body, int bytes)
+        where T : IAirHandler;
 
     #endregion Delegates
 
     public interface IServer<T>
+        where T : IAirHandler
     {
         #region Events
 

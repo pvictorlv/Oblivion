@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Misc;
+﻿using Oblivion.HabboHotel.GameClients.Interfaces;
+using Oblivion.HabboHotel.Misc;
 using SuperSocket.SocketBase;
 using SuperSocket.SocketBase.Config;
 using SuperSocket.SocketBase.Logging;
@@ -7,6 +8,7 @@ using SuperSocket.SocketBase.Protocol;
 namespace Oblivion.Connection.SuperSocket
 {
     public class SuperServer<T> : AppServer<Session<T>, RequestInfo>, IServer<T>
+        where T : IAirHandler
     {
         #region Events
 

@@ -3,6 +3,7 @@ using System.Linq;
 using Oblivion.Configuration;
 using Oblivion.Connection.Net;
 using Oblivion.Connection.SuperSocket;
+using Oblivion.Encryption.Encryption.Hurlant.Crypto.Prng;
 using Oblivion.HabboHotel.Users;
 using Oblivion.HabboHotel.Users.UserDataManagement;
 using Oblivion.Messages;
@@ -15,7 +16,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
     /// <summary>
     ///     Class GameClient.
     /// </summary>
-    public class GameClient
+    public class GameClient : IAirHandler
     {
         /// <summary>
         ///     The _connection
@@ -71,6 +72,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             PacketParser = new GamePacketParser();
         }
 
+<<<<<<< HEAD
         public bool IsAir
         {
             get => _connection != null && _connection.IsAir;
@@ -79,6 +81,18 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 if (_connection != null) _connection.IsAir = value;
             }
         }
+=======
+        /// <summary>
+        ///     Gets the connection identifier.
+        /// </summary>
+        /// <value>The connection identifier.</value>
+        internal uint ConnectionId { get; }
+
+        public bool IsAir { get; set; }
+
+        public ARC4 ServerRc4
+        { get; set; }
+>>>>>>> 47db4a603639e16a6d36c2137d3e883e0a86ba80
 
         /// <summary>
         ///     Gets the connection.
@@ -160,6 +174,9 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
                 _habbo = userData.User;
                 _habbo.LoadData(userData);
+
+                if (MachineId == null)
+                    MachineId = "";
 
                 if (string.IsNullOrEmpty(_habbo.UserName) ||
                     Oblivion.GetGame().GetBanManager().CheckBan(_habbo.UserName, ip, MachineId))
