@@ -72,7 +72,6 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             PacketParser = new GamePacketParser();
         }
 
-<<<<<<< HEAD
         public bool IsAir
         {
             get => _connection != null && _connection.IsAir;
@@ -81,18 +80,9 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 if (_connection != null) _connection.IsAir = value;
             }
         }
-=======
-        /// <summary>
-        ///     Gets the connection identifier.
-        /// </summary>
-        /// <value>The connection identifier.</value>
-        internal uint ConnectionId { get; }
-
-        public bool IsAir { get; set; }
 
         public ARC4 ServerRc4
         { get; set; }
->>>>>>> 47db4a603639e16a6d36c2137d3e883e0a86ba80
 
         /// <summary>
         ///     Gets the connection.

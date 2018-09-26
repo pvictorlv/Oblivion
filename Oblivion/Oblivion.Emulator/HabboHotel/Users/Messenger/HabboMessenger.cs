@@ -70,7 +70,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             foreach (DataRow row in friendsTable.Rows)
             {
-                var num4 = Convert.ToUInt32(row["id"]);
+                var num4 = Convert.ToUInt64(row["id"]);
                 var pUsername = (string) row["username"];
                 var pLook = (string) row["look"];
                 var pMotto = (string) row["motto"];
@@ -85,8 +85,8 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             foreach (DataRow row in friendsRequestsTable.Rows)
             {
-                var num5 = Convert.ToUInt32(row["from_id"]);
-                var num6 = Convert.ToUInt32(row["to_id"]);
+                var num5 = Convert.ToUInt64(row["from_id"]);
+                var num6 = Convert.ToUInt64(row["to_id"]);
                 var pUsername2 = row["username"].ToString();
                 var pLook = row["look"].ToString();
 
@@ -113,7 +113,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="senderId">The sender identifier.</param>
         /// <returns>MessengerRequest.</returns>
-        internal MessengerRequest GetRequest(uint senderId) =>
+        internal MessengerRequest GetRequest(ulong senderId) =>
             Requests.TryGetValue(senderId, out var sender) ? sender : null;
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         ///     Handles the request.
         /// </summary>
         /// <param name="sender">The sender.</param>
-        internal void HandleRequest(uint sender)
+        internal void HandleRequest(ulong sender)
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.RunFastQuery(string.Concat("DELETE FROM messenger_requests WHERE (from_id = ", _userId,
@@ -232,7 +232,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         ///     Destroys the friendship.
         /// </summary>
         /// <param name="friendId">The friend identifier.</param>
-        internal void DestroyFriendship(uint friendId)
+        internal void DestroyFriendship(ulong friendId)
         {
             var habbo = GetClient().GetHabbo();
 

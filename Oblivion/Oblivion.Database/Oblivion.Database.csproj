@@ -122,7 +122,6 @@
     <Compile Include="Manager\Database\MySqlClient.cs" />
     <Compile Include="Manager\Database\Session_Details\Interfaces\IDatabaseClient.cs" />
     <Compile Include="Manager\Database\Session_Details\Interfaces\IQueryAdapter.cs" />
-    <Compile Include="Manager\Database\Session_Details\NormalQueryReactor.cs" />
     <Compile Include="Manager\Database\Session_Details\QueryAdapter.cs" />
     <Compile Include="Manager\Database\Session_Details\TransactionQueryReactor.cs" />
     <Compile Include="Manager\Managers\Database\DatabaseServer.cs" />

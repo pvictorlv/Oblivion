@@ -13,12 +13,9 @@ namespace Oblivion.Connection.SuperSocket
         where TSession: IAirHandler
     {
         #region Properties
-<<<<<<< HEAD
 
         public bool IsAir;
-=======
         public uint ConnId { get; set; }
->>>>>>> 47db4a603639e16a6d36c2137d3e883e0a86ba80
         
         public IDataParser Parser { get; set; }
 
@@ -123,13 +120,9 @@ namespace Oblivion.Connection.SuperSocket
             }
 
         }
-<<<<<<< HEAD
 
         public uint VirtualId;
-        public T UserData { get; set; }
-=======
->>>>>>> 47db4a603639e16a6d36c2137d3e883e0a86ba80
-
+        
         protected override void HandleException(Exception e)
         {
 //            Logging.HandleException(e, "Connection - Session.cs");

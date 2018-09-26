@@ -61,11 +61,7 @@ namespace Oblivion.Database.Manager.Database
         {
             return _info == null;
         }
-
-        public void Prepare()
-        {
-            _info = new NormalQueryReactor(this);
-        }
+        
 
         public void ReportDone()
         {

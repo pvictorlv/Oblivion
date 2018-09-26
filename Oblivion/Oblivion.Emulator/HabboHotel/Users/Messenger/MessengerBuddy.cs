@@ -115,7 +115,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             if (session?.GetHabbo()?.Data?.Relations == null) return;
 
             var value =
-                session.GetHabbo().Data.Relations.FirstOrDefault(x => x.Value.UserId == Convert.ToUInt64(Id)).Value;
+                session.GetHabbo().Data.Relations.FirstOrDefault(x => x.Value.UserId == Id).Value;
 
             var i = value?.Type ?? 0;
 

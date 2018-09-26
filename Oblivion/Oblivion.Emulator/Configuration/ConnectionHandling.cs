@@ -35,17 +35,12 @@ namespace Oblivion.Configuration
             Manager.OnMessageReceived += (session, body, bytes) =>
             {
                 if (session?.Parser == null) return;
-<<<<<<< HEAD
 
-
-=======
-                
->>>>>>> 47db4a603639e16a6d36c2137d3e883e0a86ba80
                 using (var clientMessage = new ClientMessage(body))
                 {
                     if (session.UserData.IsAir && !AirPacketTranslator.ReplaceIncomingHeader(clientMessage))
                         return;
-
+                    
                     session.Parser.SuperHandle(clientMessage, session);
                 }
             };
