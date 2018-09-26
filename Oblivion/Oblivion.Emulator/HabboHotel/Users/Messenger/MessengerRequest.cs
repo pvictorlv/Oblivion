@@ -10,12 +10,12 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <summary>
         ///     The _user look
         /// </summary>
-        private readonly string _look;
+        private string _look;
 
         /// <summary>
         ///     The _user name
         /// </summary>
-        private readonly string _userName;
+        private string _userName;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="MessengerRequest" /> class.
@@ -55,6 +55,12 @@ namespace Oblivion.HabboHotel.Users.Messenger
             request.AppendInteger(virtualId);
             request.AppendString(_userName);
             request.AppendString(_look);
+        }
+
+        public void Dispose()
+        {
+            _look = null;
+            _userName = null;
         }
     }
 }

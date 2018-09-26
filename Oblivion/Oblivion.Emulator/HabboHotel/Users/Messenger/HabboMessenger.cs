@@ -123,8 +123,16 @@ namespace Oblivion.HabboHotel.Users.Messenger
         {
             foreach (var current in Friends.Values.ToList())
             {
-                var user = current?.Client;
+                if (current == null) continue;
+
+                var user = current.Client;
                 user?.GetHabbo()?.GetMessenger()?.UpdateFriend(_userId, null, true);
+                current.Dispose();
+            }
+
+            foreach (var current in Requests.Values)
+            {
+                current?.Dispose();
             }
 
             Friends?.Clear();
@@ -305,8 +313,8 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 messengerBuddy.UpdateUser();
             }
 
-            if (!Friends.ContainsKey(friendId))
-                Friends.Add(friendId, messengerBuddy);
+
+            Friends.Add(friendId, messengerBuddy);
 
             GetClient().SendMessage(SerializeUpdate(messengerBuddy));
         }
@@ -579,7 +587,6 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
                 using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-
                     OfflineMessage.SaveMessage(dbClient, toId,
                         GetClient().GetHabbo().Id, message);
                 }
@@ -692,42 +699,45 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             var client = GetClient();
             if (client?.GetHabbo() == null) return null;
-            var groups = new List<Guild>();
+
+            serverMessage.StartArray();
+
+//            serverMessage.AppendInteger(Friends.Count + groups.Count);
+
+            foreach (var current in Friends.Values)
+            {
+                current.UpdateUser();
+                current.Serialize(serverMessage, client);
+                serverMessage.SaveArray();
+            }
+
             foreach (var gp in Oblivion.GetGame().GetGroupManager().Groups.Values.ToList())
             {
                 if (gp?.Members == null) continue;
                 if (gp.HasChat && gp.Members.TryGetValue(client.GetHabbo().Id, out var memb))
                 {
                     if (memb != null && memb.HasChat)
-                        groups.Add(gp);
+                    {
+                        serverMessage.AppendInteger(-Convert.ToInt32(gp.Id));
+                        serverMessage.AppendString(gp.Name);
+                        serverMessage.AppendInteger(0);
+                        serverMessage.AppendBool(gp.HasChat);
+                        serverMessage.AppendBool(false);
+                        serverMessage.AppendString(gp.Badge);
+                        serverMessage.AppendInteger(1);
+                        serverMessage.AppendString(gp.Description);
+                        serverMessage.AppendString("");
+                        serverMessage.AppendString("");
+                        serverMessage.AppendBool(false);
+                        serverMessage.AppendBool(false);
+                        serverMessage.AppendBool(false);
+                        serverMessage.AppendShort(0);
+                        serverMessage.SaveArray();
+                    }
                 }
             }
 
-            serverMessage.AppendInteger(Friends.Count + groups.Count);
-
-            foreach (var current in Friends.Values)
-            {
-                current.UpdateUser();
-                current.Serialize(serverMessage, client);
-            }
-
-            foreach (var group in groups)
-            {
-                serverMessage.AppendInteger(-Convert.ToInt32(group.Id));
-                serverMessage.AppendString(group.Name);
-                serverMessage.AppendInteger(0);
-                serverMessage.AppendBool(group.HasChat);
-                serverMessage.AppendBool(false);
-                serverMessage.AppendString(group.Badge);
-                serverMessage.AppendInteger(1);
-                serverMessage.AppendString(group.Description);
-                serverMessage.AppendString("");
-                serverMessage.AppendString("");
-                serverMessage.AppendBool(false);
-                serverMessage.AppendBool(false);
-                serverMessage.AppendBool(false);
-                serverMessage.AppendShort(0);
-            }
+            serverMessage.EndArray();
 
             return serverMessage;
         }

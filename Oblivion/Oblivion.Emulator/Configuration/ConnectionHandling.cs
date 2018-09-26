@@ -40,7 +40,7 @@ namespace Oblivion.Configuration
                 {
                     if (session.UserData.IsAir && !AirPacketTranslator.ReplaceIncomingHeader(clientMessage))
                         return;
-                    
+
                     session.Parser.SuperHandle(clientMessage, session);
                 }
             };
@@ -88,7 +88,7 @@ namespace Oblivion.Configuration
         {
             try
             {
-                if (connection.Disposed()) return;
+                if (connection?.UserData == null) return;
                 Oblivion.GetGame().GetClientManager().DisposeConnection(connection.UserData.VirtualId);
             }
             catch (Exception ex)

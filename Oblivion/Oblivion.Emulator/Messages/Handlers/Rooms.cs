@@ -956,6 +956,7 @@ namespace Oblivion.Messages.Handlers
                 Response.AppendString(habboForId.Look);
                 Response.SaveArray();
             }
+
             Response.EndArray();
             SendResponse();
         }
@@ -1038,7 +1039,7 @@ namespace Oblivion.Messages.Handlers
             {
                 if (i > 0)
                     stringBuilder.Append(" OR ");
-                
+
                 var userId = Request.GetUInteger();
 
                 var realId = Oblivion.GetGame().GetClientManager().GetRealId(userId);
@@ -1235,7 +1236,8 @@ namespace Oblivion.Messages.Handlers
             msg.AppendBool(habbo.Id != Session.VirtualId &&
                            !Session.GetHabbo().GetMessenger().FriendshipExists(habbo.GetClient().VirtualId) &&
                            Session.GetHabbo().GetMessenger().RequestExists(habbo.GetClient().VirtualId));
-            msg.AppendBool(Oblivion.GetGame().GetClientManager().GetClientByUserId(habbo.GetClient().VirtualId) != null);
+            msg.AppendBool(Oblivion.GetGame().GetClientManager().GetClientByUserId(habbo.GetClient().VirtualId) !=
+                           null);
             var groups = habbo.UserGroups;
             msg.AppendInteger(groups.Count);
             /* TODO CHECK */
@@ -1871,12 +1873,13 @@ namespace Oblivion.Messages.Handlers
 
                 room.ResetGameMap("custom", wallHeight, wallThickness, floorThickness);
                 Oblivion.GetGame().GetRoomManager().UnloadRoom(room, "Reload floor");
-                using (var forwardToRoom =
-                    new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer")))
+                foreach (var roomUser in room.GetRoomUserManager().GetRoomUsers())
                 {
-                    forwardToRoom.AppendInteger(room.RoomId);
-                    foreach (var roomUser in room.GetRoomUserManager().GetRoomUsers())
+                    using (var forwardToRoom =
+                        new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer")))
                     {
+                        forwardToRoom.AppendInteger(room.RoomId);
+
                         roomUser?.GetClient()?.SendMessage(forwardToRoom);
                     }
                 }

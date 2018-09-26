@@ -11,7 +11,6 @@ namespace Oblivion.HabboHotel.Users.Messenger
     /// </summary>
     internal class MessengerBuddy
     {
-        //private readonly int _lastOnline;
         /// <summary>
         ///     The _appear offline
         /// </summary>
@@ -41,6 +40,16 @@ namespace Oblivion.HabboHotel.Users.Messenger
         ///     The user name
         /// </summary>
         internal string UserName;
+
+
+        public void Dispose()
+        {
+            Client = null;
+            CurrentRoom = null;
+            UserName = null;
+            _motto = null;
+            _look = null;
+        }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="MessengerBuddy" /> class.
@@ -125,7 +134,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 virtualId = Oblivion.GetGame().GetClientManager().GetVirtualId(Id);
             }
 
-            message.AppendInteger(Id != 0 ? virtualId : 0);
+            message.AppendInteger(virtualId);
             message.AppendString(UserName);
             message.AppendInteger(1);
 

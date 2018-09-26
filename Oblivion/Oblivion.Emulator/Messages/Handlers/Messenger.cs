@@ -65,15 +65,16 @@ namespace Oblivion.Messages.Handlers
             var num = Request.GetInteger();
             for (var i = 0; i < num; i++)
             {
-                var num2 = Request.GetUInteger();
-                var request = Session.GetHabbo().GetMessenger().GetRequest(num2);
+                var userId = Request.GetUInteger();
+                var realId = Oblivion.GetGame().GetClientManager().GetRealId(userId);
+                var request = Session.GetHabbo().GetMessenger().GetRequest(realId);
                 if (request == null) continue;
                 if (request.To != Session.GetHabbo().Id) return;
 
 
                 if (!Session.GetHabbo().GetMessenger().FriendshipExists(request.To))
                     Session.GetHabbo().GetMessenger().CreateFriendship(request.From);
-                Session.GetHabbo().GetMessenger().HandleRequest(num2);
+                Session.GetHabbo().GetMessenger().HandleRequest(realId);
             }
         }
 
