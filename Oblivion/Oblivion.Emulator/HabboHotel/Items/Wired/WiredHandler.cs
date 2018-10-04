@@ -22,6 +22,7 @@ namespace Oblivion.HabboHotel.Items.Wired
     public class WiredHandler
     {
         private Room _room;
+
         //todo recode
         private ConcurrentDictionary<string, IWiredItem> _wiredItems;
 
@@ -55,10 +56,12 @@ namespace Oblivion.HabboHotel.Items.Wired
             {
                 _executedEffects = new List<IWiredItem>();
             }
+
             if (_executedEffects.Count >= EffectList.Count)
             {
                 _executedEffects.Clear();
             }
+
             foreach (var effect in EffectList.OrderBy(x => Guid.NewGuid()))
             {
                 if (!_executedEffects.Contains(effect))
@@ -67,6 +70,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     return effect;
                 }
             }
+
             return null;
         }
 
@@ -121,7 +125,13 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         public bool OtherBoxHasItem(IWiredItem Box, RoomItem boxItem)
         {
-            return GetEffects(Box).Where(item => item.Item.Id != Box.Item.Id && (item.Type == Interaction.ActionMoveRotate || item.Type == Interaction.ActionMoveToDir || item.Type == Interaction.ActionChase || item.Type == Interaction.ActionInverseChase)).Where(item => item.Items != null && item.Items.Count > 0).Any(item => item.Items.Contains(boxItem));
+            return GetEffects(Box)
+                .Where(item =>
+                    item.Item.Id != Box.Item.Id && (item.Type == Interaction.ActionMoveRotate ||
+                                                    item.Type == Interaction.ActionMoveToDir ||
+                                                    item.Type == Interaction.ActionChase ||
+                                                    item.Type == Interaction.ActionInverseChase))
+                .Where(item => item.Items != null && item.Items.Count > 0).Any(item => item.Items.Contains(boxItem));
         }
 
         public static void SaveWired(IWiredItem fItem)
@@ -200,6 +210,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                         b = true;
                     }
                 }
+
                 return b;
             }
             catch (Exception e)
@@ -310,6 +321,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     Specials.TryAdd(point, items);
                 }
             }
+
             _wiredItems.TryAdd(item.Item.Id, item);
         }
 
@@ -329,7 +341,6 @@ namespace Oblivion.HabboHotel.Items.Wired
                     {
                         Effects.TryRemove(point, out _);
                     }
-
                 }
             }
             else if (IsCondition(item.Type))
@@ -354,6 +365,9 @@ namespace Oblivion.HabboHotel.Items.Wired
                     }
                 }
             }
+
+            _executedEffects.Remove(item);
+
             _wiredItems.TryRemove(item.Item.Id, out _);
         }
 
@@ -378,6 +392,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                         AddWired(wired);
                         return null;
                     }
+
                     items.Remove(current);
                     if (items.Count <= 0)
                     {
@@ -396,6 +411,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                         AddWired(wired);
                         return null;
                     }
+
                     items.Remove(current);
                     if (items.Count <= 0)
                     {
@@ -415,6 +431,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                         AddWired(wired);
                         return null;
                     }
+
                     items.Remove(current);
                     if (items.Count <= 0)
                     {
@@ -422,8 +439,11 @@ namespace Oblivion.HabboHotel.Items.Wired
                     }
                 }
             }
+
+
             _wiredItems.TryRemove(item.Id, out current);
 
+            _executedEffects.Remove(current);
 
             return current;
         }
@@ -704,8 +724,8 @@ namespace Oblivion.HabboHotel.Items.Wired
                 if (users.Count <= 0) continue;
                 foreach (RoomUser User in users)
                 {
-                    if (Gamemap.TileDistance(point.X,point.Y,User.X,User.Y) <= 1)
-                    ExecuteWired(Interaction.TriggerCollision, User, Item);
+                    if (Gamemap.TileDistance(point.X, point.Y, User.X, User.Y) <= 1)
+                        ExecuteWired(Interaction.TriggerCollision, User, Item);
                 }
             }
 
@@ -761,6 +781,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 current.Room = null;
                 current.Dispose();
             }
+
             _wiredItems.Clear();
             Effects.Clear();
             Conditions.Clear();

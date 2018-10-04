@@ -29,12 +29,18 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 session.SendNotif(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
-
-            client.GetHabbo().Emeralds++;
-            client.GetHabbo().Diamonds += 100;
-            client.SendWhisper("Você recebeu 100 diamantes!");
+            
+            client.GetHabbo().Credits += 15;
+            client.SendWhisper("Você recebeu 15 moedas!");
             client.GetHabbo().UpdateCreditsBalance();
-            client.GetHabbo().UpdateSeasonalCurrencyBalance(true);
+
+
+            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                dbClient.SetQuery("UPDATE usets SET epoints = epoints + 1 WHERE id = @id");
+                dbClient.AddParameter("id", client.GetHabbo().Id);
+                dbClient.RunQuery();
+            }
 
             Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(client, Oblivion.GetDbConfig().DbData["badge.code"], 1, true);
             

@@ -274,7 +274,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             user.X = item.X;
             user.Y = item.Y;
             user.Z = item.Z;
-            
             user.SqState = GameMap[item.X, item.Y];
             GameMap[user.X, user.Y] = 1;
             user.RotBody = item.Rot;

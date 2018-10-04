@@ -64,7 +64,7 @@ namespace Oblivion
         /// <summary>
         ///     The live currency type
         /// </summary>
-        internal static int ConsoleTimer = 2000;
+        internal static int LiveCurrencyType = 105, ConsoleTimer = 2000;
 
         /// <summary>
         ///     The is live
@@ -106,7 +106,7 @@ namespace Oblivion
         /// <summary>
         ///     The offline messages
         /// </summary>
-        internal static Dictionary<ulong, List<OfflineMessage>> OfflineMessages;
+        internal static Dictionary<uint, List<OfflineMessage>> OfflineMessages;
 
         /// <summary>
         ///     The timer
@@ -247,48 +247,6 @@ namespace Oblivion
             return null;
         }
 
-        internal static Habbo GetHabboById(ulong userId)
-        {
-            if (userId <= 0)
-            {
-                return null;
-            }
-
-            try
-            {
-                var clientByUserId = GetGame().GetClientManager().GetClientByUserId(userId);
-
-                if (clientByUserId != null)
-                {
-                    var habbo = clientByUserId.GetHabbo();
-
-                    return habbo;
-                }
-
-                var virtualId = GetGame().GetClientManager().GetVirtualId(userId);
-                if (virtualId <= 0) return null;
-                if (UsersCached.TryGetValue(virtualId, out var user))
-                    return user;
-
-                var userData = UserDataFactory.GetUserData((int) userId);
-
-
-                if (userData?.User == null)
-                    return null;
-
-                UsersCached.TryAdd(virtualId, userData.User);
-                userData.User.InitInformation(userData);
-
-                return userData.User;
-            }
-            catch (Exception e)
-            {
-                Writer.Writer.LogException("Habbo GetHabboForId: " + e);
-            }
-
-            return null;
-        }
-
         internal static WebSocketManager GetWebSocket() => _webSocket;
 
 
@@ -378,7 +336,7 @@ namespace Oblivion
                     ConfigData = new ConfigData(queryReactor);
                     PetCommandHandler.Init(queryReactor);
                     PetLocale.Init(queryReactor);
-                    OfflineMessages = new Dictionary<ulong, List<OfflineMessage>>();
+                    OfflineMessages = new Dictionary<uint, List<OfflineMessage>>();
                     OfflineMessage.InitOfflineMessages(queryReactor);
                 }
 
@@ -428,12 +386,13 @@ namespace Oblivion
                     "Starting up asynchronous sockets server for game connections for port " +
                     int.Parse(ConfigurationData.Data["game.tcp.port"]), "Server.AsyncSocketListener");
 
-                _connectionManager = new ConnectionHandling(int.Parse(ConfigurationData.Data["game.tcp.port"]),
-                    int.Parse(ConfigurationData.Data["game.tcp.conlimit"]),
-                    int.Parse(ConfigurationData.Data["game.tcp.conperip"]),
-                    ConfigurationData.Data["game.tcp.antiddos"].ToLower() == "true",
-                    ConfigurationData.Data["game.tcp.enablenagles"].ToLower() == "true");
+                                _connectionManager = new ConnectionHandling(int.Parse(ConfigurationData.Data["game.tcp.port"]),
+                                    int.Parse(ConfigurationData.Data["game.tcp.conlimit"]),
+                                    int.Parse(ConfigurationData.Data["game.tcp.conperip"]),
+                                    ConfigurationData.Data["game.tcp.antiddos"].ToLower() == "true",
+                                    ConfigurationData.Data["game.tcp.enablenagles"].ToLower() == "true");
 
+                
 
                 Console.WriteLine();
 
@@ -497,7 +456,7 @@ namespace Oblivion
                 }
             }
         }
-
+        
 
         public static string GetLocalIPAddress()
         {
@@ -587,6 +546,7 @@ namespace Oblivion
         /// <returns>System.Int64.</returns>
         internal static long Now() => (long) (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds;
 
+      
 
         /// <summary>
         ///     Filter's the Habbo Avatars Figure

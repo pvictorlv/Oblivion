@@ -47,7 +47,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             if (session == null)
                 return;
 
-            var user = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.VirtualId);
+            var user = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
 
             if (user == null)
                 return;
@@ -63,7 +63,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             if (item.InteractingUser == 0)
             {
-                item.InteractingUser = user.UserId;
+                item.InteractingUser = user.HabboId;
 
                 user.CanWalk = false;
 

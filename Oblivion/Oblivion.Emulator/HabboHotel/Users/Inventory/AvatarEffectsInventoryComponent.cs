@@ -17,7 +17,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <summary>
         ///     The _user identifier
         /// </summary>
-        private readonly ulong _userId;
+        private readonly uint _userId;
 
         /// <summary>
         ///     The _effects
@@ -40,7 +40,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <param name="client">The client.</param>
-        internal AvatarEffectsInventoryComponent(ulong userId, GameClient client)
+        internal AvatarEffectsInventoryComponent(uint userId, GameClient client)
         {
             _userId = userId;
             _session = client;
@@ -253,7 +253,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         {
             var userRoom = GetUserRoom();
 
-            var roomUserByHabbo = userRoom?.GetRoomUserManager().GetRoomUserByHabbo(GetClient().VirtualId);
+            var roomUserByHabbo = userRoom?.GetRoomUserManager().GetRoomUserByHabbo(GetClient().GetHabbo().Id);
 
             if (roomUserByHabbo == null)
                 return;

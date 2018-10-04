@@ -37,7 +37,7 @@ namespace Oblivion.HabboHotel.Support
         /// <summary>
         ///     The moderator identifier
         /// </summary>
-        internal ulong ModeratorId;
+        internal uint ModeratorId;
 
         /// <summary>
         ///     The reported chats
@@ -67,7 +67,7 @@ namespace Oblivion.HabboHotel.Support
         /// <summary>
         ///     The sender identifier
         /// </summary>
-        internal ulong SenderId;
+        internal uint SenderId;
 
         /// <summary>
         ///     The status
@@ -98,7 +98,7 @@ namespace Oblivion.HabboHotel.Support
         /// <param name="roomName">Name of the room.</param>
         /// <param name="timestamp">The timestamp.</param>
         /// <param name="reportedChats">The reported chats.</param>
-        internal SupportTicket(uint id, int score, int category, int type, ulong senderId, uint reportedId,
+        internal SupportTicket(uint id, int score, int category, int type, uint senderId, uint reportedId,
             string message, uint roomId, string roomName, double timestamp, List<string> reportedChats)
         {
             TicketId = id;
@@ -151,11 +151,11 @@ namespace Oblivion.HabboHotel.Support
         /// </summary>
         /// <param name="pModeratorId">The p moderator identifier.</param>
         /// <param name="updateInDb">if set to <c>true</c> [update in database].</param>
-        internal void Pick(ulong pModeratorId, bool updateInDb)
+        internal void Pick(uint pModeratorId, bool updateInDb)
         {
             Status = TicketStatus.Picked;
             ModeratorId = pModeratorId;
-            _modName = Oblivion.GetHabboById(Oblivion.GetGame().GetClientManager().GetVirtualId(pModeratorId)).UserName;
+            _modName = Oblivion.GetHabboById(pModeratorId).UserName;
 
             if (!updateInDb)
                 return;
@@ -255,11 +255,11 @@ namespace Oblivion.HabboHotel.Support
             message.AppendInteger((Oblivion.GetUnixTimeStamp() - (int) Timestamp)*1000);
             message.AppendInteger(Score);
             message.AppendInteger(1);
-            message.AppendInteger(Oblivion.GetGame().GetClientManager().GetVirtualId(SenderId));
+            message.AppendInteger(SenderId);
             message.AppendString(_senderName);
             message.AppendInteger(ReportedId);
             message.AppendString(_reportedName);
-            message.AppendInteger((Status == TicketStatus.Picked) ? Oblivion.GetGame().GetClientManager().GetVirtualId(ModeratorId) : 0);
+            message.AppendInteger((Status == TicketStatus.Picked) ? ModeratorId : 0);
             message.AppendString(_modName);
             message.AppendString(Message);
             message.AppendInteger(0);

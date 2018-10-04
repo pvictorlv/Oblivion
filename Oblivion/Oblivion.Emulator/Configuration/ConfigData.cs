@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Data;
-using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
+using Oblivion.Database.Manager.Session_Details.Interfaces;
 
 namespace Oblivion.Configuration
 {
@@ -18,7 +18,7 @@ namespace Oblivion.Configuration
         /// Initializes a new instance of the <see cref="ConfigData"/> class.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal ConfigData(IQueryAdapter dbClient)
+        internal ConfigData(IRegularQueryAdapter dbClient)
         {
             DbData = new Dictionary<string, string>();
 

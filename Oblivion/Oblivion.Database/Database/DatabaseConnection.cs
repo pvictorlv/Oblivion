@@ -17,7 +17,7 @@ namespace Oblivion.Database
         public DatabaseConnection(string connectionStr)
         {
             _mysqlConnection = new MySqlConnection(connectionStr);
-            _adapter = new QueryAdapter(this);
+            _adapter = new NormalQueryReactor(this);
         }
 
         public void Open()

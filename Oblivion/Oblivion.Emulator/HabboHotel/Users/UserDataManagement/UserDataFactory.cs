@@ -4,7 +4,9 @@ using System.Data;
 using System.Linq;
 using Oblivion.HabboHotel.Achievements.Interfaces;
 using Oblivion.HabboHotel.Groups.Interfaces;
+using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.HabboHotel.Users.Authenticator;
+using Oblivion.HabboHotel.Users.Messenger;
 using Oblivion.HabboHotel.Users.Relationships;
 using Oblivion.HabboHotel.Users.Subscriptions;
 
@@ -44,20 +46,20 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             DataTable myRoomsTable;
 
-            ulong userId;
+            uint userId;
             string userName;
             string look;
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery(
-                    $"SELECT id,username,look,rank,builders_expire,navilogs,disabled_alert,DutyLevel,OnDuty,builders_items_max,builders_items_used,motto,gender,last_online,credits,activity_points,is_muted,home_room,hide_online,hide_inroom,block_newfriends,vip,account_created,talent_status,diamonds,last_name_change,trade_lock,trade_lock_expire,{Oblivion.GetDbConfig().DbData["emerald.column"]},badStaff,prefixes FROM users WHERE auth_ticket = @ticket");
+                
+                queryReactor.SetQuery($"SELECT id,username,look,rank,builders_expire,navilogs,disabled_alert,DutyLevel,OnDuty,builders_items_max,builders_items_used,motto,gender,last_online,credits,activity_points,is_muted,home_room,hide_online,hide_inroom,block_newfriends,vip,account_created,talent_status,diamonds,last_name_change,trade_lock,trade_lock_expire,{Oblivion.GetDbConfig().DbData["emerald.column"]},badStaff,prefixes FROM users WHERE auth_ticket = @ticket");
                 queryReactor.AddParameter("ticket", sessionTicket);
                 dataRow = queryReactor.GetRow();
                 if (dataRow == null)
                     return null;
 
-                userId = Convert.ToUInt64(dataRow["id"]);
+                userId = Convert.ToUInt32(dataRow["id"]);
                 userName = dataRow["username"].ToString();
                 look = dataRow["look"].ToString();
 
@@ -95,6 +97,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 subscriptionsRow = queryReactor.GetRow();
 
 
+
                 queryReactor.SetQuery(
                     $"SELECT poll_id FROM users_polls WHERE user_id = {userId} GROUP BY poll_id;");
                 pollsTable = queryReactor.GetTable();
@@ -103,16 +106,18 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 queryReactor.SetQuery($"SELECT * FROM users_stats WHERE id = {userId}");
                 statsTable = queryReactor.GetRow();
 
+               
 
                 queryReactor.SetQuery("SELECT * FROM rooms_data WHERE owner = @name LIMIT 150");
                 queryReactor.AddParameter("name", userName);
                 myRoomsTable = queryReactor.GetTable();
 
+               
 
                 queryReactor.SetQuery(
                     $"SELECT quest_id, progress FROM users_quests_data WHERE user_id = {userId}");
                 questsTable = queryReactor.GetTable();
-
+                
 
                 queryReactor.SetQuery(
                     $"SELECT group_id, rank, date_join, has_chat FROM groups_members WHERE user_id = {userId}");
@@ -135,8 +140,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             var achievements = new Dictionary<string, UserAchievement>();
 
-            /* TODO CHECK */
-            foreach (DataRow row in achievementsTable.Rows)
+            /* TODO CHECK */ foreach (DataRow row in achievementsTable.Rows)
             {
                 var text = (string) row["group"];
                 var level = (int) row["level"];
@@ -147,8 +151,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             var talents = new Dictionary<int, UserTalent>();
 
-            /* TODO CHECK */
-            foreach (DataRow row in talentsTable.Rows)
+            /* TODO CHECK */ foreach (DataRow row in talentsTable.Rows)
             {
                 var num2 = (int) row["talent_id"];
                 var state = (int) row["talent_state"];
@@ -161,6 +164,8 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             var tags = (from DataRow row in tagsTable.Rows select row["tag"].ToString().Replace(" ", "")).ToList();
 
 
+          
+
             Subscription subscriptions = null;
 
             if (subscriptionsRow != null)
@@ -170,14 +175,13 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             var pollSuggested = new HashSet<uint>();
 
-            /* TODO CHECK */
-            foreach (var pId in from DataRow row in pollsTable.Rows select (uint) row["poll_id"])
+            /* TODO CHECK */ foreach (var pId in from DataRow row in pollsTable.Rows select (uint) row["poll_id"])
                 pollSuggested.Add(pId);
 
 
+
             var quests = new Dictionary<uint, int>();
-            /* TODO CHECK */
-            foreach (DataRow row in questsTable.Rows)
+            /* TODO CHECK */ foreach (DataRow row in questsTable.Rows)
             {
                 var key = Convert.ToUInt32(row["quest_id"]);
                 var value3 = (int) row["progress"];
@@ -188,23 +192,18 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 quests.Add(key, value3);
             }
 
-            var groups = (from DataRow row in groupsTable.Rows
-                select new GroupMember(userId, userName, look, (uint) row["group_id"], Convert.ToInt16(row["rank"]),
-                    (int) row["date_join"], Oblivion.EnumToBool(row["has_chat"].ToString()))).ToList();
+            var groups = (from DataRow row in groupsTable.Rows select new GroupMember(userId, userName, look, (uint) row["group_id"], Convert.ToInt16(row["rank"]), (int) row["date_join"], Oblivion.EnumToBool(row["has_chat"].ToString()))).ToList();
 
             /* TODO CHECK */
 
-            var relationShips = new Dictionary<int, Relationship>();
-            foreach (DataRow row in relationShipsTable.Rows)
-            {
-                relationShips.Add((int) row[0],
-                    new Relationship((int) row[0], (ulong) row[2], Convert.ToInt32(row[3].ToString())));
-            }
+            var relationShips = relationShipsTable.Rows.Cast<DataRow>()
+                .ToDictionary(row => (int) row[0],
+                    row => new Relationship((int) row[0], (int) row[2], Convert.ToInt32(row[3].ToString())));
 
             var user = HabboFactory.GenerateHabbo(dataRow, statsTable, groups);
             errorCode = 0;
 
-
+          
             var blockedCommands = (from DataRow r in dBlockedCommands.Rows select r["command_name"].ToString())
                 .ToList();
 
@@ -235,27 +234,27 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         {
             //todo: improve it
             DataRow dataRow;
-            ulong num;
+            uint num;
 //            DataRow row;
 //            DataTable table;
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery(
-                    $"SELECT u.id,s.favourite_group,s.achievement_score,username,block_newfriends,look,motto,gender,last_online,account_created FROM users AS u, users_stats AS s WHERE u.id = '{userId}' AND u.id = s.id");
+                queryReactor.SetQuery($"SELECT u.id,s.favourite_group,s.achievement_score,username,block_newfriends,look,motto,gender,last_online,account_created FROM users AS u, users_stats AS s WHERE u.id = '{userId}' AND u.id = s.id");
 
                 dataRow = queryReactor.GetRow();
 
                 if (dataRow == null)
                     return null;
-
-                num = Convert.ToUInt64(dataRow["id"]);
+                
+                num = Convert.ToUInt32(dataRow["id"]);
 //                Oblivion.GetGame().GetClientManager().LogClonesOut(num);
+
 
 
                 if (Oblivion.GetGame().GetClientManager().GetClientByUserId(num) != null)
                     return null;
-
+                
 //                queryReactor.SetQuery($"SELECT * FROM users_stats WHERE id={num} LIMIT 1");
 //                row = queryReactor.GetRow();
 
@@ -276,8 +275,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             var user = HabboFactory.GenerateCachedHabbo(dataRow, group);
 
-            return new UserData(num, achievements, talents, favouritedRooms, ignores, tags, null, rooms, quests, user,
-                new Dictionary<int, Relationship>(), pollData, 0, new List<string>(), new List<int>());
+            return new UserData(num, achievements, talents, favouritedRooms, ignores, tags, null, rooms, quests, user, new Dictionary<int, Relationship>(), pollData, 0, new List<string>(), new List<int>());
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             if (!ushort.TryParse(pms[0], out var effectId)) return true;
 
             var room = session.GetHabbo().CurrentRoom;
-            room.GetRoomUserManager().GetRoomUserByHabbo(session.VirtualId);
+            room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
             /* TODO CHECK */ foreach (var user in room.GetRoomUserManager().GetRoomUsers().Where(user => !user.RidingHorse))
                 user.ApplyEffect(effectId);
             return true;

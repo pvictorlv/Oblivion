@@ -20,17 +20,12 @@ namespace Oblivion.Connection.SuperSocket
 
         #region Methods
 
-        
         protected override int GetBodyLengthFromHeader(byte[] header, int offset, int length)
-
-       { 
-
-            
+        {
             var head = HabboEncoding.ToInt(header, offset);
 //            Console.WriteLine(head);
             return head;
         }
-
 
         protected override RequestInfo ResolveRequestInfo(ArraySegment<byte> header, byte[] data, int offset,
             int length)

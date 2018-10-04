@@ -20,7 +20,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <summary>
         ///     The _user identifier
         /// </summary>
-        private readonly ulong _userId;
+        private readonly uint _userId;
 
 
         /// <summary>
@@ -31,21 +31,21 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <summary>
         ///     The friends
         /// </summary>
-        internal Dictionary<ulong, MessengerBuddy> Friends;
+        internal Dictionary<uint, MessengerBuddy> Friends;
 
         /// <summary>
         ///     The requests
         /// </summary>
-        internal Dictionary<ulong, MessengerRequest> Requests;
+        internal Dictionary<uint, MessengerRequest> Requests;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="HabboMessenger" /> class.
         /// </summary>
         /// <param name="userId">The user identifier.</param>
-        internal HabboMessenger(ulong userId)
+        internal HabboMessenger(uint userId)
         {
-            Requests = new Dictionary<ulong, MessengerRequest>();
-            Friends = new Dictionary<ulong, MessengerBuddy>();
+            Requests = new Dictionary<uint, MessengerRequest>();
+            Friends = new Dictionary<uint, MessengerBuddy>();
             _userId = userId;
         }
 
@@ -70,7 +70,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             foreach (DataRow row in friendsTable.Rows)
             {
-                var num4 = Convert.ToUInt64(row["id"]);
+                var num4 = Convert.ToUInt32(row["id"]);
                 var pUsername = (string) row["username"];
                 var pLook = (string) row["look"];
                 var pMotto = (string) row["motto"];
@@ -85,8 +85,8 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             foreach (DataRow row in friendsRequestsTable.Rows)
             {
-                var num5 = Convert.ToUInt64(row["from_id"]);
-                var num6 = Convert.ToUInt64(row["to_id"]);
+                var num5 = Convert.ToUInt32(row["from_id"]);
+                var num6 = Convert.ToUInt32(row["to_id"]);
                 var pUsername2 = row["username"].ToString();
                 var pLook = row["look"].ToString();
 
@@ -113,7 +113,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="senderId">The sender identifier.</param>
         /// <returns>MessengerRequest.</returns>
-        internal MessengerRequest GetRequest(ulong senderId) =>
+        internal MessengerRequest GetRequest(uint senderId) =>
             Requests.TryGetValue(senderId, out var sender) ? sender : null;
 
         /// <summary>
@@ -140,7 +140,6 @@ namespace Oblivion.HabboHotel.Users.Messenger
             Friends = null;
             Requests = null;
         }
-
         /// <summary>
         ///     Called when [status changed].
         /// </summary>
@@ -167,7 +166,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="userid">The userid.</param>
         /// <param name="client">The client.</param>
         /// <param name="notification">if set to <c>true</c> [notification].</param>
-        internal void UpdateFriend(ulong userid, GameClient client, bool notification)
+        internal void UpdateFriend(uint userid, GameClient client, bool notification)
         {
             if (Friends == null) return;
 
@@ -183,6 +182,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             client2?.SendMessage(SerializeUpdate(friend));
         }
 
+    
 
         /// <summary>
         ///     Handles all requests.
@@ -200,7 +200,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         ///     Handles the request.
         /// </summary>
         /// <param name="sender">The sender.</param>
-        internal void HandleRequest(ulong sender)
+        internal void HandleRequest(uint sender)
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.RunFastQuery(string.Concat("DELETE FROM messenger_requests WHERE (from_id = ", _userId,
@@ -213,7 +213,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         ///     Creates the friendship.
         /// </summary>
         /// <param name="friendId">The friend identifier.</param>
-        internal void CreateFriendship(ulong friendId)
+        internal void CreateFriendship(uint friendId)
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.RunFastQuery(
@@ -240,7 +240,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         ///     Destroys the friendship.
         /// </summary>
         /// <param name="friendId">The friend identifier.</param>
-        internal void DestroyFriendship(ulong friendId)
+        internal void DestroyFriendship(uint friendId)
         {
             var habbo = GetClient().GetHabbo();
 
@@ -284,7 +284,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         ///     Called when [new friendship].
         /// </summary>
         /// <param name="friendId">The friend identifier.</param>
-        internal void OnNewFriendship(ulong friendId)
+        internal void OnNewFriendship(uint friendId)
         {
             var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(friendId);
             MessengerBuddy messengerBuddy;
@@ -313,8 +313,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 messengerBuddy.UpdateUser();
             }
 
-
-            Friends.Add(friendId, messengerBuddy);
+                Friends.Add(friendId, messengerBuddy);
 
             GetClient().SendMessage(SerializeUpdate(messengerBuddy));
         }
@@ -336,23 +335,22 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="requestId">The request identifier.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool RequestExists(ulong requestId) => Requests != null && Requests.ContainsKey(requestId);
+        internal bool RequestExists(uint requestId) => Requests != null && Requests.ContainsKey(requestId);
 
         /// <summary>
         ///     Friendships the exists.
         /// </summary>
         /// <param name="friendId">The friend identifier.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool FriendshipExists(ulong friendId) => Friends.ContainsKey(friendId);
+        internal bool FriendshipExists(uint friendId) => Friends.ContainsKey(friendId);
 
         /// <summary>
         ///     Called when [destroy friendship].
         /// </summary>
         /// <param name="friend">The friend.</param>
-        internal void OnDestroyFriendship(ulong friend)
+        internal void OnDestroyFriendship(uint friend)
         {
             Friends.Remove(friend);
-            var virtualId = Oblivion.GetGame().GetClientManager().GetVirtualId(friend);
             GetClient()
                 .GetMessageHandler()
                 .GetResponse()
@@ -362,7 +360,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             GetClient().GetMessageHandler().GetResponse().AppendString("Grupos"); //count
             GetClient().GetMessageHandler().GetResponse().AppendInteger(1);
             GetClient().GetMessageHandler().GetResponse().AppendInteger(-1);
-            GetClient().GetMessageHandler().GetResponse().AppendInteger(virtualId);
+            GetClient().GetMessageHandler().GetResponse().AppendInteger(friend);
             GetClient().GetMessageHandler().SendResponse();
         }
 
@@ -385,6 +383,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             GetClient().GetMessageHandler().SendResponse();
         }
 
+    
 
         private int _lastRequest;
 
@@ -404,7 +403,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             _lastRequest = Oblivion.GetUnixTimeStamp();
 
             var clientByUsername = Oblivion.GetGame().GetClientManager().GetClientByUserName(userQuery);
-            ulong userId;
+            uint userId;
             bool blockForNewFriends;
 
             if (clientByUsername == null)
@@ -421,7 +420,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 if (dataRow == null)
                     return false;
 
-                userId = Convert.ToUInt64(dataRow["id"]);
+                userId = Convert.ToUInt32(dataRow["id"]);
                 blockForNewFriends = Oblivion.EnumToBool(dataRow["block_newfriends"].ToString());
             }
             else
@@ -480,7 +479,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="friendId">The friend identifier.</param>
         /// <param name="friendRequest"></param>
-        internal void OnNewRequest(ulong friendId, MessengerRequest friendRequest)
+        internal void OnNewRequest(uint friendId, MessengerRequest friendRequest)
         {
             if (!Requests.ContainsKey(friendId))
                 Requests.Add(friendId, friendRequest);
@@ -538,11 +537,12 @@ namespace Oblivion.HabboHotel.Users.Messenger
             if (!BobbaFilter.CanTalk(session, msg)) return;
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleInvitationMessageComposer"));
-            serverMessage.AppendInteger(session.VirtualId);
+            serverMessage.AppendInteger(session.GetHabbo().Id);
             serverMessage.AppendString(msg);
             foreach (var friend in Friends.Values)
             {
                 friend?.Client?.SendMessage(serverMessage);
+
             }
         }
 
@@ -552,7 +552,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="toId">To identifier.</param>
         /// <param name="message">The message.</param>
-        internal void SendInstantMessage(ulong toId, string message)
+        internal void SendInstantMessage(uint toId, string message)
         {
             if (!BobbaFilter.CanTalk(GetClient(), message))
             {
@@ -585,11 +585,8 @@ namespace Oblivion.HabboHotel.Users.Messenger
                     Oblivion.OfflineMessages.Add(toId, msgs);
                 }
 
-                using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
-                {
-                    OfflineMessage.SaveMessage(dbClient, toId,
-                        GetClient().GetHabbo().Id, message);
-                }
+                OfflineMessage.SaveMessage(Oblivion.GetDatabaseManager().GetQueryReactor(), toId,
+                    GetClient().GetHabbo().Id, message);
 
                 return;
             }
@@ -622,16 +619,14 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="convoId">The convo identifier.</param>
-        internal void DeliverInstantMessage(string message, ulong convoId)
+        internal void DeliverInstantMessage(string message, uint convoId)
         {
-            var virtualId = Oblivion.GetGame().GetClientManager().GetVirtualId(convoId);
-
             using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleChatMessageComposer")))
             {
-                serverMessage.AppendInteger(virtualId);
-                serverMessage.AppendString(message);
-                serverMessage.AppendInteger(0);
-                GetClient().SendMessage(serverMessage);
+                serverMessage.AppendInteger(convoId);
+            serverMessage.AppendString(message);
+            serverMessage.AppendInteger(0);
+            GetClient().SendMessage(serverMessage);
             }
         }
 
@@ -646,10 +641,10 @@ namespace Oblivion.HabboHotel.Users.Messenger
             using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleChatMessageComposer")))
             {
                 serverMessage.AppendInteger(-GroupId);
-                serverMessage.AppendString(message);
-                serverMessage.AppendInteger(0);
-                serverMessage.AppendString(Username + "/" + figure + "/" + UserId);
-                GetClient().SendMessage(serverMessage);
+            serverMessage.AppendString(message);
+            serverMessage.AppendInteger(0);
+            serverMessage.AppendString(Username + "/" + figure + "/" + UserId);
+            GetClient().SendMessage(serverMessage);
             }
         }
 
@@ -658,16 +653,14 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="errorId">The error identifier.</param>
         /// <param name="conversationId">The conversation identifier.</param>
-        internal void DeliverInstantMessageError(int errorId, ulong conversationId)
+        internal void DeliverInstantMessageError(int errorId, uint conversationId)
         {
-            var virtualId = Oblivion.GetGame().GetClientManager().GetVirtualId(conversationId);
-            using (var serverMessage =
-                new ServerMessage(LibraryParser.OutgoingRequest("ConsoleChatErrorMessageComposer")))
+            using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleChatErrorMessageComposer")))
             {
                 serverMessage.AppendInteger(errorId);
-                serverMessage.AppendInteger(virtualId);
-                serverMessage.AppendString("");
-                GetClient().SendMessage(serverMessage);
+            serverMessage.AppendInteger(conversationId);
+            serverMessage.AppendString("");
+            GetClient().SendMessage(serverMessage);
             }
         }
 
@@ -702,7 +695,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             serverMessage.StartArray();
 
-//            serverMessage.AppendInteger(Friends.Count + groups.Count);
+            //            serverMessage.AppendInteger(Friends.Count + groups.Count);
 
             foreach (var current in Friends.Values)
             {
@@ -750,7 +743,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         internal ServerMessage SerializeOfflineMessages(OfflineMessage message)
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleChatMessageComposer"));
-            serverMessage.AppendInteger(Oblivion.GetGame().GetClientManager().GetVirtualId(message.FromId));
+            serverMessage.AppendInteger(message.FromId);
             serverMessage.AppendString(message.Message);
             serverMessage.AppendInteger(((int) (Oblivion.GetUnixTimeStamp() - message.Timestamp)));
 

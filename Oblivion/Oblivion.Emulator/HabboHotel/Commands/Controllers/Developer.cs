@@ -75,7 +75,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var room = session.GetHabbo().CurrentRoom;
 
             var user = room.GetRoomUserManager()
-                .GetRoomUserByHabbo(session.VirtualId);
+                .GetRoomUserByHabbo(session.GetHabbo().Id);
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
@@ -128,7 +128,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
                     var roomItem = new RoomItem(insertId, user.RoomId, item.GetBaseItem().ItemId, item.ExtraData,
                         user.LastSelectedX, user.LastSelectedY, item.Z, item.Rot, session.GetHabbo().CurrentRoom,
-                        Oblivion.GetGame().GetClientManager().GetRealId(user.UserId), item.GroupId, item.SongCode,
+                        user.UserId, item.GroupId, item.SongCode,
                         item.IsBuilder, item.LimitedNo, item.LimitedTot);
                     room.GetRoomItemHandler().DeveloperSetFloorItem(session, roomItem);
                 }

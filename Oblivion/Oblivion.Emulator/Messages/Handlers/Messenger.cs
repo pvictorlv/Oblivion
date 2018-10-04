@@ -36,14 +36,13 @@ namespace Oblivion.Messages.Handlers
             for (var i = 0; i < num; i++)
             {
                 var num2 = Request.GetUInteger();
-                var realId = Oblivion.GetGame().GetClientManager().GetRealId(num2);
                 if (Session.GetHabbo().Data.Relations.ContainsKey(Convert.ToInt32(num2)))
                 {
                     Session.SendNotif(Oblivion.GetLanguage().GetVar("buddy_error_1"));
                     return;
                 }
 
-                Session.GetHabbo().GetMessenger().DestroyFriendship(realId);
+                Session.GetHabbo().GetMessenger().DestroyFriendship(num2);
             }
         }
 
@@ -65,16 +64,13 @@ namespace Oblivion.Messages.Handlers
             var num = Request.GetInteger();
             for (var i = 0; i < num; i++)
             {
-                var userId = Request.GetUInteger();
-                var realId = Oblivion.GetGame().GetClientManager().GetRealId(userId);
-                var request = Session.GetHabbo().GetMessenger().GetRequest(realId);
+                var num2 = Request.GetUInteger();
+                var request = Session.GetHabbo().GetMessenger().GetRequest(num2);
                 if (request == null) continue;
                 if (request.To != Session.GetHabbo().Id) return;
-
-
                 if (!Session.GetHabbo().GetMessenger().FriendshipExists(request.To))
                     Session.GetHabbo().GetMessenger().CreateFriendship(request.From);
-                Session.GetHabbo().GetMessenger().HandleRequest(realId);
+                Session.GetHabbo().GetMessenger().HandleRequest(num2);
             }
         }
 
@@ -112,15 +108,14 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal void SendInstantMessenger()
         {
-            var toId = Request.GetUInteger();
+            var toId = Request.GetInteger();
             var text = Request.GetString();
             if (Session.GetHabbo().GetMessenger() == null) return;
             if (!string.IsNullOrWhiteSpace(text))
             {
                 if (toId > 0)
                 {
-                    var realId = Oblivion.GetGame().GetClientManager().GetRealId(toId);
-                    Session.GetHabbo().GetMessenger().SendInstantMessage(realId, text);
+                    Session.GetHabbo().GetMessenger().SendInstantMessage((uint) toId, text);
                     return;
                 }
 
@@ -194,7 +189,7 @@ namespace Oblivion.Messages.Handlers
             if (!BobbaFilter.CanTalk(Session, s)) return;
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleInvitationMessageComposer"));
-            serverMessage.AppendInteger(Session.VirtualId);
+            serverMessage.AppendInteger(Session.GetHabbo().Id);
             serverMessage.AppendString(s);
 
             foreach (var current in list)

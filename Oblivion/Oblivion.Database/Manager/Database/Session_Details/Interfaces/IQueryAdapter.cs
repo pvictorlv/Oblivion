@@ -1,36 +1,20 @@
 #region
 
-using System;
-using System.Data;
+using Oblivion.Database.Manager.Session_Details.Interfaces;
 
 #endregion
 
 namespace Oblivion.Database.Manager.Database.Session_Details.Interfaces
 {
-    public interface IQueryAdapter : IDisposable
+    public interface IQueryAdapter : IRegularQueryAdapter
     {
-        void AddParameter(string name, object query);
+        void DoCommit();
 
-        bool FindsResult();
-
-        int GetInteger();
-
-        DataRow GetRow();
-
-        string GetString();
-
-        DataTable GetTable();
-
-        void RunFastQuery(string query);
-        void RunNoLockFastQuery(string query);
-
-        void SetQuery(string query);
-        void SetNoLockQuery(string query);
+        void DoRollBack();
 
         long InsertQuery();
 
         void RunQuery();
         void RunQuery(string query);
-        void RunNoLockQuery(string query);
     }
 }

@@ -39,13 +39,13 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 adapter.SetQuery(
-                    "UPDATE users SET gender = @gender, look = @look WHERE id = " + session.VirtualId);
+                    "UPDATE users SET gender = @gender, look = @look WHERE id = " + session.GetHabbo().Id);
                 adapter.AddParameter("gender", gender);
                 adapter.AddParameter("look", look);
                 adapter.RunQuery();
             }
 
-            var myUser = room.GetRoomUserManager().GetRoomUserByHabbo(session.VirtualId);
+            var myUser = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
             if (myUser == null) return true;
 
             var message = new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));

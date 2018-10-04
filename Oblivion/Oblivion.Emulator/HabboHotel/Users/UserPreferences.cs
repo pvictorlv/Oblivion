@@ -11,7 +11,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <summary>
         ///     The _user identifier
         /// </summary>
-        private readonly ulong _userId;
+        private readonly uint _userId;
 
         internal int ChatColor;
         internal bool DisableCameraFollow;
@@ -28,7 +28,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         ///     Initializes a new instance of the <see cref="UserPreferences" /> class.
         /// </summary>
         /// <param name="userId">The user identifier.</param>
-        internal UserPreferences(ulong userId)
+        internal UserPreferences(uint userId)
         {
             _userId = userId;
 

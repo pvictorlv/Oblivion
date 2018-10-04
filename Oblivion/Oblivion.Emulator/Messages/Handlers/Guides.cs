@@ -75,10 +75,10 @@ namespace Oblivion.Messages.Handlers
             var requester = Session.GetHabbo().GuideOtherUser;
             var message = new ServerMessage(LibraryParser.OutgoingRequest("OnGuideSessionStartedMessageComposer"));
 
-            message.AppendInteger(requester.VirtualId);
+            message.AppendInteger(requester.GetHabbo().Id);
             message.AppendString(requester.GetHabbo().UserName);
             message.AppendString(requester.GetHabbo().Look);
-            message.AppendInteger(Session.VirtualId);
+            message.AppendInteger(Session.GetHabbo().Id);
             message.AppendString(Session.GetHabbo().UserName);
             message.AppendString(Session.GetHabbo().Look);
             requester.SendMessage(message);
@@ -160,7 +160,7 @@ namespace Oblivion.Messages.Handlers
             var requester = Session.GetHabbo().GuideOtherUser;
             var messageC = new ServerMessage(LibraryParser.OutgoingRequest("OnGuideSessionMsgMessageComposer"));
             messageC.AppendString(message);
-            messageC.AppendInteger(Session.VirtualId);
+            messageC.AppendInteger(Session.GetHabbo().Id);
             requester.SendMessage(messageC);
             Session.SendMessage(messageC);
         }

@@ -25,7 +25,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         {
             var room = session.GetHabbo().CurrentRoom;
 
-            var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.VirtualId);
+            var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
             if (user == null) return true;
 
             if (room.RoomData.DisablePush)

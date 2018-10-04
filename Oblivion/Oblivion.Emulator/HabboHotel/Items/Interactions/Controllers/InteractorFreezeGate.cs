@@ -12,7 +12,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
     {
         public override void OnUserWalk(GameClient session, RoomItem item, RoomUser user)
         {
-            if (item?.Team == null) return;
+            if (item == null) return;
 
             var num4 = (int) (item.Team + 39);
             var teamManagerForFreeze =

@@ -73,7 +73,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             if (item == null || item.GetRoom() == null || session == null || session.GetHabbo() == null)
                 return;
 
-            var roomUserByHabbo = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.VirtualId);
+            var roomUserByHabbo = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
 
             if (roomUserByHabbo == null)
                 return;
@@ -87,7 +87,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             if (item.InteractingUser != 0)
                 return;
 
-            item.InteractingUser = roomUserByHabbo.GetClient().VirtualId;
+            item.InteractingUser = roomUserByHabbo.GetClient().GetHabbo().Id;
         }
 
         public override void OnUserWalk(GameClient session, RoomItem item, RoomUser user)
@@ -95,7 +95,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             if (item == null || item.GetRoom() == null || session == null || session.GetHabbo() == null)
                 return;
 
-            var roomUserByHabbo = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.VirtualId);
+            var roomUserByHabbo = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
 
             if (roomUserByHabbo == null)
                 return;
@@ -109,7 +109,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             if (item.InteractingUser != 0)
                 return;
 
-            item.InteractingUser = roomUserByHabbo.GetClient().VirtualId;
+            item.InteractingUser = roomUserByHabbo.GetClient().GetHabbo().Id;
         }
     }
 }

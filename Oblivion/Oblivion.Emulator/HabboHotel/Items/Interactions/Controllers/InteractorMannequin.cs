@@ -48,7 +48,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery(
-                    $"UPDATE users SET look = @look, gender = @gender WHERE id = {session.VirtualId}");
+                    $"UPDATE users SET look = @look, gender = @gender WHERE id = {session.GetHabbo().Id}");
                 queryReactor.AddParameter("look", session.GetHabbo().Look);
                 queryReactor.AddParameter("gender", session.GetHabbo().Gender);
                 queryReactor.RunQuery();
@@ -64,7 +64,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             session.GetMessageHandler().GetResponse().AppendInteger(session.GetHabbo().AchievementPoints);
             session.GetMessageHandler().SendResponse();
 
-            var roomUserByHabbo = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.VirtualId);
+            var roomUserByHabbo = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
 

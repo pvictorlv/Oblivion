@@ -119,7 +119,7 @@ namespace Oblivion.HabboHotel.RoomBots
         {
             var roomUser = GetRoomUser();
 
-            if (roomUser.PetData.OwnerId != user.GetClient().VirtualId)
+            if (roomUser.PetData.OwnerId != user.GetClient().GetHabbo().Id)
             {
                 return;
             }

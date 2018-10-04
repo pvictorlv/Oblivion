@@ -23,7 +23,7 @@ namespace Oblivion.HabboHotel.Groups.Interfaces
         /// <summary>
         ///     The identifier
         /// </summary>
-        internal ulong Id;
+        internal uint Id;
 
         /// <summary>
         ///     The look
@@ -49,7 +49,7 @@ namespace Oblivion.HabboHotel.Groups.Interfaces
         /// <param name="rank">The rank.</param>
         /// <param name="name"></param>
         /// <param name="dateJoin"></param>
-        internal GroupMember(ulong id, string name, string look, uint groupId, int rank, int dateJoin, bool hasChat)
+        internal GroupMember(uint id, string name, string look, uint groupId, int rank, int dateJoin, bool hasChat)
         {
             Id = id;
             Name = name;

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Oblivion.Configuration;
-using Oblivion.Encryption.Encryption.Hurlant.Crypto.Prng;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
@@ -13,15 +11,16 @@ namespace Oblivion.Connection.SuperSocket
         where TSession: IAirHandler
     {
         #region Properties
-
-        public bool IsAir;
         public uint ConnId { get; set; }
         
         public IDataParser Parser { get; set; }
 
         public TSession UserData { get; set; }
 
+        public System.Net.IPAddress RemoteAddress => RemoteEndPoint.Address;
+
         #endregion Properties
+
 
         #region Methods
 
@@ -103,14 +102,11 @@ namespace Oblivion.Connection.SuperSocket
             }
         }
 
-        public bool Disposed() => _disposed;
+
         private bool _disposed;
         public void Dispose()
         {
             if (_disposed) return;
-            
-            Oblivion.GetGame().GetClientManager().DisposeConnection(VirtualId);
-
             _disposed = true;
             UserData = default(TSession);
             if (Parser != null)
@@ -121,8 +117,6 @@ namespace Oblivion.Connection.SuperSocket
 
         }
 
-        public uint VirtualId;
-        
         protected override void HandleException(Exception e)
         {
 //            Logging.HandleException(e, "Connection - Session.cs");

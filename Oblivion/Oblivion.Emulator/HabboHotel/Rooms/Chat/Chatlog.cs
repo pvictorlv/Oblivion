@@ -29,7 +29,7 @@ namespace Oblivion.HabboHotel.Rooms.Chat
         /// <summary>
         ///     The user identifier
         /// </summary>
-        internal ulong UserId;
+        internal uint UserId;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Chatlog" /> class.
@@ -39,7 +39,7 @@ namespace Oblivion.HabboHotel.Rooms.Chat
         /// <param name="time">The time.</param>
         /// <param name="globalMessage"></param>
         /// <param name="fromDatabase">if set to <c>true</c> [from database].</param>
-        internal Chatlog(ulong user, string msg, DateTime time, bool globalMessage, bool fromDatabase = false)
+        internal Chatlog(uint user, string msg, DateTime time, bool globalMessage, bool fromDatabase = false)
         {
             UserId = user;
             Message = msg;
@@ -74,11 +74,9 @@ namespace Oblivion.HabboHotel.Rooms.Chat
 
         internal void Serialize(ref ServerMessage message)
         {
-            var virtualId = Oblivion.GetGame().GetClientManager().GetVirtualId(UserId);
-
-            var habbo = Oblivion.GetHabboById(virtualId);
+            var habbo = Oblivion.GetHabboById(UserId);
             message.AppendString(TimeStamp.ToString("h:mm:ss"));
-            message.AppendInteger(virtualId);
+            message.AppendInteger(UserId);
             message.AppendString(habbo == null ? "*User not found*" : habbo.UserName);
             message.AppendString(Message);
             message.AppendBool(_globalMessage);

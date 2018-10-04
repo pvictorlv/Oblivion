@@ -348,8 +348,7 @@ namespace Oblivion.HabboHotel.Navigators
             if (value2.Length > 0)
                 SearchResultList.SerializeSearches(value2, newNavigator, session);
             else
-                if (!SearchResultList.SerializeSearchResultListStatics(value1, true, newNavigator, session))
-                    return null;
+                if (!SearchResultList.SerializeSearchResultListStatics(value1, true, newNavigator, session)) return null;
 
             return newNavigator;
         }

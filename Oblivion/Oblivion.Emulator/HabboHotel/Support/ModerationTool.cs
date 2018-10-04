@@ -125,13 +125,13 @@ namespace Oblivion.HabboHotel.Support
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <param name="result">if set to <c>true</c> [result].</param>
-        internal static void ModActionResult(ulong userId, bool result)
+        internal static void ModActionResult(uint userId, bool result)
         {
             var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
             clientByUserId.GetMessageHandler()
                 .GetResponse()
                 .Init(LibraryParser.OutgoingRequest("ModerationActionResultMessageComposer"));
-            clientByUserId.GetMessageHandler().GetResponse().AppendInteger(clientByUserId.VirtualId);
+            clientByUserId.GetMessageHandler().GetResponse().AppendInteger(userId);
             clientByUserId.GetMessageHandler().GetResponse().AppendBool(false);
             clientByUserId.GetMessageHandler().SendResponse();
         }
@@ -154,7 +154,7 @@ namespace Oblivion.HabboHotel.Support
             else
                 serverMessage.AppendBool(false);
 
-            serverMessage.AppendInteger(Oblivion.GetGame().GetClientManager().GetVirtualId(room?.RoomData.OwnerId ?? 0));
+            serverMessage.AppendInteger(room?.RoomData.OwnerId ?? 0);
             serverMessage.AppendString(data.Owner);
             serverMessage.AppendBool(room != null);
             serverMessage.AppendString(data.Name);
@@ -434,8 +434,7 @@ namespace Oblivion.HabboHotel.Support
                                     while (enumerator2.MoveNext())
                                     {
                                         var dataRow2 = (DataRow) enumerator2.Current;
-                                        if (dataRow2 == null) continue;
-                                        
+
                                         var habboForId = Oblivion.GetHabboById((uint) dataRow2["user_id"]);
                                         Oblivion.UnixToDateTime((double) dataRow2["timestamp"]);
 
@@ -445,7 +444,7 @@ namespace Oblivion.HabboHotel.Support
                                         serverMessage.AppendInteger(
                                             ((int) (Oblivion.GetUnixTimeStamp() - (double) dataRow2["timestamp"])));
 
-                                        serverMessage.AppendInteger(habboForId.GetClient().VirtualId);
+                                        serverMessage.AppendInteger(habboForId.Id);
                                         serverMessage.AppendString(habboForId.UserName);
                                         serverMessage.AppendString(dataRow2["message"].ToString());
                                         serverMessage.AppendBool(false);
@@ -501,7 +500,7 @@ namespace Oblivion.HabboHotel.Support
                 message.Init(LibraryParser.OutgoingRequest("ModerationToolIssueChatlogMessageComposer"));
 
                 message.AppendInteger(ticket.TicketId);
-                message.AppendInteger(Oblivion.GetGame().GetClientManager().GetVirtualId(ticket.SenderId));
+                message.AppendInteger(ticket.SenderId);
                 message.AppendInteger(ticket.ReportedId);
                 message.AppendInteger(ticket.RoomId);
 
@@ -861,7 +860,7 @@ namespace Oblivion.HabboHotel.Support
             if (ticket == null || ticket.Status != TicketStatus.Picked || ticket.ModeratorId != session.GetHabbo().Id)
                 return;
 
-            var senderUser = Oblivion.GetHabboById(Oblivion.GetGame().GetClientManager().GetVirtualId(ticket.SenderId));
+            var senderUser = Oblivion.GetHabboById(ticket.SenderId);
 
             if (senderUser == null)
                 return;
@@ -892,13 +891,13 @@ namespace Oblivion.HabboHotel.Support
             {
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    AbusiveCooldown.Add(Oblivion.GetGame().GetClientManager().GetVirtualId(ticket.SenderId), Oblivion.GetUnixTimeStamp() + 600);
+                    AbusiveCooldown.Add(ticket.SenderId, Oblivion.GetUnixTimeStamp() + 600);
                     queryReactor.RunFastQuery(
                         $"UPDATE users_info SET cfhs_abusive = cfhs_abusive + 1 WHERE user_id = {ticket.SenderId}");
                 }
             }
 
-            var senderClient = Oblivion.GetGame().GetClientManager().GetClientByUserId(senderUser.GetClient().GetHabbo().Id);
+            var senderClient = Oblivion.GetGame().GetClientManager().GetClientByUserId(senderUser.Id);
 
             if (senderClient != null)
             {
@@ -919,11 +918,11 @@ namespace Oblivion.HabboHotel.Support
                     .Init(LibraryParser.OutgoingRequest("ModerationToolUpdateIssueMessageComposer"));
                 senderClient.GetMessageHandler().GetResponse().AppendInteger(1);
                 senderClient.GetMessageHandler().GetResponse().AppendInteger(ticket.TicketId);
-                senderClient.GetMessageHandler().GetResponse().AppendInteger(Oblivion.GetGame().GetClientManager().GetVirtualId(ticket.ModeratorId));
+                senderClient.GetMessageHandler().GetResponse().AppendInteger(ticket.ModeratorId);
                 senderClient.GetMessageHandler()
                     .GetResponse()
-                    .AppendString((Oblivion.GetHabboById(Oblivion.GetGame().GetClientManager().GetVirtualId(ticket.ModeratorId)) != null)
-                        ? Oblivion.GetHabboById(Oblivion.GetGame().GetClientManager().GetVirtualId(ticket.ModeratorId)).UserName
+                    .AppendString((Oblivion.GetHabboById(ticket.ModeratorId) != null)
+                        ? Oblivion.GetHabboById(ticket.ModeratorId).UserName
                         : "Undefined");
                 senderClient.GetMessageHandler().GetResponse().AppendBool(false);
                 senderClient.GetMessageHandler().GetResponse().AppendInteger(0);
@@ -958,7 +957,7 @@ namespace Oblivion.HabboHotel.Support
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool UsersHasPendingTicket(ulong id)
+        internal bool UsersHasPendingTicket(uint id)
         {
             return Tickets.Any(current => current.SenderId == id && current.Status == TicketStatus.Open);
         }
@@ -1002,7 +1001,7 @@ namespace Oblivion.HabboHotel.Support
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns>SupportTicket.</returns>
-        internal SupportTicket GetPendingTicketForUser(ulong id)
+        internal SupportTicket GetPendingTicketForUser(uint id)
         {
             return Tickets.FirstOrDefault(current => current.SenderId == id && current.Status == TicketStatus.Open);
         }

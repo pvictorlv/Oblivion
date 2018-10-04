@@ -60,14 +60,14 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <summary>
         ///     The user identifier
         /// </summary>
-        internal ulong UserId;
+        internal uint UserId;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="InventoryComponent" /> class.
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <param name="client">The client.</param>
-        internal InventoryComponent(ulong userId, GameClient client)
+        internal InventoryComponent(uint userId, GameClient client)
         {
             _mClient = client;
             UserId = userId;

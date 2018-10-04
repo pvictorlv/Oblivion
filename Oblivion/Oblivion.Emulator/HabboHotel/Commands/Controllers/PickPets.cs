@@ -25,7 +25,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var room = session.GetHabbo().CurrentRoom;
            foreach (
                 var pet in
-                    room.GetRoomUserManager().GetPets().Where(pet => pet.OwnerId == session.VirtualId))
+                    room.GetRoomUserManager().GetPets().Where(pet => pet.OwnerId == session.GetHabbo().Id))
             {
                 session.GetHabbo().GetInventoryComponent().AddPet(pet);
                 room.GetRoomUserManager().RemoveBot(pet.VirtualId, false);

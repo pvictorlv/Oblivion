@@ -3,13 +3,14 @@
 using System;
 using System.Data;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
+using Oblivion.Database.Manager.Session_Details.Interfaces;
 using MySql.Data.MySqlClient;
 
 #endregion
 
 namespace Oblivion.Database.Manager.Database.Session_Details
 {
-    public class QueryAdapter : IQueryAdapter
+    public class QueryAdapter : IRegularQueryAdapter
     {
         protected IDatabaseClient Client;
         protected MySqlCommand CommandMySql;
@@ -27,14 +28,7 @@ namespace Oblivion.Database.Manager.Database.Session_Details
             Client = null;
         }
 
-
-        public QueryAdapter(IDatabaseClient client)
-        {
-
-            Client = client;
-            CommandMySql = client.CreateNewCommandMySql();
-
-        }
+        public QueryAdapter(IDatabaseClient client) => Client = client;
 
         private static bool DbEnabled => DatabaseManager.DbEnabled;
 
@@ -247,26 +241,6 @@ namespace Oblivion.Database.Manager.Database.Session_Details
             {
 //                Writer.Writer.WriteLine(query);
 //                CommandMySql.Parameters.Clear();
-                CommandMySql.CommandText = query;
-                CommandMySql.ExecuteNonQuery();
-                CommandMySql.Parameters.Clear();
-
-            }
-            catch (Exception exception)
-            {
-                Writer.Writer.LogQueryError(exception, CommandMySql?.CommandText);
-
-            }
-        }
-        public void RunNoLockQuery(string query)
-        {
-            try
-            {
-                //                Writer.Writer.WriteLine(query);
-                //                CommandMySql.Parameters.Clear();
-                query = query.Insert(0, "SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;");
-                query += "SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ; ";
-
                 CommandMySql.CommandText = query;
                 CommandMySql.ExecuteNonQuery();
                 CommandMySql.Parameters.Clear();

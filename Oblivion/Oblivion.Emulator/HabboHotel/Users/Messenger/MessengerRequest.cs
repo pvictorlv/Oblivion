@@ -24,7 +24,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="fromUser">From user.</param>
         /// <param name="userName">Name of the user.</param>
         /// <param name="look"></param>
-        internal MessengerRequest(ulong toUser, ulong fromUser, string userName, string look)
+        internal MessengerRequest(uint toUser, uint fromUser, string userName, string look)
         {
             To = toUser;
             From = fromUser;
@@ -32,17 +32,25 @@ namespace Oblivion.HabboHotel.Users.Messenger
             _look = look;
         }
 
+
+
+        public void Dispose()
+        {
+            _look = null;
+            _userName = null;
+        }
+
         /// <summary>
         ///     Gets to.
         /// </summary>
         /// <value>To.</value>
-        internal ulong To { get; private set; }
+        internal uint To { get; private set; }
 
         /// <summary>
         ///     Gets from.
         /// </summary>
         /// <value>From.</value>
-        internal ulong From { get; }
+        internal uint From { get; }
 
         /// <summary>
         ///     Serializes the specified request.
@@ -50,17 +58,9 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="request">The request.</param>
         internal void Serialize(ServerMessage request)
         {
-            var virtualId = Oblivion.GetGame().GetClientManager().GetVirtualId(From);
-
-            request.AppendInteger(virtualId);
+            request.AppendInteger(From);
             request.AppendString(_userName);
             request.AppendString(_look);
-        }
-
-        public void Dispose()
-        {
-            _look = null;
-            _userName = null;
         }
     }
 }

@@ -158,13 +158,10 @@ namespace Oblivion.HabboHotel.Rooms.Data
             {
                 return;
             }
-
-            var virtualId = Oblivion.GetGame().GetClientManager().GetVirtualId(room.RoomData.OwnerId);
-
             var serverMessage = new ServerMessage();
             serverMessage.Init(LibraryParser.OutgoingRequest("RoomEventMessageComposer"));
             serverMessage.AppendInteger(roomId);
-            serverMessage.AppendInteger(virtualId);
+            serverMessage.AppendInteger(room.RoomData.OwnerId);
             serverMessage.AppendString(room.RoomData.Owner);
             serverMessage.AppendInteger(1);
             serverMessage.AppendInteger(1);

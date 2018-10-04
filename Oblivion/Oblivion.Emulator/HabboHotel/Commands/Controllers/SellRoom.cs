@@ -22,7 +22,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         public override bool Execute(GameClient client, string[] pms)
         {
             var currentRoom = client.GetHabbo().CurrentRoom;
-            var user = currentRoom.GetRoomUserManager().GetRoomUserByHabbo(client.VirtualId);
+            var user = currentRoom.GetRoomUserManager().GetRoomUserByHabbo(client.GetHabbo().Id);
             if (user == null) return false;
 
             if (currentRoom.RoomData.OwnerId != user.HabboId)

@@ -42,7 +42,6 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         ///     The current room user identifier
         /// </summary>
         internal int CurrentRoomUserId;
-        internal uint VirtualId;
 
         /// <summary>
         ///     The machine identifier
@@ -65,21 +64,21 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// </summary>
         /// <param name="clientId">The client identifier.</param>
         /// <param name="connection">The connection.</param>
-        internal GameClient(Session<GameClient> connection)
+        internal GameClient(uint clientId, Session<GameClient> connection)
         {
+            ConnectionId = clientId;
             _connection = connection;
             CurrentRoomUserId = -1;
             PacketParser = new GamePacketParser();
         }
 
-        public bool IsAir
-        {
-            get => _connection != null && _connection.IsAir;
-            set
-            {
-                if (_connection != null) _connection.IsAir = value;
-            }
-        }
+        /// <summary>
+        ///     Gets the connection identifier.
+        /// </summary>
+        /// <value>The connection identifier.</value>
+        internal uint ConnectionId { get; }
+
+        public bool IsAir { get; set; }
 
         public ARC4 ServerRc4
         { get; set; }
@@ -161,7 +160,6 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 }
 
                 Oblivion.GetGame().GetClientManager().RegisterClient(this, userData.UserId, userData.User.UserName);
-
                 _habbo = userData.User;
                 _habbo.LoadData(userData);
 
@@ -189,7 +187,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                                                       supaString + "' WHERE user_id=" + _habbo.Id + " LIMIT 1");
                         else
                             queryReactor.RunFastQuery("INSERT INTO users_bans_access (user_id, ip) VALUES (" +
-                                                      _habbo.Id + ", '" + supaString + "')");
+                                                      GetHabbo().Id + ", '" + supaString + "')");
                     }
 
                     return false;
@@ -197,7 +195,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     queryReactor.RunFastQuery(
-                        $"UPDATE users SET ip_last='{ip}', online = '1' WHERE id={_habbo.Id}");
+                        $"UPDATE users SET ip_last='{ip}', online = '1' WHERE id={GetHabbo().Id}");
 
                 _habbo.Init(this, userData);
                 using (var msg =

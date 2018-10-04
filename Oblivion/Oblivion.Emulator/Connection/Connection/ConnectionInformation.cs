@@ -135,7 +135,7 @@ namespace Oblivion.Connection.Connection
                 _connected = false;
                 Parser?.Dispose();
 
-                SocketConnectionCheck.FreeConnection(GetIp());
+//                SocketConnectionCheck.FreeConnection(GetIp());
 
                 DisconnectAction(this, exception);
             }

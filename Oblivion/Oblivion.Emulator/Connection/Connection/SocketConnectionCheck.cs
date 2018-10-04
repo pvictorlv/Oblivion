@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using Oblivion.Configuration;
 using Oblivion.Util;
 
 namespace Oblivion.Connection.Connection
@@ -9,99 +10,96 @@ namespace Oblivion.Connection.Connection
     /// <summary>
     /// Class SocketConnectionCheck.
     /// </summary>
-    internal class SocketConnectionCheck
+    class SocketConnectionCheck
     {
         /// <summary>
-        /// The _m connection storage
+        ///     Server Connections By IP Address
         /// </summary>
-        private static string[] _mConnectionStorage;
+        internal static Dictionary<string, uint> ServerClientConnectionsByAddress;
 
         /// <summary>
-        /// The banned ip list
+        ///     Blocked Client Connections By IP Address
         /// </summary>
-        private static readonly List<string> BannedList = new List<string>();
+        internal static List<string> BlockedClientConnectionsByAddress;
 
         /// <summary>
-        /// the last banned ip
+        ///     Initialize Security Manager
         /// </summary>
-        private static string _lastBanned;
-
-        /// <summary>
-        /// Checks the connection.
-        /// </summary>
-        /// <param name="sock">The sock.</param>
-        /// <param name="maxIpConnectionCount">The maximum ip connection count.</param>
-        /// <param name="antiDDosStatus">if set to <c>true</c> [anti d dos status].</param>
-        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal static bool CheckConnection(Socket sock, int maxIpConnectionCount, bool antiDDosStatus)
+        internal static void Init()
         {
-            if (!antiDDosStatus)
+            ServerClientConnectionsByAddress = new Dictionary<string, uint>();
+
+            BlockedClientConnectionsByAddress = new List<string>();
+        }
+
+        /// <summary>
+        ///     Add new Client to List
+        /// </summary>
+        internal static void AddNewClient(string clientAddress)
+            => ServerClientConnectionsByAddress.Add(clientAddress, 1);
+
+        /// <summary>
+        ///     Add Client Count
+        /// </summary>
+        internal static void AddClientCount(string clientAddress)
+        {
+            if (ServerClientConnectionsByAddress.ContainsKey(clientAddress))
+                ServerClientConnectionsByAddress[clientAddress]++;
+        }
+
+        /// <summary>
+        ///     Remove Client Count
+        /// </summary>
+        internal static void RemoveClientCount(string clientAddress)
+        {
+            if (ServerClientConnectionsByAddress.ContainsKey(clientAddress))
+                ServerClientConnectionsByAddress[clientAddress]--;
+        }
+
+        /// <summary>
+        ///     Get Client Count
+        /// </summary>
+        internal static uint GetClientCount(string clientAddress)
+        {
+            if (ServerClientConnectionsByAddress.ContainsKey(clientAddress))
+                return ServerClientConnectionsByAddress[clientAddress];
+
+            AddClientCount(clientAddress);
+
+            return 1;
+        }
+
+        /// <summary>
+        ///     Check Availability of New Connection
+        /// </summary>
+        internal static bool CheckAvailability(string clientAddress)
+        {
+            if (BlockedClientConnectionsByAddress.Contains(clientAddress))
+                return false;
+
+            
+            if (!ServerClientConnectionsByAddress.ContainsKey(clientAddress))
+            {
+                AddNewClient(clientAddress);
+
                 return true;
-
-            var iP = sock.RemoteEndPoint.ToString().Split(':')[0];
-
-            if (iP == null)
-                return false;
-
-            if (iP == _lastBanned)
-            {
-                return false;
             }
 
-            if (BannedList.Contains(iP))
-                return false;
-         
-
-            if ((GetConnectionAmount(iP) > maxIpConnectionCount))
+            if (GetClientCount(clientAddress) >= Oblivion.GetConnectionManager().ConnectionsPerIp)
             {
-                Out.WriteLine(iP + " was banned by Anti-DDoS system.", "Oblivion.TcpAntiDDoS", ConsoleColor.Blue);
-                _lastBanned = iP;
+                if (!BlockedClientConnectionsByAddress.Contains(clientAddress))
+                {
+                    BlockedClientConnectionsByAddress.Add(clientAddress);
 
-                BannedList.Add(iP);
+                    Logging.LogMessage($"Connection with Address {clientAddress} is Banned. Due TCP Flooding, will be unbanned after next Restart.");
+                }
 
                 return false;
             }
 
-            int freeConnectionId = GetFreeConnectionId();
-
-            if (freeConnectionId < 0)
-                return false;
-
-            _mConnectionStorage[freeConnectionId] = iP;
+            AddClientCount(clientAddress);
 
             return true;
-        }
-
-        /// <summary>
-        /// Frees the connection.
-        /// </summary>
-        /// <param name="ip">The ip.</param>
-        internal static void FreeConnection(string ip)
-        {
-            for (int i = 0; i < _mConnectionStorage.Length; i++)
-                if (_mConnectionStorage[i] == ip)
-                    _mConnectionStorage[i] = null;
-        }
-
-        private static int GetConnectionAmount(string ip) => _mConnectionStorage.Count(t => t == ip);
-
-        private static int GetFreeConnectionId()
-        {
-            for (int i = 0; i < _mConnectionStorage.Length; i++)
-                if (_mConnectionStorage[i] == null)
-                    return i;
-
-            return -1;
-        }
-
-        internal static void ClearCache()
-        {
-            BannedList.Clear();
-        }
-
-        internal static void SetupTcpAuthorization(int connectionCount)
-        {
-            _mConnectionStorage = new string[connectionCount];
         }
     }
 }

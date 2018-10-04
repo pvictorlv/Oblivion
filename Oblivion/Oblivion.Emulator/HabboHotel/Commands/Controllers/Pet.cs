@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages;
@@ -31,9 +32,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var habbo = client.GetHabbo();
             if (room == null) return true;
 
-            var virtualId = Oblivion.GetGame().GetClientManager().GetVirtualId(habbo.Id);
-
-            var roomUser = room.GetRoomUserManager().GetRoomUserByHabbo(virtualId);
+            var roomUser = room.GetRoomUserManager().GetRoomUserByHabbo(habbo.Id);
 
             if (pms[0] == "habbo")
             {
@@ -62,7 +61,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var serverMessage =
                 new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer"));
             serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(virtualId);
+            serverMessage.AppendInteger(habbo.Id);
             serverMessage.AppendString(habbo.UserName);
             serverMessage.AppendString("");
             serverMessage.AppendString($"{petId} 0 {color} 2 2 -1 0 3 -1 0");
@@ -73,7 +72,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             serverMessage.AppendInteger(0);
             serverMessage.AppendInteger(2);
             serverMessage.AppendInteger(petId);
-            serverMessage.AppendInteger(virtualId);
+            serverMessage.AppendInteger(habbo.Id);
             serverMessage.AppendString(habbo.UserName);
             serverMessage.AppendInteger(1);
             serverMessage.AppendBool(false);

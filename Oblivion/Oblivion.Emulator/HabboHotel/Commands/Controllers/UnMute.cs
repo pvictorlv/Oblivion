@@ -39,7 +39,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     "Unmute", "Unmuted user");
             client.GetHabbo().UnMute();
 
-            Oblivion.MutedUsersByFilter.Remove(session.VirtualId);
+            Oblivion.MutedUsersByFilter.Remove(session.GetHabbo().Id);
 
             return true;
         }

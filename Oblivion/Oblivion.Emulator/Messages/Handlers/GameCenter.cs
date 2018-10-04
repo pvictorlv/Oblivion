@@ -57,7 +57,7 @@ namespace Oblivion.Messages.Handlers
             weeklyLeaderboard.AppendInteger(0);
             weeklyLeaderboard.AppendInteger(6526);
             weeklyLeaderboard.AppendInteger(1);
-            weeklyLeaderboard.AppendInteger(Session.VirtualId);
+            weeklyLeaderboard.AppendInteger(Session.GetHabbo().Id);
             weeklyLeaderboard.AppendInteger(0);
             weeklyLeaderboard.AppendInteger(1);
             weeklyLeaderboard.AppendString(Session.GetHabbo().UserName);
@@ -74,7 +74,7 @@ namespace Oblivion.Messages.Handlers
             weeklyLeaderboard2.AppendInteger(0);
             weeklyLeaderboard2.AppendInteger(6526);
             weeklyLeaderboard2.AppendInteger(1);
-            weeklyLeaderboard2.AppendInteger(Session.VirtualId);
+            weeklyLeaderboard2.AppendInteger(Session.GetHabbo().Id);
             weeklyLeaderboard2.AppendInteger(0);
             weeklyLeaderboard2.AppendInteger(1);
             weeklyLeaderboard2.AppendString(Session.GetHabbo().UserName);
@@ -91,7 +91,7 @@ namespace Oblivion.Messages.Handlers
             weeklyLeaderboard3.AppendInteger(1);
             weeklyLeaderboard3.AppendInteger(6526);
             weeklyLeaderboard3.AppendInteger(1);
-            weeklyLeaderboard3.AppendInteger(Session.VirtualId);
+            weeklyLeaderboard3.AppendInteger(Session.GetHabbo().Id);
             weeklyLeaderboard3.AppendInteger(0);
             weeklyLeaderboard3.AppendInteger(1);
             weeklyLeaderboard3.AppendString(Session.GetHabbo().UserName);
@@ -170,7 +170,7 @@ namespace Oblivion.Messages.Handlers
             joinQueue.AppendInteger(gameId);
             Session.SendMessage(joinQueue);
 
-            var habboId = Session.VirtualId;
+            var habboId = Session.GetHabbo().Id;
             string ssoTicket;
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
@@ -179,7 +179,7 @@ namespace Oblivion.Messages.Handlers
                 //todo: delete when login
                 if (data == null)
                 {
-                    ssoTicket = "Fastfood-" + GenerateSso(32) + "-" + Session.VirtualId;
+                    ssoTicket = "Fastfood-" + GenerateSso(32) + "-" + Session.GetHabbo().Id;
                     dbClient.RunQuery("INSERT INTO user_auth_food(user_id, auth_ticket) VALUES ('" + habboId +
                                       "', '" +
                                       ssoTicket + "')");

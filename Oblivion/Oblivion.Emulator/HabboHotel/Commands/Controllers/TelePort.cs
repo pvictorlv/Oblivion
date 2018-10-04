@@ -28,7 +28,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 return false;
             }
 
-            var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.VirtualId);
+            var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
             if (user == null) return true;
             if (!user.RidingHorse)
             {

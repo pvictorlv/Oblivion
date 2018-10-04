@@ -60,7 +60,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             if (item?.GetRoom() == null || session?.GetHabbo() == null)
                 return;
 
-            var roomUserByHabbo = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.VirtualId);
+            var roomUserByHabbo = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
 
             if (roomUserByHabbo == null)
                 return;
@@ -76,7 +76,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 return;
 
             roomUserByHabbo.TeleDelay = 2;
-            item.InteractingUser = roomUserByHabbo.GetClient().VirtualId;
+            item.InteractingUser = roomUserByHabbo.GetClient().GetHabbo().Id;
         }
     }
 }

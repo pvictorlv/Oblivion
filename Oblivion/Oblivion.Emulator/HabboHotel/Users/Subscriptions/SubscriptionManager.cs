@@ -11,7 +11,7 @@ namespace Oblivion.HabboHotel.Users.Subscriptions
         /// <summary>
         ///     The _user identifier
         /// </summary>
-        private readonly ulong _userId;
+        private readonly uint _userId;
 
         /// <summary>
         ///     The _subscription
@@ -23,7 +23,7 @@ namespace Oblivion.HabboHotel.Users.Subscriptions
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <param name="userData">The user data.</param>
-        internal SubscriptionManager(ulong userId, UserData userData)
+        internal SubscriptionManager(uint userId, UserData userData)
         {
             _userId = userId;
             _subscription = userData.Subscriptions;

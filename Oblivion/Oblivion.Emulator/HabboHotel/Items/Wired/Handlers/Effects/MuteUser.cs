@@ -64,7 +64,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             var minutes = Delay / 500;
 
-            var userId = roomUser.GetClient().VirtualId;
+            var userId = roomUser.GetClient().GetHabbo().Id;
 
             Room.MutedUsers[userId] = Convert.ToUInt32(Oblivion.GetUnixTimeStamp() + minutes * 60);
 

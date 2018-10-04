@@ -26,7 +26,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     .GetRoomManager()
                     .GetRoom(session.GetHabbo().CurrentRoomId)
                     .GetRoomUserManager()
-                    .GetRoomUserByHabbo(session.VirtualId);
+                    .GetRoomUserByHabbo(session.GetHabbo().Id);
             user.FastWalking = !user.FastWalking;
             return true;
         }

@@ -135,7 +135,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         /// <summary>
         ///     The owner identifier
         /// </summary>
-        internal ulong OwnerId;
+        internal int OwnerId;
 
         /// <summary>
         ///     The pass word
@@ -302,7 +302,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
 
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    ulong integer;
+                    uint integer;
                     var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(Owner);
                     if (client == null && user == 0)
                     {
@@ -315,7 +315,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                         integer = client?.GetHabbo()?.Id ?? user;
                     }
 
-                    OwnerId = integer != ulong.MinValue ? Convert.ToUInt64(integer) : 0;
+                    OwnerId = integer != uint.MinValue ? Convert.ToInt32(integer) : 0;
                 }
                 var roomState = row["state"].ToString().ToLower();
 
@@ -397,7 +397,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
 
             message.AppendInteger(Id);
             message.AppendString(Name);
-            message.AppendInteger(Oblivion.GetGame().GetClientManager().GetVirtualId(OwnerId));
+            message.AppendInteger(OwnerId);
             message.AppendString(Owner);
             message.AppendInteger(State);
             message.AppendInteger(UsersNow);

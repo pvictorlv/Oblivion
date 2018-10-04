@@ -244,7 +244,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             if (mover?.GetHabbo() == null)
                 return;
 
-            var user = mover.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(mover.VirtualId);
+            var user = mover.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(mover.GetHabbo().Id);
             if (IsBanzaiActive)
                 HandleBanzaiTiles(new Point(newX, newY), Team, user);
         }
@@ -284,7 +284,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                 if (client?.GetHabbo() != null)
                 {
                     var roomUserByHabbo =
-                        client.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(client.VirtualId);
+                        client.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(client.GetHabbo().Id);
                     /* TODO CHECK */
                     foreach (var point in list)
                         HandleBanzaiTiles(point, Team, roomUserByHabbo);

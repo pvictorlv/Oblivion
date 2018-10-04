@@ -305,7 +305,7 @@ Request.GetString()
                             Oblivion.GetGame().GetGroupManager().BackGroundColours[habboGroup.Colour2]).Colour
                         : "4f8a00");
                 subResponse.AppendBool(habboGroup.CreatorId == Session.GetHabbo().Id);
-                subResponse.AppendInteger(Oblivion.GetGame().GetClientManager().GetVirtualId(habboGroup.CreatorId));
+                subResponse.AppendInteger(habboGroup.CreatorId);
                 subResponse.AppendBool(habboGroup.HasForum);
 
                 responseList.Add(subResponse);

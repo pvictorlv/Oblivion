@@ -12,7 +12,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <summary>
         ///     From identifier
         /// </summary>
-        internal ulong FromId;
+        internal uint FromId;
 
         /// <summary>
         ///     The message
@@ -30,7 +30,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="id">The identifier.</param>
         /// <param name="msg">The MSG.</param>
         /// <param name="ts">The ts.</param>
-        internal OfflineMessage(ulong id, string msg, double ts)
+        internal OfflineMessage(uint id, string msg, double ts)
         {
             FromId = id;
             Message = msg;
@@ -48,8 +48,8 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
             {
-                var key = (ulong) dataRow[1];
-                var id = (ulong) dataRow[2];
+                var key = (uint) dataRow[1];
+                var id = (uint) dataRow[2];
                 var msg = dataRow[3].ToString();
                 var ts = (double) dataRow[4];
 
@@ -74,7 +74,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="toId">To identifier.</param>
         /// <param name="fromId">From identifier.</param>
         /// <param name="message">The message.</param>
-        internal static void SaveMessage(IQueryAdapter dbClient, ulong toId, ulong fromId, string message)
+        internal static void SaveMessage(IQueryAdapter dbClient, uint toId, uint fromId, string message)
         {
             dbClient.SetQuery(
                 "INSERT INTO messenger_offline_messages (to_id, from_id, Message, timestamp) VALUES (@tid, @fid, @msg, UNIX_TIMESTAMP())");
@@ -89,7 +89,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="dbClient">The database client.</param>
         /// <param name="toId">To identifier.</param>
-        internal static void RemoveAllMessages(IQueryAdapter dbClient, ulong toId)
+        internal static void RemoveAllMessages(IQueryAdapter dbClient, uint toId)
         {
             dbClient.RunFastQuery($"DELETE FROM messenger_offline_messages WHERE to_id={toId}");
         }

@@ -18,12 +18,16 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             Description = "Dar Rango al Usuario.";
             Usage = ":giverank [USERNAME] [RANK]";
             MinParams = 2;
-            BlockBad = true;
         }
 
         public override bool Execute(GameClient session, string[] pms)
         {
-          
+            var staff = session.GetHabbo().UserName.ToLower();
+            if (staff != "dark" && staff != "roberta" && staff != "crazzyflos")
+            {
+                return false;
+            }
+
             var user = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
 
             if (user == null)

@@ -11,6 +11,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
     /// </summary>
     internal class MessengerBuddy
     {
+        //private readonly int _lastOnline;
         /// <summary>
         ///     The _appear offline
         /// </summary>
@@ -41,16 +42,6 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         internal string UserName;
 
-
-        public void Dispose()
-        {
-            Client = null;
-            CurrentRoom = null;
-            UserName = null;
-            _motto = null;
-            _look = null;
-        }
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="MessengerBuddy" /> class.
         /// </summary>
@@ -60,7 +51,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="motto">The motto.</param>
         /// <param name="appearOffline">if set to <c>true</c> [appear offline].</param>
         /// <param name="hideInroom">if set to <c>true</c> [hide inroom].</param>
-        internal MessengerBuddy(ulong userId, string userName, string look, string motto,
+        internal MessengerBuddy(uint userId, string userName, string look, string motto,
             bool appearOffline, bool hideInroom)
         {
             Id = userId;
@@ -76,7 +67,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         ///     Gets the identifier.
         /// </summary>
         /// <value>The identifier.</value>
-        internal ulong Id { get; set; }
+        internal uint Id { get; set; }
 
         /// <summary>
         ///     Gets a value indicating whether this instance is online.
@@ -114,6 +105,17 @@ namespace Oblivion.HabboHotel.Users.Messenger
             _motto = Client.GetHabbo().Motto;
         }
 
+
+        public void Dispose()
+        {
+            Client = null;
+            CurrentRoom = null;
+            UserName = null;
+            _motto = null;
+            _look = null;
+        }
+
+
         /// <summary>
         ///     Serializes the specified message.
         /// </summary>
@@ -124,17 +126,11 @@ namespace Oblivion.HabboHotel.Users.Messenger
             if (session?.GetHabbo()?.Data?.Relations == null) return;
 
             var value =
-                session.GetHabbo().Data.Relations.FirstOrDefault(x => x.Value.UserId == Id).Value;
+                session.GetHabbo().Data.Relations.FirstOrDefault(x => x.Value.UserId == Convert.ToInt32(Id)).Value;
 
             var i = value?.Type ?? 0;
 
-            var virtualId = 0u;
-            if (Id != 0)
-            {
-                virtualId = Oblivion.GetGame().GetClientManager().GetVirtualId(Id);
-            }
-
-            message.AppendInteger(virtualId);
+            message.AppendInteger(Id);
             message.AppendString(UserName);
             message.AppendInteger(1);
 

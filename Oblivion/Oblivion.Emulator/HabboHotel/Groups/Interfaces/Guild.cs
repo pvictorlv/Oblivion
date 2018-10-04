@@ -19,7 +19,7 @@ namespace Oblivion.HabboHotel.Groups.Interfaces
         /// <summary>
         ///     The admins
         /// </summary>
-        internal Dictionary<ulong, GroupMember> Admins;
+        internal Dictionary<uint, GroupMember> Admins;
 
         /// <summary>
         ///     The badge
@@ -44,7 +44,7 @@ namespace Oblivion.HabboHotel.Groups.Interfaces
         /// <summary>
         ///     The creator identifier
         /// </summary>
-        internal ulong CreatorId;
+        internal uint CreatorId;
 
         /// <summary>
         ///     The description
@@ -99,7 +99,7 @@ namespace Oblivion.HabboHotel.Groups.Interfaces
         /// <summary>
         ///     The members
         /// </summary>
-        internal Dictionary<ulong, GroupMember> Members;
+        internal Dictionary<uint, GroupMember> Members;
 
         /// <summary>
         ///     The name
@@ -109,7 +109,7 @@ namespace Oblivion.HabboHotel.Groups.Interfaces
         /// <summary>
         ///     The requests
         /// </summary>
-        internal Dictionary<ulong, GroupMember> Requests;
+        internal Dictionary<uint, GroupMember> Requests;
 
         /// <summary>
         ///     The room identifier
@@ -160,9 +160,9 @@ namespace Oblivion.HabboHotel.Groups.Interfaces
         /// <param name="whoCanPost"></param>
         /// <param name="whoCanThread"></param>
         /// <param name="whoCanMod"></param>
-        internal Guild(uint id, string name, string desc, uint roomId, string badge, int create, ulong creator,
-            int colour1, int colour2, Dictionary<ulong, GroupMember> members, Dictionary<ulong, GroupMember> requests,
-            Dictionary<ulong, GroupMember> admins, uint state, uint adminOnlyDeco, bool hasForum, string forumName,
+        internal Guild(uint id, string name, string desc, uint roomId, string badge, int create, uint creator,
+            int colour1, int colour2, Dictionary<uint, GroupMember> members, Dictionary<uint, GroupMember> requests,
+            Dictionary<uint, GroupMember> admins, uint state, uint adminOnlyDeco, bool hasForum, string forumName,
             string forumDescription, uint forumMessagesCount, double forumScore, uint forumLastPosterId,
             string forumLastPosterName, int forumLastPosterTimestamp,
             int whoCanRead, int whoCanPost, int whoCanThread, int whoCanMod, bool hasChat)
@@ -207,7 +207,7 @@ namespace Oblivion.HabboHotel.Groups.Interfaces
         /// </summary>
         /// <param name="requesterId">The requester identifier.</param>
         /// <returns>ServerMessage.</returns>
-        internal ServerMessage ForumDataMessage(ulong requesterId)
+        internal ServerMessage ForumDataMessage(uint requesterId)
         {
             string string1 = string.Empty, string2 = string.Empty, string3 = string.Empty, string4 = string.Empty;
 

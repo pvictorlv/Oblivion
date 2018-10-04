@@ -201,7 +201,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <summary>
         ///     The user identifier
         /// </summary>
-        internal ulong UserId;
+        internal uint UserId;
 
         /// <summary>
         ///     The value
@@ -236,7 +236,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="songCode">The song code.</param>
         /// <param name="isBuilder">if set to <c>true</c> [is builder].</param>
         internal RoomItem(string id, uint roomId, uint baseItem, string extraData, int x, int y, double z, int rot,
-            Room pRoom, ulong userid, uint eGroup, string songCode, bool isBuilder, int limNo, int limStack)
+            Room pRoom, uint userid, uint eGroup, string songCode, bool isBuilder, int limNo, int limStack)
         {
             Id = id;
             
@@ -334,7 +334,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="eGroup">The group.</param>
         /// <param name="isBuilder">if set to <c>true</c> [is builder].</param>
         internal RoomItem(string id, uint roomId, uint baseItem, string extraData, WallCoordinate wallCoord, Room pRoom,
-            ulong userid, uint eGroup, bool isBuilder)
+            uint userid, uint eGroup, bool isBuilder)
         {
             BaseItem = baseItem;
 
