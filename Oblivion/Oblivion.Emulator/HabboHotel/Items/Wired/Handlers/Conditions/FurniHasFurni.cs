@@ -67,42 +67,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
             if (OtherBool)
             {
-                bool all = true;
-                foreach (var item in Items)
-                {
-                    if (!all) break;
-
-                    foreach (var coord in item.GetCoords())
-                    {
-                        var itemsForSquare = item.GetRoom().GetGameMap().GetAllRoomItemForSquare(coord.X, coord.Y)
-                            .Where(x => x.Id != item.Id && x.Z >= item.Z);
-                        if (!itemsForSquare.Any())
-                        {
-                            all = false;
-                            break;
-                        }
-
-
-                    }
-                }
-
-                return all;
+                return Items.All(item => item.GetRoom().GetGameMap().HasHeightestItem(item.Coordinate, item.Z));
             }
 
-            foreach (var item in Items)
-            {
-                foreach (var coord in item.GetCoords())
-                {
-                    var itemsForSquare = item.GetRoom().GetGameMap().GetAllRoomItemForSquare(coord.X, coord.Y)
-                        .Where(x => x.Id != item.Id && x.Z >= item.Z);
-                    if (itemsForSquare.Any())
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
+            return Items.Any(item => item.GetRoom().GetGameMap().HasHeightestItem(item.Coordinate, item.Z));
 
         }
     }

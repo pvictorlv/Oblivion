@@ -682,7 +682,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                     return new InteractorHopper();
 
                 case Interaction.Teleport:
-                    TeleporterId = TeleHandler.GetLinkedTele(Id, _mRoom);
+                    TeleporterId = TeleHandler.GetLinkedTele(Id);
                     IsTrans = true;
                     ReqUpdate(0, true);
                     return new InteractorTeleport();
@@ -774,7 +774,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                     return new InteractorHcGate();
 
                 case Interaction.QuickTeleport:
-                    TeleporterId = TeleHandler.GetLinkedTele(Id, _mRoom);
+                    TeleporterId = TeleHandler.GetLinkedTele(Id);
                     IsTrans = true;
                     ReqUpdate(0, true);
                     return new InteractorQuickTeleport();

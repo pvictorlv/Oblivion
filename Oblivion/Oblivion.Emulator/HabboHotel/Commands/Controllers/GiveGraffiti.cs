@@ -6,16 +6,16 @@ namespace Oblivion.HabboHotel.Commands.Controllers
     /// <summary>
     ///     Class GiveDiamonds. This class cannot be inherited.
     /// </summary>
-    internal sealed class GiveEmeralds : Command
+    internal sealed class GiveGraffiti : Command
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="GiveDiamonds" /> class.
         /// </summary>
-        public GiveEmeralds()
+        public GiveGraffiti()
         {
             MinRank = 11;
             Description = "Gives user emeralds.";
-            Usage = ":emeralds [USERNAME] [AMOUNT]";
+            Usage = ":grafites [USERNAME] [AMOUNT]";
             MinParams = 2;
             BlockBad = true;
 
@@ -35,7 +35,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 session.SendWhisper(Oblivion.GetLanguage().GetVar("enter_numbers"));
                 return true;
             }
-            client.GetHabbo().Emeralds += amount;
+            client.GetHabbo().Graffiti += amount;
             client.GetHabbo().UpdateSeasonalCurrencyBalance();
             client.SendNotif(string.Format(Oblivion.GetLanguage().GetVar("staff_gives_emeralds"),
                 session.GetHabbo().UserName, amount));

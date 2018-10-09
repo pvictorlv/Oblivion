@@ -365,8 +365,8 @@ namespace Oblivion.HabboHotel.Items.Wired
                     }
                 }
             }
+            
 
-            _executedEffects.Remove(item);
 
             _wiredItems.TryRemove(item.Item.Id, out _);
         }
@@ -443,7 +443,6 @@ namespace Oblivion.HabboHotel.Items.Wired
 
             _wiredItems.TryRemove(item.Id, out current);
 
-            _executedEffects.Remove(current);
 
             return current;
         }
@@ -472,6 +471,7 @@ namespace Oblivion.HabboHotel.Items.Wired
             current.Item = null;
             current.Room = null;
             current.Dispose();
+            
         }
 
         public IWiredItem GenerateNewItem(RoomItem item)

@@ -513,7 +513,7 @@ namespace Oblivion.HabboHotel.Rooms
                 }
             }
 
-            LoadedRooms.TryRemove(room.RoomId, out var _);
+            LoadedRooms.TryRemove(room.RoomId, out _);
             room.Destroy();
             room = null;
         }

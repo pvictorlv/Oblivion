@@ -462,7 +462,7 @@ namespace Oblivion.HabboHotel.Catalogs
                 if (session.GetHabbo().Diamonds < item.DiamondsCost)
                     return;
 
-                if (session.GetHabbo().Emeralds < item.EmeraldsCost)
+                if (session.GetHabbo().Graffiti < item.EmeraldsCost)
                     return;
 
                 var array = item.Name.Split('_');
@@ -500,7 +500,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
                 if (item.EmeraldsCost > 0)
                 {
-                    session.GetHabbo().Emeralds -= (int) item.EmeraldsCost * totalPrice;
+                    session.GetHabbo().Graffiti -= (int) item.EmeraldsCost * totalPrice;
                     session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
                 }
 
@@ -573,7 +573,7 @@ namespace Oblivion.HabboHotel.Catalogs
                 return;
             if (session.GetHabbo().Diamonds < item.DiamondsCost * totalPrice)
                 return;
-            if (session.GetHabbo().Emeralds < item.EmeraldsCost * totalPrice)
+            if (session.GetHabbo().Graffiti < item.EmeraldsCost * totalPrice)
                 return;
 
             if (item.CreditsCost > 0 && !isGift)
@@ -596,7 +596,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
             if (item.EmeraldsCost > 0 && !isGift)
             {
-                session.GetHabbo().Emeralds -= item.EmeraldsCost * totalPrice;
+                session.GetHabbo().Graffiti -= item.EmeraldsCost * totalPrice;
                 session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
             }
 
@@ -667,7 +667,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
                     if (item.EmeraldsCost > 0 && isGift)
                     {
-                        session.GetHabbo().Emeralds -= (int) item.EmeraldsCost * totalPrice;
+                        session.GetHabbo().Graffiti -= (int) item.EmeraldsCost * totalPrice;
                         session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
                     }
                 }

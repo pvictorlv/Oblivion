@@ -110,16 +110,13 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 currentRoom.RoomData.RoomForSale = false;
                 currentRoom.RoomData.RoomSaleCost = 0;
                 currentRoom.RoomData.RoomSaleType = "";
-
-              
-                var UsersToReturn = currentRoom.GetRoomUserManager().GetRoomUsers();
-                Oblivion.GetGame().GetRoomManager().UnloadRoom(currentRoom, "purchase");
-                /* TODO CHECK */ foreach (var User in UsersToReturn.Where(User => User?.GetClient() != null))
+                using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    var forwardToRoom = new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
-                    forwardToRoom.AppendInteger(currentRoom.RoomId);
-                    User.GetClient().SendMessage(forwardToRoom);
+                    currentRoom.GetRoomItemHandler().SaveFurniture(dbClient);
+
                 }
+                Oblivion.GetGame().GetRoomManager().UnloadRoom(currentRoom, "purchase");
+               
             }
             else
             {

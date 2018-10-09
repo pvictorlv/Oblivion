@@ -14,7 +14,7 @@ namespace Oblivion.HabboHotel.Items.Handlers
         /// </summary>
         /// <param name="teleId">The tele identifier.</param>
         /// <returns>System.UInt32.</returns>
-        internal static string GetLinkedTele(string teleId, Room pRoom)
+        internal static string GetLinkedTele(string teleId)
         {
             string result;
 
@@ -38,7 +38,7 @@ namespace Oblivion.HabboHotel.Items.Handlers
         /// <returns>System.UInt32.</returns>
         internal static uint GetTeleRoomId(string teleId, Room pRoom)
         {
-            if (pRoom.GetRoomItemHandler().GetItem(teleId) != null)
+            if (pRoom?.GetRoomItemHandler()?.GetItem(teleId) != null)
                 return pRoom.RoomId;
 
             uint result;

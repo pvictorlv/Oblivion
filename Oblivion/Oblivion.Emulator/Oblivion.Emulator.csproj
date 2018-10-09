@@ -233,7 +233,7 @@
     <Compile Include="HabboHotel\Commands\Controllers\DisableSex.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\FixRoom.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\FlagUser.cs" />
-    <Compile Include="HabboHotel\Commands\Controllers\GiveEmeralds.cs" />
+    <Compile Include="HabboHotel\Commands\Controllers\GiveGraffiti.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\GivePoints.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\GiveRadioPoints.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\InviteAll.cs" />

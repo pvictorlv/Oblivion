@@ -462,7 +462,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage12 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage12.AppendBool(false);
-                        serverMessage12.AppendInteger(15);
+                        serverMessage12.AppendInteger(5);
                         serverMessage12.AppendInteger(list.Count);
                         foreach (var current12 in list) serverMessage12.AppendInteger(current12.VirtualId);
                         serverMessage12.AppendInteger(item.GetBaseItem().SpriteId);

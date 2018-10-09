@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Oblivion.Collections;
+﻿using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
@@ -61,7 +59,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             
 
             var roomUser = (RoomUser) stuff[0];
-            if (roomUser == null)
+            if (roomUser?.GetClient() == null)
                 return false;
 
             if (string.IsNullOrEmpty(OtherString)) return false;

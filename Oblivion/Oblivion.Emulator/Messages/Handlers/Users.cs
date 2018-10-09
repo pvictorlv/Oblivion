@@ -701,7 +701,7 @@ namespace Oblivion.Messages.Handlers
             {
                 queryReactor.SetQuery(string.Concat(
                     "REPLACE INTO users_wardrobe (user_id,slot_id,look,gender) VALUES (", Session.GetHabbo().Id, ",",
-                    num, ",@look,@gender) ON DUPLICATE KEY UPDATE SET look = @look, gender = @gender"));
+                    num, ",@look,@gender)   "));
                 queryReactor.AddParameter("look", text);
                 queryReactor.AddParameter("gender", text2);
                 queryReactor.RunQuery();

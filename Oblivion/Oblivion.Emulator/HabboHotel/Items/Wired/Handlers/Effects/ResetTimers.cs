@@ -67,7 +67,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public async Task<bool> OnCycle()
         {
-            if (!Requested) return false;
             var num = Oblivion.Now();
             await Task.Yield();
 

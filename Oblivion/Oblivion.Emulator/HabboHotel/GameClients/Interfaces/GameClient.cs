@@ -381,7 +381,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                     serverMessage.AppendInteger(_habbo.Diamonds);
 
                     serverMessage.AppendInteger(102);
-                    serverMessage.AppendInteger(_habbo.Emeralds);
+                    serverMessage.AppendInteger(_habbo.Graffiti);
 
                     SendMessage(serverMessage);
 

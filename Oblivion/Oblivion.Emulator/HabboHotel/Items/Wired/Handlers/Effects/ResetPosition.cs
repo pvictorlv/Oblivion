@@ -1,4 +1,5 @@
-﻿using Oblivion.Collections;
+﻿using System;
+using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
@@ -6,6 +7,7 @@ using Oblivion.HabboHotel.Rooms;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
 using System.Threading.Tasks;
+using Oblivion.Configuration;
 
 namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 {
@@ -65,107 +67,117 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public async Task<bool> OnCycle()
         {
-            if (!Requested) return false;
-
-            if (Room == null)
-                return false;
-
-            if (Items?.Count == 0)
-                return false;
-
-            if (string.IsNullOrWhiteSpace(OtherString) || string.IsNullOrWhiteSpace(OtherExtraString))
-                return false;
-
-            var booleans = OtherString.Split(',');
-
-            if (booleans.Length < 3)
-                return false;
-            var num = Oblivion.Now();
-
-            if (_mNext > num)
-                return false;
-
-            await Task.Yield();
-
-
-            var extraData = booleans[0] == "true";
-            var rot = booleans[1] == "true";
-            var position = booleans[2] == "true";
-            var arr = OtherExtraString.Split('/');
-            if (arr.Length > 0)
+            try
             {
-                foreach (var itemData in arr)
+                if (!Requested) return false;
+
+                if (Room == null)
+                    return false;
+
+                if (Items?.Count == 0)
+                    return false;
+
+                if (string.IsNullOrWhiteSpace(OtherString) || string.IsNullOrWhiteSpace(OtherExtraString))
+                    return false;
+
+                var booleans = OtherString.Split(',');
+
+                if (booleans.Length < 3)
+                    return false;
+                var num = Oblivion.Now();
+
+                if (_mNext > num)
+                    return false;
+
+
+
+                var extraData = booleans[0] == "true";
+                var rot = booleans[1] == "true";
+                var position = booleans[2] == "true";
+                var arr = OtherExtraString.Split('/');
+                if (arr.Length > 0)
                 {
-                    if (string.IsNullOrWhiteSpace(itemData))
-                        continue;
-
-                    var innerData = itemData.Split('|');
-                    if (innerData.Length < 4)
-                        continue;
-
-                    var itemId = innerData[0];
-
-                    var fItem = Room.GetRoomItemHandler().GetItem(itemId);
-
-
-                    if (fItem == null)
-                        continue;
-
-                    var extraDataToSet = extraData ? innerData[1] : fItem.ExtraData;
-                    var rotationToSet = rot ? int.Parse(innerData[2]) : fItem.Rot;
-
-                    var positions = innerData[3].Split(',');
-                    if (positions.Length < 3)
-                        continue;
-
-                    int xToSet, yToSet;
-                    double zToSet;
-
-                    if (position)
+                    foreach (var itemData in arr)
                     {
-                        int.TryParse(positions[0], out xToSet);
-                        int.TryParse(positions[1], out yToSet);
-                        double.TryParse(positions[2], out zToSet);
+                        if (string.IsNullOrWhiteSpace(itemData))
+                            continue;
+
+                        var innerData = itemData.Split('|');
+                        if (innerData.Length < 4)
+                            continue;
+
+                        var itemId = innerData[0];
+
+                        var fItem = Room.GetRoomItemHandler().GetItem(itemId);
+
+
+                        if (fItem == null)
+                            continue;
+
+                        var extraDataToSet = extraData ? innerData[1] : fItem.ExtraData;
+                        var rotationToSet = rot ? int.Parse(innerData[2]) : fItem.Rot;
+
+                        var positions = innerData[3].Split(',');
+                        if (positions.Length < 3)
+                            continue;
+
+                        int xToSet, yToSet;
+                        double zToSet;
+
+                        if (position)
+                        {
+                            int.TryParse(positions[0], out xToSet);
+                            int.TryParse(positions[1], out yToSet);
+                            double.TryParse(positions[2], out zToSet);
+                        }
+                        else
+                        {
+                            xToSet = fItem.X;
+                            yToSet = fItem.Y;
+                            zToSet = fItem.Z;
+                        }
+
+
+                        var serverMessage =
+                            new ServerMessage(LibraryParser.OutgoingRequest("ItemAnimationMessageComposer"));
+                        serverMessage.AppendInteger(fItem.X);
+                        serverMessage.AppendInteger(fItem.Y);
+                        serverMessage.AppendInteger(xToSet);
+                        serverMessage.AppendInteger(yToSet);
+                        serverMessage.AppendInteger(1);
+                        serverMessage.AppendInteger(fItem.VirtualId);
+                        serverMessage.AppendString(fItem.Z.ToString(Oblivion.CultureInfo));
+                        serverMessage.AppendString(zToSet.ToString(Oblivion.CultureInfo));
+                        serverMessage.AppendInteger(0);
+                        Room.SendMessage(serverMessage);
+
+                        Room.GetRoomItemHandler().SetFloorItem(null, fItem, xToSet, yToSet, rotationToSet, false, false,
+                            true,
+                            false, true);
+
+                        fItem.ExtraData = extraDataToSet;
+                        fItem.UpdateState();
+                        fItem.GetRoom().GetGameMap().UpdateMapForItem(fItem);
+
                     }
-                    else
-                    {
-                        xToSet = fItem.X;
-                        yToSet = fItem.Y;
-                        zToSet = fItem.Z;
-                    }
 
-
-                    var serverMessage =
-                        new ServerMessage(LibraryParser.OutgoingRequest("ItemAnimationMessageComposer"));
-                    serverMessage.AppendInteger(fItem.X);
-                    serverMessage.AppendInteger(fItem.Y);
-                    serverMessage.AppendInteger(xToSet);
-                    serverMessage.AppendInteger(yToSet);
-                    serverMessage.AppendInteger(1);
-                    serverMessage.AppendInteger(fItem.VirtualId);
-                    serverMessage.AppendString(fItem.Z.ToString(Oblivion.CultureInfo));
-                    serverMessage.AppendString(zToSet.ToString(Oblivion.CultureInfo));
-                    serverMessage.AppendInteger(0);
-                    Room.SendMessage(serverMessage);
-
-                    Room.GetRoomItemHandler().SetFloorItem(null, fItem, xToSet, yToSet, rotationToSet, false, false,
-                        true,
-                        false, true);
-
-                    fItem.ExtraData = extraDataToSet;
-                    fItem.UpdateState();
-                    fItem.GetRoom().GetGameMap().UpdateMapForItem(fItem);
-
+                    Room.GetGameMap().GenerateMaps();
                 }
-                Room.GetGameMap().GenerateMaps();
+
+                Requested = false;
+                _mNext = Oblivion.Now() + Delay;
+                return true;
             }
-            Requested = false;
-            _mNext = Oblivion.Now() + Delay;
-            return true;
+            catch (Exception e)
+            {
+                Logging.HandleException(e, "ResetPostion.cs");
+                return false;
+            }
 
         }
         public bool Execute(params object[] stuff)
         {
+            _mNext = Oblivion.Now() + Delay;
             Requested = true;
             return true;
         }

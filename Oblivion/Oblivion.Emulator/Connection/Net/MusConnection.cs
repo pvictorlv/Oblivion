@@ -172,7 +172,7 @@ namespace Oblivion.Connection.Net
                             emeralds = Convert.ToInt32(row["vip_points"]);
                         }
 
-                        clientByUserId.GetHabbo().Emeralds = emeralds;
+                        clientByUserId.GetHabbo().Graffiti = emeralds;
                         clientByUserId.GetHabbo().UpdateActivityPointsBalance();
                         break;
                     }

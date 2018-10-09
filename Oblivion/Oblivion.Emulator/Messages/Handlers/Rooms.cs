@@ -1863,11 +1863,18 @@ namespace Oblivion.Messages.Handlers
                 }
 
                 room.ResetGameMap("custom", wallHeight, wallThickness, floorThickness);
-                Oblivion.GetGame().GetRoomManager().UnloadRoom(room, "Reload floor");
+                room.GetGameMap().GenerateMaps();
 
-                var forwardToRoom = new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
-                forwardToRoom.AppendInteger(room.RoomId);
-                room?.SendMessage(forwardToRoom);
+                //                Oblivion.GetGame().GetRoomManager().UnloadRoom(room, "Reload floor");
+
+                var UsersToReturn = room.GetRoomUserManager().GetRoomUsers();
+
+                foreach (var User in UsersToReturn.Where(User => User?.GetClient() != null))
+                {
+                    var forwardToRoom = new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
+                    forwardToRoom.AppendInteger(room.RoomId);
+                    User.GetClient().SendMessage(forwardToRoom);
+                }
             }
         }
 
