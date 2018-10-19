@@ -104,6 +104,7 @@ namespace Oblivion.Collections
         {
             using (_lock.ReadLock())
             {
+
                 _inner.CopyTo(array, arrayIndex);
             }
         }

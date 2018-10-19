@@ -128,7 +128,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
 
 
-            foreach (var Item in Items.ToList())
+            foreach (var Item in Items)
             {
                 if (Item == null) continue;
 

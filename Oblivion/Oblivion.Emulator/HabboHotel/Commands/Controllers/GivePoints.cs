@@ -37,7 +37,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                dbClient.SetQuery("UPDATE usets SET epoints = epoints + 1 WHERE id = @id");
+                dbClient.SetQuery("UPDATE users SET epoints = epoints + 1 WHERE id = @id");
                 dbClient.AddParameter("id", client.GetHabbo().Id);
                 dbClient.RunQuery();
             }

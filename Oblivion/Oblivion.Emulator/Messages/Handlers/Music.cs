@@ -95,7 +95,7 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().GetInventoryComponent().RemoveItem(num, true, currentRoom.RoomId);
 
             using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery($"UPDATE items_rooms SET user_id='0' WHERE id={num} LIMIT 1");
+                queryReactor.RunFastQuery($"UPDATE items_rooms SET user_id='0' WHERE id='{num}' LIMIT 1");
 
             Session.SendMessage(SoundMachineComposer.Compose(roomMusicController.PlaylistCapacity, roomMusicController.Playlist.Values.ToList()));
         }
