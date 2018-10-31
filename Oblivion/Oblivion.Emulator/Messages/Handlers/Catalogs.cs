@@ -62,6 +62,9 @@ Request.GetString()
 
             Session.SendMessage(CatalogPageComposer.ComposeIndex(rank, pageType, allowedPages, Session));
             Session.SendMessage(StaticMessage.CatalogOffersConfiguration);
+
+            if (Session.IsAir)
+                Oblivion.GetGame().GetNavigator().SerializeFlatCategories(Session);
         }
 
         /// <summary>

@@ -111,7 +111,7 @@ namespace Oblivion.Configuration
         internal static bool AdminCanUseHtml = true, CryptoClientSide;
 
         internal static string WelcomeMessage = "";
-        internal static string GameCenterBaseJumpUrl;
+        internal static string GameCenterBaseJumpUrl = "";
 
         /// <summary>
         /// Runs the extra settings.

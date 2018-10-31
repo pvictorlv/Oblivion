@@ -19,6 +19,7 @@ namespace Oblivion.Messages.Parsers
         internal static Dictionary<short, short> OutgoingAir;
 
         internal static Dictionary<int, string> OutgoingNames;
+        internal static Dictionary<ushort, string> OutgoingAirNames;
 
         private static List<uint> _registeredOutoings;
 
@@ -38,6 +39,8 @@ namespace Oblivion.Messages.Parsers
 
         public static string TryGetOutgoingName(int header) => OutgoingNames.TryGetValue(header, out var incomingName) ? incomingName : string.Empty;
 
+        public static string TryGetOutgoingAirName(ushort header) => OutgoingAirNames.TryGetValue(header, out var incomingName) ? incomingName : string.Empty;
+
         public static void RegisterAll()
         {
             Incoming = new Dictionary<int, StaticRequestHandler>();
@@ -47,6 +50,7 @@ namespace Oblivion.Messages.Parsers
 
             IncomingAir = new Dictionary<short, short>();
             OutgoingAir = new Dictionary<short, short>();
+            OutgoingAirNames = new Dictionary<ushort, string>();
 
             OutgoingNames = new Dictionary<int, string>();
 
@@ -108,6 +112,7 @@ namespace Oblivion.Messages.Parsers
             Config.Clear();
             IncomingAir.Clear();
             OutgoingAir.Clear();
+            OutgoingAirNames.Clear();
 
             RegisterLibrary();
             RegisterConfig();
@@ -175,6 +180,22 @@ namespace Oblivion.Messages.Parsers
 
         internal static void RegisterOutgoing()
         {
+            if (File.Exists("outgoing_air.ini"))
+            {
+                foreach (string line in File.ReadAllLines("outgoing_air.ini"))
+                {
+                    if (string.IsNullOrWhiteSpace(line) && !line.StartsWith("#") && line.Contains("="))
+                    {
+                        string[] @params = line.Split('=');
+                        string id = @params[0];
+                        string @namespace = @params[1];
+
+                        if (ushort.TryParse(id, out ushort idUShort))
+                            OutgoingAirNames.Add(idUShort, @namespace);
+                    }
+                }
+            }
+
             _registeredOutoings = new List<uint>();
 
             var filePaths = Directory.GetFiles($"{Environment.CurrentDirectory}\\Packets", "*.outgoing");

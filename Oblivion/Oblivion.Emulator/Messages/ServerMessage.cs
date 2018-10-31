@@ -236,6 +236,33 @@ namespace Oblivion.Messages
             }
         }
 
+        public void AppendPacketString(string packet)
+        {
+            char[] pckt = packet.ToCharArray();
+            for (int i = 0; i < packet.Length; i++)
+            {
+                char c = pckt[i];
+
+                if (c == '[')
+                {
+                    int r = pckt.Skip(i).TakeWhile(s => s != ']').Count();
+
+                    if (r <= 3)
+                    {
+                        string s = string.Join("", pckt.Skip(i + 1).Take(r - 1).ToArray());
+                        if (int.TryParse(s, out int bts))
+                        {
+                            AppendByte((byte)bts);
+                        }
+                        i = i + r;
+                        continue;
+                    }
+                }
+
+                AppendByte((byte)c);
+            }
+        }
+
         /// <summary>
         /// Appends the bool.
         /// </summary>

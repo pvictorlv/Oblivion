@@ -23,7 +23,7 @@ namespace Oblivion.Messages
             return false;
         }
 
-        public static byte[] ReplaceOutgoingHeader(byte[] packet, out short oldHeader)
+        public static byte[] ReplaceOutgoingHeader(byte[] packet, out short oldHeader, out short newHeader)
         {
             byte[] newArr = new byte[packet.Length];
             Array.Copy(packet, newArr, packet.Length);
@@ -33,7 +33,7 @@ namespace Oblivion.Messages
             };
             oldHeader = BitConverter.ToInt16(oldHeaderBytes, 0);
 
-            if (LibraryParser.OutgoingAir.TryGetValue(oldHeader, out short newHeader))
+            if (LibraryParser.OutgoingAir.TryGetValue(oldHeader, out newHeader))
             {
                 if (Oblivion.DebugMode)
                     Console.WriteLine($"[AIR][OUTGOING] Changed header {oldHeader} to {newHeader}");

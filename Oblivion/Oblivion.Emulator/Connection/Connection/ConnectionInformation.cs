@@ -281,42 +281,5 @@ namespace Oblivion.Connection.Connection
 //            Arc4ServerSide?.Parse(ref packet);
             Parser?.HandlePacketData(packet, bytesReceived);
         }
-
-        /// <summary>
-        /// Sends the data.
-        /// </summary>
-        /// <param name="packet">The packet.</param>
-        public void SendData(byte[] packet)
-        {
-            if (Socket == null || !Socket.Connected) return;
-            byte[] newHeader = null;
-            if (IsAir)
-            {
-                newHeader = AirPacketTranslator.ReplaceOutgoingHeader(packet, out var oldHeader);
-                string packetName = "";
-                if (Oblivion.DebugMode)
-                     packetName = LibraryParser.TryGetOutgoingName(oldHeader);
-                if (newHeader == null)
-                {
-                    if (Oblivion.DebugMode)
-                        Console.WriteLine("Header *production* " + oldHeader + " (" + packetName +
-                                          ") wasn't translated to packet air.");
-                    return;
-                }
-                if (Oblivion.DebugMode)
-                    Console.WriteLine("Header *production* " + oldHeader + " (" + packetName +
-                                      ") has been translated to packet air.");
-            }
-
-            try
-            {
-                Socket.BeginSend(newHeader ?? packet, 0, packet.Length, 0, OnSendCompleted, null);
-            }
-            catch (Exception e)
-            {
-                //                Logging.HandleException(e, "SendData - ConnectionInformation.cs");
-                HandleDisconnect(e);
-            }
-        }
     }
 }
