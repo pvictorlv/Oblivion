@@ -34,7 +34,7 @@ namespace Oblivion.Connection.SuperSocket
 
         #region Methods
 
-        public RequestInfo Filter(byte[] readBuffer, int offset, int length, bool toBeCopied, out int rest)
+        public virtual RequestInfo Filter(byte[] readBuffer, int offset, int length, bool toBeCopied, out int rest)
         {
             // did not read anything
             rest = length;

@@ -27,6 +27,9 @@ namespace Oblivion.Messages.Handlers
                 rank = 1;
             Session.SendMessage(CatalogPageComposer.ComposeIndex(rank, Request.GetString().ToUpper(), Session));
             Session.SendMessage(StaticMessage.CatalogOffersConfiguration);
+
+            if (Session.IsAir)
+                Oblivion.GetGame().GetNavigator().SerializeFlatCategories(Session);
         }
 
         /// <summary>

@@ -44,7 +44,7 @@ namespace Oblivion.Connection.SuperSocket
 
             if (UserData.IsAir)
             {
-                newHeader = AirPacketTranslator.ReplaceOutgoingHeader(data, out var oldHeader);
+                newHeader = AirPacketTranslator.ReplaceOutgoingHeader(data, out var oldHeader, out var newHeaderShort);
 
                 string packetName = "";
 
@@ -52,9 +52,7 @@ namespace Oblivion.Connection.SuperSocket
                     packetName = LibraryParser.TryGetOutgoingName(oldHeader);
                 if (newHeader == null)
                 {
-                    if (Oblivion.DebugMode)
-                        Console.WriteLine("Header *production* " + oldHeader + " (" + packetName +
-                                          ") wasn't translated to packet air.");
+                    Console.WriteLine($"Header *production* {oldHeader} ({packetName}) wasn't translated to packet air.");
                     return;
                 }
                 if (Oblivion.DebugMode)
@@ -94,7 +92,7 @@ namespace Oblivion.Connection.SuperSocket
             if (_disposed) return;
             try
             {
-                Send(data);
+                Send(data.Array);
             }
             catch (Exception e)
             {

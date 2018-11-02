@@ -114,12 +114,12 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
             TimePingedReceived = DateTime.Now;
 
-//            if (_connection.Parser is InitialPacketParser packetParser)
-//                packetParser.PolicyRequest += PolicyRequest;
+            //            if (_connection.Parser is InitialPacketParser packetParser)
+            //                packetParser.PolicyRequest += PolicyRequest;
 
-//            if (_connection.Parser is InitialPacketParser initialPacketParser)
-//                initialPacketParser.SwitchParserRequest += SwitchParserRequest;
-//            _connection.StartPacketProcessing();
+            //            if (_connection.Parser is InitialPacketParser initialPacketParser)
+            //                initialPacketParser.SwitchParserRequest += SwitchParserRequest;
+            //            _connection.StartPacketProcessing();
         }
 
         /// <summary>
@@ -140,7 +140,8 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             try
             {
                 var ip = GetConnection()?.RemoteEndPoint.Address.ToString();
-                if (ip == null) return false;
+                if (ip == null)
+                    return false;
                 var userData = UserDataFactory.GetUserData(authTicket, out var errorCode);
 
                 if (errorCode == 1 || errorCode == 2 || userData?.User == null)
@@ -401,7 +402,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 }
 
                 SendMessage(GetHabbo().GetAvatarEffectsInventoryComponent().GetPacket());
-//                    queuedServerMessage.SendResponse();
+                //                    queuedServerMessage.SendResponse();
 
                 if (GetHabbo().GetMessenger() != null)
                     GetHabbo().GetMessenger().OnStatusChanged(true);

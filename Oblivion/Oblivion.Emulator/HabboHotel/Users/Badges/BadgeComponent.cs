@@ -32,7 +32,7 @@ namespace Oblivion.HabboHotel.Users.Badges
 
                 foreach (DataRow dataRow8 in badgesTable.Rows)
                 {
-                    var badge = new Badge((string) dataRow8["badge_id"], (int) dataRow8["badge_slot"]);
+                    var badge = new Badge((string)dataRow8["badge_id"], (int)dataRow8["badge_slot"]);
                     if (!BadgeList.ContainsKey(badge.Code))
                         BadgeList.TryAdd(badge.Code, badge);
                 }
@@ -76,6 +76,11 @@ namespace Oblivion.HabboHotel.Users.Badges
         /// <param name="wiredReward">if set to <c>true</c> [wired reward].</param>
         internal void GiveBadge(string badge, bool inDatabase, GameClient session, bool wiredReward = false)
         {
+            if (session == null)
+            {
+                return;
+            }
+
             if (wiredReward)
                 session.SendMessage(SerializeBadgeReward(!HasBadge(badge)));
 
@@ -132,7 +137,8 @@ namespace Oblivion.HabboHotel.Users.Badges
         /// </summary>
         internal void ResetSlots()
         {
-            /* TODO CHECK */ foreach (Badge badge in BadgeList.Values)
+            /* TODO CHECK */
+            foreach (Badge badge in BadgeList.Values)
                 badge.Slot = 0;
         }
 
@@ -146,7 +152,7 @@ namespace Oblivion.HabboHotel.Users.Badges
             if (session == null || !HasBadge(badge))
                 return;
 
-            
+
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery("DELETE FROM users_badges WHERE badge_id = @badge AND user_id = " + _userId);
@@ -183,7 +189,8 @@ namespace Oblivion.HabboHotel.Users.Badges
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("LoadBadgesWidgetMessageComposer"));
             serverMessage.AppendInteger(Count);
 
-            /* TODO CHECK */ foreach (Badge badge in BadgeList.Values)
+            /* TODO CHECK */
+            foreach (Badge badge in BadgeList.Values)
             {
                 serverMessage.AppendInteger(1);
                 serverMessage.AppendString(badge.Code);
@@ -194,7 +201,8 @@ namespace Oblivion.HabboHotel.Users.Badges
 
             serverMessage.AppendInteger(list.Count);
 
-            /* TODO CHECK */ foreach (var current in list)
+            /* TODO CHECK */
+            foreach (var current in list)
             {
                 serverMessage.AppendInteger(current.Slot);
                 serverMessage.AppendString(current.Code);
@@ -202,6 +210,5 @@ namespace Oblivion.HabboHotel.Users.Badges
 
             return serverMessage;
         }
-        
     }
 }

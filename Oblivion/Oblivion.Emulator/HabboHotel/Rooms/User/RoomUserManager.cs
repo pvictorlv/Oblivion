@@ -97,7 +97,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             UsersByUserId = new ConcurrentDictionary<uint, RoomUser>();
             _primaryPrivateUserId = 0;
             _secondaryPrivateUserId = 0;
-            _removeUsers = new ConcurrentList<RoomUser>((int) room.RoomData.UsersMax);
+            _removeUsers = new ConcurrentList<RoomUser>((int)room.RoomData.UsersMax);
             PetCount = 0;
             _roomUserCount = 0;
         }
@@ -170,7 +170,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             bot.RoomUser = roomUser;
             roomUser.BotData = bot;
 
-            roomUser.BotAi = bot.GenerateBotAi(roomUser.VirtualId, (int) bot.BotId);
+            roomUser.BotAi = bot.GenerateBotAi(roomUser.VirtualId, (int)bot.BotId);
             if (roomUser.IsPet)
             {
                 roomUser.BotAi.Init(bot.BotId, roomUser.VirtualId, _room.RoomId, roomUser, _room);
@@ -314,7 +314,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
             var roomUser = new RoomUser(habbo.Id, _room.RoomId, _primaryPrivateUserId++, _room,
                     spectator)
-                {UserId = habbo.Id};
+            { UserId = habbo.Id };
 
 
             var userName = habbo.UserName;
@@ -333,7 +333,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             habbo.LoadingRoom = 0;
 
             if (Oblivion.GetGame().GetNavigator().PrivateCategories.Contains(_room.RoomData.Category))
-                ((FlatCat) Oblivion.GetGame().GetNavigator().PrivateCategories[_room.RoomData.Category]).UsersNow++;
+                ((FlatCat)Oblivion.GetGame().GetNavigator().PrivateCategories[_room.RoomData.Category]).UsersNow++;
         }
 
         /// <summary>
@@ -431,7 +431,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (user.RidingHorse)
                 {
                     user.RidingHorse = false;
-                    var horse = GetRoomUserByVirtualId((int) user.HorseId);
+                    var horse = GetRoomUserByVirtualId((int)user.HorseId);
                     if (horse != null)
                     {
                         horse.RidingHorse = false;
@@ -560,7 +560,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 UserList.Values.Where(
                     current =>
                         !current.IsBot && current.GetClient() != null && current.GetClient().GetHabbo() != null &&
-                        current.GetClient().GetHabbo().Rank > (ulong) minRank).ToList();
+                        current.GetClient().GetHabbo().Rank > (ulong)minRank).ToList();
         }
 
         /// <summary>
@@ -656,6 +656,10 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <returns>ServerMessage.</returns>
         internal ServerMessage SerializeStatusUpdates(bool all)
         {
+            if (UserList.Count <= 0)
+            {
+                return null;
+            }
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
             var i = 0;
             serverMessage.StartArray();
@@ -780,7 +784,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                 if (!roomUsers.IsOwner() && roomUsers.LastHostingDate + 60 < Oblivion.GetUnixTimeStamp())
                 {
-                    var roomOwner = (uint) roomUsers.GetRoom().RoomData.OwnerId;
+                    var roomOwner = (uint)roomUsers.GetRoom().RoomData.OwnerId;
                     var ownerClient = Oblivion.GetGame().GetClientManager().GetClientByUserId(roomOwner);
                     if (ownerClient != null)
                     {
@@ -860,7 +864,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 UpdateUserStatus(roomUsers, false);
             }
             else if ((roomUsers.IsPet) && ((roomUsers.PetData.Type == 3) || (roomUsers.PetData.Type == 4)) &&
-                     (roomUsers.PetData.WaitingForBreading  > 0) &&
+                     (roomUsers.PetData.WaitingForBreading > 0) &&
                      ((roomUsers.PetData.BreadingTile.X != roomUsers.X) &&
                       (roomUsers.PetData.BreadingTile.Y != roomUsers.Y)))
             {
@@ -1049,7 +1053,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             horseRidingPet.SetZ = (roomUsers.SetZ - 1);
                             horseRidingPet.SetStep = true;
 
-//                            UpdateUserEffect(horseRidingPet, horseRidingPet.SetX, horseRidingPet.SetY);
+                            //                            UpdateUserEffect(horseRidingPet, horseRidingPet.SetX, horseRidingPet.SetY);
                             UpdateUserStatus(horseRidingPet, false);
                         }
                     }
@@ -1067,7 +1071,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     }
 
                     // Region Update User Effect And Status
-//                    UpdateUserEffect(roomUsers, roomUsers.SetX, roomUsers.SetY);
+                    //                    UpdateUserEffect(roomUsers, roomUsers.SetX, roomUsers.SetY);
 
                     // Update Effect if is Ridding
                     if (roomUsers.RidingHorse)
@@ -1439,9 +1443,9 @@ namespace Oblivion.HabboHotel.Rooms.User
 
             if (userInRoomCount >= 5 && Oblivion.Multipy > 1)
             {
-                if (_roomUserCount != userInRoomCount * (uint) Oblivion.Multipy)
+                if (_roomUserCount != userInRoomCount * (uint)Oblivion.Multipy)
                 {
-                    UpdateUserCount(userInRoomCount * (uint) Oblivion.Multipy);
+                    UpdateUserCount(userInRoomCount * (uint)Oblivion.Multipy);
                 }
             }
             else

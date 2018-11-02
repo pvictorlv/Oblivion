@@ -25,6 +25,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         {
             _bot = null;
         }
+
         private RoomUser _bot;
 
         public bool Disposed { get; set; }
@@ -52,8 +53,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool Execute(params object[] stuff)
         {
-            
-
             if (string.IsNullOrEmpty(OtherString)) return false;
 
             if (_bot?.BotData == null || _bot.BotData.Name != OtherString)
@@ -64,6 +63,11 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             var rnd = new Random();
             var goal = Items[rnd.Next(Items.Count)];
+            if (goal == null)
+            {
+                return false;
+            }
+
             _bot.MoveTo(goal.X, goal.Y);
 
             return true;
