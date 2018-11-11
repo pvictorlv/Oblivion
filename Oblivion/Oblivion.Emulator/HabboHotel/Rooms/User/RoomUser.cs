@@ -763,7 +763,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
 
 
-
             UnIdle();
             if (!IsPet && !IsBot)
             {
@@ -898,15 +897,20 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="pOverride">if set to <c>true</c> [p override].</param>
         internal void MoveTo(int x, int y, bool pOverride)
         {
+            if (x >= GetRoom().GetGameMap().GameMap.GetLength(0) ||
+                y >= GetRoom().GetGameMap().GameMap.GetLength(1))
+                return;
+
             if (TeleportEnabled)
             {
                 UnIdle();
-                using (var msg = GetRoom()
+                using (var msg = _mRoom
                     .GetRoomItemHandler()
                     .UpdateUserOnRoller(this, new Point(x, y), 0u,
                         GetRoom().GetGameMap().SqAbsoluteHeight(GoalX, GoalY)))
                 {
-                    GetRoom()
+                    if (msg == null) return;
+                    _mRoom?
                         .SendMessage(msg);
                 }
 
@@ -993,7 +997,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 serverMessage.AppendInteger(VirtualId);
                 serverMessage.AppendInteger(item);
-                GetRoom().SendMessage(serverMessage);
+                _mRoom?.SendMessage(serverMessage);
             }
         }
 

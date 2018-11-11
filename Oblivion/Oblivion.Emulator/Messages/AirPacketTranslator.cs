@@ -11,7 +11,6 @@ namespace Oblivion.Messages
     {
         public static bool ReplaceIncomingHeader(ClientMessage clientMessage)
         {
-            Console.WriteLine(clientMessage.Id);
             if (LibraryParser.IncomingAir.TryGetValue((short) clientMessage.Id, out short newMessageId))
             {
                 if (Oblivion.DebugMode)

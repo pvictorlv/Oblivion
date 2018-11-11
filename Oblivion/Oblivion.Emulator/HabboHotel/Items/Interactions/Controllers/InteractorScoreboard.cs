@@ -14,7 +14,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             int num;
             int.TryParse(item.ExtraData, out num);
-            Out.WriteLine(request.ToString());
+
             switch (request)
             {
                 case 1:

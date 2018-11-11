@@ -206,7 +206,6 @@
   <ItemGroup>
     <Compile Include="Configuration\FurniData.cs" />
     <Compile Include="Configuration\Languages.cs" />
-    <Compile Include="Connection\Connection\ConnectionInformation.cs" />
     <Compile Include="Connection\Connection\GameSocketManagerStatics.cs" />
     <Compile Include="Connection\Connection\SocketConnectionCheck.cs" />
     <Compile Include="Connection\Net\MusConnection.cs" />

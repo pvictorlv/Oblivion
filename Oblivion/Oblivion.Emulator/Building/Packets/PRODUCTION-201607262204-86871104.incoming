@@ -38,7 +38,7 @@ CheckUsernameMessageEvent=3704
 ChangeUsernameMessageEvent=1060
 WardrobeMessageEvent=277
 WardrobeUpdateMessageEvent=1377
-InitConsole=3058
+InitConsole=3058/1513
 
 [Navigator]
 NavigatorGetEventsMessageEvent=1937
@@ -127,7 +127,7 @@ RoomGetSettingsInfoMessageEvent=177/587
 RoomSaveSettingsMessageEvent=1934/1436
 RoomSettingsMuteAllMessageEvent=2325
 RoomSettingsMuteUserMessageEvent=329
-RoomLoadByDoorbellMessageEvent=745
+RoomLoadByDoorbellMessageEvent=745/1733
 DoorbellAnswerMessageEvent=1332/3767
 RoomGetFilterMessageEvent=3536
 RoomAlterFilterMessageEvent=3838
@@ -286,16 +286,16 @@ OpenAchievementsBoxMessageEvent=1749
 CompleteSafetyQuizMessageEvent=2015
 
 [Friends]
-ConsoleInstantChatMessageEvent=3653
+ConsoleInstantChatMessageEvent=3653/2994
 ConsoleInviteFriendsMessageEvent=3233
 ConsoleSearchFriendsMessageEvent=1021/3966
 FollowFriendMessageEvent=3906
-FriendListUpdateMessageEvent=2531
+FriendListUpdateMessageEvent=2531/107
 FriendRequestListLoad=2492
 AcceptFriendMessageEvent=109/2893
 DeclineFriendMessageEvent=3875
 DeleteFriendMessageEvent=579
-RequestFriendMessageEvent=2457
+RequestFriendMessageEvent=2457/2343
 GetMyFriendsMessageEvent=1686
 FindMoreFriendsMessageEvent=3406
 ConsoleInit=1307

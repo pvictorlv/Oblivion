@@ -23,7 +23,6 @@ namespace Oblivion.Connection.SuperSocket
         protected override int GetBodyLengthFromHeader(byte[] header, int offset, int length)
         {
             var head = HabboEncoding.ToInt(header, offset);
-//            Console.WriteLine(head);
             return head;
         }
 

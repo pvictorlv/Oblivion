@@ -52,7 +52,6 @@ namespace Oblivion.Connection.SuperSocket
                     packetName = LibraryParser.TryGetOutgoingName(oldHeader);
                 if (newHeader == null)
                 {
-                    Console.WriteLine($"Header *production* {oldHeader} ({packetName}) wasn't translated to packet air.");
                     return;
                 }
                 if (Oblivion.DebugMode)
