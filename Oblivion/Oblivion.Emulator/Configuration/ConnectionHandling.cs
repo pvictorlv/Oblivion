@@ -34,7 +34,7 @@ namespace Oblivion.Configuration
             Manager = new SuperServer<GameClient>(port, maxConnections);
             ConnectionsPerIp = connectionsPerIp;
 
-//            SocketConnectionCheck.Init();
+            SocketConnectionCheck.SetupTcpAuthorization(maxConnections);
             //            Manager.OnConnectionOpened += OnClientConnected;
             Manager.OnConnectionClosed += (session) => OnClientDisconnected(session, null);
 
@@ -53,8 +53,8 @@ namespace Oblivion.Configuration
 
             Manager.NewSessionConnected += session =>
             {
-//                if (SocketConnectionCheck.CheckAvailability(session.RemoteAddress.ToString()))
-//                {
+                if (SocketConnectionCheck.CheckConnection(session.RemoteAddress.ToString(), connectionsPerIp, true))
+                {
                     session.SocketSession.Client
                         .SetSocketOption(SocketOptionLevel.Socket,
                             SocketOptionName.NoDelay, !enabeNagles);
@@ -62,11 +62,12 @@ namespace Oblivion.Configuration
                     session.Parser = new GamePacketParser();
                     session.ConnId = ++Manager.AcceptedConnections;
                     Oblivion.GetGame().GetClientManager().CreateAndStartClient(session.ConnId, session);
-//                }
-//                else
-//                {
-//                    session.Disconnect();
-//                }
+                }
+                else
+                {
+                    session.Disconnect();
+
+                }
             };
 
 
@@ -102,7 +103,7 @@ namespace Oblivion.Configuration
         {
             try
             {
-//                SocketConnectionCheck.RemoveClientCount(connection.RemoteAddress.ToString());
+                SocketConnectionCheck.FreeConnection(connection.RemoteAddress.ToString());
                 Oblivion.GetGame().GetClientManager().DisposeConnection((uint) connection.ConnId);
             }
             catch (Exception ex)

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Oblivion.Configuration;
+using Oblivion.Connection.Connection;
 using Oblivion.Connection.SuperSocket;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages;
@@ -229,8 +230,9 @@ namespace Oblivion.HabboHotel.GameClients
         {
             if (!Clients.TryRemove(clientId, out var client))
                 return;
-            client.Dispose();
-            
+
+            client?.Dispose();
+
         }
 
 

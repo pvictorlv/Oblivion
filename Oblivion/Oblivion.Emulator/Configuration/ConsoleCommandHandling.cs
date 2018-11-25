@@ -108,7 +108,6 @@ namespace Oblivion.Configuration
                         return;
                     }
                     case "clear":
-                        SocketConnectionCheck.Init();
                         Console.Clear();
                         break;
 

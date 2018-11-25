@@ -84,10 +84,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         private SoundMachineManager _musicController;
 
-        /// <summary>
-        ///     The _process timer
-        /// </summary>
-        private Timer _processTimer;
+        private CancellationTokenSource _mainProcessSource;
 
         /// <summary>
         ///     The _room item handling
@@ -98,11 +95,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     The _room kick
         /// </summary>
         private Queue _roomKick;
-
-        /// <summary>
-        /// The _room thread
-        /// </summary>
-        private Task _roomThread;
+        
 
         /// <summary>
         ///     The _room user manager
@@ -343,8 +336,16 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         internal void StartRoomProcessing()
         {
-            _processTimer = new Timer(ProcessRoom, null, 0, 450);
-        }
+            new Task(async () =>
+            {
+                while (!_mainProcessSource.Token.IsCancellationRequested)
+                {
+                    await ProcessRoom();
+                    await Task.Delay(200);
+                }
+            }, _mainProcessSource.Token, TaskCreationOptions.LongRunning).Start();
+            
+}
 
         private bool _processingWireds;
         private bool _processingBall;
@@ -742,7 +743,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <summary>
         ///     Processes the room.
         /// </summary>
-        internal void ProcessRoom(object callItem)
+        internal async Task ProcessRoom()
         {
             try
             {
@@ -751,6 +752,7 @@ namespace Oblivion.HabboHotel.Rooms
 
                 try
                 {
+                    //todo: separate thread for each cycle, like wired & ball
                     var idle = 0;
                     if (UserCount > 0)
                     {
@@ -866,8 +868,11 @@ namespace Oblivion.HabboHotel.Rooms
                 {
                     if (user?.GetClient() != null)
                     {
+                        
+                        var distance =user.GetClient().IsAir ? 16 : RoomData.ChatMaxDistance;
+
                         if (Gamemap.TileDistance(currentLocation.X, currentLocation.Y, user.X, user.Y) >
-                            RoomData.ChatMaxDistance) continue;
+                            distance) continue;
 
                         user.GetClient().SendMessage(arrayData);
                     }
@@ -903,8 +908,9 @@ namespace Oblivion.HabboHotel.Rooms
                     if (usersClient?.GetHabbo()?.Data == null)
                         continue;
 
-                    if (RoomData.ChatMaxDistance > 0 &&
-                        Gamemap.TileDistance(senderCoord.X, senderCoord.Y, user.X, user.Y) > RoomData.ChatMaxDistance)
+                    var distance = usersClient.IsAir ? 16 : RoomData.ChatMaxDistance;
+
+                    if (Gamemap.TileDistance(senderCoord.X, senderCoord.Y, user.X, user.Y) > distance)
                         continue;
 
                     try
@@ -1273,13 +1279,17 @@ namespace Oblivion.HabboHotel.Rooms
                 }
             }
 
-            if (!forceLoad)
-            {
-                _roomThread = new Task(StartRoomProcessing, TaskCreationOptions.LongRunning);
-                _roomThread.Start();
-            }
 
             Oblivion.GetGame().GetRoomManager().QueueActiveRoomAdd(RoomData);
+
+
+            if (!forceLoad)
+            {
+                _mainProcessSource = new CancellationTokenSource();
+                StartRoomProcessing();
+
+            }
+
         }
 
         /// <summary>
@@ -1412,8 +1422,9 @@ namespace Oblivion.HabboHotel.Rooms
             }
 
             _gameMap = null;
-            _processTimer?.Dispose();
-            _processTimer = null;
+
+            _mainProcessSource.Cancel();
+
             RoomData?.Tags?.Clear();
             RoomData.Tags = null;
             RoomData?.BlockedCommands?.Clear();
@@ -1447,8 +1458,7 @@ namespace Oblivion.HabboHotel.Rooms
             UsersWithRights = null;
             Oblivion.GetGame().GetRoomManager().RemoveRoomData(RoomId);
 
-            _roomThread?.Dispose();
-            _roomThread = null;
+            
 
             _roomKick?.Clear();
             _roomKick = null;
