@@ -111,7 +111,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 /* TODO CHECK */
                 foreach (var s in array)
                 {
-                    var item = _room.GetRoomItemHandler().GetItem(s);
+                    var item = _room?.GetRoomItemHandler()?.GetItem(s);
                     if (item == null) continue;
                     fItem.Items.Add(item);
                 }
@@ -221,13 +221,22 @@ namespace Oblivion.HabboHotel.Items.Wired
             return false;
         }
 
+        private int _sleepingTime = 0;
 
         public void OnCycle()
         {
             try
             {
-                if (_wiredItems == null || _wiredItems.Count <= 0 || _room == null)
+                if (_room == null)
                     return;
+
+                if (_wiredItems == null || _wiredItems.Count <= 0)
+                {
+                    _sleepingTime++;
+                    if (_sleepingTime >= 600)
+                        _room.StopWired();
+                    return;
+                }
 
                 foreach (var item in _wiredItems.Values)
                 {
@@ -267,6 +276,8 @@ namespace Oblivion.HabboHotel.Items.Wired
                         }
                     }
                 }
+
+                _sleepingTime = 0;
             }
             catch (Exception e)
             {
@@ -365,7 +376,6 @@ namespace Oblivion.HabboHotel.Items.Wired
                     }
                 }
             }
-            
 
 
             _wiredItems.TryRemove(item.Item.Id, out _);
@@ -471,7 +481,6 @@ namespace Oblivion.HabboHotel.Items.Wired
             current.Item = null;
             current.Room = null;
             current.Dispose();
-            
         }
 
         public IWiredItem GenerateNewItem(RoomItem item)

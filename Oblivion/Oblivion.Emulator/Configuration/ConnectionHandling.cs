@@ -53,7 +53,7 @@ namespace Oblivion.Configuration
 
             Manager.NewSessionConnected += session =>
             {
-                if (SocketConnectionCheck.CheckConnection(session.RemoteAddress.ToString(), connectionsPerIp, true))
+                if (SocketConnectionCheck.CheckConnection(session.GetIp(), connectionsPerIp, true))
                 {
                     session.SocketSession.Client
                         .SetSocketOption(SocketOptionLevel.Socket,
@@ -103,7 +103,7 @@ namespace Oblivion.Configuration
         {
             try
             {
-                SocketConnectionCheck.FreeConnection(connection.RemoteAddress.ToString());
+                SocketConnectionCheck.FreeConnection(connection.GetIp());
                 Oblivion.GetGame().GetClientManager().DisposeConnection((uint) connection.ConnId);
             }
             catch (Exception ex)

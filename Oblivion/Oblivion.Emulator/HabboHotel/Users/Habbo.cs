@@ -1304,10 +1304,7 @@ namespace Oblivion.HabboHotel.Users
 
             if (TradeLockExpire - Oblivion.GetUnixTimeStamp() > 0)
                 return false;
-
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery($"UPDATE users SET trade_lock = '0' WHERE id = {Id}");
-
+            
             TradeLocked = false;
             return true;
         }

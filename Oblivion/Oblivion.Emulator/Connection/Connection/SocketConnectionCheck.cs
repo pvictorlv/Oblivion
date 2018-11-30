@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
-using Oblivion.Configuration;
 using Oblivion.Util;
 
 namespace Oblivion.Connection.Connection
@@ -48,7 +45,10 @@ namespace Oblivion.Connection.Connection
             int freeConnectionId = GetFreeConnectionId();
 
             if (freeConnectionId < 0)
+            {
+                Out.WriteLine("Bug in socket!");
                 return false;
+            }
 
             _mConnectionStorage[freeConnectionId] = iP;
 

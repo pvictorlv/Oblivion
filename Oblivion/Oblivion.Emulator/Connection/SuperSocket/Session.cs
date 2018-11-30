@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Oblivion.Connection.Connection;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
@@ -21,6 +22,8 @@ namespace Oblivion.Connection.SuperSocket
 
         #endregion Properties
 
+        public string GetIp() => RemoteEndPoint.ToString().Split(':')[0];
+
 
         #region Methods
 
@@ -31,7 +34,7 @@ namespace Oblivion.Connection.SuperSocket
 
         public void Disconnect()
         {
-//            SocketConnectionCheck.FreeConnection(GetIp());
+            SocketConnectionCheck.FreeConnection(GetIp());
             Close();
             Dispose();
         }

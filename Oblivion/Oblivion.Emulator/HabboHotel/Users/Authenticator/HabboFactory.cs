@@ -66,8 +66,8 @@ namespace Oblivion.HabboHotel.Users.Authenticator
             var citizenship = dRow["talent_status"].ToString();
             var diamonds = int.Parse(dRow["diamonds"].ToString());
             var lastChange = (int) dRow["last_name_change"];
-            var tradeLocked = Oblivion.EnumToBool(dRow["trade_lock"].ToString());
             var tradeLockExpire = int.Parse(dRow["trade_lock_expire"].ToString());
+            var tradeLocked = tradeLockExpire >= Oblivion.GetUnixTimeStamp();
 
             /* builders club */
             var buildersExpire = (int) dRow["builders_expire"];

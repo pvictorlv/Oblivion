@@ -95,7 +95,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     The _room kick
         /// </summary>
         private Queue _roomKick;
-        
+
 
         /// <summary>
         ///     The _room user manager
@@ -228,7 +228,16 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Gets the wired handler.
         /// </summary>
         /// <returns>WiredHandler.</returns>
-        public WiredHandler GetWiredHandler() => _wiredHandler ?? (_wiredHandler = new WiredHandler(this));
+        public WiredHandler GetWiredHandler()
+        {
+            if (_wiredHandler == null)
+            {
+                _wiredHandler = new WiredHandler(this);
+                StartWiredsProcess();
+            }
+
+            return _wiredHandler;
+        }
 
 
         /// <summary>
@@ -236,6 +245,9 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         /// <returns>WiredHandler.</returns>
         public bool GotWireds() => _wiredHandler != null;
+
+
+        
 
         /// <summary>
         ///     Gets the game map.
@@ -259,7 +271,16 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Gets the soccer.
         /// </summary>
         /// <returns>Soccer.</returns>
-        internal Soccer GetSoccer() => _soccer ?? (_soccer = new Soccer(this));
+        internal Soccer GetSoccer()
+        {
+            if (_soccer == null)
+            {
+                _soccer = new Soccer(this);
+                StartBallProcess();
+            }
+
+            return _soccer;
+        }
 
         /// <summary>
         ///     Gets the team manager for banzai.
@@ -340,12 +361,14 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 while (!_mainProcessSource.Token.IsCancellationRequested)
                 {
+                    var start = Oblivion.GetUnixTimeStamp();
                     await ProcessRoom();
-                    await Task.Delay(200);
+                    var end = Oblivion.GetUnixTimeStamp();
+                    var wait = 450 - (end - start);
+                    await Task.Delay(wait);
                 }
             }, _mainProcessSource.Token, TaskCreationOptions.LongRunning).Start();
-            
-}
+        }
 
         private bool _processingWireds;
         private bool _processingBall;
@@ -358,20 +381,27 @@ namespace Oblivion.HabboHotel.Rooms
 
             new Task(async () =>
             {
-                while (GotWireds() && !Disposed)
+                while (_wiredHandler != null && !_mainProcessSource.Token.IsCancellationRequested)
                 {
                     _wiredHandler.OnCycle();
                     await Task.Delay(250);
                 }
-            }, TaskCreationOptions.LongRunning).Start();
+            }, _mainProcessSource.Token, TaskCreationOptions.LongRunning).Start();
         }
 
         internal void StopSoccer()
         {
+            _soccer.Destroy();
             _soccer = null;
             _processingBall = false;
         }
 
+        internal void StopWired()
+        {
+            _processingWireds = false;
+            _wiredHandler.Destroy();
+            _wiredHandler = null;
+        }
         internal void StartBallProcess()
         {
             if (_processingBall) return;
@@ -380,7 +410,7 @@ namespace Oblivion.HabboHotel.Rooms
 
             new Task(async () =>
             {
-                while (GotSoccer() && !Disposed)
+                while ((GotSoccer() && !Disposed) && !_mainProcessSource.Token.IsCancellationRequested)
                 {
                     try
                     {
@@ -791,16 +821,6 @@ namespace Oblivion.HabboHotel.Rooms
                         GetRoomMusicController().Update(this);
                     }
 
-                    if (GotWireds())
-                    {
-                        StartWiredsProcess();
-                    }
-
-                    if (GotSoccer())
-                    {
-                        StartBallProcess();
-                    }
-
                     WorkRoomKickQueue();
                 }
                 catch (Exception e)
@@ -868,8 +888,7 @@ namespace Oblivion.HabboHotel.Rooms
                 {
                     if (user?.GetClient() != null)
                     {
-                        
-                        var distance =user.GetClient().IsAir ? 16 : RoomData.ChatMaxDistance;
+                        var distance = user.GetClient().IsAir ? 16 : RoomData.ChatMaxDistance;
 
                         if (Gamemap.TileDistance(currentLocation.X, currentLocation.Y, user.X, user.Y) >
                             distance) continue;
@@ -998,12 +1017,12 @@ namespace Oblivion.HabboHotel.Rooms
                 foreach (var unit in _roomUserManager.UserList.Values)
                 {
                     var user = unit;
-                    
+
                     var usersClient = user?.GetClient();
                     if (usersClient == null)
                         continue;
 
-                    if (!CheckRights(usersClient, false, true,false,true))
+                    if (!CheckRights(usersClient, false, true, false, true))
                         continue;
 
                     usersClient.SendMessage(data);
@@ -1287,9 +1306,7 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 _mainProcessSource = new CancellationTokenSource();
                 StartRoomProcessing();
-
             }
-
         }
 
         /// <summary>
@@ -1458,7 +1475,6 @@ namespace Oblivion.HabboHotel.Rooms
             UsersWithRights = null;
             Oblivion.GetGame().GetRoomManager().RemoveRoomData(RoomId);
 
-            
 
             _roomKick?.Clear();
             _roomKick = null;

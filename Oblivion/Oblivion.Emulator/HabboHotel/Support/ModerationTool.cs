@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
 using System.Linq;
-using System.Windows.Forms;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
-using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.Chat;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
-using Oblivion.Util;
 
 namespace Oblivion.HabboHotel.Support
 {
@@ -63,14 +60,7 @@ namespace Oblivion.HabboHotel.Support
             AbusiveCooldown = new Dictionary<uint, double>();
         }
 
-        /// <summary>
-        ///     Sends the ticket update to moderators.
-        /// </summary>
-        /// <param name="ticket">The ticket.</param>
-        internal static void SendTicketUpdateToModerators(SupportTicket ticket)
-        {
-        }
-
+ 
         /// <summary>
         ///     Sends the ticket to moderators.
         /// </summary>
@@ -248,7 +238,7 @@ namespace Oblivion.HabboHotel.Support
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.RunFastQuery(
-                    $"UPDATE users SET trade_lock = '1', trade_lock_expire = '{clientByUserId.GetHabbo().TradeLockExpire}' WHERE id = '{clientByUserId.GetHabbo().Id}'");
+                    $"UPDATE users SET trade_lock_expire = '{clientByUserId.GetHabbo().TradeLockExpire}' WHERE id = '{clientByUserId.GetHabbo().Id}'");
         }
 
         /// <summary>
@@ -295,7 +285,7 @@ namespace Oblivion.HabboHotel.Support
                 if (queryReactor != null)
                 {
                     queryReactor.SetQuery(
-                        "SELECT id, username, mail, look, trade_lock, trade_lock_expire, rank, ip_last, " +
+                        "SELECT id, username, mail, look, trade_lock_expire, rank, ip_last, " +
                         "IFNULL(cfhs, 0) cfhs, IFNULL(cfhs_abusive, 0) cfhs_abusive, IFNULL(cautions, 0) cautions, IFNULL(bans, 0) bans, " +
                         "IFNULL(reg_timestamp, 0) reg_timestamp, IFNULL(login_timestamp, 0) login_timestamp " +
                         $"FROM users left join users_info on (users.id = users_info.user_id) WHERE id = '{userId}' LIMIT 1"
@@ -323,8 +313,9 @@ namespace Oblivion.HabboHotel.Support
 
                     serverMessage.AppendInteger(0);
                     var rank = (uint) row["rank"];
-                    serverMessage.AppendString(row["trade_lock"].ToString() == "1"
-                        ? Oblivion.UnixToDateTime(int.Parse(row["trade_lock_expire"].ToString())).ToLongDateString()
+                    var expire = int.Parse(row["trade_lock_expire"].ToString());
+                    serverMessage.AppendString(expire >= Oblivion.GetUnixTimeStamp()
+                        ? Oblivion.UnixToDateTime(expire).ToLongDateString()
                         : "Not trade-locked");
                     serverMessage.AppendString(rank < 6 ? row["ip_last"].ToString() : "127.0.0.1");
                     serverMessage.AppendInteger(id);
