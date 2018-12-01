@@ -222,7 +222,6 @@ namespace Oblivion.HabboHotel
                 Progress(bar, wait, end, "Loading ModerationTool...");
                 _moderationTool = new ModerationTool();
                 _moderationTool.LoadMessagePresets(queryReactor);
-                _moderationTool.LoadPendingTickets(queryReactor);
                 
 
                 Progress(bar, wait, end, "Loading Quests...");

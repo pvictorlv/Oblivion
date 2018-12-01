@@ -21,7 +21,11 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override bool Execute(GameClient session, string[] pms)
         {
-            Oblivion.GetGame().GetAchievementManager().LoadAchievements(Oblivion.GetDatabaseManager().GetQueryReactor());
+            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            {
+                Oblivion.GetGame().GetAchievementManager().LoadAchievements(dbClient);
+            }
+
             session.SendNotif(Oblivion.GetLanguage().GetVar("command_refresh_achievements"));
             return true;
         }

@@ -64,7 +64,7 @@ namespace Oblivion
         /// <summary>
         ///     The live currency type
         /// </summary>
-        internal static int LiveCurrencyType = 105, ConsoleTimer = 2000;
+        internal static int ConsoleTimer = 2000;
 
         /// <summary>
         ///     The is live
@@ -539,6 +539,17 @@ namespace Oblivion
         /// <returns>System.Int32.</returns>
         internal static int DateTimeToUnix(DateTime target) => Convert.ToInt32(
             (target - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds);
+        /// <summary>
+        ///     Convert's a String to Unix TimeStamp
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <returns>System.Int32.</returns>
+        internal static int DateToUnix(string target)
+        {
+            var time = Convert.ToDateTime(target);
+            return Convert.ToInt32(
+                (time - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds);
+        }
 
         /// <summary>
         ///     Get the Actual Time
@@ -717,7 +728,6 @@ namespace Oblivion
                 using (var queryReactor = Manager.GetQueryReactor())
                 {
                     queryReactor.RunFastQuery("UPDATE users SET online = '0'");
-                    queryReactor.RunFastQuery("TRUNCATE TABLE users_rooms_visits");
                 }
 
                 _connectionManager.Destroy();

@@ -74,12 +74,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 currentRoom.RoomData.OwnerId = (int)user.Id;
                 currentRoom.RoomData.Owner = user.UserName;
 
-                //Change Item Owners
-                /* TODO CHECK */
-                foreach (var CurrentItem in currentRoom.GetRoomItemHandler().GetWallAndFloor)
-                {
-                    CurrentItem.UserId = user.Id;
-                }
+            
 
                 //Take Credits or Diamonds from User
                 if (type == "c")

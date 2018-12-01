@@ -457,12 +457,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     if (habbo.GetMessenger() != null)
                         habbo.GetMessenger().OnStatusChanged(true);
 
-
-                    using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                        queryreactor2.RunFastQuery(string.Concat(
-                            "UPDATE users_rooms_visits SET exit_timestamp = '", Oblivion.GetUnixTimeStamp(),
-                            "' WHERE room_id = '", room.RoomId, "' AND user_id = '", userId,
-                            "' ORDER BY exit_timestamp DESC LIMIT 1"));
+                    
                     UsersByUserName?.TryRemove(habbo.UserName.ToLower(), out _);
                 }
 

@@ -60,7 +60,7 @@ namespace Oblivion.HabboHotel.Support
             AbusiveCooldown = new Dictionary<uint, double>();
         }
 
- 
+
         /// <summary>
         ///     Sends the ticket to moderators.
         /// </summary>
@@ -263,7 +263,7 @@ namespace Oblivion.HabboHotel.Support
                 ModActionResult(modSession.GetHabbo().Id, false);
                 return;
             }
-            
+
 
             Oblivion.GetGame()
                 .GetBanManager()
@@ -325,6 +325,7 @@ namespace Oblivion.HabboHotel.Support
                     serverMessage.AppendString($"Rank ID:        {rank}");
                 }
             }
+
             return serverMessage;
         }
 
@@ -440,6 +441,7 @@ namespace Oblivion.HabboHotel.Support
                                         serverMessage.AppendString(dataRow2["message"].ToString());
                                         serverMessage.AppendBool(false);
                                     }
+
                                     continue;
                                 }
                                 finally
@@ -469,6 +471,7 @@ namespace Oblivion.HabboHotel.Support
                 serverMessage.AppendInteger(0);
                 result = serverMessage;
             }
+
             return result;
         }
 
@@ -515,6 +518,7 @@ namespace Oblivion.HabboHotel.Support
 
                 return message;
             }
+
             return null;
         }
 
@@ -549,6 +553,7 @@ namespace Oblivion.HabboHotel.Support
                     tempChatlogs.Add(chatlog);
                     i++;
                 }
+
                 DataTable table = null;
                 if (i < 150)
                 {
@@ -559,16 +564,18 @@ namespace Oblivion.HabboHotel.Support
                         table = dbClient.GetTable();
                     }
                 }
+
                 if (table != null)
                 {
                     i += table.Rows.Count;
                 }
+
                 message.AppendShort(i);
 
                 if (table != null)
                     foreach (DataRow row in table.Rows)
                     {
-                        var timeStamp = Oblivion.UnixToDateTime((double)row["timestamp"]);
+                        var timeStamp = Oblivion.UnixToDateTime((double) row["timestamp"]);
                         var habbo = Oblivion.GetHabboById(Convert.ToUInt32(row["user_id"]));
                         message.AppendString(timeStamp.ToString("h:mm:ss"));
                         message.AppendInteger(Convert.ToInt32(row["user_id"]));
@@ -576,6 +583,7 @@ namespace Oblivion.HabboHotel.Support
                         message.AppendString(row["message"].ToString());
                         message.AppendBool(false);
                     }
+
                 foreach (var chatLog in tempChatlogs)
                 {
                     chatLog.Serialize(ref message);
@@ -598,28 +606,26 @@ namespace Oblivion.HabboHotel.Support
 
             serverMessage.AppendInteger(Tickets.Count);
 
-            /* TODO CHECK */
             foreach (var current in Tickets)
                 current.Serialize(serverMessage);
 
 
             serverMessage.AppendInteger(UserMessagePresets.Count);
 
-            /* TODO CHECK */
             foreach (var current2 in UserMessagePresets)
                 serverMessage.AppendString(current2);
 
 
-            IEnumerable<ModerationTemplate> enumerable =
-                (from x in ModerationTemplates.Values where x.Category == -1 select x).ToArray();
+            /* TODO CHECK */
 
-            serverMessage.AppendInteger(enumerable.Count());
-            using (var enumerator3 = enumerable.GetEnumerator())
+            var enumerable =
+                (from x in ModerationTemplates.Values where x.Category == -1 select x).ToList();
+
+            serverMessage.AppendInteger(enumerable.Count);
+
+            foreach (var entry in enumerable)
             {
-                while (enumerator3.MoveNext())
-                {
-                    serverMessage.AppendString(enumerator3.Current.Caption);
-                }
+                serverMessage.AppendString(entry.Caption);
             }
 
             // but = button
@@ -660,7 +666,6 @@ namespace Oblivion.HabboHotel.Support
             if (table == null || table2 == null)
                 return;
 
-            /* TODO CHECK */
             foreach (DataRow dataRow in table.Rows)
             {
                 var item = (string) dataRow["message"];
@@ -679,11 +684,9 @@ namespace Oblivion.HabboHotel.Support
                     UserMessagePresets.Add(item);
             }
 
-            /* TODO CHECK */
             foreach (DataRow dataRow2 in table2.Rows)
                 SupportTicketHints.Add((string) dataRow2[0], (string) dataRow2[1]);
 
-            /* TODO CHECK */
             foreach (DataRow dataRow3 in table3.Rows)
                 ModerationTemplates.Add(uint.Parse(dataRow3["id"].ToString()),
                     new ModerationTemplate(uint.Parse(dataRow3["id"].ToString()),
@@ -694,22 +697,7 @@ namespace Oblivion.HabboHotel.Support
                         dataRow3["trade_lock"].ToString() == "1"));
         }
 
-        /// <summary>
-        ///     Loads the pending tickets.
-        /// </summary>
-        /// <param name="dbClient">The database client.</param>
-        internal void LoadPendingTickets(IQueryAdapter dbClient)
-        {
-            /*dbClient.SetQuery("SELECT * FROM moderation_tickets");
-            DataTable table = dbClient.GetTable();
-            if (table == null) return;
-             foreach (DataRow dataRow in table.Rows)
-            {
-                var ticket = new SupportTicket((uint)dataRow[0], (int)dataRow[1], (int)dataRow[2], 3, (uint)dataRow[4], (uint)dataRow[5], (string)dataRow[7], (uint)dataRow[8], (string)dataRow[9], (double)dataRow[10], new List<string>());
-                this.Tickets.Add(ticket);
-                //this.SupportTicketHints.Add((string)dataRow2[0], (string)dataRow2[1]);
-            }*/
-        }
+ 
 
         /// <summary>
         ///     Sends the new ticket.
@@ -772,30 +760,6 @@ namespace Oblivion.HabboHotel.Support
                 SendTicketToModerators(ticket2);
             }
         }
-
-        /// <summary>
-        ///     Serializes the open tickets.
-        /// </summary>
-        /// <param name="serverMessages">The server messages.</param>
-        /// <param name="userId">The user identifier.</param>
-   /*     internal void SerializeOpenTickets(ref QueuedServerMessage serverMessages, uint userId)
-        {
-            var message = new ServerMessage(LibraryParser.OutgoingRequest("ModerationToolIssueMessageComposer"));
-
-            /* TODO CHECK #1#
-            foreach (
-                var current in
-                Tickets.Where(
-                    current =>
-                        current.Status == TicketStatus.Open ||
-                        (current.Status == TicketStatus.Picked && current.ModeratorId == userId) ||
-                        (current.Status == TicketStatus.Picked && current.ModeratorId == 0u)))
-            {
-                message = current.Serialize(message);
-                serverMessages.AppendResponse(message);
-            }
-        }
-*/
         /// <summary>
         ///     Gets the ticket.
         /// </summary>
@@ -960,16 +924,12 @@ namespace Oblivion.HabboHotel.Support
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool UsersHasAbusiveCooldown(uint id)
         {
-            /* TODO CHECK */
-            foreach (var item in AbusiveCooldown)
-            {
-                if (AbusiveCooldown.ContainsKey(id) && item.Value - Oblivion.GetUnixTimeStamp() > 0)
-                    return true;
+            if (!AbusiveCooldown.TryGetValue(id, out var time)) return false;
+            if (time - Oblivion.GetUnixTimeStamp() > 0) return true;
 
-                AbusiveCooldown.Remove(id);
-                return false;
-            }
+            AbusiveCooldown.Remove(id);
             return false;
+
         }
 
         /// <summary>
@@ -979,8 +939,9 @@ namespace Oblivion.HabboHotel.Support
         internal void DeletePendingTicketForUser(uint id)
         {
             /* TODO CHECK */
-            foreach (var current in Tickets.Where(current => current.SenderId == id))
+            foreach (var current in Tickets)
             {
+                if (current.SenderId != id) continue;
                 current.Delete(true);
                 SendTicketToModerators(current);
                 break;

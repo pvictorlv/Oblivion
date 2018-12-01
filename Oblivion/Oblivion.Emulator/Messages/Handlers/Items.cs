@@ -1241,7 +1241,6 @@ namespace Oblivion.Messages.Handlers
             }
             var randomEcotronReward =
                 Oblivion.GetGame().GetCatalog().GetRandomEcotronReward();
-            uint insertId;
             using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 var itemGuid = Guid.NewGuid();
@@ -1253,16 +1252,16 @@ namespace Oblivion.Messages.Handlers
                 queryreactor2.AddParameter("timestamp", DateTime.Now.ToLongDateString());
                 queryreactor2.AddParameter("baseItem",
                     Convert.ToUInt32(Oblivion.GetDbConfig().DbData["recycler.box_id"]));
-                insertId = (uint) queryreactor2.InsertQuery();
                 queryreactor2.RunFastQuery(
-                    "INSERT INTO users_gifts (gift_id,item_id,gift_sprite,extradata) VALUES (" + insertId + "," +
+                    "INSERT INTO users_gifts (gift_id,item_id,gift_sprite,extradata) VALUES ('" + itemId + "'," +
                     randomEcotronReward.BaseId + ", " + randomEcotronReward.DisplayId + ",'')");
+
+                Session.GetHabbo().GetInventoryComponent().UpdateItems(true);
+                Response.Init(LibraryParser.OutgoingRequest("RecyclingStateMessageComposer"));
+                Response.AppendInteger(1);
+                Response.AppendInteger(Oblivion.GetGame().GetItemManager().GetVirtualId(itemId));
+                SendResponse();
             }
-            Session.GetHabbo().GetInventoryComponent().UpdateItems(true);
-            Response.Init(LibraryParser.OutgoingRequest("RecyclingStateMessageComposer"));
-            Response.AppendInteger(1);
-            Response.AppendInteger(insertId);
-            SendResponse();
         }
 
         internal void RedeemExchangeFurni()

@@ -232,7 +232,6 @@ namespace Oblivion.HabboHotel.GameClients
                 return;
 
             client?.Dispose();
-
         }
 
 
@@ -256,7 +255,6 @@ namespace Oblivion.HabboHotel.GameClients
 
             foreach (var client in Clients.Values)
             {
-                
                 client?.GetConnection()?.SendAsync(bytes);
             }
         }
@@ -317,8 +315,9 @@ namespace Oblivion.HabboHotel.GameClients
                     flag = true;
                     Console.ForegroundColor = ConsoleColor.DarkMagenta;
                 }
-                catch
+                catch (Exception e)
                 {
+                    Logging.HandleException(e, "inventory dispose");
                     Out.WriteLine("error disponsig inventory");
                 }
             }
@@ -370,10 +369,9 @@ namespace Oblivion.HabboHotel.GameClients
         /// <param name="newName">The new name.</param>
         internal void UpdateClient(string oldName, string newName)
         {
-            if (!_userNameRegister.TryGetValue(oldName.ToLower(), out var old))
+            if (!_userNameRegister.TryRemove(oldName.ToLower(), out var old))
                 return;
 
-            _userNameRegister.TryRemove(oldName.ToLower(), out _);
             _userNameRegister.TryAdd(newName.ToLower(), old);
         }
     }

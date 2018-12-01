@@ -53,7 +53,7 @@ namespace Oblivion.Configuration
 
             Manager.NewSessionConnected += session =>
             {
-                if (SocketConnectionCheck.CheckConnection(session.GetIp(), connectionsPerIp, true))
+//                if (SocketConnectionCheck.CheckConnection(session.GetIp(), connectionsPerIp, true))
                 {
                     session.SocketSession.Client
                         .SetSocketOption(SocketOptionLevel.Socket,
@@ -63,9 +63,9 @@ namespace Oblivion.Configuration
                     session.ConnId = ++Manager.AcceptedConnections;
                     Oblivion.GetGame().GetClientManager().CreateAndStartClient(session.ConnId, session);
                 }
-                else
+//                else
                 {
-                    session.Disconnect();
+//                    session.Disconnect();
 
                 }
             };

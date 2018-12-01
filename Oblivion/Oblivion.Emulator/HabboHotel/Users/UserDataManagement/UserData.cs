@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Oblivion.HabboHotel.Achievements.Interfaces;
-using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.HabboHotel.Users.Relationships;
 using Oblivion.HabboHotel.Users.Subscriptions;
 
@@ -46,10 +45,6 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         /// </summary>
         internal Dictionary<int, Relationship> Relations;
 
-        /// <summary>
-        ///     The requests
-        /// </summary>
-//        internal Dictionary<uint, MessengerRequest> Requests;
         /// <summary>
         ///     The rooms
         /// </summary>
@@ -152,7 +147,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 {
                     Relations = table.Rows.Cast<DataRow>()
                         .ToDictionary(row => (int) row[0],
-                            row => new Relationship((int) row[0], (int) row[2], Convert.ToInt32(row[3].ToString())));
+                            row => new Relationship((int) row[0], (uint) row[2], Convert.ToInt32(row[3].ToString())));
                 }
             }
             LoadedRelations = true;

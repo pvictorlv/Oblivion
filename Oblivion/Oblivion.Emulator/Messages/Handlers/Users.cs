@@ -846,10 +846,6 @@ namespace Oblivion.Messages.Handlers
                 if (!string.IsNullOrWhiteSpace(String) &&
                     !string.Equals(userName, text, StringComparison.CurrentCultureIgnoreCase))
                     return;
-                queryReactor.SetQuery("UPDATE rooms_data SET owner = @newowner WHERE owner = @oldowner");
-                queryReactor.AddParameter("newowner", text);
-                queryReactor.AddParameter("oldowner", Session.GetHabbo().UserName);
-                queryReactor.RunQuery();
 
                 queryReactor.SetQuery(
                     "UPDATE users SET username = @newname, last_name_change = @timestamp WHERE id = @userid");
@@ -857,7 +853,7 @@ namespace Oblivion.Messages.Handlers
                 queryReactor.AddParameter("timestamp", Oblivion.GetUnixTimeStamp() + 43200);
                 queryReactor.AddParameter("userid", Session.GetHabbo().Id);
                 queryReactor.RunQuery();
-
+                
                 Session.GetHabbo().LastChange = Oblivion.GetUnixTimeStamp() + 43200;
                 Session.GetHabbo().UserName = text;
                 Response.Init(LibraryParser.OutgoingRequest("UpdateUsernameMessageComposer"));
@@ -1028,7 +1024,7 @@ namespace Oblivion.Messages.Handlers
                         queryReactor.AddParameter("target", num);
                         queryReactor.AddParameter("type", num2);
                         var num3 = (int) queryReactor.InsertQuery();
-                        Session.GetHabbo().Data.Relations.Add(num3, new Relationship(num3, (int) num, num2));
+                        Session.GetHabbo().Data.Relations.Add(num3, new Relationship(num3, num, num2));
                     }
 
                     var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(num);

@@ -50,7 +50,7 @@ namespace Oblivion.Manager
 
         private static void ClearUserCache()
         {
-            foreach (var user in Oblivion.UsersCached.ToArray())
+            foreach (var user in Oblivion.UsersCached.ToList())
             {
                 if (user.Value == null)
                 {

@@ -221,8 +221,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             pet.PlacedInRoom = false;
             pet.RoomId = 0u;
-
-            SerializePetInventory();
         }
 
         /// <summary>
@@ -662,6 +660,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             serverMessage.AppendInteger(list.Count);
             foreach (var current in list)
                 current.SerializeInventory(serverMessage);
+
             return serverMessage;
         }
 
@@ -855,6 +854,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
         ///     Gets the client.
         /// </summary>
         /// <returns>GameClient.</returns>
-        private GameClient GetClient() => Oblivion.GetGame().GetClientManager().GetClientByUserId(UserId);
+        private GameClient GetClient() => _mClient ?? Oblivion.GetGame().GetClientManager().GetClientByUserId(UserId);
     }
 }

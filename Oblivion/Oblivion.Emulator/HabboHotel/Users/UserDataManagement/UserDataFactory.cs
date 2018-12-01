@@ -4,9 +4,7 @@ using System.Data;
 using System.Linq;
 using Oblivion.HabboHotel.Achievements.Interfaces;
 using Oblivion.HabboHotel.Groups.Interfaces;
-using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.HabboHotel.Users.Authenticator;
-using Oblivion.HabboHotel.Users.Messenger;
 using Oblivion.HabboHotel.Users.Relationships;
 using Oblivion.HabboHotel.Users.Subscriptions;
 
@@ -53,7 +51,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 
-                queryReactor.SetQuery($"SELECT id,username,look,rank,builders_expire,navilogs,disabled_alert,DutyLevel,OnDuty,builders_items_max,builders_items_used,motto,gender,last_online,credits,activity_points,is_muted,home_room,hide_online,hide_inroom,block_newfriends,vip,account_created,talent_status,diamonds,last_name_change,trade_lock,trade_lock_expire,{Oblivion.GetDbConfig().DbData["emerald.column"]},badStaff,prefixes FROM users WHERE auth_ticket = @ticket");
+                queryReactor.SetQuery($"SELECT id,username,look,rank,builders_expire,navilogs,disabled_alert,DutyLevel,OnDuty,builders_items_max,builders_items_used,motto,gender,last_online,credits,activity_points,is_muted,home_room,hide_online,hide_inroom,block_newfriends,vip,account_created,talent_status,diamonds,last_name_change,trade_lock_expire,{Oblivion.GetDbConfig().DbData["emerald.column"]},badStaff,prefixes FROM users WHERE auth_ticket = @ticket");
                 queryReactor.AddParameter("ticket", sessionTicket);
                 dataRow = queryReactor.GetRow();
                 if (dataRow == null)
@@ -198,7 +196,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             var relationShips = relationShipsTable.Rows.Cast<DataRow>()
                 .ToDictionary(row => (int) row[0],
-                    row => new Relationship((int) row[0], (int) row[2], Convert.ToInt32(row[3].ToString())));
+                    row => new Relationship((int) row[0], (uint) row[2], Convert.ToInt32(row[3].ToString())));
 
             var user = HabboFactory.GenerateHabbo(dataRow, statsTable, groups);
             errorCode = 0;
