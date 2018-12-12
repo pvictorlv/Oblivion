@@ -132,7 +132,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             lock (_ball)
             {
                 if (user.SetX == _ball.X && user.SetY == _ball.Y && user.GoalX == _ball.X &&
-                    user.GoalY == _ball.Y) // super chute.
+                    user.GoalY == _ball.Y && user.HandelingBallStatus == 0) // super chute.
                 {
                     var userPoint = new Point(user.X, user.Y);
                     _ball.ExtraData = "55";
@@ -140,7 +140,28 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                     _ball.BallValue = 1;
                     MoveBall(_ball, user.GetClient(), userPoint);
                 }
-                else if (user.X == _ball.X && user.Y == _ball.Y)
+                else if (user.SetX == _ball.X && user.SetY == _ball.Y && user.GoalX == _ball.X && user.GoalY == _ball.Y && user.HandelingBallStatus == 1) // super chute quando para de andar
+                {
+                    user.HandelingBallStatus = 0;
+                    var _comeDirection = ComeDirection.GetComeDirection(new Point(user.X, user.Y), _ball.Coordinate);
+                    if (_comeDirection != IComeDirection.Null)
+                    {
+                        int NewX = user.SetX;
+                        int NewY = user.SetY;
+
+                        ComeDirection.GetNewCoords(_comeDirection, ref NewX, ref NewY);
+                        if (_ball.GetRoom().GetGameMap().ValidTile(NewX, NewY))
+                        {
+                            Point userPoint = new Point(user.X, user.Y);
+                            _ball.ExtraData = "55";
+                            _ball.BallIsMoving = true;
+                            _ball.BallValue = 1;
+                            _ball.InteractingBallUser = user.GetClient();
+                            MoveBall(_ball, user.GetClient(), userPoint);
+                        }
+                    }
+                }
+                else if (user.X == _ball.X && user.Y == _ball.Y && user.HandelingBallStatus == 0)
                 {
                     var userPoint = new Point(user.SetX, user.SetY);
                     _ball.ExtraData = "55";
@@ -188,28 +209,16 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
         {
             if (item?.GetBaseItem() == null /*|| mover == null || mover.GetHabbo() == null*/)
                 return false;
+            if (!_room.GetGameMap().ItemCanBePlacedHere(newX, newY))
+                return false;
 
-//            if (_room.GetGameMap().SquareHasFurni(newX, newY))
-//            {
-//                mover.SendWhisper("Has furni");
-//                return false;
-//            }
-            if (item.BallIsMoving)
+            var roomUser = _room.GetRoomUserManager().GetRoomUserByHabbo(mover.GetHabbo().Id);
+
+            if (roomUser != null && roomUser.HandelingBallStatus == 1)
             {
-                if (item.ExtraData == "55" || item.ExtraData == "44")
-                {
-                    var randomValue = new Random().Next(1, 7);
-                    if (randomValue != 5)
-                        if (!_room.GetGameMap().ItemCanBePlacedHere(newX, newY))
-                            return false;
-                }
-            }
-            else
-            {
-                if (!_room.GetGameMap().ValidTile(newX, newY))
+                if (_room.GetGameMap().SquareHasUsers(newX, newY) && item.BallValue > 1)
                     return false;
             }
-
             var oldRoomCoord = item.Coordinate;
             var itemIsOnGameItem = GameItemOverlaps(item);
 //            double  = _room.GetGameMap().Model.SqFloorHeight[newX][newY];
@@ -222,8 +231,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                 mMessage.AppendInteger(newX);
                 mMessage.AppendInteger(newY);
                 mMessage.AppendInteger(4);
-                mMessage.AppendString(TextHandling.GetString(item.Z));
-                mMessage.AppendString(TextHandling.GetString(newZ));
+                mMessage.AppendString(String.Format("{0:0.00}", TextHandling.GetString(item.Z)));
+                mMessage.AppendString(String.Format("{0:0.00}", TextHandling.GetString(item.Z)));
+
                 mMessage.AppendInteger(0);
                 mMessage.AppendInteger(0);
                 mMessage.AppendString(item.ExtraData);
@@ -242,9 +252,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                         item.Rot));
 //            _room.GetGameMap().Model.SqFloorHeight[item.X][item.Y] = item.Z;
                 if (itemIsOnGameItem || mover?.GetHabbo() == null)
-                    return false;
-                HandleFootballGameItems(new Point(newX, newY),
-                    _room.GetRoomUserManager().GetRoomUserByHabbo(mover.GetHabbo().Id));
+                    return true;
+
+                HandleFootballGameItems(new Point(newX, newY), roomUser);
                 return false;
             }
         }
@@ -383,14 +393,11 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
         {
             if (_room == null) return;
             if (_ball == null) return;
-
-
-            lock (_ball)
-            {
+            
                 _room.StopSoccer();
                 _ball.BallIsMoving = false;
-                _ball = null;
-            }
+                Destroy();
+            
         }
 
         internal void UnRegisterGate(RoomItem item)

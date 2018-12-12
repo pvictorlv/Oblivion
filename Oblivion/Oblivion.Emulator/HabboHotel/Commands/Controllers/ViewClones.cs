@@ -25,7 +25,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                dbClient.SetQuery($"SELECT username,mail,online,{col},rank FROM users WHERE ip_last = @ip OR ip_reg = @ip");
+                dbClient.SetQuery($"SELECT username,mail,online,{col},rank FROM users WHERE ip_last = @ip");
                 dbClient.AddParameter("ip", user.GetConnection().RemoteEndPoint.Address.ToString());
                 data = dbClient.GetTable();
             }

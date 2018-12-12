@@ -252,5 +252,24 @@ namespace Oblivion.Database.Manager.Database.Session_Details
 
             }
         }
+        public void RunNoLockQuery(string query)
+        {
+            try
+            {
+                //                Writer.Writer.WriteLine(query);
+                //                CommandMySql.Parameters.Clear();
+                query = query.Insert(0, "SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;");
+                query += "SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ; ";
+                CommandMySql.CommandText = query;
+                CommandMySql.ExecuteNonQuery();
+                CommandMySql.Parameters.Clear();
+
+            }
+            catch (Exception exception)
+            {
+                Writer.Writer.LogQueryError(exception, CommandMySql?.CommandText);
+
+            }
+        }
     }
 }

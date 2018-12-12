@@ -275,6 +275,11 @@ namespace Oblivion.Messages
         /// <param name="isUtf8">If string is UTF8</param>
         public void AppendString(string s, bool isUtf8 = false)
         {
+            if (s == null)
+            {
+                s = "";
+            }
+
             Encoding encoding = isUtf8 ? Encoding.UTF8 : Oblivion.GetDefaultEncoding();
 
             byte[] bytes = encoding.GetBytes(s);

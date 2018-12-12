@@ -33,53 +33,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                 return IComeDirection.Null;
             }
         }
-
-        internal static IComeDirection GetInverseDirectionEasy(IComeDirection comeWith)
-        {
-            IComeDirection result;
-            try
-            {
-                switch (comeWith)
-                {
-                    case IComeDirection.Up:
-                        result = IComeDirection.Down;
-                        break;
-
-                    case IComeDirection.UpRight:
-                        result = IComeDirection.DownLeft;
-                        break;
-
-                    case IComeDirection.Right:
-                        result = IComeDirection.Left;
-                        break;
-
-                    case IComeDirection.DownRight:
-                        result = IComeDirection.UpLeft;
-                        break;
-
-                    case IComeDirection.Down:
-                        result = IComeDirection.Up;
-                        break;
-
-                    case IComeDirection.DownLeft:
-                        result = IComeDirection.UpRight;
-                        break;
-
-                    case IComeDirection.Left:
-                        result = IComeDirection.Right;
-                        break;
-
-                    default:
-                        result = comeWith == IComeDirection.UpLeft ? IComeDirection.DownRight : IComeDirection.Null;
-                        break;
-                }
-            }
-            catch
-            {
-                result = IComeDirection.Null;
-            }
-            return result;
-        }
+        
 
         internal static void GetNewCoords(IComeDirection comeWith, ref int newX, ref int newY)
         {
