@@ -856,8 +856,14 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// </summary>
         internal void Dispose(bool removeVirtual)
         {
+         
+            if (_mRoom.GotWireds())
+            {
+                _mRoom.GetWiredHandler().RemoveWired(this);
+            }
             if (removeVirtual)
                 Oblivion.GetGame().GetItemManager().RemoveVirtualItem(Id);
+
             _mBaseItem = null;
             _mRoom = null;
             AffectedTiles.Clear();

@@ -724,7 +724,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="shout">if set to <c>true</c> [shout].</param>
         /// <param name="count">The count.</param>
         /// <param name="textColor">Color of the text.</param>
-        internal void Chat(GameClient session, string msg, bool shout, int count, int textColor = 0)
+        internal void Chat(GameClient session, string msg, bool shout, int count, int textColor = 0, bool ignoreMute = false)
         {
             if (IsPet || IsBot)
             {
@@ -754,11 +754,16 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (msg.Length > 100)
                 return;
 
+
+            if (GetRoom().GotWireds())
+                if (GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSay, this, msg))
+                    return;
+
             if (!((msg.StartsWith(":deleteblackword ") || msg.StartsWith("ban")) && session.GetHabbo().Rank > 4) &&
                 !BobbaFilter.CanTalk(session, msg))
                 return;
 
-
+            if (!ignoreMute)
             if (session.GetHabbo().Rank < 4 && GetRoom().CheckMute(session))
                 return;
 
@@ -782,9 +787,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (!habbo.CanTalk(true)) return;
 
 
-                if (GetRoom().GotWireds())
-                    if (GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSay, this, msg))
-                        return;
 
                 GetRoom().AddChatlog(session.GetHabbo().Id, msg, true);
 

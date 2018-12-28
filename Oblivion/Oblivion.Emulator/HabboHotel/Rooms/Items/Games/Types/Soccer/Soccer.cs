@@ -344,7 +344,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
 
                 int.TryParse(item.ExtraData, out var number);
                 if (number > 11)
-                    item.ExtraData = (int.Parse(item.ExtraData) - 11).ToString();
+                    item.ExtraData = (number-11).ToString();
 
                 item.BallValue++;
 

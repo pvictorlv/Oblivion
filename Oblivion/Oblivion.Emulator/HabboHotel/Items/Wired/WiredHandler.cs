@@ -243,18 +243,13 @@ namespace Oblivion.HabboHotel.Items.Wired
                     try
                     {
                         if (item?.Item == null)
-                            continue;
-
-                        if (_room == null) return;
-
-
-                        var selectedItem = _room.GetRoomItemHandler().GetItem(item.Item.Id);
-
-                        if (selectedItem == null)
                         {
                             RemoveWired(item);
                             continue;
                         }
+
+                        if (_room == null) return;
+
 
                         if (!(item is IWiredCycler cycle)) continue;
 

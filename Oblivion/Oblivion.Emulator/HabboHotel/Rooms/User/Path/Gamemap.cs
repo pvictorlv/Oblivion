@@ -269,8 +269,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         internal void TeleportToItem(RoomUser user, RoomItem item)
         {
             GameMap[user.X, user.Y] = user.SqState;
-            UpdateUserMovement(new Point(user.Coordinate.X, user.Coordinate.Y),
-                new Point(item.Coordinate.X, item.Coordinate.Y), user);
+            UpdateUserMovement(new Point(user.X, user.Y),
+                new Point(item.X, item.Y), user);
             user.X = item.X;
             user.Y = item.Y;
             user.Z = item.Z;

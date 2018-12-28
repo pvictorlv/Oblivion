@@ -383,7 +383,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                 var client = user.GetClient();
                 var habbo = user.GetClient().GetHabbo();
                 if (client == null || habbo == null) return;
-                var userId = habbo.Id;
                 habbo.CurrentRoom = null;
                 habbo.GetAvatarEffectsInventoryComponent()?.OnRoomExit();
                 var room = _room;
@@ -480,7 +479,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             if (user == null) return;
 
-            if (!UserList.TryRemove(user.InternalRoomId, out _)) return;
+            UserList.TryRemove(user.InternalRoomId, out _);
 
             user.InternalRoomId = -1;
             _room.GetGameMap().GameMap[user.X, user.Y] = user.SqState;
@@ -492,6 +491,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                 OnRemove(user);
             }
+
         }
 
         /// <summary>
@@ -1687,6 +1687,8 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             try
             {
+                _room.GetGameMap().RemoveUserFromMap(user, new Point(user.X, user.Y));
+
                 if (user?.GetClient() == null) return;
                 var client = user.GetClient();
                 var list = Bots.Values;
@@ -1705,7 +1707,6 @@ namespace Oblivion.HabboHotel.Rooms.User
                     }
                 }
 
-                _room.GetGameMap().RemoveUserFromMap(user, new Point(user.X, user.Y));
             }
             catch (Exception ex)
             {

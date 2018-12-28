@@ -91,7 +91,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
            foreach (var item in Items)
             {
-                if (item == null || Room.GetRoomItemHandler().GetItem(item.Id) == null || Room.GetWiredHandler().OtherBoxHasItem(this, Item))
+                if (item == null || Room.GetWiredHandler().OtherBoxHasItem(this, Item))
                 {
                     _toRemove.Enqueue(item);
                     continue;

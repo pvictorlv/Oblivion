@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.PathFinding;
 
@@ -38,7 +37,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var users = room.GetGameMap().GetRoomUsers(user.SquareInFront);
             if (users.Count <= 0)
             {
-                return false;
+                return true;
                 
             }
             var user2 = users[0];
@@ -89,7 +88,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     user2.MoveTo(user2.X- 1, user2.Y - 1);
                     break;
             }
-            user.Chat(session, $"Eu empurrei {user2.GetUserName()}!", true, -1);
+            user.Chat(session, $"Eu empurrei {user2.GetUserName()}!", true, -1, 0, true);
             user2.UpdateNeeded = true;
             user2.SetRot(PathFinder.CalculateRotation(user2.X, user2.Y, user.GoalX, user.GoalY));
             return true;

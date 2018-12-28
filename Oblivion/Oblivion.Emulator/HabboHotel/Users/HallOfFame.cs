@@ -24,7 +24,7 @@ namespace Oblivion.HabboHotel.Users
             Rankings.Clear();
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery($"SELECT id,username,look,{ExtraSettings.HallCurrency} FROM users WHERE rank < 3 ORDER BY {ExtraSettings.HallCurrency} DESC LIMIT 10");
+                queryReactor.SetQuery($"SELECT id,username,look,{ExtraSettings.HallCurrency} FROM users WHERE rank < 5 ORDER BY {ExtraSettings.HallCurrency} DESC LIMIT 10");
                 var table = queryReactor.GetTable();
 
                 if (table == null)

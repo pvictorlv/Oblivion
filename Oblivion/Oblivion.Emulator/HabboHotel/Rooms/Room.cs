@@ -359,7 +359,7 @@ namespace Oblivion.HabboHotel.Rooms
         {
             new Task(async () =>
             {
-                while (!_mainProcessSource.Token.IsCancellationRequested)
+                while (!_mainProcessSource.IsCancellationRequested)
                 {
                     var start = Oblivion.GetUnixTimeStamp();
                     await ProcessRoom();
@@ -381,7 +381,7 @@ namespace Oblivion.HabboHotel.Rooms
 
             new Task(async () =>
             {
-                while (_wiredHandler != null && !_mainProcessSource.Token.IsCancellationRequested)
+                while (_wiredHandler != null && !_mainProcessSource.IsCancellationRequested)
                 {
                     _wiredHandler.OnCycle();
                     await Task.Delay(250);
@@ -410,7 +410,7 @@ namespace Oblivion.HabboHotel.Rooms
 
             new Task(async () =>
             {
-                while ((GotSoccer() && !Disposed) && !_mainProcessSource.Token.IsCancellationRequested)
+                while ((GotSoccer() && !Disposed) && !_mainProcessSource.IsCancellationRequested)
                 {
                     try
                     {
@@ -418,9 +418,7 @@ namespace Oblivion.HabboHotel.Rooms
                     }
                     catch (Exception e)
                     {
-                        Logging.LogCriticalException("INVALID MARIO BUG IN BALLMOVEMENT: <" + RoomData.Id +
-                                                     "> :" +
-                                                     e);
+                        Logging.LogCriticalException(e.ToString());
                     }
 
                     await Task.Delay(175);
@@ -502,7 +500,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         internal void OnRoomKick()
         {
-            foreach (var t in _roomUserManager.UserList.Values.ToList())
+            foreach (var t in _roomUserManager.UserList.Values)
             {
                 if (!t.IsBot && t.GetClient().GetHabbo().Rank < 4u)
                 {
@@ -1354,6 +1352,8 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         public void Dispose()
         {
+            _mainProcessSource.Cancel();
+
             _roomUserManager.Disposed = true;
             _mCycleEnded = true;
             Oblivion.GetGame().GetRoomManager().QueueActiveRoomRemove(RoomData);
@@ -1440,8 +1440,7 @@ namespace Oblivion.HabboHotel.Rooms
 
             _gameMap = null;
 
-            _mainProcessSource.Cancel();
-
+            
             RoomData?.Tags?.Clear();
             RoomData.Tags = null;
             RoomData?.BlockedCommands?.Clear();
@@ -1451,6 +1450,7 @@ namespace Oblivion.HabboHotel.Rooms
             Bans.Clear();
             Bans = null;
             LoadedGroups.Clear();
+            MoodlightData?.Dispose();
             MoodlightData = null;
             foreach (var current in _roomItemHandler.GetWallAndFloor)
             {
@@ -1478,6 +1478,16 @@ namespace Oblivion.HabboHotel.Rooms
 
             _roomKick?.Clear();
             _roomKick = null;
+
+
+            new Task(async () =>
+            {
+                await Task.Delay(2500);
+                _mainProcessSource.Dispose();
+                _mainProcessSource = null;
+            }).Start();
+
+
         }
     }
 }

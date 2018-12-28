@@ -58,6 +58,13 @@ namespace Oblivion.HabboHotel.Items.Datas
             }
         }
 
+
+        public void Dispose()
+        {
+            Presets.Clear();
+            Presets = null;
+            ItemId = null;
+        }
         /// <summary>
         ///     Generates the preset.
         /// </summary>
