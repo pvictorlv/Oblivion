@@ -391,14 +391,16 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             _gates[3] = item;
         }
 
-        internal void RemoveBall()
+        internal void RemoveBall(bool removed)
         {
-            if (_room == null) return;
             if (_ball == null) return;
             
-                _room.StopSoccer();
                 _ball.BallIsMoving = false;
-                Destroy();
+
+            if (removed)
+            {
+                _room?.StopSoccer();
+            }
             
         }
 

@@ -418,6 +418,7 @@ namespace Oblivion.HabboHotel.Rooms
                         if (!GetSoccer().OnCycle())
                         {
                             await Task.Delay(175);
+                            continue;
                         }
                     }
                     catch (Exception e)
@@ -426,7 +427,7 @@ namespace Oblivion.HabboHotel.Rooms
                     }
 
                     var end = Oblivion.GetUnixTimeStamp() - start;
-                    await Task.Delay(180 - end);
+                    await Task.Delay(225 - end);
                 }
             }, TaskCreationOptions.LongRunning).Start();
         }

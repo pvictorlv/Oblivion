@@ -34,7 +34,7 @@ namespace Oblivion.HabboHotel.Misc
         /// </summary>
         internal static void Process()
         {
-            if (_lowPriorityStopWatch.ElapsedMilliseconds >= 45000 || !_isExecuted)
+            if (_lowPriorityStopWatch.ElapsedMilliseconds >= 60000 || !_isExecuted)
             {
                 _isExecuted = true;
                 _lowPriorityStopWatch.Restart();

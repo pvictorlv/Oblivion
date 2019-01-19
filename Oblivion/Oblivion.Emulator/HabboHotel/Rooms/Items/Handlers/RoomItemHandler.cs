@@ -179,13 +179,14 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         {
             try
             {
-                if (dbClient == null) return;
+                if (dbClient == null)
+                    return;
 
 
                 if (_removedItems.Count > 0)
                 {
                     var builder = new StringBuilder();
-                    builder.Append("UPDATE items_rooms SET room_id=NULL, x='0', y='0', z='0', rot='0' WHERE id IN (");
+                    builder.Append("UPDATE items_rooms SET room_id = NULL, x='0', y='0', z='0', rot='0' WHERE id IN (");
                     var i = 0;
                     var count = _removedItems.Count;
                     foreach (var itemId in _removedItems)
@@ -207,7 +208,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     {
                         i++;
                         var roomItem = GetItem(it);
-                        if (roomItem == null) continue;
+                        if (roomItem == null)
+                            continue;
                         if (roomItem.GetBaseItem() != null && roomItem.GetBaseItem().IsGroupItem)
                         {
                             try
@@ -221,7 +223,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                             }
                         }
 
-                        if (roomItem.RoomId == 0) continue;
+                        if (roomItem.RoomId == 0)
+                            continue;
 
                         if (roomItem.GetBaseItem().Name.Contains("wallpaper_single") ||
                             roomItem.GetBaseItem().Name.Contains("floor_single") ||
@@ -314,7 +317,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
 
                 item.Interactor.OnRemove(session, item);
-                roomGamemap.RemoveSpecialItem(item);
+                roomGamemap.RemoveSpecialItem(item, true);
                 using (var serverMessage =
                     new ServerMessage(LibraryParser.OutgoingRequest("PickUpFloorItemMessageComposer")))
                 {
@@ -557,14 +560,13 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             if (item.GetBaseItem().InteractionType != Interaction.Gift)
                 item.Interactor.OnRemove(session, item);
 
-            if (item.IsWired)
-            {
-                _room.GetWiredHandler().RemoveWired(item);
-            }
+
+            
+
 
             RemoveRoomItem(item, wasPicked);
 
-            item.Dispose(false);
+          item.Dispose(false);
         }
 
 
@@ -612,14 +614,15 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     WallItems.TryRemove(item.Id, out _);
                 }
             }
-            else if (!item.IsWallItem)
+            else
             {
-                using (var serverMessage =
-                    new ServerMessage(LibraryParser.OutgoingRequest("PickUpFloorItemMessageComposer")))
+                var serverMessage =
+                    new ServerMessage(LibraryParser.OutgoingRequest("PickUpFloorItemMessageComposer"));
                 {
                     serverMessage.AppendString(item.VirtualId.ToString());
                     serverMessage.AppendBool(false); //expired
-                    serverMessage.AppendInteger(wasPicked ? item.UserId : 0); //pickerId
+                    Console.WriteLine(item.UserId);
+                    serverMessage.AppendInteger(item.UserId); //pickerId
                     serverMessage.AppendInteger(0); // delay
                     _room.SendMessage(serverMessage);
 
@@ -731,7 +734,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             var flag = false;
             if (_room?.GetGameMap() == null) return false;
 
-            if (!newItem) flag = _room.GetGameMap().RemoveFromMap(item);
+            if (!newItem) flag = _room.GetGameMap().RemoveFromMap(item, false);
 
             var affectedTiles = Gamemap.GetAffectedTiles(item.GetBaseItem().Length,
                 item.GetBaseItem().Width, newX, newY, newRot);
@@ -1094,7 +1097,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool SetFloorItem(RoomItem item, int newX, int newY, double newZ)
         {
-            _room.GetGameMap().RemoveFromMap(item);
+            _room.GetGameMap().RemoveFromMap(item, false);
             item.SetState(newX, newY, newZ,
                 Gamemap.GetAffectedTiles(item.GetBaseItem().Length,
                     item.GetBaseItem().Width, newX, newY, item.Rot));
@@ -1117,7 +1120,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool SetFloorItem(RoomItem item, int newX, int newY, double newZ, int rot, bool sendUpdate)
         {
-            _room.GetGameMap().RemoveFromMap(item);
+            _room.GetGameMap().RemoveFromMap(item, false);
             item.SetState(newX, newY, newZ,
                 Gamemap.GetAffectedTiles(item.GetBaseItem().Length,
                     item.GetBaseItem().Width, newX, newY, rot));

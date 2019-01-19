@@ -208,7 +208,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             UserId = userid;
             SongCode = songCode;
             IsBuilder = isBuilder;
-
+            RoomId = roomId;
             _mRoom = pRoom;
 
 
@@ -788,10 +788,14 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         {
             base.Dispose(removeVirtual);
 
-            if (_mRoom.GotWireds())
+            if (_mRoom != null)
             {
-                _mRoom.GetWiredHandler().RemoveWired(this);
+                if (_mRoom.GotWireds() && IsWired)
+                {
+                    _mRoom.GetWiredHandler().RemoveWired(this);
+                }
             }
+
             if (removeVirtual)
                 Oblivion.GetGame().GetItemManager().RemoveVirtualItem(Id);
 

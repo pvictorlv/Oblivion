@@ -547,12 +547,13 @@ namespace Oblivion.Messages.Handlers
                 var owner = item.UserId != Session.GetHabbo().Id ? Oblivion.GetGame().GetClientManager().GetClientByUserId(item.UserId) : Session;
                 if (owner != null)
                 {
+                    owner.GetHabbo().GetInventoryComponent().AddItemToItemInventory(item, false);
+
                     room.GetRoomItemHandler().RemoveFurniture(owner, item.Id);
                     /*owner.GetHabbo()
                         .GetInventoryComponent()
                         .AddNewItem(item.Id, item.BaseItem, item.ExtraData, item.GroupId, true, true, 0, 0);
                     */
-                    owner.GetHabbo().GetInventoryComponent().AddItemToItemInventory(item, false);
                 }
                 else
                 {
@@ -2494,7 +2495,7 @@ namespace Oblivion.Messages.Handlers
             room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.RunFastQuery($"UPDATE items_rooms SET room_id=NULL WHERE id='{item.Id}' LIMIT 1");
+                queryReactor.RunFastQuery($"UPDATE items_rooms SET room_id = NULL WHERE id='{item.Id}' LIMIT 1");
             }
 
         }

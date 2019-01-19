@@ -222,7 +222,7 @@ namespace Oblivion.Database.Manager.Database.Session_Details
         {
             try
             {
-                //                Writer.Writer.WriteLine(query);
+//                Writer.Writer.WriteLine(query);
                 query = query.Insert(0, "SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;");
                 query += "SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ; ";
                 CommandMySql.Parameters.Clear();
@@ -256,7 +256,7 @@ namespace Oblivion.Database.Manager.Database.Session_Details
         {
             try
             {
-                //                Writer.Writer.WriteLine(query);
+//                Writer.Writer.WriteLine(query);
                 //                CommandMySql.Parameters.Clear();
                 query = query.Insert(0, "SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;");
                 query += "SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ; ";
