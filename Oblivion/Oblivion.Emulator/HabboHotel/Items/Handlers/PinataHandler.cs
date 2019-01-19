@@ -58,8 +58,7 @@ namespace Oblivion.HabboHotel.Items.Handlers
             if (pinataItem == null || pinataItem.Rewards.Count < 1)
                 return;
 
-            item.RefreshItem();
-            item.BaseItem = pinataItem.Rewards[new Random().Next((pinataItem.Rewards.Count - 1))];
+           item.BaseItem = Oblivion.GetGame().GetItemManager().GetItem(pinataItem.Rewards[new Random().Next((pinataItem.Rewards.Count - 1))]);
 
             item.ExtraData = string.Empty;
             room.GetRoomItemHandler().RemoveFurniture(user.GetClient(), item.Id, false);

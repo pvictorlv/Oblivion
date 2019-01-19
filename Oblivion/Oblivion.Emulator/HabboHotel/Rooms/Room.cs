@@ -412,16 +412,21 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 while ((GotSoccer() && !Disposed) && !_mainProcessSource.IsCancellationRequested)
                 {
+                    var start = Oblivion.GetUnixTimeStamp();
                     try
                     {
-                        GetSoccer().OnCycle();
+                        if (!GetSoccer().OnCycle())
+                        {
+                            await Task.Delay(175);
+                        }
                     }
                     catch (Exception e)
                     {
                         Logging.LogCriticalException(e.ToString());
                     }
 
-                    await Task.Delay(175);
+                    var end = Oblivion.GetUnixTimeStamp() - start;
+                    await Task.Delay(180 - end);
                 }
             }, TaskCreationOptions.LongRunning).Start();
         }

@@ -1232,15 +1232,15 @@ namespace Oblivion.HabboHotel.Catalogs
                 if (list.Count <= 0) return list;
                 var query = new StringBuilder();
                 query.Append(
-                    "INSERT INTO items_rooms (id, base_item, user_id, group_id, extra_data, songcode, limited) VALUES ");
+                    "INSERT INTO items_rooms (id, base_item, user_id, extra_data, songcode, limited) VALUES ");
                 var position = 0;
                 foreach (var addedItem in list)
                 {
                     position++;
                     query.Append(
                         position >= list.Count
-                            ? $"('{addedItem.Id}', '{addedItem.BaseItem.ItemId}', '{session.GetHabbo().Id}', '{addedItem.GroupId}', @edata, '{songCode}', '{limno};{limtot}');"
-                            : $"('{addedItem.Id}', '{addedItem.BaseItem.ItemId}', '{session.GetHabbo().Id}', '{addedItem.GroupId}', @edata, '{songCode}', '{limno};{limtot}'),");
+                            ? $"('{addedItem.Id}', '{addedItem.BaseItem.ItemId}', '{session.GetHabbo().Id}', @edata, '{songCode}', '{limno};{limtot}');"
+                            : $"('{addedItem.Id}', '{addedItem.BaseItem.ItemId}', '{session.GetHabbo().Id}', @edata, '{songCode}', '{limno};{limtot}'),");
 
                     
                     session.GetHabbo().GetInventoryComponent().AddNewItem(addedItem);

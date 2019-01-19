@@ -91,8 +91,13 @@ namespace Oblivion.HabboHotel.Groups.Interfaces
             Locked = row["locked"].ToString() == "1";
             Hidden = row["hidden"].ToString() == "1";
             PosterId = uint.Parse(row["poster_id"].ToString());
-            PosterName = row["poster_name"].ToString();
-            PosterLook = row["poster_look"].ToString();
+            var habbo = Oblivion.GetHabboById(PosterId);
+            if (habbo == null)
+            {
+                return;
+            }
+            PosterName = habbo.UserName;
+            PosterLook = habbo.Look;
             Subject = row["subject"].ToString();
             PostContent = row["post_content"].ToString();
             Hider = row["post_hider"].ToString();

@@ -63,7 +63,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     Adapter.RunQuery();
 
                     Adapter.RunFastQuery($"DELETE FROM rooms_rights WHERE room_id = '{currentRoom.RoomId}'");
-                    Adapter.RunFastQuery($"UPDATE bots SET room_id = '0' WHERE room_id = '{currentRoom.RoomId}'");
+                    Adapter.RunFastQuery($"UPDATE bots SET room_id = NULL WHERE room_id = '{currentRoom.RoomId}'");
                 }
 
                 if (currentRoom.RoomData.Group != null)

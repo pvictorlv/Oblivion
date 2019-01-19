@@ -29,13 +29,9 @@ namespace Oblivion.HabboHotel.Items.Interfaces
     /// <summary>
     ///     Class RoomItem.
     /// </summary>
-    public class RoomItem
+    public class RoomItem : UserItem
     {
-        /// <summary>
-        ///     The _m base item
-        /// </summary>
-        private Item _mBaseItem;
-
+       
         /// <summary>
         ///     The _m room
         /// </summary>
@@ -57,20 +53,11 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         internal int BallValue;
 
         /// <summary>
-        ///     The base item
-        /// </summary>
-        internal uint BaseItem;
-
-        /// <summary>
         ///     The come direction
         /// </summary>
         internal IComeDirection ComeDirection;
 
-        /// <summary>
-        ///     The extra data
-        /// </summary>
-        internal string ExtraData;
-
+        
         /// <summary>
         ///     The freeze power up
         /// </summary>
@@ -80,26 +67,14 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         ///     The group data
         /// </summary>
         internal string GroupData;
-
-        /// <summary>
-        ///     The group identifier
-        /// </summary>
-        internal uint GroupId;
+        
 
         /// <summary>
         ///     The highscore data
         /// </summary>
         internal HighscoreData HighscoreData;
-
-        /// <summary>
-        ///     The identifier
-        /// </summary>
-        internal string Id;
-
-        /// <summary>
-        /// the virtual id
-        /// </summary>
-        internal uint VirtualId;
+        
+       
 
         /// <summary>
         ///     The interacting ball user
@@ -167,11 +142,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         ///     The pets list
         /// </summary>
         internal List<Pet> PetsList = new List<Pet>(2);
-
-        /// <summary>
-        ///     The room identifier
-        /// </summary>
-        internal uint RoomId;
+        
 
         /// <summary>
         /// The tele link
@@ -182,11 +153,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         ///     The rot
         /// </summary>
         internal int Rot;
-
-        /// <summary>
-        ///     The song code
-        /// </summary>
-        internal string SongCode;
+        
 
         /// <summary>
         ///     The team
@@ -222,29 +189,10 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <summary>
         ///     Initializes a new instance of the <see cref="RoomItem" /> class.
         /// </summary>
-        /// <param name="id">The identifier.</param>
-        /// <param name="roomId">The room identifier.</param>
-        /// <param name="baseItem">The base item.</param>
-        /// <param name="extraData">The extra data.</param>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
-        /// <param name="z">The z.</param>
-        /// <param name="rot">The rot.</param>
-        /// <param name="pRoom">The p room.</param>
-        /// <param name="userid">The userid.</param>
-        /// <param name="eGroup">The group.</param>
-        /// <param name="songCode">The song code.</param>
-        /// <param name="isBuilder">if set to <c>true</c> [is builder].</param>
         internal RoomItem(string id, uint roomId, uint baseItem, string extraData, int x, int y, double z, int rot,
-            Room pRoom, uint userid, uint eGroup, string songCode, bool isBuilder, int limNo, int limStack)
+            Room pRoom, uint userid, uint eGroup, string songCode, bool isBuilder, int limNo, int limStack) : base(id,baseItem,extraData,eGroup,songCode,limNo,limStack)
         {
-            Id = id;
             
-            VirtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(id);
-            RoomId = roomId;
-            BaseItem = baseItem;
-            ExtraData = extraData;
-            GroupId = eGroup;
             X = x;
             Y = y;
             if (!double.IsInfinity(z)) Z = z;
@@ -261,14 +209,12 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             SongCode = songCode;
             IsBuilder = isBuilder;
 
-            _mBaseItem = Oblivion.GetGame().GetItemManager().GetItem(baseItem);
             _mRoom = pRoom;
 
-            if (_mBaseItem == null) return;
 
             LimitedNo = limNo;
             LimitedTot = limStack;
-            if (_mBaseItem.Name.ContainsAny("guild_", "grp", "gld_"))
+            if (BaseItem.Name.ContainsAny("guild_", "grp", "gld_"))
             {
                 GroupData = extraData;
                 ExtraData = GroupData.Split(';')[0];
@@ -280,9 +226,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             }
 
 
-            IsWallItem = (_mBaseItem.Type.ToString().ToLower() == "i");
-            IsFloorItem = (_mBaseItem.Type.ToString().ToLower() == "s");
-            AffectedTiles = Gamemap.GetAffectedTiles(_mBaseItem.Length, _mBaseItem.Width, X, Y, rot);
+            AffectedTiles = Gamemap.GetAffectedTiles(BaseItem.Length, BaseItem.Width, X, Y, rot);
 
             Interactor = GetInteractor();
             switch (GetBaseItem().InteractionType)
@@ -334,14 +278,11 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="eGroup">The group.</param>
         /// <param name="isBuilder">if set to <c>true</c> [is builder].</param>
         internal RoomItem(string id, uint roomId, uint baseItem, string extraData, WallCoordinate wallCoord, Room pRoom,
-            uint userid, uint eGroup, bool isBuilder)
+            uint userid, uint eGroup, bool isBuilder) : base(id,baseItem,extraData,eGroup,"",0,0)
         {
-            BaseItem = baseItem;
 
-            _mBaseItem = Oblivion.GetGame().GetItemManager().GetItem(baseItem);
             _mRoom = pRoom;
 
-            if (_mBaseItem == null) Logging.LogException($"Unknown baseID: {baseItem}");
 
             Id = id;
 
@@ -365,7 +306,6 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             UserId = userid;
             IsBuilder = isBuilder;
             IsWallItem = true;
-            IsFloorItem = false;
             AffectedTiles = new Dictionary<int, ThreeDCoord>();
             SongCode = string.Empty;
             Interactor = GetInteractor();
@@ -494,18 +434,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 }
             }
         }
-
-        /// <summary>
-        ///     Gets a value indicating whether this instance is wall item.
-        /// </summary>
-        /// <value><c>true</c> if this instance is wall item; otherwise, <c>false</c>.</value>
-        internal bool IsWallItem { get; set; }
-
-        /// <summary>
-        ///     Gets a value indicating whether this instance is floor item.
-        /// </summary>
-        /// <value><c>true</c> if this instance is floor item; otherwise, <c>false</c>.</value>
-        internal bool IsFloorItem { get; set; }
+        
+        
 
         /// <summary>
         ///     Gets the square in front.
@@ -856,7 +786,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// </summary>
         internal void Dispose(bool removeVirtual)
         {
-         
+            base.Dispose(removeVirtual);
+
             if (_mRoom.GotWireds())
             {
                 _mRoom.GetWiredHandler().RemoveWired(this);
@@ -864,7 +795,6 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             if (removeVirtual)
                 Oblivion.GetGame().GetItemManager().RemoveVirtualItem(Id);
 
-            _mBaseItem = null;
             _mRoom = null;
             AffectedTiles.Clear();
             HighscoreData = null;
@@ -1550,7 +1480,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 GetRoom().GetRoomItemHandler().AddOrUpdateItem(Id);
             if (!inRoom) return;
             ServerMessage serverMessage;
-            if (IsFloorItem)
+            if (!IsWallItem)
             {
                 serverMessage =
                     new ServerMessage(LibraryParser.OutgoingRequest("UpdateFloorItemExtraDataMessageComposer"));
@@ -1637,7 +1567,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="message">The message.</param>
         internal void Serialize(ServerMessage message)
         {
-            if (IsFloorItem)
+           //todo: serialize in interactors
+            if (!IsWallItem)
             {
                 message.AppendInteger(VirtualId);
                 message.AppendInteger(GetBaseItem().SpriteId);
@@ -1920,9 +1851,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
 
                 return;
             }
-
-            if (!IsWallItem)
-                return;
+            
 
             message.AppendString($"{VirtualId}{string.Empty}");
             message.AppendInteger(GetBaseItem().SpriteId);
@@ -1935,21 +1864,13 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             message.AppendInteger(GetBaseItem().Modes > 1 ? 1 : 0);
             message.AppendInteger(IsBuilder ? -12345678 : Convert.ToInt32(UserId));
         }
-
-        /// <summary>
-        ///     Refreshes the item.
-        /// </summary>
-        internal void RefreshItem()
-        {
-            _mBaseItem = null;
-        }
+        
 
         /// <summary>
         ///     Gets the base item.
         /// </summary>
         /// <returns>Item.</returns>
-        internal Item GetBaseItem() =>
-            _mBaseItem ?? (_mBaseItem = Oblivion.GetGame().GetItemManager().GetItem(BaseItem));
+        internal Item GetBaseItem() => BaseItem;
 
         /// <summary>
         ///     Gets the room.

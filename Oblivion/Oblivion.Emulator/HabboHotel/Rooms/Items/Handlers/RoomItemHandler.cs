@@ -185,7 +185,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 if (_removedItems.Count > 0)
                 {
                     var builder = new StringBuilder();
-                    builder.Append("UPDATE items_rooms SET room_id='0', x='0', y='0', z='0', rot='0' WHERE id IN (");
+                    builder.Append("UPDATE items_rooms SET room_id=NULL, x='0', y='0', z='0', rot='0' WHERE id IN (");
                     var i = 0;
                     var count = _removedItems.Count;
                     foreach (var itemId in _removedItems)
@@ -238,7 +238,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                             dbClient.AddParameter($"extraData{i}", roomItem.ExtraData);
                         }
 
-                        if (roomItem.IsFloorItem)
+                        if (!roomItem.IsWallItem)
                         {
                             query +=
                                 $", x={roomItem.X}, y={roomItem.Y}, z='{roomItem.Z.ToString(CultureInfo.InvariantCulture).Replace(',', '.')}', rot={roomItem.Rot}";
@@ -462,7 +462,10 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         if (DBNull.Value.Equals(dataRow["songcode"])) songCode = string.Empty;
                         else songCode = (string) dataRow["songcode"];
 
-                        var groupId = Convert.ToUInt32(dataRow["group_id"]);
+                        if (!uint.TryParse(dataRow["group_id"].ToString(), out var groupId))
+                        {
+                            groupId = 0;
+                        }
                         if (item.Type == 'i')
                         {
                             var wallCoord = new WallCoordinate(':' + locationData.Split(':')[1]);
@@ -488,13 +491,13 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                                 {
                                     clientByUserId2.GetHabbo()
                                         .GetInventoryComponent()
-                                        .AddNewItem(roomItem.Id, roomItem.BaseItem, roomItem.ExtraData, groupId, true,
+                                        .AddNewItem(roomItem.Id, roomItem.BaseItem.ItemId, roomItem.ExtraData, groupId, true,
                                             true, 0, 0);
                                     clientByUserId2.GetHabbo().GetInventoryComponent().UpdateItems(true);
                                 }
 
                                 queryReactor.RunFastQuery(
-                                    "UPDATE items_rooms SET room_id = 0 WHERE id = '" + roomItem.Id + "'");
+                                    "UPDATE items_rooms SET room_id = NULL WHERE id = '" + roomItem.Id + "'");
                             }
                             else
                             {
@@ -609,7 +612,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     WallItems.TryRemove(item.Id, out _);
                 }
             }
-            else if (item.IsFloorItem)
+            else if (!item.IsWallItem)
             {
                 using (var serverMessage =
                     new ServerMessage(LibraryParser.OutgoingRequest("PickUpFloorItemMessageComposer")))
@@ -913,7 +916,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             if (newItem)
             {
                 if (FloorItems.ContainsKey(item.Id)) return true;
-                if (item.IsFloorItem) FloorItems.TryAdd(item.Id, item);
+                if (!item.IsWallItem) FloorItems.TryAdd(item.Id, item);
                 else if (item.IsWallItem) WallItems.TryAdd(item.Id, item);
 
                 AddOrUpdateItem(item.Id);

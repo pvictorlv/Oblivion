@@ -36,7 +36,7 @@ namespace Oblivion.Connection.SuperSocket
                 
                 return new RequestInfo(readBuffer.CloneRange(position, decryptedLength), false, decryptedLength);
             }
-            catch (Exception ex)
+            catch
             {
                 return null;
             }

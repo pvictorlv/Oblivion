@@ -269,7 +269,7 @@ namespace Oblivion.Messages.Handlers
             try
             {
                 var wallCoord = new WallCoordinate(":" + locationData.Split(':')[1]);
-                var item2 = new RoomItem(item.Id, room.RoomId, item.BaseItemId, item.ExtraData, wallCoord, room,
+                var item2 = new RoomItem(item.Id, room.RoomId, item.BaseItem.ItemId, item.ExtraData, wallCoord, room,
                     Session.GetHabbo().Id, item.GroupId, false);
                 if (room.GetRoomItemHandler().SetWallItem(Session, item2))
                     Session.GetHabbo().GetInventoryComponent().RemoveItem(id, true, room.RoomId);
@@ -357,7 +357,7 @@ namespace Oblivion.Messages.Handlers
                             case Interaction.BreedingTerrier:
                             case Interaction.BreedingBear:
                             {
-                                var roomItemBreed = new RoomItem(item.Id, room.RoomId, item.BaseItemId, item.ExtraData,
+                                var roomItemBreed = new RoomItem(item.Id, room.RoomId, item.BaseItem.ItemId, item.ExtraData,
                                     x, y, z, rot, room, Session.GetHabbo().Id, 0, string.Empty, false, (int)item.LimitedSellId, (int)item.LimitedStack);
 
                                 if (item.BaseItem.InteractionType == Interaction.BreedingTerrier)
@@ -406,7 +406,7 @@ namespace Oblivion.Messages.Handlers
 
                 PlaceWall:
                 var coordinate = new WallCoordinate(":" + placementData.Split(':')[1]);
-                var roomItemWall = new RoomItem(item.Id, room.RoomId, item.BaseItemId, item.ExtraData,
+                var roomItemWall = new RoomItem(item.Id, room.RoomId, item.BaseItem.ItemId, item.ExtraData,
                     coordinate, room, Session.GetHabbo().Id, item.GroupId, false);
                 if (room.GetRoomItemHandler().SetWallItem(Session, roomItemWall))
                     Session.GetHabbo().GetInventoryComponent().RemoveItem(realId, true, room.RoomId);
@@ -417,7 +417,7 @@ namespace Oblivion.Messages.Handlers
                 if (room.CheckRights(Session))
                     Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.FurniPlace);
 
-                var roomItem = new RoomItem(item.Id, room.RoomId, item.BaseItemId, item.ExtraData, x, y, z, rot,
+                var roomItem = new RoomItem(item.Id, room.RoomId, item.BaseItem.ItemId, item.ExtraData, x, y, z, rot,
                     room, Session.GetHabbo().Id, item.GroupId, item.SongCode, false, (int) item.LimitedSellId, (int) item.LimitedStack);
 
                 if (room.GetRoomItemHandler().SetFloorItem(Session, roomItem, x, y, rot, true, false, true))
@@ -560,7 +560,7 @@ namespace Oblivion.Messages.Handlers
                     {
                         room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
 
-                        adapter.RunFastQuery($"UPDATE items_rooms SET room_id = '0' WHERE id = '{item.Id}'");
+                        adapter.RunFastQuery($"UPDATE items_rooms SET room_id = NULL WHERE id = '{item.Id}'");
                     }
                 }
             }
@@ -867,8 +867,9 @@ namespace Oblivion.Messages.Handlers
                 queryReactor.AddParameter("extraData", extraData);
                 queryReactor.RunQuery();
                 queryReactor.RunFastQuery($"DELETE FROM users_gifts WHERE gift_id='{item.Id}'");
-                item.BaseItem = num;
-                item.RefreshItem();
+
+                item.BaseItem = Oblivion.GetGame().GetItemManager().GetItem(num);
+
                 item.ExtraData = extraData;
                 if (!currentRoom.GetRoomItemHandler().SetFloorItem(item, item.X, item.Y, item.Z, item.Rot, true))
                 {
@@ -1140,7 +1141,7 @@ namespace Oblivion.Messages.Handlers
 
 
             var allItems = Session.GetHabbo().GetInventoryComponent().GetItems
-                .Where(x => x.BaseItemId == item.BaseItemId).Take(amount);
+                .Where(x => x.BaseItem.ItemId == item.BaseItem.ItemId).Take(amount);
             /* TODO CHECK */
             foreach (var it in allItems)
             {
@@ -2143,7 +2144,7 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().GetInventoryComponent().AddBot(bot.BotData);
             using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryreactor2.RunFastQuery("UPDATE bots SET room_id = '0' WHERE id = " + id);
+                queryreactor2.RunFastQuery("UPDATE bots SET room_id = NULL WHERE id = " + id);
             }
             room.GetRoomUserManager().RemoveBot(bot.VirtualId, false);
             bot.BotData.WasPicked = true;
@@ -2493,7 +2494,7 @@ namespace Oblivion.Messages.Handlers
             room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.RunFastQuery($"UPDATE items_rooms SET room_id='0' WHERE id='{item.Id}' LIMIT 1");
+                queryReactor.RunFastQuery($"UPDATE items_rooms SET room_id=NULL WHERE id='{item.Id}' LIMIT 1");
             }
 
         }

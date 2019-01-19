@@ -50,7 +50,6 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("fixroom", new FixRoom());
             CommandsDictionary.Add("follow", new FollowUser());
             CommandsDictionary.Add("seguir", new FollowUser());
-            CommandsDictionary.Add("faq", new UserFaq());
             CommandsDictionary.Add("weapon", new Weapon());
             CommandsDictionary.Add("armas", new Weapon());
             CommandsDictionary.Add("sex", new Sex());

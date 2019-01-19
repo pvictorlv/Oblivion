@@ -52,16 +52,16 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             }
         }
 
-        internal void OnCycle()
+        internal bool OnCycle()
         {
             try
             {
                 if (_ball == null)
-                    return;
+                    return false;
 
                 lock (_ball)
                 {
-                    if (!_ball.BallIsMoving || _ball?.InteractingBallUser == null) return;
+                    if (!_ball.BallIsMoving || _ball?.InteractingBallUser == null) return false;
 
                     MoveBallProcess(_ball, _ball.InteractingBallUser);
                 }
@@ -69,7 +69,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             catch (Exception e)
             {
                 Logging.HandleException(e, "Ball - OnCycle");
+                return false;
             }
+            return true;
         }
 
         internal void OnGateRemove(RoomItem item)
@@ -227,12 +229,12 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             {
                 mMessage.Init(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer")); // Cf
                 mMessage.AppendInteger(item.VirtualId);
-                mMessage.AppendInteger(item.BaseItem);
+                mMessage.AppendInteger(item.BaseItem.ItemId);
                 mMessage.AppendInteger(newX);
                 mMessage.AppendInteger(newY);
                 mMessage.AppendInteger(4);
-                mMessage.AppendString(String.Format("{0:0.00}", TextHandling.GetString(item.Z)));
-                mMessage.AppendString(String.Format("{0:0.00}", TextHandling.GetString(item.Z)));
+                mMessage.AppendString($"{TextHandling.GetString(item.Z):0.00}");
+                mMessage.AppendString($"{TextHandling.GetString(item.Z):0.00}");
 
                 mMessage.AppendInteger(0);
                 mMessage.AppendInteger(0);

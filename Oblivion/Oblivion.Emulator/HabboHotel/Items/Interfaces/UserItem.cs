@@ -7,17 +7,13 @@ namespace Oblivion.HabboHotel.Items.Interfaces
     /// <summary>
     ///     Class UserItem.
     /// </summary>
-    internal class UserItem
+    public class UserItem
     {
         /// <summary>
         ///     The base item
         /// </summary>
         internal Item BaseItem;
-
-        /// <summary>
-        ///     The base item identifier
-        /// </summary>
-        internal uint BaseItemId;
+        
 
         /// <summary>
         ///     The extra data
@@ -64,7 +60,6 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             int limitedStack)
         {
             Id = id;
-            BaseItemId = baseItemId;
             ExtraData = extraData;
             GroupId = group;
 
@@ -84,9 +79,10 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         }
 
 
-        public void Dispose()
+        public void Dispose(bool removeVirtual= true)
         {
             BaseItem = null;
+            if (removeVirtual)
             Oblivion.GetGame().GetItemManager().RemoveVirtualItem(Id);
         }
 

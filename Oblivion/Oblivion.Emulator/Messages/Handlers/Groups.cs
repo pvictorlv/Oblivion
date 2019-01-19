@@ -652,13 +652,11 @@ namespace Oblivion.Messages.Handlers
 
                 Session.GetHabbo().LastSqlQuery = Oblivion.GetUnixTimeStamp();
                 dbClient.SetQuery(
-                    "INSERT INTO groups_forums_posts (group_id, parent_id, timestamp, poster_id, poster_name, poster_look, subject, post_content) VALUES (@gid, @pard, @ts, @pid, @pnm, @plk, @subjc, @content)");
+                    "INSERT INTO groups_forums_posts (group_id, parent_id, timestamp, poster_id, subject, post_content) VALUES (@gid, @pard, @ts, @pid, @pnm, @plk, @subjc, @content)");
                 dbClient.AddParameter("gid", groupId);
                 dbClient.AddParameter("pard", threadId);
                 dbClient.AddParameter("ts", timestamp);
                 dbClient.AddParameter("pid", Session.GetHabbo().Id);
-                dbClient.AddParameter("pnm", Session.GetHabbo().UserName);
-                dbClient.AddParameter("plk", Session.GetHabbo().Look);
                 dbClient.AddParameter("subjc", subject);
                 dbClient.AddParameter("content", content);
 
