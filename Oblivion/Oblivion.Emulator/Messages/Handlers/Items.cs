@@ -560,7 +560,7 @@ namespace Oblivion.Messages.Handlers
                     {
                         room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
 
-                        adapter.RunFastQuery($"UPDATE items_rooms SET room_id = '0' WHERE id = '{item.Id}'");
+                        adapter.RunFastQuery($"UPDATE items_rooms SET room_id = NULL WHERE id = '{item.Id}'");
                     }
                 }
             }
@@ -2143,7 +2143,7 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().GetInventoryComponent().AddBot(bot.BotData);
             using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryreactor2.RunFastQuery("UPDATE bots SET room_id = '0' WHERE id = " + id);
+                queryreactor2.RunFastQuery("UPDATE bots SET room_id = NULL WHERE id = " + id);
             }
             room.GetRoomUserManager().RemoveBot(bot.VirtualId, false);
             bot.BotData.WasPicked = true;
@@ -2321,8 +2321,7 @@ namespace Oblivion.Messages.Handlers
             // Now check if both of the users have confirmed.
             if (userOne.LoveLockPartner == 0 || userTwo.LoveLockPartner == 0)
                 return;
-            item.ExtraData =
-                $"1{(char) 5}{userOne.GetUserName()}{(char) 5}{userTwo.GetUserName()}{(char) 5}{userOne.GetClient().GetHabbo().Look}{(char) 5}{userTwo.GetClient().GetHabbo().Look}{(char) 5}{DateTime.Now:dd/MM/yyyy}";
+            item.ExtraData = $"1{'\u0005'}{userOne.GetUserName()}{'\u0005'}{userTwo.GetUserName()}{'\u0005'}{userOne.GetClient().GetHabbo().Look}{'\u0005'}{userTwo.GetClient().GetHabbo().Look}{'\u0005'}{DateTime.Now.ToString("dd/MM/yyyy")}";
             userOne.LoveLockPartner = 0;
             userTwo.LoveLockPartner = 0;
             item.InteractingUser = 0;
@@ -2493,7 +2492,7 @@ namespace Oblivion.Messages.Handlers
             room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.RunFastQuery($"UPDATE items_rooms SET room_id='0' WHERE id='{item.Id}' LIMIT 1");
+                queryReactor.RunFastQuery($"UPDATE items_rooms SET room_id=NULL WHERE id='{item.Id}' LIMIT 1");
             }
 
         }

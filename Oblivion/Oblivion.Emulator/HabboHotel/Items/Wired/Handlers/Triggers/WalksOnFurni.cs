@@ -74,7 +74,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
 
             var userPosition = roomUser.X;
-            var lastUserPosition = roomUser.CopyX;
+            var lastUserPosition = roomUser.LastSelectedX;
 
             if (roomUser.LastItem != "0" && roomUser.LastItem == roomItem.Id &&
                 userPosition == lastUserPosition)

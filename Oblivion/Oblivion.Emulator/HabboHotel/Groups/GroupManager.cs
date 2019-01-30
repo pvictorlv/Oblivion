@@ -223,7 +223,7 @@ namespace Oblivion.HabboHotel.Groups
 
                     var membGroup = new GroupMember(userId, dataRow["username"].ToString(), dataRow["look"].ToString(),
                         groupId, rank, (int) dataRow["date_join"], true);
-                    
+
                     members[userId] = membGroup;
 
                     if (rank >= 1)
@@ -239,9 +239,8 @@ namespace Oblivion.HabboHotel.Groups
 
                     var membGroup = new GroupMember(userId, dataRow["username"].ToString(), dataRow["look"].ToString(),
                         groupId, 0, Oblivion.GetUnixTimeStamp(), true);
-                    
-                    requests[userId] = membGroup;
 
+                    requests[userId] = membGroup;
                 }
 
                 var group = new Guild((uint) row[0], row[1].ToString(), row[2].ToString(), (uint) row[6],
@@ -254,7 +253,7 @@ namespace Oblivion.HabboHotel.Groups
                     (int) row["who_can_read"], (int) row["who_can_post"], (int) row["who_can_thread"],
                     (int) row["who_can_mod"], Oblivion.EnumToBool(row["has_chat"].ToString()));
 
-                    Groups[(uint) row[0]] = group;
+                Groups[(uint) row[0]] = group;
 
                 return group;
             }
@@ -310,17 +309,15 @@ namespace Oblivion.HabboHotel.Groups
         {
             if (theGroup == null || session == null)
                 return null;
-/*
-            if (page <= 1)
-                page = 0;*/
+
             response.AppendInteger(theGroup.Id);
             response.AppendString(theGroup.Name);
             response.AppendInteger(theGroup.RoomId);
             response.AppendString(theGroup.Badge);
 
             var list = (GetGroupUsersByString(theGroup, searchVal, reqType));
-           
-            int startIndex = (page -1) * 14 + 14;
+
+            int startIndex = (page - 1) * 14 + 14;
             int finishIndex = list.Count;
             var members = list.Skip(startIndex).Take(finishIndex - startIndex).ToList();
             if (reqType == 0)
@@ -406,6 +403,7 @@ namespace Oblivion.HabboHotel.Groups
 
             return response;
         }
+
         /// <summary>
         ///     Gets the theGroup users by string.
         /// </summary>
@@ -415,25 +413,26 @@ namespace Oblivion.HabboHotel.Groups
         /// <returns>List&lt;GroupUser&gt;.</returns>
         internal List<GroupMember> GetGroupUsersByString(Guild theGroup, string searchVal, uint req)
         {
-            var list = new List<GroupMember>();
+            List<GroupMember> list = null;
 
             switch (req)
             {
                 case 0:
-                    using (var enumerator = theGroup.Members.Values.GetEnumerator())
-                        while (enumerator.MoveNext())
-                            list.Add(enumerator.Current);
+                    list = theGroup.Members.Values.ToList();
                     break;
 
                 case 1:
-                    using (var enumerator2 = theGroup.Admins.Values.GetEnumerator())
-                        while (enumerator2.MoveNext())
-                            list.Add(enumerator2.Current);
+                    list = theGroup.Admins.Values.ToList();
                     break;
 
                 case 2:
                     list = GetGroupRequestsByString(theGroup, searchVal);
                     break;
+            }
+
+            if (list == null)
+            {
+                return null;
             }
 
             if (!string.IsNullOrWhiteSpace(searchVal))

@@ -247,8 +247,6 @@ namespace Oblivion.HabboHotel.Rooms
         public bool GotWireds() => _wiredHandler != null;
 
 
-        
-
         /// <summary>
         ///     Gets the game map.
         /// </summary>
@@ -402,6 +400,7 @@ namespace Oblivion.HabboHotel.Rooms
             _wiredHandler.Destroy();
             _wiredHandler = null;
         }
+
         internal void StartBallProcess()
         {
             if (_processingBall) return;
@@ -1088,6 +1087,11 @@ namespace Oblivion.HabboHotel.Rooms
                 queryReactor.SetQuery(
                     $"SELECT user_id FROM rooms_bans WHERE room_id={RoomId} AND expire > UNIX_TIMESTAMP()");
                 var table = queryReactor.GetTable();
+                if (table == null)
+                {
+                    return list;
+                }
+
                 list.AddRange(from DataRow dataRow in table.Rows select (uint) dataRow[0]);
             }
 
@@ -1353,6 +1357,10 @@ namespace Oblivion.HabboHotel.Rooms
         public void Dispose()
         {
             _mainProcessSource.Cancel();
+            if (_roomUserManager == null)
+            {
+                return;
+            }
 
             _roomUserManager.Disposed = true;
             _mCycleEnded = true;
@@ -1440,7 +1448,7 @@ namespace Oblivion.HabboHotel.Rooms
 
             _gameMap = null;
 
-            
+
             RoomData?.Tags?.Clear();
             RoomData.Tags = null;
             RoomData?.BlockedCommands?.Clear();
@@ -1486,8 +1494,6 @@ namespace Oblivion.HabboHotel.Rooms
                 _mainProcessSource.Dispose();
                 _mainProcessSource = null;
             }).Start();
-
-
         }
     }
 }

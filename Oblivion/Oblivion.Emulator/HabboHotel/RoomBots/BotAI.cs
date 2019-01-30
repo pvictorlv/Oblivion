@@ -68,7 +68,7 @@ namespace Oblivion.HabboHotel.RoomBots
         ///     Gets the bot data.
         /// </summary>
         /// <returns>RoomBot.</returns>
-        internal RoomBot GetBotData() => GetRoomUser() == null ? null : GetRoomUser().BotData;
+        internal RoomBot GetBotData() => GetRoomUser()?.BotData;
 
         /// <summary>
         ///     Disposes this instance.

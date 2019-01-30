@@ -434,12 +434,18 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <value>The get coords.</value>
         internal List<Point> GetCoords()
         {
-//            get 
-//                {
-            var list = new List<Point> {Coordinate};
-            list.AddRange(AffectedTiles.Values.Select(current => new Point(current.X, current.Y)));
+            var list = new List<Point>
+            {
+                Coordinate
+            };
+
+            foreach (var tile in AffectedTiles.Values)
+            {
+                list.Add(new Point(tile.X, tile.Y));
+            }
+
+            
             return list;
-//            }
         }
 
         internal double Height

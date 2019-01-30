@@ -231,8 +231,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                 mMessage.AppendInteger(newX);
                 mMessage.AppendInteger(newY);
                 mMessage.AppendInteger(4);
-                mMessage.AppendString(String.Format("{0:0.00}", TextHandling.GetString(item.Z)));
-                mMessage.AppendString(String.Format("{0:0.00}", TextHandling.GetString(item.Z)));
+                mMessage.AppendString($"{TextHandling.GetString(item.Z):0.00}");
+                mMessage.AppendString($"{TextHandling.GetString(item.Z):0.00}");
 
                 mMessage.AppendInteger(0);
                 mMessage.AppendInteger(0);

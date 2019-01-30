@@ -185,7 +185,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 if (_removedItems.Count > 0)
                 {
                     var builder = new StringBuilder();
-                    builder.Append("UPDATE items_rooms SET room_id='0', x='0', y='0', z='0', rot='0' WHERE id IN (");
+                    builder.Append("UPDATE items_rooms SET room_id=NULL, x='0', y='0', z='0', rot='0' WHERE id IN (");
                     var i = 0;
                     var count = _removedItems.Count;
                     foreach (var itemId in _removedItems)
@@ -494,7 +494,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                                 }
 
                                 queryReactor.RunFastQuery(
-                                    "UPDATE items_rooms SET room_id = 0 WHERE id = '" + roomItem.Id + "'");
+                                    "UPDATE items_rooms SET room_id = NULL WHERE id = '" + roomItem.Id + "'");
                             }
                             else
                             {

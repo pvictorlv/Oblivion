@@ -1199,8 +1199,12 @@ namespace Oblivion.HabboHotel.Rooms.User
             message.AppendInteger(RotBody);
             var stringBuilder = new StringBuilder();
             stringBuilder.Append("/");
-            if (IsPet && PetData.Type == 16u)
-                stringBuilder.AppendFormat("/{0}{1}", PetData.MoplaBreed.GrowStatus, Statusses.Count >= 1 ? "/" : "");
+            if (PetData?.MoplaBreed != null)
+            {
+                if (IsPet && PetData.Type == 16u)
+                    stringBuilder.AppendFormat("/{0}{1}", PetData.MoplaBreed.GrowStatus,
+                        Statusses.Count >= 1 ? "/" : "");
+            }
 
             foreach (var current in Statusses)
             {

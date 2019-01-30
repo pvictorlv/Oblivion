@@ -31,7 +31,11 @@ namespace Oblivion.HabboHotel.RoomBots
             var bot = new RoomBot(id, Convert.ToUInt32(row["user_id"]), AiType.Generic,
                 row["is_bartender"].ToString() == "1");
 
-            bot.Update(Convert.ToUInt32(row["room_id"]), (string) row["walk_mode"], (string) row["name"],
+            if (!uint.TryParse(row["room_id"].ToString(), out var roomId))
+            {
+                roomId = 0;
+            }
+            bot.Update(roomId, (string) row["walk_mode"], (string) row["name"],
                 (string) row["motto"],
                 (string) row["look"],
                 int.Parse(row["x"].ToString()), int.Parse(row["y"].ToString()), int.Parse(row["z"].ToString()), 4, 0, 0,

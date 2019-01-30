@@ -181,6 +181,7 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("kill", new Kill());
             CommandsDictionary.Add("matar", new Kill());
             CommandsDictionary.Add("disco", new Disco());
+            CommandsDictionary.Add("about", new About());
             CommandsDictionary.Add("block", new BlockCommand());
 
             if (ExtraSettings.WebSocketAddr.Length > 10)

@@ -43,6 +43,7 @@ namespace Oblivion.Connection.Net
             catch
             {
             }
+
             MDisconnect();
         }
 
@@ -101,7 +102,7 @@ namespace Oblivion.Connection.Net
                         hotelAlert.AppendString($"{param}\r\n- Hotel Management");
                         Oblivion.GetGame().GetClientManager().SendMessage(hotelAlert);
                         break;
-                        
+
                     case "alert":
                         var pUserId = param[0];
                         var pMessage = param[1];
@@ -148,6 +149,7 @@ namespace Oblivion.Connection.Net
 
                             diamonds = Convert.ToInt32(row["diamonds"]);
                         }
+
                         clientByUserId.GetHabbo().Diamonds = diamonds;
                         clientByUserId.GetHabbo().UpdateActivityPointsBalance();
                         break;
@@ -207,6 +209,7 @@ namespace Oblivion.Connection.Net
                             message.AppendInteger(clientByUserId.GetHabbo().AchievementPoints);
                             clientByUserId.SendMessage(message);
                         }
+
                         break;
 
                     case "addtoinventory":
@@ -233,6 +236,7 @@ namespace Oblivion.Connection.Net
                             clientByUserId.GetHabbo().Credits = credits;
                             clientByUserId.GetHabbo().UpdateCreditsBalance();
                         }
+
                         return;
 
                     case "updatesubscription":
@@ -248,6 +252,12 @@ namespace Oblivion.Connection.Net
                         {
                             Oblivion.GetGame().GetBanManager().LoadBans(adapter3);
                         }
+
+                        break;
+                    case "shutdown":
+                    {
+                        Oblivion.PerformShutDown();
+                    }
                         break;
                     default:
                         return;
@@ -280,6 +290,7 @@ namespace Oblivion.Connection.Net
                     }
                         break;
                 }
+
                 Out.WriteLine("Parsed " + header + " MUS command");
             }
             catch

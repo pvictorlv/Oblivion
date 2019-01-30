@@ -12,46 +12,44 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             if (!hasRights)
                 return;
 
-            int num;
-            int.TryParse(item.ExtraData, out num);
+            // Request 1 - Decrease value with red button
+            // Request 2 - Increase value with green button
+            // Request 3 - Reset with UI/Wired/Double click
 
-            switch (request)
+            if (!int.TryParse(item.ExtraData, out var oldValue))
             {
-                case 1:
-                    if (item.PendingReset && num > 0)
-                    {
-                        num = 0;
-                        item.PendingReset = false;
-                    }
-                    else
-                    {
-                        num = num + 60;
-                        item.UpdateNeeded = false;
-                    }
-                    break;
-
-                case 2:
-                    item.ExtraData = (num + 1).ToString();
-                    item.UpdateNeeded = true;
-                    item.PendingReset = true;
-                    break;
-                case 3:
-                    break;
+                oldValue = 0;
             }
 
-            item.ExtraData = num.ToString();
+            if (oldValue >= 0 && oldValue <= 99 && request == 1)
+            {
+                if (oldValue > 0)
+                    oldValue--;
+                else if (oldValue == 0)
+                    oldValue = 99;
+            }
+
+            else if (oldValue >= 0 && oldValue <= 99 && request == 2)
+            {
+                if (oldValue < 99)
+                    oldValue++;
+                else if (oldValue == 99)
+                    oldValue = 0;
+            }
+
+            else if (request == 3)
+            {
+                oldValue = 0;
+                item.PendingReset = true;
+            }
+
+            item.ExtraData = oldValue.ToString();
             item.UpdateState();
         }
 
         public override void OnWiredTrigger(RoomItem item)
         {
-            int num;
-            int.TryParse(item.ExtraData, out num);
-
-            num += 60;
-
-            item.UpdateNeeded = false;
-            item.ExtraData = num.ToString();
+            item.ExtraData = "0";
             item.UpdateState();
         }
     }
