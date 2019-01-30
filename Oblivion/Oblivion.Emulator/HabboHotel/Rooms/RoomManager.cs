@@ -401,7 +401,6 @@ namespace Oblivion.HabboHotel.Rooms
 
             room.Disposed = true;
 
-            if (Oblivion.GetGame().GetNavigator().PrivateCategories.Contains(room.RoomData.Category))
                 if (Oblivion.GetGame().GetNavigator().PrivateCategories.Contains(room.RoomData.Category))
                 {
                     ((FlatCat) Oblivion.GetGame().GetNavigator().PrivateCategories[room.RoomData.Category]).UsersNow -=

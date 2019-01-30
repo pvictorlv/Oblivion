@@ -315,7 +315,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
                     .GetClient()
                     .GetHabbo()
                     .GetInventoryComponent()
-                    .AddNewItem(current3.Id, current3.BaseItemId, current3.ExtraData, current3.GroupId, false, false, 0,
+                    .AddNewItem(current3.Id, current3.BaseItem.ItemId, current3.ExtraData, current3.GroupId, false, false, 0,
                         0,
                         current3.SongCode);
             }
@@ -327,7 +327,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
                     .GetClient()
                     .GetHabbo()
                     .GetInventoryComponent()
-                    .AddNewItem(current4.Id, current4.BaseItemId, current4.ExtraData, current4.GroupId, false, false, 0,
+                    .AddNewItem(current4.Id, current4.BaseItem.ItemId, current4.ExtraData, current4.GroupId, false, false, 0,
                         0,
                         current4.SongCode);
             }

@@ -373,7 +373,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="item">The item.</param>
         internal void UpdateMapForItem(RoomItem item)
         {
-            RemoveFromMap(item);
+            RemoveFromMap(item, false);
             AddToMap(item);
         }
 
@@ -602,9 +602,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         }
 
 
-        internal bool RemoveFromMap(RoomItem item, bool handleGameItem)
+        internal bool RemoveFromMap(RoomItem item, bool removed)
         {
-            RemoveSpecialItem(item);
+            RemoveSpecialItem(item, removed);
             if (_room.GotSoccer())
                 _room.GetSoccer().OnGateRemove(item);
             var result = false;
@@ -1418,7 +1418,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         ///     Removes the special item.
         /// </summary>
         /// <param name="item">The item.</param>
-        internal void RemoveSpecialItem(RoomItem item)
+        internal void RemoveSpecialItem(RoomItem item, bool removed)
         {
             switch (item.GetBaseItem().InteractionType)
             {
@@ -1451,7 +1451,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                                     break;*/
 
                 case Interaction.Football:
-                    _room.GetSoccer().RemoveBall();
+                    _room.GetSoccer().RemoveBall(removed);
                     break;
             }
         }

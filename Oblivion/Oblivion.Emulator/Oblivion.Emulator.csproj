@@ -378,7 +378,6 @@
     <Compile Include="HabboHotel\Commands\Controllers\FastWalk.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\Freeze.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\GiveBadge.cs" />
-    <Compile Include="HabboHotel\Commands\Controllers\UserFaq.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\GiveCredits.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\GiveDiamonds.cs" />
     <Compile Include="HabboHotel\Commands\Controllers\GiveDuckets.cs" />
