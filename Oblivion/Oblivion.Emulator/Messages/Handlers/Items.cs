@@ -2494,11 +2494,7 @@ namespace Oblivion.Messages.Handlers
             room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-<<<<<<< HEAD
-                queryReactor.RunFastQuery($"UPDATE items_rooms SET room_id=NULL WHERE id='{item.Id}' LIMIT 1");
-=======
                 queryReactor.RunFastQuery($"UPDATE items_rooms SET room_id = NULL WHERE id='{item.Id}' LIMIT 1");
->>>>>>> 9558dc72b6803d3461d9a7ce76ecb3778af47e3a
             }
 
         }

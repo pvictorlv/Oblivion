@@ -186,11 +186,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 if (_removedItems.Count > 0)
                 {
                     var builder = new StringBuilder();
-<<<<<<< HEAD
                     builder.Append("UPDATE items_rooms SET room_id=NULL, x='0', y='0', z='0', rot='0' WHERE id IN (");
-=======
-                    builder.Append("UPDATE items_rooms SET room_id = NULL, x='0', y='0', z='0', rot='0' WHERE id IN (");
->>>>>>> 9558dc72b6803d3461d9a7ce76ecb3778af47e3a
                     var i = 0;
                     var count = _removedItems.Count;
                     foreach (var itemId in _removedItems)

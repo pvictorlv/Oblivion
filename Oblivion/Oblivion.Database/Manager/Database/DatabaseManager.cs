@@ -115,8 +115,7 @@ namespace Oblivion.Database.Manager.Database
                 AllowZeroDateTime = true,
                 ConvertZeroDateTime = true,
                 DefaultCommandTimeout = 30,
-                ConnectionTimeout = 10,
-                Logging = false,
+                ConnectionTimeout = 10
 
             };
             var mySqlConnectionStringBuilder2 = mySqlConnectionStringBuilder;

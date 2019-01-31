@@ -412,11 +412,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
 
                         queryReactor.SetNoLockQuery(
-<<<<<<< HEAD
                             $"INSERT INTO items_rooms (id, base_item, user_id, group_id, extra_data, songcode, limited) VALUES ('{id}', '{baseItem}', '{UserId}', {groupId}, @edata, '{songCode}', '{limno};{limtot}');");
-=======
-                            $"INSERT INTO items_rooms (id, base_item, user_id, extra_data, songcode, limited) VALUES ('{id}', '{baseItem}', '{UserId}', @edata, '{songCode}', '{limno};{limtot}');");
->>>>>>> 9558dc72b6803d3461d9a7ce76ecb3778af47e3a
+
                         queryReactor.AddParameter("edata", extraData);
                         queryReactor.RunQuery();
                         var virtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(id);
@@ -718,11 +715,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     var added = _mAddedItems.ToList();
 
                     var builder = new StringBuilder();
-<<<<<<< HEAD
-                    builder.Append($"UPDATE items_rooms SET user_id='{UserId}', room_id=NULL WHERE id IN (");
-=======
                     builder.Append($"UPDATE items_rooms SET user_id='{UserId}', room_id = NULL WHERE id IN (");
->>>>>>> 9558dc72b6803d3461d9a7ce76ecb3778af47e3a
                     var i = 0;
                     var count = added.Count;
                     foreach (var itemId in added)

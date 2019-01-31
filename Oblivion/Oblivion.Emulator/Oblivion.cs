@@ -26,7 +26,6 @@ using Oblivion.Messages;
 using Oblivion.Messages.Factorys;
 using Oblivion.Messages.Parsers;
 using Oblivion.Util;
-using MySql.Data.MySqlClient;
 using Oblivion.Connection.Net;
 using Oblivion.Connection.WebSocket;
 using Timer = System.Timers.Timer;
@@ -308,28 +307,12 @@ namespace Oblivion
                 ConfigurationData.Load(Path.Combine(Application.StartupPath, "Settings/Welcome/settings.ini"), true);
 
                 DatabaseConnectionType = ConfigurationData.Data["db.type"];
-
-                var mySqlConnectionStringBuilder = new MySqlConnectionStringBuilder
-                {
-                    Server = ConfigurationData.Data["db.hostname"],
-                    Port = uint.Parse(ConfigurationData.Data["db.port"]),
-                    UserID = ConfigurationData.Data["db.username"],
-                    Password = ConfigurationData.Data["db.password"],
-                    Database = ConfigurationData.Data["db.name"],
-                    MinimumPoolSize = uint.Parse(ConfigurationData.Data["db.pool.minsize"]),
-                    MaximumPoolSize = uint.Parse(ConfigurationData.Data["db.pool.maxsize"]),
-                    Pooling = true,
-                    AllowZeroDateTime = true,
-                    ConvertZeroDateTime = true,
-                    DefaultCommandTimeout = 300,
-                    Logging = false,
-                    ConnectionTimeout = 10,
-                    SslMode = MySqlSslMode.None
-                };
+                
 
                 Handler.Initialize(CryptoKeys.N, CryptoKeys.D, CryptoKeys.E);
 
-                Manager = new DatabaseManager(mySqlConnectionStringBuilder.ToString());
+                Manager = new DatabaseManager(ConfigurationData.Data["db.hostname"], uint.Parse(ConfigurationData.Data["db.port"]), ConfigurationData.Data["db.username"]
+                , ConfigurationData.Data["db.password"], ConfigurationData.Data["db.name"], uint.Parse(ConfigurationData.Data["db.pool.maxsize"]));
 
                 using (var queryReactor = GetDatabaseManager().GetQueryReactor())
                 {

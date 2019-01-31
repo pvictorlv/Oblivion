@@ -1,6 +1,7 @@
 #region
 
 using System;
+using MySql.Data.MySqlClient;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 
 #endregion
@@ -11,9 +12,25 @@ namespace Oblivion.Database
     {
         private readonly string _connectionStr;
 
-        public DatabaseManager(string connectionStr)
+        public DatabaseManager(string host, uint port, string user, string pass, string db, uint maxPool)
         {
-            _connectionStr = connectionStr;
+            var mySqlConnectionStringBuilder = new MySqlConnectionStringBuilder
+            {
+                Server = host,
+                Port = port,
+                UserID = user,
+                Password = pass,
+                Database = db,
+                MinimumPoolSize = 1,
+                MaximumPoolSize = maxPool,
+                Pooling = true,
+                AllowZeroDateTime = true,
+                ConvertZeroDateTime = true,
+                DefaultCommandTimeout = 30,
+                ConnectionTimeout = 10
+
+            };
+            _connectionStr = mySqlConnectionStringBuilder.ToString();
         }
 
         public IQueryAdapter GetQueryReactor()

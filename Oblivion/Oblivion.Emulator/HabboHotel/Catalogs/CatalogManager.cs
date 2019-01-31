@@ -1240,14 +1240,8 @@ namespace Oblivion.HabboHotel.Catalogs
                     position++;
                     query.Append(
                         position >= list.Count
-<<<<<<< HEAD
                             ? $"('{addedItem.Id}', '{addedItem.BaseItem.ItemId}', '{session.GetHabbo().Id}', {groupId}, @edata, '{songCode}', '{limno};{limtot}');"
                             : $"('{addedItem.Id}', '{addedItem.BaseItem.ItemId}', '{session.GetHabbo().Id}', {groupId}, @edata, '{songCode}', '{limno};{limtot}'),");
-=======
-                            ? $"('{addedItem.Id}', '{addedItem.BaseItem.ItemId}', '{session.GetHabbo().Id}', @edata, '{songCode}', '{limno};{limtot}');"
-                            : $"('{addedItem.Id}', '{addedItem.BaseItem.ItemId}', '{session.GetHabbo().Id}', @edata, '{songCode}', '{limno};{limtot}'),");
->>>>>>> 9558dc72b6803d3461d9a7ce76ecb3778af47e3a
-
                     
                     session.GetHabbo().GetInventoryComponent().AddNewItem(addedItem);
                 }
