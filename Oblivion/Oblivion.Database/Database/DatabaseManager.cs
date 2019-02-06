@@ -27,7 +27,7 @@ namespace Oblivion.Database
                 AllowZeroDateTime = true,
                 ConvertZeroDateTime = true,
                 DefaultCommandTimeout = 30,
-                ConnectionTimeout = 10
+                ConnectionTimeout = 30
 
             };
             _connectionStr = mySqlConnectionStringBuilder.ToString();

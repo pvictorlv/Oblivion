@@ -331,7 +331,8 @@ namespace Oblivion.HabboHotel.Catalogs
                                 (string) dataRow2["page_link"], (string) dataRow2["caption"], visible, enabled, false,
                                 Convert.ToUInt32(dataRow2["min_rank"]), (int) dataRow2["icon_image"],
                                 (string) dataRow2["page_layout"], (string) dataRow2["page_strings_1"],
-                                (string) dataRow2["page_strings_2"], (int) dataRow2["order_num"], ref Offers, dataRow2["blockBad"].ToString() == "1"));
+                                (string) dataRow2["page_strings_2"], (int) dataRow2["order_num"], ref Offers,
+                                dataRow2["blockBad"].ToString() == "1"));
                     }
                 }
 
@@ -980,8 +981,9 @@ namespace Oblivion.HabboHotel.Catalogs
 
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        queryReactor.SetNoLockQuery("INSERT INTO items_rooms (id, base_item,user_id) VALUES ('" + insertId + "',"  +
-                                              itemBySprite.ItemId + ", " + toUserId + ");");
+                        queryReactor.SetNoLockQuery("INSERT INTO items_rooms (id, base_item,user_id) VALUES ('" +
+                                                    insertId + "'," +
+                                                    itemBySprite.ItemId + ", " + toUserId + ");");
 
                         queryReactor.RunQuery();
 
@@ -1080,23 +1082,22 @@ namespace Oblivion.HabboHotel.Catalogs
             if (a == 'i' || a == 's')
             {
                 var i = 0;
+                var subQuery = new StringBuilder();
+
                 while (i < amount)
                 {
                     var interactionType = item.InteractionType;
 
-                    var itemGuid= Guid.NewGuid();
-                    ShortGuid itemId =  itemGuid;
+                    var itemGuid = Guid.NewGuid();
+                    ShortGuid itemId = itemGuid;
 
-                    
                     switch (interactionType)
                     {
                         case Interaction.Dimmer:
-
                             var dimmer = new UserItem(itemId, item.ItemId, extraData, 0u, songCode, limno, limtot);
 
-                            using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                                queryreactor2.RunFastQuery(
-                                    $"INSERT INTO items_moodlight (item_id,enabled,current_preset,preset_one,preset_two,preset_three) VALUES ('{itemId}','0',1,'#000000,255,0','#000000,255,0','#000000,255,0')");
+                            subQuery.Append(
+                                $"INSERT INTO items_moodlight (item_id,enabled,current_preset,preset_one,preset_two,preset_three) VALUES ('{itemId}','0',1,'#000000,255,0','#000000,255,0','#000000,255,0');");
 
                             list.Add(dimmer);
                             break;
@@ -1113,9 +1114,8 @@ namespace Oblivion.HabboHotel.Catalogs
                             list.Add(userItem);
                             list.Add(userItem2);
 
-                            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                                queryReactor.RunFastQuery(
-                                    $"INSERT INTO items_teleports (tele_one_id,tele_two_id) VALUES ('{itemId}','{linkedId}'), ('{linkedId}','{itemId}');");
+                            subQuery.Append(
+                                $"INSERT INTO items_teleports (tele_one_id,tele_two_id) VALUES ('{itemId}','{linkedId}'), ('{linkedId}','{itemId}');");
 
                             break;
 
@@ -1173,8 +1173,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
                             list.Add(roomBg);
 
-                            using (var queryreactor3 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                                queryreactor3.RunFastQuery($"INSERT INTO items_toners VALUES ('{itemId}','0',0,0,0)");
+                            subQuery.Append($"INSERT INTO items_toners VALUES ('{itemId}','0',0,0,0);");
 
                             break;
 
@@ -1232,7 +1231,7 @@ namespace Oblivion.HabboHotel.Catalogs
                 if (list.Count <= 0) return list;
                 var query = new StringBuilder();
                 query.Append(
-                    "INSERT INTO items_rooms (id, base_item, user_id, extra_data, songcode, limited) VALUES ");
+                    "INSERT INTO items_rooms (id, base_item, user_id,group_id,extra_data, songcode, limited) VALUES ");
                 var position = 0;
                 foreach (var addedItem in list)
                 {
@@ -1242,7 +1241,7 @@ namespace Oblivion.HabboHotel.Catalogs
                         position >= list.Count
                             ? $"('{addedItem.Id}', '{addedItem.BaseItem.ItemId}', '{session.GetHabbo().Id}', {groupId}, @edata, '{songCode}', '{limno};{limtot}');"
                             : $"('{addedItem.Id}', '{addedItem.BaseItem.ItemId}', '{session.GetHabbo().Id}', {groupId}, @edata, '{songCode}', '{limno};{limtot}'),");
-                    
+
                     session.GetHabbo().GetInventoryComponent().AddNewItem(addedItem);
                 }
 
@@ -1250,7 +1249,13 @@ namespace Oblivion.HabboHotel.Catalogs
                 {
                     dbClient.SetNoLockQuery(query.ToString());
                     dbClient.AddParameter("edata", extraData);
+
                     dbClient.RunQuery();
+
+                    if (subQuery.Length > 0)
+                    {
+                        dbClient.RunFastQuery(subQuery.ToString());
+                    }
                 }
 
 
@@ -1259,11 +1264,8 @@ namespace Oblivion.HabboHotel.Catalogs
 
             else if (a == 'e')
             {
-                Task.Factory.StartNew(() =>
-                {
-                    for (var j = 0; j < amount; j++)
-                        session.GetHabbo().GetAvatarEffectsInventoryComponent().AddNewEffect(item.SpriteId, 7200, 0);
-                });
+                for (var j = 0; j < amount; j++)
+                    session.GetHabbo().GetAvatarEffectsInventoryComponent().AddNewEffect(item.SpriteId, 7200, 0);
             }
             else if (a == 'r')
             {

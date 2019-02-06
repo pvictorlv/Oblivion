@@ -249,11 +249,11 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                         else
                         {
                             query += ", wall_pos = @wallPos";
-                            dbClient.AddParameter("wallPos", roomItem.WallCoord);
+                            dbClient.AddParameter("wallPos", roomItem.WallCoord.ToString());
                         }
 
-                        query += " WHERE id = '" + roomItem.Id + "'";
-                        dbClient.RunQuery(query);
+                        query += " WHERE id = '" + roomItem.Id + "';";
+                        dbClient.RunNoLockQuery(query);
                     }
 
                     _updatedItems.Clear();
@@ -621,7 +621,6 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 {
                     serverMessage.AppendString(item.VirtualId.ToString());
                     serverMessage.AppendBool(false); //expired
-                    Console.WriteLine(item.UserId);
                     serverMessage.AppendInteger(item.UserId); //pickerId
                     serverMessage.AppendInteger(0); // delay
                     _room.SendMessage(serverMessage);
