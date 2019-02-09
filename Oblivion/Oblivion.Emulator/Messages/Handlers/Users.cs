@@ -981,55 +981,52 @@ namespace Oblivion.Messages.Handlers
         {
             var num = Request.GetUInteger();
             var num2 = Request.GetInteger();
-
+            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                if (num2 == 0)
                 {
-                    if (num2 == 0)
+                    queryReactor.SetQuery(
+                        "SELECT id FROM users_relationships WHERE user_id=@id AND target=@target LIMIT 1");
+                    queryReactor.AddParameter("id", Session.GetHabbo().Id);
+                    queryReactor.AddParameter("target", num);
+                    var integer = (uint) queryReactor.GetInteger();
+                    queryReactor.SetQuery(
+                        "DELETE FROM users_relationships WHERE user_id=@id AND target=@target LIMIT 1");
+                    queryReactor.AddParameter("id", Session.GetHabbo().Id);
+                    queryReactor.AddParameter("target", num);
+                    queryReactor.RunQuery();
+                    if (Session.GetHabbo().Data.Relations.ContainsKey(integer))
+                        Session.GetHabbo().Data.Relations.Remove(integer);
+                }
+                else
+                {
+                    queryReactor.SetQuery(
+                        "SELECT id FROM users_relationships WHERE user_id=@id AND target=@target LIMIT 1");
+                    queryReactor.AddParameter("id", Session.GetHabbo().Id);
+                    queryReactor.AddParameter("target", num);
+                    var integer2 = (uint) queryReactor.GetInteger();
+                    if (integer2 > 0)
                     {
-                        queryReactor.SetQuery(
-                            "SELECT id FROM users_relationships WHERE user_id=@id AND target=@target LIMIT 1");
-                        queryReactor.AddParameter("id", Session.GetHabbo().Id);
-                        queryReactor.AddParameter("target", num);
-                        var integer = queryReactor.GetInteger();
                         queryReactor.SetQuery(
                             "DELETE FROM users_relationships WHERE user_id=@id AND target=@target LIMIT 1");
                         queryReactor.AddParameter("id", Session.GetHabbo().Id);
                         queryReactor.AddParameter("target", num);
                         queryReactor.RunQuery();
-                        if (Session.GetHabbo().Data.Relations.ContainsKey(integer))
-                            Session.GetHabbo().Data.Relations.Remove(integer);
-                    }
-                    else
-                    {
-                        queryReactor.SetQuery(
-                            "SELECT id FROM users_relationships WHERE user_id=@id AND target=@target LIMIT 1");
-                        queryReactor.AddParameter("id", Session.GetHabbo().Id);
-                        queryReactor.AddParameter("target", num);
-                        var integer2 = queryReactor.GetInteger();
-                        if (integer2 > 0)
-                        {
-                            queryReactor.SetQuery(
-                                "DELETE FROM users_relationships WHERE user_id=@id AND target=@target LIMIT 1");
-                            queryReactor.AddParameter("id", Session.GetHabbo().Id);
-                            queryReactor.AddParameter("target", num);
-                            queryReactor.RunQuery();
-                            if (Session.GetHabbo().Data.Relations.ContainsKey(integer2))
-                                Session.GetHabbo().Data.Relations.Remove(integer2);
-                        }
-
-                        queryReactor.SetQuery(
-                            "INSERT INTO users_relationships (user_id, target, type) VALUES (@id, @target, @type)");
-                        queryReactor.AddParameter("id", Session.GetHabbo().Id);
-                        queryReactor.AddParameter("target", num);
-                        queryReactor.AddParameter("type", num2);
-                        var num3 = (int) queryReactor.InsertQuery();
-                        Session.GetHabbo().Data.Relations.Add(num3, new Relationship(num3, num, num2));
+                        if (Session.GetHabbo().Data.Relations.ContainsKey(integer2))
+                            Session.GetHabbo().Data.Relations.Remove(integer2);
                     }
 
-                    var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(num);
-                    Session.GetHabbo().GetMessenger().UpdateFriend(num, clientByUserId, true);
+                    queryReactor.SetQuery(
+                        "INSERT INTO users_relationships (user_id, target, type) VALUES (@id, @target, @type)");
+                    queryReactor.AddParameter("id", Session.GetHabbo().Id);
+                    queryReactor.AddParameter("target", num);
+                    queryReactor.AddParameter("type", num2);
+                    var num3 = (uint) queryReactor.InsertQuery();
+                    Session.GetHabbo().Data.Relations.Add(num3, new Relationship(num3, num, num2));
                 }
+
+                var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(num);
+                Session.GetHabbo().GetMessenger().UpdateFriend(num, clientByUserId, true);
             }
         }
 

@@ -8,7 +8,7 @@ namespace Oblivion.HabboHotel.Users.Relationships
         /// <summary>
         ///     The identifier
         /// </summary>
-        public int Id;
+        public uint Id;
 
         /// <summary>
         ///     The type
@@ -26,7 +26,7 @@ namespace Oblivion.HabboHotel.Users.Relationships
         /// <param name="id">The identifier.</param>
         /// <param name="user">The user.</param>
         /// <param name="type">The type.</param>
-        public Relationship(int id, uint user, int type)
+        public Relationship(uint id, uint user, int type)
         {
             Id = id;
             UserId = user;

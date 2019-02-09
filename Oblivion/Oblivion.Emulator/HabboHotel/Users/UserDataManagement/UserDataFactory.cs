@@ -195,8 +195,8 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             /* TODO CHECK */
 
             var relationShips = relationShipsTable.Rows.Cast<DataRow>()
-                .ToDictionary(row => (int) row[0],
-                    row => new Relationship((int) row[0], (uint) row[2], Convert.ToInt32(row[3].ToString())));
+                .ToDictionary(row => (uint) row[0],
+                    row => new Relationship((uint) row[0], (uint) row[2], Convert.ToInt32(row[3].ToString())));
 
             var user = HabboFactory.GenerateHabbo(dataRow, statsTable, groups);
             errorCode = 0;
@@ -219,6 +219,8 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             var data = new UserData(userId, achievements, talents, favorites, ignoreUsers, tags, subscriptions, myRooms,
                 quests, user, relationShips,
                 pollSuggested, miniMailCount, blockedCommands, openedGifts) {LoadedRelations = true};
+
+            data.LoadedRelations = true;
 
             return data;
         }
@@ -273,7 +275,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             var user = HabboFactory.GenerateCachedHabbo(dataRow, group);
 
-            return new UserData(num, achievements, talents, favouritedRooms, ignores, tags, null, rooms, quests, user, new Dictionary<int, Relationship>(), pollData, 0, new List<string>(), new List<int>());
+            return new UserData(num, achievements, talents, favouritedRooms, ignores, tags, null, rooms, quests, user, new Dictionary<uint, Relationship>(), pollData, 0, new List<string>(), new List<int>());
         }
     }
 }

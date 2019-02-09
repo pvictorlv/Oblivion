@@ -252,7 +252,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
                 queryReactor.RunFastQuery(string.Concat("SELECT id FROM users_relationships WHERE user_id=", habbo.Id,
                     " AND target = ", friendId, " LIMIT 1"));
-                var id = queryReactor.GetInteger();
+                var id = (uint) queryReactor.GetInteger();
                 if (id > 0)
                 {
                     queryReactor.RunFastQuery(string.Concat("DELETE FROM users_relationships WHERE (user_id = ",

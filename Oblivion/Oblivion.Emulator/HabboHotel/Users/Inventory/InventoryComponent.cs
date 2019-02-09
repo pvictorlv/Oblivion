@@ -111,7 +111,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 UpdateItems(true);
 
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                    queryReactor.RunNoLockFastQuery($"DELETE FROM items_rooms WHERE room_id IS NULL AND user_id = {UserId};");
+                    queryReactor.RunNoLockFastQuery(
+                        $"DELETE FROM items_rooms WHERE room_id IS NULL AND user_id = {UserId};");
 
                 _mAddedItems.Clear();
                 _mRemovedItems.Clear();
@@ -261,7 +262,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 {
                     group = 0;
                 }
-                
+
                 string songCode;
 
                 if (!DBNull.Value.Equals(dataRow["songcode"]))
@@ -700,7 +701,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
         ///     Adds the item.
         /// </summary>
         /// <param name="item">The item.</param>
-        internal void AddItem(RoomItem item) => AddNewItem(item.Id, item.BaseItem.ItemId, item.ExtraData, item.GroupId, true,
+        internal void AddItem(RoomItem item) => AddNewItem(item.Id, item.BaseItem.ItemId, item.ExtraData, item.GroupId,
+            true,
             true, 0, 0, item.SongCode);
 
         /// <summary>
@@ -773,9 +775,10 @@ namespace Oblivion.HabboHotel.Users.Inventory
                             queryChunk.AddParameter($"{current.PetId}name", current.Name);
                             queryChunk.AddParameter($"{current.PetId}race", current.Race);
                             queryChunk.AddParameter($"{current.PetId}color", current.Color);
+                            queryChunk.AddParameter("roomId",
+                                (current.RoomId <= 0) ? "NULL" : current.RoomId.ToString());
 
-                            queryChunk.AddQuery(string.Concat("UPDATE bots SET room_id = ", current.RoomId,
-                                ", name = @",
+                            queryChunk.AddQuery(string.Concat("UPDATE bots SET room_id = @roomId name = @",
                                 current.PetId, "name, x = ", current.X, ", Y = ", current.Y, ", Z = ", current.Z,
                                 " WHERE id = ", current.PetId));
 
