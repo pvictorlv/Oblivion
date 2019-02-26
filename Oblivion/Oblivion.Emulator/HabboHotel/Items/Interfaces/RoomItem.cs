@@ -379,6 +379,11 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 Coordinate
             };
 
+            if (AffectedTiles == null)
+            {
+                return list;
+            }
+
             foreach (var tile in AffectedTiles.Values)
             {
                 list.Add(new Point(tile.X, tile.Y));
@@ -792,7 +797,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// </summary>
         internal void Dispose(bool removeVirtual)
         {
-            base.Dispose(removeVirtual);
+           // base.Dispose(removeVirtual);
 
             if (_mRoom != null)
             {
@@ -806,12 +811,15 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 Oblivion.GetGame().GetItemManager().RemoveVirtualItem(Id);
 
             _mRoom = null;
-            AffectedTiles.Clear();
+            AffectedTiles?.Clear();
+            HighscoreData?.Dispose();
             HighscoreData = null;
             PetsList?.Clear();
             PetsList = null;
             WallCoord = null;
+            AffectedTiles = null;
             InteractingBallUser = null;
+            BaseItem = null;
         }
 
         /// <summary>
@@ -825,6 +833,10 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 UpdateNeeded = false;
                 UpdateCounter = 0;
 
+                if (GetBaseItem() == null)
+                {
+                    return;
+                }
                 var interactionType = GetBaseItem().InteractionType;
 
                 switch (interactionType)
@@ -1892,9 +1904,9 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         ///     Users the walks on furni.
         /// </summary>
         /// <param name="user">The user.</param>
-        internal void UserWalksOnFurni(RoomUser user)
+        internal void UserWalksOnFurni(RoomUser user, bool fromWired = false)
         {
-            if (GetRoom().GotWireds())
+            if (!fromWired && GetRoom().GotWireds())
             {
                 GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerWalkOnFurni, user, this);
                 GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedStuff, this);

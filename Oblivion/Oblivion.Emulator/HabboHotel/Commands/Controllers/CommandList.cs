@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -63,6 +64,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                                     current + (command.Value.Usage + " - " + command.Value.Description + "\n"));
                 }
             }
+
             session.SendNotifWithScroll(commandList);
 
             return true;

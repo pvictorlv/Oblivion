@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Oblivion.Configuration;
 using Oblivion.Connection.Connection;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages;
@@ -43,7 +44,14 @@ namespace Oblivion.Connection.SuperSocket
         {
             if (_disposed || data == null) return;
 
-            byte[] newHeader = null;
+            try
+            {
+                byte[] newHeader = null;
+
+            if (UserData == null)
+            {
+                return;
+            }
 
             if (UserData.IsAir)
             {
@@ -62,8 +70,6 @@ namespace Oblivion.Connection.SuperSocket
                                       ") has been translated to packet air.");
             }
 
-            try
-            {
                 Send(newHeader ?? data, 0, data.Length);
             }
             catch (Exception e)
@@ -119,7 +125,7 @@ namespace Oblivion.Connection.SuperSocket
 
         protected override void HandleException(Exception e)
         {
-//            Logging.HandleException(e, "Connection - Session.cs");
+            Logging.HandleException(e, "Connection - Session.cs");
             Disconnect();
         }
 

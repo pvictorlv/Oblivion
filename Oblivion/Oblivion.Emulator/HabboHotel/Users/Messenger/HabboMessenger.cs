@@ -140,6 +140,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             Friends = null;
             Requests = null;
         }
+
         /// <summary>
         ///     Called when [status changed].
         /// </summary>
@@ -182,7 +183,6 @@ namespace Oblivion.HabboHotel.Users.Messenger
             client2?.SendMessage(SerializeUpdate(friend));
         }
 
-    
 
         /// <summary>
         ///     Handles all requests.
@@ -313,7 +313,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 messengerBuddy.UpdateUser();
             }
 
-                Friends.Add(friendId, messengerBuddy);
+            Friends[friendId] = messengerBuddy;
 
             GetClient().SendMessage(SerializeUpdate(messengerBuddy));
         }
@@ -383,7 +383,6 @@ namespace Oblivion.HabboHotel.Users.Messenger
             GetClient().GetMessageHandler().SendResponse();
         }
 
-    
 
         private int _lastRequest;
 
@@ -542,7 +541,6 @@ namespace Oblivion.HabboHotel.Users.Messenger
             foreach (var friend in Friends.Values)
             {
                 friend?.Client?.SendMessage(serverMessage);
-
             }
         }
 
@@ -624,9 +622,9 @@ namespace Oblivion.HabboHotel.Users.Messenger
             using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleChatMessageComposer")))
             {
                 serverMessage.AppendInteger(convoId);
-            serverMessage.AppendString(message);
-            serverMessage.AppendInteger(0);
-            GetClient().SendMessage(serverMessage);
+                serverMessage.AppendString(message);
+                serverMessage.AppendInteger(0);
+                GetClient().SendMessage(serverMessage);
             }
         }
 
@@ -641,10 +639,10 @@ namespace Oblivion.HabboHotel.Users.Messenger
             using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleChatMessageComposer")))
             {
                 serverMessage.AppendInteger(-GroupId);
-            serverMessage.AppendString(message);
-            serverMessage.AppendInteger(0);
-            serverMessage.AppendString(Username + "/" + figure + "/" + UserId);
-            GetClient().SendMessage(serverMessage);
+                serverMessage.AppendString(message);
+                serverMessage.AppendInteger(0);
+                serverMessage.AppendString(Username + "/" + figure + "/" + UserId);
+                GetClient().SendMessage(serverMessage);
             }
         }
 
@@ -655,12 +653,13 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="conversationId">The conversation identifier.</param>
         internal void DeliverInstantMessageError(int errorId, uint conversationId)
         {
-            using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleChatErrorMessageComposer")))
+            using (var serverMessage =
+                new ServerMessage(LibraryParser.OutgoingRequest("ConsoleChatErrorMessageComposer")))
             {
                 serverMessage.AppendInteger(errorId);
-            serverMessage.AppendInteger(conversationId);
-            serverMessage.AppendString("");
-            GetClient().SendMessage(serverMessage);
+                serverMessage.AppendInteger(conversationId);
+                serverMessage.AppendString("");
+                GetClient().SendMessage(serverMessage);
             }
         }
 

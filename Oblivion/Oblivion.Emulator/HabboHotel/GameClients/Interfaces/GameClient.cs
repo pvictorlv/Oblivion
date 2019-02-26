@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Web;
 using Oblivion.Configuration;
 using Oblivion.Connection.Net;
 using Oblivion.Connection.SuperSocket;
@@ -433,7 +434,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 new ServerMessage(LibraryParser.OutgoingRequest("MOTDNotificationMessageComposer")))
             {
                 serverMessage.AppendInteger(1);
-                serverMessage.AppendString(message);
+                serverMessage.AppendString(HttpUtility.HtmlDecode(message), true);
                 SendMessage(serverMessage);
             }
         }

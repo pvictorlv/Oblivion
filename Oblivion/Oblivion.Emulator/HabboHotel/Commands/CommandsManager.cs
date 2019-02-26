@@ -198,7 +198,7 @@ namespace Oblivion.HabboHotel.Commands
         {
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                dbClient.SetQuery("SELECT command,override_cmd, description, params, rank, alias, blockBad FROM server_fuses");
+                dbClient.SetQuery("SELECT command, description, params, rank, alias, blockBad FROM server_fuses");
                 var commandsTable = dbClient.GetTable();
 
                 /* TODO CHECK */ foreach (DataRow commandRow in commandsTable.Rows)
@@ -215,11 +215,7 @@ namespace Oblivion.HabboHotel.Commands
 
                     if (!string.IsNullOrEmpty(commandRow["params"].ToString()))
                         command.Usage = ':' + key + " [" + commandRow["params"] + "]";
-
-                    if (!string.IsNullOrEmpty(commandRow["override_cmd"].ToString()))
-                    {
-                        CommandsDictionary[commandRow["override_cmd"].ToString()] = command;
-                    }
+                    
 
                     if (!string.IsNullOrEmpty(commandRow["alias"].ToString()))
                     {

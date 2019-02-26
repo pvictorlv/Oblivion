@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Oblivion.Collections;
 using Oblivion.HabboHotel.Achievements.Interfaces;
 using Oblivion.HabboHotel.Users.Relationships;
 using Oblivion.HabboHotel.Users.Subscriptions;
@@ -48,7 +49,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         /// <summary>
         ///     The rooms
         /// </summary>
-        internal List<uint> Rooms;
+        internal ConcurrentList<uint> Rooms;
 
         /// <summary>
         ///     The subscriptions
@@ -113,7 +114,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         public UserData(uint userId, Dictionary<string, UserAchievement> achievements,
             Dictionary<int, UserTalent> talents, List<uint> favouritedRooms, List<uint> ignores, List<string> tags,
             Subscription sub,
-            List<uint> rooms, Dictionary<uint, int> quests, Habbo user,
+            ConcurrentList<uint> rooms, Dictionary<uint, int> quests, Habbo user,
             Dictionary<uint, Relationship> relations, HashSet<uint> suggestedPolls,
             uint miniMailCount, List<string> blockedCommands, List<int> openedGifts)
         {

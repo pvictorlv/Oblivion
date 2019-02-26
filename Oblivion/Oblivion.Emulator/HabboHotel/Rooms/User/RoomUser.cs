@@ -1102,6 +1102,11 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (habbo == null)
                     return false;
 
+                if (string.IsNullOrEmpty(habbo.Look))
+                {
+                    return false;
+                }
+
                 message.AppendInteger(habbo.Id);
                 message.AppendString(habbo.UserName);
                 message.AppendString(habbo.Motto);

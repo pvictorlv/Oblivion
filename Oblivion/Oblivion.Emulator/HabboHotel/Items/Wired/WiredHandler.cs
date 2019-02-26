@@ -800,7 +800,7 @@ namespace Oblivion.HabboHotel.Items.Wired
             type);
 
         private static bool IsSpecial(Interaction type) =>
-            type == Interaction.SpecialRandom || type == Interaction.SpecialRandom;
+            type == Interaction.SpecialRandom || type == Interaction.SpecialUnseen;
 
         private static bool IsCondition(Interaction type) => InteractionTypes.AreFamiliar(
             GlobalInteractions.WiredCondition, type);

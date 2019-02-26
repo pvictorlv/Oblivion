@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Oblivion.Collections;
 using Oblivion.HabboHotel.Achievements.Interfaces;
 using Oblivion.HabboHotel.Groups.Interfaces;
 using Oblivion.HabboHotel.Users.Authenticator;
@@ -201,12 +202,14 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             var user = HabboFactory.GenerateHabbo(dataRow, statsTable, groups);
             errorCode = 0;
 
-          
-            var blockedCommands = (from DataRow r in dBlockedCommands.Rows select r["command_name"].ToString())
-                .ToList();
 
-            var myRooms = (from DataRow r in myRoomsTable.Rows select Convert.ToUInt32(r["id"]))
-                .ToList();
+            var blockedCommands = new List<string>();
+            foreach (DataRow r in dBlockedCommands.Rows)
+                blockedCommands.Add(r["command_name"].ToString());
+
+            var myRooms = new ConcurrentList<uint>();
+            foreach (DataRow r in myRoomsTable.Rows)
+                myRooms.Add(Convert.ToUInt32(r["id"].ToString()));
 
             var openedGifts = new List<int>();
 
@@ -268,7 +271,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             var favouritedRooms = new List<uint>();
             var ignores = new List<uint>();
             var tags = new List<string>();
-            var rooms = new List<uint>();
+            var rooms = new ConcurrentList<uint>();
             var quests = new Dictionary<uint, int>();
             var group = new List<GroupMember>();
             var pollData = new HashSet<uint>();

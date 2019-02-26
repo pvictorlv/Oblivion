@@ -178,7 +178,7 @@ namespace Oblivion.HabboHotel.Catalogs
         /// <returns>Pet.</returns>
         internal static Pet GeneratePetFromRow(DataRow Row, DataRow mRow)
         {
-            if (Row == null)
+            if (Row == null || mRow == null)
                 return null;
 
             MoplaBreed moplaBreed = null;
@@ -189,12 +189,25 @@ namespace Oblivion.HabboHotel.Catalogs
                 {
                     queryReactor.SetQuery($"SELECT * FROM pets_plants WHERE pet_id = {Convert.ToUInt32(Row["id"])}");
                     var row = queryReactor.GetRow();
+                    if (row == null)
+                    {
+                        return null;
+                    }
                     moplaBreed = new MoplaBreed(row);
                 }
             }
 
+            if (Row["id"] == null || Row["room_id"] == null)
+            {
+                return null;
+            }
+
+            if (!uint.TryParse(Row["room_id"].ToString(), out var roomId))
+            {
+                roomId = 0;
+            }
             return new Pet(Convert.ToUInt32(Row["id"]), Convert.ToUInt32(Row["user_id"]),
-                Convert.ToUInt32(Row["room_id"]), (string) Row["name"], Convert.ToUInt32(mRow["type"]),
+                roomId, (string) Row["name"], Convert.ToUInt32(mRow["type"]),
                 (string) mRow["race"], (string) mRow["color"], (int) mRow["experience"], (int) mRow["energy"],
                 (int) mRow["nutrition"], (int) mRow["respect"], Convert.ToDouble(mRow["createstamp"]), (int) Row["x"],
                 (int) Row["y"], Convert.ToDouble(Row["z"]), (int) mRow["have_saddle"] == 1, (int) mRow["anyone_ride"],
@@ -279,7 +292,11 @@ namespace Oblivion.HabboHotel.Catalogs
                             if (source.Contains(';'))
                                 firstItem = dataRow["item_id"].ToString().Split(';')[0];
 
-                            if (!Oblivion.GetGame().GetItemManager().GetItem(Convert.ToUInt32(firstItem), out var item))
+                            if (!uint.TryParse(firstItem, out var itemId))
+                            {
+                                Console.WriteLine("Item id too high:" + firstItem);
+                            }
+                            if (!Oblivion.GetGame().GetItemManager().GetItem(itemId, out var item))
                             {
                                 continue;
                             }
@@ -1180,7 +1197,11 @@ namespace Oblivion.HabboHotel.Catalogs
                         case Interaction.GuildItem:
                         case Interaction.GuildGate:
                         case Interaction.GroupForumTerminal:
-                            list.Add(new UserItem(itemId, item.ItemId, extraData, Convert.ToUInt32(extraData), songCode,
+                            if (!uint.TryParse(extraData, out var extra))
+                            {
+                                extra = 0;
+                            }
+                            list.Add(new UserItem(itemId, item.ItemId, extraData, extra, songCode,
                                 limno, limtot));
                             break;
 
@@ -1235,8 +1256,9 @@ namespace Oblivion.HabboHotel.Catalogs
                 var position = 0;
                 foreach (var addedItem in list)
                 {
-                    var groupId = (addedItem.GroupId) <= 0 ? "NULL" : $"'{addedItem.GroupId}";
+                    var groupId = (addedItem.GroupId) <= 0 ? "NULL" : $"'{addedItem.GroupId}'";
                     position++;
+
                     query.Append(
                         position >= list.Count
                             ? $"('{addedItem.Id}', '{addedItem.BaseItem.ItemId}', '{session.GetHabbo().Id}', {groupId}, @edata, '{songCode}', '{limno};{limtot}');"

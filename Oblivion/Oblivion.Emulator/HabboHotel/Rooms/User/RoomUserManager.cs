@@ -616,7 +616,9 @@ namespace Oblivion.HabboHotel.Rooms.User
                         queryChunk3.AddParameter($"{current.PetId}name", current.Name);
                         queryChunk3.AddParameter($"{current.PetId}race", current.Race);
                         queryChunk3.AddParameter($"{current.PetId}color", current.Color);
-                        queryChunk3.AddQuery(string.Concat("UPDATE bots SET room_id = ", current.RoomId, ", name = @",
+                        var roomId = (current.RoomId <= 0) ? "NULL" : $"'{current.RoomId}'";
+
+                        queryChunk3.AddQuery(string.Concat("UPDATE bots SET room_id = ", roomId, ", name = @",
                             current.PetId, "name, x = ", current.X, ", Y = ", current.Y, ", Z = ", current.Z,
                             " WHERE id = ", current.PetId));
                         queryChunk3.AddQuery(string.Concat("UPDATE pets_data SET race = @", current.PetId,

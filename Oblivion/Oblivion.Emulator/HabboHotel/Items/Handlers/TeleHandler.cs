@@ -49,7 +49,15 @@ namespace Oblivion.HabboHotel.Items.Handlers
                 queryReactor.RunQuery();
                 var row = queryReactor.GetRow();
 
-                result = row == null ? 0 : Convert.ToUInt32(row[0]);
+                if (row == null)
+                {
+                    return 0;
+                }
+
+                if (!uint.TryParse(row[0].ToString(), out result))
+                {
+                    result = 0;
+                }
             }
 
             return result;

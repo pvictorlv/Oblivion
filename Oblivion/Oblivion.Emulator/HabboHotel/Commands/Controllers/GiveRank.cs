@@ -22,11 +22,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override bool Execute(GameClient session, string[] pms)
         {
-            var staff = session.GetHabbo().UserName.ToLower();
-            if (staff != "dark" && staff != "roberta" && staff != "crazzyflos")
-            {
-                return false;
-            }
+         
 
             var user = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
 

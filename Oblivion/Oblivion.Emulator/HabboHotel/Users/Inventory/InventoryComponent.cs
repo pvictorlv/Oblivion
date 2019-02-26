@@ -409,7 +409,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 {
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        var groupId = (thGroup) <= 0 ? "NULL" : $"'{thGroup}";
+                        var groupId = (thGroup) <= 0 ? "NULL" : $"'{thGroup}'";
 
 
                         queryReactor.SetNoLockQuery(
@@ -775,10 +775,10 @@ namespace Oblivion.HabboHotel.Users.Inventory
                             queryChunk.AddParameter($"{current.PetId}name", current.Name);
                             queryChunk.AddParameter($"{current.PetId}race", current.Race);
                             queryChunk.AddParameter($"{current.PetId}color", current.Color);
-                            queryChunk.AddParameter("roomId",
-                                (current.RoomId <= 0) ? "NULL" : current.RoomId.ToString());
 
-                            queryChunk.AddQuery(string.Concat("UPDATE bots SET room_id = @roomId name = @",
+
+                            var roomId = (current.RoomId <= 0) ? "NULL" : current.RoomId.ToString();
+                            queryChunk.AddQuery(string.Concat("UPDATE bots SET room_id = ", roomId, ", name = @",
                                 current.PetId, "name, x = ", current.X, ", Y = ", current.Y, ", Z = ", current.Z,
                                 " WHERE id = ", current.PetId));
 

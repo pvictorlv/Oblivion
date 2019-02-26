@@ -39,12 +39,18 @@ namespace Oblivion.HabboHotel.Items.Datas
                 if (table == null)
                     return;
 
-               foreach (DataRow row in table.Rows)
+                foreach (DataRow row in table.Rows)
                 {
                     Lines.Add((int) row["id"], new HighScoreLine((string) row["username"], (int) row["score"]));
                     LastId = (int) row["id"];
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            Lines?.Clear();
+            Lines = null;
         }
 
         /// <summary>
@@ -68,7 +74,8 @@ namespace Oblivion.HabboHotel.Items.Datas
             message.AppendInteger(0); //Time : ["alltime", "daily", "weekly", "monthly"]
             message.AppendInteger(Lines.Count); //Count
 
-            /* TODO CHECK */ foreach (var line in Lines)
+            /* TODO CHECK */
+            foreach (var line in Lines)
             {
                 message.AppendInteger(line.Value.Score);
                 message.AppendInteger(1);

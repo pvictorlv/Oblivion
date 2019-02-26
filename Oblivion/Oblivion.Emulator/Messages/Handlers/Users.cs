@@ -944,6 +944,10 @@ namespace Oblivion.Messages.Handlers
             Response.StartArray();
 //            Response.AppendInteger(habboForId.Data.Relations.Count);
 
+            if (habboForId.Data?.Relations == null)
+            {
+                return;
+            }
             foreach (var current in habboForId.Data.Relations.Values.OrderBy(x => rand.Next()))
             {
                 if (!habboForId.GetMessenger().FriendshipExists((uint) current.UserId))
@@ -985,13 +989,13 @@ namespace Oblivion.Messages.Handlers
             {
                 if (num2 == 0)
                 {
-                    queryReactor.SetQuery(
-                        "SELECT id FROM users_relationships WHERE user_id=@id AND target=@target LIMIT 1");
+                    queryReactor.SetNoLockQuery(
+                        "SELECT id FROM users_relationships WHERE user_id=@id AND target=@target LIMIT 1;");
                     queryReactor.AddParameter("id", Session.GetHabbo().Id);
                     queryReactor.AddParameter("target", num);
                     var integer = (uint) queryReactor.GetInteger();
-                    queryReactor.SetQuery(
-                        "DELETE FROM users_relationships WHERE user_id=@id AND target=@target LIMIT 1");
+                    queryReactor.SetNoLockQuery(
+                        "DELETE FROM users_relationships WHERE user_id=@id AND target=@target LIMIT 1;");
                     queryReactor.AddParameter("id", Session.GetHabbo().Id);
                     queryReactor.AddParameter("target", num);
                     queryReactor.RunQuery();
@@ -1000,15 +1004,15 @@ namespace Oblivion.Messages.Handlers
                 }
                 else
                 {
-                    queryReactor.SetQuery(
-                        "SELECT id FROM users_relationships WHERE user_id=@id AND target=@target LIMIT 1");
+                    queryReactor.SetNoLockQuery(
+                        "SELECT id FROM users_relationships WHERE user_id=@id AND target=@target LIMIT 1;");
                     queryReactor.AddParameter("id", Session.GetHabbo().Id);
                     queryReactor.AddParameter("target", num);
                     var integer2 = (uint) queryReactor.GetInteger();
                     if (integer2 > 0)
                     {
-                        queryReactor.SetQuery(
-                            "DELETE FROM users_relationships WHERE user_id=@id AND target=@target LIMIT 1");
+                        queryReactor.SetNoLockQuery(
+                            "DELETE FROM users_relationships WHERE user_id=@id AND target=@target LIMIT 1;");
                         queryReactor.AddParameter("id", Session.GetHabbo().Id);
                         queryReactor.AddParameter("target", num);
                         queryReactor.RunQuery();
@@ -1016,13 +1020,13 @@ namespace Oblivion.Messages.Handlers
                             Session.GetHabbo().Data.Relations.Remove(integer2);
                     }
 
-                    queryReactor.SetQuery(
-                        "INSERT INTO users_relationships (user_id, target, type) VALUES (@id, @target, @type)");
+                    queryReactor.SetNoLockQuery(
+                        "INSERT INTO users_relationships (user_id, target, type) VALUES (@id, @target, @type);");
                     queryReactor.AddParameter("id", Session.GetHabbo().Id);
                     queryReactor.AddParameter("target", num);
                     queryReactor.AddParameter("type", num2);
                     var num3 = (uint) queryReactor.InsertQuery();
-                    Session.GetHabbo().Data.Relations.Add(num3, new Relationship(num3, num, num2));
+                    Session.GetHabbo().Data.Relations[num3] = new Relationship(num3, num, num2);
                 }
 
                 var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(num);

@@ -121,6 +121,10 @@ namespace Oblivion.Messages.Handlers
                 .ProgressUserAchievement(Session, "ACH_AllTimeHotelPresence", 1, true);
 
             Session.TimePingedReceived = DateTime.Now;
+
+            Response.Init(LibraryParser.OutgoingRequest("LatencyTestResponseMessageComposer"));
+            Response.AppendInteger(Request.GetIntegerFromString());
+            SendResponse();
         }
 
 

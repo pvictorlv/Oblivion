@@ -266,7 +266,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// </summary>
         /// <param name="user">The user.</param>
         /// <param name="item">The item.</param>
-        internal void TeleportToItem(RoomUser user, RoomItem item)
+        internal void TeleportToItem(RoomUser user, RoomItem item, bool fromWired = false)
         {
             GameMap[user.X, user.Y] = user.SqState;
             UpdateUserMovement(new Point(user.X, user.Y),
@@ -283,6 +283,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             user.SetStep = false;
             user.IsWalking = false;
             user.UpdateNeeded = true;
+            if (!fromWired)
             item.UserWalksOnFurni(user);
         }
 

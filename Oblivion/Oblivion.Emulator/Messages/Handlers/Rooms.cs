@@ -1898,7 +1898,9 @@ namespace Oblivion.Messages.Handlers
             SendResponse();
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.RunFastQuery(string.Concat("UPDATE bots SET room_id = '", room.RoomId, "', x = '", getX,
+                var roomId = (room.RoomId <= 0) ? "NULL" : $"'{room.RoomId}'";
+
+                queryReactor.RunFastQuery(string.Concat("UPDATE bots SET room_id = ", roomId, ", x = '", getX,
                     "', y = '", getY, "' WHERE id = '", pet.PetId, "';"));
             }
 
@@ -1957,7 +1959,9 @@ namespace Oblivion.Messages.Handlers
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.RunFastQuery("UPDATE bots SET room_id = '" + room.RoomId + "', x = '" + x + "', y = '" +
+                var roomId = (room.RoomId <= 0) ? "NULL" : $"'{room.RoomId}'";
+
+                queryReactor.RunFastQuery("UPDATE bots SET room_id = " + roomId + ", x = '" + x + "', y = '" +
                                           y + "' WHERE id = '" + petId + "'");
             }
 

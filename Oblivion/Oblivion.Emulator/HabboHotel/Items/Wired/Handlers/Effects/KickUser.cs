@@ -86,7 +86,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 var roomUser = _queue.Dequeue();
                 await Task.Delay(Delay);
 
-
                 if (!string.IsNullOrEmpty(OtherString))
                     roomUser.GetClient().SendNotif(OtherString);
 

@@ -108,7 +108,7 @@ namespace Oblivion.Database.Manager.Database.Session_Details
             {
                 Writer.Writer.LogQueryError(exception, CommandMySql?.CommandText);
             }
-
+            
             return row;
         }
 

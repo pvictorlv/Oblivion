@@ -1,4 +1,6 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -14,14 +16,13 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         private List<Interaction> _mBanned;
 
         private long _mNext;
-        private Queue<RoomUser> _queue;
+        private ConcurrentQueue<RoomUser> _queue;
 
 
         public void Dispose()
         {
             _mBanned.Clear();
             _mBanned = null;
-            _queue.Clear();
             _queue = null;
         }
 
@@ -34,7 +35,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             Items = new ConcurrentList<RoomItem>();
             Delay = 0;
             _mNext = 0L;
-            _queue = new Queue<RoomUser>();
+            _queue = new ConcurrentQueue<RoomUser>();
             _mBanned = new List<Interaction>
             {
                 Interaction.TriggerRepeater,
@@ -107,10 +108,15 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             Requested = true;
 
 
-            if (_queue == null || _queue.Contains(roomUser)) return false;
+            if (_queue == null)
+                return false;
+
+            if (_queue.Contains(roomUser))
+            {
+                return false;
+            }
+
             _queue.Enqueue(roomUser);
-
-
 
             return true;
         }
@@ -128,11 +134,13 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (_mNext >= num)
                 return false;
 
-            
 
             while (_queue.Count > 0)
             {
-                var roomUser = _queue.Dequeue();
+                if (!_queue.TryDequeue(out var roomUser))
+                {
+                    continue;
+                }
 
                 Teleport(roomUser);
             }
@@ -142,7 +150,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             return true;
         }
-
 
 
         private void Teleport(RoomUser user)
@@ -163,16 +170,15 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 roomItem = Items[Oblivion.GetRandomNumber(0, Items.Count)];
                 if (roomItem != null)
                     break;
-
-                Items.Remove(roomItem);
             }
 
             if (roomItem == null)
             {
                 return;
             }
+
             int oldX = user.X, oldY = user.Y;
-            Room.GetGameMap().TeleportToItem(user, roomItem);
+            Room.GetGameMap().TeleportToItem(user, roomItem, true);
             Room.GetRoomUserManager().OnUserUpdateStatus(oldX, oldY);
             Room.GetRoomUserManager().OnUserUpdateStatus(roomItem.X, roomItem.Y);
         }

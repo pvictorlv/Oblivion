@@ -559,9 +559,8 @@ namespace Oblivion.Messages.Handlers
                 {
                     using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
-
                         adapter.RunFastQuery($"UPDATE items_rooms SET room_id = NULL WHERE id = '{item.Id}'");
+                        room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
                     }
                 }
             }

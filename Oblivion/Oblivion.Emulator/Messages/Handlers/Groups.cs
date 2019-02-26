@@ -1555,7 +1555,6 @@ namespace Oblivion.Messages.Handlers
 
                 room.GetRoomItemHandler().RemoveAllFurniture(Session);
 
-                var roomData = room.RoomData;
                 var roomId = room.RoomData.Id;
 
                 Oblivion.GetGame().GetRoomManager().UnloadRoom(room, "Delete room");
