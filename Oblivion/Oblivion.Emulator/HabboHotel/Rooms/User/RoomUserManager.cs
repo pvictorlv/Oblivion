@@ -290,12 +290,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         internal RoomUser GetUserForSquare(int x, int y)
         {
             var users = _room.GetGameMap().GetRoomUsers(new Point(x, y));
-            if (users.Count > 0)
-            {
-                return users[0];
-            }
-
-            return null;
+            return users.Count > 0 ? users[0] : null;
         }
 
 
@@ -1117,6 +1112,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     _room.GetGameMap()
                         .UpdateUserMovement(new Point(roomUsers.Coordinate.X, roomUsers.Coordinate.Y),
                             new Point(roomUsers.SetX, roomUsers.SetY), roomUsers);
+
                     var hasItemInPlace =
                         _room.GetGameMap().GetCoordinatedItems(new Point(roomUsers.X, roomUsers.Y));
 

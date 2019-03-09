@@ -1478,7 +1478,7 @@ namespace Oblivion.HabboHotel.Rooms
 //                        chat.Save(RoomId, dbClient);
                     }
 
-                    dbClient.RunQuery(builder.ToString());
+                    dbClient.RunNoLockQuery(builder.ToString());
                 }
 
                 RoomData.RoomChat.Clear();

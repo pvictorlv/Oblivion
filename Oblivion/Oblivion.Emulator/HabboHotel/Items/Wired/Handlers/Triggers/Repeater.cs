@@ -10,7 +10,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
     internal class Repeater : IWiredItem, IWiredCycler
     {
    
-        public bool Requested { get; set; }
 
         public Repeater(RoomItem item, Room room)
         {

@@ -284,7 +284,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             user.IsWalking = false;
             user.UpdateNeeded = true;
             if (!fromWired)
-            item.UserWalksOnFurni(user);
+                item.UserWalksOnFurni(user);
         }
 
         /// <summary>
@@ -357,7 +357,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
             return new Point(0, 0);
         }
-        
+
 
         /// <summary>
         ///     Adds to map.
@@ -425,6 +425,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                         for (var j = 0; j < Model.MapSizeY; j++)
                         for (var k = 0; k < Model.MapSizeX; k++)
                         {
+                            //3 = door; 2 = seat; 1 = open; 0 = block
                             if (k == Model.DoorX && j == Model.DoorY)
                                 GameMap[k, j] = 3;
                             else if (Model.SqState[k][j] == SquareState.Open)
@@ -461,18 +462,20 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     }
 
 
+                    var doors = new List<RoomItem>();
                     foreach (var item in floorItems)
                     {
                         AddItemToMap(item);
-                    }
-
-                    foreach (var item in floorItems)
-                    {
                         if (item.GetBaseItem().InteractionType == Interaction.Gate)
                         {
-                            if (item.ExtraData == "0")
-                                GameMap[item.X, item.Y] = 0;
+                            doors.Add(item);
                         }
+                    }
+
+                    foreach (var item in doors)
+                    {
+                        if (item.ExtraData == "0")
+                            GameMap[item.X, item.Y] = 0;
                     }
 
                     if (!_room.RoomData.AllowWalkThrough)
@@ -529,28 +532,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         internal ConcurrentList<RoomItem> GetCoordinatedItems(Point coord) =>
             !CoordinatedItems.TryGetValue(coord, out var items) ? new ConcurrentList<RoomItem>() : items;
 
-        /// <summary>
-        ///     Removes the coordinated item.
-        /// </summary>
-        /// <param name="item">The item.</param>
-        /// <param name="coord">The coord.</param>
-        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool RemoveCoordinatedItem(RoomItem item, Point coord)
-        {
-            if (item == null)
-                return false;
-
-            if (CoordinatedItems.TryGetValue(coord, out var items))
-            {
-                if (items != null)
-                {
-                    items.Remove(item);
-                    return true;
-                }
-            }
-
-            return false;
-        }
 
         internal ConcurrentList<RoomItem> GetCoordinatedHeighestItems(Point coord)
         {
@@ -612,10 +593,14 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             var hybridDictionary = new Dictionary<Point, ConcurrentList<RoomItem>>();
             foreach (var current2 in item.GetCoords())
             {
-                if (RemoveCoordinatedItem(item, current2)) result = true;
-
                 if (CoordinatedItems.TryGetValue(current2, out var value))
                 {
+                    if (value != null)
+                    {
+                        value.Remove(item);
+                        result = true;
+                    }
+
                     if (!hybridDictionary.ContainsKey(current2))
                         hybridDictionary.Add(current2, value);
                 }
@@ -815,7 +800,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <returns><c>true</c> if this instance [can roll item here] the specified x; otherwise, <c>false</c>.</returns>
         internal bool CanRollItemHere(int x, int y) => ValidTile(x, y) && Model.SqState[x][y] != SquareState.Blocked;
 
-        
+
         /// <summary>
         ///     Squares the is open.
         /// </summary>
@@ -826,7 +811,6 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         internal bool SquareIsOpen(int x, int y, bool pOverride) =>
             (Model.MapSizeX - 1 >= x && Model.MapSizeY - 1 >= y) && CanWalk(GameMap[x, y], pOverride) &&
             (pOverride || _room.RoomData.AllowWalkThrough || GetRoomUsers(new Point(x, y)).Count <= 0);
-        
 
 
         /// <summary>
@@ -1060,7 +1044,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool ItemCanBePlacedHere(int x, int y) => (Model.MapSizeX - 1 >= x && Model.MapSizeY - 1 >= y) &&
                                                            (x != Model.DoorX || y != Model.DoorY) &&
-                                                           (x <= GameMap.GetLength(0) && y <= GameMap.GetLength(1) && GameMap[x, y] == 1);
+                                                           (x <= GameMap.GetLength(0) && y <= GameMap.GetLength(1) &&
+                                                            GameMap[x, y] == 1);
 
 
         /// <summary>
@@ -1184,7 +1169,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                         item.Coordinate.X == x && item.Coordinate.Y == y &&
                         item.GetBaseItem().InteractionType == type);
         }
-        
+
         /// <summary>
         ///     Gets all room item for square.
         /// </summary>
@@ -1396,7 +1381,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
                 case Interaction.FreezeExit:
                     var exitTeleport = _room.GetFreeze().ExitTeleport;
-                    if (exitTeleport == null ||  item.Id != exitTeleport.Id)
+                    if (exitTeleport == null || item.Id != exitTeleport.Id)
                         break;
                     _room.GetFreeze().ExitTeleport = null;
                     break;

@@ -599,11 +599,7 @@ namespace Oblivion.HabboHotel.Groups
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.SetQuery(string.Format("DELETE FROM groups_members WHERE group_id = {0};" +
-                                                    "DELETE FROM groups_requests WHERE group_id = {0};" +
-                                                    "DELETE FROM groups_data WHERE id = {0};" +
-                                                    "UPDATE rooms_data SET group_id = 0 WHERE group_id = {0};", id)
-                );
+                queryReactor.SetQuery($"DELETE FROM groups_data WHERE id = {id};");
                 queryReactor.RunQuery();
 
                 Groups.Remove(id);

@@ -393,9 +393,15 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool RequestBuddy(string userQuery)
         {
+            var client = GetClient();
+
+            if (client == null)
+            {
+                return false;
+            }
             if (_lastRequest + 3 >= Oblivion.GetUnixTimeStamp())
             {
-                GetClient().SendNotif("Espere um pouco!");
+                client.SendNotif("Espere um pouco!");
                 return false;
             }
 
@@ -430,7 +436,6 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 blockForNewFriends = currentUser.HasFriendRequestsDisabled;
             }
 
-            var client = GetClient();
 
             if (blockForNewFriends && client.GetHabbo().Rank < 4)
             {

@@ -557,7 +557,7 @@ namespace Oblivion.Messages.Handlers
                 return;
             }
 
-            if (SellingPrice > 70000000 || SellingPrice == 0)
+            if (SellingPrice > 70000000 || SellingPrice <= 0)
             {
                 msg.AppendInteger(0);
                 Session.SendMessage(msg);

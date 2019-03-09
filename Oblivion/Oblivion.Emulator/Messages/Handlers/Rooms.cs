@@ -688,7 +688,7 @@ namespace Oblivion.Messages.Handlers
             if (Session?.GetHabbo() == null)
                 return;
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(Convert.ToUInt32(Request.GetInteger()));
-            if (room == null)
+            if (room?.RoomData == null)
                 return;
 
             GetResponse().Init(LibraryParser.OutgoingRequest("RoomSettingsDataMessageComposer"));

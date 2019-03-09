@@ -733,7 +733,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             var flag = false;
             if (_room?.GetGameMap() == null) return false;
 
-            if (!newItem) flag = _room.GetGameMap().RemoveFromMap(item, false);
+            if (!newItem)
+                flag = _room.GetGameMap().RemoveFromMap(item, false);
 
             var affectedTiles = Gamemap.GetAffectedTiles(item.GetBaseItem().Length,
                 item.GetBaseItem().Width, newX, newY, newRot);
@@ -750,16 +751,15 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 return false;
             }
 
-            if (
-                affectedTiles.Values.Any(
-                    current =>
-                        !_room.GetGameMap().ValidTile(current.X, current.Y) ||
-                        (_room.GetGameMap().SquareHasUsers(current.X, current.Y) && !item.GetBaseItem().IsSeat)))
+            foreach (var current in affectedTiles.Values)
             {
-                if (!flag) return false;
-                AddOrUpdateItem(item.Id);
-                _room.GetGameMap().AddToMap(item);
-                return false;
+                if (!_room.GetGameMap().ValidTile(current.X, current.Y) || (_room.GetGameMap().SquareHasUsers(current.X, current.Y) && !item.GetBaseItem().IsSeat))
+                {
+                    if (!flag) return false;
+                    AddOrUpdateItem(item.Id);
+                    _room.GetGameMap().AddToMap(item);
+                    return false;
+                }
             }
 
             double height;
@@ -778,28 +778,28 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     return false;
                 }
 
-                if (
-                    affectedTiles.Values.Any(
-                        current2 =>
-                            !item.GetBaseItem().IsSeat &&
-                            _room.GetGameMap().Model.SqState[current2.X][current2.Y] != SquareState.Open))
+                foreach (var current2 in affectedTiles.Values)
                 {
-                    if (!flag) return false;
-
-                    AddOrUpdateItem(item.Id);
-                    _room.GetGameMap().AddToMap(item);
-                    return false;
-                }
-
-                if (!item.GetBaseItem().IsSeat && !item.IsRoller)
-                    if (
-                        affectedTiles.Values.Any(
-                            current3 => _room.GetGameMap().GetRoomUsers(new Point(current3.X, current3.Y)).Count > 0))
+                    if (!item.GetBaseItem().IsSeat && _room.GetGameMap().Model.SqState[current2.X][current2.Y] != SquareState.Open)
                     {
                         if (!flag) return false;
+
                         AddOrUpdateItem(item.Id);
                         _room.GetGameMap().AddToMap(item);
                         return false;
+                    }
+                }
+
+                if (!item.GetBaseItem().IsSeat && !item.IsRoller)
+                    foreach (var current3 in affectedTiles.Values)
+                    {
+                        if (_room.GetGameMap().GetRoomUsers(new Point(current3.X, current3.Y)).Count > 0)
+                        {
+                            if (!flag) return false;
+                            AddOrUpdateItem(item.Id);
+                            _room.GetGameMap().AddToMap(item);
+                            return false;
+                        }
                     }
             }
 

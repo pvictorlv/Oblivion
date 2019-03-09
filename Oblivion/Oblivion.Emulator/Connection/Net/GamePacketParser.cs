@@ -96,7 +96,7 @@ namespace Oblivion.Connection.Net
                         _currentPacketLength = HabboEncoding.DecodeInt32(data, ref pos);
                     }
 
-                    if (_currentPacketLength < 2 || _currentPacketLength > 4096)
+                    if (_currentPacketLength < 2 || _currentPacketLength > 8096)
                     {
                         _currentPacketLength = -1;
 
