@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Oblivion.Collections;
 using Oblivion.Enclosure;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -20,8 +21,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
 {
     public class BattleBanzai
     {
-        private List<RoomItem> _banzaiTiles;
-        private List<RoomItem> _pucks;
+        private ConcurrentList<RoomItem> _banzaiTiles;
+        private ConcurrentList<RoomItem> _pucks;
         private Room _room;
         private GameField _field;
         private byte[,] _floorMap;
@@ -32,8 +33,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             _room = room;
             IsBanzaiActive = false;
             _timestarted = 0;
-            _pucks = new List<RoomItem>();
-            _banzaiTiles = new List<RoomItem>();
+            _pucks = new ConcurrentList<RoomItem>();
+            _banzaiTiles = new ConcurrentList<RoomItem>();
         }
 
         public bool IsBanzaiActive { get; private set; }
@@ -69,7 +70,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             /* TODO CHECK */
             if (_pucks?.Count > 0)
             {
-                foreach (var item in _pucks.ToList())
+                foreach (var item in _pucks)
                 {
                     if (item == null) continue;
 
@@ -107,7 +108,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             _floorMap = new byte[_room.GetGameMap().Model.MapSizeY, _room.GetGameMap().Model.MapSizeX];
             _field = new GameField(_floorMap, true);
             _timestarted = Oblivion.GetUnixTimeStamp();
-            _room.GetGameManager().LockGates();
+//            _room.GetGameManager().LockGates();
             for (var i = 1; i < 5; i++)
                 _room.GetGameManager().Points[i] = 0;
 
@@ -163,7 +164,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             var winners = _room.GetGameManager().GetWinningTeam();
             _room.GetGameManager().UnlockGates();
             /* TODO CHECK */
-            foreach (var tile in _banzaiTiles.ToList())
+            foreach (var tile in _banzaiTiles)
                 if (tile.Team == winners)
                 {
                     tile.InteractionCount = 0;
@@ -354,7 +355,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             /* TODO CHECK */
             if (_banzaiTiles?.Count > 0)
             {
-                foreach (var _item in _banzaiTiles.ToList())
+                foreach (var _item in _banzaiTiles)
                 {
                     if (_item == null) continue;
                     if (_item.GetBaseItem().InteractionType != Interaction.BanzaiFloor)
@@ -392,13 +393,10 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                 return;
 
             /* TODO CHECK */
-            foreach (
-                var _item in
-                _banzaiTiles.Where(
-                    _item =>
-                        _item.GetBaseItem().InteractionType == Interaction.BanzaiFloor && _item.X == coord.X &&
-                        _item.Y == coord.Y))
+            foreach (var _item in _banzaiTiles)
             {
+                if (_item.GetBaseItem().InteractionType != Interaction.BanzaiFloor || _item.X != coord.X ||
+                    _item.Y != coord.Y) continue;
                 SetMaxForTile(_item, Team);
                 _room.GetGameManager().AddPointToTeam(Team, user);
                 _item.UpdateState(false, true);
@@ -420,8 +418,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
         public void Destroy()
         {
             _banzaiTiles.Clear();
+            _banzaiTiles.Dispose();
             _pucks.Clear();
-
+            _pucks.Dispose();
             if (_floorMap != null)
                 Array.Clear(_floorMap, 0, _floorMap.Length);
 

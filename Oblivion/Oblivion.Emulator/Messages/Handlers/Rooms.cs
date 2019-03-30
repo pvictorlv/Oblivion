@@ -9,6 +9,7 @@ using Oblivion.HabboHotel.Catalogs;
 using Oblivion.HabboHotel.Catalogs.Composers;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
+using Oblivion.HabboHotel.Pathfinding;
 using Oblivion.HabboHotel.PathFinding;
 using Oblivion.HabboHotel.Pets;
 using Oblivion.HabboHotel.Pets.Enums;
@@ -623,7 +624,6 @@ namespace Oblivion.Messages.Handlers
 
             var targetX = Request.GetInteger();
             var targetY = Request.GetInteger();
-
 
             roomUserByHabbo.MoveTo(targetX, targetY);
 
@@ -1307,7 +1307,7 @@ namespace Oblivion.Messages.Handlers
             var x = Request.GetInteger();
             var y = Request.GetInteger();
 
-            var rotation = PathFinder.CalculateRotation(roomUserByHabbo.X, roomUserByHabbo.Y, x, y);
+            var rotation = Rotation.Calculate(roomUserByHabbo.X, roomUserByHabbo.Y, x, y);
             roomUserByHabbo.SetRot(rotation, false);
             roomUserByHabbo.UpdateNeeded = true;
 

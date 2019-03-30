@@ -31,13 +31,34 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             _yellowTeamItems = new QueuedDictionary<string, RoomItem>();
             _room = room;
         }
+        internal void UnlockGates()
+        {
+            /* TODO CHECK */
+            foreach (var current in _redTeamItems.Values) UnlockGate(current);
+            /* TODO CHECK */
+            foreach (var current2 in _greenTeamItems.Values) UnlockGate(current2);
+            /* TODO CHECK */
+            foreach (var current3 in _blueTeamItems.Values) UnlockGate(current3);
+            /* TODO CHECK */
+            foreach (var current4 in _yellowTeamItems.Values) UnlockGate(current4);
+        }
+        private void UnlockGate(RoomItem item)
+        {
+            var interactionType = item.GetBaseItem().InteractionType;
+            if (!InteractionTypes.AreFamiliar(GlobalInteractions.GameGate, interactionType)) return;
+
+            /* TODO CHECK */
+            foreach (var current in _room.GetGameMap().GetRoomUsers(new Point(item.X, item.Y)))
+                current.SqState = 1;
+            _room.GetGameMap().GameMap[item.X, item.Y] = 1;
+        }
 
         internal int[] Points
         {
             get { return TeamPoints; }
             set { TeamPoints = value; }
         }
-        
+
 
         internal async void OnCycle()
         {
@@ -86,6 +107,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
                 num = TeamPoints[i];
                 result = i;
             }
+
             return (Team) result;
         }
 
@@ -96,11 +118,10 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
 
         internal void AddPointToTeam(Team team, int points, RoomUser user)
         {
-//            var num = (TeamPoints[(int) team] += points);
-//            OnScoreChanged?.Invoke(null, new TeamScoreChangedArgs(num, team, user));
-            /* TODO CHECK */ foreach (
+            /* TODO CHECK */
+            foreach (
                 var current in
-                    GetFurniItems(team).Values.Where(current => !IsSoccerGoal(current.GetBaseItem().InteractionType)))
+                GetFurniItems(team).Values.Where(current => !IsSoccerGoal(current.GetBaseItem().InteractionType)))
             {
                 current.ExtraData = TeamPoints[(int) team].ToString();
                 current.UpdateState();
@@ -112,10 +133,10 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
         internal void Reset()
         {
             {
-                AddPointToTeam(Team.Blue, GetScoreForTeam(Team.Blue)*-1, null);
-                AddPointToTeam(Team.Green, GetScoreForTeam(Team.Green)*-1, null);
-                AddPointToTeam(Team.Red, GetScoreForTeam(Team.Red)*-1, null);
-                AddPointToTeam(Team.Yellow, GetScoreForTeam(Team.Yellow)*-1, null);
+                AddPointToTeam(Team.Blue, GetScoreForTeam(Team.Blue) * -1, null);
+                AddPointToTeam(Team.Green, GetScoreForTeam(Team.Green) * -1, null);
+                AddPointToTeam(Team.Red, GetScoreForTeam(Team.Red) * -1, null);
+                AddPointToTeam(Team.Yellow, GetScoreForTeam(Team.Yellow) * -1, null);
             }
         }
 
@@ -125,23 +146,26 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             {
                 case Team.Red:
                     _redTeamItems.Add(item.Id, item);
-                    return;
+                    break;
 
                 case Team.Green:
                     _greenTeamItems.Add(item.Id, item);
-                    return;
+                    break;
 
                 case Team.Blue:
                     _blueTeamItems.Add(item.Id, item);
-                    return;
+                    break;
 
                 case Team.Yellow:
                     _yellowTeamItems.Add(item.Id, item);
-                    return;
+                    break;
 
                 default:
                     return;
             }
+
+            UnlockGate(item);
+
         }
 
         internal void RemoveFurnitureFromTeam(RoomItem item, Team team)
@@ -171,78 +195,35 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
 
         internal RoomItem GetFirstScoreBoard(Team team)
         {
+            QueuedDictionary<string, RoomItem> gameItems;
+            Interaction interaction;
+
             switch (team)
             {
                 case Team.Red:
-                    goto IL_BF;
-                case Team.Green:
+                    interaction = Interaction.FreezeRedCounter;
+                    gameItems = _redTeamItems;
                     break;
-
+                case Team.Green:
+                    interaction = Interaction.FreezeGreenCounter;
+                    gameItems = _greenTeamItems;
+                    break;
                 case Team.Blue:
-                    using (var enumerator = _blueTeamItems.Values.GetEnumerator())
-                    {
-                        while (enumerator.MoveNext())
-                        {
-                            var current = enumerator.Current;
-                            if (current.GetBaseItem().InteractionType != Interaction.FreezeBlueCounter) continue;
-                            var result = current;
-                            return result;
-                        }
-                        goto IL_151;
-                    }
+                    interaction = Interaction.FreezeBlueCounter;
+                    gameItems = _blueTeamItems;
+                    break;
                 case Team.Yellow:
-                    goto IL_108;
+                    interaction = Interaction.FreezeYellowCounter;
+                    gameItems = _yellowTeamItems;
+                    break;
+                case Team.None:
                 default:
-                    goto IL_151;
+                    return null;
             }
-            using (var enumerator2 = _greenTeamItems.Values.GetEnumerator())
-            {
-                while (enumerator2.MoveNext())
-                {
-                    var current2 = enumerator2.Current;
-                    if (current2.GetBaseItem().InteractionType != Interaction.FreezeGreenCounter) continue;
-                    var result = current2;
-                    return result;
-                }
-                goto IL_151;
-            }
-            IL_BF:
-            using (var enumerator3 = _redTeamItems.Values.GetEnumerator())
-            {
-                while (enumerator3.MoveNext())
-                {
-                    var current3 = enumerator3.Current;
-                    if (current3.GetBaseItem().InteractionType != Interaction.FreezeRedCounter) continue;
-                    var result = current3;
-                    return result;
-                }
-                goto IL_151;
-            }
-            IL_108:
-            /* TODO CHECK */ foreach (
-                var result in
-                    _yellowTeamItems.Values.Where(
-                        current4 => current4.GetBaseItem().InteractionType == Interaction.FreezeYellowCounter))
-                return result;
-            IL_151:
-            return null;
-        }
 
-        internal void UnlockGates()
-        {
-            /* TODO CHECK */ foreach (var current in _redTeamItems.Values) UnlockGate(current);
-            /* TODO CHECK */ foreach (var current2 in _greenTeamItems.Values) UnlockGate(current2);
-            /* TODO CHECK */ foreach (var current3 in _blueTeamItems.Values) UnlockGate(current3);
-            /* TODO CHECK */ foreach (var current4 in _yellowTeamItems.Values) UnlockGate(current4);
+            return gameItems.Values.FirstOrDefault(x => x.GetBaseItem().InteractionType == interaction);
         }
-
-        internal void LockGates()
-        {
-            /* TODO CHECK */ foreach (var current in _redTeamItems.Values) LockGate(current);
-            /* TODO CHECK */ foreach (var current2 in _greenTeamItems.Values) LockGate(current2);
-            /* TODO CHECK */ foreach (var current3 in _blueTeamItems.Values) LockGate(current3);
-            /* TODO CHECK */ foreach (var current4 in _yellowTeamItems.Values) LockGate(current4);
-        }
+        
 
         internal void StopGame()
         {
@@ -267,10 +248,12 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
                     winners = GetRoom().GetTeamManagerForFreeze().GreenTeam;
                     break;
             }
+
             var item = GetFirstHighscore();
             if (item == null) return;
             var score = GetScoreForTeam(team);
-            /* TODO CHECK */ foreach (var winner in winners) item.HighscoreData.AddUserScore(item, winner.GetUserName(), score);
+            /* TODO CHECK */
+            foreach (var winner in winners) item.HighscoreData.AddUserScore(item, winner.GetUserName(), score);
             item.UpdateState(false, true);
         }
 
@@ -296,8 +279,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             _room = null;
         }
 
-        private static bool IsSoccerGoal(Interaction type) => type == Interaction.FootballGoalBlue || type == Interaction.FootballGoalGreen ||
-                                                              type == Interaction.FootballGoalRed || type == Interaction.FootballGoalYellow;
+        private static bool IsSoccerGoal(Interaction type) =>
+            type == Interaction.FootballGoalBlue || type == Interaction.FootballGoalGreen ||
+            type == Interaction.FootballGoalRed || type == Interaction.FootballGoalYellow;
 
         private int GetScoreForTeam(Team team) => TeamPoints[(int) team];
 
@@ -321,38 +305,11 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
                     return new QueuedDictionary<string, RoomItem>();
             }
         }
-
-        private void LockGate(RoomItem item)
-        {
-            var interactionType = item.GetBaseItem().InteractionType;
-            if (!InteractionTypes.AreFamiliar(GlobalInteractions.GameGate, interactionType)) return;
-            /* TODO CHECK */ foreach (var current in _room.GetGameMap().GetRoomUsers(new Point(item.X, item.Y))) current.SqState = 0;
-            _room.GetGameMap().GameMap[item.X, item.Y] = 0;
-        }
-
-        private void UnlockGate(RoomItem item)
-        {
-            var interactionType = item.GetBaseItem().InteractionType;
-            if (!InteractionTypes.AreFamiliar(GlobalInteractions.GameGate, interactionType)) return;
-
-            /* TODO CHECK */ foreach (var current in _room.GetGameMap().GetRoomUsers(new Point(item.X, item.Y))) current.SqState = 1;
-            _room.GetGameMap().GameMap[item.X, item.Y] = 1;
-        }
-
+        
         internal RoomItem GetFirstHighscore()
         {
-            using (var enumerator = _room.GetRoomItemHandler().FloorItems.Values.ToList().GetEnumerator())
-            {
-                while (enumerator.MoveNext())
-                {
-                    var current2 = enumerator.Current;
-
-                    if (current2?.GetBaseItem().InteractionType != Interaction.WiredHighscore) continue;
-                    var result = current2;
-                    return result;
-                }
-            }
-            return null;
+            return _room.GetRoomItemHandler().FloorItems.Values.FirstOrDefault(current2 =>
+                current2?.GetBaseItem().InteractionType == Interaction.WiredHighscore);
         }
     }
 }

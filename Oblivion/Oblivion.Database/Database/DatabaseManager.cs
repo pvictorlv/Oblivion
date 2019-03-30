@@ -26,7 +26,7 @@ namespace Oblivion.Database
                 Pooling = true,
                 AllowZeroDateTime = true,
                 ConvertZeroDateTime = true,
-                DefaultCommandTimeout = 30,
+                DefaultCommandTimeout = 120,
                 ConnectionTimeout = 30
 
             };

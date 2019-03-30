@@ -21,7 +21,7 @@ namespace Oblivion.Connection.WebSocket
             _server = new WebSocketServer(socketUrl);
             if (socketUrl.StartsWith("wss://"))
             {
-                _server.Certificate = new X509Certificate2(Application.StartupPath + "/ca.pfx");
+                _server.Certificate = new X509Certificate2(Application.StartupPath + "/ca.pfx", "123");
                 
             }
             _server.Start(socket =>

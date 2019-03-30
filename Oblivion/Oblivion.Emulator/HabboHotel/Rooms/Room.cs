@@ -231,11 +231,11 @@ namespace Oblivion.HabboHotel.Rooms
         /// <returns>WiredHandler.</returns>
         public WiredHandler GetWiredHandler()
         {
-            if (_wiredHandler == null)
-            {
-                _wiredHandler = new WiredHandler(this);
-                StartWiredsProcess();
-            }
+            if (_wiredHandler != null)
+                return _wiredHandler;
+
+            _wiredHandler = new WiredHandler(this);
+            StartWiredsProcess();
 
             return _wiredHandler;
         }

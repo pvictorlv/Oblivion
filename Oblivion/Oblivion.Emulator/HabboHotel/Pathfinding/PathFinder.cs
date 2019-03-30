@@ -184,7 +184,7 @@ namespace Oblivion.HabboHotel.PathFinding
             var d = Math.Atan2(dY, dX)*180/Math.PI;
             return ((int) d + 90)/45;
         }
-
+  
         /// <summary>
         ///     Gets the distance.
         /// </summary>

@@ -229,7 +229,10 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                     }
 
                     SendMessage(serverMessage);
-
+                    if (_habbo.GetSubscriptionManager() == null)
+                    {
+                        return false;
+                    }
                     serverMessage.Init(LibraryParser.OutgoingRequest("UserClubRightsMessageComposer"));
                     serverMessage.AppendInteger(_habbo.GetSubscriptionManager().HasSubscription ? 2 : 0);
                     serverMessage.AppendInteger(_habbo.Rank);

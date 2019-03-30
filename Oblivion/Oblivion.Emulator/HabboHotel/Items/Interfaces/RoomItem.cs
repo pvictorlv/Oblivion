@@ -92,12 +92,12 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         internal uint InteractingUser2;
 
         /// <summary>
-        ///     The interaction count
+        ///     The interaction count tempvar2
         /// </summary>
         public byte InteractionCount;
 
         /// <summary>
-        ///     The interaction count helper
+        ///     The interaction count helper tempvar1
         /// </summary>
         internal byte InteractionCountHelper;
 

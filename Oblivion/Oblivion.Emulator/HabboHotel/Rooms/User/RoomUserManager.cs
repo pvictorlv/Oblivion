@@ -375,8 +375,8 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             try
             {
-                var client = user.GetClient();
-                var habbo = user.GetClient().GetHabbo();
+                var client = user?.GetClient();
+                var habbo = user?.GetClient()?.GetHabbo();
                 if (client == null || habbo == null) return;
                 habbo.CurrentRoom = null;
                 habbo.GetAvatarEffectsInventoryComponent()?.OnRoomExit();
@@ -1199,7 +1199,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 // Region Check User Got Freezed
                 if (_room.GotFreeze())
                 {
-                    Freeze.CycleUser(roomUsers);
+                    _room.GetFreeze().CycleUser(roomUsers);
                 }
 
                 // Region Variable Registering

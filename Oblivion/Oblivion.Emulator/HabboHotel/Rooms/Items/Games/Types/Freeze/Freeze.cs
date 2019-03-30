@@ -36,7 +36,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
 
         internal RoomItem ExitTeleport { get; set; }
 
-        public static void CycleUser(RoomUser user)
+        public void CycleUser(RoomUser user)
         {
             if (user.Freezed)
             {
@@ -67,7 +67,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
             GameStarted = true;
             CountTeamPoints();
             ResetGame();
-            _room.GetGameManager().LockGates();
+//            _room.GetGameManager().LockGates();
             _room.GetGameManager().StartGame();
 
             if (ExitTeleport == null) return;
