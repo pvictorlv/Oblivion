@@ -32,7 +32,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             var message = pms[0];
             var msg = new ServerMessage(LibraryParser.OutgoingRequest("RoomNotificationMessageComposer"));
-            message = HttpUtility.HtmlDecode(message);
+            message = System.Net.WebUtility.HtmlDecode(message);
 
             msg.AppendString("micro");
             msg.AppendInteger(5);

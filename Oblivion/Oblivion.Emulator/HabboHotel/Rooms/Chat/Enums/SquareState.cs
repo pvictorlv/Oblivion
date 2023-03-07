@@ -8,7 +8,7 @@ namespace Oblivion.HabboHotel.Rooms.Chat.Enums
         /// <summary>
         ///     The open
         /// </summary>
-        Open,
+        Open, // 0
 
         /// <summary>
         ///     The blocked

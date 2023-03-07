@@ -183,7 +183,7 @@ namespace Oblivion.Security
         internal static bool CheckForBannedPhrases(string str)
         {
             var oldStr = str;
-            str = HttpUtility.HtmlDecode(str) ?? oldStr;
+            str = System.Net.WebUtility.HtmlDecode(str) ?? oldStr;
             str = str.Replace("&nbsp;", "").ToLower();
 
             if (str.Contains("s2.vc") || str.Contains("abre.ai"))

@@ -11,7 +11,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
-using System.Windows.Forms;
 using Oblivion.Configuration;
 using Oblivion.Database;
 using Oblivion.HabboHotel;
@@ -169,7 +168,7 @@ namespace Oblivion
         /// <returns>ICollection&lt;IPlugin&gt;.</returns>
         public static ICollection<IPlugin> LoadPlugins()
         {
-            var path = Application.StartupPath + "Plugins";
+            var path = System.Reflection.Assembly.GetExecutingAssembly().Location + "Plugins";
 
             if (!Directory.Exists(path))
                 return null;
@@ -303,8 +302,8 @@ namespace Oblivion
             CultureInfo = CultureInfo.CreateSpecificCulture("en-GB");
             try
             {
-                ConfigurationData.Load(Path.Combine(Application.StartupPath, "Settings/main.ini"));
-                ConfigurationData.Load(Path.Combine(Application.StartupPath, "Settings/Welcome/settings.ini"), true);
+                ConfigurationData.Load(Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, "Settings/main.ini"));
+                ConfigurationData.Load(Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, "Settings/Welcome/settings.ini"), true);
 
                 DatabaseConnectionType = ConfigurationData.Data["db.type"];
                 
@@ -330,11 +329,10 @@ namespace Oblivion
                 LibraryParser.RegisterAll();
 
                 Plugins = new Dictionary<string, IPlugin>();
-
+                
                 var plugins = LoadPlugins();
 
                 if (plugins != null)
-                    /* TODO CHECK */
                     foreach (var item in plugins.Where(item => item != null))
                     {
                         Plugins.Add(item.PluginName, item);
@@ -342,7 +340,9 @@ namespace Oblivion
                         Out.WriteLine("Loaded Plugin: " + item.PluginName + " Version: " + item.PluginVersion,
                             "Oblivion.Plugins", ConsoleColor.DarkBlue);
                     }
-
+                    
+                
+                
                 ExtraSettings.RunExtraSettings();
                 CrossDomainPolicy.Set();
 
@@ -353,9 +353,8 @@ namespace Oblivion
                 ServerLanguage = Convert.ToString(ConfigurationData.Data["system.lang"]);
                 _languages = new Languages(ServerLanguage);
                 Out.WriteLine("Loaded " + _languages.Count() + " Languages Vars", "Oblivion.Lang");
-
+                
                 if (plugins != null)
-                    /* TODO CHECK */
                     foreach (var itemTwo in plugins)
                         itemTwo?.message_void();
 

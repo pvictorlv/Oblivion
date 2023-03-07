@@ -437,7 +437,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 new ServerMessage(LibraryParser.OutgoingRequest("MOTDNotificationMessageComposer")))
             {
                 serverMessage.AppendInteger(1);
-                serverMessage.AppendString(HttpUtility.HtmlDecode(message), true);
+                serverMessage.AppendString(System.Net.WebUtility.HtmlDecode(message), true);
                 SendMessage(serverMessage);
             }
         }

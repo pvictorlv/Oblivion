@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Security.Cryptography.X509Certificates;
-using System.Windows.Forms;
 using Fleck;
 using Oblivion.Util;
 
@@ -21,7 +20,7 @@ namespace Oblivion.Connection.WebSocket
             _server = new WebSocketServer(socketUrl);
             if (socketUrl.StartsWith("wss://"))
             {
-                _server.Certificate = new X509Certificate2(Application.StartupPath + "/ca.pfx", "123");
+                _server.Certificate = new X509Certificate2(System.Reflection.Assembly.GetExecutingAssembly().Location + "/ca.pfx", "123");
                 
             }
             _server.Start(socket =>
