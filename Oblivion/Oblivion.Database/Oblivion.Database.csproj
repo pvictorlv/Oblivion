@@ -70,7 +70,7 @@
   <PropertyGroup>
     <PreBuildEvent>if not exist "$(SolutionDir)\Oblivion\bin\$(ConfigurationName)\$(PlatformName)\Packets\" xcopy "$(SolutionDir)\Oblivion\Oblivion.Emulator\Building\*.*" "$(SolutionDir)\Oblivion\bin\$(ConfigurationName)\$(PlatformName)\" /E /Y /C</PreBuildEvent>
   </PropertyGroup>
-  <PropertyGroup>
-    <PostBuildEvent>xcopy /Y "$(TargetPath)" "$(SolutionDir)\Oblivion\bin\$(ConfigurationName)\$(PlatformName)\" /R</PostBuildEvent>
-  </PropertyGroup>
+	<PropertyGroup>
+		<PostBuildEvent></PostBuildEvent>
+	</PropertyGroup>
 </Project>

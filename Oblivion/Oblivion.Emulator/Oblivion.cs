@@ -168,7 +168,7 @@ namespace Oblivion
         /// <returns>ICollection&lt;IPlugin&gt;.</returns>
         public static ICollection<IPlugin> LoadPlugins()
         {
-            var path = System.Reflection.Assembly.GetExecutingAssembly().Location + "Plugins";
+            var path = AppDomain.CurrentDomain.BaseDirectory + "Plugins";
 
             if (!Directory.Exists(path))
                 return null;
@@ -302,8 +302,8 @@ namespace Oblivion
             CultureInfo = CultureInfo.CreateSpecificCulture("en-GB");
             try
             {
-                ConfigurationData.Load(Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, "Settings/main.ini"));
-                ConfigurationData.Load(Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, "Settings/Welcome/settings.ini"), true);
+                ConfigurationData.Load(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings/main.ini"));
+                ConfigurationData.Load(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings/Welcome/settings.ini"), true);
 
                 DatabaseConnectionType = ConfigurationData.Data["db.type"];
                 

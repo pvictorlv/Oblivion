@@ -20,7 +20,7 @@ namespace Oblivion.Connection.WebSocket
             _server = new WebSocketServer(socketUrl);
             if (socketUrl.StartsWith("wss://"))
             {
-                _server.Certificate = new X509Certificate2(System.Reflection.Assembly.GetExecutingAssembly().Location + "/ca.pfx", "123");
+                _server.Certificate = new X509Certificate2(AppDomain.CurrentDomain.BaseDirectory + "/ca.pfx", "123");
                 
             }
             _server.Start(socket =>

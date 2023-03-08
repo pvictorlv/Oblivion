@@ -70,7 +70,7 @@ namespace Oblivion
             Console.WriteLine(@"     " + @"  \____/|_.__/|_|_| \_/ |_|\___/|_| |_|");
             Console.WriteLine();
             Console.WriteLine(@"     " + @"  BUILD " + Oblivion.Version + "." + Oblivion.Build + " RELEASE 63B NO CRYPTO");
-            Console.WriteLine(@"     " + @"  .NET Framework " + Environment.Version + "     C# 7 Roslyn");
+            Console.WriteLine(@"     " + @"  .NET " + Environment.Version + "     C# 11 Roslyn");
             Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.White;
         }

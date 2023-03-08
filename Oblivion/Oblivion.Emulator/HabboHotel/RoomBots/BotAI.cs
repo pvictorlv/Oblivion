@@ -1,3 +1,4 @@
+using System;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.User;
@@ -7,7 +8,7 @@ namespace Oblivion.HabboHotel.RoomBots
     /// <summary>
     ///     Class BotAI.
     /// </summary>
-    internal abstract class BotAi
+    internal abstract class BotAi : IDisposable
     {
         /// <summary>
         ///     The _room
@@ -73,7 +74,7 @@ namespace Oblivion.HabboHotel.RoomBots
         /// <summary>
         ///     Disposes this instance.
         /// </summary>
-        internal void Dispose()
+        public void Dispose()
         {
             Disposed = true;
             GetBotData()?.Dispose();

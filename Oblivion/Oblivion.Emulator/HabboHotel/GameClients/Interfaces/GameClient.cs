@@ -17,7 +17,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
     /// <summary>
     ///     Class GameClient.
     /// </summary>
-    public class GameClient
+    public class GameClient : IDisposable
     {
         /// <summary>
         ///     The _connection
@@ -544,7 +544,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <summary>
         ///     Stops this instance.
         /// </summary>
-        internal void Dispose()
+        public void Dispose()
         {
             _habbo?.OnDisconnect("disconnect");
 

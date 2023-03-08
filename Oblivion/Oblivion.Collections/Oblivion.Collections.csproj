@@ -57,6 +57,6 @@
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /Y "$(TargetPath)" "$(SolutionDir)\Oblivion\bin\$(ConfigurationName)\$(PlatformName)\" /R</PostBuildEvent>
+	  <PostBuildEvent></PostBuildEvent>
   </PropertyGroup>
 </Project>
