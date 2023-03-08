@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using DotNetty.Buffers;
 using Oblivion.Messages.Parsers;
 
 namespace Oblivion.Messages.Enums
@@ -47,7 +48,7 @@ namespace Oblivion.Messages.Enums
         /// <summary>
         /// The cache
         /// </summary>
-        private static readonly Dictionary<StaticMessage, byte[]> Cache = new Dictionary<StaticMessage, byte[]>();
+        private static readonly Dictionary<StaticMessage, IByteBuffer> Cache = new();
 
         /// <summary>
         /// Loads this instance.
@@ -61,14 +62,14 @@ namespace Oblivion.Messages.Enums
             message.AppendInteger(1);
             message.AppendString("message");
             message.AppendString("${room.error.cant_set_item}");
-            Cache.Add(StaticMessage.ErrorCantSetItem, message.GetReversedBytes());
+            Cache.Add(StaticMessage.ErrorCantSetItem, message.CompileBuffer());
 
             message = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
             message.AppendString("furni_placement_error");
             message.AppendInteger(1);
             message.AppendString("message");
             message.AppendString("${room.error.cant_set_not_owner}");
-            Cache.Add(StaticMessage.ErrorCantSetNotOwner, message.GetReversedBytes());
+            Cache.Add(StaticMessage.ErrorCantSetNotOwner, message.CompileBuffer());
 
             message = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
             message.AppendString("game_promo_small");
@@ -81,7 +82,7 @@ namespace Oblivion.Messages.Enums
             message.AppendString("event:habbopages/chat/newway");
             message.AppendString("linkTitle");
             message.AppendString("${mod.alert.link}");
-            Cache.Add(StaticMessage.NewWayToOpenCommandsList, message.GetReversedBytes());
+            Cache.Add(StaticMessage.NewWayToOpenCommandsList, message.CompileBuffer());
 
             message = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
             message.AppendString(string.Empty);
@@ -94,7 +95,7 @@ namespace Oblivion.Messages.Enums
             message.AppendString("event:");
             message.AppendString("linkTitle");
             message.AppendString("ok");
-            Cache.Add(StaticMessage.UserNotFound, message.GetReversedBytes());
+            Cache.Add(StaticMessage.UserNotFound, message.CompileBuffer());
 
             message = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
             message.AppendString(string.Empty);
@@ -107,7 +108,7 @@ namespace Oblivion.Messages.Enums
             message.AppendString("event:");
             message.AppendString("linkTitle");
             message.AppendString("ok");
-            Cache.Add(StaticMessage.AdviceMaxItems, message.GetReversedBytes());
+            Cache.Add(StaticMessage.AdviceMaxItems, message.CompileBuffer());
 
             message = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
             message.AppendString(string.Empty);
@@ -120,7 +121,7 @@ namespace Oblivion.Messages.Enums
             message.AppendString("event:");
             message.AppendString("linkTitle");
             message.AppendString("ok");
-            Cache.Add(StaticMessage.AdvicePurchaseMaxItems, message.GetReversedBytes());
+            Cache.Add(StaticMessage.AdvicePurchaseMaxItems, message.CompileBuffer());
 
             message = new ServerMessage(LibraryParser.OutgoingRequest("CatalogueOfferConfigMessageComposer"));
             message.AppendInteger(100);// purchase_limit
@@ -130,7 +131,7 @@ namespace Oblivion.Messages.Enums
             message.AppendInteger(2); // array count
             message.AppendInteger(40);
             message.AppendInteger(99);
-            Cache.Add(StaticMessage.CatalogOffersConfiguration, message.GetReversedBytes());
+            Cache.Add(StaticMessage.CatalogOffersConfiguration, message.CompileBuffer());
 
             message = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
             message.AppendString(string.Empty);
@@ -143,7 +144,7 @@ namespace Oblivion.Messages.Enums
             message.AppendString("event:avatareditor/open");
             message.AppendString("linkTitle");
             message.AppendString("${notification.figureset.redeemed.success.linkTitle}");
-            Cache.Add(StaticMessage.FiguresetRedeemed, message.GetReversedBytes());
+            Cache.Add(StaticMessage.FiguresetRedeemed, message.CompileBuffer());
 
             message.Dispose();
         }
@@ -153,7 +154,7 @@ namespace Oblivion.Messages.Enums
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns>System.Byte[].</returns>
-        public static byte[] Get(StaticMessage type)
+        public static IByteBuffer Get(StaticMessage type)
         {
             return Cache[type];
         }

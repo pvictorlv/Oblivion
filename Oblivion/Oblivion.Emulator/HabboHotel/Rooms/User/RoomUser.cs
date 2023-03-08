@@ -740,7 +740,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     botChatmsg.AppendInteger(0);
                     botChatmsg.AppendInteger(textColor);
                     botChatmsg.AppendInteger(0);
-                    botChatmsg.AppendInteger(count);
+                    botChatmsg.AppendInteger(VirtualId);
 
                     var location = new Vector2D(X, Y);
                     GetRoom().SendMessageWithRange(location, botChatmsg);
@@ -1133,7 +1133,8 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                 message.AppendString("");
                 message.AppendInteger(habbo.AchievementPoints);
-                message.AppendBool(false);
+//                message.AppendString("");
+                message.AppendBool(true);
                 return true;
             }
 

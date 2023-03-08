@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
+using System.Threading.Tasks;
 using Oblivion.Configuration;
 
 namespace Oblivion
@@ -28,14 +29,15 @@ namespace Oblivion
         /// </summary>
         /// <param name="args">The arguments.</param>
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             IntPtr hWnd = Process.GetCurrentProcess().MainWindowHandle;
             SetWindowPos(hWnd,
                 new IntPtr(HWND_TOPMOST),
                 0, 0, 0, 0,
                 SWP_NOMOVE | SWP_NOSIZE);
-            StartEverything();
+            
+            await StartEverything();
 
             while (Oblivion.IsLive)
             {
@@ -46,11 +48,11 @@ namespace Oblivion
             }
         }
 
-        private static void StartEverything()
+        private static async Task StartEverything()
         {
             StartConsoleWindow();
             DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), ScClose, 0);
-            InitEnvironment();
+            await InitEnvironment();
         }
 
         public static void StartConsoleWindow()
@@ -78,7 +80,7 @@ namespace Oblivion
         /// <summary>
         /// Initialize the Oblivion Environment
         /// </summary>
-        public static void InitEnvironment()
+        public static async Task InitEnvironment()
         {
 
             if (Oblivion.IsLive)
@@ -88,7 +90,7 @@ namespace Oblivion
             var currentDomain = AppDomain.CurrentDomain;
             currentDomain.UnhandledException += ExceptionHandler;
 
-            Oblivion.Initialize();
+            await Oblivion.Initialize();
         }
 
         /// <summary>

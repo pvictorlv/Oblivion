@@ -1,4 +1,7 @@
+using DotNetty.Buffers;
+using DotNetty.Common.Utilities;
 using System;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Oblivion.Messages
@@ -46,10 +49,27 @@ namespace Oblivion.Messages
             Init(messageId, body, position, packetLength);
         }
 
-        internal ClientMessage(byte[] body)
+        public ClientMessage(byte[] body)
         {
             _body = body;
             Id = GetInteger16();
+        }
+
+        private IByteBuffer buffer;
+
+        public ClientMessage(int length, IByteBuffer buf)
+        {
+            this._length = length;
+            this.buffer = (buf != null) && (buf.ReadableBytes > 0) ? buf : Unpooled.Empty;
+
+            if (this.buffer.ReadableBytes >= 2)
+            {
+                this.Id = this.buffer.ReadShort();
+            }
+            else
+            {
+                this.Id = 0;
+            }
         }
 
         internal ClientMessage(byte[] body, int position, int packetLength)
@@ -77,6 +97,17 @@ namespace Oblivion.Messages
         /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
         public override string ToString()
         {
+            if (this.buffer != null)
+            {
+                String body = this.buffer.ToString(Encoding.UTF8);
+
+                for (int i = 0; i < 13; i++)
+                {
+                    body = body.Replace(((char)i).ToString(), "[" + i + "]");
+                }
+
+                return body;
+            }
             string stringValue = string.Empty;
 
             stringValue += Encoding.Default.GetString(_body);
@@ -113,6 +144,19 @@ namespace Oblivion.Messages
         /// <returns>System.Byte[].</returns>
         internal byte[] GetBytes(int len)
         {
+            if (buffer != null)
+            {
+                var bytes = new byte[len];
+
+                for (int i = 0; i < len; i++)
+                {
+                    bytes[i] = this.buffer.ReadByte();
+                }
+
+                //        byte[] data = this.content().readBytes((length)).array();
+                return bytes;
+            }
+            
             byte[] arrayBytes = new byte[len];
             int pos = _position;
 
@@ -141,6 +185,13 @@ namespace Oblivion.Messages
         /// <returns>System.String.</returns>
         internal string GetString(Encoding encoding)
         {
+            if (this.buffer != null)
+            {
+                int length = buffer.ReadShort();
+                var bytes = GetBytes(length);
+                return encoding.GetString(bytes);
+            }
+            
             int stringLength = GetInteger16();
             if (stringLength == 0 || _position + stringLength > _body.Length)
                 return string.Empty;
@@ -171,6 +222,11 @@ namespace Oblivion.Messages
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool GetBool()
         {
+            if (this.buffer != null)
+            {
+                return this.buffer.ReadBoolean();
+            }
+            
             return (_body[_position++] == 1);
         }
 
@@ -178,15 +234,33 @@ namespace Oblivion.Messages
         /// Gets the integer16.
         /// </summary>
         /// <returns>System.Int16.</returns>
-        internal Int16 GetInteger16() => HabboEncoding.DecodeInt16(_body, ref _position);
+        internal Int16 GetInteger16()
+        {
+            if (this.buffer != null)
+                return this.buffer.ReadShort();
+            
+            return HabboEncoding.DecodeInt16(_body, ref _position);
+        }
 
         /// <summary>
         /// Gets the integer.
         /// </summary>
         /// <returns>System.Int32.</returns>
-        internal int GetInteger() => HabboEncoding.DecodeInt32(_body, ref _position);
+        internal int GetInteger()
+        {
+            if (this.buffer != null)
+                return this.buffer.ReadInt();
 
-        internal bool GetIntegerAsBool() => HabboEncoding.DecodeInt32(_body, ref _position) == 1;
+            return HabboEncoding.DecodeInt32(_body, ref _position);
+        }
+
+        internal bool GetIntegerAsBool()
+        {
+            if (this.buffer != null)
+                return this.buffer.ReadInt() == 1;
+
+            return HabboEncoding.DecodeInt32(_body, ref _position) == 1;
+        }
 
         /// <summary>
         /// Gets the integer32.

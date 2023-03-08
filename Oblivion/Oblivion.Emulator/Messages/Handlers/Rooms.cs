@@ -545,6 +545,12 @@ namespace Oblivion.Messages.Handlers
                         Oblivion.GetGame().GetGroupManager().GetGroup(Session.GetHabbo().FavouriteGroup).Badge);
             }
 
+
+            Response.Init(LibraryParser.OutgoingRequest("InitialRoomInfoMessageComposer"));
+            Response.AppendString(currentLoadingRoom.RoomData.ModelName);
+            Response.AppendInteger(currentLoadingRoom.RoomId);
+            SendResponse();
+            
             Response.Init(LibraryParser.OutgoingRequest("RoomGroupMessageComposer"));
             Response.AppendInteger(CurrentLoadingRoom.LoadedGroups.Count);
             /* TODO CHECK */
@@ -556,10 +562,6 @@ namespace Oblivion.Messages.Handlers
 
             SendResponse();
 
-            Response.Init(LibraryParser.OutgoingRequest("InitialRoomInfoMessageComposer"));
-            Response.AppendString(currentLoadingRoom.RoomData.ModelName);
-            Response.AppendInteger(currentLoadingRoom.RoomId);
-            SendResponse();
             if (Session.GetHabbo().SpectatorMode)
             {
                 Response.Init(LibraryParser.OutgoingRequest("SpectatorModeMessageComposer"));
@@ -2646,7 +2648,7 @@ namespace Oblivion.Messages.Handlers
 
             var message = Request.GetString();
             var bubble = Request.GetInteger();
-            var count = Request.GetInteger();
+           // var count = Request.GetInteger();
 
             if (!roomUser.IsBot)
                 if (bubble == 2 || bubble >= 23 && !Session.GetHabbo().HasFuse("fuse_mod") || bubble < 0)

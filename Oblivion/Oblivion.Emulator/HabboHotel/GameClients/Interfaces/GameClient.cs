@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
+using DotNetty.Transport.Channels;
 using Oblivion.Configuration;
 using Oblivion.Connection;
 using Oblivion.Connection.Net;
@@ -65,7 +67,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// </summary>
         /// <param name="clientId">The client identifier.</param>
         /// <param name="connection">The connection.</param>
-        internal GameClient(long clientId, ISession<GameClient> connection)
+        internal GameClient(IChannelId clientId, ISession<GameClient> connection)
         {
             ConnectionId = clientId;
             _connection = connection;
@@ -77,7 +79,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         ///     Gets the connection identifier.
         /// </summary>
         /// <value>The connection identifier.</value>
-        internal long ConnectionId { get; set; }
+        internal IChannelId ConnectionId { get; set; }
 
         public bool IsAir { get; set; }
 
@@ -140,7 +142,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         {
             try
             {
-                var ip = GetConnection()?.RemoteAddress.ToString();
+                var ip = GetConnection()?.Channel.RemoteAddress.ToString();
                 if (ip == null)
                     return false;
                 var userData = UserDataFactory.GetUserData(authTicket, out var errorCode);
@@ -521,7 +523,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <param name="title">The title.</param>
         /// <param name="picture">The picture.</param>
         /// <returns>System.Byte[].</returns>
-        public static byte[] GetBytesNotif(string message, string title = "Aviso", string picture = "")
+        public static ServerMessage GetBytesNotif(string message, string title = "Aviso", string picture = "")
         {
             using (var serverMessage =
                 new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer")))
@@ -537,7 +539,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 serverMessage.AppendString("linkTitle");
                 serverMessage.AppendString("ok");
 
-                return serverMessage.GetReversedBytes();
+                return serverMessage;
             }
         }
 
@@ -601,12 +603,10 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             if (_connection == null)
                 return;
 
-            var bytes = message.GetReversedBytes();
-
-            _connection.Send(bytes);
+            _connection.Send(message).Wait();
         }
 
-        internal void SendMessageAsync(ServerMessage message)
+        internal async Task SendMessageAsync(ServerMessage message)
         {
             if (message == null)
                 return;
@@ -614,32 +614,32 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             if (_connection == null)
                 return;
 
-            var bytes = message.GetReversedBytes();
+           // var bytes = message.GetReversedBytes();
 
-            _connection.Send(bytes);
+            await _connection.Send(message);
         }
 
         /// <summary>
         ///     Sends the message.
         /// </summary>
         /// <param name="bytes">The bytes.</param>
-        internal void SendMessage(byte[] bytes)
+       /* internal async Task SendMessage(byte[] bytes)
         {
-            _connection?.Send(bytes);
+            _connection?.Send(bytes); ;
         }
 
-        internal void SendMessage(ArraySegment<byte> bytes)
+        internal async Task SendMessage(ArraySegment<byte> bytes)
         {
-            _connection?.Send(bytes.Array);
+            _connection?.Send(bytes.Array); ;
         }
-
+       */
         /// <summary>
         ///     Sends the message.
         /// </summary>
         /// <param name="type">The type.</param>
-        internal void SendMessage(StaticMessage type)
+        internal async Task SendMessage(StaticMessage type)
         {
-            _connection?.Send(StaticMessagesManager.Get(type));
+            _connection?.Send(StaticMessagesManager.Get(type)); ;
         }
     }
 }

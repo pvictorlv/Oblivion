@@ -2,22 +2,25 @@
 using System.Net;
 using System;
 using System.Threading.Tasks;
+using DotNetty.Transport.Channels;
+using Oblivion.Messages;
+using DotNetty.Buffers;
 
 namespace Oblivion.Connection;
 
 public interface ISession<T> : IDisposable
 {
     #region Properties
+    
+
+    IChannel Channel { get; set; }
+
 
     ARC4 clientRC4
     {
         get; set;
     }
-
-    IPAddress RemoteAddress
-    {
-        get;
-    }
+    
 
     ARC4 serverRC4
     {
@@ -36,8 +39,9 @@ public interface ISession<T> : IDisposable
     void Disconnect();
 
     Task Send(ArraySegment<byte> data);
+    Task Send(ServerMessage data);
 
-    Task Send(byte[] data);
+    Task Send(IByteBuffer data);
 
     #endregion Methods
 }

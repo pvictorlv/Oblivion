@@ -302,7 +302,8 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="snow">if set to <c>true</c> [snow].</param>
         internal void AddUserToRoom(GameClient session, bool spectator, bool snow = false)
         {
-            if (Disposed) return;
+            if (Disposed) 
+                return;
             var habbo = session?.GetHabbo();
 
             if (habbo == null || _room == null)

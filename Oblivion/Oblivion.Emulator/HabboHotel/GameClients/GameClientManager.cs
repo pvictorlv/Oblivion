@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using DotNetty.Common.Utilities;
+using DotNetty.Transport.Channels;
 using Oblivion.Configuration;
 using Oblivion.Connection;
 using Oblivion.Connection.Connection;
@@ -22,8 +24,6 @@ namespace Oblivion.HabboHotel.GameClients
     /// </summary>
     internal class GameClientManager
     {
-        private int _connectionCounter;
-
         /// <summary>
         ///     The _badge queue
         /// </summary>
@@ -49,14 +49,14 @@ namespace Oblivion.HabboHotel.GameClients
         /// <summary>
         ///     The clients
         /// </summary>
-        internal ConcurrentDictionary<long, GameClient> Clients;
+        internal ConcurrentDictionary<IChannelId, GameClient> Clients;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="GameClientManager" /> class.
         /// </summary>
         internal GameClientManager()
         {
-            Clients = new ConcurrentDictionary<long, GameClient>();
+            Clients = new ConcurrentDictionary<IChannelId, GameClient>();
             _userNameRegister = new ConcurrentDictionary<string, GameClient>();
             _userIdRegister = new ConcurrentDictionary<uint, GameClient>();
         }
@@ -88,7 +88,8 @@ namespace Oblivion.HabboHotel.GameClients
         /// </summary>
         /// <param name="clientId">The client identifier.</param>
         /// <returns>GameClient.</returns>
-        internal GameClient GetClient(uint clientId) => Clients.TryGetValue(clientId, out var client) ? client : null;
+        internal GameClient GetClient(IChannelId clientId) =>
+            Clients.TryGetValue(clientId, out var client) ? client : null;
 
         /// <summary>
         ///     Gets the name by identifier.
@@ -207,12 +208,12 @@ namespace Oblivion.HabboHotel.GameClients
         /// <param name="message">The message.</param>
         internal void ModAlert(ServerMessage message)
         {
-            var bytes = message.GetReversedBytes();
+            //var bytes = message.GetReversedBytes();
 
             foreach (var current in Clients.Values.Where(current => current?.GetHabbo() != null).Where(current =>
                          (current.GetHabbo().Rank == 4u || current.GetHabbo().Rank == 5u) ||
                          current.GetHabbo().Rank == 6u))
-                current.GetConnection().Send(bytes);
+                current.GetConnection().Send(message);
         }
 
         /// <summary>
@@ -222,23 +223,44 @@ namespace Oblivion.HabboHotel.GameClients
         /// <param name="connection">The connection.</param>
         internal void CreateAndStartClient(ISession<GameClient> connection)
         {
-            
-            Interlocked.Increment(ref _connectionCounter);
-
-
-            var gameClient = new GameClient(_connectionCounter, connection);
+            var gameClient = new GameClient(connection.Channel.Id, connection);
             gameClient.PacketParser = new GamePacketParser();
-            
+
             connection.UserData = gameClient;
-            Clients.AddOrUpdate(gameClient.ConnectionId, gameClient, (key, value) => gameClient);
+            Clients.AddOrUpdate(connection.Channel.Id, gameClient, (key, value) => gameClient);
             gameClient.StartConnection();
         }
+
+
+        internal void CreateAndStartClient(IChannelHandlerContext channel)
+        {
+            var session = new Session(channel.Channel, null);
+
+            var gameClient = new GameClient(channel.Channel.Id, session);
+            gameClient.PacketParser = new GamePacketParser();
+
+            /*AttributeKey<Session> attr = AttributeKey<Session>.NewInstance("Session.attr");
+
+            channel.GetAttribute(attr).Set(session);
+            
+            AttributeKey<IChannelId> attr2 = AttributeKey<IChannelId>.NewInstance("ChannelId.attr");
+
+            channel.GetAttribute(attr2).Set(channel.Channel.Id);
+            */
+            
+            session.UserData = gameClient;
+
+            Clients.AddOrUpdate(channel.Channel.Id, gameClient, (key, value) => gameClient);
+
+            gameClient.StartConnection();
+        }
+
 
         /// <summary>
         ///     Disposes the connection.
         /// </summary>
         /// <param name="clientId">The client identifier.</param>
-        internal void DisposeConnection(uint clientId)
+        internal void DisposeConnection(IChannelId clientId)
         {
             if (!Clients.TryRemove(clientId, out var client))
                 return;
@@ -253,11 +275,9 @@ namespace Oblivion.HabboHotel.GameClients
         /// <param name="packet"></param>
         public void SendMessage(ServerMessage packet)
         {
-            var bytes = packet.GetReversedBytes();
-
             foreach (var client in Clients.Values)
             {
-                client?.GetConnection()?.Send(bytes);
+                client?.GetConnection()?.Send(packet); ;
             }
         }
 
@@ -267,7 +287,7 @@ namespace Oblivion.HabboHotel.GameClients
 
             foreach (var client in Clients.Values)
             {
-                client?.GetConnection()?.Send(bytes);
+                client?.GetConnection()?.Send(packet);
             }
         }
 

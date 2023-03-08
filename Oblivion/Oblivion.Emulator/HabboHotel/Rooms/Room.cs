@@ -401,7 +401,6 @@ namespace Oblivion.HabboHotel.Rooms
 
                 new Task(async () =>
                 {
-
                     while (_wiredHandler != null && !_mainProcessSource.IsCancellationRequested)
                     {
                         try
@@ -499,7 +498,7 @@ namespace Oblivion.HabboHotel.Rooms
                         var pet = CatalogManager.GeneratePetFromRow(dataRow, row);
 
                         var bot = new RoomBot(pet.PetId, Convert.ToUInt32(RoomData.OwnerId), AiType.Pet, false);
-                        bot.Update(RoomId, "freeroam", pet.Name, "", pet.Look, pet.X, pet.Y, ((int) pet.Z), 4, 0, 0, 0,
+                        bot.Update(RoomId, "freeroam", pet.Name, "", pet.Look, pet.X, pet.Y, ((int)pet.Z), 4, 0, 0, 0,
                             0,
                             null, null, "", 0, 0, false, false);
                         _roomUserManager.DeployBot(bot, pet);
@@ -633,7 +632,7 @@ namespace Oblivion.HabboHotel.Rooms
             /* TODO CHECK */
             foreach (DataRow dataRow in table.Rows)
             {
-                var songId = (uint) dataRow[0];
+                var songId = (uint)dataRow[0];
                 var num = dataRow[1].ToString();
 
 
@@ -654,8 +653,8 @@ namespace Oblivion.HabboHotel.Rooms
 
                     if (row != null)
                     {
-                        extraData = (string) row["extra_data"];
-                        songCode = (string) row["songcode"];
+                        extraData = (string)row["extra_data"];
+                        songCode = (string)row["songcode"];
                     }
                 }
 
@@ -709,7 +708,7 @@ namespace Oblivion.HabboHotel.Rooms
                 return;
             /* TODO CHECK */
             foreach (DataRow dataRow in table.Rows)
-                Bans.Add((uint) dataRow[0], Convert.ToDouble(dataRow[1]));
+                Bans.Add((uint)dataRow[0], Convert.ToDouble(dataRow[1]));
         }
 
         /// <summary>
@@ -889,32 +888,8 @@ namespace Oblivion.HabboHotel.Rooms
                 var connId = user?.GetClient()?.GetHabbo()?.WebSocketConnId;
                 if (connId != null && connId != Guid.Empty)
                 {
-                    Oblivion.GetWebSocket().SendMessage((Guid) connId, message);
+                    Oblivion.GetWebSocket().SendMessage((Guid)connId, message);
                 }
-            }
-        }
-
-        /// <summary>
-        ///     Sends the message.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        internal void SendMessage(byte[] message)
-        {
-            try
-            {
-                var data = new ArraySegment<byte>(message);
-                if (_roomUserManager?.UserList != null)
-                    foreach (var user in _roomUserManager.UserList.Values)
-                    {
-                        if (user?.GetClient()?.GetConnection() != null && !user.IsBot)
-                        {
-                            user.GetClient().SendMessage(data);
-                        }
-                    }
-            }
-            catch (Exception e)
-            {
-                Logging.HandleException(e, "SendMessage");
             }
         }
 
@@ -926,9 +901,6 @@ namespace Oblivion.HabboHotel.Rooms
         {
             try
             {
-                var data = message.GetReversedBytes();
-                var arrayData = new ArraySegment<byte>(data);
-
                 if (_roomUserManager?.UserList == null) return;
                 foreach (var user in _roomUserManager.UserList.Values)
                 {
@@ -939,7 +911,7 @@ namespace Oblivion.HabboHotel.Rooms
                         if (Gamemap.TileDistance(currentLocation.X, currentLocation.Y, user.X, user.Y) >
                             distance) continue;
 
-                        user.GetClient().SendMessage(arrayData);
+                        user.GetClient().SendMessage(message);
                     }
                 }
             }
@@ -960,7 +932,7 @@ namespace Oblivion.HabboHotel.Rooms
             try
             {
                 if (roomUser == null) return;
-                var packetData = chatMsg.GetReversedBytes();
+
                 var senderCoord = new Vector2D(roomUser.X, roomUser.Y);
                 foreach (var user in _roomUserManager.UserList.Values)
                 {
@@ -983,7 +955,7 @@ namespace Oblivion.HabboHotel.Rooms
                         if (user.OnCampingTent || !roomUser.OnCampingTent)
                         {
                             if (!usersClient.GetHabbo().Data.Ignores.Contains(p))
-                                usersClient.SendMessage(packetData);
+                                usersClient.SendMessage(chatMsg);
                         }
                     }
                     catch (Exception e)
@@ -1006,7 +978,14 @@ namespace Oblivion.HabboHotel.Rooms
         internal void SendMessage(ServerMessage message)
         {
             if (message != null)
-                SendMessage(message.GetReversedBytes());
+                if (_roomUserManager?.UserList != null)
+                    foreach (var user in _roomUserManager.UserList.Values)
+                    {
+                        if (user?.GetClient()?.GetConnection() != null && !user.IsBot)
+                        {
+                            user.GetClient().SendMessage(message);
+                        }
+                    }
         }
 
         /// <summary>
@@ -1020,27 +999,11 @@ namespace Oblivion.HabboHotel.Rooms
 
             try
             {
-                var totalBytes = new byte[0];
-                var currentWorking = 0;
-
                 /* TODO CHECK */
                 foreach (var message in messages)
                 {
-                    var toAppend = message.GetReversedBytes();
-
-                    var newLength = totalBytes.Length + toAppend.Length;
-
-                    Array.Resize(ref totalBytes, newLength);
-
-                    /* TODO CHECK */
-                    foreach (var t in toAppend)
-                    {
-                        totalBytes[currentWorking] = t;
-                        currentWorking++;
-                    }
+                    SendMessage(message);
                 }
-
-                SendMessage(totalBytes);
             }
             catch (Exception e)
             {
@@ -1055,8 +1018,6 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="message">The message.</param>
         internal void SendMessageToUsersWithRights(ServerMessage message)
         {
-            var messagebytes = message.GetReversedBytes();
-            var data = new ArraySegment<byte>(messagebytes);
             try
             {
                 /* TODO CHECK */
@@ -1071,7 +1032,7 @@ namespace Oblivion.HabboHotel.Rooms
                     if (!CheckRights(usersClient, false, true, false, true))
                         continue;
 
-                    usersClient.SendMessage(data);
+                    usersClient.SendMessage(message);
                 }
             }
             catch (Exception e)
@@ -1141,7 +1102,7 @@ namespace Oblivion.HabboHotel.Rooms
                     return list;
                 }
 
-                list.AddRange(from DataRow dataRow in table.Rows select (uint) dataRow[0]);
+                list.AddRange(from DataRow dataRow in table.Rows select (uint)dataRow[0]);
             }
 
             return list;
@@ -1371,7 +1332,7 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 while (_roomKick.Count > 0)
                 {
-                    var roomKick = (RoomKick) _roomKick.Dequeue();
+                    var roomKick = (RoomKick)_roomKick.Dequeue();
                     foreach (var current in _roomUserManager.UserList.Values)
                     {
                         if (current?.GetClient()?.GetHabbo() != null && !current.IsBot &&

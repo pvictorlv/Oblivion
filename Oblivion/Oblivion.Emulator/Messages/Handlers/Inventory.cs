@@ -10,9 +10,8 @@
         /// </summary>
         internal void GetInventory()
         {
-            var msg = Session?.GetHabbo()?.GetInventoryComponent()?.SerializeFloorItemInventory();
-            if (msg == null) return;
-            Session.SendMessage(msg);
+          Session?.GetHabbo()?.GetInventoryComponent()?.SerializeFloorItemInventory(Session);
+          
         }
     }
 }

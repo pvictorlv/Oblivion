@@ -43,6 +43,9 @@ namespace Oblivion.Connection.Net
         /// </summary>
         private int _currentPacketLength;
 
+        private bool _isWebSocket;
+
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="GamePacketParser" /> class.
         /// </summary>
@@ -204,7 +207,7 @@ namespace Oblivion.Connection.Net
 
         public void SuperHandle(ClientMessage message, ISession<GameClient> userSocket)
         {
-            var client = userSocket.UserData;
+            var client = userSocket?.UserData;
             if (client == null)
                 return;
             if (client.GetMessageHandler() == null)

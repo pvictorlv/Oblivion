@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using DotNetty.Buffers;
+using DotNetty.Codecs.Http.WebSockets;
 
 namespace Oblivion.Messages
 {
-    internal class ServerMessage : IDisposable
+    public class ServerMessage : IDisposable
     {
         /// <summary>
         /// The buffer for the ServerMessage.
@@ -165,6 +167,14 @@ namespace Oblivion.Messages
             {
                 AppendServerMessage(message);
             }
+        }
+
+        public IByteBuffer CompileBuffer()
+        {
+
+            IByteBuffer buffer = Unpooled.WrappedBuffer(GetReversedBytes());
+
+            return buffer;
         }
 
         /// <summary>

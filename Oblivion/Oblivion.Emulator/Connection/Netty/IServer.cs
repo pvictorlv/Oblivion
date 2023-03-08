@@ -1,4 +1,6 @@
-﻿namespace Oblivion.Connection.Netty
+﻿using System.Threading.Tasks;
+
+namespace Oblivion.Connection.Netty
 {
 
     #region Delegates
@@ -31,7 +33,7 @@
         /// <returns>
         /// return true if start successfull, else false
         /// </returns>
-        bool Start();
+        Task<bool> Start();
 
         /// <summary>
         /// Stops this server instance.

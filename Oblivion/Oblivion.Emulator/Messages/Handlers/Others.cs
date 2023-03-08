@@ -77,7 +77,7 @@ namespace Oblivion.Messages.Handlers
         internal void SendResponse()
         {
             if (Response != null && Response.Id > 0 && Session?.GetConnection() != null)
-                Session.SendMessage(Response.GetReversedBytes());
+                Session.SendMessage(Response);
         }
 
 

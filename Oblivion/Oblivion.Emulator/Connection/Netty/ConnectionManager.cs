@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
+using DotNetty.Codecs.Http;
+using DotNetty.Codecs.Http.WebSockets.Extensions.Compression;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
+using Oblivion.Connection.Netty.WS;
 
 namespace Oblivion.Connection.Netty;
 
@@ -20,6 +24,8 @@ public class ConnectionManager<T> : IServer<T>
     ///     Server Channel
     /// </summary>
     private IChannel ServerChannel;
+
+    private IChannel WSServerChannel;
 
     /// <summary>
     ///     Main Server Worker
@@ -45,7 +51,7 @@ public class ConnectionManager<T> : IServer<T>
         this.FlashPolicy = flashPolicy;
     }
 
-    public bool Start()
+    public async Task<bool> Start()
     {
         MainServerWorkers = this.Settings.MaxIOThreads == 0
             ? new MultithreadEventLoopGroup()
@@ -83,26 +89,54 @@ public class ConnectionManager<T> : IServer<T>
                     channel.Pipeline.AddLast(headerDecoder, messageHandler);
                 }));
 
-            Task<IChannel> task = server.BindAsync(Settings.IP, Settings.Port);
-            task.Wait();
-            ServerChannel = task.Result;
+            ServerChannel = await server.BindAsync(new IPEndPoint(IPAddress.Any, Settings.Port));
+
+            var bootstrapWebSocket = new ServerBootstrap()
+                .Group(new MultithreadEventLoopGroup(), new MultithreadEventLoopGroup())
+                .Channel<TcpServerSocketChannel>()
+                .Option(ChannelOption.AutoRead, true)
+                .Option(ChannelOption.SoBacklog, Settings.Backlog)
+                .Option(ChannelOption.SoKeepalive, true)
+                .Option(ChannelOption.ConnectTimeout, TimeSpan.MaxValue)
+                .Option(ChannelOption.TcpNodelay, Settings.TcpNoDelay)
+                .Option(ChannelOption.SoRcvbuf, this.Settings.BufferSize)
+                .ChildHandler(new ActionChannelInitializer<ISocketChannel>(channel =>
+                {
+                    /*
+                     * Note: we have to create a new MessageHandler for each 
+                     * session because it has stateful properties.
+                     */
+                    channel.Pipeline.AddLast(new HttpServerCodec());
+                    channel.Pipeline.AddLast(new HttpObjectAggregator(65536));
+                    channel.Pipeline.AddLast(new WebSocketServerCompressionHandler());
+                    channel.Pipeline.AddLast(new WebSocketMessageEncoder());
+                    channel.Pipeline.AddLast(new WebSocketChannelHandler());
+
+                    //channel.Pipeline.AddLast(headerDecoder, messageHandler);
+                }));
+
+            WSServerChannel = await bootstrapWebSocket.BindAsync(new IPEndPoint(IPAddress.Any, 2096));
+            
+
             return true;
         }
-        catch
+        catch (Exception ex)
         {
-            // TODO Store/print error
+            throw ex;
             return false;
         }
     }
 
     public void Stop()
     {
-        DoStop().Wait();
+        DoStop();
     }
 
     private async Task DoStop()
     {
         await ServerChannel.CloseAsync();
+        
+        await WSServerChannel.CloseAsync();
 
         await MainServerWorkers.ShutdownGracefullyAsync();
 

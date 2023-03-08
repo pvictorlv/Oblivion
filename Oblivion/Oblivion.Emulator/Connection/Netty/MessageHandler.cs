@@ -4,6 +4,7 @@ using Oblivion.Encryption.Encryption.Hurlant.Crypto.Prng;
 using System.Net;
 using System;
 using System.Threading.Tasks;
+using Oblivion.Messages;
 
 namespace Oblivion.Connection.Netty;
 
@@ -14,7 +15,7 @@ public class MessageHandler<T> : ChannelHandlerAdapter, ISession<T>
     private static readonly log4net.ILog Logger = log4net.LogManager.GetLogger
         (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-    private IChannel Channel;
+    public IChannel Channel { get; set; }
     private ConnectionClosed<T> OnConnectionClosed;
     private ConnectionOpened<T> OnConnectionOpened;
     private MessageReceived<T> OnMessage;
@@ -23,25 +24,16 @@ public class MessageHandler<T> : ChannelHandlerAdapter, ISession<T>
 
     #region Properties
 
-    public ARC4 clientRC4
-    {
-        get; set;
-    }
+    public ARC4 clientRC4 { get; set; }
 
     public IPAddress RemoteAddress
     {
         get { return ((IPEndPoint)Channel.RemoteAddress).Address; }
     }
 
-    public ARC4 serverRC4
-    {
-        get; set;
-    }
+    public ARC4 serverRC4 { get; set; }
 
-    public T UserData
-    {
-        get; set;
-    }
+    public T UserData { get; set; }
 
     #endregion Properties
 
@@ -94,6 +86,16 @@ public class MessageHandler<T> : ChannelHandlerAdapter, ISession<T>
     {
         Logger.Warn("A networking error occured", exception);
         context.CloseAsync();
+    }
+
+    public Task Send(ServerMessage data)
+    {
+        return this.Channel.WriteAndFlushAsync(data);
+    }
+
+    public Task Send(IByteBuffer data)
+    {
+        return this.Channel.WriteAndFlushAsync(data);
     }
 
     public async Task Send(byte[] data)

@@ -280,7 +280,7 @@ namespace Oblivion
         /// <summary>
         ///     Main Void, Initializes the Emulator.
         /// </summary>
-        internal static void Initialize()
+        internal static async Task Initialize()
         {
             Console.Title = "Oblivion Emulator | Loading [...]";
             ServerStarted = DateTime.Now;
@@ -374,7 +374,7 @@ namespace Oblivion
                                     ConfigurationData.Data["game.tcp.antiddos"].ToLower() == "true",
                                     ConfigurationData.Data["game.tcp.enablenagles"].ToLower() == "true");
 
-                
+                                await _connectionManager.StartServer();
 
                 Console.WriteLine();
 

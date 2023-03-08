@@ -112,7 +112,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     queryReactor.RunNoLockFastQuery(
-                        $"DELETE FROM items_rooms WHERE room_id IS NULL AND user_id = {UserId};");
+                        $"DELETE FROM items_rooms WHERE (room_id IS NULL or room_id=0) AND user_id = {UserId};");
 
                 _mAddedItems.Clear();
                 _mRemovedItems.Clear();
@@ -141,7 +141,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryreactor2.SetNoLockQuery(
-                    $"SELECT id FROM items_rooms WHERE user_id={session.GetHabbo().Id} AND room_id IS NULL;");
+                    $"SELECT id FROM items_rooms WHERE user_id={session.GetHabbo().Id} AND (room_id IS NULL or room_id=0) IS NULL;");
                 var table = queryreactor2.GetTable();
 
                 foreach (DataRow dataRow in table.Rows)
@@ -236,8 +236,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetNoLockQuery(
-                    "SELECT id,base_item,extra_data,group_id,songcode,limited FROM items_rooms WHERE user_id=@userid AND room_id IS NULL LIMIT 4500;");
-                queryReactor.AddParameter("userid", ((int) UserId));
+                    "SELECT id,base_item,extra_data,group_id,songcode,limited FROM items_rooms WHERE user_id=@userid AND (room_id IS NULL or room_id=0) LIMIT 4500;");
+                queryReactor.AddParameter("userid", ((int)UserId));
 
                 table = queryReactor.GetTable();
             }
@@ -253,7 +253,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 string extraData;
 
                 if (!DBNull.Value.Equals(dataRow[2]))
-                    extraData = (string) dataRow[2];
+                    extraData = (string)dataRow[2];
                 else
                     extraData = string.Empty;
 
@@ -266,7 +266,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 string songCode;
 
                 if (!DBNull.Value.Equals(dataRow["songcode"]))
-                    songCode = (string) dataRow["songcode"];
+                    songCode = (string)dataRow["songcode"];
                 else
                     songCode = string.Empty;
 
@@ -287,7 +287,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             using (var queryReactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor2.SetQuery($"SELECT * FROM bots WHERE user_id = {UserId} AND room_id IS NULL");
+                queryReactor2.SetQuery($"SELECT * FROM bots WHERE user_id = {UserId} AND (room_id IS NULL or room_id=0)");
                 var table2 = queryReactor2.GetTable();
 
                 if (table2 == null)
@@ -295,7 +295,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
                 foreach (DataRow botRow in table2.Rows)
                 {
-                    if ((string) botRow["ai_type"] == "pet")
+                    if ((string)botRow["ai_type"] == "pet")
                     {
                         queryReactor2.SetQuery($"SELECT * FROM pets_data WHERE id={botRow[0]} LIMIT 1");
                         var row = queryReactor2.GetRow();
@@ -307,7 +307,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
                         _inventoryPets[pet.PetId] = pet;
                     }
-                    else if ((string) botRow["ai_type"] == "generic")
+                    else if ((string)botRow["ai_type"] == "generic")
                         AddBot(BotManager.GenerateBotFromRow(botRow));
                 }
             }
@@ -400,7 +400,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             if (id == "0" || id == "0u")
             {
                 var guidId = Guid.NewGuid();
-                id = (ShortGuid) guidId;
+                id = (ShortGuid)guidId;
             }
 
             if (insert)
@@ -507,9 +507,9 @@ namespace Oblivion.HabboHotel.Users.Inventory
         ///     Serializes the floor item inventory.
         /// </summary>
         /// <returns>ServerMessage.</returns>
-        internal ServerMessage SerializeFloorItemInventory()
+        internal void SerializeFloorItemInventory(GameClient session)
         {
-            if (_items == null) return null;
+            if (_items == null) return;
             var i = _items.Count;
 
             if (i <= 0)
@@ -518,32 +518,56 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 message.AppendInteger(1);
                 message.AppendInteger(0);
                 message.AppendInteger(0);
-                return message;
+                session.SendMessage(message);
             }
 
+            var ITEMS_PER_PAGE = 2000d;
+            int totalPages = (int)Math.Ceiling(i / ITEMS_PER_PAGE);
+
+
+            int totalSent = 0;
+            int currentPage = 0;
 
             if (i > 4500)
                 _mClient.SendMessage(StaticMessage.AdviceMaxItems);
 
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("LoadInventoryMessageComposer"));
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(i > 4500 ? 4500 : i);
 
-            var inc = 0;
+            var inventoryItems = new List<UserItem>();
 
-            foreach (var userItem in _items.Values.Where(userItem => userItem != null)
-                .TakeWhile(userItem => inc != 4500))
+            using (var serverMessage = new ServerMessage())
             {
-                inc++;
+                serverMessage.Init(LibraryParser.OutgoingRequest("LoadInventoryMessageComposer"));
 
-                if (userItem.IsWallItem)
-                    userItem.SerializeWall(serverMessage, true);
-                else
-                    userItem.SerializeFloor(serverMessage, true);
+                serverMessage.AppendInteger(1);
+                serverMessage.AppendInteger(0);
+                serverMessage.AppendInteger(_items.Count);
+
+                foreach (var inventoryItem in _items.Values)
+            {
+                totalSent++;
+
+             //   inventoryItems.Add(userItem.Value);
+
+             //   if (inventoryItems.Count >= ITEMS_PER_PAGE || totalSent >= i)
+                {
+
+                        
+
+           //             foreach (var inventoryItem in inventoryItems)
+                        {
+                            if (inventoryItem.IsWallItem)
+                                inventoryItem.SerializeWall(serverMessage, true);
+                            else
+                                inventoryItem.SerializeFloor(serverMessage, true);
+                        }
+
+                    }
+                _mClient.SendMessage(serverMessage);
+
+                    inventoryItems = new List<UserItem>();
+                    currentPage++;
+                }
             }
-
-            return serverMessage;
         }
 
 

@@ -50,7 +50,7 @@ namespace Oblivion.Manager
 
         private static void ClearUserCache()
         {
-            foreach (var user in Oblivion.UsersCached.ToList())
+            foreach (var user in Oblivion.UsersCached)
             {
                 if (user.Value == null)
                 {
@@ -58,7 +58,7 @@ namespace Oblivion.Manager
                     continue;
                 }
 
-                if (Oblivion.GetGame().GetClientManager().Clients.ContainsKey(user.Key))
+                if (Oblivion.GetGame().GetClientManager().Clients.ContainsKey(user.Value.GetClient().ConnectionId))
                 {
                     RemoveUser(user.Key);
                     continue;

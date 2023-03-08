@@ -139,7 +139,8 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             var achievements = new Dictionary<string, UserAchievement>();
 
-            /* TODO CHECK */ foreach (DataRow row in achievementsTable.Rows)
+            /* TODO CHECK */ 
+            foreach (DataRow row in achievementsTable.Rows)
             {
                 var text = (string) row["group"];
                 var level = (int) row["level"];
@@ -159,7 +160,9 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             }
 
             var favorites = (from DataRow row in favoritesTable.Rows select (uint) row["room_id"]).ToList();
+            
             var ignoreUsers = (from DataRow row in ignoresTable.Rows select (uint) row["ignore_id"]).ToList();
+            
             var tags = (from DataRow row in tagsTable.Rows select row["tag"].ToString().Replace(" ", "")).ToList();
 
 
@@ -212,11 +215,13 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 myRooms.Add(Convert.ToUInt32(r["id"].ToString()));
 
             var openedGifts = new List<int>();
-
-            var opened = statsTable["opened_gifts"].ToString();
-            if (!string.IsNullOrEmpty(opened))
+            if (statsTable != null)
             {
-                openedGifts = opened.Split(',').Select(int.Parse).ToList();
+                var opened = statsTable["opened_gifts"].ToString();
+                if (!string.IsNullOrEmpty(opened))
+                {
+                    openedGifts = opened.Split(',').Select(int.Parse).ToList();
+                }
             }
 
             var data = new UserData(userId, achievements, talents, favorites, ignoreUsers, tags, subscriptions, myRooms,
