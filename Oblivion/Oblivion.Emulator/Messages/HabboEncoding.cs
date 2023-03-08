@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 
 namespace Oblivion.Messages
 {
@@ -23,11 +24,24 @@ namespace Oblivion.Messages
 
             return (v[position++] << 24) + (v[position++] << 16) + (v[position++] << 8) + v[position++];
         }
-        public static int ToInt(byte[] data, int offset = 0)
+        
+
+        public static int ToInt(ReadOnlySequence<byte> buffer)
         {
+            var reader = new SequenceReader<byte>(buffer);
+
+            reader.TryReadBigEndian(out int value);
+
+            /*
+            var data = reader.Sequence.ToArray();
+            var offset = reader.Consumed;
+            
             CheckRange(data, offset, 4);
 
             return (data[offset] << 24) | (data[offset + 1] << 16) | (data[offset + 2] << 8) | (data[offset + 3]);
+            */
+
+            return value;
         }
 
         private static void CheckRange(byte[] data, int offset, int count)

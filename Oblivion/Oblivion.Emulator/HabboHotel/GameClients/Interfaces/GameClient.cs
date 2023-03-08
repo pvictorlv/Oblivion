@@ -2,8 +2,8 @@ using System;
 using System.Linq;
 using System.Web;
 using Oblivion.Configuration;
+using Oblivion.Connection;
 using Oblivion.Connection.Net;
-using Oblivion.Connection.SuperSocket;
 using Oblivion.Encryption.Encryption.Hurlant.Crypto.Prng;
 using Oblivion.HabboHotel.Users;
 using Oblivion.HabboHotel.Users.UserDataManagement;
@@ -17,12 +17,12 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
     /// <summary>
     ///     Class GameClient.
     /// </summary>
-    public class GameClient : IAirHandler
+    public class GameClient
     {
         /// <summary>
         ///     The _connection
         /// </summary>
-        private Session<GameClient> _connection;
+        private ISession<GameClient> _connection;
 
         /// <summary>
         ///     The _disconnected
@@ -65,7 +65,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// </summary>
         /// <param name="clientId">The client identifier.</param>
         /// <param name="connection">The connection.</param>
-        internal GameClient(uint clientId, Session<GameClient> connection)
+        internal GameClient(long clientId, ISession<GameClient> connection)
         {
             ConnectionId = clientId;
             _connection = connection;
@@ -77,7 +77,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         ///     Gets the connection identifier.
         /// </summary>
         /// <value>The connection identifier.</value>
-        internal uint ConnectionId { get; }
+        internal long ConnectionId { get; set; }
 
         public bool IsAir { get; set; }
 
@@ -88,7 +88,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         ///     Gets the connection.
         /// </summary>
         /// <returns>ConnectionInformation.</returns>
-        internal Session<GameClient> GetConnection() => _connection;
+        internal ISession<GameClient> GetConnection() => _connection;
 
         /// <summary>
         ///     Gets the message handler.
@@ -140,7 +140,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         {
             try
             {
-                var ip = GetConnection()?.RemoteEndPoint.Address.ToString();
+                var ip = GetConnection()?.RemoteAddress.ToString();
                 if (ip == null)
                     return false;
                 var userData = UserDataFactory.GetUserData(authTicket, out var errorCode);
@@ -616,7 +616,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
             var bytes = message.GetReversedBytes();
 
-            _connection.SendAsync(bytes);
+            _connection.Send(bytes);
         }
 
         /// <summary>
@@ -630,7 +630,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
         internal void SendMessage(ArraySegment<byte> bytes)
         {
-            _connection?.SendArray(bytes);
+            _connection?.Send(bytes.Array);
         }
 
         /// <summary>

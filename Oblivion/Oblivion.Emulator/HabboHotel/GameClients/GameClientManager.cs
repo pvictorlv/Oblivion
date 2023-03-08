@@ -3,14 +3,17 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Oblivion.Configuration;
+using Oblivion.Connection;
 using Oblivion.Connection.Connection;
-using Oblivion.Connection.SuperSocket;
+using Oblivion.Connection.Net;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
 using Oblivion.Util;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Oblivion.HabboHotel.GameClients
 {
@@ -19,6 +22,8 @@ namespace Oblivion.HabboHotel.GameClients
     /// </summary>
     internal class GameClientManager
     {
+        private int _connectionCounter;
+
         /// <summary>
         ///     The _badge queue
         /// </summary>
@@ -44,14 +49,14 @@ namespace Oblivion.HabboHotel.GameClients
         /// <summary>
         ///     The clients
         /// </summary>
-        internal ConcurrentDictionary<uint, GameClient> Clients;
+        internal ConcurrentDictionary<long, GameClient> Clients;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="GameClientManager" /> class.
         /// </summary>
         internal GameClientManager()
         {
-            Clients = new ConcurrentDictionary<uint, GameClient>();
+            Clients = new ConcurrentDictionary<long, GameClient>();
             _userNameRegister = new ConcurrentDictionary<string, GameClient>();
             _userIdRegister = new ConcurrentDictionary<uint, GameClient>();
         }
@@ -205,7 +210,8 @@ namespace Oblivion.HabboHotel.GameClients
             var bytes = message.GetReversedBytes();
 
             foreach (var current in Clients.Values.Where(current => current?.GetHabbo() != null).Where(current =>
-                (current.GetHabbo().Rank == 4u || current.GetHabbo().Rank == 5u) || current.GetHabbo().Rank == 6u))
+                         (current.GetHabbo().Rank == 4u || current.GetHabbo().Rank == 5u) ||
+                         current.GetHabbo().Rank == 6u))
                 current.GetConnection().Send(bytes);
         }
 
@@ -214,11 +220,17 @@ namespace Oblivion.HabboHotel.GameClients
         /// </summary>
         /// <param name="clientId">The client identifier.</param>
         /// <param name="connection">The connection.</param>
-        internal void CreateAndStartClient(uint clientId, Session<GameClient> connection)
+        internal void CreateAndStartClient(ISession<GameClient> connection)
         {
-            var gameClient = new GameClient(clientId, connection);
+            
+            Interlocked.Increment(ref _connectionCounter);
+
+
+            var gameClient = new GameClient(_connectionCounter, connection);
+            gameClient.PacketParser = new GamePacketParser();
+            
             connection.UserData = gameClient;
-            Clients.AddOrUpdate(clientId, gameClient, (key, value) => gameClient);
+            Clients.AddOrUpdate(gameClient.ConnectionId, gameClient, (key, value) => gameClient);
             gameClient.StartConnection();
         }
 
@@ -255,7 +267,7 @@ namespace Oblivion.HabboHotel.GameClients
 
             foreach (var client in Clients.Values)
             {
-                client?.GetConnection()?.SendAsync(bytes);
+                client?.GetConnection()?.Send(bytes);
             }
         }
 

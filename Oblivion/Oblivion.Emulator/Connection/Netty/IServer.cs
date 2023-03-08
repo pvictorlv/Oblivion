@@ -1,24 +1,17 @@
-﻿using System;
-using Oblivion.HabboHotel.GameClients.Interfaces;
-
-namespace Oblivion.Connection.SuperSocket
+﻿namespace Oblivion.Connection.Netty
 {
 
     #region Delegates
 
-    public delegate void ConnectionClosed<T>(Session<T> session)
-        where T: IAirHandler;
+    public delegate void ConnectionClosed<T>(ISession<T> session);
 
-    public delegate void ConnectionOpened<T>(Session<T> session)
-        where T : IAirHandler;
+    public delegate void ConnectionOpened<T>(ISession<T> session);
 
-    public delegate void MessageReceived<T>(Session<T> session, byte[] body, int bytes)
-        where T : IAirHandler;
+    public delegate void MessageReceived<T>(ISession<T> session, byte[] body);
 
     #endregion Delegates
 
     public interface IServer<T>
-        where T : IAirHandler
     {
         #region Events
 

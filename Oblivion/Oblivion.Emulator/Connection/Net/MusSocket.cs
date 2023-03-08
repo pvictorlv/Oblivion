@@ -9,11 +9,11 @@ namespace Oblivion.Connection.Net
 {
     public class MusSocket
     {
-        private static Socket _handler;
+        private static System.Net.Sockets.Socket _handler;
         private static List<string> _allowedIps;
         internal MusSocket(int port, string allowedIps)
         {
-            _handler = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            _handler = new System.Net.Sockets.Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             _allowedIps = allowedIps.Split(';').ToList();
            

@@ -150,7 +150,7 @@ namespace Oblivion.Messages.Handlers
         {
             var cipherKey = Request.GetString();
             var sharedKey = Handler.CalculateDiffieHellmanSharedKey(cipherKey);
-
+            /*
             if (Session.IsAir)
             {
                 Response.Init(LibraryParser.OutgoingRequest("SecretKeyMessageComposer"));
@@ -168,6 +168,7 @@ namespace Oblivion.Messages.Handlers
                 Session.ServerRc4 = new ARC4(data);
                 Session.GetConnection().ActivateRc4Filter();
             }
+            */
         }
 
         internal void InitConsole()

@@ -1,9 +1,12 @@
 using System;
 using System.Net.Sockets;
+using System.Threading;
+using Oblivion.Connection;
 using Oblivion.Connection.Connection;
 using Oblivion.Connection.Net;
-using Oblivion.Connection.SuperSocket;
+using Oblivion.Connection.Netty;
 using Oblivion.HabboHotel.GameClients.Interfaces;
+using Oblivion.HabboHotel.Users;
 using Oblivion.Messages;
 
 namespace Oblivion.Configuration
@@ -16,8 +19,9 @@ namespace Oblivion.Configuration
         /// <summary>
         /// The manager
         /// </summary>
-        public SuperServer<GameClient> Manager;
+        public ConnectionManager<GameClient> Manager;
 
+        private int _connectionCounter;
 
         internal int ConnectionsPerIp;
 
@@ -31,37 +35,40 @@ namespace Oblivion.Configuration
         /// <param name="enabeNagles">if set to <c>true</c> [enabe nagles].</param>
         public ConnectionHandling(int port, int maxConnections, int connectionsPerIp, bool antiDdoS, bool enabeNagles)
         {
-            Manager = new SuperServer<GameClient>(port, maxConnections);
+
+            CrossDomainSettings flashPolicy = new CrossDomainSettings("*", port);
+
+            
+            Manager = new ConnectionManager<GameClient>(new ServerSettings()
+            {
+                Port = port,
+                IP = "0.0.0.0"
+            }, flashPolicy);
             ConnectionsPerIp = connectionsPerIp;
 
             SocketConnectionCheck.SetupTcpAuthorization(maxConnections);
             //            Manager.OnConnectionOpened += OnClientConnected;
             Manager.OnConnectionClosed += (session) => OnClientDisconnected(session, null);
 
-            Manager.OnMessageReceived += (session, body, bytes) =>
+            Manager.OnMessageReceived += (session, body) =>
             {
-                if (session?.Parser == null) return;
+                if (session?.UserData?.PacketParser == null) return;
                 
                 using (var clientMessage = new ClientMessage(body))
                 {
                     if (session.UserData.IsAir && !AirPacketTranslator.ReplaceIncomingHeader(clientMessage))
                         return;
 
-                    session.Parser.SuperHandle(clientMessage, session);
+                    session.UserData.PacketParser.SuperHandle(clientMessage, session);
                 }
             };
 
-            Manager.NewSessionConnected += session =>
+            Manager.OnConnectionOpened += session =>
             {
 //                if (SocketConnectionCheck.CheckConnection(session.GetIp(), connectionsPerIp, true))
                 {
-                    session.SocketSession.Client
-                        .SetSocketOption(SocketOptionLevel.Socket,
-                            SocketOptionName.NoDelay, !enabeNagles);
-
-                    session.Parser = new GamePacketParser();
-                    session.ConnId = ++Manager.AcceptedConnections;
-                    Oblivion.GetGame().GetClientManager().CreateAndStartClient(session.ConnId, session);
+                    
+                    Oblivion.GetGame().GetClientManager().CreateAndStartClient(session);
                 }
 //                else
                 {
@@ -70,8 +77,7 @@ namespace Oblivion.Configuration
                 }
             };
 
-
-            Manager.SessionClosed += (session, value) => OnClientDisconnected(session, null);
+            
 
             Manager.Start();
 
@@ -99,12 +105,12 @@ namespace Oblivion.Configuration
         /// </summary>
         /// <param name="connection">The connection.</param>
         /// <param name="exception"></param>
-        private static void OnClientDisconnected(Session<GameClient> connection, Exception exception)
+        private static void OnClientDisconnected(ISession<GameClient> connection, Exception exception)
         {
             try
             {
-                SocketConnectionCheck.FreeConnection(connection.GetIp());
-                Oblivion.GetGame().GetClientManager().DisposeConnection((uint) connection.ConnId);
+                SocketConnectionCheck.FreeConnection(connection.RemoteAddress.ToString());
+                Oblivion.GetGame().GetClientManager().DisposeConnection((uint) connection.UserData.ConnectionId);
             }
             catch (Exception ex)
             {

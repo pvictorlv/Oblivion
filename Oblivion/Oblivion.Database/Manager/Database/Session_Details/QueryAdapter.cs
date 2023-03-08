@@ -4,7 +4,7 @@ using System;
 using System.Data;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.Database.Manager.Session_Details.Interfaces;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 
 #endregion
 

@@ -3,10 +3,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using MySqlConnector;
 using Oblivion.Database.Manager.Database.Database_Exceptions;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.Database.Manager.Managers.Database;
-using MySql.Data.MySqlClient;
 
 #endregion
 

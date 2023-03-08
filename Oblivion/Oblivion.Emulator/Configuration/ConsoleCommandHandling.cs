@@ -123,7 +123,7 @@ namespace Oblivion.Configuration
                         Console.WriteLine();
                         Console.WriteLine("Stats:");
                         Console.WriteLine("\tAccepted Connections: {0}",
-                            Oblivion.GetConnectionManager().Manager.AcceptedConnections);
+                            Oblivion.GetConnectionManager().Manager.AcceptedClients);
                         Console.WriteLine("\tActive Threads: {0}", Process.GetCurrentProcess().Threads.Count);
                         Console.WriteLine();
                         Console.WriteLine();

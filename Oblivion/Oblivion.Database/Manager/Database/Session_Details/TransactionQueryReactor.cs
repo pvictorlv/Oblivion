@@ -4,7 +4,7 @@ using Oblivion.Database.Manager.Database.Database_Exceptions;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using FirebirdSql.Data.FirebirdClient;
 using Ingres.Client;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using Npgsql;
 
 #endregion

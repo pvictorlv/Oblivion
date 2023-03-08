@@ -1,6 +1,5 @@
 using System;
 using Oblivion.Configuration;
-using Oblivion.Connection.SuperSocket;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages;
 using Oblivion.Messages.Factorys;
@@ -203,7 +202,7 @@ namespace Oblivion.Connection.Net
             }
         }
 
-        public void SuperHandle(ClientMessage message, Session<GameClient> userSocket)
+        public void SuperHandle(ClientMessage message, ISession<GameClient> userSocket)
         {
             var client = userSocket.UserData;
             if (client == null)
