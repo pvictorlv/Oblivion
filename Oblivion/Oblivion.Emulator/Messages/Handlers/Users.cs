@@ -328,7 +328,7 @@ namespace Oblivion.Messages.Handlers
             serverMessage.AppendBool(preferences.PreferOldChat);
             serverMessage.AppendBool(preferences.IgnoreRoomInvite);
             serverMessage.AppendBool(preferences.DisableCameraFollow);
-            serverMessage.AppendInteger(3); // collapse friends (3 = no)
+            serverMessage.AppendInteger(0); // collapse friends (3 = no)
             serverMessage.AppendInteger(preferences.ChatColor); //bubble
             Session.SendMessage(serverMessage);
         }

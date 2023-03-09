@@ -587,7 +587,7 @@ namespace Oblivion.Messages.Handlers
             var x = Request.GetInteger();
             var y = Request.GetInteger();
             var rot = Request.GetInteger();
-            Request.GetInteger();
+            //Request.GetInteger();
 
             IWiredItem wired = null;
             if (item.IsWired)

@@ -287,7 +287,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             using (var queryReactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor2.SetQuery($"SELECT * FROM bots WHERE user_id = {UserId} AND (room_id IS NULL or room_id=0)");
+                queryReactor2.SetQuery(
+                    $"SELECT * FROM bots WHERE user_id = {UserId} AND (room_id IS NULL or room_id=0)");
                 var table2 = queryReactor2.GetTable();
 
                 if (table2 == null)
@@ -521,18 +522,14 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 session.SendMessage(message);
             }
 
-            var ITEMS_PER_PAGE = 2000d;
-            int totalPages = (int)Math.Ceiling(i / ITEMS_PER_PAGE);
-
 
             int totalSent = 0;
-            int currentPage = 0;
 
             if (i > 4500)
                 _mClient.SendMessage(StaticMessage.AdviceMaxItems);
 
 
-            var inventoryItems = new List<UserItem>();
+
 
             using (var serverMessage = new ServerMessage())
             {
@@ -540,33 +537,20 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
                 serverMessage.AppendInteger(1);
                 serverMessage.AppendInteger(0);
-                serverMessage.AppendInteger(_items.Count);
+                serverMessage.AppendInteger(i >= 4500 ? 4500 : i);
 
-                foreach (var inventoryItem in _items.Values)
-            {
-                totalSent++;
-
-             //   inventoryItems.Add(userItem.Value);
-
-             //   if (inventoryItems.Count >= ITEMS_PER_PAGE || totalSent >= i)
+                foreach (var inventoryItem in _items.Values.Where(userItem => userItem != null)
+                             .TakeWhile(_ => totalSent != 4500))
                 {
+                    totalSent++;
 
-                        
-
-           //             foreach (var inventoryItem in inventoryItems)
-                        {
-                            if (inventoryItem.IsWallItem)
-                                inventoryItem.SerializeWall(serverMessage, true);
-                            else
-                                inventoryItem.SerializeFloor(serverMessage, true);
-                        }
-
-                    }
-                _mClient.SendMessage(serverMessage);
-
-                    inventoryItems = new List<UserItem>();
-                    currentPage++;
+                    if (inventoryItem.IsWallItem)
+                        inventoryItem.SerializeWall(serverMessage, true);
+                    else
+                        inventoryItem.SerializeFloor(serverMessage, true);
                 }
+
+                _mClient.SendMessage(serverMessage);
             }
         }
 

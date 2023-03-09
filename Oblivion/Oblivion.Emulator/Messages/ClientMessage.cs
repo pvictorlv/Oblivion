@@ -248,10 +248,17 @@ namespace Oblivion.Messages
         /// <returns>System.Int32.</returns>
         internal int GetInteger()
         {
-            if (this.buffer != null)
-                return this.buffer.ReadInt();
+            try
+            {
+                if (this.buffer != null)
+                    return this.buffer.ReadInt();
 
-            return HabboEncoding.DecodeInt32(_body, ref _position);
+                return HabboEncoding.DecodeInt32(_body, ref _position);
+            }
+            catch
+            {
+                return 0;
+            }
         }
 
         internal bool GetIntegerAsBool()
