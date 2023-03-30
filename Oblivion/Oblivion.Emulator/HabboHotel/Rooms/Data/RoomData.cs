@@ -411,28 +411,19 @@ namespace Oblivion.HabboHotel.Rooms.Data
             message.AppendInteger(TagCount);
             /* TODO CHECK */ foreach (var current in Tags) message.AppendString(current);
 
-            string imageData = null;
-
-            var enumType = enterRoom ? 32 : 0;
-            var publicItem = Oblivion.GetGame().GetNavigator().GetPublicItem(Id);
-            if (!string.IsNullOrEmpty(publicItem?.Image))
-            {
-                imageData = publicItem.Image;
-                enumType += 1;
-            }
+            var enumType = 32;
+            
 
             if (Group != null) enumType += 2;
             if (showEvents && Event != null) enumType += 4;
             if (Type == "private") enumType += 8;
             if (AllowPets) enumType += 16;
+
             message.AppendInteger(enumType);
 
-            if (imageData != null)
-            {
-                message.AppendString(imageData);
-            }
             if (Group != null)
             {
+
                 message.AppendInteger(Group.Id);
                 message.AppendString(Group.Name);
                 message.AppendString(Group.Badge);

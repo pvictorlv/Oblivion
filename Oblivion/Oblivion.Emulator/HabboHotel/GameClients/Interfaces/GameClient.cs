@@ -231,19 +231,16 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                     }
 
                     SendMessage(serverMessage);
-                    if (_habbo.GetSubscriptionManager() == null)
+                    if (_habbo.GetSubscriptionManager() != null)
                     {
-                        return false;
+                        serverMessage.Init(LibraryParser.OutgoingRequest("UserClubRightsMessageComposer"));
+                        serverMessage.AppendInteger(_habbo.GetSubscriptionManager().HasSubscription ? 2 : 0);
+                        serverMessage.AppendInteger(_habbo.Rank);
+                        serverMessage.AppendInteger(0); //Is an ambassador
+                        SendMessage(serverMessage);
                     }
-                    serverMessage.Init(LibraryParser.OutgoingRequest("UserClubRightsMessageComposer"));
-                    serverMessage.AppendInteger(_habbo.GetSubscriptionManager().HasSubscription ? 2 : 0);
-                    serverMessage.AppendInteger(_habbo.Rank);
-                    serverMessage.AppendInteger(0);
-                    SendMessage(serverMessage);
 
                     serverMessage.Init(LibraryParser.OutgoingRequest("EnableNotificationsMessageComposer"));
-                    serverMessage.AppendBool(true);
-                    serverMessage.AppendBool(false);
                     serverMessage.AppendBool(true);
                     SendMessage(serverMessage);
 
@@ -401,7 +398,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                         .AchievementDataCached);
 
                     if (!GetHabbo().Vip && ExtraSettings.NewUsersGiftsEnabled)
-                    {
+                    {//todo
                         serverMessage.Init(LibraryParser.OutgoingRequest("NuxSuggestFreeGiftsMessageComposer"));
                         SendMessage(serverMessage);
                     }
@@ -603,7 +600,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             if (_connection == null)
                 return;
 
-            _connection.Send(message).Wait();
+            _connection.Channel.WriteAndFlushAsync(message).Wait();
         }
 
         internal async Task SendMessageAsync(ServerMessage message)
@@ -614,9 +611,9 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             if (_connection == null)
                 return;
 
-           // var bytes = message.GetReversedBytes();
+            // var bytes = message.GetReversedBytes();
 
-            await _connection.Send(message);
+            await _connection.Channel.WriteAndFlushAsync(message);
         }
 
         /// <summary>
