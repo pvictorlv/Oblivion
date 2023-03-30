@@ -270,7 +270,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         private ServerMessage SerializeHeightmap()
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FloorMapMessageComposer"));
-            serverMessage.AppendBool(false);
+            serverMessage.AppendBool(true);
             serverMessage.AppendInteger(_mRoom.RoomData.WallHeight);
             var FloorMap = new StringBuilder();
 

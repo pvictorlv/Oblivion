@@ -451,9 +451,10 @@ namespace Oblivion.HabboHotel.Rooms
                         var start = Oblivion.GetUnixTimeStamp();
                         try
                         {
-                            if (!GetSoccer().OnCycle())
+                            if (!await GetSoccer().OnCycle())
                             {
-                                await Task.Delay(175);
+                                ;
+                                await Task.Delay(250);
                                 continue;
                             }
                         }

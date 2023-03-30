@@ -8,6 +8,7 @@ using Oblivion.HabboHotel.Rooms;
 using Oblivion.Messages.Parsers;
 using Oblivion.Encryption.Encryption;
 using Oblivion.Encryption.Encryption.Hurlant.Crypto.Prng;
+using Oblivion.HabboHotel.Users;
 
 namespace Oblivion.Messages.Handlers
 {
@@ -218,6 +219,7 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session?.GetHabbo() == null)
                 return;
+            
             var habbo = Session.GetHabbo();
             Response.Init(LibraryParser.OutgoingRequest("UserObjectMessageComposer"));
             Response.AppendInteger(habbo.Id);
@@ -230,61 +232,86 @@ namespace Oblivion.Messages.Handlers
             Response.AppendInteger(habbo.Respect);
             Response.AppendInteger(habbo.DailyRespectPoints);
             Response.AppendInteger(habbo.DailyPetRespectPoints);
-            Response.AppendBool(true);
+            Response.AppendBool(false);
             Response.AppendString(habbo.LastOnline.ToString(CultureInfo.InvariantCulture));
             Response.AppendBool(habbo.CanChangeName());
             Response.AppendBool(false);
             SendResponse();
+
             Response.Init(LibraryParser.OutgoingRequest("BuildersClubMembershipMessageComposer"));
             Response.AppendInteger(Session.GetHabbo().BuildersExpire);
             Response.AppendInteger(Session.GetHabbo().BuildersItemsMax);
             Response.AppendInteger(2);
             SendResponse();
             var tradeLocked = Session.GetHabbo().CheckTrading();
-            var canUseFloorEditor = ExtraSettings.EveryoneUseFloor || Session.GetHabbo().Vip ||
-                                    Session.GetHabbo().Rank >= 4;
+
             Response.Init(LibraryParser.OutgoingRequest("SendPerkAllowancesMessageComposer"));
-            Response.AppendInteger(11);
-            Response.AppendString("BUILDER_AT_WORK");
-            Response.AppendString("");
-            Response.AppendBool(canUseFloorEditor);
-            Response.AppendString("VOTE_IN_COMPETITIONS");
-            Response.AppendString("requirement.unfulfilled.helper_level_2");
-            Response.AppendBool(false);
-            Response.AppendString("USE_GUIDE_TOOL");
-            Response.AppendString(Session.GetHabbo().TalentStatus == "helper" &&
-                                  Session.GetHabbo().CurrentTalentLevel >= 4 ||
-                                  Session.GetHabbo().Rank >= 4
-                ? ""
-                : "requirement.unfulfilled.helper_level_4");
-            Response.AppendBool(Session.GetHabbo().TalentStatus == "helper" &&
-                                Session.GetHabbo().CurrentTalentLevel >= 4 ||
-                                Session.GetHabbo().Rank >= 4);
-            Response.AppendString("JUDGE_CHAT_REVIEWS");
-            Response.AppendString("requirement.unfulfilled.helper_level_6");
-            Response.AppendBool(false);
-            Response.AppendString("NAVIGATOR_ROOM_THUMBNAIL_CAMERA");
-            Response.AppendString("");
-            Response.AppendBool(true);
-            Response.AppendString("CALL_ON_HELPERS");
-            Response.AppendString("");
-            Response.AppendBool(true);
-            Response.AppendString("CITIZEN");
-            Response.AppendString("");
-            Response.AppendBool(Session.GetHabbo().TalentStatus == "helper" ||
-                                Session.GetHabbo().CurrentTalentLevel >= 4);
-            Response.AppendString("MOUSE_ZOOM");
-            Response.AppendString("");
-            Response.AppendBool(false);
-            Response.AppendString("TRADE");
-            Response.AppendString(tradeLocked ? "" : "requirement.unfulfilled.no_trade_lock");
-            Response.AppendBool(tradeLocked);
-            Response.AppendString("CAMERA");
-            Response.AppendString("");
-            Response.AppendBool(ExtraSettings.EnableBetaCamera);
-            Response.AppendString("NAVIGATOR_PHASE_TWO_2014");
-            Response.AppendString("");
-            Response.AppendBool(true);
+
+            Response.AppendInteger(16); // Count
+             Response.AppendString("USE_GUIDE_TOOL");
+             Response.AppendString("");
+             Response.AppendBool(habbo.Rank >= 3);
+
+             Response.AppendString("GIVE_GUIDE_TOURS");
+             Response.AppendString("requirement.unfulfilled.helper_le");
+             Response.AppendBool(habbo.Rank >= 3);
+
+             Response.AppendString("JUDGE_CHAT_REVIEWS");
+             Response.AppendString(""); // ??
+             Response.AppendBool(true);
+
+             Response.AppendString("VOTE_IN_COMPETITIONS");
+             Response.AppendString(""); // ??
+             Response.AppendBool(true);
+
+             Response.AppendString("CALL_ON_HELPERS");
+             Response.AppendString(""); // ??
+             Response.AppendBool(true);
+
+             Response.AppendString("CITIZEN");
+             Response.AppendString(""); // ??
+             Response.AppendBool(true);
+
+             Response.AppendString("TRADE");
+             Response.AppendString(""); // ??
+             Response.AppendBool(tradeLocked);
+
+             Response.AppendString("HEIGHTMAP_EDITOR_BETA");
+             Response.AppendString(""); // ??
+             Response.AppendBool(false);
+
+             Response.AppendString("EXPERIMENTAL_CHAT_BETA");
+             Response.AppendString("requirement.unfulfilled.helper_level_2");
+             Response.AppendBool(true);
+
+             Response.AppendString("EXPERIMENTAL_TOOLBAR");
+             Response.AppendString(""); // ??
+             Response.AppendBool(true);
+
+             Response.AppendString("BUILDER_AT_WORK");
+             Response.AppendString(""); // ??
+             Response.AppendBool(true);
+
+             Response.AppendString("NAVIGATOR_PHASE_ONE_2014");
+             Response.AppendString(""); // ??
+             Response.AppendBool(false);
+
+             Response.AppendString("CAMERA");
+             Response.AppendString(""); // ??
+             Response.AppendBool(true);
+
+             Response.AppendString("NAVIGATOR_PHASE_TWO_2014");
+             Response.AppendString(""); // ??
+             Response.AppendBool(true);
+
+             Response.AppendString("MOUSE_ZOOM");
+             Response.AppendString(""); // ??
+             Response.AppendBool(true);
+
+             Response.AppendString("NAVIGATOR_ROOM_THUMBNAIL_CAMERA");
+             Response.AppendString(""); // ??
+             Response.AppendBool(true);
+
             SendResponse();
 
 

@@ -240,6 +240,12 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                         SendMessage(serverMessage);
                     }
 
+                    serverMessage.Init(LibraryParser.OutgoingRequest("UserRightsMessageComposer"));
+                    serverMessage.AppendBool(true);
+                    serverMessage.AppendBool(false);
+                    serverMessage.AppendBool(true);
+                    SendMessage(serverMessage);
+
                     serverMessage.Init(LibraryParser.OutgoingRequest("EnableNotificationsMessageComposer"));
                     serverMessage.AppendBool(true);
                     SendMessage(serverMessage);
