@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 
 namespace Oblivion.Util
@@ -104,7 +105,7 @@ namespace Oblivion.Util
             /* TODO CHECK */ foreach (var current in _parameters)
                 dbClient.AddParameter(current.Key, current.Value);
 
-            dbClient.RunQuery();
+            await dbClient.RunQueryAsync();
         }  /// <summary>
         /// Executes the specified database client with no lock.
         /// </summary>
@@ -121,13 +122,13 @@ namespace Oblivion.Util
             /* TODO CHECK */ foreach (var current in _parameters)
                 dbClient.AddParameter(current.Key, current.Value);
 
-            dbClient.RunQuery();
+            await dbClient.RunQueryAsync();
         }
 
         /// <summary>
         /// Disposes this instance.
         /// </summary>
-        internal async Task Dispose()
+        internal void Dispose()
         {
             _parameters.Clear();
             _queries.Clear();

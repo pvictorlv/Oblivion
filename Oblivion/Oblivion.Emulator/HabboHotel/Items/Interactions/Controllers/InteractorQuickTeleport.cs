@@ -8,12 +8,12 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorQuickTeleport : FurniInteractorModel
     {
-        public override void OnUserWalkOff(GameClient session, RoomItem item, RoomUser user)
+        public override async Task OnUserWalkOff(GameClient session, RoomItem item, RoomUser user)
         {
             OnUserWalk(session, item, user);
         }
 
-        public override void OnPlace(GameClient session, RoomItem item)
+        public override async Task OnPlace(GameClient session, RoomItem item)
         {
             item.ExtraData = "0";
 
@@ -46,7 +46,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             item.InteractingUser2 = 0u;
         }
 
-        public override void OnRemove(GameClient session, RoomItem item)
+        public override async Task OnRemove(GameClient session, RoomItem item)
         {
             item.ExtraData = "0";
 
@@ -69,7 +69,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             item.InteractingUser2 = 0u;
         }
 
-        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             if (item == null || item.GetRoom() == null || session == null || session.GetHabbo() == null)
                 return;
@@ -91,7 +91,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             item.InteractingUser = roomUserByHabbo.GetClient().GetHabbo().Id;
         }
 
-        public override void OnUserWalk(GameClient session, RoomItem item, RoomUser user)
+        public override async Task OnUserWalk(GameClient session, RoomItem item, RoomUser user)
         {
             if (item == null || item.GetRoom() == null || session == null || session.GetHabbo() == null)
                 return;

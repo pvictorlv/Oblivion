@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading.Tasks;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
 
@@ -274,18 +275,18 @@ namespace Oblivion.HabboHotel.Groups.Interfaces
         /// <param name="message">The message.</param>
         internal async Task SerializeForumRoot(ServerMessage message)
         {
-            message.AppendInteger(Id);
-            message.AppendString(Name);
-            message.AppendString(string.Empty);
-            message.AppendString(Badge);
-            message.AppendInteger(0);
-            message.AppendInteger((int)Math.Round(ForumScore));
-            message.AppendInteger(ForumMessagesCount);
-            message.AppendInteger(0);
-            message.AppendInteger(0);
-            message.AppendInteger(ForumLastPosterId);
-            message.AppendString(ForumLastPosterName);
-            message.AppendInteger(ForumLastPostTime);
+            await message.AppendIntegerAsync(Id);
+            await message.AppendStringAsync(Name);
+            await message.AppendStringAsync(string.Empty);
+            await message.AppendStringAsync(Badge);
+            await message.AppendIntegerAsync(0);
+            await message.AppendIntegerAsync((int)Math.Round(ForumScore));
+            await message.AppendIntegerAsync(ForumMessagesCount);
+            await message.AppendIntegerAsync(0);
+            await message.AppendIntegerAsync(0);
+            await message.AppendIntegerAsync(ForumLastPosterId);
+            await message.AppendStringAsync(ForumLastPosterName);
+            await message.AppendIntegerAsync(ForumLastPostTime);
         }
 
         /// <summary>
@@ -307,7 +308,7 @@ namespace Oblivion.HabboHotel.Groups.Interfaces
                 adapter.AddParameter("lastpostername", ForumLastPosterName);
                 adapter.AddParameter("lasttimestamp", ForumLastPosterTimestamp);
 
-                adapter.RunQuery();
+                await adapter.RunQueryAsync();
             }
         }
     }

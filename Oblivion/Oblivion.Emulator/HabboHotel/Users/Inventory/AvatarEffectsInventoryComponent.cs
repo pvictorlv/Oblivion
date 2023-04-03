@@ -97,19 +97,19 @@ namespace Oblivion.HabboHotel.Users.Inventory
         internal async Task AddNewEffect(int effectId, int duration, short type)
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery(
+                await queryReactor.RunFastQueryAsync(
                     string.Concat(
                         "INSERT INTO users_effects (user_id,effect_id,total_duration,is_activated,activated_stamp) VALUES (",
                         _userId, ",", effectId, ",", duration, ",'0',0)"));
 
             _effects.Add(new AvatarEffect(effectId, duration, false, 0.0, type));
-            GetClient()
+            await GetClient()
                 .GetMessageHandler()
                 .GetResponse()
-                .Init(LibraryParser.OutgoingRequest("AddEffectToInventoryMessageComposer"));
-            GetClient().GetMessageHandler().GetResponse().AppendInteger(effectId);
-            GetClient().GetMessageHandler().GetResponse().AppendInteger(type);
-            GetClient().GetMessageHandler().GetResponse().AppendInteger(duration);
+                .InitAsync(LibraryParser.OutgoingRequest("AddEffectToInventoryMessageComposer"));
+            await GetClient().GetMessageHandler().GetResponse().AppendIntegerAsync(effectId);
+            await GetClient().GetMessageHandler().GetResponse().AppendIntegerAsync(type);
+            await GetClient().GetMessageHandler().GetResponse().AppendIntegerAsync(duration);
             GetClient().GetMessageHandler().GetResponse().AppendBool(duration == -1);
             await GetClient().GetMessageHandler().SendResponse();
         }
@@ -221,7 +221,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 .GetResponse()
                 .InitAsync(LibraryParser.OutgoingRequest("StopAvatarEffectMessageComposer"));
 
-            GetClient().GetMessageHandler().GetResponse().AppendInteger(effectId);
+            await GetClient().GetMessageHandler().GetResponse().AppendIntegerAsync(effectId);
             await GetClient().GetMessageHandler().SendResponse();
 
             if (CurrentEffect >= 0)
@@ -265,9 +265,9 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 CurrentEffect = effectId;
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ApplyEffectMessageComposer"));
-            serverMessage.AppendInteger(roomUserByHabbo.VirtualId);
-            serverMessage.AppendInteger(effectId);
-            serverMessage.AppendInteger(0);
+            await serverMessage.AppendIntegerAsync(roomUserByHabbo.VirtualId);
+            await serverMessage.AppendIntegerAsync(effectId);
+            await serverMessage.AppendIntegerAsync(0);
             await userRoom.SendMessageAsync(serverMessage);
         }
         /// <summary>
@@ -285,9 +285,9 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 return;
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ApplyEffectMessageComposer"));
-            serverMessage.AppendInteger(roomUserByHabbo.VirtualId);
-            serverMessage.AppendInteger(effectId);
-            serverMessage.AppendInteger(0);
+            await serverMessage.AppendIntegerAsync(roomUserByHabbo.VirtualId);
+            await serverMessage.AppendIntegerAsync(effectId);
+            await serverMessage.AppendIntegerAsync(0);
             await roomUserByHabbo.GetClient().SendMessageAsync(serverMessage);
         }
 

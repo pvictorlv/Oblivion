@@ -46,7 +46,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 adapter.SetQuery("UPDATE users SET rank=@rank WHERE username=@user LIMIT 1");
                 adapter.AddParameter("user", userName);
                 adapter.AddParameter("rank", rank);
-                adapter.RunQuery();
+                await adapter.RunQueryAsync();
             }
 
             user.GetHabbo().Rank = Convert.ToUInt32(pms[1]);

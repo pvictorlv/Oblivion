@@ -686,7 +686,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             await ApplyEffect(0);
             using (var sleep = new ServerMessage(LibraryParser.OutgoingRequest("RoomUserIdleMessageComposer")))
             {
-                sleep.AppendInteger(VirtualId);
+                await sleep.AppendIntegerAsync(VirtualId);
                 sleep.AppendBool(false);
                 await GetRoom().SendMessage(sleep);
             }
@@ -697,7 +697,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <summary>
         ///     Disposes this instance.
         /// </summary>
-        internal async Task Dispose()
+        internal void Dispose()
         {
             if (_disposed) return;
             Statusses?.Clear();
@@ -734,15 +734,15 @@ namespace Oblivion.HabboHotel.Rooms.User
                     textColor = 2;
                 using (var botChatmsg = new ServerMessage())
                 {
-                    botChatmsg.Init(shout
+                    await botChatmsg.InitAsync(shout
                         ? LibraryParser.OutgoingRequest("ShoutMessageComposer")
                         : LibraryParser.OutgoingRequest("ChatMessageComposer"));
-                    botChatmsg.AppendInteger(VirtualId);
-                    botChatmsg.AppendString(msg);
-                    botChatmsg.AppendInteger(0);
-                    botChatmsg.AppendInteger(textColor);
-                    botChatmsg.AppendInteger(0);
-                    botChatmsg.AppendInteger(VirtualId);
+                    await botChatmsg.AppendIntegerAsync(VirtualId);
+                    await botChatmsg.AppendStringAsync(msg);
+                    await botChatmsg.AppendIntegerAsync(0);
+                    await botChatmsg.AppendIntegerAsync(textColor);
+                    await botChatmsg.AppendIntegerAsync(0);
+                    await botChatmsg.AppendIntegerAsync(VirtualId);
 
                     var location = new Vector2D(X, Y);
                     GetRoom().SendMessageWithRange(location, botChatmsg);
@@ -819,15 +819,15 @@ namespace Oblivion.HabboHotel.Rooms.User
 
             using (var chatMsg = new ServerMessage())
             {
-                chatMsg.Init(shout
+                await chatMsg.InitAsync(shout
                     ? LibraryParser.OutgoingRequest("ShoutMessageComposer")
                     : LibraryParser.OutgoingRequest("ChatMessageComposer"));
-                chatMsg.AppendInteger(VirtualId);
-                chatMsg.AppendString(msg);
-                chatMsg.AppendInteger(ChatEmotions.GetEmotionsForText(msg));
-                chatMsg.AppendInteger(textColor);
-                chatMsg.AppendInteger(0);
-                chatMsg.AppendInteger(count);
+                await chatMsg.AppendIntegerAsync(VirtualId);
+                await chatMsg.AppendStringAsync(msg);
+                await chatMsg.AppendIntegerAsync(ChatEmotions.GetEmotionsForText(msg));
+                await chatMsg.AppendIntegerAsync(textColor);
+                await chatMsg.AppendIntegerAsync(0);
+                await chatMsg.AppendIntegerAsync(count);
                 await GetRoom().BroadcastChatMessageWithRange(chatMsg, this, session.GetHabbo().Id);
                 if (needReChange)
                 {
@@ -843,9 +843,9 @@ namespace Oblivion.HabboHotel.Rooms.User
             using (var message =
                    new ServerMessage(LibraryParser.OutgoingRequest("UserUpdateNameInRoomMessageComposer")))
             {
-                message.AppendInteger(RoomId);
-                message.AppendInteger(VirtualId);
-                message.AppendString(name);
+                await message.AppendIntegerAsync(RoomId);
+                await message.AppendIntegerAsync(VirtualId);
+                await message.AppendStringAsync(name);
                 await GetRoom().SendMessage(message);
             }
         }
@@ -1002,8 +1002,8 @@ namespace Oblivion.HabboHotel.Rooms.User
             CarryTimer = item > 0 ? 240 : 0;
             using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ApplyHanditemMessageComposer")))
             {
-                serverMessage.AppendInteger(VirtualId);
-                serverMessage.AppendInteger(item);
+                await serverMessage.AppendIntegerAsync(VirtualId);
+                await serverMessage.AppendIntegerAsync(item);
                 await _mRoom.SendMessageAsync(serverMessage);
             }
         }
@@ -1202,12 +1202,12 @@ namespace Oblivion.HabboHotel.Rooms.User
         internal async Task SerializeStatus(ServerMessage message)
         {
             if (Statusses == null) return;
-            message.AppendInteger(VirtualId);
-            message.AppendInteger(X);
-            message.AppendInteger(Y);
-            message.AppendString(TextHandling.GetString(Z));
-            message.AppendInteger(RotHead);
-            message.AppendInteger(RotBody);
+            await message.AppendIntegerAsync(VirtualId);
+            await message.AppendIntegerAsync(X);
+            await message.AppendIntegerAsync(Y);
+            await message.AppendStringAsync(TextHandling.GetString(Z));
+            await message.AppendIntegerAsync(RotHead);
+            await message.AppendIntegerAsync(RotBody);
             var stringBuilder = new StringBuilder();
             stringBuilder.Append("/");
             if (PetData?.MoplaBreed != null)
@@ -1230,7 +1230,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
 
             stringBuilder.Append("/");
-            message.AppendString(stringBuilder.ToString());
+            await message.AppendStringAsync(stringBuilder.ToString());
 
             if (Statusses.TryRemove("sign", out _))
             {
@@ -1247,13 +1247,13 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             if (IsSpectator)
                 return;
-            message.AppendInteger(VirtualId);
-            message.AppendInteger(X);
-            message.AppendInteger(Y);
-            message.AppendString(TextHandling.GetString(SetZ));
-            message.AppendInteger(RotHead);
-            message.AppendInteger(RotBody);
-            message.AppendString(status);
+            await message.AppendIntegerAsync(VirtualId);
+            await message.AppendIntegerAsync(X);
+            await message.AppendIntegerAsync(Y);
+            await message.AppendStringAsync(TextHandling.GetString(SetZ));
+            await message.AppendIntegerAsync(RotHead);
+            await message.AppendIntegerAsync(RotBody);
+            await message.AppendStringAsync(status);
         }
 
         /// <summary>

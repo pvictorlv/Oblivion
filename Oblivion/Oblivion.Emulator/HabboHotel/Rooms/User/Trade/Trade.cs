@@ -154,8 +154,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             }
             tradeUser.HasAccepted = true;
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("TradeAcceptMessageComposer"));
-            serverMessage.AppendInteger(userId);
-            serverMessage.AppendInteger(1);
+            await serverMessage.AppendIntegerAsync(userId);
+            await serverMessage.AppendIntegerAsync(1);
             SendMessageToUsers(serverMessage);
             if (!AllUsersAccepted)
             {
@@ -179,8 +179,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             }
             tradeUser.HasAccepted = false;
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("TradeAcceptMessageComposer"));
-            serverMessage.AppendInteger(userId);
-            serverMessage.AppendInteger(0);
+            await serverMessage.AppendIntegerAsync(userId);
+            await serverMessage.AppendIntegerAsync(0);
             await SendMessageToUsers(serverMessage);
         }
 
@@ -197,8 +197,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             }
             tradeUser.HasAccepted = true;
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("TradeAcceptMessageComposer"));
-            serverMessage.AppendInteger(userId);
-            serverMessage.AppendInteger(1);
+            await serverMessage.AppendIntegerAsync(userId);
+            await serverMessage.AppendIntegerAsync(1);
             SendMessageToUsers(serverMessage);
             if (!AllUsersAccepted)
             {
@@ -229,54 +229,54 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             var firstUser = _users.First();
             var secondUser = _users.Last();
 
-            serverMessage.AppendInteger(firstUser.UserId);
-            serverMessage.AppendInteger(firstUser.OfferedItems.Count);
+            await serverMessage.AppendIntegerAsync(firstUser.UserId);
+            await serverMessage.AppendIntegerAsync(firstUser.OfferedItems.Count);
             /* TODO CHECK */ foreach (var current in firstUser.OfferedItems)
             {
-                serverMessage.AppendInteger(current.VirtualId);
-                serverMessage.AppendString(current.BaseItem.Type.ToString().ToLower());
-                serverMessage.AppendInteger(current.VirtualId);
-                serverMessage.AppendInteger(current.BaseItem.SpriteId);
-                serverMessage.AppendInteger(0);
+                await serverMessage.AppendIntegerAsync(current.VirtualId);
+                await serverMessage.AppendStringAsync(current.BaseItem.Type.ToString().ToLower());
+                await serverMessage.AppendIntegerAsync(current.VirtualId);
+                await serverMessage.AppendIntegerAsync(current.BaseItem.SpriteId);
+                await serverMessage.AppendIntegerAsync(0);
                 serverMessage.AppendBool(true);
-                serverMessage.AppendInteger(0);
-                serverMessage.AppendString("");
-                serverMessage.AppendInteger(0);
-                serverMessage.AppendInteger(0);
-                serverMessage.AppendInteger(0);
+                await serverMessage.AppendIntegerAsync(0);
+                await serverMessage.AppendStringAsync("");
+                await serverMessage.AppendIntegerAsync(0);
+                await serverMessage.AppendIntegerAsync(0);
+                await serverMessage.AppendIntegerAsync(0);
                 if (current.BaseItem.Type == 's')
                 {
-                    serverMessage.AppendInteger(0);
+                    await serverMessage.AppendIntegerAsync(0);
                 }
             }
 
-            serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(secondUser.OfferedItems.Count);
+            await serverMessage.AppendIntegerAsync(0);
+            await serverMessage.AppendIntegerAsync(0);
+            await serverMessage.AppendIntegerAsync(1);
+            await serverMessage.AppendIntegerAsync(secondUser.OfferedItems.Count);
             /* TODO CHECK */ foreach (var current in secondUser.OfferedItems)
             {
-                serverMessage.AppendInteger(current.VirtualId);
-                serverMessage.AppendString(current.BaseItem.Type.ToString().ToLower());
-                serverMessage.AppendInteger(current.VirtualId);
-                serverMessage.AppendInteger(current.BaseItem.SpriteId);
-                serverMessage.AppendInteger(0);
+                await serverMessage.AppendIntegerAsync(current.VirtualId);
+                await serverMessage.AppendStringAsync(current.BaseItem.Type.ToString().ToLower());
+                await serverMessage.AppendIntegerAsync(current.VirtualId);
+                await serverMessage.AppendIntegerAsync(current.BaseItem.SpriteId);
+                await serverMessage.AppendIntegerAsync(0);
                 serverMessage.AppendBool(true);
 
-                serverMessage.AppendInteger(0);
-                serverMessage.AppendString("");
+                await serverMessage.AppendIntegerAsync(0);
+                await serverMessage.AppendStringAsync("");
 
-                serverMessage.AppendInteger(0);
-                serverMessage.AppendInteger(0);
-                serverMessage.AppendInteger(0);
+                await serverMessage.AppendIntegerAsync(0);
+                await serverMessage.AppendIntegerAsync(0);
+                await serverMessage.AppendIntegerAsync(0);
                 if (current.BaseItem.Type == 's')
                 {
-                    serverMessage.AppendInteger(0);
+                    await serverMessage.AppendIntegerAsync(0);
                 }
             }
 
-            serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(0);
+            await serverMessage.AppendIntegerAsync(0);
+            await serverMessage.AppendIntegerAsync(0);
 
             SendMessageToUsers(serverMessage);
         }
@@ -340,7 +340,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             await userOne.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
             await userTwo.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("NewInventoryObjectMessageComposer"));
-            serverMessage.AppendInteger(1);
+            await serverMessage.AppendIntegerAsync(1);
             var i = 1;
             foreach (var current5 in offeredItems)
             {
@@ -351,25 +351,25 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
                 }
             }
 
-            serverMessage.AppendInteger(i);
-            serverMessage.AppendInteger(offeredItems.Count);
+            await serverMessage.AppendIntegerAsync(i);
+            await serverMessage.AppendIntegerAsync(offeredItems.Count);
             /* TODO CHECK */ foreach (var current6 in offeredItems)
             {
-                serverMessage.AppendInteger(current6.VirtualId);
+                await serverMessage.AppendIntegerAsync(current6.VirtualId);
             }
             await userTwo.GetClient().SendMessageAsync(serverMessage);
             var serverMessage2 = new ServerMessage(LibraryParser.OutgoingRequest("NewInventoryObjectMessageComposer"));
-            serverMessage2.AppendInteger(1);
+            await serverMessage2.AppendIntegerAsync(1);
             i = 1;
             if (offeredItems2.Any(current7 => current7.BaseItem.Type.ToString().ToLower() != "s"))
             {
                 i = 2;
             }
-            serverMessage2.AppendInteger(i);
-            serverMessage2.AppendInteger(offeredItems2.Count);
+            await serverMessage2.AppendIntegerAsync(i);
+            await serverMessage2.AppendIntegerAsync(offeredItems2.Count);
             /* TODO CHECK */ foreach (var current8 in offeredItems2)
             {
-                serverMessage2.AppendInteger(current8.VirtualId);
+                await serverMessage2.AppendIntegerAsync(current8.VirtualId);
             }
             await userOne.GetClient().SendMessageAsync(serverMessage2);
             await userOne.GetClient().GetHabbo().GetInventoryComponent().UpdateItems(false);
@@ -411,8 +411,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
                     tradeUser.GetRoomUser().UpdateNeeded = true;
                 }
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("TradeCloseMessageComposer"));
-                serverMessage.AppendInteger(userId);
-                serverMessage.AppendInteger(0);
+                await serverMessage.AppendIntegerAsync(userId);
+                await serverMessage.AppendIntegerAsync(0);
                 await SendMessageToUsers(serverMessage);
             }
         }

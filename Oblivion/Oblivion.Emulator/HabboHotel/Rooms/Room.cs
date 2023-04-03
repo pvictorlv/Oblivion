@@ -844,14 +844,14 @@ namespace Oblivion.HabboHotel.Rooms
                     {
                         if ((_idleTime >= 25 && !JustLoaded) || (_idleTime >= 100 && JustLoaded))
                         {
-                            Oblivion.GetGame().GetRoomManager().UnloadRoom(this, "No users");
+                            await Oblivion.GetGame().GetRoomManager().UnloadRoom(this, "No users");
                             return;
                         }
 
-                        using (var serverMessage = GetRoomUserManager().SerializeStatusUpdates(false))
+                        using (var serverMessage = await GetRoomUserManager().SerializeStatusUpdates(false))
                         {
                             if (serverMessage != null)
-                                SendMessage(serverMessage);
+                                await SendMessage(serverMessage);
                         }
                     }
 
@@ -1133,8 +1133,8 @@ namespace Oblivion.HabboHotel.Rooms
         internal async Task Unban(uint userId)
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery("DELETE FROM rooms_bans WHERE user_id=" + userId + " AND room_id=" + RoomId +
-                                          " LIMIT 1");
+                await queryReactor.RunFastQueryAsync("DELETE FROM rooms_bans WHERE user_id=" + userId + " AND room_id=" + RoomId +
+                                                     " LIMIT 1");
             Bans.Remove(userId);
         }
 
@@ -1200,7 +1200,7 @@ namespace Oblivion.HabboHotel.Rooms
         {
             RoomData.UsersMax = maxUsers;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery("UPDATE rooms_data SET users_max = " + maxUsers + " WHERE id = " + RoomId);
+                await queryReactor.RunFastQueryAsync("UPDATE rooms_data SET users_max = " + maxUsers + " WHERE id = " + RoomId);
         }
 
 

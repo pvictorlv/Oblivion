@@ -32,7 +32,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             
             client.GetHabbo().Credits += 15;
-            client.SendWhisper("Você recebeu 15 moedas!");
+            await client.SendWhisperAsync("Você recebeu 15 moedas!");
             client.GetHabbo().UpdateCreditsBalance();
 
 
@@ -40,7 +40,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             {
                 dbClient.SetQuery("UPDATE users SET epoints = epoints + 1 WHERE id = @id");
                 dbClient.AddParameter("id", client.GetHabbo().Id);
-                dbClient.RunQuery();
+                await dbClient.RunQueryAsync();
             }
 
             Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(client, Oblivion.GetDbConfig().DbData["badge.code"], 1, true);
@@ -53,19 +53,19 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             var msg = new ServerMessage(LibraryParser.OutgoingRequest("RoomNotificationMessageComposer"));
           
-            msg.AppendString("rank");
-            msg.AppendInteger(5);
-            msg.AppendString("title");
-            msg.AppendString("Hotel");
-            msg.AppendString("message");
-            msg.AppendString($"O usuário {client.GetHabbo().UserName} ganhou o evento!");
-            msg.AppendString("linkUrl");
-            msg.AppendString("");
-            msg.AppendString("linkTitle");
-            msg.AppendString("");
-            msg.AppendString("display");
-            msg.AppendString("BUBBLE");
-            Oblivion.GetGame().GetClientManager().SendMessage(msg);
+            await msg.AppendStringAsync("rank");
+            await msg.AppendIntegerAsync(5);
+            await msg.AppendStringAsync("title");
+            await msg.AppendStringAsync("Hotel");
+            await msg.AppendStringAsync("message");
+            await msg.AppendStringAsync($"O usuário {client.GetHabbo().UserName} ganhou o evento!");
+            await msg.AppendStringAsync("linkUrl");
+            await msg.AppendStringAsync("");
+            await msg.AppendStringAsync("linkTitle");
+            await msg.AppendStringAsync("");
+            await msg.AppendStringAsync("display");
+            await msg.AppendStringAsync("BUBBLE");
+            await Oblivion.GetGame().GetClientManager().SendMessageAsync(msg);
             
 
             return true;

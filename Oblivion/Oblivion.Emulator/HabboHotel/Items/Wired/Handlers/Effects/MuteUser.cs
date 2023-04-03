@@ -70,7 +70,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
 
             if (!string.IsNullOrEmpty(OtherString))
-                roomUser.GetClient().SendWhisper(OtherString);
+                await roomUser.GetClient().SendWhisperAsync(OtherString);
 
             return true;
         }

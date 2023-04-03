@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -61,17 +62,17 @@ namespace Oblivion.HabboHotel.Items.Handlers
            item.BaseItem = Oblivion.GetGame().GetItemManager().GetItem(pinataItem.Rewards[new Random().Next((pinataItem.Rewards.Count - 1))]);
 
             item.ExtraData = string.Empty;
-            room.GetRoomItemHandler().RemoveFurniture(user.GetClient(), item.Id, false);
+           await room.GetRoomItemHandler().RemoveFurniture(user.GetClient(), item.Id, false);
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.RunFastQuery(
+                await queryReactor.RunFastQueryAsync(
                     $"UPDATE items_rooms SET base_item='{item.BaseItem}', extra_data='' WHERE id='{item.Id}'");
-                queryReactor.RunQuery();
+                await queryReactor.RunQueryAsync();
             }
 
-            if (!room.GetRoomItemHandler().SetFloorItem(user.GetClient(), item, item.X, item.Y, 0, true, false, true))
-                user.GetClient().GetHabbo().GetInventoryComponent().AddItem(item);
+            if (!await room.GetRoomItemHandler().SetFloorItem(user.GetClient(), item, item.X, item.Y, 0, true, false, true))
+                await user.GetClient().GetHabbo().GetInventoryComponent().AddItem(item);
         }
     }
 }

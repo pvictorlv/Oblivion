@@ -11,7 +11,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorNearSwitch : FurniInteractorModel
     {
-        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             var num = item.GetBaseItem().Modes - 1;
 
@@ -42,9 +42,9 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
 
             item.ExtraData = num3.ToString();
-            item.UpdateState();
+            await  item.UpdateState();
             if (item.GetRoom().GotWireds())
-                item.GetRoom()
+                await item.GetRoom()
                     .GetWiredHandler()
                     .ExecuteWired(Interaction.TriggerStateChanged,
                         item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id), item);
@@ -53,7 +53,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
         }
 
-        public override void OnWiredTrigger(RoomItem item)
+        public override async Task OnWiredTrigger(RoomItem item)
         {
             var num = item.GetBaseItem().Modes - 1;
 
@@ -76,7 +76,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
 
             item.ExtraData = num3.ToString();
-            item.UpdateState();
+            await  item.UpdateState();
 
             if (!item.GetBaseItem().StackMultipler)
                 return;
@@ -85,7 +85,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             foreach (var current in room.GetGameMap().GetRoomUsers(new Point(item.X, item.Y)))
             {
-                room.GetRoomUserManager().UpdateUserStatus(current, true);
+                await room.GetRoomUserManager().UpdateUserStatus(current, true);
             }
         }
     }

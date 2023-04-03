@@ -30,19 +30,19 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var gp = room.RoomData.Group;
             if (gp == null)
             {
-                client.SendWhisper("Você deve estar no quarto do grupo para usar esse comando!");
+                await client.SendWhisperAsync("Você deve estar no quarto do grupo para usar esse comando!");
                 return false;
             }
             if (!gp.Admins.ContainsKey(client.GetHabbo().Id))
             {
-                client.SendWhisper("Você não tem direitos para isso!");
+                await client.SendWhisperAsync("Você não tem direitos para isso!");
                 return false;
             }
 
             gp.HasChat = !gp.HasChat;
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                dbClient.RunFastQuery(
+                await dbClient.RunFastQueryAsync(
                     $"UPDATE groups_data SET has_chat = '{Oblivion.BoolToEnum(gp.HasChat)}' WHERE id = '{gp.Id}'");
             }
 
@@ -56,7 +56,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 else
                     user.GetHabbo().GetMessenger().SerializeUpdate(gp);
             }
-            client.SendWhisper(gp.HasChat ? "O chat foi ativado" : "o chat foi desativado");
+            await client.SendWhisperAsync(gp.HasChat ? "O chat foi ativado" : "o chat foi desativado");
 
             return true;
         }

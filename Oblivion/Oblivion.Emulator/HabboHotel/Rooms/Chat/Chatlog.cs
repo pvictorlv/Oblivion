@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.Messages;
 
@@ -67,19 +68,21 @@ namespace Oblivion.HabboHotel.Rooms.Chat
                 dbClient.AddParameter("room", roomId);
                 dbClient.AddParameter("time", Oblivion.DateTimeToUnix(TimeStamp));
                 dbClient.AddParameter("message", Message);
-                dbClient.RunQuery();
+                await dbClient.RunQueryAsync();
             }
             IsSaved = true;
         }
 
-        internal async Task Serialize(ref ServerMessage message)
+        internal async Task Serialize(ServerMessage message)
         {
             var habbo = Oblivion.GetHabboById(UserId);
-            message.AppendString(TimeStamp.ToString("h:mm:ss"));
-            message.AppendInteger(UserId);
-            message.AppendString(habbo == null ? "*User not found*" : habbo.UserName);
-            message.AppendString(Message);
+            await message.AppendStringAsync(TimeStamp.ToString("h:mm:ss"));
+            await message.AppendIntegerAsync(UserId);
+            await message.AppendStringAsync(habbo == null ? "*User not found*" : habbo.UserName);
+            await message.AppendStringAsync(Message);
             message.AppendBool(_globalMessage);
+
+            return message;
         }
     }
 }

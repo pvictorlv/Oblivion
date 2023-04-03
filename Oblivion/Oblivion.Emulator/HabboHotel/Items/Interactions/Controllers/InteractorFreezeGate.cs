@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.GameClients.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Models;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Rooms.Items.Games.Teams.Enums;
@@ -10,7 +11,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorFreezeGate : FurniInteractorModel
     {
-        public override void OnUserWalk(GameClient session, RoomItem item, RoomUser user)
+        public override async Task OnUserWalk(GameClient session, RoomItem item, RoomUser user)
         {
             if (item == null) return;
 

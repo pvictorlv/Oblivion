@@ -44,8 +44,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             client.GetHabbo().FloodTime = Oblivion.GetUnixTimeStamp() + Convert.ToInt32(pms[1]);
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FloodFilterMessageComposer"));
-            serverMessage.AppendInteger(Convert.ToInt32(pms[1]));
-            client.SendMessage(serverMessage);
+            await serverMessage.AppendIntegerAsync(Convert.ToInt32(pms[1]));
+            await client.SendMessage(serverMessage);
             return true;
         }
     }

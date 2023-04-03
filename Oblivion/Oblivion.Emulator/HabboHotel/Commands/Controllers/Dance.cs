@@ -36,9 +36,9 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
 
             var message = new ServerMessage();
-            message.Init(LibraryParser.OutgoingRequest("DanceStatusMessageComposer"));
-            message.AppendInteger(session.CurrentRoomUserId);
-            message.AppendInteger(result);
+            await message.InitAsync(LibraryParser.OutgoingRequest("DanceStatusMessageComposer"));
+            await message.AppendIntegerAsync(session.CurrentRoomUserId);
+            await message.AppendIntegerAsync(result);
             session.GetHabbo().CurrentRoom.SendMessage(message);
             user.DanceId = result;
 

@@ -31,19 +31,19 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var fuckerUser = room.GetRoomUserManager().GetRoomUserByHabbo(fuckedName);
             if (fuckerUser == null)
             {
-                client.SendWhisper("Usuário não encontrado!");
+                await client.SendWhisperAsync("Usuário não encontrado!");
                 return true;
             }
 
             if (client.GetHabbo().LastCustomCommand + 30 >= Oblivion.GetUnixTimeStamp())
             {
-                client.SendWhisper("Espere um pouco!");
+                await client.SendWhisperAsync("Espere um pouco!");
                 return true;
             }
 
             if (!fuckerUser.GetClient().GetHabbo().AllowCustomCommands)
             {
-                client.SendWhisper("O usuário não aceita esse tipo de brincadeira!");
+                await client.SendWhisperAsync("O usuário não aceita esse tipo de brincadeira!");
                 return true;
             }
 
@@ -51,7 +51,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             if (fuckerUser.InteractingUser != fuckedUser.UserId)
             {
-                fuckerUser.GetClient().SendWhisper($"O usuário {fuckedUser.GetUserName()} deseja fazer sexo com você!");
+                await fuckerUser.GetClient().SendWhisperAsync($"O usuário {fuckedUser.GetUserName()} deseja fazer sexo com você!");
                 return true;
             }
 
@@ -79,7 +79,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             else
             {
-                client.SendWhisper("Chegue mais perto da pessoa ou aguarde mais tempo para fazer novamente.");
+                await client.SendWhisperAsync("Chegue mais perto da pessoa ou aguarde mais tempo para fazer novamente.");
             }
 
             fuckedUser.InteractingUser = 0;

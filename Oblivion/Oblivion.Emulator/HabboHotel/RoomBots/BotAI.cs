@@ -112,7 +112,7 @@ namespace Oblivion.HabboHotel.RoomBots
         /// </summary>
         /// <param name="user">The user.</param>
         /// <param name="msg">The MSG.</param>
-        internal abstract void OnUserSay(RoomUser user, string msg);
+        internal abstract Task OnUserSay(RoomUser user, string msg);
 
         /// <summary>
         ///     Called when [user shout].
@@ -124,7 +124,7 @@ namespace Oblivion.HabboHotel.RoomBots
         /// <summary>
         ///     Called when [timer tick].
         /// </summary>
-        internal abstract void OnTimerTick();
+        internal abstract Task OnTimerTick();
 
         internal abstract void OnChatTick();
 

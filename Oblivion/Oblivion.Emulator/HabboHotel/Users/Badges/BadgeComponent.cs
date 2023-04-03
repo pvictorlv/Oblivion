@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
@@ -95,7 +96,7 @@ namespace Oblivion.HabboHotel.Users.Badges
                         string.Concat("INSERT INTO users_badges (user_id,badge_id,badge_slot) VALUES (", _userId,
                             ",@badge,", 0, ")"));
                     queryReactor.AddParameter("badge", badge);
-                    queryReactor.RunQuery();
+                    await queryReactor.RunQueryAsync();
                 }
             }
 
@@ -157,7 +158,7 @@ namespace Oblivion.HabboHotel.Users.Badges
             {
                 queryReactor.SetQuery("DELETE FROM users_badges WHERE badge_id = @badge AND user_id = " + _userId);
                 queryReactor.AddParameter("badge", badge);
-                queryReactor.RunQuery();
+                await queryReactor.RunQueryAsync();
             }
 
             BadgeList.TryRemove(badge, out _);

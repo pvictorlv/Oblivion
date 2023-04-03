@@ -98,7 +98,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
 
             if (roomUser?.GetClient() != null && !string.IsNullOrEmpty(OtherString))
-                roomUser.GetClient().SendWhisper(OtherString, true);
+                await roomUser.GetClient().SendWhisperAsync(OtherString, true);
 
             return true;
         }

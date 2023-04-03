@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Quests;
 using Oblivion.Messages.Parsers;
 using Oblivion.Security;
@@ -42,7 +43,7 @@ namespace Oblivion.Messages.Handlers
                     return;
                 }
 
-                Session.GetHabbo().GetMessenger().DestroyFriendship(num2);
+                await Session.GetHabbo().GetMessenger().DestroyFriendship(num2);
             }
         }
 
@@ -52,7 +53,7 @@ namespace Oblivion.Messages.Handlers
         internal async Task SearchHabbo()
         {
             if (Session.GetHabbo().GetMessenger() == null) return;
-            await Session.SendMessageAsync(Session.GetHabbo().GetMessenger().PerformSearch(Request.GetString()));
+            await Session.SendMessageAsync(await Session.GetHabbo().GetMessenger().PerformSearch(Request.GetString()));
         }
 
         /// <summary>
@@ -69,8 +70,8 @@ namespace Oblivion.Messages.Handlers
                 if (request == null) continue;
                 if (request.To != Session.GetHabbo().Id) return;
                 if (!Session.GetHabbo().GetMessenger().FriendshipExists(request.To))
-                    Session.GetHabbo().GetMessenger().CreateFriendship(request.From);
-                Session.GetHabbo().GetMessenger().HandleRequest(num2);
+                    await Session.GetHabbo().GetMessenger().CreateFriendship(request.From);
+                await Session.GetHabbo().GetMessenger().HandleRequest(num2);
             }
         }
 
@@ -85,11 +86,11 @@ namespace Oblivion.Messages.Handlers
             if (!flag)
             {
                 var sender = Request.GetUInteger();
-                Session.GetHabbo().GetMessenger().HandleRequest(sender);
+                await Session.GetHabbo().GetMessenger().HandleRequest(sender);
                 return;
             }
 
-            Session.GetHabbo().GetMessenger().HandleAllRequests();
+            await Session.GetHabbo().GetMessenger().HandleAllRequests();
         }
 
         /// <summary>
@@ -99,7 +100,7 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session?.GetHabbo()?.GetMessenger() == null) return;
 
-            if (Session.GetHabbo().GetMessenger().RequestBuddy(Request.GetString()))
+            if (await Session.GetHabbo().GetMessenger().RequestBuddy(Request.GetString()))
                 await Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.SocialFriend);
         }
 
@@ -115,7 +116,7 @@ namespace Oblivion.Messages.Handlers
             {
                 if (toId > 0)
                 {
-                    Session.GetHabbo().GetMessenger().SendInstantMessage((uint) toId, text);
+                    await Session.GetHabbo().GetMessenger().SendInstantMessage((uint) toId, text);
                     return;
                 }
 
@@ -131,7 +132,7 @@ namespace Oblivion.Messages.Handlers
                     return;
                 }
 
-                Session.GetHabbo().GetMessenger().SendInstantMessage(gp, text);
+                await Session.GetHabbo().GetMessenger().SendInstantMessage(gp, text);
             }
         }
 
@@ -149,24 +150,24 @@ namespace Oblivion.Messages.Handlers
             if (clientByUserId.GetHabbo().GetMessenger() == null || clientByUserId.GetHabbo().CurrentRoom == null)
             {
                 if (Session.GetHabbo().GetMessenger() == null) return;
-                Response.Init(LibraryParser.OutgoingRequest("FollowFriendErrorMessageComposer"));
-                Response.AppendInteger(2);
+                await Response.InitAsync(LibraryParser.OutgoingRequest("FollowFriendErrorMessageComposer"));
+                await Response.AppendIntegerAsync(2);
                 await SendResponse();
-                Session.GetHabbo().GetMessenger().UpdateFriend(userId, clientByUserId, true);
+                await Session.GetHabbo().GetMessenger().UpdateFriend(userId, clientByUserId, true);
                 return;
             }
 
             if (Session.GetHabbo().Rank < 4 && Session.GetHabbo().GetMessenger() != null &&
                 !Session.GetHabbo().GetMessenger().FriendshipExists(userId))
             {
-                Response.Init(LibraryParser.OutgoingRequest("FollowFriendErrorMessageComposer"));
-                Response.AppendInteger(0);
+                await Response.InitAsync(LibraryParser.OutgoingRequest("FollowFriendErrorMessageComposer"));
+                await Response.AppendIntegerAsync(0);
                 await SendResponse();
                 return;
             }
 
             var roomFwd = new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
-            roomFwd.AppendInteger(clientByUserId.GetHabbo().CurrentRoom.RoomId);
+            await roomFwd.AppendIntegerAsync(clientByUserId.GetHabbo().CurrentRoom.RoomId);
             await Session.SendMessageAsync(roomFwd);
         }
 
@@ -179,7 +180,7 @@ namespace Oblivion.Messages.Handlers
             if (Session?.GetHabbo() == null)
                 return;
 
-            if (!Session.GetHabbo().CanTalk()) return;
+            if (!await Session.GetHabbo().CanTalk()) return;
 
             var num = Request.GetInteger();
             var list = new List<uint>();
@@ -189,8 +190,8 @@ namespace Oblivion.Messages.Handlers
             if (!BobbaFilter.CanTalk(Session, s)) return;
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleInvitationMessageComposer"));
-            serverMessage.AppendInteger(Session.GetHabbo().Id);
-            serverMessage.AppendString(s);
+            await serverMessage.AppendIntegerAsync(Session.GetHabbo().Id);
+            await serverMessage.AppendStringAsync(s);
 
             foreach (var current in list)
             {

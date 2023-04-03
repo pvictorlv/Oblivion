@@ -9,7 +9,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorTotem : FurniInteractorModel
     {
-        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             var num = item.GetBaseItem().Modes - 1;
 
@@ -32,9 +32,9 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
 
             item.ExtraData = num3.ToString();
-            item.UpdateState();
+            await  item.UpdateState();
             if (item.GetRoom().GotWireds())
-                item.GetRoom()
+               await item.GetRoom()
                     .GetWiredHandler()
                     .ExecuteWired(Interaction.TriggerStateChanged,
                         item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id), item);
@@ -74,34 +74,34 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 return;
             if (Oblivion.GetUnixTimeStamp() - session.GetHabbo().LastTotem <= 1800)
             {
-                 await Session.SendWhisperAsync("Hey, você só pode receber um efeito a cada meia hora!");
+                 await session.SendWhisperAsync("Hey, você só pode receber um efeito a cada meia hora!");
                 return;
             }
             if (currentPlanet == 0 && (currentLeg == 3 || currentLeg == 7 || currentLeg == 11) &&
                 (currentHead == 6 || currentHead == 10 || currentHead == 14))
             {
-                session.GetHabbo().GetAvatarEffectsInventoryComponent().AddNewEffect(24, 86400, 0);
+                await session.GetHabbo().GetAvatarEffectsInventoryComponent().AddNewEffect(24, 86400, 0);
             }
             else if (currentPlanet == 1 && (currentLeg == 1 || currentLeg == 5 || currentLeg == 9) &&
                      (currentHead == 4 || currentHead == 8 || currentHead == 12))
             {
-                session.GetHabbo().GetAvatarEffectsInventoryComponent().AddNewEffect(25, 86400, 0);
-                session.GetHabbo().GetAvatarEffectsInventoryComponent().AddNewEffect(26, 86400, 0);
+                await session.GetHabbo().GetAvatarEffectsInventoryComponent().AddNewEffect(25, 86400, 0);
+                await session.GetHabbo().GetAvatarEffectsInventoryComponent().AddNewEffect(26, 86400, 0);
             }
             else if (currentPlanet == 2 && (currentLeg == 2 || currentLeg == 6 || currentLeg == 10) &&
                      (currentHead == 5 || currentHead == 9 || currentHead == 13))
             {
-                session.GetHabbo().GetAvatarEffectsInventoryComponent().AddNewEffect(23, 86400, 0);
+                await session.GetHabbo().GetAvatarEffectsInventoryComponent().AddNewEffect(23, 86400, 0);
             }
             else
             {
                 return;
             }
-             await Session.SendWhisperAsync("Você recebeu 1 efeito!");
+             await session.SendWhisperAsync("Você recebeu 1 efeito!");
             session.GetHabbo().SaveLastTotem();
         }
 
-        public override void OnWiredTrigger(RoomItem item)
+        public override async Task OnWiredTrigger(RoomItem item)
         {
             var num = item.GetBaseItem().Modes - 1;
 
@@ -124,7 +124,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
 
             item.ExtraData = num3.ToString();
-            item.UpdateState();
+            await  item.UpdateState();
         }
     }
 }

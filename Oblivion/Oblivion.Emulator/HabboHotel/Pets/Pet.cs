@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Pets.Enums;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.Messages;
@@ -336,24 +337,24 @@ namespace Oblivion.HabboHotel.Pets
                 Respect++;
                 var ownerSession = Oblivion.GetGame().GetClientManager().GetClientByUserId(OwnerId);
                 if (ownerSession != null)
-                    Oblivion.GetGame()
+                    await Oblivion.GetGame()
                         .GetAchievementManager()
                         .ProgressUserAchievement(ownerSession, "ACH_PetRespectReceiver", 1);
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("RespectPetMessageComposer"));
-                serverMessage.AppendInteger(VirtualId);
+                await serverMessage.AppendIntegerAsync(VirtualId);
                 serverMessage.AppendBool(true);
-                Room.SendMessage(serverMessage);
+                await Room.SendMessage(serverMessage);
 
                 serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("PetRespectNotificationMessageComposer"));
-                serverMessage.AppendInteger(1);
-                serverMessage.AppendInteger(VirtualId);
-                SerializeInventory(serverMessage);
-                Room.SendMessage(serverMessage);
+                await serverMessage.AppendIntegerAsync(1);
+                await serverMessage.AppendIntegerAsync(VirtualId);
+                await SerializeInventory(serverMessage);
+                await Room.SendMessage(serverMessage);
 
                 if (DbState != DatabaseUpdateState.NeedsInsert)
                     DbState = DatabaseUpdateState.NeedsUpdate;
                 if (Type != 16 && Experience <= 51900)
-                    AddExperience(10);
+                    await AddExperience(10);
                 if (Type == 16)
                     Energy = 100;
                 LastHealth = DateTime.Now.AddSeconds(129600.0);
@@ -376,10 +377,10 @@ namespace Oblivion.HabboHotel.Pets
                 if (Room == null)
                     return;
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("AddPetExperienceMessageComposer"));
-                serverMessage.AppendInteger(PetId);
-                serverMessage.AppendInteger(VirtualId);
-                serverMessage.AppendInteger(amount);
-                Room.SendMessage(serverMessage);
+                await serverMessage.AppendIntegerAsync(PetId);
+                await serverMessage.AppendIntegerAsync(VirtualId);
+                await serverMessage.AppendIntegerAsync(amount);
+                await Room.SendMessage(serverMessage);
                 if (Experience < oldExperienceGoal)
                     return;
                 var ownerSession = Oblivion.GetGame().GetClientManager().GetClientByUserId(OwnerId);
@@ -391,29 +392,29 @@ namespace Oblivion.HabboHotel.Pets
                 if (ownerSession == null)
                     return;
                 var levelNotify = new ServerMessage(LibraryParser.OutgoingRequest("NotifyNewPetLevelMessageComposer"));
-                SerializeInventory(levelNotify, true);
-                ownerSession.SendMessage(levelNotify);
+                await SerializeInventory(levelNotify, true);
+                await ownerSession.SendMessage(levelNotify);
 
                 var tp = new ServerMessage();
-                tp.Init(LibraryParser.OutgoingRequest("PetTrainerPanelMessageComposer"));
-                tp.AppendInteger(PetId);
+                await tp.InitAsync(LibraryParser.OutgoingRequest("PetTrainerPanelMessageComposer"));
+                await tp.AppendIntegerAsync(PetId);
 
                 var availableCommands = new List<short>();
 
-                tp.AppendInteger(PetCommands.Count);
+                await tp.AppendIntegerAsync(PetCommands.Count);
                 
                 foreach (var sh in PetCommands)
                 {
-                    tp.AppendInteger(sh.Key);
+                    await tp.AppendIntegerAsync(sh.Key);
                     if (sh.Value)
                         availableCommands.Add(sh.Key);
                 }
 
-                tp.AppendInteger(availableCommands.Count);
+                await tp.AppendIntegerAsync(availableCommands.Count);
                 
                 foreach (var sh in availableCommands)
-                    tp.AppendInteger(sh);
-                ownerSession.SendMessage(tp);
+                    await tp.AppendIntegerAsync(sh);
+                await ownerSession.SendMessage(tp);
             }
         }
 
@@ -421,7 +422,7 @@ namespace Oblivion.HabboHotel.Pets
         ///     Pets the energy.
         /// </summary>
         /// <param name="add">if set to <c>true</c> [add].</param>
-        internal async Task PetEnergy(bool add)
+        internal void PetEnergy(bool add)
         {
             {
                 int num;
@@ -464,24 +465,24 @@ namespace Oblivion.HabboHotel.Pets
         /// <param name="levelAfterName">if set to <c>true</c> [level after name].</param>
         internal async Task SerializeInventory(ServerMessage message, bool levelAfterName = false)
         {
-            message.AppendInteger(PetId);
-            message.AppendString(Name);
+            await message.AppendIntegerAsync(PetId);
+            await message.AppendStringAsync(Name);
             if (levelAfterName)
-                message.AppendInteger(Level);
-            message.AppendInteger(Type);
-            message.AppendInteger(int.Parse(Race));
-            message.AppendString((Type == 16u) ? "ffffff" : Color);
-            message.AppendInteger((Type == 16u) ? 0u : Type);
+                await message.AppendIntegerAsync(Level);
+            await message.AppendIntegerAsync(Type);
+            await message.AppendIntegerAsync(int.Parse(Race));
+            await message.AppendStringAsync((Type == 16u) ? "ffffff" : Color);
+            await message.AppendIntegerAsync((Type == 16u) ? 0u : Type);
             if (Type == 16u && MoplaBreed != null)
             {
                 var array = MoplaBreed.PlantData.Substring(12).Split(' ');
                 foreach (var s in array)
-                    message.AppendInteger(int.Parse(s));
-                message.AppendInteger(MoplaBreed.GrowingStatus);
+                    await message.AppendIntegerAsync(int.Parse(s));
+                await message.AppendIntegerAsync(MoplaBreed.GrowingStatus);
                 return;
             }
-            message.AppendInteger(0);
-            message.AppendInteger(0);
+            await message.AppendIntegerAsync(0);
+            await message.AppendIntegerAsync(0);
         }
 
         /// <summary>

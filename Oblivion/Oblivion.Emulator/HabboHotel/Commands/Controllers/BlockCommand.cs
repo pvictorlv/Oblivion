@@ -77,7 +77,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 dbClient.SetQuery("INSERT INTO user_blockcmd (user_id, command_name) VALUES (@user, @command)");
                 dbClient.AddParameter("user", user.Id);
                 dbClient.AddParameter("command", word);
-                dbClient.RunQuery();
+                await dbClient.RunQueryAsync();
             }
              await Session.SendWhisperAsync("Sucesso!");
 

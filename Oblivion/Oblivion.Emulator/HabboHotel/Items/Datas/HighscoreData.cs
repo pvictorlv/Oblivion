@@ -113,7 +113,7 @@ namespace Oblivion.HabboHotel.Items.Datas
                         queryReactor.AddParameter("itemid", item.Id);
                         queryReactor.AddParameter("username", username);
                         queryReactor.AddParameter("score", score);
-                        queryReactor.RunQuery();
+                        await queryReactor.RunQueryAsync();
                         Lines.Remove((int) row["id"]);
                     }
                     else
@@ -123,7 +123,7 @@ namespace Oblivion.HabboHotel.Items.Datas
                         queryReactor.AddParameter("itemid", item.Id);
                         queryReactor.AddParameter("username", username);
                         queryReactor.AddParameter("score", score);
-                        queryReactor.RunQuery();
+                        await queryReactor.RunQueryAsync();
                     }
                 }
                 else if (item.GetBaseItem().Name.StartsWith("highscore_mostwin"))
@@ -142,7 +142,7 @@ namespace Oblivion.HabboHotel.Items.Datas
                             "UPDATE items_highscores SET score = score + 1 WHERE username = @username AND item_id = @itemid");
                         queryReactor.AddParameter("itemid", item.Id);
                         queryReactor.AddParameter("username", username);
-                        queryReactor.RunQuery();
+                        await queryReactor.RunQueryAsync();
                         Lines.Remove((int) row["id"]);
                         score = (int) row["score"] + 1;
                     }
@@ -153,7 +153,7 @@ namespace Oblivion.HabboHotel.Items.Datas
                         queryReactor.AddParameter("itemid", item.Id);
                         queryReactor.AddParameter("username", username);
                         queryReactor.AddParameter("score", score);
-                        queryReactor.RunQuery();
+                        await queryReactor.RunQueryAsync();
                     }
                 }
 

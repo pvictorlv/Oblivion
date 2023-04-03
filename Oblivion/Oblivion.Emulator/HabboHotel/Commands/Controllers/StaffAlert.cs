@@ -28,12 +28,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             var message =
                 new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
-            message.AppendString("staffcloud");
-            message.AppendInteger(2);
-            message.AppendString("title");
-            message.AppendString("Staff Internal Alert");
-            message.AppendString("message");
-            message.AppendString(
+            await message.AppendStringAsync("staffcloud");
+            await message.AppendIntegerAsync(2);
+            await message.AppendStringAsync("title");
+            await message.AppendStringAsync("Staff Internal Alert");
+            await message.AppendStringAsync("message");
+            await message.AppendStringAsync(
                 $"{msg}\r\n- <i>Sender: {session.GetHabbo().UserName}</i>");
             Oblivion.GetGame().GetClientManager().StaffAlert(message);
             Oblivion.GetGame()

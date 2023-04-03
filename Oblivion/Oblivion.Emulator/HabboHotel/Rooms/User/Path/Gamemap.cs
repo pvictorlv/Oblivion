@@ -846,7 +846,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="endOfPath">if set to <c>true</c> [end of path].</param>
         /// <param name="Override">if set to <c>true</c> [override].</param>
         /// <returns><c>true</c> if [is valid step] [the specified user]; otherwise, <c>false</c>.</returns>
-        internal bool IsValidStep(RoomUser user, Vector2D from, Vector2D to, bool endOfPath, bool Override,
+        internal async Task<bool> IsValidStep(RoomUser user, Vector2D from, Vector2D to, bool endOfPath, bool Override,
             bool checkDiag, bool generating)
         {
             if (user == null)
@@ -958,7 +958,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 user.Path.Clear();
                 user.IsWalking = false;
                 user.RemoveStatus("mv");
-                _room.GetRoomUserManager().UpdateUserStatus(user, false);
+                await _room.GetRoomUserManager().UpdateUserStatus(user, false);
                 if (!user.RidingHorse || user.IsPet || user.IsBot)
                     return generating;
                 var roomUserByVirtualId =
@@ -971,10 +971,10 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     {
                         roomUserByVirtualId.IsWalking = false;
                         roomUserByVirtualId.ClearMovement();
-                        roomUserByVirtualId.SerializeStatus(message, "");
+                        await roomUserByVirtualId.SerializeStatus(message, "");
                     }
 
-                    user.GetClient().GetHabbo().CurrentRoom.SendMessage(message);
+                    await user.GetClient().GetHabbo().CurrentRoom.SendMessage(message);
                 }
             }
             else if (squaseHasUser && !_room.RoomData.AllowWalkThrough)

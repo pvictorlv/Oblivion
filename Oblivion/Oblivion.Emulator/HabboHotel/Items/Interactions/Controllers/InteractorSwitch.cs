@@ -11,7 +11,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
     internal class InteractorSwitch : FurniInteractorModel
     {
         
-        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             RoomUser roomUser = null;
 
@@ -38,14 +38,14 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 }
 
                 item.ExtraData = num3.ToString();
-                item.UpdateState();
+                await  item.UpdateState();
                 if (item.GetRoom().GotWireds())
                     item.GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerStateChanged, roomUser, item);
 
                 return;
             }
 
-            roomUser.MoveTo(item.SquareInFront);
+            await roomUser.MoveTo(item.SquareInFront);
         }
     }
 }

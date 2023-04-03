@@ -25,7 +25,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var numb = pms[0];
             if (!int.TryParse(numb, out int value))
             {
-                client.SendWhisper("Valor inválido");
+                await client.SendWhisperAsync("Valor inválido");
                 return false;
             }
             Oblivion.Multipy = value;

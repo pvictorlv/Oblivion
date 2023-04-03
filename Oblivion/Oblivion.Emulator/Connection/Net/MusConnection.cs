@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Camera;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages;
@@ -20,7 +21,7 @@ namespace Oblivion.Connection.Net
             conn.BeginReceive(_dataBuffering, 0, _dataBuffering.Length, SocketFlags.None, RecieveData, _conn);
         }
 
-        internal async Task RecieveData(IAsyncResult iAr)
+        internal async void RecieveData(IAsyncResult iAr)
         {
             try
             {
@@ -38,7 +39,7 @@ namespace Oblivion.Connection.Net
                 var data = Encoding.Default.GetString(_dataBuffering, 0, bytes);
 
                 if (data.Length > 0)
-                    DArrival(data);
+                   await DArrival(data);
             }
             catch
             {
@@ -47,7 +48,7 @@ namespace Oblivion.Connection.Net
             MDisconnect();
         }
 
-        private void DArrival(string data)
+        private async Task DArrival(string data)
         {
             try
             {
@@ -109,7 +110,7 @@ namespace Oblivion.Connection.Net
 
                         clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(uint.Parse(pUserId));
                         if (clientByUserId == null) return;
-                        clientByUserId.SendNotif(pMessage);
+                        await clientByUserId.SendNotif(pMessage);
                         break;
 
                     case "kill":
@@ -175,7 +176,7 @@ namespace Oblivion.Connection.Net
                         }
 
                         clientByUserId.GetHabbo().Graffiti = emeralds;
-                        clientByUserId.GetHabbo().UpdateActivityPointsBalance();
+                        await clientByUserId.GetHabbo().UpdateActivityPointsBalance();
                         break;
                     }
 
@@ -207,7 +208,7 @@ namespace Oblivion.Connection.Net
                             message.AppendString(clientByUserId.GetHabbo().Gender.ToLower());
                             message.AppendString(motto);
                             message.AppendInteger(clientByUserId.GetHabbo().AchievementPoints);
-                            clientByUserId.SendMessage(message);
+                            await clientByUserId.SendMessage(message);
                         }
 
                         break;
@@ -221,8 +222,8 @@ namespace Oblivion.Connection.Net
                             clientByUserId.GetHabbo().GetInventoryComponent() == null)
                             return;
 
-                        clientByUserId.GetHabbo().GetInventoryComponent().UpdateItems(true);
-                        clientByUserId.GetHabbo().GetInventoryComponent().SendNewItems(furniId);
+                        await clientByUserId.GetHabbo().GetInventoryComponent().UpdateItems(true);
+                        await clientByUserId.GetHabbo().GetInventoryComponent().SendNewItems(furniId);
 
                         break;
 
@@ -234,7 +235,7 @@ namespace Oblivion.Connection.Net
                         if (clientByUserId?.GetHabbo() != null)
                         {
                             clientByUserId.GetHabbo().Credits = credits;
-                            clientByUserId.GetHabbo().UpdateCreditsBalance();
+                            await clientByUserId.GetHabbo().UpdateCreditsBalance();
                         }
 
                         return;
@@ -244,13 +245,13 @@ namespace Oblivion.Connection.Net
 
                         clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
                         if (clientByUserId?.GetHabbo() == null) return;
-                        clientByUserId.GetHabbo().GetSubscriptionManager().ReloadSubscription();
-                        clientByUserId.GetHabbo().SerializeClub();
+                        await clientByUserId.GetHabbo().GetSubscriptionManager().ReloadSubscription();
+                        await clientByUserId.GetHabbo().SerializeClub();
                         break;
                     case "reload_bans":
                         using (var adapter3 = Oblivion.GetDatabaseManager().GetQueryReactor())
                         {
-                            Oblivion.GetGame().GetBanManager().LoadBans(adapter3);
+                            await Oblivion.GetGame().GetBanManager().LoadBans(adapter3);
                         }
 
                         break;
@@ -278,14 +279,14 @@ namespace Oblivion.Connection.Net
                         var room = await Oblivion.GetGame().GetRoomManager().LoadRoom(roomId);
                         if (room == null)
                         {
-                            clientByUserId.SendNotif("Failed to find the requested room!");
+                          await  clientByUserId.SendNotif("Failed to find the requested room!");
                         }
                         else
                         {
                             var roomFwd =
                                 new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
                             roomFwd.AppendInteger(clientByUserId.GetHabbo().CurrentRoom.RoomId);
-                            clientByUserId.SendMessage(roomFwd);
+                            await clientByUserId.SendMessage(roomFwd);
                         }
                     }
                         break;

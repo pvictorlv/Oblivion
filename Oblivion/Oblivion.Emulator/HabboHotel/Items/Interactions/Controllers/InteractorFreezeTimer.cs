@@ -79,7 +79,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
 
             item.ExtraData = num.ToString();
-            await item.UpdateState();
+            await  item.UpdateState();
         }
     }
 }

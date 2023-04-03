@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -30,8 +31,8 @@ namespace Oblivion.Messages.Handlers
             if (songId != 0u)
             {
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("RetrieveSongIDMessageComposer"));
-                serverMessage.AppendString(text);
-                serverMessage.AppendInteger(songId);
+                await serverMessage.AppendStringAsync(text);
+                await serverMessage.AppendIntegerAsync(songId);
                 await Session.SendMessageAsync(serverMessage);
             }
         }
@@ -90,12 +91,12 @@ namespace Oblivion.Messages.Handlers
             if (num2 < 0)
                 return;
 
-            songItem.SaveToDatabase(currentRoom.RoomId);
+            await songItem.SaveToDatabase(currentRoom.RoomId);
 
-            Session.GetHabbo().GetInventoryComponent().RemoveItem(num, true, currentRoom.RoomId);
+            await Session.GetHabbo().GetInventoryComponent().RemoveItem(num, true, currentRoom.RoomId);
 
             using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery($"UPDATE items_rooms SET user_id=NULL WHERE id='{num}' LIMIT 1");
+                await queryReactor.RunFastQueryAsync($"UPDATE items_rooms SET user_id=NULL WHERE id='{num}' LIMIT 1");
 
             await Session.SendMessageAsync(SoundMachineComposer.Compose(roomMusicController.PlaylistCapacity, roomMusicController.Playlist.Values.ToList()));
         }
@@ -120,15 +121,15 @@ namespace Oblivion.Messages.Handlers
             if (songItem == null)
                 return;
 
-            songItem.RemoveFromDatabase();
+            await songItem.RemoveFromDatabase();
 
             var guid = Guid.NewGuid();
             ShortGuid itemId = guid;
-            Session.GetHabbo().GetInventoryComponent().AddNewItem(itemId, songItem.BaseItem.ItemId, songItem.ExtraData, 0u, false, true, 0, 0, songItem.SongCode);
-            Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
+            await Session.GetHabbo().GetInventoryComponent().AddNewItem(itemId, songItem.BaseItem.ItemId, songItem.ExtraData, 0u, false, true, 0, 0, songItem.SongCode);
+            await Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
 
             using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery($"UPDATE items_rooms SET user_id='{Session.GetHabbo().Id}' WHERE id='{songItem.ItemId}' LIMIT 1;");
+                await queryReactor.RunFastQueryAsync($"UPDATE items_rooms SET user_id='{Session.GetHabbo().Id}' WHERE id='{songItem.ItemId}' LIMIT 1;");
 
             await Session.SendMessageAsync(SoundMachineComposer.SerializeSongInventory(Session.GetHabbo().GetInventoryComponent().GetDisks()));
             await Session.SendMessageAsync(SoundMachineComposer.Compose(roomMusicController.PlaylistCapacity, roomMusicController.Playlist.Values.ToList()));

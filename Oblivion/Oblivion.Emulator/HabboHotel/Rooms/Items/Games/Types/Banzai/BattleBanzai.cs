@@ -122,7 +122,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                 await tile.UpdateState();
             }
 
-            ResetTiles();
+            await ResetTiles();
             IsBanzaiActive = true;
 
             if (_room.GotWireds())
@@ -133,7 +133,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                 user.LockedTilesCount = 0;
         }
 
-        public void ResetTiles()
+        public async Task ResetTiles()
         {
             /* TODO CHECK */
             foreach (var item in _room.GetRoomItemHandler().FloorItems.Values)
@@ -147,7 +147,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                     case Interaction.BanzaiScoreYellow:
                     case Interaction.BanzaiScoreGreen:
                         item.ExtraData = "0";
-                        item.UpdateState();
+                        await  item.UpdateState();
                         break;
                 }
             }
@@ -204,8 +204,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
 
 
                     var waveAtWin = new ServerMessage(LibraryParser.OutgoingRequest("RoomUserActionMessageComposer"));
-                    waveAtWin.AppendInteger(User.VirtualId);
-                    waveAtWin.AppendInteger(1);
+                    await waveAtWin.AppendIntegerAsync(User.VirtualId);
+                    await waveAtWin.AppendIntegerAsync(1);
                     await _room.SendMessage(waveAtWin);
                 }
                 _field?.Destroy();
@@ -225,20 +225,20 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
 
             item.ExtraData = Convert.ToInt32(Team).ToString();
             item.UpdateNeeded = true;
-            await item.UpdateState();
+            await  item.UpdateState();
 
             double newZ = _room.GetGameMap().Model.SqFloorHeight[newX][newY];
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ItemAnimationMessageComposer"));
-            serverMessage.AppendInteger(oldRoomCoord.X);
-            serverMessage.AppendInteger(oldRoomCoord.Y);
-            serverMessage.AppendInteger(newX);
-            serverMessage.AppendInteger(newY);
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(item.VirtualId);
-            serverMessage.AppendString(TextHandling.GetString(item.Z));
-            serverMessage.AppendString(TextHandling.GetString(newZ));
-            serverMessage.AppendInteger(-1);
+            await serverMessage.AppendIntegerAsync(oldRoomCoord.X);
+            await serverMessage.AppendIntegerAsync(oldRoomCoord.Y);
+            await serverMessage.AppendIntegerAsync(newX);
+            await serverMessage.AppendIntegerAsync(newY);
+            await serverMessage.AppendIntegerAsync(1);
+            await serverMessage.AppendIntegerAsync(item.VirtualId);
+            await serverMessage.AppendStringAsync(TextHandling.GetString(item.Z));
+            await serverMessage.AppendStringAsync(TextHandling.GetString(newZ));
+            await serverMessage.AppendIntegerAsync(-1);
             await _room.SendMessage(serverMessage);
 
             await _room.GetRoomItemHandler().SetFloorItem(mover, item, newX, newY, item.Rot, false, false, false);
@@ -324,7 +324,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                             var point = gameField.GetPoints().ToList();
                             foreach (var p in point)
                             {
-                                HandleMaxBanzaiTiles(new Point(p.X, p.Y), t, user);
+                                await HandleMaxBanzaiTiles(new Point(p.X, p.Y), t, user);
                                 _floorMap[p.Y, p.X] = gameField.ForValue;
                             }
                             point.Clear();
@@ -388,7 +388,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             }
         }
 
-        private void HandleMaxBanzaiTiles(Point coord, Team Team, RoomUser user)
+        private async Task HandleMaxBanzaiTiles(Point coord, Team Team, RoomUser user)
         {
             if (Team == Team.None)
                 return;
@@ -399,8 +399,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                 if (_item.GetBaseItem().InteractionType != Interaction.BanzaiFloor || _item.X != coord.X ||
                     _item.Y != coord.Y) continue;
                 SetMaxForTile(_item, Team);
-                _room.GetGameManager().AddPointToTeam(Team, user);
-                _item.UpdateState(false, true);
+                await _room.GetGameManager().AddPointToTeam(Team, user);
+                await _item.UpdateState(false, true);
             }
         }
 

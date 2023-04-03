@@ -31,20 +31,20 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             if (user == null || roomOwner == null)
             {
-                client.SendWhisper("O dono deve estar na sala para ela ser vendida!");
+                await client.SendWhisperAsync("O dono deve estar na sala para ela ser vendida!");
                 return false;
             }
 
             if (!currentRoom.RoomData.RoomForSale)
             {
-                client.SendWhisper("A sala não está à venda!");
+                await client.SendWhisperAsync("A sala não está à venda!");
                 return false;
             }
 
 
             if (currentRoom.RoomData.OwnerId == user.Id)
             {
-                client.SendWhisper("Não compre sua própria sala!");
+                await client.SendWhisperAsync("Não compre sua própria sala!");
                 return false;
             }
             var cost = currentRoom.RoomData.RoomSaleCost;
@@ -56,15 +56,15 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     Adapter.SetQuery("UPDATE rooms_data SET owner = @newowner WHERE id = @roomid");
                     Adapter.AddParameter("newowner", user.UserName);
                     Adapter.AddParameter("roomid", currentRoom.RoomId);
-                    Adapter.RunQuery();
+                    await Adapter.RunQueryAsync();
 
                     Adapter.SetNoLockQuery("UPDATE items_rooms SET user_id = @newowner WHERE room_id = @roomid;");
                     Adapter.AddParameter("newowner", user.Id);
                     Adapter.AddParameter("roomid", currentRoom.RoomId);
-                    Adapter.RunQuery();
+                    await Adapter.RunQueryAsync();
 
-                    Adapter.RunFastQuery($"DELETE FROM rooms_rights WHERE room_id = '{currentRoom.RoomId}'");
-                    Adapter.RunFastQuery($"UPDATE bots SET room_id = NULL WHERE room_id = '{currentRoom.RoomId}'");
+                    await Adapter.RunFastQueryAsync($"DELETE FROM rooms_rights WHERE room_id = '{currentRoom.RoomId}'");
+                    await Adapter.RunFastQueryAsync($"UPDATE bots SET room_id = NULL WHERE room_id = '{currentRoom.RoomId}'");
                 }
 
                 if (currentRoom.RoomData.Group != null)
@@ -116,7 +116,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             else
             {
-                client.SendWhisper($"O preço é {cost}{type}");
+                await client.SendWhisperAsync($"O preço é {cost}{type}");
             }
             return true;
         }

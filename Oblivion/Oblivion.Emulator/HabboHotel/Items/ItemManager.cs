@@ -5,6 +5,7 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Catalogs.Wrappers;
 using Oblivion.HabboHotel.Items.Interactions;
@@ -49,7 +50,7 @@ namespace Oblivion.HabboHotel.Items
         /// <param name="itemLoaded">The item loaded.</param>
         internal async Task LoadItems(IQueryAdapter dbClient, out uint itemLoaded)
         {
-            LoadItems(dbClient);
+            await LoadItems(dbClient);
             itemLoaded = (uint) _items.Count;
             _itemsByVirtualId = new ConcurrentDictionary<uint, string>();
             _itemsByRealId = new ConcurrentDictionary<string, uint>();

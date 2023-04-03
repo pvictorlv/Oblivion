@@ -8,7 +8,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorGate : FurniInteractorModel
     {
-        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             if (!hasRights)
                 return;
@@ -19,7 +19,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             var modes = item.GetBaseItem().Modes - 1;
 
             if (modes <= 0)
-                item.UpdateState(false, true);
+                await item.UpdateState(false, true);
 
             if (item.GetRoom() == null || item.GetRoom().GetGameMap() == null ||
                 item.GetRoom().GetGameMap().SquareHasUsers(item.X, item.Y))
@@ -52,7 +52,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
 
             item.ExtraData = newMode.ToString();
-            item.UpdateState();
+            await  item.UpdateState();
            
             if (item.GetRoom().GotWireds())
                 item.GetRoom()
@@ -66,12 +66,12 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
         }
 
-        public override void OnWiredTrigger(RoomItem item)
+        public override async Task OnWiredTrigger(RoomItem item)
         {
             var num = item.GetBaseItem().Modes - 1;
 
             if (num <= 0)
-                item.UpdateState(false, true);
+                await item.UpdateState(false, true);
 
             if (item.GetRoom() == null || item.GetRoom().GetGameMap() == null ||
                 item.GetRoom().GetGameMap().SquareHasUsers(item.X, item.Y))
@@ -108,7 +108,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
 
             item.ExtraData = num3.ToString();
-            item.UpdateState();
+            await  item.UpdateState();
             if (item.GetBaseItem().Width > 1 || item.GetBaseItem().Length > 1)
             {
                 item.GetRoom().GetGameMap().UpdateMapForItem(item);

@@ -984,7 +984,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 {
                     if ((current.X == oldCoord.X && current.Y == oldCoord.Y) ||
                         (current.X == item.X && current.Y == item.Y))
-                        _room.GetRoomUserManager().UpdateUserStatus(current, false);
+                        await _room.GetRoomUserManager().UpdateUserStatus(current, false);
                 }
             }
 

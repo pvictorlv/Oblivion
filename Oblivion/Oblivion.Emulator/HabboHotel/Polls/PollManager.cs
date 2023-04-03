@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 
 namespace Oblivion.HabboHotel.Polls
@@ -25,9 +26,9 @@ namespace Oblivion.HabboHotel.Polls
         /// </summary>
         /// <param name="dbClient">The database client.</param>
         /// <param name="pollLoaded">The poll loaded.</param>
-        internal async Task Init(IQueryAdapter dbClient, out uint pollLoaded)
+        internal async Task Init(IQueryAdapter dbClient, uint pollLoaded)
         {
-            Init(dbClient);
+           await Init(dbClient);
             pollLoaded = (uint) Polls.Count;
         }
 

@@ -22,33 +22,33 @@ namespace Oblivion.Messages.Handlers
             var GameId = Request.GetInteger();
 
             ServerMessage gamesLeft = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterGamesLeftMessageComposer"));
-            gamesLeft.AppendInteger(GameId);
-            gamesLeft.AppendInteger(-1);
-            gamesLeft.AppendInteger(0);
+            await gamesLeft.AppendIntegerAsync(GameId);
+            await gamesLeft.AppendIntegerAsync(-1);
+            await gamesLeft.AppendIntegerAsync(0);
             await Session.SendMessageAsync(gamesLeft);
 
             ServerMessage enterInGame = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterEnterInGameMessageComposer"));
-            enterInGame.AppendInteger(GameId);
-            enterInGame.AppendInteger(0);
+            await enterInGame.AppendIntegerAsync(GameId);
+            await enterInGame.AppendIntegerAsync(0);
             await Session.SendMessageAsync(enterInGame);
 
             ServerMessage achievements = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterGameAchievementsMessageComposer"));
-            achievements.AppendInteger(GameId);
-            achievements.AppendInteger(1);//count
-            achievements.AppendInteger(295);//id
-            achievements.AppendInteger(1);
-            achievements.AppendString("ACH_StoryChallengeChampion1");
-            achievements.AppendInteger(0);
-            achievements.AppendInteger(1);
-            achievements.AppendInteger(0);
-            achievements.AppendInteger(0);
-            achievements.AppendInteger(0);
+            await achievements.AppendIntegerAsync(GameId);
+            await achievements.AppendIntegerAsync(1);//count
+            await achievements.AppendIntegerAsync(295);//id
+            await achievements.AppendIntegerAsync(1);
+            await achievements.AppendStringAsync("ACH_StoryChallengeChampion1");
+            await achievements.AppendIntegerAsync(0);
+            await achievements.AppendIntegerAsync(1);
+            await achievements.AppendIntegerAsync(0);
+            await achievements.AppendIntegerAsync(0);
+            await achievements.AppendIntegerAsync(0);
             achievements.AppendBool(false);
-            achievements.AppendString("games");
-            achievements.AppendString("basejump");
-            achievements.AppendInteger(1);
-            achievements.AppendInteger(0);
-            achievements.AppendString("");
+            await achievements.AppendStringAsync("games");
+            await achievements.AppendStringAsync("basejump");
+            await achievements.AppendIntegerAsync(1);
+            await achievements.AppendIntegerAsync(0);
+            await achievements.AppendStringAsync("");
             await Session.SendMessageAsync(achievements);
 /*
             ServerMessage weeklyLeaderboard = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterLeaderboardMessageComposer"));
@@ -152,13 +152,13 @@ namespace Oblivion.Messages.Handlers
         {
 
             var game = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterGamesListMessageComposer"));
-            game.AppendInteger(1);
-            game.AppendInteger(1);
-            game.AppendString("basejump");
-            game.AppendString("93d4f3");
-            game.AppendString("");
-            game.AppendString(ExtraSettings.GameCenterBaseJumpUrl);
-            game.AppendString("");
+            await game.AppendIntegerAsync(1);
+            await game.AppendIntegerAsync(1);
+            await game.AppendStringAsync("basejump");
+            await game.AppendStringAsync("93d4f3");
+            await game.AppendStringAsync("");
+            await game.AppendStringAsync(ExtraSettings.GameCenterBaseJumpUrl);
+            await game.AppendStringAsync("");
             await Session.SendMessageAsync(game);
         }
         /// <summary>
@@ -168,7 +168,7 @@ namespace Oblivion.Messages.Handlers
         {
             var gameId = Request.GetInteger();
             ServerMessage joinQueue = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterJoinGameQueueMessageComposer"));
-            joinQueue.AppendInteger(gameId);
+            await joinQueue.AppendIntegerAsync(gameId);
             await Session.SendMessageAsync(joinQueue);
 
             var habboId = Session.GetHabbo().Id;
@@ -194,27 +194,27 @@ namespace Oblivion.Messages.Handlers
 
 
             ServerMessage loadGame = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterLoadGameUrlMessageComposer"));
-            loadGame.AppendInteger(gameId);
-            loadGame.AppendString(Convert.ToString(Oblivion.GetUnixTimeStamp()));
-            loadGame.AppendString(ExtraSettings.GameCenterBaseJumpUrl + "BaseJump.swf");
-            loadGame.AppendString("best");
-            loadGame.AppendString("showAll");
-            loadGame.AppendInteger(60);
-            loadGame.AppendInteger(10);
-            loadGame.AppendInteger(8);
-            loadGame.AppendInteger(6);
-            loadGame.AppendString("assetUrl");
-            loadGame.AppendString(ExtraSettings.GameCenterBaseJumpUrl + "BasicAssets.swf");
-            loadGame.AppendString("habboHost");
-            loadGame.AppendString("http://fuseus-private-httpd-fe-1");
-            loadGame.AppendString("accessToken");
-            loadGame.AppendString(ssoTicket);
-            loadGame.AppendString("gameServerHost");
-            loadGame.AppendString(ExtraSettings.BaseJumpHost);
-            loadGame.AppendString("gameServerPort");
-            loadGame.AppendString(ExtraSettings.BaseJumpPort);
-            loadGame.AppendString("socketPolicyPort");
-            loadGame.AppendString(ExtraSettings.BaseJumpHost);
+            await loadGame.AppendIntegerAsync(gameId);
+            await loadGame.AppendStringAsync(Convert.ToString(Oblivion.GetUnixTimeStamp()));
+            await loadGame.AppendStringAsync(ExtraSettings.GameCenterBaseJumpUrl + "BaseJump.swf");
+            await loadGame.AppendStringAsync("best");
+            await loadGame.AppendStringAsync("showAll");
+            await loadGame.AppendIntegerAsync(60);
+            await loadGame.AppendIntegerAsync(10);
+            await loadGame.AppendIntegerAsync(8);
+            await loadGame.AppendIntegerAsync(6);
+            await loadGame.AppendStringAsync("assetUrl");
+            await loadGame.AppendStringAsync(ExtraSettings.GameCenterBaseJumpUrl + "BasicAssets.swf");
+            await loadGame.AppendStringAsync("habboHost");
+            await loadGame.AppendStringAsync("http://fuseus-private-httpd-fe-1");
+            await loadGame.AppendStringAsync("accessToken");
+            await loadGame.AppendStringAsync(ssoTicket);
+            await loadGame.AppendStringAsync("gameServerHost");
+            await loadGame.AppendStringAsync(ExtraSettings.BaseJumpHost);
+            await loadGame.AppendStringAsync("gameServerPort");
+            await loadGame.AppendStringAsync(ExtraSettings.BaseJumpPort);
+            await loadGame.AppendStringAsync("socketPolicyPort");
+            await loadGame.AppendStringAsync(ExtraSettings.BaseJumpHost);
 
             await Session.SendMessageAsync(loadGame);
         }

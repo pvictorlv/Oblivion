@@ -3,6 +3,7 @@ using DotNetty.Common.Utilities;
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Oblivion.Messages
 {

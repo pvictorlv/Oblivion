@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.User;
@@ -183,7 +184,7 @@ namespace Oblivion.HabboHotel.SoundMachine
         ///     Updates the specified instance.
         /// </summary>
         /// <param name="instance">The instance.</param>
-        public void Update(Room instance)
+        public async Task Update(Room instance)
         {
             if (IsPlaying && (CurrentSong == null || TimePlaying >= CurrentSong.SongData.LengthSeconds + 1.0))
             {
@@ -201,7 +202,7 @@ namespace Oblivion.HabboHotel.SoundMachine
             if (!_mBroadcastNeeded)
                 return;
 
-            BroadcastCurrentSongData(instance);
+            await BroadcastCurrentSongData(instance);
             _mBroadcastNeeded = false;
         }
 
@@ -291,12 +292,12 @@ namespace Oblivion.HabboHotel.SoundMachine
         {
             if (CurrentSong != null)
             {
-                instance.SendMessage(
+                await instance.SendMessage(
                     SoundMachineComposer.ComposePlayingComposer(CurrentSong.SongData.Id, SongQueuePosition, 0));
                 return;
             }
 
-            instance.SendMessage(SoundMachineComposer.ComposePlayingComposer(0u, 0, 0));
+            await instance.SendMessage(SoundMachineComposer.ComposePlayingComposer(0u, 0, 0));
         }
 
         /// <summary>
@@ -315,7 +316,7 @@ namespace Oblivion.HabboHotel.SoundMachine
         /// <summary>
         ///     Destroys this instance.
         /// </summary>
-        internal async Task Destroy()
+        internal void Destroy()
         {
             _mLoadedDisks?.Clear();
 

@@ -117,7 +117,7 @@ namespace Oblivion.HabboHotel.Items.Datas
         {
             Enabled = true;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery($"UPDATE items_moodlight SET enabled = '1' WHERE item_id = '{ItemId}'");
+                await queryReactor.RunFastQueryAsync($"UPDATE items_moodlight SET enabled = '1' WHERE item_id = '{ItemId}'");
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace Oblivion.HabboHotel.Items.Datas
         {
             Enabled = false;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery($"UPDATE items_moodlight SET enabled = '0' WHERE item_id = '{ItemId}'");
+                await queryReactor.RunFastQueryAsync($"UPDATE items_moodlight SET enabled = '0' WHERE item_id = '{ItemId}'");
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace Oblivion.HabboHotel.Items.Datas
             {
                 queryReactor.SetQuery(
                     $"UPDATE items_moodlight SET preset_{text}='{color},{intensity},{Oblivion.BoolToEnum(bgOnly)}' WHERE item_id='{ItemId}'");
-                queryReactor.RunQuery();
+                await queryReactor.RunQueryAsync();
             }
 
             GetPreset(preset).ColorCode = color;

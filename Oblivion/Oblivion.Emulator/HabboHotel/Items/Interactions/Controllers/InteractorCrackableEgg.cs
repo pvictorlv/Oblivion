@@ -11,7 +11,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorCrackableEgg : FurniInteractorModel
     {
-        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             RoomUser roomUser = null;
             if (session?.GetHabbo() != null)
@@ -29,11 +29,11 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
                 cracks++;
                 item.ExtraData = Convert.ToString(cracks);
-                item.UpdateState(false, true);
+                await item.UpdateState(false, true);
             }
             else
             {
-                roomUser.MoveTo(item.SquareInFront);
+                await roomUser.MoveTo(item.SquareInFront);
             }
             var room = item.GetRoom();
 
@@ -61,7 +61,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
         }
 
-        public override void OnUserWalk(GameClient session, RoomItem item, RoomUser user)
+        public override async Task OnUserWalk(GameClient session, RoomItem item, RoomUser user)
         {
             if (item.GetBaseItem().InteractionType == Interaction.Pinata)
             {
@@ -70,7 +70,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 if (num5 >= 100 || user.CurrentEffect != 158) return;
                 var num6 = num5 + 1;
                 item.ExtraData = num6.ToString();
-                item.UpdateState();
+                await  item.UpdateState();
                 Oblivion.GetGame()
                     .GetAchievementManager()
                     .ProgressUserAchievement(user.GetClient(), "ACH_PinataWhacker", 1);

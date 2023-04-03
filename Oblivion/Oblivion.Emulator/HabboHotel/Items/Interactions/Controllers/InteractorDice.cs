@@ -9,7 +9,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorDice : FurniInteractorModel
     {
-        public override void OnPlace(GameClient session, RoomItem item)
+        public override async Task OnPlace(GameClient session, RoomItem item)
         {
             if (item.ExtraData != "-1")
                 return;
@@ -18,13 +18,13 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             item.UpdateNeeded = true;
         }
 
-        public override void OnRemove(GameClient session, RoomItem item)
+        public override async Task OnRemove(GameClient session, RoomItem item)
         {
             if (item.ExtraData == "-1")
                 item.ExtraData = "0";
         }
 
-        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             RoomUser roomUser = null;
             if (session != null)
@@ -41,23 +41,23 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 if (request == -1)
                 {
                     item.ExtraData = "0";
-                    item.UpdateState();
+                    await  item.UpdateState();
                     return;
                 }
 
                 item.ExtraData = "-1";
-                item.UpdateState(false, true);
+                await  item.UpdateState(false, true);
                 item.ReqUpdate(4, true);
                 return;
             }
 
-            roomUser.MoveTo(item.SquareInFront);
+            await roomUser.MoveTo(item.SquareInFront);
         }
 
-        public override void OnWiredTrigger(RoomItem item)
+        public override async Task OnWiredTrigger(RoomItem item)
         {
             item.ExtraData = "-1";
-            item.UpdateState(false, true);
+            await  item.UpdateState(false, true);
             item.ReqUpdate(4, true);
         }
     }

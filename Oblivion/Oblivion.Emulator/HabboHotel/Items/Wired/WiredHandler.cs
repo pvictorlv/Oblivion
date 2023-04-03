@@ -38,13 +38,13 @@ namespace Oblivion.HabboHotel.Items.Wired
             _room = room;
         }
 
-        public static void OnEvent(IWiredItem item)
+        public static async Task OnEvent(IWiredItem item)
         {
             if (item.Item == null || item.Item.ExtraData == "1")
                 return;
 
             item.Item.ExtraData = "1";
-            item.Item.UpdateState(false, true);
+            await item.Item.UpdateState(false, true);
             item.Item.ReqUpdate(1, true);
         }
 
@@ -721,7 +721,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 //        public ConcurrentDictionary<long, IWiredItem> Triggers;
         public ConcurrentDictionary<int, ConcurrentList<IWiredItem>> Specials;
 
-        public bool OnUserFurniCollision(Room Instance, RoomItem Item)
+        public async Task<bool> OnUserFurniCollision(Room Instance, RoomItem Item)
         {
             if (Instance == null || Item == null)
                 return false;
@@ -733,7 +733,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 foreach (RoomUser User in users)
                 {
                     if (Gamemap.TileDistance(point.X, point.Y, User.X, User.Y) <= 1)
-                        ExecuteWired(Interaction.TriggerCollision, User, Item);
+                        await ExecuteWired(Interaction.TriggerCollision, User, Item);
                 }
             }
 

@@ -7,7 +7,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorOneWayGate : FurniInteractorModel
     {
-        public override void OnPlace(GameClient session, RoomItem item)
+        public override async Task OnPlace(GameClient session, RoomItem item)
         {
             item.ExtraData = "0";
 
@@ -25,7 +25,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
         }
 
-        public override void OnRemove(GameClient session, RoomItem item)
+        public override async Task OnRemove(GameClient session, RoomItem item)
         {
             item.ExtraData = "0";
 
@@ -43,7 +43,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
         }
 
-        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             if (session == null)
                 return;

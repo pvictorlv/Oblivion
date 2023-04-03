@@ -32,13 +32,13 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                dbClient.RunFastQuery($"UPDATE users SET rpoints = rpoints + 1 WHERE id = '{targetUser.UserId}'");
+                await dbClient.RunFastQueryAsync($"UPDATE users SET rpoints = rpoints + 1 WHERE id = '{targetUser.UserId}'");
             }
 
             client.GetHabbo().Diamonds += 5;
             client.GetHabbo().UpdateSeasonalCurrencyBalance();
-            client.SendWhisper("Enviado com sucesso!");
-            targetUser.GetClient().SendWhisper("Você ganhou um ponto de rádio!");
+            await client.SendWhisperAsync("Enviado com sucesso!");
+            await targetUser.GetClient().SendWhisperAsync("Você ganhou um ponto de rádio!");
             return true;
         }
     }

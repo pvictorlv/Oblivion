@@ -75,7 +75,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 queryReactor.AddParameter("newnavi_height", NewnaviHeight);
                 queryReactor.AddParameter("disable_camera_follow", Oblivion.BoolToEnum(DisableCameraFollow));
                 queryReactor.AddParameter("chat_color", ChatColor);
-                queryReactor.RunQuery();
+                await queryReactor.RunQueryAsync();
             }
         }
     }

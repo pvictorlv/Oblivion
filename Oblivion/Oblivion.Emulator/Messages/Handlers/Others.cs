@@ -124,8 +124,8 @@ namespace Oblivion.Messages.Handlers
 
             Session.TimePingedReceived = DateTime.Now;
 
-            Response.Init(LibraryParser.OutgoingRequest("LatencyTestResponseMessageComposer"));
-            Response.AppendInteger(Request.GetIntegerFromString());
+            await Response.InitAsync(LibraryParser.OutgoingRequest("LatencyTestResponseMessageComposer"));
+            await Response.AppendIntegerAsync(Request.GetIntegerFromString());
             await SendResponse();
         }
 
@@ -137,9 +137,9 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session.IsAir)
             {
-                Response.Init(LibraryParser.OutgoingRequest("InitCryptoMessageComposer"));
-                Response.AppendString(Handler.GetRsaDiffieHellmanPrimeKey().ToLower());
-                Response.AppendString(Handler.GetRsaDiffieHellmanGeneratorKey().ToLower());
+                await Response.InitAsync(LibraryParser.OutgoingRequest("InitCryptoMessageComposer"));
+                await Response.AppendStringAsync(Handler.GetRsaDiffieHellmanPrimeKey().ToLower());
+                await Response.AppendStringAsync(Handler.GetRsaDiffieHellmanGeneratorKey().ToLower());
                 await SendResponse();
             }
         }
@@ -187,8 +187,8 @@ namespace Oblivion.Messages.Handlers
             var machineId = Request.GetString();
             Session.MachineId = machineId;
 
-            Response.Init(LibraryParser.OutgoingRequest("UniqueMachineIDMessageComposer"));
-            Response.AppendString(machineId);
+            await Response.InitAsync(LibraryParser.OutgoingRequest("UniqueMachineIDMessageComposer"));
+            await Response.AppendStringAsync(machineId);
             await SendResponse();
         }
 
@@ -222,110 +222,110 @@ namespace Oblivion.Messages.Handlers
                 return;
             
             var habbo = Session.GetHabbo();
-            Response.Init(LibraryParser.OutgoingRequest("UserObjectMessageComposer"));
-            Response.AppendInteger(habbo.Id);
-            Response.AppendString(habbo.UserName);
-            Response.AppendString(habbo.Look);
-            Response.AppendString(habbo.Gender.ToUpper());
-            Response.AppendString(habbo.Motto);
-            Response.AppendString("");
+            await Response.InitAsync(LibraryParser.OutgoingRequest("UserObjectMessageComposer"));
+            await Response.AppendIntegerAsync(habbo.Id);
+            await Response.AppendStringAsync(habbo.UserName);
+            await Response.AppendStringAsync(habbo.Look);
+            await Response.AppendStringAsync(habbo.Gender.ToUpper());
+            await Response.AppendStringAsync(habbo.Motto);
+            await Response.AppendStringAsync("");
             Response.AppendBool(false);
-            Response.AppendInteger(habbo.Respect);
-            Response.AppendInteger(habbo.DailyRespectPoints);
-            Response.AppendInteger(habbo.DailyPetRespectPoints);
+            await Response.AppendIntegerAsync(habbo.Respect);
+            await Response.AppendIntegerAsync(habbo.DailyRespectPoints);
+            await Response.AppendIntegerAsync(habbo.DailyPetRespectPoints);
             Response.AppendBool(false);
-            Response.AppendString(habbo.LastOnline.ToString(CultureInfo.InvariantCulture));
+            await Response.AppendStringAsync(habbo.LastOnline.ToString(CultureInfo.InvariantCulture));
             Response.AppendBool(habbo.CanChangeName());
             Response.AppendBool(false);
             await SendResponse();
 
-            Response.Init(LibraryParser.OutgoingRequest("BuildersClubMembershipMessageComposer"));
-            Response.AppendInteger(Session.GetHabbo().BuildersExpire);
-            Response.AppendInteger(Session.GetHabbo().BuildersItemsMax);
-            Response.AppendInteger(2);
+            await Response.InitAsync(LibraryParser.OutgoingRequest("BuildersClubMembershipMessageComposer"));
+            await Response.AppendIntegerAsync(Session.GetHabbo().BuildersExpire);
+            await Response.AppendIntegerAsync(Session.GetHabbo().BuildersItemsMax);
+            await Response.AppendIntegerAsync(2);
             await SendResponse();
             var tradeLocked = Session.GetHabbo().CheckTrading();
 
-            Response.Init(LibraryParser.OutgoingRequest("SendPerkAllowancesMessageComposer"));
+            await Response.InitAsync(LibraryParser.OutgoingRequest("SendPerkAllowancesMessageComposer"));
 
-            Response.AppendInteger(16); // Count
-             Response.AppendString("USE_GUIDE_TOOL");
-             Response.AppendString("");
+            await Response.AppendIntegerAsync(16); // Count
+             await Response.AppendStringAsync("USE_GUIDE_TOOL");
+             await Response.AppendStringAsync("");
              Response.AppendBool(habbo.Rank >= 3);
 
-             Response.AppendString("GIVE_GUIDE_TOURS");
-             Response.AppendString("requirement.unfulfilled.helper_le");
+             await Response.AppendStringAsync("GIVE_GUIDE_TOURS");
+             await Response.AppendStringAsync("requirement.unfulfilled.helper_le");
              Response.AppendBool(habbo.Rank >= 3);
 
-             Response.AppendString("JUDGE_CHAT_REVIEWS");
-             Response.AppendString(""); // ??
+             await Response.AppendStringAsync("JUDGE_CHAT_REVIEWS");
+             await Response.AppendStringAsync(""); // ??
              Response.AppendBool(true);
 
-             Response.AppendString("VOTE_IN_COMPETITIONS");
-             Response.AppendString(""); // ??
+             await Response.AppendStringAsync("VOTE_IN_COMPETITIONS");
+             await Response.AppendStringAsync(""); // ??
              Response.AppendBool(true);
 
-             Response.AppendString("CALL_ON_HELPERS");
-             Response.AppendString(""); // ??
+             await Response.AppendStringAsync("CALL_ON_HELPERS");
+             await Response.AppendStringAsync(""); // ??
              Response.AppendBool(true);
 
-             Response.AppendString("CITIZEN");
-             Response.AppendString(""); // ??
+             await Response.AppendStringAsync("CITIZEN");
+             await Response.AppendStringAsync(""); // ??
              Response.AppendBool(true);
 
-             Response.AppendString("TRADE");
-             Response.AppendString(""); // ??
+             await Response.AppendStringAsync("TRADE");
+             await Response.AppendStringAsync(""); // ??
              Response.AppendBool(tradeLocked);
 
-             Response.AppendString("HEIGHTMAP_EDITOR_BETA");
-             Response.AppendString(""); // ??
+             await Response.AppendStringAsync("HEIGHTMAP_EDITOR_BETA");
+             await Response.AppendStringAsync(""); // ??
              Response.AppendBool(false);
 
-             Response.AppendString("EXPERIMENTAL_CHAT_BETA");
-             Response.AppendString("requirement.unfulfilled.helper_level_2");
+             await Response.AppendStringAsync("EXPERIMENTAL_CHAT_BETA");
+             await Response.AppendStringAsync("requirement.unfulfilled.helper_level_2");
              Response.AppendBool(true);
 
-             Response.AppendString("EXPERIMENTAL_TOOLBAR");
-             Response.AppendString(""); // ??
+             await Response.AppendStringAsync("EXPERIMENTAL_TOOLBAR");
+             await Response.AppendStringAsync(""); // ??
              Response.AppendBool(true);
 
-             Response.AppendString("BUILDER_AT_WORK");
-             Response.AppendString(""); // ??
+             await Response.AppendStringAsync("BUILDER_AT_WORK");
+             await Response.AppendStringAsync(""); // ??
              Response.AppendBool(true);
 
-             Response.AppendString("NAVIGATOR_PHASE_ONE_2014");
-             Response.AppendString(""); // ??
+             await Response.AppendStringAsync("NAVIGATOR_PHASE_ONE_2014");
+             await Response.AppendStringAsync(""); // ??
              Response.AppendBool(false);
 
-             Response.AppendString("CAMERA");
-             Response.AppendString(""); // ??
+             await Response.AppendStringAsync("CAMERA");
+             await Response.AppendStringAsync(""); // ??
              Response.AppendBool(true);
 
-             Response.AppendString("NAVIGATOR_PHASE_TWO_2014");
-             Response.AppendString(""); // ??
+             await Response.AppendStringAsync("NAVIGATOR_PHASE_TWO_2014");
+             await Response.AppendStringAsync(""); // ??
              Response.AppendBool(true);
 
-             Response.AppendString("MOUSE_ZOOM");
-             Response.AppendString(""); // ??
+             await Response.AppendStringAsync("MOUSE_ZOOM");
+             await Response.AppendStringAsync(""); // ??
              Response.AppendBool(true);
 
-             Response.AppendString("NAVIGATOR_ROOM_THUMBNAIL_CAMERA");
-             Response.AppendString(""); // ??
+             await Response.AppendStringAsync("NAVIGATOR_ROOM_THUMBNAIL_CAMERA");
+             await Response.AppendStringAsync(""); // ??
              Response.AppendBool(true);
 
             await SendResponse();
 
 
-            GetResponse().Init(LibraryParser.OutgoingRequest("CitizenshipStatusMessageComposer"));
-            GetResponse().AppendString("citizenship");
-            GetResponse().AppendInteger(1);
-            GetResponse().AppendInteger(4);
+            await GetResponse().InitAsync(LibraryParser.OutgoingRequest("CitizenshipStatusMessageComposer"));
+            await GetResponse().AppendStringAsync("citizenship");
+            await GetResponse().AppendIntegerAsync(1);
+            await GetResponse().AppendIntegerAsync(4);
             await SendResponse();
 
-            GetResponse().Init(LibraryParser.OutgoingRequest("AchievementPointsMessageComposer"));
-            GetResponse().AppendInteger(Session.GetHabbo().AchievementPoints);
+            await GetResponse().InitAsync(LibraryParser.OutgoingRequest("AchievementPointsMessageComposer"));
+            await GetResponse().AppendIntegerAsync(Session.GetHabbo().AchievementPoints);
             await SendResponse();
-            GetResponse().Init(LibraryParser.OutgoingRequest("FigureSetIdsMessageComposer"));
+            await GetResponse().InitAsync(LibraryParser.OutgoingRequest("FigureSetIdsMessageComposer"));
 //            Session.GetHabbo().ClothingManager.Serialize(GetResponse());
 //            await SendResponse();
             /*Response.Init(LibraryParser.OutgoingRequest("NewbieStatusMessageComposer"));
@@ -374,18 +374,18 @@ namespace Oblivion.Messages.Handlers
                 dbClient.SetQuery("UPDATE `user_stats` SET `calendar_gifts` = @giftData WHERE `id` = @habboId LIMIT 1");
                 dbClient.AddParameter("giftData", string.Join(",", data.OpenedGifts));
                 dbClient.AddParameter("habboId", Session.GetHabbo().Id);
-                dbClient.RunQuery();
+                await dbClient.RunQueryAsync();
             }
 
 
             Session.GetHabbo().GetInventoryComponent().AddNewItem("0", itemId, "", 0, true, false, 0, 0);
             Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
 
-            Response.Init(LibraryParser.OutgoingRequest("CampaignCalendarGiftMessageComposer"));
+            await Response.InitAsync(LibraryParser.OutgoingRequest("CampaignCalendarGiftMessageComposer"));
             Response.AppendBool(true);
-            Response.AppendString(newItem.Name);
-            Response.AppendString("");
-            Response.AppendString(newItem.Name);
+            await Response.AppendStringAsync(newItem.Name);
+            await Response.AppendStringAsync("");
+            await Response.AppendStringAsync(newItem.Name);
             await SendResponse();
         }
 
@@ -422,9 +422,9 @@ namespace Oblivion.Messages.Handlers
 
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                dbClient.RunFastQuery("UPDATE `camera_photos` SET `file_state` = 'purchased' WHERE `id` = '" +
-                                      preview.Id +
-                                      "' LIMIT 1");
+                await dbClient.RunFastQueryAsync("UPDATE `camera_photos` SET `file_state` = 'purchased' WHERE `id` = '" +
+                                                 preview.Id +
+                                                 "' LIMIT 1");
             }
 
             var data = "{\"w\":\"" +
@@ -443,7 +443,7 @@ namespace Oblivion.Messages.Handlers
 
             await Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_CameraPhotoCount", 1);
 
-            Response.Init(LibraryParser.OutgoingRequest("CameraPurchaseOk"));
+            await Response.InitAsync(LibraryParser.OutgoingRequest("CameraPurchaseOk"));
             await SendResponse();
         }
 
@@ -529,8 +529,8 @@ namespace Oblivion.Messages.Handlers
             if (roomId == 0)
                 return;
 
-            Response.Init(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
-            Response.AppendInteger(roomId);
+            await Response.InitAsync(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
+            await Response.AppendIntegerAsync(roomId);
             await SendResponse();
         }
 
@@ -591,9 +591,9 @@ namespace Oblivion.Messages.Handlers
 
                 using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    dbClient.RunFastQuery("UPDATE `camera_photos` SET `file_state` = 'purchased' WHERE `id` = '" +
-                                          preview.Id +
-                                          "' LIMIT 1");
+                    await dbClient.RunFastQueryAsync("UPDATE `camera_photos` SET `file_state` = 'purchased' WHERE `id` = '" +
+                                                     preview.Id +
+                                                     "' LIMIT 1");
                 }
 
                 var data = "{\"w\":\"" +

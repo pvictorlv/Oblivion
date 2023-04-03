@@ -10,7 +10,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
     {
         private RoomItem _mItem;
 
-        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             var user = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
 
@@ -26,7 +26,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     return;
 
                 item.ExtraData = "1";
-                item.UpdateState();
+                await  item.UpdateState();
 
                 item.VikingCotieBurning = true;
 

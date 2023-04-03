@@ -186,11 +186,11 @@ namespace Oblivion.HabboHotel
 
                 Progress(bar, wait, end, "Loading Roles...");
                 _roleManager = new RoleManager();
-                await _roleManager.LoadRights(queryReactor);
+                _roleManager.LoadRights(queryReactor);
 
                 Progress(bar, wait, end, "Loading Items...");
                 _itemManager = new ItemManager();
-                await _itemManager.LoadItems(queryReactor, out _);
+                await _itemManager.LoadItems(queryReactor, 0);
 
                 _cameraManager = new CameraPhotoManager();
                 await _cameraManager.Init(_itemManager);
@@ -256,7 +256,7 @@ namespace Oblivion.HabboHotel
 
                 Progress(bar, wait, end, "Loading Polls...");
                 _pollManager = new PollManager();
-                await _pollManager.Init(queryReactor, out _);
+                await _pollManager.Init(queryReactor, 0);
 
                 Progress(bar, wait, end, "Loading Achievements...");
                 _achievementManager = new AchievementManager();

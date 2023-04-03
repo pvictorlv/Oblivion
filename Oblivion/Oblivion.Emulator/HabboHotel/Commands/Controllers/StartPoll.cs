@@ -31,12 +31,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
                 var result =
                     new ServerMessage(LibraryParser.OutgoingRequest("MatchingPollResultMessageComposer"));
-                result.AppendInteger(room.RoomId);
-                result.AppendInteger(2);
-                result.AppendString("0");
-                result.AppendInteger(endPoll.AnswersNegative);
-                result.AppendString("1");
-                result.AppendInteger(endPoll.AnswersPositive);
+                await result.AppendIntegerAsync(room.RoomId);
+                await result.AppendIntegerAsync(2);
+                await result.AppendStringAsync("0");
+                await result.AppendIntegerAsync(endPoll.AnswersNegative);
+                await result.AppendStringAsync("1");
+                await result.AppendIntegerAsync(endPoll.AnswersPositive);
                 await room.SendMessage(result);
 
                 Oblivion.GetGame().GetPollManager().Polls.Remove(room.RoomId);
@@ -50,17 +50,17 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             Oblivion.GetGame().GetPollManager().Polls.Add(room.RoomId, poll);
 
             var message = new ServerMessage(LibraryParser.OutgoingRequest("MatchingPollMessageComposer"));
-            message.AppendString("MATCHING_POLL");
-            message.AppendInteger(poll.RoomId);
-            message.AppendInteger(poll.RoomId);
-            message.AppendInteger(1);
-            message.AppendInteger(poll.RoomId);
-            message.AppendInteger(120);
-            message.AppendInteger(3);
-            message.AppendString(title);
+            await message.AppendStringAsync("MATCHING_POLL");
+            await message.AppendIntegerAsync(poll.RoomId);
+            await message.AppendIntegerAsync(poll.RoomId);
+            await message.AppendIntegerAsync(1);
+            await message.AppendIntegerAsync(poll.RoomId);
+            await message.AppendIntegerAsync(120);
+            await message.AppendIntegerAsync(3);
+            await message.AppendStringAsync(title);
             client.GetHabbo().CurrentRoom.SendMessage(message);
 
-            client.SendWhisper("Para finalizar a votação digite :poll endquestion");
+            await client.SendWhisperAsync("Para finalizar a votação digite :poll endquestion");
 
             return true;
         }

@@ -453,7 +453,7 @@ namespace Oblivion.HabboHotel.Rooms
                     queryReactor.AddParameter("chat_s", room.RoomData.ChatSpeed);
                     queryReactor.AddParameter("chat_m", room.RoomData.ChatMaxDistance);
                     queryReactor.AddParameter("chat_f", room.RoomData.ChatFloodProtection);
-                    queryReactor.RunQuery();
+                    await queryReactor.RunQueryAsync();
                 }
             }
             catch (Exception e)
@@ -476,7 +476,7 @@ namespace Oblivion.HabboHotel.Rooms
                             queryReactor.AddParameter("y", current.Y);
                             queryReactor.AddParameter("z", current.Z);
                             queryReactor.AddParameter("id", current.PetData.PetId);
-                            queryReactor.RunQuery();
+                            await queryReactor.RunQueryAsync();
 
                             if (current.BotAi == null)
                                 continue;
@@ -498,7 +498,7 @@ namespace Oblivion.HabboHotel.Rooms
                             queryReactor.AddParameter("y", current.Y);
                             queryReactor.AddParameter("z", current.Z);
                             queryReactor.AddParameter("id", current.BotData.BotId);
-                            queryReactor.RunQuery();
+                            await queryReactor.RunQueryAsync();
 
                             current.BotAi?.Dispose();
                         }

@@ -8,12 +8,14 @@ namespace Oblivion.HabboHotel.Items.Interactions.Models
 {
     internal class FurniInteractorModel : IFurniInteractor
     {
-        public virtual void OnPlace(GameClient session, RoomItem item)
+        public virtual Task OnPlace(GameClient session, RoomItem item)
         {
+            return Task.CompletedTask;
         }
 
-        public virtual void OnRemove(GameClient session, RoomItem item)
+        public virtual Task OnRemove(GameClient session, RoomItem item)
         {
+            return Task.CompletedTask;
         }
 
         public virtual Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
@@ -21,16 +23,19 @@ namespace Oblivion.HabboHotel.Items.Interactions.Models
             return Task.CompletedTask;
         }
 
-        public virtual void OnUserWalk(GameClient session, RoomItem item, RoomUser user)
+        public virtual Task OnUserWalk(GameClient session, RoomItem item, RoomUser user)
         {
+            return Task.CompletedTask;
         }
 
-        public virtual void OnUserWalkOff(GameClient session, RoomItem item, RoomUser user)
+        public virtual Task OnUserWalkOff(GameClient session, RoomItem item, RoomUser user)
         {
+            return Task.CompletedTask;
         }
 
-        public virtual void OnWiredTrigger(RoomItem item)
+        public virtual Task OnWiredTrigger(RoomItem item)
         {
+            return Task.CompletedTask;
         }
     }
 }

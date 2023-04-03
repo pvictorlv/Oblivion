@@ -76,12 +76,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (OtherBool)
             {
                 var whisp = new ServerMessage(LibraryParser.OutgoingRequest("WhisperMessageComposer"));
-                whisp.AppendInteger(_bot.VirtualId);
-                whisp.AppendString(OtherExtraString);
-                whisp.AppendInteger(0);
-                whisp.AppendInteger(2);
-                whisp.AppendInteger(0);
-                whisp.AppendInteger(-1);
+                await whisp.AppendIntegerAsync(_bot.VirtualId);
+                await whisp.AppendStringAsync(OtherExtraString);
+                await whisp.AppendIntegerAsync(0);
+                await whisp.AppendIntegerAsync(2);
+                await whisp.AppendIntegerAsync(0);
+                await whisp.AppendIntegerAsync(-1);
                 await roomUser.GetClient().SendMessageAsync(whisp);
             }
             else

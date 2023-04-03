@@ -24,12 +24,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         {
             if (client.GetHabbo().AllowCustomCommands)
             {
-                client.SendWhisper("Você não recebe mais pedidos de sexo!");
+                await client.SendWhisperAsync("Você não recebe mais pedidos de sexo!");
                 client.GetHabbo().AllowCustomCommands = false;
             }
             else
             {
-                client.SendWhisper("Você recebe pedidos de sexo!");
+                await client.SendWhisperAsync("Você recebe pedidos de sexo!");
                 client.GetHabbo().AllowCustomCommands = true;
             }
 

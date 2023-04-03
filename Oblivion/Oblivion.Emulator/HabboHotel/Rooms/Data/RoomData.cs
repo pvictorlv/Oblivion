@@ -396,21 +396,21 @@ namespace Oblivion.HabboHotel.Rooms.Data
         {
             if (message == null || Tags == null) return;
 
-            message.AppendInteger(Id);
-            message.AppendString(Name);
-            message.AppendInteger(OwnerId);
-            message.AppendString(Owner);
-            message.AppendInteger(State);
-            message.AppendInteger(UsersNow);
-            message.AppendInteger(UsersMax);
-            message.AppendString(Description);
-            message.AppendInteger(TradeState);
-            message.AppendInteger(Score);
-            message.AppendInteger(0); // Ranking
-            message.AppendInteger(Category);
+            await message.AppendIntegerAsync(Id);
+            await message.AppendStringAsync(Name);
+            await message.AppendIntegerAsync(OwnerId);
+            await message.AppendStringAsync(Owner);
+            await message.AppendIntegerAsync(State);
+            await message.AppendIntegerAsync(UsersNow);
+            await message.AppendIntegerAsync(UsersMax);
+            await message.AppendStringAsync(Description);
+            await message.AppendIntegerAsync(TradeState);
+            await message.AppendIntegerAsync(Score);
+            await message.AppendIntegerAsync(0); // Ranking
+            await message.AppendIntegerAsync(Category);
 
-            message.AppendInteger(TagCount);
-            /* TODO CHECK */ foreach (var current in Tags) message.AppendString(current);
+            await message.AppendIntegerAsync(TagCount);
+            /* TODO CHECK */ foreach (var current in Tags) await message.AppendStringAsync(current);
 
             var enumType = 32;
             
@@ -420,20 +420,20 @@ namespace Oblivion.HabboHotel.Rooms.Data
             if (Type == "private") enumType += 8;
             if (AllowPets) enumType += 16;
 
-            message.AppendInteger(enumType);
+            await message.AppendIntegerAsync(enumType);
 
             if (Group != null)
             {
 
-                message.AppendInteger(Group.Id);
-                message.AppendString(Group.Name);
-                message.AppendString(Group.Badge);
+                await message.AppendIntegerAsync(Group.Id);
+                await message.AppendStringAsync(Group.Name);
+                await message.AppendStringAsync(Group.Badge);
             }
             if (showEvents && Event != null)
             {
-                message.AppendString(Event.Name);
-                message.AppendString(Event.Description);
-                message.AppendInteger((int) Math.Floor((Event.Time - Oblivion.GetUnixTimeStamp()) / 60.0));
+                await message.AppendStringAsync(Event.Name);
+                await message.AppendStringAsync(Event.Description);
+                await message.AppendIntegerAsync((int) Math.Floor((Event.Time - Oblivion.GetUnixTimeStamp()) / 60.0));
             }
         }
 
@@ -462,11 +462,11 @@ namespace Oblivion.HabboHotel.Rooms.Data
             await message.AppendIntegerAsync(WhoCanKick);
             await message.AppendIntegerAsync(WhoCanBan);
             message.AppendBool(room != null && room.CheckRights(session, true));
-            message.AppendInteger(ChatType);
-            message.AppendInteger(ChatBalloon);
-            message.AppendInteger(ChatSpeed);
-            message.AppendInteger(ChatMaxDistance);
-            message.AppendInteger(ChatFloodProtection);
+            await message.AppendIntegerAsync(ChatType);
+            await message.AppendIntegerAsync(ChatBalloon);
+            await message.AppendIntegerAsync(ChatSpeed);
+            await message.AppendIntegerAsync(ChatMaxDistance);
+            await message.AppendIntegerAsync(ChatFloodProtection);
             if (sendRoom == null) return;
 
             if (sendRoom.Value)

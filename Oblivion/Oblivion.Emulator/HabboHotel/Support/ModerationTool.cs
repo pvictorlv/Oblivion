@@ -96,7 +96,7 @@ namespace Oblivion.HabboHotel.Support
                 room.RoomData.State = 1;
 
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                    queryReactor.RunFastQuery($"UPDATE rooms_data SET state = 'locked' WHERE id = {room.RoomId}");
+                    await queryReactor.RunFastQueryAsync($"UPDATE rooms_data SET state = 'locked' WHERE id = {room.RoomId}");
             }
 
             if (inappropriateRoom)
@@ -119,10 +119,10 @@ namespace Oblivion.HabboHotel.Support
         internal static async Task ModActionResult(uint userId, bool result)
         {
             var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
-            clientByUserId.GetMessageHandler()
+            await clientByUserId.GetMessageHandler()
                 .GetResponse()
-                .Init(LibraryParser.OutgoingRequest("ModerationActionResultMessageComposer"));
-            clientByUserId.GetMessageHandler().GetResponse().AppendInteger(userId);
+                .InitAsync(LibraryParser.OutgoingRequest("ModerationActionResultMessageComposer"));
+            await clientByUserId.GetMessageHandler().GetResponse().AppendIntegerAsync(userId);
             clientByUserId.GetMessageHandler().GetResponse().AppendBool(false);
             await clientByUserId.GetMessageHandler().SendResponse();
         }
@@ -137,24 +137,24 @@ namespace Oblivion.HabboHotel.Support
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(data.Id);
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ModerationRoomToolMessageComposer"));
-            serverMessage.AppendInteger(data.Id);
-            serverMessage.AppendInteger(data.UsersNow);
+            await serverMessage.AppendIntegerAsync(data.Id);
+            await serverMessage.AppendIntegerAsync(data.UsersNow);
 
             if (room != null)
                 serverMessage.AppendBool(room.GetRoomUserManager().GetRoomUserByHabbo(data.Owner) != null);
             else
                 serverMessage.AppendBool(false);
 
-            serverMessage.AppendInteger(room?.RoomData.OwnerId ?? 0);
-            serverMessage.AppendString(data.Owner);
+            await serverMessage.AppendIntegerAsync(room?.RoomData.OwnerId ?? 0);
+            await serverMessage.AppendStringAsync(data.Owner);
             serverMessage.AppendBool(room != null);
-            serverMessage.AppendString(data.Name);
-            serverMessage.AppendString(data.Description);
-            serverMessage.AppendInteger(data.TagCount);
+            await serverMessage.AppendStringAsync(data.Name);
+            await serverMessage.AppendStringAsync(data.Description);
+            await serverMessage.AppendIntegerAsync(data.TagCount);
 
             /* TODO CHECK */
             foreach (var current in data.Tags)
-                serverMessage.AppendString(current);
+                await serverMessage.AppendStringAsync(current);
 
             serverMessage.AppendBool(false);
 
@@ -339,18 +339,18 @@ namespace Oblivion.HabboHotel.Support
         {
             var serverMessage =
                 new ServerMessage(LibraryParser.OutgoingRequest("ModerationToolRoomVisitsMessageComposer"));
-            serverMessage.AppendInteger(userId);
+            await serverMessage.AppendIntegerAsync(userId);
 
             var user = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
 
             if (user?.GetHabbo() == null)
             {
-                serverMessage.AppendString("Not online");
-                serverMessage.AppendInteger(0);
+                await serverMessage.AppendStringAsync("Not online");
+                await serverMessage.AppendIntegerAsync(0);
                 return serverMessage;
             }
 
-            serverMessage.AppendString(user.GetHabbo().UserName);
+            await serverMessage.AppendStringAsync(user.GetHabbo().UserName);
             serverMessage.StartArray();
 
             /* TODO CHECK */
@@ -360,11 +360,11 @@ namespace Oblivion.HabboHotel.Support
                 var roomData = await Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId);
                 if (roomData != null)
                 {
-                    serverMessage.AppendInteger(roomData.Id);
-                    serverMessage.AppendString(roomData.Name);
+                    await serverMessage.AppendIntegerAsync(roomData.Id);
+                    await serverMessage.AppendStringAsync(roomData.Name);
 
-                    serverMessage.AppendInteger(0); //hour
-                    serverMessage.AppendInteger(0); //min
+                    await serverMessage.AppendIntegerAsync(0); //hour
+                    await serverMessage.AppendIntegerAsync(0); //min
 
                     serverMessage.SaveArray();
                 }
@@ -390,12 +390,12 @@ namespace Oblivion.HabboHotel.Support
                 var table = queryReactor.GetTable();
                 var serverMessage =
                     new ServerMessage(LibraryParser.OutgoingRequest("ModerationToolUserChatlogMessageComposer"));
-                serverMessage.AppendInteger(userId);
-                serverMessage.AppendString(Oblivion.GetGame().GetClientManager().GetNameById(userId));
+                await serverMessage.AppendIntegerAsync(userId);
+                await serverMessage.AppendStringAsync(Oblivion.GetGame().GetClientManager().GetNameById(userId));
 
                 if (table != null)
                 {
-                    serverMessage.AppendInteger(table.Rows.Count);
+                    await serverMessage.AppendIntegerAsync(table.Rows.Count);
                     var enumerator = table.Rows.GetEnumerator();
 
                     try
@@ -414,14 +414,14 @@ namespace Oblivion.HabboHotel.Support
                             if (table2 != null)
                             {
                                 serverMessage.AppendByte(1);
-                                serverMessage.AppendShort(2);
-                                serverMessage.AppendString("roomName");
+                                await serverMessage.AppendShortAsync(2);
+                                await serverMessage.AppendStringAsync("roomName");
                                 serverMessage.AppendByte(2);
-                                serverMessage.AppendString(roomData == null ? "This room was deleted" : roomData.Name);
-                                serverMessage.AppendString("roomId");
+                                await serverMessage.AppendStringAsync(roomData == null ? "This room was deleted" : roomData.Name);
+                                await serverMessage.AppendStringAsync("roomId");
                                 serverMessage.AppendByte(1);
-                                serverMessage.AppendInteger((uint)dataRow["room_id"]);
-                                serverMessage.AppendShort(table2.Rows.Count);
+                                await serverMessage.AppendIntegerAsync((uint)dataRow["room_id"]);
+                                await serverMessage.AppendShortAsync(table2.Rows.Count);
                                 var enumerator2 = table2.Rows.GetEnumerator();
                                 try
                                 {
@@ -435,12 +435,12 @@ namespace Oblivion.HabboHotel.Support
                                         if (habboForId == null)
                                             return null;
 
-                                        serverMessage.AppendInteger(
+                                        await serverMessage.AppendIntegerAsync(
                                             ((int)(Oblivion.GetUnixTimeStamp() - (double)dataRow2["timestamp"])));
 
-                                        serverMessage.AppendInteger(habboForId.Id);
-                                        serverMessage.AppendString(habboForId.UserName);
-                                        serverMessage.AppendString(dataRow2["message"].ToString());
+                                        await serverMessage.AppendIntegerAsync(habboForId.Id);
+                                        await serverMessage.AppendStringAsync(habboForId.UserName);
+                                        await serverMessage.AppendStringAsync(dataRow2["message"].ToString());
                                         serverMessage.AppendBool(false);
                                     }
 
@@ -455,8 +455,8 @@ namespace Oblivion.HabboHotel.Support
                             }
 
                             serverMessage.AppendByte(1);
-                            serverMessage.AppendShort(0);
-                            serverMessage.AppendShort(0);
+                            await serverMessage.AppendShortAsync(0);
+                            await serverMessage.AppendShortAsync(0);
                         }
 
                         result = serverMessage;
@@ -470,7 +470,7 @@ namespace Oblivion.HabboHotel.Support
                     }
                 }
 
-                serverMessage.AppendInteger(0);
+                await serverMessage.AppendIntegerAsync(0);
                 result = serverMessage;
             }
 
@@ -493,30 +493,30 @@ namespace Oblivion.HabboHotel.Support
 
             if (room != null)
             {
-                message.Init(LibraryParser.OutgoingRequest("ModerationToolIssueChatlogMessageComposer"));
+                await message.InitAsync(LibraryParser.OutgoingRequest("ModerationToolIssueChatlogMessageComposer"));
 
-                message.AppendInteger(ticket.TicketId);
-                message.AppendInteger(ticket.SenderId);
-                message.AppendInteger(ticket.ReportedId);
-                message.AppendInteger(ticket.RoomId);
+                await message.AppendIntegerAsync(ticket.TicketId);
+                await message.AppendIntegerAsync(ticket.SenderId);
+                await message.AppendIntegerAsync(ticket.ReportedId);
+                await message.AppendIntegerAsync(ticket.RoomId);
 
                 message.AppendByte(1);
-                message.AppendShort(2);
-                message.AppendString("roomName");
+                await message.AppendShortAsync(2);
+                await message.AppendStringAsync("roomName");
                 message.AppendByte(2);
-                message.AppendString(ticket.RoomName);
-                message.AppendString("roomId");
+                await message.AppendStringAsync(ticket.RoomName);
+                await message.AppendStringAsync("roomId");
                 message.AppendByte(1);
-                message.AppendInteger(ticket.RoomId);
+                await message.AppendIntegerAsync(ticket.RoomId);
 
                 var tempChatlogs =
                     room.RoomChat.Skip(Math.Max(0, room.RoomChat.Count - 60)).Take(60).ToList();
 
-                message.AppendShort(tempChatlogs.Count);
+                await message.AppendShortAsync(tempChatlogs.Count);
 
                 /* TODO CHECK */
                 foreach (var chatLog in tempChatlogs)
-                    chatLog.Serialize(ref message);
+                    message = await chatLog.Serialize(message);
 
                 return message;
             }
@@ -538,15 +538,15 @@ namespace Oblivion.HabboHotel.Support
 
             if (room?.RoomData != null)
             {
-                message.Init(LibraryParser.OutgoingRequest("ModerationToolRoomChatlogMessageComposer"));
+                await message.InitAsync(LibraryParser.OutgoingRequest("ModerationToolRoomChatlogMessageComposer"));
                 message.AppendByte(1);
-                message.AppendShort(2);
-                message.AppendString("roomName");
+                await message.AppendShortAsync(2);
+                await message.AppendStringAsync("roomName");
                 message.AppendByte(2);
-                message.AppendString(room.RoomData.Name);
-                message.AppendString("roomId");
+                await message.AppendStringAsync(room.RoomData.Name);
+                await message.AppendStringAsync("roomId");
                 message.AppendByte(1);
-                message.AppendInteger(room.RoomData.Id);
+                await message.AppendIntegerAsync(room.RoomData.Id);
 
                 var tempChatlogs = new List<Chatlog>();
                 var i = 0;
@@ -572,23 +572,23 @@ namespace Oblivion.HabboHotel.Support
                     i += table.Rows.Count;
                 }
 
-                message.AppendShort(i);
+                await message.AppendShortAsync(i);
 
                 if (table != null)
                     foreach (DataRow row in table.Rows)
                     {
                         var timeStamp = Oblivion.UnixToDateTime((double)row["timestamp"]);
                         var habbo = Oblivion.GetHabboById(Convert.ToUInt32(row["user_id"]));
-                        message.AppendString(timeStamp.ToString("h:mm:ss"));
-                        message.AppendInteger(Convert.ToInt32(row["user_id"]));
-                        message.AppendString(habbo == null ? "*User not found*" : habbo.UserName);
-                        message.AppendString(row["message"].ToString());
+                        await message.AppendStringAsync(timeStamp.ToString("h:mm:ss"));
+                        await message.AppendIntegerAsync(Convert.ToInt32(row["user_id"]));
+                        await message.AppendStringAsync(habbo == null ? "*User not found*" : habbo.UserName);
+                        await message.AppendStringAsync(row["message"].ToString());
                         message.AppendBool(false);
                     }
 
                 foreach (var chatLog in tempChatlogs)
                 {
-                    await chatLog.Serialize(ref message);
+                    message = await chatLog.Serialize(message);
                 }
 
                 return message;
@@ -724,8 +724,8 @@ namespace Oblivion.HabboHotel.Support
                             category, "','open','", session.GetHabbo().Id, "','", reportedUser,
                             "','0',@message,'0','','", Oblivion.GetUnixTimeStamp(), "')"));
                     dbClient.AddParameter("message", message);
-                    id = (uint)dbClient.InsertQuery();
-                    dbClient.RunFastQuery(
+                    id = (uint)await dbClient.InsertQueryAsync();
+                    await dbClient.RunFastQueryAsync(
                         $"UPDATE users_info SET cfhs = cfhs + 1 WHERE user_id = {session.GetHabbo().Id}");
                 }
 
@@ -749,8 +749,8 @@ namespace Oblivion.HabboHotel.Support
                             data.Id, "',@name,'", Oblivion.GetUnixTimeStamp(), "')"));
                     dbClient.AddParameter("message", message);
                     dbClient.AddParameter("name", data.Name);
-                    id = (uint)dbClient.InsertQuery();
-                    dbClient.RunFastQuery(
+                    id = (uint)await dbClient.InsertQueryAsync();
+                    await dbClient.RunFastQueryAsync(
                         $"UPDATE users_info SET cfhs = cfhs + 1 WHERE user_id = {session.GetHabbo().Id}");
                 }
 
@@ -849,7 +849,7 @@ namespace Oblivion.HabboHotel.Support
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
                     AbusiveCooldown.Add(ticket.SenderId, Oblivion.GetUnixTimeStamp() + 600);
-                    queryReactor.RunFastQuery(
+                    await queryReactor.RunFastQueryAsync(
                         $"UPDATE users_info SET cfhs_abusive = cfhs_abusive + 1 WHERE user_id = {ticket.SenderId}");
                 }
             }
@@ -870,23 +870,23 @@ namespace Oblivion.HabboHotel.Support
                     await current2.Close(newStatus, true);
                 }
 
-                senderClient.GetMessageHandler()
+                await senderClient.GetMessageHandler()
                     .GetResponse()
-                    .Init(LibraryParser.OutgoingRequest("ModerationToolUpdateIssueMessageComposer"));
-                senderClient.GetMessageHandler().GetResponse().AppendInteger(1);
-                senderClient.GetMessageHandler().GetResponse().AppendInteger(ticket.TicketId);
-                senderClient.GetMessageHandler().GetResponse().AppendInteger(ticket.ModeratorId);
-                senderClient.GetMessageHandler()
+                    .InitAsync(LibraryParser.OutgoingRequest("ModerationToolUpdateIssueMessageComposer"));
+                await senderClient.GetMessageHandler().GetResponse().AppendIntegerAsync(1);
+                await senderClient.GetMessageHandler().GetResponse().AppendIntegerAsync(ticket.TicketId);
+                await senderClient.GetMessageHandler().GetResponse().AppendIntegerAsync(ticket.ModeratorId);
+                await senderClient.GetMessageHandler()
                     .GetResponse()
-                    .AppendString((Oblivion.GetHabboById(ticket.ModeratorId) != null)
+                    .AppendStringAsync((Oblivion.GetHabboById(ticket.ModeratorId) != null)
                         ? Oblivion.GetHabboById(ticket.ModeratorId).UserName
                         : "Undefined");
                 senderClient.GetMessageHandler().GetResponse().AppendBool(false);
-                senderClient.GetMessageHandler().GetResponse().AppendInteger(0);
-                senderClient.GetMessageHandler()
+                await senderClient.GetMessageHandler().GetResponse().AppendIntegerAsync(0);
+                await senderClient.GetMessageHandler()
                     .GetResponse()
-                    .Init(LibraryParser.OutgoingRequest("ModerationTicketResponseMessageComposer"));
-                senderClient.GetMessageHandler().GetResponse().AppendInteger(statusCode);
+                    .InitAsync(LibraryParser.OutgoingRequest("ModerationTicketResponseMessageComposer"));
+                await senderClient.GetMessageHandler().GetResponse().AppendIntegerAsync(statusCode);
                 await senderClient.GetMessageHandler().SendResponse();
             }
             else
@@ -905,7 +905,7 @@ namespace Oblivion.HabboHotel.Support
             }
 
             using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryreactor2.RunFastQuery(
+                await queryreactor2.RunFastQueryAsync(
                     $"UPDATE users_stats SET tickets_answered = tickets_answered+1 WHERE id={session.GetHabbo().Id} LIMIT 1");
         }
 
@@ -976,7 +976,7 @@ namespace Oblivion.HabboHotel.Support
                 queryReactor.AddParameter("target", target);
                 queryReactor.AddParameter("type", type);
                 queryReactor.AddParameter("desc", description);
-                queryReactor.RunQuery();
+                await queryReactor.RunQueryAsync();
             }
         }
     }

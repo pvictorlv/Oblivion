@@ -32,23 +32,23 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             var msg = new ServerMessage(LibraryParser.OutgoingRequest("PublishShopMessageComposer"));
             msg.AppendBool(false);
-            Oblivion.GetGame()
+            await Oblivion.GetGame()
                 .GetClientManager()
-                .SendMessage(msg);
+                .SendMessageAsync(msg);
             var message = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
-            message.AppendString("ninja_promo_LTD");
-            message.AppendInteger(4);
-            message.AppendString("title");
-            message.AppendString("Novo Raro Limitado!");
-            message.AppendString("message");
-            message.AppendString(
+            await message.AppendStringAsync("ninja_promo_LTD");
+            await message.AppendIntegerAsync(4);
+            await message.AppendStringAsync("title");
+            await message.AppendStringAsync("Novo Raro Limitado!");
+            await message.AppendStringAsync("message");
+            await message.AppendStringAsync(
                 "<i><h1>Como Assim?</h1>, Um Novo Raro Limitado foi Adicionado na Loja!<br> Descubra como ele é Abrindo a Loja!</br>");
-            message.AppendString("linkUrl");
-            message.AppendString("event:catalog/open/ultd_furni");
-            message.AppendString("linkTitle");
-            message.AppendString("Ver o Raro");
+            await message.AppendStringAsync("linkUrl");
+            await message.AppendStringAsync("event:catalog/open/ultd_furni");
+            await message.AppendStringAsync("linkTitle");
+            await message.AppendStringAsync("Ver o Raro");
 
-            Oblivion.GetGame().GetClientManager().SendMessage(message);
+            await Oblivion.GetGame().GetClientManager().SendMessageAsync(message);
             return true;
         }
     }

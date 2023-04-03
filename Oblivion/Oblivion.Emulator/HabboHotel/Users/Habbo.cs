@@ -807,7 +807,7 @@ namespace Oblivion.HabboHotel.Users
                     await serverMessage.AppendIntegerAsync(0);
                 }
 
-                client.SendMessage(serverMessage);
+                await client.SendMessage(serverMessage);
 
                 if (GetSubscriptionManager() == null) return;
                 using (var serverMessage2 =
@@ -818,7 +818,7 @@ namespace Oblivion.HabboHotel.Users
                     serverMessage2.AppendBool(
                         Rank >= Convert.ToUInt32(Oblivion.GetDbConfig().DbData["ambassador.minrank"]));
 
-                    client.SendMessage(serverMessage2);
+                    await client.SendMessage(serverMessage2);
                 }
             }
         }
@@ -1013,19 +1013,19 @@ namespace Oblivion.HabboHotel.Users
             if (client == null)
                 return;
 
-            using (var message = _messenger.SerializeCategories())
+            using (var message = await _messenger.SerializeCategories())
             {
-                client.SendMessage(message);
+                await client.SendMessage(message);
             }
 
-            using (var message = _messenger.SerializeFriends())
+            using (var message = await _messenger.SerializeFriends())
             {
-                client.SendMessage(message);
+                await client.SendMessage(message);
             }
 
             using (var message = _messenger.SerializeRequests())
             {
-                client.SendMessage(message);
+                await client.SendMessage(message);
             }
 
             if (Oblivion.OfflineMessages.TryGetValue(Id, out var list))
@@ -1034,7 +1034,7 @@ namespace Oblivion.HabboHotel.Users
                 {
                     using (var msg = _messenger.SerializeOfflineMessages(current))
                     {
-                        client.SendMessage(msg);
+                        await client.SendMessage(msg);
                     }
                 }
 
@@ -1046,7 +1046,7 @@ namespace Oblivion.HabboHotel.Users
             }
 
             if (_messenger.Requests.Count > Oblivion.FriendRequestLimit)
-                client.SendNotif(Oblivion.GetLanguage().GetVar("user_friend_request_max"));
+                await client.SendNotif(Oblivion.GetLanguage().GetVar("user_friend_request_max"));
 //            _messenger.OnStatusChanged(false);
         }
 
@@ -1092,7 +1092,7 @@ namespace Oblivion.HabboHotel.Users
 
             if (inDb)
             {
-                RunDbUpdate();
+                await RunDbUpdate();
             }
         }
 
@@ -1118,7 +1118,7 @@ namespace Oblivion.HabboHotel.Users
 
             if (inDb)
             {
-                RunDbUpdate();
+                await RunDbUpdate();
             }
         }
 

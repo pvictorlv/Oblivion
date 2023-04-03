@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.Messages;
 
@@ -93,29 +94,29 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="inventory">if set to <c>true</c> [inventory].</param>
         internal async Task SerializeWall(ServerMessage message, bool inventory)
         {
-            message.AppendInteger(VirtualId);
-            message.AppendString(BaseItem.Type.ToString().ToUpper());
-            message.AppendInteger(VirtualId);
-            message.AppendInteger(BaseItem.SpriteId);
+            await message.AppendIntegerAsync(VirtualId);
+            await message.AppendStringAsync(BaseItem.Type.ToString().ToUpper());
+            await message.AppendIntegerAsync(VirtualId);
+            await message.AppendIntegerAsync(BaseItem.SpriteId);
 
             if (BaseItem.Name.Contains("a2") || BaseItem.Name == "floor")
-                message.AppendInteger(3);
+                await message.AppendIntegerAsync(3);
             else if (BaseItem.Name.Contains("wallpaper") && BaseItem.Name != "wildwest_wallpaper")
-                message.AppendInteger(2);
+                await message.AppendIntegerAsync(2);
             else if (BaseItem.Name.Contains("landscape"))
-                message.AppendInteger(4);
+                await message.AppendIntegerAsync(4);
             else
-                message.AppendInteger(1);
+                await message.AppendIntegerAsync(1);
 
-            message.AppendInteger(0);
-            message.AppendString(ExtraData);
+            await message.AppendIntegerAsync(0);
+            await message.AppendStringAsync(ExtraData);
             message.AppendBool(BaseItem.AllowRecycle);
             message.AppendBool(BaseItem.AllowTrade);
             message.AppendBool(BaseItem.AllowInventoryStack);
             message.AppendBool(BaseItem.AllowMarketplaceSell); //SELLABLE_ICON
-            message.AppendInteger(-1); //secondsToExpiration
+            await message.AppendIntegerAsync(-1); //secondsToExpiration
             message.AppendBool(false); //hasRentPeriodStarted
-            message.AppendInteger(-1); //flatId
+            await message.AppendIntegerAsync(-1); //flatId
         }
 
         /// <summary>
@@ -125,10 +126,10 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="inventory">if set to <c>true</c> [inventory].</param>
         internal async Task SerializeFloor(ServerMessage message, bool inventory)
         {
-            message.AppendInteger(VirtualId);
-            message.AppendString(BaseItem.Type.ToString(CultureInfo.InvariantCulture).ToUpper());
-            message.AppendInteger(VirtualId);
-            message.AppendInteger(BaseItem.SpriteId);
+            await message.AppendIntegerAsync(VirtualId);
+            await message.AppendStringAsync(BaseItem.Type.ToString(CultureInfo.InvariantCulture).ToUpper());
+            await message.AppendIntegerAsync(VirtualId);
+            await message.AppendIntegerAsync(BaseItem.SpriteId);
             var extraParam = 0;
 
             try
@@ -146,7 +147,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 extraParam = 1001;
             }
 
-            message.AppendInteger(extraParam);
+            await message.AppendIntegerAsync(extraParam);
 
             if (BaseItem.IsGroupItem)
             {
@@ -154,34 +155,34 @@ namespace Oblivion.HabboHotel.Items.Interfaces
 
                 if (group != null)
                 {
-                    message.AppendInteger(2);
-                    message.AppendInteger(5);
-                    message.AppendString(ExtraData);
-                    message.AppendString(group.Id.ToString(CultureInfo.InvariantCulture));
-                    message.AppendString(group.Badge);
-                    message.AppendString(Oblivion.GetGame().GetGroupManager().GetGroupColour(group.Colour1, true));
-                    message.AppendString(Oblivion.GetGame().GetGroupManager().GetGroupColour(group.Colour2, false));
+                    await message.AppendIntegerAsync(2);
+                    await message.AppendIntegerAsync(5);
+                    await message.AppendStringAsync(ExtraData);
+                    await message.AppendStringAsync(group.Id.ToString(CultureInfo.InvariantCulture));
+                    await message.AppendStringAsync(group.Badge);
+                    await message.AppendStringAsync(Oblivion.GetGame().GetGroupManager().GetGroupColour(group.Colour1, true));
+                    await message.AppendStringAsync(Oblivion.GetGame().GetGroupManager().GetGroupColour(group.Colour2, false));
                 }
                 else
                 {
-                    message.AppendInteger(0);
-                    message.AppendString(string.Empty);
+                    await message.AppendIntegerAsync(0);
+                    await message.AppendStringAsync(string.Empty);
                 }
             }
             else if (LimitedStack > 0)
             {
-                message.AppendString(string.Empty);
+                await message.AppendStringAsync(string.Empty);
                 message.AppendBool(true);
                 message.AppendBool(false);
-                message.AppendString(ExtraData);
+                await message.AppendStringAsync(ExtraData);
             }
             else if ((BaseItem.InteractionType == Interaction.Moplaseed) &&
                      (BaseItem.InteractionType == Interaction.RareMoplaSeed))
             {
-                message.AppendInteger(1);
-                message.AppendInteger(1);
-                message.AppendString("rarity");
-                message.AppendString(ExtraData);
+                await message.AppendIntegerAsync(1);
+                await message.AppendIntegerAsync(1);
+                await message.AppendStringAsync("rarity");
+                await message.AppendStringAsync(ExtraData);
             }
             else
             {
@@ -189,59 +190,59 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 {
                     case Interaction.BadgeDisplay:
                         var extra = ExtraData.Split('|');
-                        message.AppendInteger(2);
-                        message.AppendInteger(4);
-                        message.AppendString("0");
-                        message.AppendString(extra[0]);
-                        message.AppendString(extra.Length > 1 ? extra[1] : "");
-                        message.AppendString(extra.Length > 1 ? extra[2] : "");
+                        await message.AppendIntegerAsync(2);
+                        await message.AppendIntegerAsync(4);
+                        await message.AppendStringAsync("0");
+                        await message.AppendStringAsync(extra[0]);
+                        await message.AppendStringAsync(extra.Length > 1 ? extra[1] : "");
+                        await message.AppendStringAsync(extra.Length > 1 ? extra[2] : "");
                         break;
 
                     case Interaction.YoutubeTv:
-                        message.AppendInteger(1);
-                        message.AppendInteger(1);
-                        message.AppendString("THUMBNAIL_URL");
-                        message.AppendString(ExtraData);
+                        await message.AppendIntegerAsync(1);
+                        await message.AppendIntegerAsync(1);
+                        await message.AppendStringAsync("THUMBNAIL_URL");
+                        await message.AppendStringAsync(ExtraData);
                         break;
 
                     case Interaction.Mannequin:
-                        message.AppendInteger(1);
+                        await message.AppendIntegerAsync(1);
                         if (ExtraData.Length <= 0 || !ExtraData.Contains(";") || ExtraData.Split(';').Length < 3)
                         {
-                            message.AppendInteger(3); // Coun Of Values
-                            message.AppendString("GENDER");
-                            message.AppendString("m");
-                            message.AppendString("FIGURE");
-                            message.AppendString(string.Empty);
-                            message.AppendString("OUTFIT_NAME");
-                            message.AppendString(string.Empty);
+                            await message.AppendIntegerAsync(3); // Coun Of Values
+                            await message.AppendStringAsync("GENDER");
+                            await message.AppendStringAsync("m");
+                            await message.AppendStringAsync("FIGURE");
+                            await message.AppendStringAsync(string.Empty);
+                            await message.AppendStringAsync("OUTFIT_NAME");
+                            await message.AppendStringAsync(string.Empty);
                         }
                         else
                         {
                             var extradatas = ExtraData.Split(';');
 
-                            message.AppendInteger(3); // Count Of Values
-                            message.AppendString("GENDER");
-                            message.AppendString(extradatas[0]);
-                            message.AppendString("FIGURE");
-                            message.AppendString(extradatas[1]);
-                            message.AppendString("OUTFIT_NAME");
-                            message.AppendString(extradatas[2]);
+                            await message.AppendIntegerAsync(3); // Count Of Values
+                            await message.AppendStringAsync("GENDER");
+                            await message.AppendStringAsync(extradatas[0]);
+                            await message.AppendStringAsync("FIGURE");
+                            await message.AppendStringAsync(extradatas[1]);
+                            await message.AppendStringAsync("OUTFIT_NAME");
+                            await message.AppendStringAsync(extradatas[2]);
                         }
                         break;
 
                     default:
-                        message.AppendInteger(0);
+                        await message.AppendIntegerAsync(0);
                         if (!BaseItem.IsGroupItem)
-                            message.AppendString(ExtraData);
+                            await message.AppendStringAsync(ExtraData);
                         break;
                 }
             }
 
             if (LimitedSellId > 0)
             {
-                message.AppendInteger(LimitedSellId);
-                message.AppendInteger(LimitedStack);
+                await message.AppendIntegerAsync(LimitedSellId);
+                await message.AppendIntegerAsync(LimitedStack);
             }
 
             /* message.AppendInteger((BaseItem.InteractionType == InteractionType.gift) ? 9 : 0);
@@ -254,13 +255,13 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             message.AppendBool(BaseItem.AllowTrade);
             message.AppendBool(LimitedSellId <= 0 && BaseItem.AllowInventoryStack);
             message.AppendBool(true); // sellable
-            message.AppendInteger(-1); // expireTime
+            await message.AppendIntegerAsync(-1); // expireTime
             message.AppendBool(false); // hasRentPeriodStarted
-            message.AppendInteger(-1); // flatId
+            await message.AppendIntegerAsync(-1); // flatId
 
             if (BaseItem.Type != 's') return;
-            message.AppendString(string.Empty); //slotId
-            message.AppendInteger(0);
+            await message.AppendStringAsync(string.Empty); //slotId
+            await message.AppendIntegerAsync(0);
         }
     }
 }

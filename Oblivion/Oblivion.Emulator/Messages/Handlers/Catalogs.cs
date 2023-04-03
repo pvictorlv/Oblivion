@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Catalogs;
 using Oblivion.HabboHotel.Catalogs.Composers;
 using Oblivion.HabboHotel.Catalogs.Wrappers;
@@ -17,7 +18,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Catalogues the index.
         /// </summary>
-        public void CatalogueMode()
+        public async Task CatalogueMode()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -26,16 +27,14 @@ namespace Oblivion.Messages.Handlers
             if (rank < 1)
                 rank = 1;
             await Session.SendMessageAsync(CatalogPageComposer.ComposeIndex(rank, Request.GetString().ToUpper(), Session));
-            await Session.SendMessageAsync(StaticMessage.CatalogOffersConfiguration);
-
-            if (Session.IsAir)
-                Oblivion.GetGame().GetNavigator().SerializeFlatCategories(Session);
+            await Session.SendStaticMessage(StaticMessage.CatalogOffersConfiguration);
+            
         }
 
         /// <summary>
         ///     Catalogues the index.
         /// </summary>
-        public void CatalogueIndex()
+        public async Task CatalogueIndex()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -64,13 +63,13 @@ Request.GetString()
                 rank = 1;
 
             await Session.SendMessageAsync(CatalogPageComposer.ComposeIndex(rank, pageType, allowedPages, Session));
-            await Session.SendMessageAsync(StaticMessage.CatalogOffersConfiguration);
+            await Session.SendStaticMessage(StaticMessage.CatalogOffersConfiguration);
         }
 
         /// <summary>
         ///     Catalogues the page.
         /// </summary>
-        public void CataloguePage()
+        public async Task CataloguePage()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -94,7 +93,7 @@ Request.GetString()
         /// <summary>
         ///     Catalogues the club page.
         /// </summary>
-        public void CatalogueClubPage()
+        public async Task CatalogueClubPage()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -106,7 +105,7 @@ Request.GetString()
         /// <summary>
         ///     Reloads the ecotron.
         /// </summary>
-        public void ReloadEcotron()
+        public async Task ReloadEcotron()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -119,7 +118,7 @@ Request.GetString()
         /// <summary>
         ///     Gifts the wrapping configuration.
         /// </summary>
-        public void GiftWrappingConfig()
+        public async Task GiftWrappingConfig()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -152,7 +151,7 @@ Request.GetString()
         /// <summary>
         ///     Gets the recycler rewards.
         /// </summary>
-        public void GetRecyclerRewards()
+        public async Task GetRecyclerRewards()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -189,7 +188,7 @@ Request.GetString()
         /// <summary>
         ///     Purchases the item.
         /// </summary>
-        public void PurchaseItem()
+        public async Task PurchaseItem()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -197,7 +196,7 @@ Request.GetString()
             if (Session.GetHabbo().GetInventoryComponent().TotalItems >= 3500)
             {
                 await Session.SendMessageAsync(CatalogPageComposer.PurchaseOk(0, string.Empty, 0));
-                await Session.SendMessageAsync(StaticMessage.AdvicePurchaseMaxItems);
+                await Session.SendStaticMessage(StaticMessage.AdvicePurchaseMaxItems);
                 return;
             }
 
@@ -205,7 +204,7 @@ Request.GetString()
             var itemId = Request.GetUInteger();
             var extraData = Request.GetString();
             var priceAmount = Request.GetInteger();
-            Oblivion.GetGame().GetCatalog().HandlePurchase(Session, pageId, itemId, extraData, priceAmount, false,
+            await Oblivion.GetGame().GetCatalog().HandlePurchase(Session, pageId, itemId, extraData, priceAmount, false,
                 string.Empty, string.Empty, 0, 0, 0, false, 0u);
            
 
@@ -214,7 +213,7 @@ Request.GetString()
         /// <summary>
         ///     Purchases the gift.
         /// </summary>
-        public void PurchaseGift()
+        public async Task PurchaseGift()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -227,14 +226,14 @@ Request.GetString()
             var giftLazo = Request.GetInteger();
             var giftColor = Request.GetInteger();
             var undef = Request.GetBool();
-            Oblivion.GetGame().GetCatalog().HandlePurchase(Session, pageId, itemId, extraData, 1, true, giftUser,
+            await Oblivion.GetGame().GetCatalog().HandlePurchase(Session, pageId, itemId, extraData, 1, true, giftUser,
                 giftMessage, giftSpriteId, giftLazo, giftColor, undef, 0u);
         }
 
         /// <summary>
         ///     Checks the name of the pet.
         /// </summary>
-        public void CheckPetName()
+        public async Task CheckPetName()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -257,7 +256,7 @@ Request.GetString()
         /// <summary>
         ///     Catalogues the offer.
         /// </summary>
-        public void CatalogueOffer()
+        public async Task CatalogueOffer()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -283,7 +282,7 @@ Request.GetString()
         {
             var userGroups = Oblivion.GetGame().GetGroupManager().GetUserGroups(Session.GetHabbo().Id);
 
-            Response.Init(LibraryParser.OutgoingRequest("GroupFurniturePageMessageComposer"));
+            await Response.InitAsync(LibraryParser.OutgoingRequest("GroupFurniturePageMessageComposer"));
 
             var responseList = new List<ServerMessage>();
 
@@ -295,26 +294,26 @@ Request.GetString()
                     continue;
 
                 var subResponse = new ServerMessage();
-                subResponse.AppendInteger(habboGroup.Id);
-                subResponse.AppendString(habboGroup.Name);
-                subResponse.AppendString(habboGroup.Badge);
-                subResponse.AppendString(Oblivion.GetGame().GetGroupManager().SymbolColours.Contains(habboGroup.Colour1)
+                await subResponse.AppendIntegerAsync(habboGroup.Id);
+                await subResponse.AppendStringAsync(habboGroup.Name);
+                await subResponse.AppendStringAsync(habboGroup.Badge);
+                await subResponse.AppendStringAsync(Oblivion.GetGame().GetGroupManager().SymbolColours.Contains(habboGroup.Colour1)
                     ? ((GroupSymbolColours)
                         Oblivion.GetGame().GetGroupManager().SymbolColours[habboGroup.Colour1]).Colour
                     : "4f8a00");
-                subResponse.AppendString(
+                await subResponse.AppendStringAsync(
                     Oblivion.GetGame().GetGroupManager().BackGroundColours.Contains(habboGroup.Colour2)
                         ? ((GroupBackGroundColours)
                             Oblivion.GetGame().GetGroupManager().BackGroundColours[habboGroup.Colour2]).Colour
                         : "4f8a00");
                 subResponse.AppendBool(habboGroup.CreatorId == Session.GetHabbo().Id);
-                subResponse.AppendInteger(habboGroup.CreatorId);
+                await subResponse.AppendIntegerAsync(habboGroup.CreatorId);
                 subResponse.AppendBool(habboGroup.HasForum);
 
                 responseList.Add(subResponse);
             }
 
-            Response.AppendInteger(responseList.Count);
+            await Response.AppendIntegerAsync(responseList.Count);
             Response.AppendServerMessages(responseList);
 
             responseList.Clear();

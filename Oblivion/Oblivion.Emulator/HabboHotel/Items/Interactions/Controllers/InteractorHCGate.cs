@@ -18,7 +18,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             if (!ishc)
             {
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("CustomUserNotificationMessageComposer"));
-                message.AppendInteger(3);
+                await message.AppendIntegerAsync(3);
                 await session.SendMessage(message);
                 return;
             }
@@ -29,7 +29,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             var modes = item.GetBaseItem().Modes - 1;
 
             if (modes <= 0)
-                item.UpdateState(false, true);
+                await  item.UpdateState(false, true);
 
             int.TryParse(item.ExtraData, out var currentMode);
             int newMode;
@@ -45,8 +45,8 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 return;
 
             item.ExtraData = newMode.ToString();
-            item.UpdateState();
-            item.GetRoom().GetGameMap().UpdateMapForItem(item);
+            await  item.UpdateState();
+            await item.GetRoom().GetGameMap().UpdateMapForItem(item);
             if (item.GetRoom().GotWireds())
                 await item.GetRoom()
                     .GetWiredHandler()
@@ -54,12 +54,12 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id), item);
         }
 
-        public override void OnWiredTrigger(RoomItem item)
+        public override async Task OnWiredTrigger(RoomItem item)
         {
             var num = item.GetBaseItem().Modes - 1;
 
             if (num <= 0)
-                item.UpdateState(false, true);
+                await  item.UpdateState(false, true);
 
             int.TryParse(item.ExtraData, out var num2);
             int num3;
@@ -78,8 +78,8 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 return;
 
             item.ExtraData = num3.ToString();
-            item.UpdateState();
-            item.GetRoom().GetGameMap().UpdateMapForItem(item);
+            await  item.UpdateState();
+            await item.GetRoom().GetGameMap().UpdateMapForItem(item);
         }
     }
 }

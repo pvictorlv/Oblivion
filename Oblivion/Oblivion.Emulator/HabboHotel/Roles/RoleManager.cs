@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 
@@ -41,7 +42,7 @@ namespace Oblivion.HabboHotel.Roles
         ///     Loads the rights.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal async Task LoadRights(IQueryAdapter dbClient)
+        internal void LoadRights(IQueryAdapter dbClient)
         {
             ClearRights();
             dbClient.SetQuery("SELECT command,rank FROM server_fuses;");
@@ -156,7 +157,7 @@ namespace Oblivion.HabboHotel.Roles
         /// <summary>
         ///     Clears the rights.
         /// </summary>
-        internal async Task ClearRights()
+        internal void ClearRights()
         {
             _rights.Clear();
             _cmdRights.Clear();

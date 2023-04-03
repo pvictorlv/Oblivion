@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Polls.Enums;
 using Oblivion.Messages;
 
@@ -90,10 +91,10 @@ namespace Oblivion.HabboHotel.Polls
         /// <param name="message">The message.</param>
         internal async Task Serialize(ServerMessage message)
         {
-            message.AppendInteger(Id);
-            message.AppendString(string.Empty); //?
-            message.AppendString(PollInvitation);
-            message.AppendString("Test"); // whats this??
+            await message.AppendIntegerAsync(Id);
+            await message.AppendStringAsync(string.Empty); //?
+            await message.AppendStringAsync(PollInvitation);
+            await message.AppendStringAsync("Test"); // whats this??
         }
     }
 }

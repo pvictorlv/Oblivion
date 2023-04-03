@@ -38,49 +38,49 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             if (pms[0] == "habbo")
             {
                 var messageRemove = new ServerMessage(LibraryParser.OutgoingRequest("UserLeftRoomMessageComposer"));
-                messageRemove.AppendString(roomUser.VirtualId.ToString());
+                await messageRemove.AppendStringAsync(roomUser.VirtualId.ToString());
                 await room.SendMessage(messageRemove);
 
                 var messageNormal = new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer"));
-                messageNormal.AppendInteger(1);
+                await messageNormal.AppendIntegerAsync(1);
                 roomUser.Serialize(messageNormal);
                 await room.SendMessage(messageNormal);
                 return true;
             }
             if (!int.TryParse(pms[0], out var petId))
             {
-                client.SendWhisper("Digite um número de 0 a 47, caso queira voltar ao normal digite :pet habbo");
+                await client.SendWhisperAsync("Digite um número de 0 a 47, caso queira voltar ao normal digite :pet habbo");
                 return false;
             }
             if (petId == 13 || petId > 47 || petId < 0) return false;
             var random = new Random();
             var color = $"{random.Next(0x1000000):X6}";
             var message = new ServerMessage(LibraryParser.OutgoingRequest("UserLeftRoomMessageComposer"));
-            message.AppendString(roomUser.VirtualId.ToString());
+            await message.AppendStringAsync(roomUser.VirtualId.ToString());
             await room.SendMessage(message);
 
             var serverMessage =
                 new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer"));
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(habbo.Id);
-            serverMessage.AppendString(habbo.UserName);
-            serverMessage.AppendString("");
-            serverMessage.AppendString($"{petId} 0 {color} 2 2 -1 0 3 -1 0");
-            serverMessage.AppendInteger(roomUser.VirtualId);
-            serverMessage.AppendInteger(roomUser.X);
-            serverMessage.AppendInteger(roomUser.Y);
-            serverMessage.AppendString(TextHandling.GetString(roomUser.Z));
-            serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(2);
-            serverMessage.AppendInteger(petId);
-            serverMessage.AppendInteger(habbo.Id);
-            serverMessage.AppendString(habbo.UserName);
-            serverMessage.AppendInteger(1);
+            await serverMessage.AppendIntegerAsync(1);
+            await serverMessage.AppendIntegerAsync(habbo.Id);
+            await serverMessage.AppendStringAsync(habbo.UserName);
+            await serverMessage.AppendStringAsync("");
+            await serverMessage.AppendStringAsync($"{petId} 0 {color} 2 2 -1 0 3 -1 0");
+            await serverMessage.AppendIntegerAsync(roomUser.VirtualId);
+            await serverMessage.AppendIntegerAsync(roomUser.X);
+            await serverMessage.AppendIntegerAsync(roomUser.Y);
+            await serverMessage.AppendStringAsync(TextHandling.GetString(roomUser.Z));
+            await serverMessage.AppendIntegerAsync(0);
+            await serverMessage.AppendIntegerAsync(2);
+            await serverMessage.AppendIntegerAsync(petId);
+            await serverMessage.AppendIntegerAsync(habbo.Id);
+            await serverMessage.AppendStringAsync(habbo.UserName);
+            await serverMessage.AppendIntegerAsync(1);
             serverMessage.AppendBool(false);
             serverMessage.AppendBool(false);
-            serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(0);
-            serverMessage.AppendString("");
+            await serverMessage.AppendIntegerAsync(0);
+            await serverMessage.AppendIntegerAsync(0);
+            await serverMessage.AppendStringAsync("");
             await room.SendMessage(serverMessage);
             return true;
         }

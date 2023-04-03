@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
+using System.Threading.Tasks;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
@@ -213,7 +214,7 @@ namespace Oblivion.HabboHotel.Support
                 queryreactor2.AddParameter("num", num);
                 queryreactor2.AddParameter("mod", moderator);
                 queryreactor2.AddParameter("time", DateTime.Now.ToLongDateString());
-                queryreactor2.RunQuery();
+                await queryreactor2.RunQueryAsync();
             }
 
             if (ipBan)
@@ -233,20 +234,20 @@ namespace Oblivion.HabboHotel.Support
                     {
                         /* TODO CHECK */
                         foreach (DataRow dataRow in dataTable.Rows)
-                            queryreactor4.RunFastQuery(
+                            await queryreactor4.RunFastQueryAsync(
                                 $"UPDATE users_info SET bans = bans + 1 WHERE user_id = {Convert.ToUInt32(dataRow["id"])}");
                     }
                 }
 
-                BanUser(client, moderator, lengthSeconds, reason, false, false);
+                await BanUser(client, moderator, lengthSeconds, reason, false, false);
                 return;
             }
 
             using (var queryreactor5 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryreactor5.RunFastQuery(
+                await queryreactor5.RunFastQueryAsync(
                     $"UPDATE users_info SET bans = bans + 1 WHERE user_id = {client.GetHabbo().Id}");
 
-            client.Disconnect("banned");
+            await client.Disconnect("banned");
         }
 
         /// <summary>
@@ -262,7 +263,7 @@ namespace Oblivion.HabboHotel.Support
             {
                 queryReactor.SetQuery("DELETE FROM users_bans WHERE value = @userorip");
                 queryReactor.AddParameter("userorip", userNameOrIp);
-                queryReactor.RunQuery();
+                await queryReactor.RunQueryAsync();
             }
         }
     }

@@ -32,34 +32,34 @@ namespace Oblivion.Messages.Handlers
                 if (current.Group == null) list.Add(current);
             }
 
-            Response.Init(LibraryParser.OutgoingRequest("GroupPurchasePageMessageComposer"));
-            Response.AppendInteger(10);
-            Response.AppendInteger(list.Count);
+            await Response.InitAsync(LibraryParser.OutgoingRequest("GroupPurchasePageMessageComposer"));
+            await Response.AppendIntegerAsync(10);
+            await Response.AppendIntegerAsync(list.Count);
 
             /* TODO CHECK */
             foreach (RoomData current2 in list)
             {
-                Response.AppendInteger(current2.Id);
-                Response.AppendString(current2.Name);
+                await Response.AppendIntegerAsync(current2.Id);
+                await Response.AppendStringAsync(current2.Name);
                 Response.AppendBool(false);
             }
 
-            Response.AppendInteger(5);
-            Response.AppendInteger(10);
-            Response.AppendInteger(3);
-            Response.AppendInteger(4);
-            Response.AppendInteger(25);
-            Response.AppendInteger(17);
-            Response.AppendInteger(5);
-            Response.AppendInteger(25);
-            Response.AppendInteger(17);
-            Response.AppendInteger(3);
-            Response.AppendInteger(29);
-            Response.AppendInteger(11);
-            Response.AppendInteger(4);
-            Response.AppendInteger(0);
-            Response.AppendInteger(0);
-            Response.AppendInteger(0);
+            await Response.AppendIntegerAsync(5);
+            await Response.AppendIntegerAsync(10);
+            await Response.AppendIntegerAsync(3);
+            await Response.AppendIntegerAsync(4);
+            await Response.AppendIntegerAsync(25);
+            await Response.AppendIntegerAsync(17);
+            await Response.AppendIntegerAsync(5);
+            await Response.AppendIntegerAsync(25);
+            await Response.AppendIntegerAsync(17);
+            await Response.AppendIntegerAsync(3);
+            await Response.AppendIntegerAsync(29);
+            await Response.AppendIntegerAsync(11);
+            await Response.AppendIntegerAsync(4);
+            await Response.AppendIntegerAsync(0);
+            await Response.AppendIntegerAsync(0);
+            await Response.AppendIntegerAsync(0);
             await SendResponse();
         }
 
@@ -68,47 +68,47 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal async Task SerializeGroupPurchaseParts()
         {
-            Response.Init(LibraryParser.OutgoingRequest("GroupPurchasePartsMessageComposer"));
-            Response.AppendInteger(Oblivion.GetGame().GetGroupManager().Bases.Count);
+            await Response.InitAsync(LibraryParser.OutgoingRequest("GroupPurchasePartsMessageComposer"));
+            await Response.AppendIntegerAsync(Oblivion.GetGame().GetGroupManager().Bases.Count);
             /* TODO CHECK */
             foreach (GroupBases current in Oblivion.GetGame().GetGroupManager().Bases)
             {
-                Response.AppendInteger(current.Id);
-                Response.AppendString(current.Value1);
-                Response.AppendString(current.Value2);
+                await Response.AppendIntegerAsync(current.Id);
+                await Response.AppendStringAsync(current.Value1);
+                await Response.AppendStringAsync(current.Value2);
             }
 
-            Response.AppendInteger(Oblivion.GetGame().GetGroupManager().Symbols.Count);
+            await Response.AppendIntegerAsync(Oblivion.GetGame().GetGroupManager().Symbols.Count);
             /* TODO CHECK */
             foreach (GroupSymbols current2 in Oblivion.GetGame().GetGroupManager().Symbols)
             {
-                Response.AppendInteger(current2.Id);
-                Response.AppendString(current2.Value1);
-                Response.AppendString(current2.Value2);
+                await Response.AppendIntegerAsync(current2.Id);
+                await Response.AppendStringAsync(current2.Value1);
+                await Response.AppendStringAsync(current2.Value2);
             }
 
-            Response.AppendInteger(Oblivion.GetGame().GetGroupManager().BaseColours.Count);
+            await Response.AppendIntegerAsync(Oblivion.GetGame().GetGroupManager().BaseColours.Count);
             /* TODO CHECK */
             foreach (GroupBaseColours current3 in Oblivion.GetGame().GetGroupManager().BaseColours)
             {
-                Response.AppendInteger(current3.Id);
-                Response.AppendString(current3.Colour);
+                await Response.AppendIntegerAsync(current3.Id);
+                await Response.AppendStringAsync(current3.Colour);
             }
 
-            Response.AppendInteger(Oblivion.GetGame().GetGroupManager().SymbolColours.Count);
+            await Response.AppendIntegerAsync(Oblivion.GetGame().GetGroupManager().SymbolColours.Count);
             /* TODO CHECK */
             foreach (GroupSymbolColours current4 in Oblivion.GetGame().GetGroupManager().SymbolColours.Values)
             {
-                Response.AppendInteger(current4.Id);
-                Response.AppendString(current4.Colour);
+                await Response.AppendIntegerAsync(current4.Id);
+                await Response.AppendStringAsync(current4.Colour);
             }
 
-            Response.AppendInteger(Oblivion.GetGame().GetGroupManager().BackGroundColours.Count);
+            await Response.AppendIntegerAsync(Oblivion.GetGame().GetGroupManager().BackGroundColours.Count);
             /* TODO CHECK */
             foreach (GroupBackGroundColours current5 in Oblivion.GetGame().GetGroupManager().BackGroundColours.Values)
             {
-                Response.AppendInteger(current5.Id);
-                Response.AppendString(current5.Colour);
+                await Response.AppendIntegerAsync(current5.Id);
+                await Response.AppendStringAsync(current5.Colour);
             }
 
             await SendResponse();
@@ -149,9 +149,9 @@ namespace Oblivion.Messages.Handlers
                 (!Oblivion.GetGame().GetGroupManager().BackGroundColours.Contains(num3)) ? 1 : num3, out var theGroup);
 
             await Session.SendMessageAsync(CatalogPageComposer.PurchaseOk(0u, "CREATE_GUILD", 10));
-            Response.Init(LibraryParser.OutgoingRequest("GroupRoomMessageComposer"));
-            Response.AppendInteger(roomid);
-            Response.AppendInteger(theGroup.Id);
+            await Response.InitAsync(LibraryParser.OutgoingRequest("GroupRoomMessageComposer"));
+            await Response.AppendIntegerAsync(roomid);
+            await Response.AppendIntegerAsync(theGroup.Id);
             await SendResponse();
             roomData.Group = theGroup;
             roomData.GroupId = theGroup.Id;
@@ -174,13 +174,13 @@ namespace Oblivion.Messages.Handlers
             {
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("RoomGroupMessageComposer"));
 
-                serverMessage.AppendInteger(CurrentLoadingRoom.LoadedGroups.Count);
+                await serverMessage.AppendIntegerAsync(CurrentLoadingRoom.LoadedGroups.Count);
 
                 /* TODO CHECK */
                 foreach (var current in CurrentLoadingRoom.LoadedGroups)
                 {
-                    serverMessage.AppendInteger(current.Key);
-                    serverMessage.AppendString(current.Value);
+                    await serverMessage.AppendIntegerAsync(current.Key);
+                    await serverMessage.AppendStringAsync(current.Value);
                 }
 
                 await CurrentLoadingRoom.SendMessage(serverMessage);
@@ -192,11 +192,11 @@ namespace Oblivion.Messages.Handlers
             var serverMessage2 =
                 new ServerMessage(LibraryParser.OutgoingRequest("ChangeFavouriteGroupMessageComposer"));
 
-            serverMessage2.AppendInteger(CurrentLoadingRoom.GetRoomUserManager()
+            await serverMessage2.AppendIntegerAsync(CurrentLoadingRoom.GetRoomUserManager()
                 .GetRoomUserByHabbo(Session.GetHabbo().Id).VirtualId);
-            serverMessage2.AppendInteger(theGroup.Id);
-            serverMessage2.AppendInteger(3);
-            serverMessage2.AppendString(theGroup.Name);
+            await serverMessage2.AppendIntegerAsync(theGroup.Id);
+            await serverMessage2.AppendIntegerAsync(3);
+            await serverMessage2.AppendStringAsync(theGroup.Name);
 
             await CurrentLoadingRoom.SendMessage(serverMessage2);
         }
@@ -231,7 +231,7 @@ namespace Oblivion.Messages.Handlers
 
             if (group == null) return;
 
-            Response.Init(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
+            await Response.InitAsync(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
 
             Oblivion.GetGame().GetGroupManager()
                 .SerializeGroupMembers(Response, group, reqType, Session, searchVal, page);
@@ -257,7 +257,7 @@ namespace Oblivion.Messages.Handlers
 
             group.Admins.Add(num2, group.Members[num2]);
 
-            Response.Init(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
+            await Response.InitAsync(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
             Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 1u, Session);
 
             await SendResponse();
@@ -272,14 +272,14 @@ namespace Oblivion.Messages.Handlers
 //                if (!roomUserByHabbo.Statusses.ContainsKey("flatctrl 1"))
                 roomUserByHabbo.AddStatus("flatctrl 1", "");
 
-                Response.Init(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
-                Response.AppendInteger(1);
+                await Response.InitAsync(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
+                await Response.AppendIntegerAsync(1);
                 await roomUserByHabbo.GetClient().SendMessageAsync(GetResponse());
                 roomUserByHabbo.UpdateNeeded = true;
             }
 
             using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery(string.Concat("UPDATE groups_members SET rank='1' WHERE group_id=", num,
+                await queryReactor.RunFastQueryAsync(string.Concat("UPDATE groups_members SET rank='1' WHERE group_id=", num,
                     " AND user_id=", num2, " LIMIT 1;"));
         }
 
@@ -300,7 +300,7 @@ namespace Oblivion.Messages.Handlers
             group.Members[num2].Rank = 0;
             group.Admins.Remove(num2);
 
-            Response.Init(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
+            await Response.InitAsync(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
             Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 0u, Session);
             await SendResponse();
 
@@ -313,14 +313,14 @@ namespace Oblivion.Messages.Handlers
 //                if (roomUserByHabbo.Statusses.ContainsKey("flatctrl 1"))
                 roomUserByHabbo.RemoveStatus("flatctrl 1");
 
-                Response.Init(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
-                Response.AppendInteger(0);
+                await Response.InitAsync(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
+                await Response.AppendIntegerAsync(0);
                 await roomUserByHabbo.GetClient().SendMessageAsync(GetResponse());
                 roomUserByHabbo.UpdateNeeded = true;
             }
 
             using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery(string.Concat("UPDATE groups_members SET rank='0' WHERE group_id=", num,
+                await queryReactor.RunFastQueryAsync(string.Concat("UPDATE groups_members SET rank='0' WHERE group_id=", num,
                     " AND user_id=", num2, " LIMIT 1;"));
         }
 
@@ -345,7 +345,7 @@ namespace Oblivion.Messages.Handlers
                 group.Requests.Remove(userId);
 
                 using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                    queryReactor.RunFastQuery(
+                    await queryReactor.RunFastQueryAsync(
                         $"DELETE FROM groups_requests WHERE group_id = '{groupId}' AND user_id = '{userId}' LIMIT 1");
                 return;
             }
@@ -357,16 +357,16 @@ namespace Oblivion.Messages.Handlers
             group.Admins.Add(userId, member);
 
             Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
-            Response.Init(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
+            await Response.InitAsync(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
             Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 0u, Session);
             await SendResponse();
 
             using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery(
+                await queryReactor.RunFastQueryAsync(
                     $"DELETE FROM groups_requests WHERE group_id = '{groupId}' AND user_id = '{userId}' LIMIT 1");
 
             using (IQueryAdapter queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryreactor2.RunFastQuery(
+                await queryreactor2.RunFastQueryAsync(
                     $"INSERT INTO groups_members (group_id, user_id, rank, date_join) VALUES ('{groupId}','{userId}','0','{Oblivion.GetUnixTimeStamp()}')");
         }
 
@@ -386,7 +386,7 @@ namespace Oblivion.Messages.Handlers
 
             group.Requests.Remove(userId);
 
-            Response.Init(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
+            await Response.InitAsync(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
             Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 2u, Session);
             await SendResponse();
 
@@ -405,8 +405,8 @@ namespace Oblivion.Messages.Handlers
             Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery("DELETE FROM groups_requests WHERE group_id=" + groupId + " AND user_id=" +
-                                          userId);
+                await queryReactor.RunFastQueryAsync("DELETE FROM groups_requests WHERE group_id=" + groupId + " AND user_id=" +
+                                                     userId);
         }
 
         /// <summary>
@@ -426,10 +426,10 @@ namespace Oblivion.Messages.Handlers
                 {
                     using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        queryReactor.RunFastQuery(
+                        await queryReactor.RunFastQueryAsync(
                             string.Concat("INSERT INTO groups_members (user_id, group_id, date_join) VALUES (", user.Id,
                                 ",", groupId, ",", Oblivion.GetUnixTimeStamp(), ")"));
-                        queryReactor.RunFastQuery(string.Concat("UPDATE users_stats SET favourite_group=", groupId,
+                        await queryReactor.RunFastQueryAsync(string.Concat("UPDATE users_stats SET favourite_group=", groupId,
                             " WHERE id= ", user.Id, " LIMIT 1"));
                     }
 
@@ -445,7 +445,7 @@ namespace Oblivion.Messages.Handlers
                     if (!group.Requests.ContainsKey(user.Id))
                     {
                         using (IQueryAdapter queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                            queryreactor2.RunFastQuery(
+                            await queryreactor2.RunFastQueryAsync(
                                 string.Concat("INSERT INTO groups_requests (user_id, group_id) VALUES (",
                                     Session.GetHabbo().Id, ",", groupId, ")"));
 
@@ -479,7 +479,7 @@ namespace Oblivion.Messages.Handlers
                     group.Admins.Remove(num2);
 
                 using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                    queryReactor.RunFastQuery(string.Concat("DELETE FROM groups_members WHERE user_id=", num2,
+                    await queryReactor.RunFastQueryAsync(string.Concat("DELETE FROM groups_members WHERE user_id=", num2,
                         " AND group_id=", num, " LIMIT 1"));
 
                 await Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
@@ -489,16 +489,16 @@ namespace Oblivion.Messages.Handlers
                     Session.GetHabbo().FavouriteGroup = 0u;
 
                     using (IQueryAdapter queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                        queryreactor2.RunFastQuery($"UPDATE users_stats SET favourite_group=0 WHERE id={num2} LIMIT 1");
+                        await queryreactor2.RunFastQueryAsync($"UPDATE users_stats SET favourite_group=0 WHERE id={num2} LIMIT 1");
 
-                    Response.Init(LibraryParser.OutgoingRequest("FavouriteGroupMessageComposer"));
-                    Response.AppendInteger(Session.GetHabbo().Id);
+                    await Response.InitAsync(LibraryParser.OutgoingRequest("FavouriteGroupMessageComposer"));
+                    await Response.AppendIntegerAsync(Session.GetHabbo().Id);
                     await Session.GetHabbo().CurrentRoom.SendMessage(Response);
-                    Response.Init(LibraryParser.OutgoingRequest("ChangeFavouriteGroupMessageComposer"));
-                    Response.AppendInteger(0);
-                    Response.AppendInteger(-1);
-                    Response.AppendInteger(-1);
-                    Response.AppendString("");
+                    await Response.InitAsync(LibraryParser.OutgoingRequest("ChangeFavouriteGroupMessageComposer"));
+                    await Response.AppendIntegerAsync(0);
+                    await Response.AppendIntegerAsync(-1);
+                    await Response.AppendIntegerAsync(-1);
+                    await Response.AppendStringAsync("");
                     await Session.GetHabbo().CurrentRoom.SendMessage(Response);
 
                     if (group.AdminOnlyDeco == 0u)
@@ -510,9 +510,9 @@ namespace Oblivion.Messages.Handlers
                             return;
 
                         roomUserByHabbo.RemoveStatus("flatctrl 1");
-                        Response.Init(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
+                        await Response.InitAsync(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
 
-                        Response.AppendInteger(0);
+                        await Response.AppendIntegerAsync(0);
 
                         await roomUserByHabbo.GetClient().SendMessageAsync(GetResponse());
                     }
@@ -530,12 +530,12 @@ namespace Oblivion.Messages.Handlers
                 group.Admins.Remove(num2);
 
             await Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
-            Response.Init(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
+            await Response.InitAsync(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
             Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 0u, Session);
             await SendResponse();
 
             using (IQueryAdapter queryreactor3 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryreactor3.RunFastQuery(string.Concat("DELETE FROM groups_members WHERE group_id=", num,
+                await queryreactor3.RunFastQueryAsync(string.Concat("DELETE FROM groups_members WHERE group_id=", num,
                     " AND user_id=", num2, " LIMIT 1;"));
         }
 
@@ -558,11 +558,11 @@ namespace Oblivion.Messages.Handlers
             await Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(theGroup, Response, Session);
 
             using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery(string.Concat("UPDATE users_stats SET favourite_group =", theGroup.Id,
+                await queryReactor.RunFastQueryAsync(string.Concat("UPDATE users_stats SET favourite_group =", theGroup.Id,
                     " WHERE id=", Session.GetHabbo().Id, " LIMIT 1;"));
 
-            Response.Init(LibraryParser.OutgoingRequest("FavouriteGroupMessageComposer"));
-            Response.AppendInteger(Session.GetHabbo().Id);
+            await Response.InitAsync(LibraryParser.OutgoingRequest("FavouriteGroupMessageComposer"));
+            await Response.AppendIntegerAsync(Session.GetHabbo().Id);
             await Session.SendMessageAsync(Response);
 
             if (Session.GetHabbo().CurrentRoom != null)
@@ -570,25 +570,25 @@ namespace Oblivion.Messages.Handlers
                 if (!Session.GetHabbo().CurrentRoom.LoadedGroups.ContainsKey(theGroup.Id))
                 {
                     Session.GetHabbo().CurrentRoom.LoadedGroups.Add(theGroup.Id, theGroup.Badge);
-                    Response.Init(LibraryParser.OutgoingRequest("RoomGroupMessageComposer"));
-                    Response.AppendInteger(Session.GetHabbo().CurrentRoom.LoadedGroups.Count);
+                    await Response.InitAsync(LibraryParser.OutgoingRequest("RoomGroupMessageComposer"));
+                    await Response.AppendIntegerAsync(Session.GetHabbo().CurrentRoom.LoadedGroups.Count);
 
                     /* TODO CHECK */
                     foreach (KeyValuePair<uint, string> current in Session.GetHabbo().CurrentRoom.LoadedGroups)
                     {
-                        Response.AppendInteger(current.Key);
-                        Response.AppendString(current.Value);
+                        await Response.AppendIntegerAsync(current.Key);
+                        await Response.AppendStringAsync(current.Value);
                     }
 
                     await Session.GetHabbo().CurrentRoom.SendMessage(Response);
                 }
             }
 
-            Response.Init(LibraryParser.OutgoingRequest("ChangeFavouriteGroupMessageComposer"));
-            Response.AppendInteger(0);
-            Response.AppendInteger(theGroup.Id);
-            Response.AppendInteger(3);
-            Response.AppendString(theGroup.Name);
+            await Response.InitAsync(LibraryParser.OutgoingRequest("ChangeFavouriteGroupMessageComposer"));
+            await Response.AppendIntegerAsync(0);
+            await Response.AppendIntegerAsync(theGroup.Id);
+            await Response.AppendIntegerAsync(3);
+            await Response.AppendStringAsync(theGroup.Name);
 
             await Session.SendMessageAsync(Response);
         }
@@ -605,14 +605,14 @@ namespace Oblivion.Messages.Handlers
                 await queryReactor.RunFastQueryAsync(
                     $"UPDATE users_stats SET favourite_group=0 WHERE id={Session.GetHabbo().Id} LIMIT 1;");
 
-            Response.Init(LibraryParser.OutgoingRequest("FavouriteGroupMessageComposer"));
-            Response.AppendInteger(Session.GetHabbo().Id);
+            await Response.InitAsync(LibraryParser.OutgoingRequest("FavouriteGroupMessageComposer"));
+            await Response.AppendIntegerAsync(Session.GetHabbo().Id);
             await Session.SendMessageAsync(Response);
-            Response.Init(LibraryParser.OutgoingRequest("ChangeFavouriteGroupMessageComposer"));
-            Response.AppendInteger(0);
-            Response.AppendInteger(-1);
-            Response.AppendInteger(-1);
-            Response.AppendString(string.Empty);
+            await Response.InitAsync(LibraryParser.OutgoingRequest("ChangeFavouriteGroupMessageComposer"));
+            await Response.AppendIntegerAsync(0);
+            await Response.AppendIntegerAsync(-1);
+            await Response.AppendIntegerAsync(-1);
+            await Response.AppendStringAsync(string.Empty);
 
             await Session.SendMessageAsync(Response);
         }
@@ -674,42 +674,42 @@ namespace Oblivion.Messages.Handlers
             if (threadId == 0)
             {
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("GroupForumNewThreadMessageComposer"));
-                message.AppendInteger(groupId);
-                message.AppendInteger(threadId);
-                message.AppendInteger(Session.GetHabbo().Id);
-                message.AppendString(subject);
-                message.AppendString(content);
+                await message.AppendIntegerAsync(groupId);
+                await message.AppendIntegerAsync(threadId);
+                await message.AppendIntegerAsync(Session.GetHabbo().Id);
+                await message.AppendStringAsync(subject);
+                await message.AppendStringAsync(content);
                 message.AppendBool(false);
                 message.AppendBool(false);
-                message.AppendInteger((Oblivion.GetUnixTimeStamp() - timestamp));
-                message.AppendInteger(1);
-                message.AppendInteger(0);
-                message.AppendInteger(0);
-                message.AppendInteger(1);
-                message.AppendString("");
-                message.AppendInteger((Oblivion.GetUnixTimeStamp() - timestamp));
+                await message.AppendIntegerAsync((Oblivion.GetUnixTimeStamp() - timestamp));
+                await message.AppendIntegerAsync(1);
+                await message.AppendIntegerAsync(0);
+                await message.AppendIntegerAsync(0);
+                await message.AppendIntegerAsync(1);
+                await message.AppendStringAsync("");
+                await message.AppendIntegerAsync((Oblivion.GetUnixTimeStamp() - timestamp));
                 message.AppendByte(1);
-                message.AppendInteger(1);
-                message.AppendString("");
-                message.AppendInteger(42);
+                await message.AppendIntegerAsync(1);
+                await message.AppendStringAsync("");
+                await message.AppendIntegerAsync(42);
                 await Session.SendMessageAsync(message);
             }
             else
             {
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("GroupForumNewResponseMessageComposer"));
-                message.AppendInteger(groupId);
-                message.AppendInteger(threadId);
-                message.AppendInteger(group.ForumMessagesCount);
-                message.AppendInteger(0);
-                message.AppendInteger(Session.GetHabbo().Id);
-                message.AppendString(Session.GetHabbo().UserName);
-                message.AppendString(Session.GetHabbo().Look);
-                message.AppendInteger((Oblivion.GetUnixTimeStamp() - timestamp));
-                message.AppendString(content);
+                await message.AppendIntegerAsync(groupId);
+                await message.AppendIntegerAsync(threadId);
+                await message.AppendIntegerAsync(group.ForumMessagesCount);
+                await message.AppendIntegerAsync(0);
+                await message.AppendIntegerAsync(Session.GetHabbo().Id);
+                await message.AppendStringAsync(Session.GetHabbo().UserName);
+                await message.AppendStringAsync(Session.GetHabbo().Look);
+                await message.AppendIntegerAsync((Oblivion.GetUnixTimeStamp() - timestamp));
+                await message.AppendStringAsync(content);
                 message.AppendByte(0);
-                message.AppendInteger(0);
-                message.AppendString("");
-                message.AppendInteger(0);
+                await message.AppendIntegerAsync(0);
+                await message.AppendStringAsync("");
+                await message.AppendIntegerAsync(0);
                 await Session.SendMessageAsync(message);
             }
         }
@@ -741,7 +741,7 @@ namespace Oblivion.Messages.Handlers
                             $"UPDATE groups_forums_posts SET pinned = @pin , locked = @lock WHERE id = {threadId};");
                         dbClient.AddParameter("pin", (pin) ? "1" : "0");
                         dbClient.AddParameter("lock", (Lock) ? "1" : "0");
-                        dbClient.RunQuery();
+                        await dbClient.RunQueryAsync();
                     }
                 }
 
@@ -751,8 +751,8 @@ namespace Oblivion.Messages.Handlers
                 {
                     var notif = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
 
-                    notif.AppendString((pin) ? "forums.thread.pinned" : "forums.thread.unpinned");
-                    notif.AppendInteger(0);
+                    await notif.AppendStringAsync((pin) ? "forums.thread.pinned" : "forums.thread.unpinned");
+                    await notif.AppendIntegerAsync(0);
                     await Session.SendMessageAsync(notif);
                 }
 
@@ -760,8 +760,8 @@ namespace Oblivion.Messages.Handlers
                 {
                     var notif2 = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
 
-                    notif2.AppendString((Lock) ? "forums.thread.locked" : "forums.thread.unlocked");
-                    notif2.AppendInteger(0);
+                    await notif2.AppendStringAsync((Lock) ? "forums.thread.locked" : "forums.thread.unlocked");
+                    await notif2.AppendIntegerAsync(0);
                     await Session.SendMessageAsync(notif2);
                 }
 
@@ -769,24 +769,24 @@ namespace Oblivion.Messages.Handlers
                     return;
 
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("GroupForumThreadUpdateMessageComposer"));
-                message.AppendInteger(groupId);
-                message.AppendInteger(thread.Id);
-                message.AppendInteger(thread.PosterId);
-                message.AppendString(thread.PosterName);
-                message.AppendString(thread.Subject);
+                await message.AppendIntegerAsync(groupId);
+                await message.AppendIntegerAsync(thread.Id);
+                await message.AppendIntegerAsync(thread.PosterId);
+                await message.AppendStringAsync(thread.PosterName);
+                await message.AppendStringAsync(thread.Subject);
                 message.AppendBool(pin);
                 message.AppendBool(Lock);
-                message.AppendInteger((Oblivion.GetUnixTimeStamp() - thread.Timestamp));
-                message.AppendInteger(thread.MessageCount + 1);
-                message.AppendInteger(0);
-                message.AppendInteger(0);
-                message.AppendInteger(1);
-                message.AppendString("");
-                message.AppendInteger((Oblivion.GetUnixTimeStamp() - thread.Timestamp));
+                await message.AppendIntegerAsync((Oblivion.GetUnixTimeStamp() - thread.Timestamp));
+                await message.AppendIntegerAsync(thread.MessageCount + 1);
+                await message.AppendIntegerAsync(0);
+                await message.AppendIntegerAsync(0);
+                await message.AppendIntegerAsync(1);
+                await message.AppendStringAsync("");
+                await message.AppendIntegerAsync((Oblivion.GetUnixTimeStamp() - thread.Timestamp));
                 message.AppendByte((thread.Hidden) ? 10 : 1);
-                message.AppendInteger(1);
-                message.AppendString(thread.Hider);
-                message.AppendInteger(0);
+                await message.AppendIntegerAsync(1);
+                await message.AppendStringAsync(thread.Hider);
+                await message.AppendIntegerAsync(0);
 
                 await Session.SendMessageAsync(message);
             }
@@ -816,39 +816,39 @@ namespace Oblivion.Messages.Handlers
                     {
                         dbClient.SetQuery($"UPDATE groups_forums_posts SET hidden = @hid WHERE id = {threadId};");
                         dbClient.AddParameter("hid", (stateToSet == 20) ? "1" : "0");
-                        dbClient.RunQuery();
+                        await dbClient.RunQueryAsync();
                     }
                 }
 
                 var thread = new GroupForumPost(row);
                 var notif = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
 
-                notif.AppendString((stateToSet == 20) ? "forums.thread.hidden" : "forums.thread.restored");
-                notif.AppendInteger(0);
+                await notif.AppendStringAsync((stateToSet == 20) ? "forums.thread.hidden" : "forums.thread.restored");
+                await notif.AppendIntegerAsync(0);
                 await Session.SendMessageAsync(notif);
 
                 if (thread.ParentId != 0)
                     return;
 
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("GroupForumThreadUpdateMessageComposer"));
-                message.AppendInteger(groupId);
-                message.AppendInteger(thread.Id);
-                message.AppendInteger(thread.PosterId);
-                message.AppendString(thread.PosterName);
-                message.AppendString(thread.Subject);
+                await message.AppendIntegerAsync(groupId);
+                await message.AppendIntegerAsync(thread.Id);
+                await message.AppendIntegerAsync(thread.PosterId);
+                await message.AppendStringAsync(thread.PosterName);
+                await message.AppendStringAsync(thread.Subject);
                 message.AppendBool(thread.Pinned);
                 message.AppendBool(thread.Locked);
-                message.AppendInteger((Oblivion.GetUnixTimeStamp() - thread.Timestamp));
-                message.AppendInteger(thread.MessageCount + 1);
-                message.AppendInteger(0);
-                message.AppendInteger(0);
-                message.AppendInteger(0);
-                message.AppendString(string.Empty);
-                message.AppendInteger((Oblivion.GetUnixTimeStamp() - thread.Timestamp));
+                await message.AppendIntegerAsync((Oblivion.GetUnixTimeStamp() - thread.Timestamp));
+                await message.AppendIntegerAsync(thread.MessageCount + 1);
+                await message.AppendIntegerAsync(0);
+                await message.AppendIntegerAsync(0);
+                await message.AppendIntegerAsync(0);
+                await message.AppendStringAsync(string.Empty);
+                await message.AppendIntegerAsync((Oblivion.GetUnixTimeStamp() - thread.Timestamp));
                 message.AppendByte(stateToSet);
-                message.AppendInteger(0);
-                message.AppendString(thread.Hider);
-                message.AppendInteger(0);
+                await message.AppendIntegerAsync(0);
+                await message.AppendStringAsync(thread.Hider);
+                await message.AppendIntegerAsync(0);
 
                 await Session.SendMessageAsync(message);
             }
@@ -909,28 +909,28 @@ namespace Oblivion.Messages.Handlers
                 var messageBuffer =
                     new ServerMessage(LibraryParser.OutgoingRequest("GroupForumReadThreadMessageComposer"));
 
-                messageBuffer.AppendInteger(groupId);
-                messageBuffer.AppendInteger(threadId);
-                messageBuffer.AppendInteger(startIndex);
-                messageBuffer.AppendInteger(b);
+                await messageBuffer.AppendIntegerAsync(groupId);
+                await messageBuffer.AppendIntegerAsync(threadId);
+                await messageBuffer.AppendIntegerAsync(startIndex);
+                await messageBuffer.AppendIntegerAsync(b);
 
                 int indx = 0;
 
                 /* TODO CHECK */
                 foreach (GroupForumPost post in posts)
                 {
-                    messageBuffer.AppendInteger(indx++ - 1);
-                    messageBuffer.AppendInteger(indx - 1);
-                    messageBuffer.AppendInteger(post.PosterId);
-                    messageBuffer.AppendString(post.PosterName);
-                    messageBuffer.AppendString(post.PosterLook);
-                    messageBuffer.AppendInteger(Oblivion.GetUnixTimeStamp() - post.Timestamp);
-                    messageBuffer.AppendString(post.PostContent);
+                    await messageBuffer.AppendIntegerAsync(indx++ - 1);
+                    await messageBuffer.AppendIntegerAsync(indx - 1);
+                    await messageBuffer.AppendIntegerAsync(post.PosterId);
+                    await messageBuffer.AppendStringAsync(post.PosterName);
+                    await messageBuffer.AppendStringAsync(post.PosterLook);
+                    await messageBuffer.AppendIntegerAsync(Oblivion.GetUnixTimeStamp() - post.Timestamp);
+                    await messageBuffer.AppendStringAsync(post.PostContent);
                     messageBuffer.AppendByte(0);
-                    messageBuffer.AppendInteger(0);
-                    messageBuffer.AppendString(post.Hider);
-                    messageBuffer.AppendInteger(0);
-                    messageBuffer.AppendInteger(0);
+                    await messageBuffer.AppendIntegerAsync(0);
+                    await messageBuffer.AppendStringAsync(post.Hider);
+                    await messageBuffer.AppendIntegerAsync(0);
+                    await messageBuffer.AppendIntegerAsync(0);
                 }
 
                 await Session.SendMessageAsync(messageBuffer);
@@ -965,30 +965,30 @@ namespace Oblivion.Messages.Handlers
                 var threads = (from DataRow row in table.Rows select new GroupForumPost(row)).ToList();
 
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("GroupForumThreadRootMessageComposer"));
-                message.AppendInteger(groupId);
-                message.AppendInteger(startIndex);
-                message.AppendInteger(threadCount);
+                await message.AppendIntegerAsync(groupId);
+                await message.AppendIntegerAsync(startIndex);
+                await message.AppendIntegerAsync(threadCount);
 
                 /* TODO CHECK */
                 foreach (GroupForumPost thread in threads)
                 {
-                    message.AppendInteger(thread.Id);
-                    message.AppendInteger(thread.PosterId);
-                    message.AppendString(thread.PosterName);
-                    message.AppendString(thread.Subject);
+                    await message.AppendIntegerAsync(thread.Id);
+                    await message.AppendIntegerAsync(thread.PosterId);
+                    await message.AppendStringAsync(thread.PosterName);
+                    await message.AppendStringAsync(thread.Subject);
                     message.AppendBool(thread.Pinned);
                     message.AppendBool(thread.Locked);
-                    message.AppendInteger((Oblivion.GetUnixTimeStamp() - thread.Timestamp));
-                    message.AppendInteger(thread.MessageCount + 1);
-                    message.AppendInteger(0);
-                    message.AppendInteger(0);
-                    message.AppendInteger(0);
-                    message.AppendString(string.Empty);
-                    message.AppendInteger((Oblivion.GetUnixTimeStamp() - thread.Timestamp));
+                    await message.AppendIntegerAsync((Oblivion.GetUnixTimeStamp() - thread.Timestamp));
+                    await message.AppendIntegerAsync(thread.MessageCount + 1);
+                    await message.AppendIntegerAsync(0);
+                    await message.AppendIntegerAsync(0);
+                    await message.AppendIntegerAsync(0);
+                    await message.AppendStringAsync(string.Empty);
+                    await message.AppendIntegerAsync((Oblivion.GetUnixTimeStamp() - thread.Timestamp));
                     message.AppendByte((thread.Hidden) ? 10 : 1);
-                    message.AppendInteger(0);
-                    message.AppendString(thread.Hider);
-                    message.AppendInteger(0);
+                    await message.AppendIntegerAsync(0);
+                    await message.AppendStringAsync(thread.Hider);
+                    await message.AppendIntegerAsync(0);
                 }
 
                 await Session.SendMessageAsync(message);
@@ -1017,7 +1017,7 @@ namespace Oblivion.Messages.Handlers
             int startIndex = Request.GetInteger();
 
             var message = new ServerMessage(LibraryParser.OutgoingRequest("GroupForumListingsMessageComposer"));
-            message.AppendInteger(selectType);
+            await message.AppendIntegerAsync(selectType);
             var groupList = new List<Guild>();
 
             switch (selectType)
@@ -1039,15 +1039,15 @@ namespace Oblivion.Messages.Handlers
 
                         DataTable table = dbClient.GetTable();
 
-                        message.AppendInteger(qtdForums == 0 ? 1 : qtdForums);
-                        message.AppendInteger(startIndex);
+                        await message.AppendIntegerAsync(qtdForums == 0 ? 1 : qtdForums);
+                        await message.AppendIntegerAsync(startIndex);
 
                         groupList.AddRange(from DataRow rowGroupData in table.Rows
                             select uint.Parse(rowGroupData["id"].ToString())
                             into groupId
                             select Oblivion.GetGame().GetGroupManager().GetGroup(groupId));
 
-                        message.AppendInteger(table.Rows.Count);
+                        await message.AppendIntegerAsync(table.Rows.Count);
 
                         /* TODO CHECK */
                         foreach (Guild theGroup in groupList)
@@ -1063,13 +1063,13 @@ namespace Oblivion.Messages.Handlers
                         .Select(groupUser => Oblivion.GetGame().GetGroupManager().GetGroup(groupUser.GroupId))
                         .Where(aGroup => aGroup != null && aGroup.HasForum));
 
-                    message.AppendInteger(groupList.Count == 0 ? 1 : groupList.Count);
+                    await message.AppendIntegerAsync(groupList.Count == 0 ? 1 : groupList.Count);
 
                     groupList = groupList.OrderByDescending(x => x.ForumMessagesCount).Skip(startIndex).Take(20)
                         .ToList();
 
-                    message.AppendInteger(startIndex);
-                    message.AppendInteger(groupList.Count);
+                    await message.AppendIntegerAsync(startIndex);
+                    await message.AppendIntegerAsync(groupList.Count);
 
                     /* TODO CHECK */
                     foreach (Guild theGroup in groupList)
@@ -1079,9 +1079,9 @@ namespace Oblivion.Messages.Handlers
                     break;
 
                 default:
-                    message.AppendInteger(1);
-                    message.AppendInteger(startIndex);
-                    message.AppendInteger(0);
+                    await message.AppendIntegerAsync(1);
+                    await message.AppendIntegerAsync(startIndex);
+                    await message.AppendIntegerAsync(0);
                     await Session.SendMessageAsync(message);
                     break;
             }
@@ -1102,23 +1102,23 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().Rank < 7)
                 return;
 
-            Response.Init(LibraryParser.OutgoingRequest("GroupDataEditMessageComposer"));
-            Response.AppendInteger(0);
+            await Response.InitAsync(LibraryParser.OutgoingRequest("GroupDataEditMessageComposer"));
+            await Response.AppendIntegerAsync(0);
             Response.AppendBool(true);
-            Response.AppendInteger(theGroup.Id);
-            Response.AppendString(theGroup.Name);
-            Response.AppendString(theGroup.Description);
-            Response.AppendInteger(theGroup.RoomId);
-            Response.AppendInteger(theGroup.Colour1);
-            Response.AppendInteger(theGroup.Colour2);
-            Response.AppendInteger(theGroup.State);
-            Response.AppendInteger(theGroup.AdminOnlyDeco);
+            await Response.AppendIntegerAsync(theGroup.Id);
+            await Response.AppendStringAsync(theGroup.Name);
+            await Response.AppendStringAsync(theGroup.Description);
+            await Response.AppendIntegerAsync(theGroup.RoomId);
+            await Response.AppendIntegerAsync(theGroup.Colour1);
+            await Response.AppendIntegerAsync(theGroup.Colour2);
+            await Response.AppendIntegerAsync(theGroup.State);
+            await Response.AppendIntegerAsync(theGroup.AdminOnlyDeco);
             Response.AppendBool(false);
-            Response.AppendString(string.Empty);
+            await Response.AppendStringAsync(string.Empty);
 
             var array = theGroup.Badge.Replace("b", string.Empty).Split('s');
 
-            Response.AppendInteger(5);
+            await Response.AppendIntegerAsync(5);
 
             var num = (5 - array.Length);
 
@@ -1131,20 +1131,20 @@ namespace Oblivion.Messages.Handlers
             {
                 try
                 {
-                    Response.AppendInteger(text.Length >= 6
+                    await Response.AppendIntegerAsync(text.Length >= 6
                         ? uint.Parse(text.Substring(0, 3))
                         : uint.Parse(text.Substring(0, 2)));
 
-                    Response.AppendInteger((text.Length >= 6)
+                    await Response.AppendIntegerAsync((text.Length >= 6)
                         ? uint.Parse(text.Substring(3, 2))
                         : uint.Parse(text.Substring(2, 2)));
 
                     if (text.Length < 5)
-                        Response.AppendInteger(0);
+                        await Response.AppendIntegerAsync(0);
                     else if (text.Length >= 6)
-                        Response.AppendInteger(uint.Parse(text.Substring(5, 1)));
+                        await Response.AppendIntegerAsync(uint.Parse(text.Substring(5, 1)));
                     else
-                        Response.AppendInteger(uint.Parse(text.Substring(4, 1)));
+                        await Response.AppendIntegerAsync(uint.Parse(text.Substring(4, 1)));
                 }
                 catch
                 {
@@ -1155,14 +1155,14 @@ namespace Oblivion.Messages.Handlers
 
             while (num2 != num)
             {
-                Response.AppendInteger(0);
-                Response.AppendInteger(0);
-                Response.AppendInteger(0);
+                await Response.AppendIntegerAsync(0);
+                await Response.AppendIntegerAsync(0);
+                await Response.AppendIntegerAsync(0);
                 num2++;
             }
 
-            Response.AppendString(theGroup.Badge);
-            Response.AppendInteger(theGroup.Members.Count);
+            await Response.AppendStringAsync(theGroup.Badge);
+            await Response.AppendIntegerAsync(theGroup.Members.Count);
 
             await SendResponse();
         }
@@ -1187,7 +1187,7 @@ namespace Oblivion.Messages.Handlers
                 queryReactor.AddParameter("name", text);
                 queryReactor.AddParameter("desc", text2);
 
-                queryReactor.RunQuery();
+                await queryReactor.RunQueryAsync();
             }
 
             theGroup.Name = text;
@@ -1229,13 +1229,13 @@ namespace Oblivion.Messages.Handlers
 
                     guild.Badge = badge;
 
-                    Response.Init(LibraryParser.OutgoingRequest("RoomGroupMessageComposer"));
-                    Response.AppendInteger(room.LoadedGroups.Count);
+                    await Response.InitAsync(LibraryParser.OutgoingRequest("RoomGroupMessageComposer"));
+                    await Response.AppendIntegerAsync(room.LoadedGroups.Count);
 
                     foreach (KeyValuePair<uint, string> current2 in room.LoadedGroups)
                     {
-                        Response.AppendInteger(current2.Key);
-                        Response.AppendString(current2.Value);
+                        await Response.AppendIntegerAsync(current2.Key);
+                        await Response.AppendStringAsync(current2.Value);
                     }
 
                     await room.SendMessage(Response);
@@ -1246,21 +1246,21 @@ namespace Oblivion.Messages.Handlers
                     {
                         queryReactor.SetQuery($"UPDATE groups_data SET badge = @badgi WHERE id = {guildId}");
                         queryReactor.AddParameter("badgi", badge);
-                        queryReactor.RunQuery();
+                        await queryReactor.RunQueryAsync();
                     }
 
                     if (Session.GetHabbo().CurrentRoom != null)
                     {
                         Session.GetHabbo().CurrentRoom.LoadedGroups[guildId] = guild.Badge;
 
-                        Response.Init(LibraryParser.OutgoingRequest("RoomGroupMessageComposer"));
-                        Response.AppendInteger(Session.GetHabbo().CurrentRoom.LoadedGroups.Count);
+                        await Response.InitAsync(LibraryParser.OutgoingRequest("RoomGroupMessageComposer"));
+                        await Response.AppendIntegerAsync(Session.GetHabbo().CurrentRoom.LoadedGroups.Count);
 
                         /* TODO CHECK */
                         foreach (KeyValuePair<uint, string> current in Session.GetHabbo().CurrentRoom.LoadedGroups)
                         {
-                            Response.AppendInteger(current.Key);
-                            Response.AppendString(current.Value);
+                            await Response.AppendIntegerAsync(current.Key);
+                            await Response.AppendStringAsync(current.Value);
                         }
 
                         Session.GetHabbo().CurrentRoom.SendMessage(Response);
@@ -1287,7 +1287,7 @@ namespace Oblivion.Messages.Handlers
                 return;
 
             using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery(string.Concat("UPDATE groups_data SET colour1= ", num, ", colour2=", num2,
+                await queryReactor.RunFastQueryAsync(string.Concat("UPDATE groups_data SET colour1= ", num, ", colour2=", num2,
                     " WHERE id=", theGroup.Id, " LIMIT 1"));
 
             theGroup.Colour1 = num;
@@ -1312,7 +1312,7 @@ namespace Oblivion.Messages.Handlers
                 return;
 
             using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery(string.Concat("UPDATE groups_data SET state='", num, "', admindeco='", num2,
+                await queryReactor.RunFastQueryAsync(string.Concat("UPDATE groups_data SET state='", num, "', admindeco='", num2,
                     "' WHERE id=", theGroup.Id, " LIMIT 1"));
 
             theGroup.State = num;
@@ -1331,15 +1331,15 @@ namespace Oblivion.Messages.Handlers
                         if (num2 == 1u)
                         {
                             current.RemoveStatus("flatctrl 1");
-                            Response.Init(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
-                            Response.AppendInteger(0);
+                            await Response.InitAsync(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
+                            await Response.AppendIntegerAsync(0);
                             await current.GetClient().SendMessageAsync(GetResponse());
                         }
                         else
                         {
                             current.AddStatus("flatctrl 1", "");
-                            Response.Init(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
-                            Response.AppendInteger(1);
+                            await Response.InitAsync(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
+                            await Response.AppendIntegerAsync(1);
                             await current.GetClient().SendMessageAsync(GetResponse());
                         }
 
@@ -1367,9 +1367,9 @@ namespace Oblivion.Messages.Handlers
 
             if (userId == Session.GetHabbo().Id || guild.Admins.ContainsKey(Session.GetHabbo().Id))
             {
-                Response.Init(LibraryParser.OutgoingRequest("GroupAreYouSureMessageComposer"));
-                Response.AppendInteger(userId);
-                Response.AppendInteger(0);
+                await Response.InitAsync(LibraryParser.OutgoingRequest("GroupAreYouSureMessageComposer"));
+                await Response.AppendIntegerAsync(userId);
+                await Response.AppendIntegerAsync(0);
                 await SendResponse();
             }
         }
@@ -1413,20 +1413,20 @@ namespace Oblivion.Messages.Handlers
                     return;
 
                 using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                    queryReactor.RunFastQuery(string.Concat("DELETE FROM groups_members WHERE user_id=", userId,
+                    await queryReactor.RunFastQueryAsync(string.Concat("DELETE FROM groups_members WHERE user_id=", userId,
                         " AND group_id=", guild, " LIMIT 1"));
 
                 Habbo byeUser = Oblivion.GetHabboById(userId);
 
                 if (byeUser != null)
                 {
-                    Response.Init(LibraryParser.OutgoingRequest("GroupConfirmLeaveMessageComposer"));
-                    Response.AppendInteger(guild);
-                    Response.AppendInteger(type);
-                    Response.AppendInteger(byeUser.Id);
-                    Response.AppendString(byeUser.UserName);
-                    Response.AppendString(byeUser.Look);
-                    Response.AppendString(string.Empty);
+                    await Response.InitAsync(LibraryParser.OutgoingRequest("GroupConfirmLeaveMessageComposer"));
+                    await Response.AppendIntegerAsync(guild);
+                    await Response.AppendIntegerAsync(type);
+                    await Response.AppendIntegerAsync(byeUser.Id);
+                    await Response.AppendStringAsync(byeUser.UserName);
+                    await Response.AppendStringAsync(byeUser.Look);
+                    await Response.AppendStringAsync(string.Empty);
 
                     await SendResponse();
                 }
@@ -1436,13 +1436,13 @@ namespace Oblivion.Messages.Handlers
                     byeUser.FavouriteGroup = 0;
 
                     using (IQueryAdapter queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                        queryreactor2.RunFastQuery(
+                        await queryreactor2.RunFastQueryAsync(
                             $"UPDATE users_stats SET favourite_group=0 WHERE id={userId} LIMIT 1");
 
                     Room room = Session.GetHabbo().CurrentRoom;
 
-                    Response.Init(LibraryParser.OutgoingRequest("FavouriteGroupMessageComposer"));
-                    Response.AppendInteger(byeUser.Id);
+                    await Response.InitAsync(LibraryParser.OutgoingRequest("FavouriteGroupMessageComposer"));
+                    await Response.AppendIntegerAsync(byeUser.Id);
 
                     if (room != null)
                         await room.SendMessage(Response);
@@ -1450,8 +1450,8 @@ namespace Oblivion.Messages.Handlers
                         await SendResponse();
                 }
 
-                Response.Init(LibraryParser.OutgoingRequest("GroupRequestReloadMessageComposer"));
-                Response.AppendInteger(guild);
+                await Response.InitAsync(LibraryParser.OutgoingRequest("GroupRequestReloadMessageComposer"));
+                await Response.AppendIntegerAsync(guild);
 
                 await SendResponse();
             }
@@ -1493,7 +1493,7 @@ namespace Oblivion.Messages.Handlers
                 queryReactor.AddParameter("who_can_post", whoCanPost);
                 queryReactor.AddParameter("who_can_thread", whoCanThread);
                 queryReactor.AddParameter("who_can_mod", whoCanMod);
-                queryReactor.RunQuery();
+                await queryReactor.RunQueryAsync();
             }
 
             await Session.SendMessageAsync(group.ForumDataMessage(Session.GetHabbo().Id));
@@ -1551,7 +1551,7 @@ namespace Oblivion.Messages.Handlers
 
                 var deleteGroup = new ServerMessage(LibraryParser.OutgoingRequest("GroupDeletedMessageComposer"));
 
-                deleteGroup.AppendInteger(groupId);
+                await deleteGroup.AppendIntegerAsync(groupId);
                 await room.SendMessage(deleteGroup);
 
                 room.GetRoomItemHandler().RemoveAllFurniture(Session);
@@ -1562,10 +1562,10 @@ namespace Oblivion.Messages.Handlers
 
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    queryReactor.RunFastQuery($"DELETE FROM users_favorites WHERE room_id = {roomId}");
-                    queryReactor.RunFastQuery($"DELETE FROM items_rooms WHERE room_id = {roomId}");
-                    queryReactor.RunFastQuery($"DELETE FROM rooms_rights WHERE room_id = {roomId}");
-                    queryReactor.RunFastQuery($"UPDATE users SET home_room = '0' WHERE home_room = {roomId}");
+                    await queryReactor.RunFastQueryAsync($"DELETE FROM users_favorites WHERE room_id = {roomId}");
+                    await queryReactor.RunFastQueryAsync($"DELETE FROM items_rooms WHERE room_id = {roomId}");
+                    await queryReactor.RunFastQueryAsync($"DELETE FROM rooms_rights WHERE room_id = {roomId}");
+                    await queryReactor.RunFastQueryAsync($"UPDATE users SET home_room = '0' WHERE home_room = {roomId}");
                 }
 
 //                var roomData2 =

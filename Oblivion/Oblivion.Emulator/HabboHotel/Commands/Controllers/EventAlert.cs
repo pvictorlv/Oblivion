@@ -25,21 +25,21 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             var message = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
-            message.AppendString("events");
-            message.AppendInteger(4);
-            message.AppendString("title");
-            message.AppendString("Temos um novo Evento");
-            message.AppendString("message");
-            message.AppendString(
+            await message.AppendStringAsync("events");
+            await message.AppendIntegerAsync(4);
+            await message.AppendStringAsync("title");
+            await message.AppendStringAsync("Temos um novo Evento");
+            await message.AppendStringAsync("message");
+            await message.AppendStringAsync(
                 "Tem um novo evento acontecendo agora mesmo!\n\nO evento está sendo feito por:    <b>" +
                 session.GetHabbo().UserName +
                 "</b>\n\nCorra para participar antes que o quarto seja fechado! Clique em " +
                 "<i>Ir para o Evento</i>\n\nE o " +
                 "evento vai ser:\n\n<b>" + string.Join(" ", pms) + "</b>\n\nEstamos esperando você lá em!<br><br><small>Digite :eventsoff para desativar o alerta!</small>");
-            message.AppendString("linkUrl");
-            message.AppendString("event:navigator/goto/" + session.GetHabbo().CurrentRoomId);
-            message.AppendString("linkTitle");
-            message.AppendString("Ir para o Evento");
+            await message.AppendStringAsync("linkUrl");
+            await message.AppendStringAsync("event:navigator/goto/" + session.GetHabbo().CurrentRoomId);
+            await message.AppendStringAsync("linkTitle");
+            await message.AppendStringAsync("Ir para o Evento");
 
             foreach (var client in Oblivion.GetGame().GetClientManager().Clients.Values)
             {
@@ -48,16 +48,16 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
                 if (session.GetHabbo().Id == client.GetHabbo().Id)
                 {
-                    client.SendWhisper("O Alerta de Evento foi Enviado com Sucesso", true);
+                    await client.SendWhisperAsync("O Alerta de Evento foi Enviado com Sucesso", true);
                     continue;
                 }
 
                 if (!client.GetHabbo().DisableEventAlert)
                 {
-                    client.SendMessageAsync(message);
+                    await client.SendMessageAsync(message);
                     continue;
                 }
-                client.SendWhisper(
+                await client.SendWhisperAsync(
                     $"Um novo evento está acontecendo! Procure por {session.GetHabbo().CurrentRoom.RoomData.Owner} e venha ao evento!");
             }
             return true;

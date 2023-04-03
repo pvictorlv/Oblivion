@@ -25,7 +25,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var currentRoom = client.GetHabbo().CurrentRoom;
             if (!int.TryParse(pms[0], out var height) || height >= 100)
             {
-                client.SendWhisper("Insira um valor válido!");
+                await client.SendWhisperAsync("Insira um valor válido!");
                 return true;
             }
 

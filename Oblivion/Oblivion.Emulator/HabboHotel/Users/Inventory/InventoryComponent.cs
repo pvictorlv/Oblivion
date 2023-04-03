@@ -111,7 +111,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 await UpdateItems(true);
 
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                    queryReactor.RunNoLockFastQuery(
+                    await queryReactor.RunNoLockFastQueryAsync(
                         $"DELETE FROM items_rooms WHERE (room_id IS NULL or room_id=0) AND user_id = {UserId};");
 
                 _mAddedItems.Clear();
@@ -156,7 +156,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     var array = item.BaseItem.Name.Split('_');
                     var num = int.Parse(array[1]);
 
-                    queryreactor2.RunNoLockFastQuery($"DELETE FROM items_rooms WHERE id='{item.Id}' LIMIT 1;");
+                    await queryreactor2.RunNoLockFastQueryAsync($"DELETE FROM items_rooms WHERE id='{item.Id}' LIMIT 1;");
 
 
                     currentRoom.GetRoomItemHandler().RemoveItem(item.Id);
@@ -426,7 +426,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                             $"INSERT INTO items_rooms (id, base_item, user_id, group_id, extra_data, songcode, limited) VALUES ('{id}', '{baseItem}', '{UserId}', {groupId}, @edata, '{songCode}', '{limno};{limtot}');");
 
                         queryReactor.AddParameter("edata", extraData);
-                        queryReactor.RunQuery();
+                        await queryReactor.RunQueryAsync();
                         var virtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(id);
 
                         await SendNewItems(virtualId);
@@ -522,9 +522,9 @@ namespace Oblivion.HabboHotel.Users.Inventory
             if (i <= 0)
             {
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("LoadInventoryMessageComposer"));
-                message.AppendInteger(1);
-                message.AppendInteger(0);
-                message.AppendInteger(0);
+                await message.AppendIntegerAsync(1);
+                await message.AppendIntegerAsync(0);
+                await message.AppendIntegerAsync(0);
                 await session.SendMessage(message);
             }
 
@@ -539,11 +539,11 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             using (var serverMessage = new ServerMessage())
             {
-                serverMessage.Init(LibraryParser.OutgoingRequest("LoadInventoryMessageComposer"));
+                await serverMessage.InitAsync(LibraryParser.OutgoingRequest("LoadInventoryMessageComposer"));
 
-                serverMessage.AppendInteger(1);
-                serverMessage.AppendInteger(0);
-                serverMessage.AppendInteger(i >= 4500 ? 4500 : i);
+                await serverMessage.AppendIntegerAsync(1);
+                await serverMessage.AppendIntegerAsync(0);
+                await serverMessage.AppendIntegerAsync(i >= 4500 ? 4500 : i);
 
                 foreach (var inventoryItem in _items.Values)
                 {
@@ -570,36 +570,36 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 item.LimitedNo, item.LimitedTot);
             using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FurniListAddMessageComposer")))
             {
-                serverMessage.AppendInteger(item.VirtualId);
-                serverMessage.AppendString(item.GetBaseItem().Type.ToString().ToUpper());
-                serverMessage.AppendInteger(item.VirtualId);
-                serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
-                serverMessage.AppendInteger(1);
-                serverMessage.AppendInteger(0);
+                await serverMessage.AppendIntegerAsync(item.VirtualId);
+                await serverMessage.AppendStringAsync(item.GetBaseItem().Type.ToString().ToUpper());
+                await serverMessage.AppendIntegerAsync(item.VirtualId);
+                await serverMessage.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                await serverMessage.AppendIntegerAsync(1);
+                await serverMessage.AppendIntegerAsync(0);
                 if (item.LimitedNo > 0)
                 {
-                    serverMessage.AppendInteger(1);
-                    serverMessage.AppendInteger(256);
-                    serverMessage.AppendString(item.ExtraData);
-                    serverMessage.AppendInteger(item.LimitedNo);
-                    serverMessage.AppendInteger(item.LimitedTot);
+                    await serverMessage.AppendIntegerAsync(1);
+                    await serverMessage.AppendIntegerAsync(256);
+                    await serverMessage.AppendStringAsync(item.ExtraData);
+                    await serverMessage.AppendIntegerAsync(item.LimitedNo);
+                    await serverMessage.AppendIntegerAsync(item.LimitedTot);
                 }
                 else
                 {
-                    serverMessage.AppendString(item.ExtraData);
+                    await serverMessage.AppendStringAsync(item.ExtraData);
                 }
 
                 serverMessage.AppendBool(item.GetBaseItem().AllowRecycle);
                 serverMessage.AppendBool(item.GetBaseItem().AllowTrade);
                 serverMessage.AppendBool(item.LimitedNo == 0 && item.GetBaseItem().AllowInventoryStack);
                 serverMessage.AppendBool(true); //can sell in marketplace xD
-                serverMessage.AppendInteger(-1);
+                await serverMessage.AppendIntegerAsync(-1);
                 serverMessage.AppendBool(false);
-                serverMessage.AppendInteger(-1);
+                await serverMessage.AppendIntegerAsync(-1);
                 if (!item.IsWallItem)
                 {
-                    serverMessage.AppendString(string.Empty);
-                    serverMessage.AppendInteger(0);
+                    await serverMessage.AppendStringAsync(string.Empty);
+                    await serverMessage.AppendIntegerAsync(0);
                 }
 
                 var id = item.Id;
@@ -623,36 +623,36 @@ namespace Oblivion.HabboHotel.Users.Inventory
         {
             using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FurniListAddMessageComposer")))
             {
-                serverMessage.AppendInteger(userItem.VirtualId);
-                serverMessage.AppendString(userItem.BaseItem.Type.ToString().ToUpper());
-                serverMessage.AppendInteger(userItem.VirtualId);
-                serverMessage.AppendInteger(userItem.BaseItem.SpriteId);
-                serverMessage.AppendInteger(1);
-                serverMessage.AppendInteger(0);
+                await serverMessage.AppendIntegerAsync(userItem.VirtualId);
+                await serverMessage.AppendStringAsync(userItem.BaseItem.Type.ToString().ToUpper());
+                await serverMessage.AppendIntegerAsync(userItem.VirtualId);
+                await serverMessage.AppendIntegerAsync(userItem.BaseItem.SpriteId);
+                await serverMessage.AppendIntegerAsync(1);
+                await serverMessage.AppendIntegerAsync(0);
                 if (userItem.LimitedSellId > 0)
                 {
-                    serverMessage.AppendInteger(1);
-                    serverMessage.AppendInteger(256);
-                    serverMessage.AppendString(userItem.ExtraData);
-                    serverMessage.AppendInteger(userItem.LimitedSellId);
-                    serverMessage.AppendInteger(userItem.LimitedStack);
+                    await serverMessage.AppendIntegerAsync(1);
+                    await serverMessage.AppendIntegerAsync(256);
+                    await serverMessage.AppendStringAsync(userItem.ExtraData);
+                    await serverMessage.AppendIntegerAsync(userItem.LimitedSellId);
+                    await serverMessage.AppendIntegerAsync(userItem.LimitedStack);
                 }
                 else
                 {
-                    serverMessage.AppendString(userItem.ExtraData);
+                    await serverMessage.AppendStringAsync(userItem.ExtraData);
                 }
 
                 serverMessage.AppendBool(userItem.BaseItem.AllowRecycle);
                 serverMessage.AppendBool(userItem.BaseItem.AllowTrade);
                 serverMessage.AppendBool(userItem.LimitedSellId == 0 && userItem.BaseItem.AllowInventoryStack);
                 serverMessage.AppendBool(true); //can sell in marketplace xD
-                serverMessage.AppendInteger(-1);
+                await serverMessage.AppendIntegerAsync(-1);
                 serverMessage.AppendBool(false);
-                serverMessage.AppendInteger(-1);
+                await serverMessage.AppendIntegerAsync(-1);
                 if (!userItem.IsWallItem)
                 {
-                    serverMessage.AppendString(string.Empty);
-                    serverMessage.AppendInteger(0);
+                    await serverMessage.AppendStringAsync(string.Empty);
+                    await serverMessage.AppendIntegerAsync(0);
                 }
 
                 var id = userItem.Id;
@@ -700,14 +700,14 @@ namespace Oblivion.HabboHotel.Users.Inventory
             await serverMessage.InitAsync(LibraryParser.OutgoingRequest("BotInventoryMessageComposer"));
 
             var list = _inventoryBots.Values;
-            serverMessage.AppendInteger(list.Count);
+            await serverMessage.AppendIntegerAsync(list.Count);
             foreach (var current in list)
             {
-                serverMessage.AppendInteger(current.BotId);
-                serverMessage.AppendString(current.Name);
-                serverMessage.AppendString(current.Motto);
-                serverMessage.AppendString("m");
-                serverMessage.AppendString(current.Look);
+                await serverMessage.AppendIntegerAsync(current.BotId);
+                await serverMessage.AppendStringAsync(current.Name);
+                await serverMessage.AppendStringAsync(current.Motto);
+                await serverMessage.AppendStringAsync("m");
+                await serverMessage.AppendStringAsync(current.Look);
             }
 
             return serverMessage;
@@ -830,11 +830,11 @@ namespace Oblivion.HabboHotel.Users.Inventory
         {
             using (var serverMessage = new ServerMessage())
             {
-                serverMessage.Init(LibraryParser.OutgoingRequest("NewInventoryObjectMessageComposer"));
-                serverMessage.AppendInteger(1);
-                serverMessage.AppendInteger(1);
-                serverMessage.AppendInteger(1);
-                serverMessage.AppendInteger(id);
+                await serverMessage.InitAsync(LibraryParser.OutgoingRequest("NewInventoryObjectMessageComposer"));
+                await serverMessage.AppendIntegerAsync(1);
+                await serverMessage.AppendIntegerAsync(1);
+                await serverMessage.AppendIntegerAsync(1);
+                await serverMessage.AppendIntegerAsync(id);
                 _mClient.SendMessage(serverMessage);
             }
         }

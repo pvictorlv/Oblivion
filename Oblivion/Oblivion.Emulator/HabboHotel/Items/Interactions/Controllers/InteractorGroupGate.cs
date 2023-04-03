@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.GameClients.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Models;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.PathFinding;
@@ -8,11 +9,11 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorGroupGate : FurniInteractorModel
     {
-        public override void OnUserWalkOff(GameClient session, RoomItem item, RoomUser user)
+        public override async Task OnUserWalkOff(GameClient session, RoomItem item, RoomUser user)
         {
-            OnUserWalk(session, item, user);
+            await OnUserWalk(session, item, user);
         }
-        public override void OnUserWalk(GameClient session, RoomItem item, RoomUser user)
+        public override async Task OnUserWalk(GameClient session, RoomItem item, RoomUser user)
         {
             if (session == null || item == null || user == null)
                 return;
@@ -24,7 +25,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             
 
             item.ExtraData = "1";
-            item.UpdateState(false, true);
+            await  item.UpdateState(false, true);
             item.InteractingUser = 1;
 
             if (user.GoalX != item.X || user.GoalY != item.Y)
@@ -35,7 +36,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 case 3:
                 case 4:
                 case 5:
-                    user.MoveTo(item.GetRoom()
+                    await user.MoveTo(item.GetRoom()
                         .GetGameMap()
                         .CanWalk(item.SquareBehind.X, item.SquareBehind.Y, user.AllowOverride)
                         ? item.SquareBehind
@@ -43,7 +44,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     break;
 
                 default:
-                    user.MoveTo(item.GetRoom()
+                    await user.MoveTo(item.GetRoom()
                         .GetGameMap()
                         .CanWalk(item.SquareInFront.X, item.SquareInFront.Y, user.AllowOverride)
                         ? item.SquareInFront
@@ -51,7 +52,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     break;
             }
             item.ExtraData = "0";
-            item.UpdateState(false, true);
+            await item.UpdateState(false, true);
 
         }
     }

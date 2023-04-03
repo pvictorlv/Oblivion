@@ -101,8 +101,8 @@ namespace Oblivion.Configuration
                     {
                         var str = inputData.Substring(6);
                         var message = new ServerMessage(LibraryParser.OutgoingRequest("BroadcastNotifMessageComposer"));
-                        message.AppendString(str);
-                        message.AppendString(string.Empty);
+                        await message.AppendStringAsync(str);
+                        await message.AppendStringAsync(string.Empty);
                         await GetGame().GetClientManager().SendMessageAsync(message);
                         Console.WriteLine("[{0}] was sent!", str);
                         return;

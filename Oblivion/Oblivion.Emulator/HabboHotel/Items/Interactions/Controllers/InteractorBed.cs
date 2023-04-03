@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interactions.Models;
@@ -11,7 +12,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorBed : FurniInteractorModel
     {
-        public override void OnUserWalk(GameClient session, RoomItem item, RoomUser user)
+        public override async Task OnUserWalk(GameClient session, RoomItem item, RoomUser user)
         {
             user.Statusses["lay"] = TextHandling.GetString(item.GetBaseItem().Height);
 
@@ -23,7 +24,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             if (item.GetBaseItem().InteractionType == Interaction.PressurePadBed)
             {
                 item.ExtraData = "1";
-                item.UpdateState();
+                await  item.UpdateState();
             }
         }
     }

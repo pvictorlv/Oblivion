@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Messages;
 
 namespace Oblivion.HabboHotel.Users.Inventory
@@ -52,7 +53,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 queryReactor.SetQuery("INSERT INTO users_clothing (userid,clothing) VALUES (@userid,@clothing)");
                 queryReactor.AddParameter("userid", _userId);
                 queryReactor.AddParameter("clothing", clothing);
-                queryReactor.RunQuery();
+                await queryReactor.RunQueryAsync();
             }
 
             Clothing.Add(clothing);
@@ -70,7 +71,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     Clothing.Select(clothing1 => Oblivion.GetGame().GetClothingManager().GetClothesInFurni(clothing1)))
             {
                 /* TODO CHECK */ foreach (var clothe in item1.Clothes)
-                    message.AppendInteger(clothe);
+                    await message.AppendIntegerAsync(clothe);
 
                 message.SaveArray();
             }
@@ -82,7 +83,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     Clothing.Select(clothing2 => Oblivion.GetGame().GetClothingManager().GetClothesInFurni(clothing2)))
             {
                 /* TODO CHECK */ foreach (var clothe in item2.Clothes)
-                    message.AppendString(item2.ItemName);
+                    await message.AppendStringAsync(item2.ItemName);
                
                 message.SaveArray();
             }

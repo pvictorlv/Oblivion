@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
@@ -71,7 +72,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                         queryReactor.AddParameter("desc", eventDesc);
                         queryReactor.AddParameter("time", roomEvent.Time);
                         queryReactor.AddParameter("category", category);
-                        queryReactor.RunQuery();
+                        await queryReactor.RunQueryAsync();
                         goto IL_17C;
                     }
                 }
@@ -82,11 +83,11 @@ namespace Oblivion.HabboHotel.Rooms.Data
                     queryreactor2.AddParameter("name", eventName);
                     queryreactor2.AddParameter("desc", eventDesc);
                     queryreactor2.AddParameter("category", category);
-                    queryreactor2.RunQuery();
+                    await queryreactor2.RunQueryAsync();
                 }
                 _events.Add(roomId, new RoomEvent(roomId, eventName, eventDesc));
                 IL_17C:
-                Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId).Event = _events[roomId];
+                (await Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId)).Event = _events[roomId];
                 var room = Oblivion.GetGame().GetRoomManager().GetRoom(roomId);
                 if (room != null)
                 {
@@ -94,7 +95,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 }
                 if (session.GetHabbo().CurrentRoomId == roomId)
                 {
-                    SerializeEventInfo(roomId);
+                    await SerializeEventInfo(roomId);
                 }
             }
         }
@@ -106,7 +107,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         internal async Task RemoveEvent(uint roomId)
         {
             _events.Remove(roomId);
-            SerializeEventInfo(roomId);
+            await SerializeEventInfo(roomId);
         }
 
         /// <summary>
@@ -159,19 +160,19 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 return;
             }
             var serverMessage = new ServerMessage();
-            serverMessage.Init(LibraryParser.OutgoingRequest("RoomEventMessageComposer"));
-            serverMessage.AppendInteger(roomId);
-            serverMessage.AppendInteger(room.RoomData.OwnerId);
-            serverMessage.AppendString(room.RoomData.Owner);
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendString(@event.Name);
-            serverMessage.AppendString(@event.Description);
-            serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(
+            await serverMessage.InitAsync(LibraryParser.OutgoingRequest("RoomEventMessageComposer"));
+            await serverMessage.AppendIntegerAsync(roomId);
+            await serverMessage.AppendIntegerAsync(room.RoomData.OwnerId);
+            await serverMessage.AppendStringAsync(room.RoomData.Owner);
+            await serverMessage.AppendIntegerAsync(1);
+            await serverMessage.AppendIntegerAsync(1);
+            await serverMessage.AppendStringAsync(@event.Name);
+            await serverMessage.AppendStringAsync(@event.Description);
+            await serverMessage.AppendIntegerAsync(0);
+            await serverMessage.AppendIntegerAsync(
                 ((int) Math.Floor((@event.Time - Oblivion.GetUnixTimeStamp())/60.0)));
 
-            serverMessage.AppendInteger(@event.Category);
+            await serverMessage.AppendIntegerAsync(@event.Category);
             await room.SendMessage(serverMessage);
         }
 
@@ -187,9 +188,9 @@ namespace Oblivion.HabboHotel.Rooms.Data
                     ", @name, @desc, ", Event.Time, ")"));
                 queryReactor.AddParameter("name", Event.Name);
                 queryReactor.AddParameter("desc", Event.Description);
-                queryReactor.RunQuery();
+                await queryReactor.RunQueryAsync();
             }
-            SerializeEventInfo(Event.RoomId);
+            await SerializeEventInfo(Event.RoomId);
         }
     }
 }

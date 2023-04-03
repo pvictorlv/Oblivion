@@ -71,7 +71,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             _bot.BotData.Look = OtherExtraString;
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer"));
-            serverMessage.AppendInteger(1);
+            await serverMessage.AppendIntegerAsync(1);
             _bot.Serialize(serverMessage);
             Room.SendMessage(serverMessage);
 

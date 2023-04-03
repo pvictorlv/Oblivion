@@ -23,14 +23,14 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             /* TODO CHECK */ foreach (var client in Oblivion.GetGame().GetClientManager().Clients.Values)
             {
                 var serverMessage = new ServerMessage();
-                serverMessage.Init(LibraryParser.OutgoingRequest("WhisperMessageComposer"));
-                serverMessage.AppendInteger(room.RoomId);
-                serverMessage.AppendString(message);
-                serverMessage.AppendInteger(0);
-                serverMessage.AppendInteger(36);
-                serverMessage.AppendInteger(0);
-                serverMessage.AppendInteger(-1);
-                client.SendMessage(serverMessage);
+                await serverMessage.InitAsync(LibraryParser.OutgoingRequest("WhisperMessageComposer"));
+                await serverMessage.AppendIntegerAsync(room.RoomId);
+                await serverMessage.AppendStringAsync(message);
+                await serverMessage.AppendIntegerAsync(0);
+                await serverMessage.AppendIntegerAsync(36);
+                await serverMessage.AppendIntegerAsync(0);
+                await serverMessage.AppendIntegerAsync(-1);
+                await client.SendMessage(serverMessage);
             }
             return true;
         }

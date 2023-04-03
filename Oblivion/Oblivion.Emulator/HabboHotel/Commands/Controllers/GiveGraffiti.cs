@@ -37,7 +37,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             client.GetHabbo().Graffiti += amount;
             client.GetHabbo().UpdateSeasonalCurrencyBalance();
-            client.SendNotif(string.Format(Oblivion.GetLanguage().GetVar("staff_gives_emeralds"),
+            await client.SendNotif(string.Format(Oblivion.GetLanguage().GetVar("staff_gives_emeralds"),
                 session.GetHabbo().UserName, amount));
             Oblivion.GetGame()
                 .GetModerationTool()

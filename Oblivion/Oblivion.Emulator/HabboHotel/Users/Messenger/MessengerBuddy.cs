@@ -130,23 +130,23 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             var i = value?.Type ?? 0;
 
-            message.AppendInteger(Id);
-            message.AppendString(UserName);
-            message.AppendInteger(1);
+            await message.AppendIntegerAsync(Id);
+            await message.AppendStringAsync(UserName);
+            await message.AppendIntegerAsync(1);
 
             message.AppendBool(Id == 0 || (!_appearOffline || session.GetHabbo().Rank >= 4) && IsOnline);
             message.AppendBool(Id != 0 && (!_hideInroom || session.GetHabbo().Rank >= 4) && InRoom);
 
-            message.AppendString(IsOnline || Id == 0 ? _look : string.Empty);
+            await message.AppendStringAsync(IsOnline || Id == 0 ? _look : string.Empty);
 
-            message.AppendInteger(0);
-            message.AppendString(_motto);
-            message.AppendString(string.Empty);
-            message.AppendString(string.Empty);
+            await message.AppendIntegerAsync(0);
+            await message.AppendStringAsync(_motto);
+            await message.AppendStringAsync(string.Empty);
+            await message.AppendStringAsync(string.Empty);
             message.AppendBool(true);
             message.AppendBool(false);
             message.AppendBool(false);
-            message.AppendShort(i);
+            await message.AppendShortAsync(i);
         }
     }
 }

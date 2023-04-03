@@ -94,8 +94,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
                 await avatar.UnIdle();
                 avatar.DanceId = 0;
                 var waveAtWin = new ServerMessage(LibraryParser.OutgoingRequest("RoomUserActionMessageComposer"));
-                waveAtWin.AppendInteger(avatar.VirtualId);
-                waveAtWin.AppendInteger(1);
+                await waveAtWin.AppendIntegerAsync(avatar.VirtualId);
+                await waveAtWin.AppendIntegerAsync(1);
                 await _room.SendMessage(waveAtWin);
             }
         }
@@ -314,7 +314,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
                     break;
             }
             await _room.GetGameMap().RemoveFromMap(item, false);
-            await item.UpdateState(false, true);
+            await  item.UpdateState(false, true);
         }
 
         private async Task PickUpPowerUp(RoomItem item, RoomUser user)
@@ -340,15 +340,15 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
                         await _room.GetGameManager().AddPointToTeam(user.Team, 10, user);
                     }
                     var serverMessage = new ServerMessage();
-                    serverMessage.Init(LibraryParser.OutgoingRequest("UpdateFreezeLivesMessageComposer"));
-                    serverMessage.AppendInteger(user.InternalRoomId);
-                    serverMessage.AppendInteger(user.FreezeLives);
+                    await serverMessage.InitAsync(LibraryParser.OutgoingRequest("UpdateFreezeLivesMessageComposer"));
+                    await serverMessage.AppendIntegerAsync(user.InternalRoomId);
+                    await serverMessage.AppendIntegerAsync(user.FreezeLives);
                     await user.GetClient().SendMessageAsync(serverMessage);
                     break;
             }
             item.FreezePowerUp = FreezePowerUp.None;
             item.ExtraData = $"1{item.ExtraData}";
-            await item.UpdateState(false, true);
+            await  item.UpdateState(false, true);
         }
 
         private async Task HandleUserFreeze(Point point)
@@ -380,9 +380,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
             if (user.FreezeLives <= 0)
             {
                 var serverMessage = new ServerMessage();
-                serverMessage.Init(LibraryParser.OutgoingRequest("UpdateFreezeLivesMessageComposer"));
-                serverMessage.AppendInteger(user.InternalRoomId);
-                serverMessage.AppendInteger(user.FreezeLives);
+                await serverMessage.InitAsync(LibraryParser.OutgoingRequest("UpdateFreezeLivesMessageComposer"));
+                await serverMessage.AppendIntegerAsync(user.InternalRoomId);
+                await serverMessage.AppendIntegerAsync(user.FreezeLives);
                 await user.GetClient().SendMessageAsync(serverMessage);
                 await user.ApplyEffect(-1);
                 await _room.GetGameManager().AddPointToTeam(user.Team, -10, user);
@@ -416,9 +416,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
                 await _room.GetGameManager().AddPointToTeam(user.Team, -10, user);
                 await user.ApplyEffect(12);
                 var serverMessage = new ServerMessage();
-                serverMessage.Init(LibraryParser.OutgoingRequest("UpdateFreezeLivesMessageComposer"));
-                serverMessage.AppendInteger(user.InternalRoomId);
-                serverMessage.AppendInteger(user.FreezeLives);
+                await serverMessage.InitAsync(LibraryParser.OutgoingRequest("UpdateFreezeLivesMessageComposer"));
+                await serverMessage.AppendIntegerAsync(user.InternalRoomId);
+                await serverMessage.AppendIntegerAsync(user.FreezeLives);
                 await user.GetClient().SendMessageAsync(serverMessage);
             }
         }

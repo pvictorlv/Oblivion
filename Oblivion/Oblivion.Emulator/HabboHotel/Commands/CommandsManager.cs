@@ -291,7 +291,7 @@ namespace Oblivion.HabboHotel.Commands
                 if (client.GetHabbo().CurrentRoom.RoomData.BlockedCommands.Contains(commandName) ||
                     client.GetHabbo().Data.BlockedCommands.Contains(commandName))
                 {
-                    client.SendWhisper("Comando bloqueado!");
+                    await client.SendWhisperAsync("Comando bloqueado!");
                     return false;
                 }
 
@@ -310,7 +310,7 @@ namespace Oblivion.HabboHotel.Commands
                     return false;
                 }
 
-                client.SendWhisper(Oblivion.GetLanguage().GetVar("use_the_command_as") + command.Usage);
+                await client.SendWhisperAsync(Oblivion.GetLanguage().GetVar("use_the_command_as") + command.Usage);
                 return true;
             }
             catch

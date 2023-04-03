@@ -39,7 +39,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             client.GetHabbo().Diamonds += amount;
             client.GetHabbo().UpdateSeasonalCurrencyBalance();
-            client.SendNotif(string.Format(Oblivion.GetLanguage().GetVar("staff_gives_diamonds"),
+            await client.SendNotif(string.Format(Oblivion.GetLanguage().GetVar("staff_gives_diamonds"),
                 session.GetHabbo().UserName, amount));
             Oblivion.GetGame()
                 .GetModerationTool()

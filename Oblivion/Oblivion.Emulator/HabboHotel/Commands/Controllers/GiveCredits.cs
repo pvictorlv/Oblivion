@@ -36,7 +36,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             client.GetHabbo().Credits += amount;
             client.GetHabbo().UpdateCreditsBalance();
-            client.SendNotif(string.Format(Oblivion.GetLanguage().GetVar("staff_gives_credits"),
+            await client.SendNotif(string.Format(Oblivion.GetLanguage().GetVar("staff_gives_credits"),
                 session.GetHabbo().UserName, amount));
             return true;
         }

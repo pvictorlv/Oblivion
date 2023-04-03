@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Models;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -8,13 +9,13 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorWalkSwitch : FurniInteractorModel
     {
-        public override void OnUserWalkOff(GameClient session, RoomItem item, RoomUser user)
+        public override async Task OnUserWalkOff(GameClient session, RoomItem item, RoomUser user)
         {
             item.ExtraData = "0";
-            item.UpdateState();
+            await  item.UpdateState();
         }
 
-        public override void OnUserWalk(GameClient session, RoomItem item, RoomUser user)
+        public override async Task OnUserWalk(GameClient session, RoomItem item, RoomUser user)
         {
             var num = item.GetBaseItem().Modes - 1;
 
@@ -35,7 +36,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
 
             item.ExtraData = num3.ToString();
-            item.UpdateState();
+            await  item.UpdateState();
         }
     }
 }

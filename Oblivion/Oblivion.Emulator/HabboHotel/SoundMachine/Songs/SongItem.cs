@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Items.Interfaces;
 
 namespace Oblivion.HabboHotel.SoundMachine.Songs
@@ -74,7 +75,7 @@ namespace Oblivion.HabboHotel.SoundMachine.Songs
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 var id = Oblivion.GetGame().GetItemManager().GetRealId(ItemId);
-                queryReactor.RunFastQuery($"REPLACE INTO items_songs VALUES ('{id}', '{roomId}', '{SongId}')");
+                await queryReactor.RunFastQueryAsync($"REPLACE INTO items_songs VALUES ('{id}', '{roomId}', '{SongId}')");
             }
         }
 
@@ -87,7 +88,7 @@ namespace Oblivion.HabboHotel.SoundMachine.Songs
             {
                 var id = Oblivion.GetGame().GetItemManager().GetRealId(ItemId);
 
-                queryReactor.RunFastQuery($"DELETE FROM items_songs WHERE itemid = '{id}'");
+                await queryReactor.RunFastQueryAsync($"DELETE FROM items_songs WHERE itemid = '{id}'");
             }
         }
     }

@@ -140,15 +140,15 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
                         var serverMessage =
                             new ServerMessage(LibraryParser.OutgoingRequest("ItemAnimationMessageComposer"));
-                        serverMessage.AppendInteger(fItem.X);
-                        serverMessage.AppendInteger(fItem.Y);
-                        serverMessage.AppendInteger(xToSet);
-                        serverMessage.AppendInteger(yToSet);
-                        serverMessage.AppendInteger(1);
-                        serverMessage.AppendInteger(fItem.VirtualId);
-                        serverMessage.AppendString(fItem.Z.ToString(Oblivion.CultureInfo));
-                        serverMessage.AppendString(zToSet.ToString(Oblivion.CultureInfo));
-                        serverMessage.AppendInteger(0);
+                        await serverMessage.AppendIntegerAsync(fItem.X);
+                        await serverMessage.AppendIntegerAsync(fItem.Y);
+                        await serverMessage.AppendIntegerAsync(xToSet);
+                        await serverMessage.AppendIntegerAsync(yToSet);
+                        await serverMessage.AppendIntegerAsync(1);
+                        await serverMessage.AppendIntegerAsync(fItem.VirtualId);
+                        await serverMessage.AppendStringAsync(fItem.Z.ToString(Oblivion.CultureInfo));
+                        await serverMessage.AppendStringAsync(zToSet.ToString(Oblivion.CultureInfo));
+                        await serverMessage.AppendIntegerAsync(0);
                         Room.SendMessage(serverMessage);
 
                         Room.GetRoomItemHandler().SetFloorItem(null, fItem, xToSet, yToSet, rotationToSet, false, false,

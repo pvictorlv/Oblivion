@@ -35,18 +35,18 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var msg = new ServerMessage(LibraryParser.OutgoingRequest("RoomNotificationMessageComposer"));
             message = System.Net.WebUtility.HtmlDecode(message);
 
-            msg.AppendString("micro");
-            msg.AppendInteger(5);
-            msg.AppendString("title");
-            msg.AppendString("Hotel");
-            msg.AppendString("message");
-            msg.AppendString(message);
-            msg.AppendString("linkUrl");
-            msg.AppendString("event:navigator/goto/" + client.GetHabbo().CurrentRoomId);
-            msg.AppendString("linkTitle");
-            msg.AppendString("");
-            msg.AppendString("display");
-            msg.AppendString("BUBBLE");
+            await msg.AppendStringAsync("micro");
+            await msg.AppendIntegerAsync(5);
+            await msg.AppendStringAsync("title");
+            await msg.AppendStringAsync("Hotel");
+            await msg.AppendStringAsync("message");
+            await msg.AppendStringAsync(message);
+            await msg.AppendStringAsync("linkUrl");
+            await msg.AppendStringAsync("event:navigator/goto/" + client.GetHabbo().CurrentRoomId);
+            await msg.AppendStringAsync("linkTitle");
+            await msg.AppendStringAsync("");
+            await msg.AppendStringAsync("display");
+            await msg.AppendStringAsync("BUBBLE");
 
             
             if (client.GetHabbo().Rank < 6)
@@ -56,7 +56,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             else
             {
-                Oblivion.GetGame().GetClientManager().SendMessage(msg);
+                await Oblivion.GetGame().GetClientManager().SendMessageAsync(msg);
             }
 
             return true;

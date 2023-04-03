@@ -31,7 +31,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var poll = Oblivion.GetGame().GetPollManager().TryGetPollById(id);
             if (poll == null || poll.Type != PollType.Matching)
             {
-                client.SendWhisper("Poll doesn't exists or isn't a matching poll.");
+                await client.SendWhisperAsync("Poll doesn't exists or isn't a matching poll.");
                 return true;
             }
             poll.AnswersPositive = 0;
@@ -82,7 +82,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                         result.AppendInteger(poll.AnswersNegative);
                         result.AppendString("1");
                         result.AppendInteger(poll.AnswersPositive);
-                        client.SendMessage(result);
+                        await client.SendMessage(result);
                     }
                 }
             }

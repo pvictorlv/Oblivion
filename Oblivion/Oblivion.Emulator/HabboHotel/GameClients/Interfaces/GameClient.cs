@@ -441,8 +441,8 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             using (var serverMessage =
                 new ServerMessage(LibraryParser.OutgoingRequest("MOTDNotificationMessageComposer")))
             {
-                serverMessage.AppendInteger(1);
-                serverMessage.AppendString(System.Net.WebUtility.HtmlDecode(message), true);
+                await serverMessage.AppendIntegerAsync(1);
+                await serverMessage.AppendStringAsync(System.Net.WebUtility.HtmlDecode(message), true);
                 SendMessage(serverMessage);
             }
         }
@@ -456,8 +456,8 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             using (var serverMessage =
                 new ServerMessage(LibraryParser.OutgoingRequest("AlertNotificationMessageComposer")))
             {
-                serverMessage.AppendString(message);
-                serverMessage.AppendString(string.Empty);
+                await serverMessage.AppendStringAsync(message);
+                await serverMessage.AppendStringAsync(string.Empty);
                 SendMessage(serverMessage);
             }
         }

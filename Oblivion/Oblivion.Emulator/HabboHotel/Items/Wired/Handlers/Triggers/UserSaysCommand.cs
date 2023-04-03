@@ -74,7 +74,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                     await WiredHandler.OnEvent(current);
                 }
 
-            roomUser.GetClient().SendWhisper(text);
+            await roomUser.GetClient().SendWhisperAsync(text);
 
             if (effects.Count > 0)
             {

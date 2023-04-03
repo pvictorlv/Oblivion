@@ -255,7 +255,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             /* TODO CHECK */
             foreach (var winner in winners) 
                 await item.HighscoreData.AddUserScore(item, winner.GetUserName(), score);
-            await item.UpdateState(false, true);
+            await  item.UpdateState(false, true);
         }
 
         internal async Task StartGame()

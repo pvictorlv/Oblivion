@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Events.Interfaces;
 using Oblivion.HabboHotel.Rooms.Data;
 
@@ -75,8 +76,9 @@ namespace Oblivion.HabboHotel.Events
             WorkUpdate();
             SortCollection();
 
-            /* TODO CHECK */ foreach (var current in _eventCategories.Values)
-                current.OnCycle();
+            /* TODO CHECK */ 
+            foreach (var current in _eventCategories.Values)
+                await current.OnCycle();
         }
 
         /// <summary>
@@ -89,7 +91,7 @@ namespace Oblivion.HabboHotel.Events
             lock (_addQueue.SyncRoot)
                 _addQueue.Enqueue(data);
 
-            _eventCategories[roomEventCategory].QueueAddEvent(data);
+            await _eventCategories[roomEventCategory].QueueAddEvent(data);
         }
 
         /// <summary>
@@ -102,7 +104,7 @@ namespace Oblivion.HabboHotel.Events
             lock (_removeQueue.SyncRoot)
                 _removeQueue.Enqueue(data);
 
-            _eventCategories[roomEventCategory].QueueRemoveEvent(data);
+            await _eventCategories[roomEventCategory].QueueRemoveEvent(data);
         }
 
         /// <summary>
@@ -115,7 +117,7 @@ namespace Oblivion.HabboHotel.Events
             lock (_updateQueue.SyncRoot)
                 _updateQueue.Enqueue(data);
 
-            _eventCategories[roomEventCategory].QueueUpdateEvent(data);
+            await _eventCategories[roomEventCategory].QueueUpdateEvent(data);
         }
 
         /// <summary>

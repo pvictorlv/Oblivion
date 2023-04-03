@@ -29,11 +29,11 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var message =
                 new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
 
-            message.AppendString("");
-            message.AppendInteger(4);
-            message.AppendString("title");
-            message.AppendString("Oblivion Emulator v2");
-            message.AppendString("message");
+            await message.AppendStringAsync("");
+            await message.AppendIntegerAsync(4);
+            await message.AppendStringAsync("title");
+            await message.AppendStringAsync("Oblivion Emulator v2");
+            await message.AppendStringAsync("message");
             var info = new StringBuilder();
             info.Append("Oblivion Emulator v2 - A new world!\n\r\r");
             info.AppendFormat("Developed by Oblivion Team \n\r\r");
@@ -43,12 +43,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var userCount = Oblivion.GetGame().GetClientManager().Clients.Count * Oblivion.Multipy;
             var roomsCount = Oblivion.GetGame().GetRoomManager().LoadedRooms.Count;
             info.Append($"{userCount} Users in {roomsCount}{((roomsCount == 1) ? " room" : " rooms")}.\n\r\r");
-            message.AppendString(info.ToString());
-            message.AppendString("linkUrl");
-            message.AppendString("event:");
-            message.AppendString("linkTitle");
-            message.AppendString("ok");
-            client.SendMessage(message);
+            await message.AppendStringAsync(info.ToString());
+            await message.AppendStringAsync("linkUrl");
+            await message.AppendStringAsync("event:");
+            await message.AppendStringAsync("linkTitle");
+            await message.AppendStringAsync("ok");
+            await client.SendMessage(message);
 
             return true;
         }

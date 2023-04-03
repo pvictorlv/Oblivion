@@ -23,7 +23,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         {
             var room = session.GetHabbo().CurrentRoom;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery($"UPDATE rooms_data SET roomtype = 'private' WHERE id = {room.RoomId}");
+                await queryReactor.RunFastQueryAsync($"UPDATE rooms_data SET roomtype = 'private' WHERE id = {room.RoomId}");
             var roomId = session.GetHabbo().CurrentRoom.RoomId;
             var users = new List<RoomUser>(session.GetHabbo().CurrentRoom.GetRoomUserManager().UserList.Values);
 
@@ -32,7 +32,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             Oblivion.GetGame().GetRoomManager().LoadRoom(roomId);
 
             var roomFwd = new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
-            roomFwd.AppendInteger(roomId);
+            await roomFwd.AppendIntegerAsync(roomId);
 
 
             /* TODO CHECK */ foreach (var user in users.Where(user => user?.GetClient() != null))

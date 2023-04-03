@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Pets.Enums;
 
 namespace Oblivion.HabboHotel.Pets
@@ -659,7 +660,7 @@ namespace Oblivion.HabboHotel.Pets
                 adapter.AddParameter("plantdata", PlantData);
                 adapter.AddParameter("plantstate", ((int) LiveState).ToString());
                 adapter.AddParameter("growing", GrowingStatus);
-                adapter.RunQuery();
+                await adapter.RunQueryAsync();
             }
         }
     }

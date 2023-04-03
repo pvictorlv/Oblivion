@@ -43,18 +43,18 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     "UPDATE users SET gender = @gender, look = @look WHERE id = " + session.GetHabbo().Id);
                 adapter.AddParameter("gender", gender);
                 adapter.AddParameter("look", look);
-                adapter.RunQuery();
+                await adapter.RunQueryAsync();
             }
 
             var myUser = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
             if (myUser == null) return true;
 
             var message = new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
-            message.AppendInteger(myUser.VirtualId);
-            message.AppendString(session.GetHabbo().Look);
-            message.AppendString(session.GetHabbo().Gender.ToLower());
-            message.AppendString(session.GetHabbo().Motto);
-            message.AppendInteger(session.GetHabbo().AchievementPoints);
+            await message.AppendIntegerAsync(myUser.VirtualId);
+            await message.AppendStringAsync(session.GetHabbo().Look);
+            await message.AppendStringAsync(session.GetHabbo().Gender.ToLower());
+            await message.AppendStringAsync(session.GetHabbo().Motto);
+            await message.AppendIntegerAsync(session.GetHabbo().AchievementPoints);
             await room.SendMessage(message);
 
             return true;

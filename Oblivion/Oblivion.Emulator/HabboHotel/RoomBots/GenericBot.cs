@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Rooms.User;
@@ -95,7 +96,7 @@ namespace Oblivion.HabboHotel.RoomBots
         /// <summary>
         ///     Called when [timer tick].
         /// </summary>
-        internal override void OnTimerTick()
+        internal override async Task OnTimerTick()
         {
             if (GetBotData() == null) return;
 
@@ -124,7 +125,7 @@ namespace Oblivion.HabboHotel.RoomBots
                     var randomPoint = GetRoom().GetGameMap().GetRandomWalkableSquare();
                     if (randomPoint.X == 0 || randomPoint.Y == 0) return;
 
-                    GetRoomUser().MoveTo(randomPoint.X, randomPoint.Y);
+                    await GetRoomUser().MoveTo(randomPoint.X, randomPoint.Y);
                     break;
                 }
                 case "specified_range":
@@ -133,7 +134,7 @@ namespace Oblivion.HabboHotel.RoomBots
                     if (!list.Any()) return;
 
                     var randomNumber = new Random(DateTime.Now.Millisecond + _virtualId ^ 2).Next(0, list.Count - 1);
-                    GetRoomUser().MoveTo(list[randomNumber].X, list[randomNumber].Y);
+                    await GetRoomUser().MoveTo(list[randomNumber].X, list[randomNumber].Y);
                     break;
                 }
             }
@@ -175,7 +176,7 @@ namespace Oblivion.HabboHotel.RoomBots
         /// </summary>
         /// <param name="user">The user.</param>
         /// <param name="message">The message.</param>
-        internal override void OnUserSay(RoomUser user, string message)
+        internal override async Task OnUserSay(RoomUser user, string message)
         {
 
             if (Disposed)
@@ -206,8 +207,8 @@ namespace Oblivion.HabboHotel.RoomBots
                 case "venha":
                 case "venha aqui":
                 case "vem aquí":
-                    GetRoomUser().Chat(null, "Estou Indo!", false, 0);
-                    GetRoomUser().MoveTo(user.SquareInFront);
+                    await GetRoomUser().Chat(null, "Estou Indo!", false, 0);
+                    await GetRoomUser().MoveTo(user.SquareInFront);
                     return;
 
                 case "sirve":
@@ -217,8 +218,8 @@ namespace Oblivion.HabboHotel.RoomBots
                     {
                         /* TODO CHECK */
                         foreach (var current in GetRoom().GetRoomUserManager().GetRoomUsers())
-                            current.CarryItem(Oblivion.GetRandomNumber(1, 38));
-                        GetRoomUser().Chat(null, "Worth. Agora você tem algo para devorar todos.", false, 0);
+                          await  current.CarryItem(Oblivion.GetRandomNumber(1, 38));
+                        await GetRoomUser().Chat(null, "Worth. Agora você tem algo para devorar todos.", false, 0);
                         return;
                     }
                     return;
@@ -231,49 +232,49 @@ namespace Oblivion.HabboHotel.RoomBots
                 case "juice":
                 case "water":
                 case "zumo":
-                    GetRoomUser().Chat(null, "Aqui você vai.", false, 0);
-                    user.CarryItem(Oblivion.GetRandomNumber(1, 3));
+                    await GetRoomUser().Chat(null, "Aqui você vai.", false, 0);
+                    await user.CarryItem(Oblivion.GetRandomNumber(1, 3));
                     return;
 
                 case "helado":
                 case "icecream":
                 case "sorvete":
                 case "ice cream":
-                    GetRoomUser()
+                    await GetRoomUser()
                         .Chat(null, "Aqui você vai. Isso não é o idioma que se encaixam perto, hehe!", false, 0);
-                    user.CarryItem(4);
+                    await user.CarryItem(4);
                     return;
 
                 case "rose":
                 case "rosa":
-                    GetRoomUser().Chat(null, "Aqui você vai ... você faz bem em sua nomeação.", false, 0);
-                    user.CarryItem(Oblivion.GetRandomNumber(1000, 1002));
+                    await GetRoomUser().Chat(null, "Aqui você vai ... você faz bem em sua nomeação.", false, 0);
+                    await user.CarryItem(Oblivion.GetRandomNumber(1000, 1002));
                     return;
 
                 case "girasol":
                 case "girassol":
                 case "sunflower":
-                    GetRoomUser().Chat(null, "Aqui estão algumas muito agradável natureza.", false, 0);
-                    user.CarryItem(1002);
+                    await GetRoomUser().Chat(null, "Aqui estão algumas muito agradável natureza.", false, 0);
+                    await user.CarryItem(1002);
                     return;
 
                 case "flor":
                 case "flower":
-                    GetRoomUser().Chat(null, "Aqui estão algumas muito agradável da natureza.", false, 0);
+                    await GetRoomUser().Chat(null, "Aqui estão algumas muito agradável da natureza.", false, 0);
                     if (Oblivion.GetRandomNumber(1, 3) == 2)
                     {
-                        user.CarryItem(Oblivion.GetRandomNumber(1019, 1024));
+                        await user.CarryItem(Oblivion.GetRandomNumber(1019, 1024));
                         return;
                     }
-                    user.CarryItem(Oblivion.GetRandomNumber(1006, 1010));
+                    await user.CarryItem(Oblivion.GetRandomNumber(1006, 1010));
                     return;
 
                 case "zanahoria":
                 case "zana":
                 case "carrot":
                 case "cenoura":
-                    GetRoomUser().Chat(null, "Aqui está um bom vegetal. Divirta-se!", false, 0);
-                    user.CarryItem(3);
+                    await GetRoomUser().Chat(null, "Aqui está um bom vegetal. Divirta-se!", false, 0);
+                    await user.CarryItem(3);
                     return;
 
                 case "café":
@@ -284,21 +285,21 @@ namespace Oblivion.HabboHotel.RoomBots
                 case "mocha":
                 case "espresso":
                 case "expreso":
-                    GetRoomUser().Chat(null, "Aqui está o seu café. É espumante!", false, 0);
-                    user.CarryItem(Oblivion.GetRandomNumber(11, 18));
+                    await GetRoomUser().Chat(null, "Aqui está o seu café. É espumante!", false, 0);
+                    await user.CarryItem(Oblivion.GetRandomNumber(11, 18));
                     return;
 
                 case "fruta":
                 case "fruit":
-                    GetRoomUser().Chat(null, "Aqui está um pouco saudável, fresco e natural. Aproveite!", false, 0);
-                    user.CarryItem(Oblivion.GetRandomNumber(36, 40));
+                    await GetRoomUser().Chat(null, "Aqui está um pouco saudável, fresco e natural. Aproveite!", false, 0);
+                    await user.CarryItem(Oblivion.GetRandomNumber(36, 40));
                     return;
 
                 case "naranja":
                 case "orange":
                 case "laranja":
-                    GetRoomUser().Chat(null, "Aqui está um pouco saudável, fresco e natural. Aproveite!", false, 0);
-                    user.CarryItem(38);
+                    await GetRoomUser().Chat(null, "Aqui está um pouco saudável, fresco e natural. Aproveite!", false, 0);
+                    await user.CarryItem(38);
                     return;
 
                 case "manzana":
@@ -307,8 +308,8 @@ namespace Oblivion.HabboHotel.RoomBots
                 case "maçã":
                 case "maca":
                 case "macã":
-                    GetRoomUser().Chat(null, "Aqui está um pouco saudável, fresco e natural. Aproveite!", false, 0);
-                    user.CarryItem(37);
+                    await GetRoomUser().Chat(null, "Aqui está um pouco saudável, fresco e natural. Aproveite!", false, 0);
+                    await user.CarryItem(37);
                     return;
 
                 case "cola":
@@ -316,23 +317,23 @@ namespace Oblivion.HabboHotel.RoomBots
                 case "habbo cola":
                 case "coca cola":
                 case "cocacola":
-                    GetRoomUser().Chat(null, "Aqui é uma bebida muito famosa macio.", false, 0);
-                    user.CarryItem(19);
+                    await GetRoomUser().Chat(null, "Aqui é uma bebida muito famosa macio.", false, 0);
+                    await user.CarryItem(19);
                     return;
 
                 case "pear":
                 case "pera":
                 case "pêra":
-                    GetRoomUser().Chat(null, "Aqui está um pouco saudável, fresco e natural. Aproveite!", false, 0);
-                    user.CarryItem(36);
+                    await GetRoomUser().Chat(null, "Aqui está um pouco saudável, fresco e natural. Aproveite!", false, 0);
+                    await user.CarryItem(36);
                     return;
 
                 case "ananá":
                 case "pineapple":
                 case "piña":
                 case "rodaja de piña":
-                    GetRoomUser().Chat(null, "Aqui está um pouco saudável, fresco e natural. Aproveite!", false, 0);
-                    user.CarryItem(39);
+                    await GetRoomUser().Chat(null, "Aqui está um pouco saudável, fresco e natural. Aproveite!", false, 0);
+                    await user.CarryItem(39);
                     return;
 
                 case "puta":
@@ -356,15 +357,15 @@ namespace Oblivion.HabboHotel.RoomBots
                 case "feiosa":
                 case "filha da puta":
                 case "gostosa":
-                    GetRoomUser().Chat(null, "Não me trate mal, eh!", true, 0);
+                    await GetRoomUser().Chat(null, "Não me trate mal, eh!", true, 0);
                     return;
 
                 case "case comigo":
-                    GetRoomUser().Chat(null, "Irei agora!", true, 0);
+                    await GetRoomUser().Chat(null, "Irei agora!", true, 0);
                     return;
 
                 case "protocolo destruir":
-                    GetRoomUser().Chat(null, "Iniciando Auto Destruição do Mundo!", true, 0);
+                    await GetRoomUser().Chat(null, "Iniciando Auto Destruição do Mundo!", true, 0);
                     return;
 
                 case "lindo":
@@ -381,11 +382,11 @@ namespace Oblivion.HabboHotel.RoomBots
                 case "te amo":
                 case "amor":
                 case "mi amor":
-                    GetRoomUser()
+                    await GetRoomUser()
                         .Chat(null, "Eu sou um bot, err ... isto está a ficar desconfortável, você sabe?", false, 0);
                     return;
             }
-            GetRoomUser().Chat(null, "Precisa de Algo?", false, 0);
+            await GetRoomUser().Chat(null, "Precisa de Algo?", false, 0);
         }
 
         /// <summary>

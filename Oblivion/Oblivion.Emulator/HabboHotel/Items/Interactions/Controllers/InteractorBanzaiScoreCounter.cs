@@ -8,23 +8,23 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorBanzaiScoreCounter : FurniInteractorModel
     {
-        public override void OnPlace(GameClient session, RoomItem item)
+        public override async Task OnPlace(GameClient session, RoomItem item)
         {
             if (item.Team == Team.None)
                 return;
 
             item.ExtraData = item.GetRoom().GetGameManager().Points[(int)item.Team].ToString();
-            item.UpdateState(false, true);
+            await item.UpdateState(false, true);
         }
 
-        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             if (!hasRights)
                 return;
 
             item.GetRoom().GetGameManager().Points[(int)item.Team] = 0;
             item.ExtraData = "0";
-            item.UpdateState();
+            await  item.UpdateState();
         }
     }
 }

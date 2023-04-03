@@ -103,14 +103,14 @@ namespace Oblivion.Messages.Handlers
             if (!Session.GetHabbo().NavigatorLogs.ContainsKey(naviLogs.Id))
                 Session.GetHabbo().NavigatorLogs.Add(naviLogs.Id, naviLogs);
             var message = new ServerMessage(LibraryParser.OutgoingRequest("NavigatorSavedSearchesComposer"));
-            message.AppendInteger(Session.GetHabbo().NavigatorLogs.Count);
+            await message.AppendIntegerAsync(Session.GetHabbo().NavigatorLogs.Count);
 
             foreach (NaviLogs navi in Session.GetHabbo().NavigatorLogs.Values)
             {
-                message.AppendInteger(navi.Id);
-                message.AppendString(navi.Value1);
-                message.AppendString(navi.Value2);
-                message.AppendString("");
+                await message.AppendIntegerAsync(navi.Id);
+                await message.AppendStringAsync(navi.Value1);
+                await message.AppendStringAsync(navi.Value2);
+                await message.AppendStringAsync("");
             }
             await Session.SendMessageAsync(message);
         }
@@ -122,9 +122,9 @@ namespace Oblivion.Messages.Handlers
         /// <param name="textTwo">The text two.</param>
         internal async Task SerializeSavedSearch(string textOne, string textTwo)
         {
-            GetResponse().AppendString(textOne);
-            GetResponse().AppendString(textTwo);
-            GetResponse().AppendString("fr");
+            await GetResponse().AppendStringAsync(textOne);
+            await GetResponse().AppendStringAsync(textTwo);
+            await GetResponse().AppendStringAsync("fr");
         }
 
         /// <summary>
@@ -158,9 +158,9 @@ namespace Oblivion.Messages.Handlers
 
             var message = new ServerMessage(LibraryParser.OutgoingRequest("HabboAirGetRoomUsersComposer"));
 
-            message.AppendInteger(5); //maybe category
-            message.AppendString("");
-            message.AppendInteger(Session.GetHabbo().Data.Rooms.Count);
+            await message.AppendIntegerAsync(5); //maybe category
+            await message.AppendStringAsync("");
+            await message.AppendIntegerAsync(Session.GetHabbo().Data.Rooms.Count);
             foreach (var current in Session.GetHabbo().Data.Rooms)
             {
                 var data = await Oblivion.GetGame().GetRoomManager().GenerateRoomData(current);
@@ -176,11 +176,11 @@ namespace Oblivion.Messages.Handlers
         {
             var message = new ServerMessage(LibraryParser.OutgoingRequest("HabboAirGetRoomUsersComposer"));
 
-            message.AppendInteger(1); //maybe category
-            message.AppendString("");
+            await message.AppendIntegerAsync(1); //maybe category
+            await message.AppendStringAsync("");
             var rooms = Oblivion.GetGame().GetRoomManager().GetActiveRooms();
 
-            message.AppendInteger(rooms.Length);
+            await message.AppendIntegerAsync(rooms.Length);
             foreach (var data in rooms)
             {
                 await data.Key.Serialize(message);
@@ -208,14 +208,14 @@ namespace Oblivion.Messages.Handlers
                 return;
             Session.GetHabbo().NavigatorLogs.Remove(searchId);
             var message = new ServerMessage(LibraryParser.OutgoingRequest("NavigatorSavedSearchesComposer"));
-            message.AppendInteger(Session.GetHabbo().NavigatorLogs.Count);
+            await message.AppendIntegerAsync(Session.GetHabbo().NavigatorLogs.Count);
 
             foreach (NaviLogs navi in Session.GetHabbo().NavigatorLogs.Values)
             {
-                message.AppendInteger(navi.Id);
-                message.AppendString(navi.Value1);
-                message.AppendString(navi.Value2);
-                message.AppendString("");
+                await message.AppendIntegerAsync(navi.Id);
+                await message.AppendStringAsync(navi.Value1);
+                await message.AppendStringAsync(navi.Value2);
+                await message.AppendStringAsync("");
             }
             await Session.SendMessageAsync(message);
         }
@@ -259,8 +259,8 @@ namespace Oblivion.Messages.Handlers
             RoomData roomData = await Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId);
             if (roomData == null)
                 return;
-            GetResponse().Init(LibraryParser.OutgoingRequest("1491"));
-            GetResponse().AppendInteger(0);
+            await GetResponse().InitAsync(LibraryParser.OutgoingRequest("1491"));
+            await GetResponse().AppendIntegerAsync(0);
             roomData.Serialize(GetResponse());
             await SendResponse();
         }
@@ -380,8 +380,8 @@ namespace Oblivion.Messages.Handlers
                     queryReactor.SetQuery(
                         "INSERT INTO navigator_publics (bannertype, room_id, category_parent_id) VALUES ('0', @roomId, '-2')");
                     queryReactor.AddParameter("roomId", room.RoomId);
-                    queryReactor.RunQuery();
-                    queryReactor.RunFastQuery("SELECT last_insert_id()");
+                    await queryReactor.RunQueryAsync();
+                    await queryReactor.RunFastQueryAsync("SELECT last_insert_id()");
                     var publicItemId = (uint) queryReactor.GetInteger();
                     var publicItem = new PublicItem(publicItemId, 0, string.Empty, string.Empty, string.Empty,
                         PublicImageType.Internal, room.RoomId, 0, -2, false, 1);
@@ -391,7 +391,7 @@ namespace Oblivion.Messages.Handlers
                 {
                     queryReactor.SetQuery("DELETE FROM navigator_publics WHERE id = @pubId");
                     queryReactor.AddParameter("pubId", pubItem.Id);
-                    queryReactor.RunQuery();
+                    await queryReactor.RunQueryAsync();
                     Oblivion.GetGame().GetNavigator().RemovePublicItem(pubItem.Id);
                 }
                 await room.RoomData.SerializeRoomData(Response, Session, false, true);

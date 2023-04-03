@@ -32,7 +32,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                  await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
-            client.SendNotif(string.Format("{0} \r\r-{1}", msg, session.GetHabbo().UserName));
+            await client.SendNotif(string.Format("{0} \r\r-{1}", msg, session.GetHabbo().UserName));
             return true;
         }
     }

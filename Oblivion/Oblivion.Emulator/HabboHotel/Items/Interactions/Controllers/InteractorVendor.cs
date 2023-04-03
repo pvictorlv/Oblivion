@@ -10,7 +10,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorVendor : FurniInteractorModel
     {
-        public override void OnPlace(GameClient session, RoomItem item)
+        public override async Task OnPlace(GameClient session, RoomItem item)
         {
             item.ExtraData = "0";
             item.UpdateNeeded = true;
@@ -24,7 +24,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
         }
 
-        public override void OnRemove(GameClient session, RoomItem item)
+        public override async Task OnRemove(GameClient session, RoomItem item)
         {
             item.ExtraData = "0";
 
@@ -37,7 +37,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 roomUserByHabbo.CanWalk = true;
         }
 
-        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             if (item.ExtraData == "1" || !item.GetBaseItem().VendingIds.Any() || item.InteractingUser != 0u ||
                 session == null)
@@ -62,7 +62,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             item.ReqUpdate(2, true);
             item.ExtraData = "1";
-            item.UpdateState(false, true);
+            await item.UpdateState(false, true);
         }
     }
 }

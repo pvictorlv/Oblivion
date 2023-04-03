@@ -142,10 +142,10 @@ namespace Oblivion.HabboHotel.Quests
                 IL_DC:
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    queryReactor.RunFastQuery(string.Concat("UPDATE users_quests_data SET progress = ", num,
+                    await queryReactor.RunFastQueryAsync(string.Concat("UPDATE users_quests_data SET progress = ", num,
                         " WHERE user_id = ", session.GetHabbo().Id, " AND quest_id =  ", quest.Id));
                     if (flag)
-                        queryReactor.RunFastQuery(string.Format("UPDATE users_stats SET quest_id = 0 WHERE id = {0}",
+                        await queryReactor.RunFastQueryAsync(string.Format("UPDATE users_stats SET quest_id = 0 WHERE id = {0}",
                             session.GetHabbo().Id));
                 }
                 session.GetHabbo().Data.Quests[session.GetHabbo().CurrentQuestId] = num;
@@ -208,9 +208,9 @@ namespace Oblivion.HabboHotel.Quests
                 return;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.RunFastQuery(string.Concat("REPLACE INTO users_quests_data(user_id,quest_id) VALUES (",
+                await queryReactor.RunFastQueryAsync(string.Concat("REPLACE INTO users_quests_data(user_id,quest_id) VALUES (",
                     session.GetHabbo().Id, ", ", quest.Id, ")"));
-                queryReactor.RunFastQuery(string.Concat("UPDATE users_stats SET quest_id = ", quest.Id, " WHERE id = ",
+                await queryReactor.RunFastQueryAsync(string.Concat("UPDATE users_stats SET quest_id = ", quest.Id, " WHERE id = ",
                     session.GetHabbo().Id));
             }
             session.GetHabbo().CurrentQuestId = quest.Id;
@@ -234,9 +234,9 @@ namespace Oblivion.HabboHotel.Quests
                 return;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.RunFastQuery(string.Concat("REPLACE INTO users_quests_data(user_id,quest_id) VALUES (",
+                await queryReactor.RunFastQueryAsync(string.Concat("REPLACE INTO users_quests_data(user_id,quest_id) VALUES (",
                     session.GetHabbo().Id, ", ", nextQuestInSeries.Id, ")"));
-                queryReactor.RunFastQuery(string.Concat("UPDATE users_stats SET quest_id = ", nextQuestInSeries.Id,
+                await queryReactor.RunFastQueryAsync(string.Concat("UPDATE users_stats SET quest_id = ", nextQuestInSeries.Id,
                     " WHERE id = ", session.GetHabbo().Id));
             }
             session.GetHabbo().CurrentQuestId = nextQuestInSeries.Id;
@@ -255,7 +255,7 @@ namespace Oblivion.HabboHotel.Quests
             if (quest == null)
                 return;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery(string.Concat("DELETE FROM users_quests_data WHERE user_id = ",
+                await queryReactor.RunFastQueryAsync(string.Concat("DELETE FROM users_quests_data WHERE user_id = ",
                     session.GetHabbo().Id, " AND quest_id = ", quest.Id, ";UPDATE users_stats SET quest_id=0 WHERE id=",
                     session.GetHabbo().Id));
             session.GetHabbo().CurrentQuestId = 0u;

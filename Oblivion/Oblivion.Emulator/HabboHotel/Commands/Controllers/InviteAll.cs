@@ -25,7 +25,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var msg = pms[0];
             if (msg.Length <= 0 || msg.Length >= 255)
             {
-                client.SendWhisper("Tamanho inválido, o tamanho máximo é 255 caracteres!");
+                await client.SendWhisperAsync("Tamanho inválido, o tamanho máximo é 255 caracteres!");
                 return false;
             }
 

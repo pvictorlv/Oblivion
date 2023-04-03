@@ -31,9 +31,9 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             var msg = new ServerMessage(LibraryParser.OutgoingRequest("PublishShopMessageComposer"));
             msg.AppendBool(false);
-            Oblivion.GetGame()
+            await Oblivion.GetGame()
                 .GetClientManager()
-                .SendMessage(msg);
+                .SendMessageAsync(msg);
             return true;
         }
     }

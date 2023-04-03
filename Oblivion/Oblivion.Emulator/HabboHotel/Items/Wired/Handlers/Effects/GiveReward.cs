@@ -75,7 +75,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             {
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("WiredRewardAlertMessageComposer"));
 
-                message.AppendInteger(0);
+                await message.AppendIntegerAsync(0);
                 await user.GetClient().SendMessageAsync(message);
 
                 return true;
@@ -113,7 +113,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 {
                     if (user.GetClient().GetHabbo().GetBadgeComponent().HasBadge(code))
                     {
-                        message.AppendInteger(1);
+                        await message.AppendIntegerAsync(1);
                         await user.GetClient().SendMessageAsync(message);
                     }
                     else
@@ -123,7 +123,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                             .GetBadgeComponent()
                             .GiveBadge(code, true, user.GetClient(), true);
 
-                        message.AppendInteger(7);
+                        await message.AppendIntegerAsync(7);
                         await user.GetClient().SendMessageAsync(message);
                     }
                 }
@@ -148,7 +148,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                                 LibraryParser.OutgoingRequest("UpdateInventoryMessageComposer")));
                     }
 
-                    message.AppendInteger(6);
+                    await message.AppendIntegerAsync(6);
                     await user.GetClient().SendMessageAsync(message);
                 }
             }
@@ -156,7 +156,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (!premied)
             {
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("WiredRewardAlertMessageComposer"));
-                message.AppendInteger(4);
+                await message.AppendIntegerAsync(4);
                 await user.GetClient().SendMessageAsync(message);
             }
             else if (amountLeft > 1)

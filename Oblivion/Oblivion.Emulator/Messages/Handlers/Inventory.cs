@@ -1,4 +1,6 @@
-﻿namespace Oblivion.Messages.Handlers
+﻿using System.Threading.Tasks;
+
+namespace Oblivion.Messages.Handlers
 {
     /// <summary>
     /// Class GameClientMessageHandler.
@@ -10,8 +12,9 @@
         /// </summary>
         internal async Task GetInventory()
         {
-          Session?.GetHabbo()?.GetInventoryComponent()?.SerializeFloorItemInventory(Session);
-          
+            var comp = Session.GetHabbo().GetInventoryComponent();
+            if (comp != null)
+                await comp.SerializeFloorItemInventory(Session);
         }
     }
 }

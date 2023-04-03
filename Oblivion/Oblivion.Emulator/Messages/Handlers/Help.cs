@@ -18,11 +18,11 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal async Task InitHelpTool()
         {
-            Response.Init(LibraryParser.OutgoingRequest("OpenHelpToolMessageComposer"));
+            await Response.InitAsync(LibraryParser.OutgoingRequest("OpenHelpToolMessageComposer"));
 
             if (!Oblivion.GetGame().GetModerationTool().UsersHasPendingTicket(Session.GetHabbo().Id))
             {
-                Response.AppendInteger(0); // It's okay, the user may send an new issue
+                await Response.AppendIntegerAsync(0); // It's okay, the user may send an new issue
                 await SendResponse();
                 return;
             }
@@ -33,11 +33,11 @@ namespace Oblivion.Messages.Handlers
             if (ticket == null) // null check to be sure
                 return;
 
-            Response.AppendInteger(1); // the user has an pending issue
+            await Response.AppendIntegerAsync(1); // the user has an pending issue
 
-            Response.AppendString(ticket.TicketId.ToString());
-            Response.AppendString(ticket.Timestamp.ToString(CultureInfo.InvariantCulture));
-            Response.AppendString(ticket.Message);
+            await Response.AppendStringAsync(ticket.TicketId.ToString());
+            await Response.AppendStringAsync(ticket.Timestamp.ToString(CultureInfo.InvariantCulture));
+            await Response.AppendStringAsync(ticket.Message);
             await SendResponse();
         }
 
@@ -66,14 +66,14 @@ namespace Oblivion.Messages.Handlers
 
             if (Oblivion.GetGame().GetModerationTool().UsersHasPendingTicket(Session.GetHabbo().Id))
             {
-                Response.Init(LibraryParser.OutgoingRequest("TicketUserAlert"));
+                await Response.InitAsync(LibraryParser.OutgoingRequest("TicketUserAlert"));
 
                 SupportTicket ticket = Oblivion.GetGame().GetModerationTool()
                     .GetPendingTicketForUser(Session.GetHabbo().Id);
-                Response.AppendInteger(1);
-                Response.AppendString(ticket.TicketId.ToString());
-                Response.AppendString(ticket.Timestamp.ToString(CultureInfo.InvariantCulture));
-                Response.AppendString(ticket.Message);
+                await Response.AppendIntegerAsync(1);
+                await Response.AppendStringAsync(ticket.TicketId.ToString());
+                await Response.AppendStringAsync(ticket.Timestamp.ToString(CultureInfo.InvariantCulture));
+                await Response.AppendStringAsync(ticket.Message);
                 await SendResponse();
 
                 return;
@@ -82,9 +82,9 @@ namespace Oblivion.Messages.Handlers
             if (Oblivion.GetGame().GetModerationTool()
                 .UsersHasAbusiveCooldown(Session.GetHabbo().Id)) // the previous issue of the user was abusive
             {
-                Response.Init(LibraryParser.OutgoingRequest("TicketUserAlert"));
+                await Response.InitAsync(LibraryParser.OutgoingRequest("TicketUserAlert"));
 
-                Response.AppendInteger(2);
+                await Response.AppendIntegerAsync(2);
                 await SendResponse();
 
                 return;
@@ -106,8 +106,8 @@ namespace Oblivion.Messages.Handlers
 
             await Oblivion.GetGame().GetModerationTool().DeletePendingTicketForUser(Session.GetHabbo().Id);
 
-            Response.Init(LibraryParser.OutgoingRequest("OpenHelpToolMessageComposer"));
-            Response.AppendInteger(0);
+            await Response.InitAsync(LibraryParser.OutgoingRequest("OpenHelpToolMessageComposer"));
+            await Response.AppendIntegerAsync(0);
             await SendResponse();
         }
 
@@ -268,14 +268,14 @@ namespace Oblivion.Messages.Handlers
 
             ServerMessage serverMessage =
                 new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
-            serverMessage.AppendString("admin");
-            serverMessage.AppendInteger(3);
-            serverMessage.AppendString("message");
-            serverMessage.AppendString($"{message}\r\n\r\n- {Session.GetHabbo().UserName}");
-            serverMessage.AppendString("link");
-            serverMessage.AppendString("event:");
-            serverMessage.AppendString("linkTitle");
-            serverMessage.AppendString("ok");
+            await serverMessage.AppendStringAsync("admin");
+            await serverMessage.AppendIntegerAsync(3);
+            await serverMessage.AppendStringAsync("message");
+            await serverMessage.AppendStringAsync($"{message}\r\n\r\n- {Session.GetHabbo().UserName}");
+            await serverMessage.AppendStringAsync("link");
+            await serverMessage.AppendStringAsync("event:");
+            await serverMessage.AppendStringAsync("linkTitle");
+            await serverMessage.AppendStringAsync("ok");
 
             Room room = Session.GetHabbo().CurrentRoom;
             

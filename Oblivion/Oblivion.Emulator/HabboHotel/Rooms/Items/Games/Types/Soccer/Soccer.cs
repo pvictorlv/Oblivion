@@ -265,22 +265,22 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             var newZ = _room.GetGameMap().SqAbsoluteHeight(newX, newY);
             using (var mMessage = new ServerMessage())
             {
-                mMessage.Init(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer")); // Cf
-                mMessage.AppendInteger(item.VirtualId);
-                mMessage.AppendInteger(item.BaseItem.ItemId);
-                mMessage.AppendInteger(newX);
-                mMessage.AppendInteger(newY);
-                mMessage.AppendInteger(4);
-                mMessage.AppendString($"{TextHandling.GetString(item.Z):0.00}");
-                mMessage.AppendString($"{TextHandling.GetString(item.Z):0.00}");
+                await mMessage.InitAsync(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer")); // Cf
+                await mMessage.AppendIntegerAsync(item.VirtualId);
+                await mMessage.AppendIntegerAsync(item.BaseItem.ItemId);
+                await mMessage.AppendIntegerAsync(newX);
+                await mMessage.AppendIntegerAsync(newY);
+                await mMessage.AppendIntegerAsync(4);
+                await mMessage.AppendStringAsync($"{TextHandling.GetString(item.Z):0.00}");
+                await mMessage.AppendStringAsync($"{TextHandling.GetString(item.Z):0.00}");
 
-                mMessage.AppendInteger(0);
-                mMessage.AppendInteger(0);
-                mMessage.AppendString(item.ExtraData);
-                mMessage.AppendInteger(-1);
-                mMessage.AppendInteger(0);
-                mMessage.AppendInteger(_room.RoomData.OwnerId);
-                mMessage.AppendInteger(item.VirtualId);
+                await mMessage.AppendIntegerAsync(0);
+                await mMessage.AppendIntegerAsync(0);
+                await mMessage.AppendStringAsync(item.ExtraData);
+                await mMessage.AppendIntegerAsync(-1);
+                await mMessage.AppendIntegerAsync(0);
+                await mMessage.AppendIntegerAsync(_room.RoomData.OwnerId);
+                await mMessage.AppendIntegerAsync(item.VirtualId);
                 await _room.SendMessage(mMessage);
 
                 if (oldRoomCoord.X == newX && oldRoomCoord.Y == newY)

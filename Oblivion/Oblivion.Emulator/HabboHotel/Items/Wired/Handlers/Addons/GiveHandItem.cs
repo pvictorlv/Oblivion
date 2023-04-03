@@ -54,7 +54,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
             {
                 if (roomUser.RidingHorse)
                 {
-                    roomUser.GetClient().SendWhisper(Oblivion.GetLanguage().GetVar("horse_handitem_error"));
+                    await roomUser.GetClient().SendWhisperAsync(Oblivion.GetLanguage().GetVar("horse_handitem_error"));
                     return true;
                 }
                 if (roomUser.IsLyingDown)

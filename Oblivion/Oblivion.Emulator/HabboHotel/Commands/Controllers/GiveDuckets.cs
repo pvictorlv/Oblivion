@@ -36,7 +36,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             client.GetHabbo().ActivityPoints += amount;
             client.GetHabbo().UpdateActivityPointsBalance();
-            client.SendNotif(string.Format(Oblivion.GetLanguage().GetVar("staff_gives_duckets"),
+            await client.SendNotif(string.Format(Oblivion.GetLanguage().GetVar("staff_gives_duckets"),
                 session.GetHabbo().UserName, amount));
             return true;
         }

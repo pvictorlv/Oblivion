@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Navigators.Enums;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.Messages;
@@ -128,42 +129,27 @@ namespace Oblivion.HabboHotel.Navigators.Interfaces
         /// </summary>
         /// <value>The identifier.</value>
         internal uint Id { get; set; }
+        
 
-        /// <summary>
-        ///     Gets the room data.
-        /// </summary>
-        /// <value>The room data.</value>
-        /// <exception cref="System.NullReferenceException"></exception>
-        internal RoomData RoomData
-        {
-            get
-            {
-                if (RoomId == 0u) return new RoomData();
-                if (Oblivion.GetGame() == null || Oblivion.GetGame().GetRoomManager() == null)
-                    throw new NullReferenceException();
-                return Oblivion.GetGame().GetRoomManager().GenerateRoomData(RoomId);
-            }
-        }
+        private RoomData _roomData = null;
 
         /// <summary>
         ///     Gets the room information.
         /// </summary>
         /// <value>The room information.</value>
-        internal RoomData RoomInfo
+        internal async Task<RoomData> RoomInfo()
         {
-            get
+            try
             {
-                RoomData result;
-                try
-                {
-                    result = RoomId > 0u ? Oblivion.GetGame().GetRoomManager().GenerateRoomData(RoomId) : null;
-                }
-                catch
-                {
-                    result = null;
-                }
-                return result;
+                if (_roomData == null)
+                    _roomData = RoomId > 0u ? await Oblivion.GetGame().GetRoomManager().GenerateRoomData(RoomId) : null;
             }
+            catch
+            {
+                _roomData = null;
+            }
+
+            return _roomData;
         }
 
         /// <summary>
@@ -174,15 +160,15 @@ namespace Oblivion.HabboHotel.Navigators.Interfaces
         {
             try
             {
-                message.AppendInteger(Id);
-                message.AppendString(Caption);
-                message.AppendString(Description);
-                message.AppendInteger(Type);
-                message.AppendString(Caption);
-                message.AppendString(Image);
-                message.AppendInteger(ParentId);
-                message.AppendInteger(RoomInfo?.UsersNow ?? 0);
-                message.AppendInteger((ItemType == PublicItemType.None)
+                await message.AppendIntegerAsync(Id);
+                await message.AppendStringAsync(Caption);
+                await message.AppendStringAsync(Description);
+                await message.AppendIntegerAsync(Type);
+                await message.AppendStringAsync(Caption);
+                await message.AppendStringAsync(Image);
+                await message.AppendIntegerAsync(ParentId);
+                await message.AppendIntegerAsync((await RoomInfo())?.UsersNow ?? 0);
+                await message.AppendIntegerAsync((ItemType == PublicItemType.None)
                     ? 0
                     : ((ItemType == PublicItemType.Tag)
                         ? 1
@@ -195,7 +181,7 @@ namespace Oblivion.HabboHotel.Navigators.Interfaces
                 {
                     case PublicItemType.Tag:
                     {
-                        message.AppendString(TagsToSearch);
+                        await message.AppendStringAsync(TagsToSearch);
                         break;
                     }
                     case PublicItemType.Category:
@@ -205,12 +191,12 @@ namespace Oblivion.HabboHotel.Navigators.Interfaces
                     }
                     case PublicItemType.Flat:
                     {
-                        RoomInfo?.Serialize(message);
+                        (await RoomInfo())?.Serialize(message);
                         break;
                     }
                     case PublicItemType.PublicFlat:
                     {
-                        RoomInfo?.Serialize(message);
+                        (await RoomInfo())?.Serialize(message);
                         break;
                     }
                 }
@@ -227,10 +213,10 @@ namespace Oblivion.HabboHotel.Navigators.Interfaces
         /// <param name="message">The message.</param>
         internal async Task SerializeNew(ServerMessage message)
         {
-            message.AppendInteger(RoomId);
-            message.AppendInteger(12);
-            message.AppendString(Image);
-            message.AppendString(Caption);
+            await message.AppendIntegerAsync(RoomId);
+            await message.AppendIntegerAsync(12);
+            await message.AppendStringAsync(Image);
+            await message.AppendStringAsync(Caption);
         }
     }
 }

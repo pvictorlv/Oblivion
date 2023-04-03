@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Users.UserDataManagement;
 
 namespace Oblivion.HabboHotel.Users.Subscriptions
@@ -74,11 +75,11 @@ namespace Oblivion.HabboHotel.Users.Subscriptions
             _subscription = new Subscription(2, num2, num4, num3);
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery(string.Concat("REPLACE INTO users_subscriptions VALUES (", _userId, ", 2, ",
+                await queryReactor.RunFastQueryAsync(string.Concat("REPLACE INTO users_subscriptions VALUES (", _userId, ", 2, ",
                     num2, ", ", num4, ", ", num3, ");"));
 
-            clientByUserId.GetHabbo().SerializeClub();
-            Oblivion.GetGame().GetAchievementManager().TryProgressHabboClubAchievements(clientByUserId);
+            await clientByUserId.GetHabbo().SerializeClub();
+            await Oblivion.GetGame().GetAchievementManager().TryProgressHabboClubAchievements(clientByUserId);
         }
 
         /// <summary>

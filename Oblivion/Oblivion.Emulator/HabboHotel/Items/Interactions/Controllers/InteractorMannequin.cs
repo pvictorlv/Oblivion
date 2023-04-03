@@ -52,28 +52,28 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     $"UPDATE users SET look = @look, gender = @gender WHERE id = {session.GetHabbo().Id}");
                 queryReactor.AddParameter("look", session.GetHabbo().Look);
                 queryReactor.AddParameter("gender", session.GetHabbo().Gender);
-                queryReactor.RunQuery();
+                await queryReactor.RunQueryAsync();
             }
 
-            session.GetMessageHandler()
+            await session.GetMessageHandler()
                 .GetResponse()
-                .Init(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
-            session.GetMessageHandler().GetResponse().AppendInteger(-1);
-            session.GetMessageHandler().GetResponse().AppendString(session.GetHabbo().Look);
-            session.GetMessageHandler().GetResponse().AppendString(session.GetHabbo().Gender.ToLower());
-            session.GetMessageHandler().GetResponse().AppendString(session.GetHabbo().Motto);
-            session.GetMessageHandler().GetResponse().AppendInteger(session.GetHabbo().AchievementPoints);
+                .InitAsync(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
+            await session.GetMessageHandler().GetResponse().AppendIntegerAsync(-1);
+            await session.GetMessageHandler().GetResponse().AppendStringAsync(session.GetHabbo().Look);
+            await session.GetMessageHandler().GetResponse().AppendStringAsync(session.GetHabbo().Gender.ToLower());
+            await session.GetMessageHandler().GetResponse().AppendStringAsync(session.GetHabbo().Motto);
+            await session.GetMessageHandler().GetResponse().AppendIntegerAsync(session.GetHabbo().AchievementPoints);
             await session.GetMessageHandler().SendResponse();
 
             var roomUserByHabbo = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
 
-            serverMessage.AppendInteger(roomUserByHabbo.VirtualId);
-            serverMessage.AppendString(session.GetHabbo().Look);
-            serverMessage.AppendString(session.GetHabbo().Gender.ToLower());
-            serverMessage.AppendString(session.GetHabbo().Motto);
-            serverMessage.AppendInteger(session.GetHabbo().AchievementPoints);
+            await serverMessage.AppendIntegerAsync(roomUserByHabbo.VirtualId);
+            await serverMessage.AppendStringAsync(session.GetHabbo().Look);
+            await serverMessage.AppendStringAsync(session.GetHabbo().Gender.ToLower());
+            await serverMessage.AppendStringAsync(session.GetHabbo().Motto);
+            await serverMessage.AppendIntegerAsync(session.GetHabbo().AchievementPoints);
 
             session.GetHabbo().CurrentRoom.SendMessage(serverMessage);
         }

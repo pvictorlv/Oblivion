@@ -7,15 +7,15 @@ namespace Oblivion.HabboHotel.Items.Interactions.Interfaces
 {
     internal interface IFurniInteractor
     {
-        void OnPlace(GameClient session, RoomItem item);
+        Task OnPlace(GameClient session, RoomItem item);
 
-        void OnRemove(GameClient session, RoomItem item);
+        Task OnRemove(GameClient session, RoomItem item);
 
         Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights);
 
-        void OnUserWalk(GameClient session, RoomItem item, RoomUser user);
-        void OnUserWalkOff(GameClient session, RoomItem item, RoomUser user);
+        Task OnUserWalk(GameClient session, RoomItem item, RoomUser user);
+        Task OnUserWalkOff(GameClient session, RoomItem item, RoomUser user);
 
-        void OnWiredTrigger(RoomItem item);
+        Task OnWiredTrigger(RoomItem item);
     }
 }

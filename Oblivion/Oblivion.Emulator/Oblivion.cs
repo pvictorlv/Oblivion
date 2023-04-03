@@ -677,12 +677,12 @@ namespace Oblivion
                 {
                     var serverMessage =
                         new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
-                    serverMessage.AppendString("disconnection");
-                    serverMessage.AppendInteger(2);
-                    serverMessage.AppendString("title");
-                    serverMessage.AppendString("HEY EVERYONE!");
-                    serverMessage.AppendString("message");
-                    serverMessage.AppendString(
+                    await serverMessage.AppendStringAsync("disconnection");
+                    await serverMessage.AppendIntegerAsync(2);
+                    await serverMessage.AppendStringAsync("title");
+                    await serverMessage.AppendStringAsync("HEY EVERYONE!");
+                    await serverMessage.AppendStringAsync("message");
+                    await serverMessage.AppendStringAsync(
                         restart
                             ? "<b>The hotel is shutting down for a break.<)/b>\nYou may come back later.\r\n<b>So long!</b>"
                             : "<b>The hotel is shutting down for a break.</b><br />You may come back soon. Don't worry, everything's going to be saved..<br /><b>So long!</b>\r\n~ This session was powered by OblivionEmulator");

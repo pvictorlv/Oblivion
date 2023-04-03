@@ -55,15 +55,15 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="reply">The reply.</param>
         internal async Task Searialize(ServerMessage reply)
         {
-            reply.AppendInteger(UserId);
-            reply.AppendString(UserName);
-            reply.AppendString(Motto);
+            await reply.AppendIntegerAsync(UserId);
+            await reply.AppendStringAsync(UserName);
+            await reply.AppendStringAsync(Motto);
             reply.AppendBool(Oblivion.GetGame().GetClientManager().GetClientByUserId(UserId) != null);
             reply.AppendBool(false);
-            reply.AppendString(string.Empty);
-            reply.AppendInteger(0);
-            reply.AppendString(Look);
-            reply.AppendString(LastOnline);
+            await reply.AppendStringAsync(string.Empty);
+            await reply.AppendIntegerAsync(0);
+            await reply.AppendStringAsync(Look);
+            await reply.AppendStringAsync(LastOnline);
         }
     }
 }

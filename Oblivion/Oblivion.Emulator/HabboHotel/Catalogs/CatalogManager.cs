@@ -137,7 +137,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
                 queryReactor.AddParameter($"{pet.PetId}name", pet.Name);
 
-                pet.PetId = (uint)queryReactor.InsertQuery();
+                pet.PetId = (uint)await queryReactor.InsertQueryAsync();
 
                 queryReactor.SetQuery($"SELECT count(id) FROM pets_data WHERE id = {pet.PetId}");
                 var count = queryReactor.GetInteger();
@@ -538,7 +538,7 @@ namespace Oblivion.HabboHotel.Catalogs
                 using (var serverMessage =
                        new ServerMessage(LibraryParser.OutgoingRequest("CatalogPurchaseNotAllowedMessageComposer")))
                 {
-                    serverMessage.AppendInteger(1);
+                    await serverMessage.AppendIntegerAsync(1);
                     await session.SendMessage(serverMessage);
                     return;
                 }
@@ -567,7 +567,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    queryReactor.RunFastQuery(string.Concat("UPDATE catalog_items SET limited_sells = ",
+                    await queryReactor.RunFastQueryAsync(string.Concat("UPDATE catalog_items SET limited_sells = ",
                         item.LimitedSelled, " WHERE id = ", item.Id));
                     limitedId = item.LimitedSelled;
                     limtot = item.LimitedStack;
@@ -641,10 +641,10 @@ namespace Oblivion.HabboHotel.Catalogs
 
                     if (row == null)
                     {
-                        session.GetMessageHandler()
+                        await session.GetMessageHandler()
                             .GetResponse()
-                            .Init(LibraryParser.OutgoingRequest("GiftErrorMessageComposer"));
-                        session.GetMessageHandler().GetResponse().AppendString(giftUser);
+                            .InitAsync(LibraryParser.OutgoingRequest("GiftErrorMessageComposer"));
+                        await session.GetMessageHandler().GetResponse().AppendStringAsync(giftUser);
                         await session.GetMessageHandler().SendResponse();
                         return;
                     }
@@ -653,10 +653,10 @@ namespace Oblivion.HabboHotel.Catalogs
 
                     if (toUserId == 0u)
                     {
-                        session.GetMessageHandler()
+                        await session.GetMessageHandler()
                             .GetResponse()
-                            .Init(LibraryParser.OutgoingRequest("GiftErrorMessageComposer"));
-                        session.GetMessageHandler().GetResponse().AppendString(giftUser);
+                            .InitAsync(LibraryParser.OutgoingRequest("GiftErrorMessageComposer"));
+                        await session.GetMessageHandler().GetResponse().AppendStringAsync(giftUser);
                         await session.GetMessageHandler().SendResponse();
                         return;
                     }
@@ -701,9 +701,9 @@ namespace Oblivion.HabboHotel.Catalogs
                     using (var update =
                            new ServerMessage(LibraryParser.OutgoingRequest("BuildersClubMembershipMessageComposer")))
                     {
-                        update.AppendInteger(session.GetHabbo().BuildersExpire);
-                        update.AppendInteger(session.GetHabbo().BuildersItemsMax);
-                        update.AppendInteger(2);
+                        await update.AppendIntegerAsync(session.GetHabbo().BuildersExpire);
+                        await update.AppendIntegerAsync(session.GetHabbo().BuildersItemsMax);
+                        await update.AppendIntegerAsync(2);
                         await session.SendMessage(update);
                     }
 
@@ -732,9 +732,9 @@ namespace Oblivion.HabboHotel.Catalogs
                     var update =
                         new ServerMessage(LibraryParser.OutgoingRequest("BuildersClubMembershipMessageComposer"));
 
-                    update.AppendInteger(session.GetHabbo().BuildersExpire);
-                    update.AppendInteger(session.GetHabbo().BuildersItemsMax);
-                    update.AppendInteger(2);
+                    await update.AppendIntegerAsync(session.GetHabbo().BuildersExpire);
+                    await update.AppendIntegerAsync(session.GetHabbo().BuildersItemsMax);
+                    await update.AppendIntegerAsync(2);
                     await session.SendMessage(update);
 
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -742,7 +742,7 @@ namespace Oblivion.HabboHotel.Catalogs
                         queryReactor.SetQuery("UPDATE users SET builders_expire = @max WHERE id = @userId");
                         queryReactor.AddParameter("max", session.GetHabbo().BuildersExpire);
                         queryReactor.AddParameter("userId", session.GetHabbo().Id);
-                        queryReactor.RunQuery();
+                        await queryReactor.RunQueryAsync();
                     }
 
                     await session.SendMessage(CatalogPageComposer.PurchaseOk(item, item.Items));
@@ -814,7 +814,7 @@ namespace Oblivion.HabboHotel.Catalogs
                             dbClient.SetQuery(
                                 $"UPDATE users SET prefixes = @prefixes WHERE id = '{session.GetHabbo().Id}'");
                             dbClient.AddParameter("prefixes", prefixStr);
-                            dbClient.RunQuery();
+                            await dbClient.RunQueryAsync();
                             await session.SendMessage(CatalogPageComposer.PurchaseOk(item, item.Items));
 
                             return;
@@ -830,7 +830,7 @@ namespace Oblivion.HabboHotel.Catalogs
                             dbClient.SetQuery(
                                 $"UPDATE users SET prefixes = @prefixes WHERE id = '{session.GetHabbo().Id}'");
                             dbClient.AddParameter("prefixes", prefixStr);
-                            dbClient.RunQuery();
+                            await dbClient.RunQueryAsync();
                             await session.SendMessage(CatalogPageComposer.PurchaseOk(item, item.Items));
 
                             return;
@@ -847,7 +847,7 @@ namespace Oblivion.HabboHotel.Catalogs
                             dbClient.SetQuery(
                                 $"UPDATE users SET prefixes = @prefixes WHERE id = '{session.GetHabbo().Id}'");
                             dbClient.AddParameter("prefixes", prefixStr);
-                            dbClient.RunQuery();
+                            await dbClient.RunQueryAsync();
                             await session.SendMessage(CatalogPageComposer.PurchaseOk(item, item.Items));
 
                             return;
@@ -999,7 +999,7 @@ namespace Oblivion.HabboHotel.Catalogs
                                                     insertId + "'," +
                                                     itemBySprite.ItemId + ", " + toUserId + ");");
 
-                        queryReactor.RunQuery();
+                        await queryReactor.RunQueryAsync();
 
                         queryReactor.SetQuery(string.Concat(
                             "INSERT INTO users_gifts (gift_id,item_id,extradata,giver_name,Message,ribbon,color,gift_sprite,show_sender,rare_id) VALUES ('",
@@ -1008,7 +1008,7 @@ namespace Oblivion.HabboHotel.Catalogs
                         queryReactor.AddParameter("extradata", extraData);
                         queryReactor.AddParameter("name", giftUser);
                         queryReactor.AddParameter("message", giftMessage);
-                        queryReactor.RunQuery();
+                        await queryReactor.RunQueryAsync();
 
                         if (session.GetHabbo().Id != toUserId)
                         {
@@ -1016,7 +1016,7 @@ namespace Oblivion.HabboHotel.Catalogs
                                 .ProgressUserAchievement(session, "ACH_GiftGiver", 1, true);
                             await Oblivion.GetGame().GetQuestManager().ProgressUserQuest(session, QuestType.GiftOthers);
 
-                            queryReactor.RunFastQuery(
+                            await queryReactor.RunFastQueryAsync(
                                 "UPDATE users_stats SET gifts_given = gifts_given + 1 WHERE id = " +
                                 session.GetHabbo().Id +
                                 ";UPDATE users_stats SET gifts_received = gifts_received + 1 WHERE id = " + toUserId);
@@ -1043,27 +1043,27 @@ namespace Oblivion.HabboHotel.Catalogs
                     continue;
                 }
 
-                session.GetMessageHandler().GetResponse()
-                    .Init(LibraryParser.OutgoingRequest("NewInventoryObjectMessageComposer"));
+                await session.GetMessageHandler().GetResponse()
+                    .InitAsync(LibraryParser.OutgoingRequest("NewInventoryObjectMessageComposer"));
 
-                session.GetMessageHandler().GetResponse().AppendInteger(1);
+                await session.GetMessageHandler().GetResponse().AppendIntegerAsync(1);
 
                 var i = 1;
 
                 if (baseItem.Type == 's')
                     i = InteractionTypes.AreFamiliar(GlobalInteractions.Pet, baseItem.InteractionType) ? 3 : 1;
 
-                session.GetMessageHandler().GetResponse().AppendInteger(i);
+                await session.GetMessageHandler().GetResponse().AppendIntegerAsync(i);
 
                 var list = await DeliverItems(session, baseItem, priceAmount * (int)item.Items[baseItem], extraData,
                     limitedId,
                     limtot, text);
 
-                session.GetMessageHandler().GetResponse().AppendInteger(list.Count);
+                await session.GetMessageHandler().GetResponse().AppendIntegerAsync(list.Count);
 
                 /* TODO CHECK */
                 foreach (var current3 in list)
-                    session.GetMessageHandler().GetResponse().AppendInteger(current3.VirtualId);
+                    await session.GetMessageHandler().GetResponse().AppendIntegerAsync(current3.VirtualId);
 
                 await session.GetMessageHandler().SendResponse();
                 await session.GetHabbo().GetInventoryComponent().UpdateItems(false);
@@ -1214,14 +1214,14 @@ namespace Oblivion.HabboHotel.Catalogs
                             {
                                 if (group.CreatorId == session.GetHabbo().Id)
                                 {
-                                    session.GetMessageHandler().GetResponse()
-                                        .Init(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
-                                    session.GetMessageHandler().GetResponse().AppendString("forums.delivered");
-                                    session.GetMessageHandler().GetResponse().AppendInteger(2);
-                                    session.GetMessageHandler().GetResponse().AppendString("groupId");
-                                    session.GetMessageHandler().GetResponse().AppendString(extraData);
-                                    session.GetMessageHandler().GetResponse().AppendString("groupName");
-                                    session.GetMessageHandler().GetResponse().AppendString(group.Name);
+                                    await session.GetMessageHandler().GetResponse()
+                                        .InitAsync(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
+                                    await session.GetMessageHandler().GetResponse().AppendStringAsync("forums.delivered");
+                                    await session.GetMessageHandler().GetResponse().AppendIntegerAsync(2);
+                                    await session.GetMessageHandler().GetResponse().AppendStringAsync("groupId");
+                                    await session.GetMessageHandler().GetResponse().AppendStringAsync(extraData);
+                                    await session.GetMessageHandler().GetResponse().AppendStringAsync("groupName");
+                                    await session.GetMessageHandler().GetResponse().AppendStringAsync(group.Name);
                                     await session.GetMessageHandler().SendResponse();
 
                                     if (!group.HasForum)

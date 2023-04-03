@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Oblivion.Messages;
 
 namespace Oblivion.HabboHotel.Users.Messenger
@@ -58,9 +59,9 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="request">The request.</param>
         internal async Task Serialize(ServerMessage request)
         {
-            request.AppendInteger(From);
-            request.AppendString(_userName);
-            request.AppendString(_look);
+            await request.AppendIntegerAsync(From);
+            await request.AppendStringAsync(_userName);
+            await request.AppendStringAsync(_look);
         }
     }
 }

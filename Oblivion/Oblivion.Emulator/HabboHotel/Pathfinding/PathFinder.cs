@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.Rooms.User;
 using Oblivion.HabboHotel.Rooms.User.Path;
@@ -46,12 +47,12 @@ namespace Oblivion.HabboHotel.PathFinding
         /// <param name="start">The start.</param>
         /// <param name="end">The end.</param>
         /// <returns>List&lt;Vector2D&gt;.</returns>
-        public static List<Vector2D> FindPath(RoomUser user, bool diag, Gamemap map, Vector2D start, Vector2D end)
+        public static async Task<List<Vector2D>> FindPath(RoomUser user, bool diag, Gamemap map, Vector2D start, Vector2D end)
         {
             try
             {
                 var list = new List<Vector2D>();
-                var pathFinderNode = FindPathReversed(user, diag, map, start, end);
+                var pathFinderNode = await FindPathReversed(user, diag, map, start, end);
 
                 if (pathFinderNode != null)
                 {
@@ -81,7 +82,7 @@ namespace Oblivion.HabboHotel.PathFinding
         /// <param name="startMap">The start.</param>
         /// <param name="endMap">The end.</param>
         /// <returns>PathFinderNode.</returns>
-        public static PathFinderNode FindPathReversed(RoomUser roomUserable, bool whatIsDiag, Gamemap gameLocalMap, Vector2D startMap, Vector2D endMap)
+        public static async Task<PathFinderNode> FindPathReversed(RoomUser roomUserable, bool whatIsDiag, Gamemap gameLocalMap, Vector2D startMap, Vector2D endMap)
         {
             try
             {
@@ -110,7 +111,7 @@ namespace Oblivion.HabboHotel.PathFinding
 
                         var isEndOfPath = ((realEndPosition.X == endMap.X) && (realEndPosition.Y == endMap.Y));
 
-                        if (gameLocalMap.IsValidStep(roomUserable,
+                        if (await gameLocalMap.IsValidStep(roomUserable,
                             new Vector2D(pathFinderStart.Position.X, pathFinderStart.Position.Y), realEndPosition,
                             isEndOfPath, roomUserable.AllowOverride, true, true))
                         {

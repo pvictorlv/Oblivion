@@ -196,20 +196,20 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     {
                         var serverMessage =
                             new ServerMessage(LibraryParser.OutgoingRequest("ItemAnimationMessageComposer"));
-                        serverMessage.AppendInteger(Item.X);
-                        serverMessage.AppendInteger(Item.Y);
-                        serverMessage.AppendInteger(Point.X);
-                        serverMessage.AppendInteger(Point.Y);
-                        serverMessage.AppendInteger(1);
-                        serverMessage.AppendInteger(Item.VirtualId);
-                        serverMessage.AppendString(Item.Z.ToString(Oblivion.CultureInfo));
-                        serverMessage.AppendString(newZ.ToString(Oblivion.CultureInfo));
-                        serverMessage.AppendInteger(0);
+                        await serverMessage.AppendIntegerAsync(Item.X);
+                        await serverMessage.AppendIntegerAsync(Item.Y);
+                        await serverMessage.AppendIntegerAsync(Point.X);
+                        await serverMessage.AppendIntegerAsync(Point.Y);
+                        await serverMessage.AppendIntegerAsync(1);
+                        await serverMessage.AppendIntegerAsync(Item.VirtualId);
+                        await serverMessage.AppendStringAsync(Item.Z.ToString(Oblivion.CultureInfo));
+                        await serverMessage.AppendStringAsync(newZ.ToString(Oblivion.CultureInfo));
+                        await serverMessage.AppendIntegerAsync(0);
                         Room.SendMessage(serverMessage);
 
                         Room.GetRoomItemHandler().SetFloorItem(Item, Point.X, Point.Y, newZ);
                     }
-                    Room.GetWiredHandler().OnUserFurniCollision(Room, Item);
+                    await Room.GetWiredHandler().OnUserFurniCollision(Room, Item);
                 }
             }
             while (_toRemove.TryDequeue(out var rI))

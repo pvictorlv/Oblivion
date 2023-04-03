@@ -36,7 +36,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             var roomFwd =
                 new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
-            roomFwd.AppendInteger(client.GetHabbo().CurrentRoom.RoomId);
+            await roomFwd.AppendIntegerAsync(client.GetHabbo().CurrentRoom.RoomId);
             await session.SendMessage(roomFwd);
 
             return true;

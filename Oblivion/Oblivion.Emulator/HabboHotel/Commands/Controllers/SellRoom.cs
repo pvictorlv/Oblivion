@@ -28,26 +28,26 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             if (currentRoom.RoomData.OwnerId != user.HabboId)
             {
-                client.SendWhisper("Você deve ser dono do quarto!");
+                await client.SendWhisperAsync("Você deve ser dono do quarto!");
                 return false;
             }
             var actualInput = pms[0];
             var roomCostType = actualInput.Substring(actualInput.Length - 1);
             if (!int.TryParse(actualInput.Substring(0, actualInput.Length - 1), out var roomCost))
             {
-                client.SendWhisper("Valor inválido");
+                await client.SendWhisperAsync("Valor inválido");
                 return false;
             }
 
             if (roomCost < 50)
             {
                 currentRoom.RoomData.RoomForSale = false;
-                client.SendWhisper("A sala não está mais a venda! (Valor mínimo: 50)");
+                await client.SendWhisperAsync("A sala não está mais a venda! (Valor mínimo: 50)");
                 return true;
             }
             if (roomCost > 1000000)
             {
-                client.SendWhisper("Valor muito grande, o máximo permitido é 1000000");
+                await client.SendWhisperAsync("Valor muito grande, o máximo permitido é 1000000");
                 return false;
             }
             if (actualInput.EndsWith("c") || actualInput.EndsWith("d"))
@@ -58,12 +58,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             else
             {
-                client.SendWhisper("Insira um valor válido no final do preço! (c para créditos e d para diamantes)");
+                await client.SendWhisperAsync("Insira um valor válido no final do preço! (c para créditos e d para diamantes)");
                 return false;
             }
             /* TODO CHECK */ foreach (var userInRoom in currentRoom.GetRoomUserManager().GetRoomUsers())
-                userInRoom?.GetClient()?
-                    .SendWhisper($"A sala está a venda pelo preço de {roomCost}{roomCostType}");
+                await userInRoom?.GetClient()?
+                    .SendWhisperAsync($"A sala está a venda pelo preço de {roomCost}{roomCostType}");
 
             return true;
         }

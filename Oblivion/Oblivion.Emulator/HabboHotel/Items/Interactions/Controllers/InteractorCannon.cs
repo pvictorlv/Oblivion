@@ -17,17 +17,17 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
         private HashSet<Point> _mCoords;
         private RoomItem _mItem;
 
-        public override void OnPlace(GameClient session, RoomItem item)
+        public override async Task OnPlace(GameClient session, RoomItem item)
         {
 //            item.ExtraData = "0";
         }
 
-        public override void OnRemove(GameClient session, RoomItem item)
+        public override async Task OnRemove(GameClient session, RoomItem item)
         {
 //            item.ExtraData = "0";
         }
 
-        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             var room = session?.GetHabbo()?.CurrentRoom;
             if (room == null) return;
@@ -81,7 +81,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
 
             item.ExtraData = (item.ExtraData == "0") ? "1" : "0";
-            item.UpdateState();
+            await  item.UpdateState();
 
             _mItem = item;
             _mCoords = coords;
@@ -91,7 +91,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             explodeTimer.Enabled = true;
         }
 
-        public override void OnWiredTrigger(RoomItem item)
+        public override async Task OnWiredTrigger(RoomItem item)
         {
             if (item.OnCannonActing)
                 return;
@@ -141,7 +141,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
 
             item.ExtraData = (item.ExtraData == "0") ? "1" : "0";
-            item.UpdateState();
+            await  item.UpdateState();
 
             _mItem = item;
             _mCoords = coords;
@@ -151,7 +151,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             explodeTimer.Enabled = true;
         }
 
-        private void ExplodeAndKick(object source, ElapsedEventArgs e)
+        private async void ExplodeAndKick(object source, ElapsedEventArgs e)
         {
             var timer = (Timer)source;
             timer.Stop();
@@ -168,24 +168,21 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             var toRemove = new HashSet<RoomUser>();
 
-            /* TODO CHECK */ foreach (
-                var user in
-                    _mCoords.SelectMany(
-                        coord =>
-                            room.GetGameMap()
-                                .GetRoomUsers(coord)
-                                .Where(
-                                    user =>
-                                        user != null && !user.IsBot && !user.IsPet &&
-                                        user.GetUserName() != room.RoomData.Owner)))
+            /* TODO CHECK */
+            foreach (Point coord in _mCoords)
+            foreach (RoomUser user in room.GetGameMap()
+                         .GetRoomUsers(coord))
             {
-                user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(4, false);
-                toRemove.Add(user);
+                if (user != null && !user.IsBot && !user.IsPet && user.GetUserName() != room.RoomData.Owner)
+                {
+                    await user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(4, false);
+                    toRemove.Add(user);
+                }
             }
 
             /* TODO CHECK */ foreach (var user in toRemove)
             {
-                room.GetRoomUserManager().RemoveUserFromRoom(user, true, false);
+                await room.GetRoomUserManager().RemoveUserFromRoom(user, true, false);
                 await user.GetClient().SendMessageAsync(serverMessage);
             }
 

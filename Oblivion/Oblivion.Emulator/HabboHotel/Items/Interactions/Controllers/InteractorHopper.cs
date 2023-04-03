@@ -7,7 +7,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorHopper : FurniInteractorModel
     {
-        public override void OnPlace(GameClient session, RoomItem item)
+        public override async Task OnPlace(GameClient session, RoomItem item)
         {
             item.GetRoom().GetRoomItemHandler().HopperCount++;
 
@@ -34,7 +34,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             item.InteractingUser = 0u;
         }
 
-        public override void OnRemove(GameClient session, RoomItem item)
+        public override async Task OnRemove(GameClient session, RoomItem item)
         {
             item.GetRoom().GetRoomItemHandler().HopperCount--;
 
@@ -56,7 +56,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             item.InteractingUser = 0u;
         }
 
-        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             if (item?.GetRoom() == null || session?.GetHabbo() == null)
                 return;

@@ -36,7 +36,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 client.GetMessageHandler()
                     .PrepareRoomForUser(session.GetHabbo().CurrentRoom.RoomId,
                         session.GetHabbo().CurrentRoom.RoomData.PassWord);
-                client.SendMessage(messageBytes);
+                await client.SendMessage(messageBytes);
             }
             return true;
         }

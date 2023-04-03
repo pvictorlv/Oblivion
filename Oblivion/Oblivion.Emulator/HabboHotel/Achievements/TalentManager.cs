@@ -81,27 +81,27 @@ namespace Oblivion.HabboHotel.Achievements
             session.GetHabbo().Data.Talents.Add(talent.Id, new UserTalent(talent.Id, 1));
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery($"REPLACE INTO users_talents VALUES ('{session.GetHabbo().Id}', '{talent.Id}', '1');");
+                await queryReactor.RunFastQueryAsync($"REPLACE INTO users_talents VALUES ('{session.GetHabbo().Id}', '{talent.Id}', '1');");
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("TalentLevelUpMessageComposer"));
 
-            serverMessage.AppendString(talent.Type);
-            serverMessage.AppendInteger(talent.Level);
-            serverMessage.AppendInteger(0);
+            await serverMessage.AppendStringAsync(talent.Type);
+            await serverMessage.AppendIntegerAsync(talent.Level);
+            await serverMessage.AppendIntegerAsync(0);
 
             if (talent.Type == "citizenship" && talent.Level == 4)
             {
-                serverMessage.AppendInteger(2);
-                serverMessage.AppendString("HABBO_CLUB_VIP_7_DAYS");
-                serverMessage.AppendInteger(7);
-                serverMessage.AppendString(talent.Prize);
-                serverMessage.AppendInteger(0);
+                await serverMessage.AppendIntegerAsync(2);
+                await serverMessage.AppendStringAsync("HABBO_CLUB_VIP_7_DAYS");
+                await serverMessage.AppendIntegerAsync(7);
+                await serverMessage.AppendStringAsync(talent.Prize);
+                await serverMessage.AppendIntegerAsync(0);
             }
             else
             {
-                serverMessage.AppendInteger(1);
-                serverMessage.AppendString(talent.Prize);
-                serverMessage.AppendInteger(0);
+                await serverMessage.AppendIntegerAsync(1);
+                await serverMessage.AppendStringAsync(talent.Prize);
+                await serverMessage.AppendIntegerAsync(0);
             }
 
             await session.SendMessage(serverMessage);
@@ -113,7 +113,7 @@ namespace Oblivion.HabboHotel.Achievements
                 await session.GetHabbo().GetSubscriptionManager().AddSubscription(7);
 
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                    queryReactor.RunFastQuery($"UPDATE users SET talent_status = 'helper' WHERE id = '{session.GetHabbo().Id}'");
+                    await queryReactor.RunFastQueryAsync($"UPDATE users SET talent_status = 'helper' WHERE id = '{session.GetHabbo().Id}'");
             }
         }
 

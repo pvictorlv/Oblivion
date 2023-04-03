@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using System.Timers;
 using Oblivion.Configuration;
 
@@ -31,7 +32,7 @@ namespace Oblivion.HabboHotel.Misc
         /// </summary>
         /// <param name="source">The source.</param>
         /// <param name="e">The <see cref="ElapsedEventArgs" /> instance containing the event data.</param>
-        internal async Task GiveCoins(object source, ElapsedEventArgs e)
+        internal async void GiveCoins(object source, ElapsedEventArgs e)
         {
             try
             {
@@ -40,7 +41,7 @@ namespace Oblivion.HabboHotel.Misc
                 {
                     if (client?.GetHabbo() == null) continue;
                     client.GetHabbo().Credits += ExtraSettings.CreditsToGive;
-                    client.GetHabbo().UpdateCreditsBalance();
+                    await client.GetHabbo().UpdateCreditsBalance();
                     client.GetHabbo().ActivityPoints += ExtraSettings.PixelsToGive;
                     if (ExtraSettings.DiamondsLoopEnabled)
                         if (ExtraSettings.DiamondsVipOnly)
@@ -49,7 +50,7 @@ namespace Oblivion.HabboHotel.Misc
                                 client.GetHabbo().Diamonds += ExtraSettings.DiamondsToGive * 2;
                         }
                         else client.GetHabbo().Diamonds += (client.GetHabbo().Vip) ? ExtraSettings.DiamondsToGive * 2 : ExtraSettings.DiamondsToGive;
-                    client.GetHabbo().UpdateSeasonalCurrencyBalance();
+                    await client.GetHabbo().UpdateSeasonalCurrencyBalance();
                 }
             }
             catch (Exception ex)
@@ -61,7 +62,7 @@ namespace Oblivion.HabboHotel.Misc
         /// <summary>
         ///     Destroys this instance.
         /// </summary>
-        internal async Task Destroy()
+        internal void Destroy()
         {
             _timer.Dispose();
             _timer = null;

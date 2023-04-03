@@ -11,13 +11,13 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorWired : FurniInteractorModel
     {
-        public override void OnRemove(GameClient session, RoomItem item)
+        public override async Task OnRemove(GameClient session, RoomItem item)
         {
             var room = item.GetRoom();
             room.GetWiredHandler().RemoveWired(item);
         }
 
-        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             if (session == null || item?.GetRoom() == null || !hasRights)
                 return;

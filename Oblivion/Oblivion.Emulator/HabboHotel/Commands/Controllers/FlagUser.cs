@@ -26,19 +26,19 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             var habbo = user.GetHabbo();
             var response = new ServerMessage();
-            response.Init(LibraryParser.OutgoingRequest("UserObjectMessageComposer"));
-            response.AppendInteger(habbo.Id);
-            response.AppendString(habbo.UserName);
-            response.AppendString(habbo.Look);
-            response.AppendString(habbo.Gender.ToUpper());
-            response.AppendString(habbo.Motto);
-            response.AppendString("");
+            await response.InitAsync(LibraryParser.OutgoingRequest("UserObjectMessageComposer"));
+            await response.AppendIntegerAsync(habbo.Id);
+            await response.AppendStringAsync(habbo.UserName);
+            await response.AppendStringAsync(habbo.Look);
+            await response.AppendStringAsync(habbo.Gender.ToUpper());
+            await response.AppendStringAsync(habbo.Motto);
+            await response.AppendStringAsync("");
             response.AppendBool(false);
-            response.AppendInteger(habbo.Respect);
-            response.AppendInteger(habbo.DailyRespectPoints);
-            response.AppendInteger(habbo.DailyPetRespectPoints);
+            await response.AppendIntegerAsync(habbo.Respect);
+            await response.AppendIntegerAsync(habbo.DailyRespectPoints);
+            await response.AppendIntegerAsync(habbo.DailyPetRespectPoints);
             response.AppendBool(true);
-            response.AppendString(habbo.LastOnline.ToString(CultureInfo.InvariantCulture));
+            await response.AppendStringAsync(habbo.LastOnline.ToString(CultureInfo.InvariantCulture));
             response.AppendBool(true);
             response.AppendBool(false);
 

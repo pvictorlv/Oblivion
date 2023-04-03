@@ -140,11 +140,11 @@ namespace Oblivion.HabboHotel.GameClients
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
 
-            serverMessage.AppendString(picture);
-            serverMessage.AppendInteger(4);
-            serverMessage.AppendString("title");
-            serverMessage.AppendString(title);
-            serverMessage.AppendString("message");
+            await serverMessage.AppendStringAsync(picture);
+            await serverMessage.AppendIntegerAsync(4);
+            await serverMessage.AppendStringAsync("title");
+            await serverMessage.AppendStringAsync(title);
+            await serverMessage.AppendStringAsync("message");
 
             if (broadCast)
                 if (Event)
@@ -152,31 +152,31 @@ namespace Oblivion.HabboHotel.GameClients
                     var text1 = Oblivion.GetLanguage().GetVar("ha_event_one");
                     var text2 = Oblivion.GetLanguage().GetVar("ha_event_two");
                     var text3 = Oblivion.GetLanguage().GetVar("ha_event_three");
-                    serverMessage.AppendString(
+                    await serverMessage.AppendStringAsync(
                         $"<b>{text1} {client.GetHabbo().CurrentRoom.RoomData.Owner}!</b>\r\n {text2} .\r\n<b>{text3}</b>\r\n{notice}");
                 }
                 else
                 {
                     var text4 = Oblivion.GetLanguage().GetVar("ha_title");
-                    serverMessage.AppendString(string.Concat("<b>" + text4 + "</b>\r\n", notice, "\r\n- <i>",
+                    await serverMessage.AppendStringAsync(string.Concat("<b>" + text4 + "</b>\r\n", notice, "\r\n- <i>",
                         client.GetHabbo().UserName, "</i>"));
                 }
             else
-                serverMessage.AppendString(notice);
+                await serverMessage.AppendStringAsync(notice);
 
             if (link != string.Empty)
             {
-                serverMessage.AppendString("linkUrl");
-                serverMessage.AppendString(link);
-                serverMessage.AppendString("linkTitle");
-                serverMessage.AppendString(linkTitle);
+                await serverMessage.AppendStringAsync("linkUrl");
+                await serverMessage.AppendStringAsync(link);
+                await serverMessage.AppendStringAsync("linkTitle");
+                await serverMessage.AppendStringAsync(linkTitle);
             }
             else
             {
-                serverMessage.AppendString("linkUrl");
-                serverMessage.AppendString("event:");
-                serverMessage.AppendString("linkTitle");
-                serverMessage.AppendString("ok");
+                await serverMessage.AppendStringAsync("linkUrl");
+                await serverMessage.AppendStringAsync("event:");
+                await serverMessage.AppendStringAsync("linkTitle");
+                await serverMessage.AppendStringAsync("ok");
             }
 
             if (broadCast)
@@ -361,7 +361,7 @@ namespace Oblivion.HabboHotel.GameClients
                 if (stringBuilder.Length > 0)
                 {
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                        queryReactor.RunFastQuery(stringBuilder.ToString());
+                        await queryReactor.RunFastQueryAsync(stringBuilder.ToString());
                 }
             }
 

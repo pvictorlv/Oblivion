@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Groups.Interfaces;
 using Oblivion.HabboHotel.Rooms;
@@ -138,9 +139,9 @@ namespace Oblivion.HabboHotel.Groups
                 queryReactor.AddParameter("desc", desc);
                 queryReactor.AddParameter("badge", badge);
 
-                var id = (uint)queryReactor.InsertQuery();
+                var id = (uint)await queryReactor.InsertQueryAsync();
 
-                queryReactor.RunFastQuery($"UPDATE rooms_data SET group_id='{id}' WHERE id='{roomId}' LIMIT 1");
+                await queryReactor.RunFastQueryAsync($"UPDATE rooms_data SET group_id='{id}' WHERE id='{roomId}' LIMIT 1");
 
                 var memberGroup = new GroupMember(user.Id, user.UserName, user.Look, id, 2,
                     Oblivion.GetUnixTimeStamp(), true);
@@ -153,7 +154,7 @@ namespace Oblivion.HabboHotel.Groups
 
                 Groups.Add(id, group);
 
-                queryReactor.RunFastQuery(
+                await queryReactor.RunFastQueryAsync(
                     $"INSERT INTO groups_members (group_id, user_id, rank, date_join) VALUES ('{id}','{session.GetHabbo().Id}','2','{Oblivion.GetUnixTimeStamp()}')");
 
                 var room = Oblivion.GetGame().GetRoomManager().GetRoom(roomId);
@@ -167,9 +168,9 @@ namespace Oblivion.HabboHotel.Groups
                 user.UserGroups.Add(memberGroup);
                 group.Admins.Add(user.Id, memberGroup);
 
-                queryReactor.RunFastQuery(
+                await queryReactor.RunFastQueryAsync(
                     $"UPDATE users_stats SET favourite_group='{id}' WHERE id='{user.Id}' LIMIT 1");
-                queryReactor.RunFastQuery($"DELETE FROM rooms_rights WHERE room_id='{roomId}'");
+                await queryReactor.RunFastQueryAsync($"DELETE FROM rooms_rights WHERE room_id='{roomId}'");
             }
         }
 
@@ -290,11 +291,11 @@ namespace Oblivion.HabboHotel.Groups
 
         internal async Task AddGroupMemberIntoResponse(ServerMessage response, GroupMember member)
         {
-            response.AppendInteger(member.Rank == 2 ? 0 : member.Rank == 1 ? 1 : 2);
-            response.AppendInteger(member.Id);
-            response.AppendString(member.Name);
-            response.AppendString(member.Look);
-            response.AppendString(Oblivion.GetGroupDateJoinString(member.DateJoin));
+            await response.AppendIntegerAsync(member.Rank == 2 ? 0 : member.Rank == 1 ? 1 : 2);
+            await response.AppendIntegerAsync(member.Id);
+            await response.AppendStringAsync(member.Name);
+            await response.AppendStringAsync(member.Look);
+            await response.AppendStringAsync(Oblivion.GetGroupDateJoinString(member.DateJoin));
         }
 
         /// <summary>
@@ -472,35 +473,36 @@ namespace Oblivion.HabboHotel.Groups
             var dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
             var dateTime2 = dateTime.AddSeconds(group.CreateTime);
 
-            response.Init(LibraryParser.OutgoingRequest("GroupDataMessageComposer"));
+            await response.InitAsync(LibraryParser.OutgoingRequest("GroupDataMessageComposer"));
 
-            response.AppendInteger(group.Id);
+            var roomData = await Oblivion.GetGame().GetRoomManager().GenerateRoomData(group.RoomId);
+            await response.AppendIntegerAsync(group.Id);
             response.AppendBool(true);
-            response.AppendInteger(group.State);
-            response.AppendString(group.Name);
-            response.AppendString(group.Description);
-            response.AppendString(group.Badge);
-            response.AppendInteger(group.RoomId);
-            response.AppendString((Oblivion.GetGame().GetRoomManager().GenerateRoomData(group.RoomId) == null)
+            await response.AppendIntegerAsync(group.State);
+            await response.AppendStringAsync(group.Name);
+            await response.AppendStringAsync(group.Description);
+            await response.AppendStringAsync(group.Badge);
+            await response.AppendIntegerAsync(group.RoomId);
+            await response.AppendStringAsync((roomData == null)
                 ? "No room found.."
-                : Oblivion.GetGame().GetRoomManager().GenerateRoomData(group.RoomId).Name);
-            response.AppendInteger((group.CreatorId == session.GetHabbo().Id)
+                : roomData.Name);
+            await response.AppendIntegerAsync((group.CreatorId == session.GetHabbo().Id)
                 ? 3
                 : (group.Requests.ContainsKey(session.GetHabbo().Id)
                     ? 2
                     : (group.Members.ContainsKey(session.GetHabbo().Id) ? 1 : 0)));
-            response.AppendInteger(group.Members.Count);
+            await response.AppendIntegerAsync(group.Members.Count);
             response.AppendBool(session.GetHabbo().FavouriteGroup == group.Id);
-            response.AppendString($"{dateTime2.Day:00}-{dateTime2.Month:00}-{dateTime2.Year}");
+            await response.AppendStringAsync($"{dateTime2.Day:00}-{dateTime2.Month:00}-{dateTime2.Year}");
             response.AppendBool(group.CreatorId == session.GetHabbo().Id);
             response.AppendBool(group.Admins.ContainsKey(session.GetHabbo().Id));
             var habbo = Oblivion.GetHabboById(group.CreatorId);
-            response.AppendString((habbo == null)
+            await response.AppendStringAsync((habbo == null)
                 ? string.Empty
                 : habbo.UserName);
             response.AppendBool(newWindow);
             response.AppendBool(group.AdminOnlyDeco == 0u);
-            response.AppendInteger(group.Requests.Count);
+            await response.AppendIntegerAsync(group.Requests.Count);
             response.AppendBool(group.HasForum);
             await session.SendMessage(response);
         }
@@ -522,34 +524,35 @@ namespace Oblivion.HabboHotel.Groups
             var dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
             var dateTime2 = dateTime.AddSeconds(group.CreateTime);
 
-            response.Init(LibraryParser.OutgoingRequest("GroupDataMessageComposer"));
+            await response.InitAsync(LibraryParser.OutgoingRequest("GroupDataMessageComposer"));
+            var roomData = await Oblivion.GetGame().GetRoomManager().GenerateRoomData(group.RoomId);
 
-            response.AppendInteger(group.Id);
+            await response.AppendIntegerAsync(group.Id);
             response.AppendBool(true);
-            response.AppendInteger(group.State);
-            response.AppendString(group.Name);
-            response.AppendString(group.Description);
-            response.AppendString(group.Badge);
-            response.AppendInteger(group.RoomId);
-            response.AppendString((Oblivion.GetGame().GetRoomManager().GenerateRoomData(group.RoomId) == null)
+            await response.AppendIntegerAsync(group.State);
+            await response.AppendStringAsync(group.Name);
+            await response.AppendStringAsync(group.Description);
+            await response.AppendStringAsync(group.Badge);
+            await response.AppendIntegerAsync(group.RoomId);
+            await response.AppendStringAsync((roomData == null)
                 ? "No room found.."
-                : Oblivion.GetGame().GetRoomManager().GenerateRoomData(group.RoomId).Name);
-            response.AppendInteger((group.CreatorId == session.GetHabbo().Id)
+                : roomData.Name);
+            await response.AppendIntegerAsync((group.CreatorId == session.GetHabbo().Id)
                 ? 3
                 : (group.Requests.ContainsKey(session.GetHabbo().Id)
                     ? 2
                     : (group.Members.ContainsKey(session.GetHabbo().Id) ? 1 : 0)));
-            response.AppendInteger(group.Members.Count);
+            await response.AppendIntegerAsync(group.Members.Count);
             response.AppendBool(session.GetHabbo().FavouriteGroup == group.Id);
-            response.AppendString($"{dateTime2.Day:00}-{dateTime2.Month:00}-{dateTime2.Year}");
+            await response.AppendStringAsync($"{dateTime2.Day:00}-{dateTime2.Month:00}-{dateTime2.Year}");
             response.AppendBool(group.CreatorId == session.GetHabbo().Id);
             response.AppendBool(group.Admins.ContainsKey(session.GetHabbo().Id));
-            response.AppendString((Oblivion.GetHabboById(group.CreatorId) == null)
+            await response.AppendStringAsync((Oblivion.GetHabboById(group.CreatorId) == null)
                 ? string.Empty
                 : Oblivion.GetHabboById(group.CreatorId).UserName);
             response.AppendBool(newWindow);
             response.AppendBool(group.AdminOnlyDeco == 0u);
-            response.AppendInteger(group.Requests.Count);
+            await response.AppendIntegerAsync(group.Requests.Count);
             response.AppendBool(group.HasForum);
             await room.SendMessage(response);
         }
@@ -603,7 +606,7 @@ namespace Oblivion.HabboHotel.Groups
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery($"DELETE FROM groups_data WHERE id = {id};");
-                queryReactor.RunQuery();
+                await queryReactor.RunQueryAsync();
 
                 Groups.Remove(id);
             }

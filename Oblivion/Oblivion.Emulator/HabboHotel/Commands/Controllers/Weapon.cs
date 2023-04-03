@@ -63,7 +63,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     stringBuilder.Append("Glock\r");
                     stringBuilder.Append("\r\rComo usar? digite :weapon + arma");
 
-                    client.SendNotifWithScroll(stringBuilder.ToString());
+                    await client.SendNotifWithScroll(stringBuilder.ToString());
                     return true;
             }
 

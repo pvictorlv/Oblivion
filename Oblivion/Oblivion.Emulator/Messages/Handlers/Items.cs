@@ -87,7 +87,7 @@ namespace Oblivion.Messages.Handlers
             // petid2
 
             item.ExtraData = "1";
-            item.UpdateState();
+            await  item.UpdateState();
 
             var randomNmb = new Random().Next(101);
             var petType = 0;
@@ -163,7 +163,7 @@ namespace Oblivion.Messages.Handlers
                 return;
 
             item.ExtraData = "2";
-            item.UpdateState();
+            await  item.UpdateState();
 
             room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
 
@@ -188,11 +188,11 @@ namespace Oblivion.Messages.Handlers
             Session.GetMessageHandler().GetResponse().AppendInt32(0);
             await Session.GetMessageHandler().SendResponse();*/
 
-            Session.GetMessageHandler()
+            await Session.GetMessageHandler()
                 .GetResponse()
-                .Init(LibraryParser.OutgoingRequest("PetBreedResultMessageComposer"));
-            Session.GetMessageHandler().GetResponse().AppendInteger(pet.PetId);
-            Session.GetMessageHandler().GetResponse().AppendInteger(randomResult);
+                .InitAsync(LibraryParser.OutgoingRequest("PetBreedResultMessageComposer"));
+            await Session.GetMessageHandler().GetResponse().AppendIntegerAsync(pet.PetId);
+            await Session.GetMessageHandler().GetResponse().AppendIntegerAsync(randomResult);
             await Session.GetMessageHandler().SendResponse();
 
             pet.X = item.X;
@@ -235,24 +235,24 @@ namespace Oblivion.Messages.Handlers
             if ((petData = currentRoom.GetRoomUserManager().GetPet(petId).PetData) == null)
                 return;
             //var arg_3F_0 = petData.Level;
-            Response.Init(LibraryParser.OutgoingRequest("PetTrainerPanelMessageComposer"));
-            Response.AppendInteger(petData.PetId);
+            await Response.InitAsync(LibraryParser.OutgoingRequest("PetTrainerPanelMessageComposer"));
+            await Response.AppendIntegerAsync(petData.PetId);
 
             var availableCommands = new List<short>();
 
-            Response.AppendInteger(petData.PetCommands.Count);
+            await Response.AppendIntegerAsync(petData.PetCommands.Count);
             /* TODO CHECK */
             foreach (var sh in petData.PetCommands)
             {
-                Response.AppendInteger(sh.Key);
+                await Response.AppendIntegerAsync(sh.Key);
                 if (sh.Value)
                     availableCommands.Add(sh.Key);
             }
 
-            Response.AppendInteger(availableCommands.Count);
+            await Response.AppendIntegerAsync(availableCommands.Count);
             /* TODO CHECK */
             foreach (var sh in availableCommands)
-                Response.AppendInteger(sh);
+                await Response.AppendIntegerAsync(sh);
 
             await SendResponse();
         }
@@ -557,7 +557,7 @@ namespace Oblivion.Messages.Handlers
                     Session.GetHabbo().BuildersItemsUsed--;
                     BuildersClubUpdateFurniCount();
 
-                    adapter.RunNoLockFastQuery("DELETE FROM items_rooms WHERE id = '" + item.Id + "';");
+                    await adapter.RunNoLockFastQueryAsync("DELETE FROM items_rooms WHERE id = '" + item.Id + "';");
                 }
             }
             else
@@ -579,7 +579,7 @@ namespace Oblivion.Messages.Handlers
                 {
                     using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        adapter.RunFastQuery($"UPDATE items_rooms SET room_id = NULL WHERE id = '{item.Id}'");
+                        await adapter.RunFastQueryAsync($"UPDATE items_rooms SET room_id = NULL WHERE id = '{item.Id}'");
                         room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
                     }
                 }
@@ -732,7 +732,7 @@ namespace Oblivion.Messages.Handlers
                     var message = new ServerMessage(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer"));
                     item.Serialize(message);
                     await room.SendMessageAsync(message);
-                    await item.UpdateState();
+                    await  item.UpdateState();
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
                         await queryReactor.RunFastQueryAsync(
@@ -769,7 +769,7 @@ namespace Oblivion.Messages.Handlers
             //await Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.ExploreFindItem, item.GetBaseItem().itemId);
             if (!item.GetBaseItem().StackMultipler || !hasRightsOne) return;
             foreach (var current in room.GetGameMap().GetRoomUsers(new Point(item.X, item.Y)))
-                await room.GetRoomUserManager().UpdateUserStatus(current, true);
+                await  room.GetRoomUserManager().UpdateUserStatus(current, true);
         }
 
         internal async Task TriggerItemDiceSpecial()
@@ -795,9 +795,9 @@ namespace Oblivion.Messages.Handlers
                 .GetItem(Oblivion.GetGame().GetItemManager().GetRealId(Request.GetUInteger()));
             if (item == null || item.GetBaseItem().InteractionType != Interaction.PostIt)
                 return;
-            Response.Init(LibraryParser.OutgoingRequest("LoadPostItMessageComposer"));
-            Response.AppendString(item.VirtualId.ToString());
-            Response.AppendString(item.ExtraData);
+            await Response.InitAsync(LibraryParser.OutgoingRequest("LoadPostItMessageComposer"));
+            await Response.AppendStringAsync(item.VirtualId.ToString());
+            await Response.AppendStringAsync(item.ExtraData);
             await SendResponse();
         }
 
@@ -818,7 +818,7 @@ namespace Oblivion.Messages.Handlers
             if ((a = text) == null || a != "FFFF33" && a != "FF9CFF" && a != "9CCEFF" && a != "9CFF9C")
                 return;
             item.ExtraData = $"{text} {text2}";
-            item.UpdateState(true, true);
+            await item.UpdateState(true, true);
         }
 
         internal async Task DeletePostit()
@@ -894,12 +894,12 @@ namespace Oblivion.Messages.Handlers
                 currentRoom.GetRoomItemHandler().RemoveFurniture(Session, item.Id, false);
                 var extraData = row["extradata"].ToString();
                 var num = uint.Parse(row["item_id"].ToString());
-                queryReactor.RunFastQuery($"UPDATE items_rooms SET base_item='{num}' WHERE id='{item.Id}'");
+                await queryReactor.RunFastQueryAsync($"UPDATE items_rooms SET base_item='{num}' WHERE id='{item.Id}'");
                 queryReactor.SetNoLockQuery("UPDATE items_rooms SET extra_data = @extraData WHERE id = '" + item.Id +
                                             "';");
                 queryReactor.AddParameter("extraData", extraData);
-                queryReactor.RunQuery();
-                queryReactor.RunFastQuery($"DELETE FROM users_gifts WHERE gift_id='{item.Id}'");
+                await queryReactor.RunQueryAsync();
+                await queryReactor.RunFastQueryAsync($"DELETE FROM users_gifts WHERE gift_id='{item.Id}'");
 
                 item.BaseItem = Oblivion.GetGame().GetItemManager().GetItem(num);
 
@@ -910,18 +910,18 @@ namespace Oblivion.Messages.Handlers
                 }
                 else
                 {
-                    Response.Init(LibraryParser.OutgoingRequest("OpenGiftMessageComposer"));
-                    Response.AppendString(item2.Type.ToString());
-                    Response.AppendInteger(item2.SpriteId);
-                    Response.AppendString(item2.Name);
-                    Response.AppendInteger(item2.ItemId);
-                    Response.AppendString(item2.Type.ToString());
+                    await Response.InitAsync(LibraryParser.OutgoingRequest("OpenGiftMessageComposer"));
+                    await Response.AppendStringAsync(item2.Type.ToString());
+                    await Response.AppendIntegerAsync(item2.SpriteId);
+                    await Response.AppendStringAsync(item2.Name);
+                    await Response.AppendIntegerAsync(item2.ItemId);
+                    await Response.AppendStringAsync(item2.Type.ToString());
                     Response.AppendBool(true);
-                    Response.AppendString(extraData);
+                    await Response.AppendStringAsync(extraData);
                     await SendResponse();
                     var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("AddFloorItemMessageComposer"));
                     item.Serialize(serverMessage);
-                    serverMessage.AppendString(currentRoom.RoomData.Owner);
+                    await serverMessage.AppendStringAsync(currentRoom.RoomData.Owner);
                     await currentRoom.SendMessage(serverMessage);
                     await currentRoom.GetRoomItemHandler()
                         .SetFloorItem(Session, item, item.X, item.Y, 0, true, false, true);
@@ -931,25 +931,25 @@ namespace Oblivion.Messages.Handlers
             {
                 await currentRoom.GetRoomItemHandler().RemoveFurniture(Session, item.Id, false);
                 await queryReactor.RunFastQueryAsync("DELETE FROM users_gifts WHERE gift_id = '" + item.Id + "'");
-                Response.Init(LibraryParser.OutgoingRequest("NewInventoryObjectMessageComposer"));
-                Response.AppendInteger(1);
+                await Response.InitAsync(LibraryParser.OutgoingRequest("NewInventoryObjectMessageComposer"));
+                await Response.AppendIntegerAsync(1);
                 var i = 2;
                 if (item2.Type == 's')
                     i = item2.InteractionType == Interaction.Pet ? 3 : 1;
 
-                Response.AppendInteger(i);
+                await Response.AppendIntegerAsync(i);
                 var list = await Oblivion.GetGame()
                     .GetCatalog()
                     .DeliverItems(Session, item2, 1, (string)row["extradata"], 0, 0, string.Empty);
-                Response.AppendInteger(list.Count);
+                await Response.AppendIntegerAsync(list.Count);
                 /* TODO CHECK */
                 foreach (var current in list)
-                    Response.AppendInteger(current.VirtualId);
+                    await Response.AppendIntegerAsync(current.VirtualId);
                 await SendResponse();
                 await Session.GetHabbo().GetInventoryComponent().UpdateItems(true);
             }
 
-            Response.Init(LibraryParser.OutgoingRequest("UpdateInventoryMessageComposer"));
+            await Response.InitAsync(LibraryParser.OutgoingRequest("UpdateInventoryMessageComposer"));
             await SendResponse();
         }
 
@@ -972,19 +972,19 @@ namespace Oblivion.Messages.Handlers
 
             if (room.MoodlightData?.Presets == null)
                 return;
-            Response.Init(LibraryParser.OutgoingRequest("DimmerDataMessageComposer"));
-            Response.AppendInteger(room.MoodlightData.Presets.Count);
-            Response.AppendInteger(room.MoodlightData.CurrentPreset);
+            await Response.InitAsync(LibraryParser.OutgoingRequest("DimmerDataMessageComposer"));
+            await Response.AppendIntegerAsync(room.MoodlightData.Presets.Count);
+            await Response.AppendIntegerAsync(room.MoodlightData.CurrentPreset);
             var num = 0;
             /* TODO CHECK */
             foreach (var current2 in room.MoodlightData.Presets)
             {
                 num++;
-                Response.AppendInteger(num);
-                Response.AppendInteger(
+                await Response.AppendIntegerAsync(num);
+                await Response.AppendIntegerAsync(
                     int.Parse(Oblivion.BoolToEnum(current2.BackgroundOnly)) + 1);
-                Response.AppendString(current2.ColorCode);
-                Response.AppendInteger(current2.ColorIntensity);
+                await Response.AppendStringAsync(current2.ColorCode);
+                await Response.AppendIntegerAsync(current2.ColorIntensity);
             }
 
             await SendResponse();
@@ -1011,7 +1011,7 @@ namespace Oblivion.Messages.Handlers
             room.MoodlightData.CurrentPreset = num;
             await room.MoodlightData.UpdatePreset(num, color, intensity, bgOnly);
             item.ExtraData = room.MoodlightData.GenerateExtraData();
-            await item.UpdateState();
+            await  item.UpdateState();
         }
 
         internal async Task SwitchMoodlightStatus()
@@ -1030,7 +1030,7 @@ namespace Oblivion.Messages.Handlers
             else
                 await room.MoodlightData.Enable();
             item.ExtraData = room.MoodlightData.GenerateExtraData();
-            await item.UpdateState();
+            await  item.UpdateState();
         }
 
         internal async Task SaveRoomBg()
@@ -1054,7 +1054,7 @@ namespace Oblivion.Messages.Handlers
                 return;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.RunFastQuery(string.Concat("UPDATE items_toners SET enabled = '1', data1=", num,
+                await queryReactor.RunFastQueryAsync(string.Concat("UPDATE items_toners SET enabled = '1', data1=", num,
                     " ,data2=", num2, ",data3=", num3, " WHERE id='", item.Id, "' LIMIT 1"));
             }
 
@@ -1067,7 +1067,7 @@ namespace Oblivion.Messages.Handlers
             item.Serialize(message);
             await room.SendMessage(message);
 
-            await item.UpdateState();
+            await  item.UpdateState();
         }
 
         internal async Task InitTrade()
@@ -1122,8 +1122,8 @@ namespace Oblivion.Messages.Handlers
                 totalZ = room.GetGameMap().SqAbsoluteHeight(item.X, item.Y);
 
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("UpdateTileStackMagicHeight"));
-                message.AppendInteger(item.VirtualId);
-                message.AppendInteger(Convert.ToUInt32(totalZ * 100));
+                await message.AppendIntegerAsync(item.VirtualId);
+                await message.AppendIntegerAsync(Convert.ToUInt32(totalZ * 100));
                 await Session.SendMessage(message);
             }
             else
@@ -1136,8 +1136,8 @@ namespace Oblivion.Messages.Handlers
                     totalZ = room.RoomData.Model.SqFloorHeight[item.X][item.Y];
 
                     var message = new ServerMessage(LibraryParser.OutgoingRequest("UpdateTileStackMagicHeight"));
-                    message.AppendInteger(item.VirtualId);
-                    message.AppendInteger(Convert.ToUInt32(totalZ * 100));
+                    await message.AppendIntegerAsync(item.VirtualId);
+                    await message.AppendIntegerAsync(Convert.ToUInt32(totalZ * 100));
                     await Session.SendMessage(message);
                 }
             }
@@ -1279,7 +1279,7 @@ namespace Oblivion.Messages.Handlers
                     var queryReactor =
                     Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    queryReactor.RunFastQuery($"DELETE FROM items_rooms WHERE id='{item.Id}' LIMIT 1");
+                    await queryReactor.RunFastQueryAsync($"DELETE FROM items_rooms WHERE id='{item.Id}' LIMIT 1");
                 }
 
                 i++;
@@ -1298,14 +1298,14 @@ namespace Oblivion.Messages.Handlers
                 queryreactor2.AddParameter("timestamp", DateTime.Now.ToLongDateString());
                 queryreactor2.AddParameter("baseItem",
                     Convert.ToUInt32(Oblivion.GetDbConfig().DbData["recycler.box_id"]));
-                queryreactor2.RunFastQuery(
+                await queryreactor2.RunFastQueryAsync(
                     "INSERT INTO users_gifts (gift_id,item_id,gift_sprite,extradata) VALUES ('" + itemId + "'," +
                     randomEcotronReward.BaseId + ", " + randomEcotronReward.DisplayId + ",'')");
 
                 await Session.GetHabbo().GetInventoryComponent().UpdateItems(true);
-                Response.Init(LibraryParser.OutgoingRequest("RecyclingStateMessageComposer"));
-                Response.AppendInteger(1);
-                Response.AppendInteger(Oblivion.GetGame().GetItemManager().GetVirtualId(itemId));
+                await Response.InitAsync(LibraryParser.OutgoingRequest("RecyclingStateMessageComposer"));
+                await Response.AppendIntegerAsync(1);
+                await Response.AppendIntegerAsync(Oblivion.GetGame().GetItemManager().GetVirtualId(itemId));
                 await SendResponse();
             }
         }
@@ -1337,7 +1337,7 @@ namespace Oblivion.Messages.Handlers
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.RunFastQuery($"DELETE FROM items_rooms WHERE id='{item.Id}' LIMIT 1;");
+                await queryReactor.RunFastQueryAsync($"DELETE FROM items_rooms WHERE id='{item.Id}' LIMIT 1;");
             }
 
             if (item.GetBaseItem().Name.StartsWith("DFD_"))
@@ -1353,7 +1353,7 @@ namespace Oblivion.Messages.Handlers
 
             await room.GetRoomItemHandler().RemoveFurniture(null, item.Id, false);
             await Session.GetHabbo().GetInventoryComponent().RemoveItem(item.Id, false, 0);
-            Response.Init(LibraryParser.OutgoingRequest("UpdateInventoryMessageComposer"));
+            await Response.InitAsync(LibraryParser.OutgoingRequest("UpdateInventoryMessageComposer"));
             await SendResponse();
         }
 
@@ -1406,7 +1406,7 @@ namespace Oblivion.Messages.Handlers
                 roomUserTwo.CanWalk = false;
 
                 var lockDialogue = new ServerMessage(LibraryParser.OutgoingRequest("LoveLockDialogueMessageComposer"));
-                lockDialogue.AppendInteger(loveLock.VirtualId);
+                await lockDialogue.AppendIntegerAsync(loveLock.VirtualId);
                 lockDialogue.AppendBool(true);
 
                 loveLock.InteractingUser = roomUserOne.GetClient().GetHabbo().Id;
@@ -1612,7 +1612,7 @@ namespace Oblivion.Messages.Handlers
                     using (
                         var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        queryReactor.RunFastQuery(
+                        await queryReactor.RunFastQueryAsync(
                             $"UPDATE users_stats SET daily_pet_respect_points = daily_pet_respect_points - 1 WHERE id = {Session.GetHabbo().Id} LIMIT 1");
                     }
                 }
@@ -1629,7 +1629,7 @@ namespace Oblivion.Messages.Handlers
             {
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    queryReactor.RunFastQuery($"UPDATE pets_data SET anyone_ride=0 WHERE id={num} LIMIT 1");
+                    await queryReactor.RunFastQueryAsync($"UPDATE pets_data SET anyone_ride=0 WHERE id={num} LIMIT 1");
                 }
 
                 pet.PetData.AnyoneCanRide = 0;
@@ -1638,28 +1638,28 @@ namespace Oblivion.Messages.Handlers
             {
                 using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    queryreactor2.RunFastQuery($"UPDATE pets_data SET anyone_ride=1 WHERE id={num} LIMIT 1");
+                    await queryreactor2.RunFastQueryAsync($"UPDATE pets_data SET anyone_ride=1 WHERE id={num} LIMIT 1");
                 }
 
                 pet.PetData.AnyoneCanRide = 1;
             }
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("PetInfoMessageComposer"));
-            serverMessage.AppendInteger(pet.PetData.PetId);
-            serverMessage.AppendString(pet.PetData.Name);
-            serverMessage.AppendInteger(pet.PetData.Level);
-            serverMessage.AppendInteger(20);
-            serverMessage.AppendInteger(pet.PetData.Experience);
-            serverMessage.AppendInteger(pet.PetData.ExperienceGoal);
-            serverMessage.AppendInteger(pet.PetData.Energy);
-            serverMessage.AppendInteger(100);
-            serverMessage.AppendInteger(pet.PetData.Nutrition);
-            serverMessage.AppendInteger(150);
-            serverMessage.AppendInteger(pet.PetData.Respect);
-            serverMessage.AppendInteger(pet.PetData.OwnerId);
-            serverMessage.AppendInteger(pet.PetData.Age);
-            serverMessage.AppendString(pet.PetData.OwnerName);
-            serverMessage.AppendInteger(1);
+            await serverMessage.AppendIntegerAsync(pet.PetData.PetId);
+            await serverMessage.AppendStringAsync(pet.PetData.Name);
+            await serverMessage.AppendIntegerAsync(pet.PetData.Level);
+            await serverMessage.AppendIntegerAsync(20);
+            await serverMessage.AppendIntegerAsync(pet.PetData.Experience);
+            await serverMessage.AppendIntegerAsync(pet.PetData.ExperienceGoal);
+            await serverMessage.AppendIntegerAsync(pet.PetData.Energy);
+            await serverMessage.AppendIntegerAsync(100);
+            await serverMessage.AppendIntegerAsync(pet.PetData.Nutrition);
+            await serverMessage.AppendIntegerAsync(150);
+            await serverMessage.AppendIntegerAsync(pet.PetData.Respect);
+            await serverMessage.AppendIntegerAsync(pet.PetData.OwnerId);
+            await serverMessage.AppendIntegerAsync(pet.PetData.Age);
+            await serverMessage.AppendStringAsync(pet.PetData.OwnerName);
+            await serverMessage.AppendIntegerAsync(1);
             serverMessage.AppendBool(pet.PetData.HaveSaddle);
             serverMessage.AppendBool(
                 Oblivion.GetGame()
@@ -1668,19 +1668,19 @@ namespace Oblivion.Messages.Handlers
                     .GetRoomUserManager()
                     .GetRoomUserByVirtualId(pet.PetData.VirtualId)
                     .RidingHorse);
-            serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(pet.PetData.AnyoneCanRide);
-            serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(0);
-            serverMessage.AppendString("");
+            await serverMessage.AppendIntegerAsync(0);
+            await serverMessage.AppendIntegerAsync(pet.PetData.AnyoneCanRide);
+            await serverMessage.AppendIntegerAsync(0);
+            await serverMessage.AppendIntegerAsync(0);
+            await serverMessage.AppendIntegerAsync(0);
+            await serverMessage.AppendIntegerAsync(0);
+            await serverMessage.AppendIntegerAsync(0);
+            await serverMessage.AppendIntegerAsync(0);
+            await serverMessage.AppendStringAsync("");
             serverMessage.AppendBool(false);
-            serverMessage.AppendInteger(-1);
-            serverMessage.AppendInteger(-1);
-            serverMessage.AppendInteger(-1);
+            await serverMessage.AppendIntegerAsync(-1);
+            await serverMessage.AppendIntegerAsync(-1);
+            await serverMessage.AppendIntegerAsync(-1);
             serverMessage.AppendBool(false);
             await room.SendMessage(serverMessage);
         }
@@ -1710,7 +1710,7 @@ namespace Oblivion.Messages.Handlers
                     using (
                         var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        queryReactor.RunFastQuery(string.Concat("UPDATE pets_data SET hairdye = '", pet.PetData.HairDye,
+                        await queryReactor.RunFastQueryAsync(string.Concat("UPDATE pets_data SET hairdye = '", pet.PetData.HairDye,
                             "' WHERE id = ", pet.PetData.PetId));
                         goto IL_40C;
                     }
@@ -1744,9 +1744,9 @@ namespace Oblivion.Messages.Handlers
                     using (
                         var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        queryReactor.RunFastQuery("UPDATE pets_data SET race = '" + pet.PetData.Race + "' WHERE id = " +
-                                                  pet.PetData.PetId);
-                        queryReactor.RunFastQuery(
+                        await queryReactor.RunFastQueryAsync("UPDATE pets_data SET race = '" + pet.PetData.Race + "' WHERE id = " +
+                                                             pet.PetData.PetId);
+                        await queryReactor.RunFastQueryAsync(
                             $"DELETE FROM items_rooms WHERE id='{item.Id}' LIMIT 1");
                         goto IL_40C;
                     }
@@ -1761,9 +1761,9 @@ namespace Oblivion.Messages.Handlers
                     using (
                         var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        queryReactor.RunFastQuery("UPDATE pets_data SET pethair = '" + pet.PetData.PetHair +
-                                                  "' WHERE id = " + pet.PetData.PetId);
-                        queryReactor.RunFastQuery(
+                        await queryReactor.RunFastQueryAsync("UPDATE pets_data SET pethair = '" + pet.PetData.PetHair +
+                                                             "' WHERE id = " + pet.PetData.PetId);
+                        await queryReactor.RunFastQueryAsync(
                             $"DELETE FROM items_rooms WHERE id='{item.Id}' LIMIT 1");
                         goto IL_40C;
                     }
@@ -1775,9 +1775,9 @@ namespace Oblivion.Messages.Handlers
                     using (
                         var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        queryReactor.RunFastQuery(
+                        await queryReactor.RunFastQueryAsync(
                             $"UPDATE pets_data SET have_saddle = 1 WHERE id = {pet.PetData.PetId}");
-                        queryReactor.RunFastQuery(
+                        await queryReactor.RunFastQueryAsync(
                             $"DELETE FROM items_rooms WHERE id='{item.Id}' LIMIT 1");
                     }
 
@@ -1793,7 +1793,7 @@ namespace Oblivion.Messages.Handlers
                     pet.PetData.MoplaBreed.UpdateInDb();
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        queryReactor.RunFastQuery(
+                        await queryReactor.RunFastQueryAsync(
                             $"DELETE FROM items_rooms WHERE id='{item.Id}' LIMIT 1");
                     }
                 }
@@ -1801,42 +1801,42 @@ namespace Oblivion.Messages.Handlers
                 IL_40C:
                 room.GetRoomItemHandler().RemoveFurniture(Session, item.Id, false);
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer"));
-                serverMessage.AppendInteger(1);
+                await serverMessage.AppendIntegerAsync(1);
                 pet.Serialize(serverMessage);
                 await room.SendMessage(serverMessage);
                 if (isForHorse)
                 {
                     var serverMessage2 =
                         new ServerMessage(LibraryParser.OutgoingRequest("SerializePetMessageComposer"));
-                    serverMessage2.AppendInteger(pet.PetData.VirtualId);
-                    serverMessage2.AppendInteger(pet.PetData.PetId);
-                    serverMessage2.AppendInteger(pet.PetData.Type);
-                    serverMessage2.AppendInteger(int.Parse(pet.PetData.Race));
-                    serverMessage2.AppendString(pet.PetData.Color.ToLower());
+                    await serverMessage2.AppendIntegerAsync(pet.PetData.VirtualId);
+                    await serverMessage2.AppendIntegerAsync(pet.PetData.PetId);
+                    await serverMessage2.AppendIntegerAsync(pet.PetData.Type);
+                    await serverMessage2.AppendIntegerAsync(int.Parse(pet.PetData.Race));
+                    await serverMessage2.AppendStringAsync(pet.PetData.Color.ToLower());
                     if (pet.PetData.HaveSaddle)
                     {
-                        serverMessage2.AppendInteger(2);
-                        serverMessage2.AppendInteger(3);
-                        serverMessage2.AppendInteger(4);
-                        serverMessage2.AppendInteger(9);
-                        serverMessage2.AppendInteger(0);
-                        serverMessage2.AppendInteger(3);
-                        serverMessage2.AppendInteger(pet.PetData.PetHair);
-                        serverMessage2.AppendInteger(pet.PetData.HairDye);
-                        serverMessage2.AppendInteger(3);
-                        serverMessage2.AppendInteger(pet.PetData.PetHair);
-                        serverMessage2.AppendInteger(pet.PetData.HairDye);
+                        await serverMessage2.AppendIntegerAsync(2);
+                        await serverMessage2.AppendIntegerAsync(3);
+                        await serverMessage2.AppendIntegerAsync(4);
+                        await serverMessage2.AppendIntegerAsync(9);
+                        await serverMessage2.AppendIntegerAsync(0);
+                        await serverMessage2.AppendIntegerAsync(3);
+                        await serverMessage2.AppendIntegerAsync(pet.PetData.PetHair);
+                        await serverMessage2.AppendIntegerAsync(pet.PetData.HairDye);
+                        await serverMessage2.AppendIntegerAsync(3);
+                        await serverMessage2.AppendIntegerAsync(pet.PetData.PetHair);
+                        await serverMessage2.AppendIntegerAsync(pet.PetData.HairDye);
                     }
                     else
                     {
-                        serverMessage2.AppendInteger(1);
-                        serverMessage2.AppendInteger(2);
-                        serverMessage2.AppendInteger(2);
-                        serverMessage2.AppendInteger(pet.PetData.PetHair);
-                        serverMessage2.AppendInteger(pet.PetData.HairDye);
-                        serverMessage2.AppendInteger(3);
-                        serverMessage2.AppendInteger(pet.PetData.PetHair);
-                        serverMessage2.AppendInteger(pet.PetData.HairDye);
+                        await serverMessage2.AppendIntegerAsync(1);
+                        await serverMessage2.AppendIntegerAsync(2);
+                        await serverMessage2.AppendIntegerAsync(2);
+                        await serverMessage2.AppendIntegerAsync(pet.PetData.PetHair);
+                        await serverMessage2.AppendIntegerAsync(pet.PetData.HairDye);
+                        await serverMessage2.AppendIntegerAsync(3);
+                        await serverMessage2.AppendIntegerAsync(pet.PetData.PetHair);
+                        await serverMessage2.AppendIntegerAsync(pet.PetData.HairDye);
                     }
 
                     serverMessage2.AppendBool(pet.PetData.HaveSaddle);
@@ -1862,30 +1862,30 @@ namespace Oblivion.Messages.Handlers
                 var guidId = Guid.NewGuid();
                 ShortGuid id = guidId;
 
-                queryReactor.RunFastQuery($"UPDATE pets_data SET have_saddle = 0 WHERE id = {pet.PetData.PetId}");
-                queryReactor.RunNoLockFastQuery(
+                await queryReactor.RunFastQueryAsync($"UPDATE pets_data SET have_saddle = 0 WHERE id = {pet.PetData.PetId}");
+                await queryReactor.RunNoLockFastQueryAsync(
                     $"INSERT INTO items_rooms (id, user_id, base_item) VALUES ('{id}', {Session.GetHabbo().Id}, 4221);");
             }
 
             Session.GetHabbo().GetInventoryComponent().UpdateItems(true);
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer"));
-            serverMessage.AppendInteger(1);
+            await serverMessage.AppendIntegerAsync(1);
             pet.Serialize(serverMessage);
             await room.SendMessage(serverMessage);
             var serverMessage2 = new ServerMessage(LibraryParser.OutgoingRequest("SerializePetMessageComposer"));
-            serverMessage2.AppendInteger(pet.PetData.VirtualId);
-            serverMessage2.AppendInteger(pet.PetData.PetId);
-            serverMessage2.AppendInteger(pet.PetData.Type);
-            serverMessage2.AppendInteger(int.Parse(pet.PetData.Race));
-            serverMessage2.AppendString(pet.PetData.Color.ToLower());
-            serverMessage2.AppendInteger(1);
-            serverMessage2.AppendInteger(2);
-            serverMessage2.AppendInteger(2);
-            serverMessage2.AppendInteger(pet.PetData.PetHair);
-            serverMessage2.AppendInteger(pet.PetData.HairDye);
-            serverMessage2.AppendInteger(3);
-            serverMessage2.AppendInteger(pet.PetData.PetHair);
-            serverMessage2.AppendInteger(pet.PetData.HairDye);
+            await serverMessage2.AppendIntegerAsync(pet.PetData.VirtualId);
+            await serverMessage2.AppendIntegerAsync(pet.PetData.PetId);
+            await serverMessage2.AppendIntegerAsync(pet.PetData.Type);
+            await serverMessage2.AppendIntegerAsync(int.Parse(pet.PetData.Race));
+            await serverMessage2.AppendStringAsync(pet.PetData.Color.ToLower());
+            await serverMessage2.AppendIntegerAsync(1);
+            await serverMessage2.AppendIntegerAsync(2);
+            await serverMessage2.AppendIntegerAsync(2);
+            await serverMessage2.AppendIntegerAsync(pet.PetData.PetHair);
+            await serverMessage2.AppendIntegerAsync(pet.PetData.HairDye);
+            await serverMessage2.AppendIntegerAsync(3);
+            await serverMessage2.AppendIntegerAsync(pet.PetData.PetHair);
+            await serverMessage2.AppendIntegerAsync(pet.PetData.HairDye);
             serverMessage2.AppendBool(pet.PetData.HaveSaddle);
             serverMessage2.AppendBool(pet.RidingHorse);
             await room.SendMessage(serverMessage2);
@@ -1960,7 +1960,7 @@ namespace Oblivion.Messages.Handlers
                 {
                     queryreactor2.SetQuery("DELETE FROM items_vouchers WHERE voucher = @vou LIMIT 1");
                     queryreactor2.AddParameter("vou", query);
-                    queryreactor2.RunQuery();
+                    await queryreactor2.RunQueryAsync();
                 }
 
                 Session.GetHabbo().Credits += (int)row["value"];
@@ -2023,11 +2023,11 @@ namespace Oblivion.Messages.Handlers
 
                     await room.SendMessage(room.GetRoomItemHandler()
                         .UpdateUserOnRoller(pet, new Point(x, y), 0u, room.GetGameMap().SqAbsoluteHeight(x, y)));
-                    room.GetRoomUserManager().UpdateUserStatus(pet, false);
+                    await room.GetRoomUserManager().UpdateUserStatus(pet, false);
                     await room.SendMessage(room.GetRoomItemHandler().UpdateUserOnRoller(roomUserByHabbo,
                         new Point(x, y), 0u,
                         room.GetGameMap().SqAbsoluteHeight(x, y) + 1.0));
-                    room.GetRoomUserManager().UpdateUserStatus(roomUserByHabbo, false);
+                    await room.GetRoomUserManager().UpdateUserStatus(roomUserByHabbo, false);
                     pet.ClearMovement();
                     roomUserByHabbo.RidingHorse = true;
                     pet.RidingHorse = true;
@@ -2070,22 +2070,22 @@ namespace Oblivion.Messages.Handlers
                         .ProgressUserAchievement(clientByUserId, "ACH_HorseRent", 1);
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SerializePetMessageComposer"));
-            serverMessage.AppendInteger(pet.PetData.VirtualId);
-            serverMessage.AppendInteger(pet.PetData.PetId);
-            serverMessage.AppendInteger(pet.PetData.Type);
-            serverMessage.AppendInteger(int.Parse(pet.PetData.Race));
-            serverMessage.AppendString(pet.PetData.Color.ToLower());
-            serverMessage.AppendInteger(2);
-            serverMessage.AppendInteger(3);
-            serverMessage.AppendInteger(4);
-            serverMessage.AppendInteger(9);
-            serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(3);
-            serverMessage.AppendInteger(pet.PetData.PetHair);
-            serverMessage.AppendInteger(pet.PetData.HairDye);
-            serverMessage.AppendInteger(3);
-            serverMessage.AppendInteger(pet.PetData.PetHair);
-            serverMessage.AppendInteger(pet.PetData.HairDye);
+            await serverMessage.AppendIntegerAsync(pet.PetData.VirtualId);
+            await serverMessage.AppendIntegerAsync(pet.PetData.PetId);
+            await serverMessage.AppendIntegerAsync(pet.PetData.Type);
+            await serverMessage.AppendIntegerAsync(int.Parse(pet.PetData.Race));
+            await serverMessage.AppendStringAsync(pet.PetData.Color.ToLower());
+            await serverMessage.AppendIntegerAsync(2);
+            await serverMessage.AppendIntegerAsync(3);
+            await serverMessage.AppendIntegerAsync(4);
+            await serverMessage.AppendIntegerAsync(9);
+            await serverMessage.AppendIntegerAsync(0);
+            await serverMessage.AppendIntegerAsync(3);
+            await serverMessage.AppendIntegerAsync(pet.PetData.PetHair);
+            await serverMessage.AppendIntegerAsync(pet.PetData.HairDye);
+            await serverMessage.AppendIntegerAsync(3);
+            await serverMessage.AppendIntegerAsync(pet.PetData.PetHair);
+            await serverMessage.AppendIntegerAsync(pet.PetData.HairDye);
             serverMessage.AppendBool(pet.PetData.HaveSaddle);
             serverMessage.AppendBool(pet.RidingHorse);
             await room.SendMessage(serverMessage);
@@ -2122,14 +2122,14 @@ namespace Oblivion.Messages.Handlers
             if (item.GetBaseItem().InteractionType != Interaction.YoutubeTv)
                 return;
             item.ExtraData = video;
-            item.UpdateState();
+            await  item.UpdateState();
             var serverMessage = new ServerMessage();
-            serverMessage.Init(LibraryParser.OutgoingRequest("YouTubeLoadVideoMessageComposer"));
-            serverMessage.AppendInteger(num);
-            serverMessage.AppendString(video);
-            serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(0);
+            await serverMessage.InitAsync(LibraryParser.OutgoingRequest("YouTubeLoadVideoMessageComposer"));
+            await serverMessage.AppendIntegerAsync(num);
+            await serverMessage.AppendStringAsync(video);
+            await serverMessage.AppendIntegerAsync(0);
+            await serverMessage.AppendIntegerAsync(0);
+            await serverMessage.AppendIntegerAsync(0);
             Response = serverMessage;
             await SendResponse();
         }
@@ -2145,19 +2145,19 @@ namespace Oblivion.Messages.Handlers
                 .GetItem(Oblivion.GetGame().GetItemManager().GetRealId(itemId));
             if (item == null) return;
             var serverMessage = new ServerMessage();
-            serverMessage.Init(LibraryParser.OutgoingRequest("YouTubeLoadVideoMessageComposer"));
-            serverMessage.AppendInteger(itemId);
-            serverMessage.AppendString(item.ExtraData);
-            serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(0); // duration
-            serverMessage.AppendInteger(0);
+            await serverMessage.InitAsync(LibraryParser.OutgoingRequest("YouTubeLoadVideoMessageComposer"));
+            await serverMessage.AppendIntegerAsync(itemId);
+            await serverMessage.AppendStringAsync(item.ExtraData);
+            await serverMessage.AppendIntegerAsync(0);
+            await serverMessage.AppendIntegerAsync(0); // duration
+            await serverMessage.AppendIntegerAsync(0);
             Response = serverMessage;
             await SendResponse();
             var serverMessage2 = new ServerMessage();
-            serverMessage2.Init(LibraryParser.OutgoingRequest("YouTubeLoadPlaylistsMessageComposer"));
-            serverMessage2.AppendInteger(itemId);
-            serverMessage2.AppendInteger(0);
-            serverMessage2.AppendString(item.ExtraData);
+            await serverMessage2.InitAsync(LibraryParser.OutgoingRequest("YouTubeLoadPlaylistsMessageComposer"));
+            await serverMessage2.AppendIntegerAsync(itemId);
+            await serverMessage2.AppendIntegerAsync(0);
+            await serverMessage2.AppendStringAsync(item.ExtraData);
             Response = serverMessage2;
             await SendResponse();
         }
@@ -2190,7 +2190,7 @@ namespace Oblivion.Messages.Handlers
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.RunFastQuery(string.Concat("UPDATE bots SET room_id = '", room.RoomId, "', x = '", x,
+                await queryReactor.RunFastQueryAsync(string.Concat("UPDATE bots SET room_id = '", room.RoomId, "', x = '", x,
                     "', y = '", y, "' WHERE id = '", num, "'"));
             }
 
@@ -2218,7 +2218,7 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().GetInventoryComponent().AddBot(bot.BotData);
             using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryreactor2.RunFastQuery("UPDATE bots SET room_id = NULL WHERE id = " + id);
+                await queryreactor2.RunFastQueryAsync("UPDATE bots SET room_id = NULL WHERE id = " + id);
             }
 
             await room.GetRoomUserManager().RemoveBot(bot.VirtualId, false);
@@ -2269,7 +2269,7 @@ namespace Oblivion.Messages.Handlers
 
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("AddFloorItemMessageComposer"));
                 newItem.Serialize(message);
-                message.AppendString(Session.GetHabbo().UserName);
+                await message.AppendStringAsync(Session.GetHabbo().UserName);
                 actualRoom.SendMessage(message);
                 actualRoom.GetGameMap().AddItemToMap(newItem);
             }
@@ -2310,7 +2310,7 @@ namespace Oblivion.Messages.Handlers
                 actualRoom.GetRoomItemHandler().WallItems.TryAdd(newItem.Id, newItem);
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("AddWallItemMessageComposer"));
                 newItem.Serialize(message);
-                message.AppendString(Session.GetHabbo().UserName);
+                await message.AppendStringAsync(Session.GetHabbo().UserName);
                 Session.SendMessage(message);
                 actualRoom.GetGameMap().AddItemToMap(newItem);
             }
@@ -2322,7 +2322,7 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().BuildersItemsUsed = 0;
             var message =
                 new ServerMessage(LibraryParser.OutgoingRequest("BuildersClubUpdateFurniCountMessageComposer"));
-            message.AppendInteger(Session.GetHabbo().BuildersItemsUsed);
+            await message.AppendIntegerAsync(Session.GetHabbo().BuildersItemsUsed);
             Session.SendMessage(message);
         }
 
@@ -2382,7 +2382,7 @@ namespace Oblivion.Messages.Handlers
             }
 
             var loock = new ServerMessage(LibraryParser.OutgoingRequest("LoveLockDialogueSetLockedMessageComposer"));
-            loock.AppendInteger(item.VirtualId);
+            await loock.AppendIntegerAsync(item.VirtualId);
 
             if (userIdOne == Session.GetHabbo().Id)
             {
@@ -2405,13 +2405,13 @@ namespace Oblivion.Messages.Handlers
             item.InteractingUser = 0;
             item.InteractingUser2 = 0;
 
-            item.UpdateState(true, false);
+            await item.UpdateState(true, false);
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetNoLockQuery("UPDATE items_rooms SET extra_data = @extraData WHERE id = '" + item.Id +
                                             "';");
                 queryReactor.AddParameter("extraData", item.ExtraData);
-                queryReactor.RunQuery();
+                await queryReactor.RunQueryAsync();
             }
 
             var message = new ServerMessage(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer"));
@@ -2419,7 +2419,7 @@ namespace Oblivion.Messages.Handlers
             await room.SendMessage(message);
 
             loock = new ServerMessage(LibraryParser.OutgoingRequest("LoveLockDialogueCloseMessageComposer"));
-            loock.AppendInteger(item.VirtualId);
+            await loock.AppendIntegerAsync(item.VirtualId);
             userOne.GetClient().SendMessage(loock);
             userTwo.GetClient().SendMessage(loock);
             userOne.CanWalk = true;
@@ -2450,7 +2450,7 @@ namespace Oblivion.Messages.Handlers
                         newFigures[1] = "hd-99999-99999.ch-630-62.lg-695-62";
 
                     item.ExtraData = string.Join(",", newFigures);
-                    //item.UpdateState();
+                    //await  item.UpdateState();
                     //    return;
                 }
                     break;
@@ -2464,7 +2464,7 @@ namespace Oblivion.Messages.Handlers
                     newFigures[1] = look;
 
                     item.ExtraData = string.Join(",", newFigures);
-                    //  item.UpdateState();
+                    //  await  item.UpdateState();
                 }
                     break;
             }
@@ -2474,7 +2474,7 @@ namespace Oblivion.Messages.Handlers
                 queryReactor.SetNoLockQuery("UPDATE items_rooms SET extra_data = @extraData WHERE id = '" + item.Id +
                                             "';");
                 queryReactor.AddParameter("extraData", item.ExtraData);
-                queryReactor.RunQuery();
+                await queryReactor.RunQueryAsync();
             }
 
             var message = new ServerMessage(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer"));
@@ -2498,13 +2498,13 @@ namespace Oblivion.Messages.Handlers
             array[2] = text;
             item.ExtraData = string.Concat(array[0], Convert.ToChar(5), array[1], Convert.ToChar(5), array[2]);
             item.Serialize(Response);
-            item.UpdateState(true, true);
+            await item.UpdateState(true, true);
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetNoLockQuery("UPDATE items_rooms SET extra_data = @extraData WHERE id = '" + item.Id +
                                             "';");
                 queryReactor.AddParameter("extraData", item.ExtraData);
-                queryReactor.RunQuery();
+                await queryReactor.RunQueryAsync();
             }
         }
 
@@ -2537,13 +2537,13 @@ namespace Oblivion.Messages.Handlers
             array[1] = array[1].TrimEnd('.');
             item.ExtraData = string.Concat(array[0], Convert.ToChar(5), array[1], Convert.ToChar(5), array[2]);
             item.UpdateNeeded = true;
-            item.UpdateState(true, true);
+            await item.UpdateState(true, true);
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetNoLockQuery("UPDATE items_rooms SET extra_data = @extraData WHERE id = '" + item.Id +
                                             "';");
                 queryReactor.AddParameter("extraData", item.ExtraData);
-                queryReactor.RunQuery();
+                await queryReactor.RunQueryAsync();
             }
         }
 
@@ -2576,7 +2576,7 @@ namespace Oblivion.Messages.Handlers
             room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                queryReactor.RunFastQuery($"UPDATE items_rooms SET room_id = NULL WHERE id='{item.Id}' LIMIT 1");
+                await queryReactor.RunFastQueryAsync($"UPDATE items_rooms SET room_id = NULL WHERE id='{item.Id}' LIMIT 1");
             }
         }
 

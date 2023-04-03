@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Oblivion.Collections;
@@ -47,8 +48,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         {
             try
             {
-                await Task.Yield();
-                CyclePyramids();
+                await CyclePyramids();
                 CycleRandomTeleports();
             }
             catch (Exception e)
@@ -126,7 +126,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
                     item.ExtraData = "1";
                     item.UpdateNeeded = true;
                     await current.UpdateState();
-                    await item.UpdateState();
+                    await  item.UpdateState();
 
                     break;
                 }
@@ -148,34 +148,37 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         /// <summary>
         ///     Cycles the pyramids.
         /// </summary>
-        private void CyclePyramids()
+        private async Task CyclePyramids()
         {
-            /* TODO CHECK */ foreach (var item in _banzaiPyramids.Select(pyramid => pyramid.Value).Where(current => current != null))
+            /* TODO CHECK */
+            foreach (var pyramid in _banzaiPyramids)
             {
-                if (item.InteractionCountHelper == 0 && item.ExtraData == "1")
+                var item = pyramid.Value;
+                if (item != null)
                 {
-                    _room.GetGameMap().RemoveFromMap(item, false);
-                    item.InteractionCountHelper = 1;
-                }
-                if (string.IsNullOrEmpty(item.ExtraData))
-                    item.ExtraData = "0";
+                    if (item.InteractionCountHelper == 0 && item.ExtraData == "1")
+                    {
+                        await _room.GetGameMap().RemoveFromMap(item, false);
+                        item.InteractionCountHelper = 1;
+                    }
 
-                var randomNumber = Oblivion.GetRandomNumber(0, 30);
-                if (randomNumber <= 26)
-                    continue;
-                if (item.ExtraData == "0")
-                {
-                    item.ExtraData = "1";
-                    item.UpdateState();
-                    _room.GetGameMap().RemoveFromMap(item, false);
-                }
-                else
-                {
-                    if (!_room.GetGameMap().ItemCanBePlacedHere(item.X, item.Y))
-                        continue;
-                    item.ExtraData = "0";
-                    item.UpdateState();
-                    _room.GetGameMap().AddItemToMap(item, false);
+                    if (string.IsNullOrEmpty(item.ExtraData)) item.ExtraData = "0";
+
+                    var randomNumber = Oblivion.GetRandomNumber(0, 30);
+                    if (randomNumber <= 26) continue;
+                    if (item.ExtraData == "0")
+                    {
+                        item.ExtraData = "1";
+                        await item.UpdateState();
+                        await _room.GetGameMap().RemoveFromMap(item, false);
+                    }
+                    else
+                    {
+                        if (!_room.GetGameMap().ItemCanBePlacedHere(item.X, item.Y)) continue;
+                        item.ExtraData = "0";
+                        await item.UpdateState();
+                        _room.GetGameMap().AddItemToMap(item, false);
+                    }
                 }
             }
         }

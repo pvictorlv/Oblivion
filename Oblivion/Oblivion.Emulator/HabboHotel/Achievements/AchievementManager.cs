@@ -51,19 +51,19 @@ namespace Oblivion.HabboHotel.Achievements
 
             AchievementDataCached =
                 new ServerMessage(LibraryParser.OutgoingRequest("SendAchievementsRequirementsMessageComposer"));
-            AchievementDataCached.AppendInteger(Achievements.Count);
+            await AchievementDataCached.AppendIntegerAsync(Achievements.Count);
 
             /* TODO CHECK */
             foreach (var ach in Achievements.Values)
             {
-                AchievementDataCached.AppendString(ach.GroupName.Replace("ACH_", string.Empty));
-                AchievementDataCached.AppendInteger(ach.Levels.Count);
+                await AchievementDataCached.AppendStringAsync(ach.GroupName.Replace("ACH_", string.Empty));
+                await AchievementDataCached.AppendIntegerAsync(ach.Levels.Count);
 
                 var i = 1;
                 foreach (var level in ach.Levels.Values)
                 {
-                    AchievementDataCached.AppendInteger(i);
-                    AchievementDataCached.AppendInteger(level.Requirement);
+                    await AchievementDataCached.AppendIntegerAsync(i);
+                    await AchievementDataCached.AppendIntegerAsync(level.Requirement);
                     i++;
                 }
             }

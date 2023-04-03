@@ -10,7 +10,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorGenericSwitch : FurniInteractorModel
     {
-        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             var num = item.GetBaseItem().Modes - 1;
 
@@ -33,7 +33,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
 
             item.ExtraData = num3.ToString();
-            item.UpdateState();
+            await  item.UpdateState();
             if (item.GetRoom().GotWireds())
                 item.GetRoom()
                     .GetWiredHandler()
@@ -44,7 +44,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             
         }
 
-        public override void OnWiredTrigger(RoomItem item)
+        public override async Task OnWiredTrigger(RoomItem item)
         {
             var num = item.GetBaseItem().Modes - 1;
 
@@ -67,7 +67,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
 
             item.ExtraData = num3.ToString();
-            item.UpdateState();
+            await  item.UpdateState();
 
             if (!item.GetBaseItem().StackMultipler)
                 return;
@@ -77,7 +77,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             /* TODO CHECK */
             foreach (var current in room.GetGameMap().GetRoomUsers(new Point(item.X, item.Y)))
             {
-                room.GetRoomUserManager().UpdateUserStatus(current, true);
+                await room.GetRoomUserManager().UpdateUserStatus(current, true);
             }
         }
     }

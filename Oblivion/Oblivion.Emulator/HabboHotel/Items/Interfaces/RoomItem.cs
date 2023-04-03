@@ -367,7 +367,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         ///     Gets the coordinate.
         /// </summary>
         /// <value>The coordinate.</value>
-        internal Point Coordinate => new Point(X, Y);
+        internal Point Coordinate => new(X, Y);
 
         /// <summary>
         ///     Gets the get coords.
@@ -983,7 +983,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                                 new ServerMessage(
                                                     LibraryParser.OutgoingRequest("RoomForwardMessageComposer")))
                                             {
-                                                roomFwd.AppendInteger(aHopper);
+                                                await roomFwd.AppendIntegerAsync(aHopper);
                                                 await roomUser4.GetClient().SendMessageAsync(roomFwd);
                                             }
 
@@ -1018,7 +1018,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             {
                                 flag2 = true;
                                 roomUserByHabbo.UnlockWalking();
-                                    await await roomUserByHabbo.MoveTo(SquareInFront);
+                                    await roomUserByHabbo.MoveTo(SquareInFront);
                             }
 
                             InteractingUser2 = 0u;
@@ -1084,7 +1084,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                                 user.SetPos(item.X, item.Y, item.Z);
                                                 user.SetRot(item.Rot, false);
                                                 item.ExtraData = "2";
-                                                await item.UpdateState(false, true);
+                                                await  item.UpdateState(false, true);
                                                 item.InteractingUser2 = InteractingUser;
                                                 _mRoom.GetGameMap().GameMap[X, Y] = 1;
                                             }
@@ -1345,32 +1345,32 @@ namespace Oblivion.HabboHotel.Items.Interfaces
 
                             if (text.EndsWith(".")) text = text.TrimEnd('.');
                             clientByUserId.GetHabbo().Look = text;
-                            clientByUserId.GetMessageHandler()
+                            await clientByUserId.GetMessageHandler()
                                 .GetResponse()
-                                .Init(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
-                            clientByUserId.GetMessageHandler().GetResponse().AppendInteger(-1);
-                            clientByUserId.GetMessageHandler()
+                                .InitAsync(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
+                            await clientByUserId.GetMessageHandler().GetResponse().AppendIntegerAsync(-1);
+                            await clientByUserId.GetMessageHandler()
                                 .GetResponse()
-                                .AppendString(clientByUserId.GetHabbo().Look);
-                            clientByUserId.GetMessageHandler()
+                                .AppendStringAsync(clientByUserId.GetHabbo().Look);
+                            await clientByUserId.GetMessageHandler()
                                 .GetResponse()
-                                .AppendString(clientByUserId.GetHabbo().Gender.ToLower());
-                            clientByUserId.GetMessageHandler()
+                                .AppendStringAsync(clientByUserId.GetHabbo().Gender.ToLower());
+                            await clientByUserId.GetMessageHandler()
                                 .GetResponse()
-                                .AppendString(clientByUserId.GetHabbo().Motto);
-                            clientByUserId.GetMessageHandler()
+                                .AppendStringAsync(clientByUserId.GetHabbo().Motto);
+                            await clientByUserId.GetMessageHandler()
                                 .GetResponse()
-                                .AppendInteger(clientByUserId.GetHabbo().AchievementPoints);
+                                .AppendIntegerAsync(clientByUserId.GetHabbo().AchievementPoints);
                             await clientByUserId.GetMessageHandler().SendResponse();
 
                             using (var serverMessage = new ServerMessage())
                             {
-                                serverMessage.Init(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
-                                serverMessage.AppendInteger(InteractingUser2);
-                                serverMessage.AppendString(clientByUserId.GetHabbo().Look);
-                                serverMessage.AppendString(clientByUserId.GetHabbo().Gender.ToLower());
-                                serverMessage.AppendString(clientByUserId.GetHabbo().Motto);
-                                serverMessage.AppendInteger(clientByUserId.GetHabbo().AchievementPoints);
+                                await serverMessage.InitAsync(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
+                                await serverMessage.AppendIntegerAsync(InteractingUser2);
+                                await serverMessage.AppendStringAsync(clientByUserId.GetHabbo().Look);
+                                await serverMessage.AppendStringAsync(clientByUserId.GetHabbo().Gender.ToLower());
+                                await serverMessage.AppendStringAsync(clientByUserId.GetHabbo().Motto);
+                                await serverMessage.AppendIntegerAsync(clientByUserId.GetHabbo().AchievementPoints);
                                 await GetRoom().SendMessageAsync(serverMessage);
                             }
 
@@ -1507,47 +1507,47 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             {
                 serverMessage =
                     new ServerMessage(LibraryParser.OutgoingRequest("UpdateFloorItemExtraDataMessageComposer"));
-                serverMessage.AppendString(VirtualId.ToString());
+                await serverMessage.AppendStringAsync(VirtualId.ToString());
                 switch (GetBaseItem().InteractionType)
                 {
                     case Interaction.Mannequin:
-                        serverMessage.AppendInteger(1);
-                        serverMessage.AppendInteger(3);
+                        await serverMessage.AppendIntegerAsync(1);
+                        await serverMessage.AppendIntegerAsync(3);
                         if (ExtraData.Contains(Convert.ToChar(5).ToString()))
                         {
                             var array = ExtraData.Split(Convert.ToChar(5));
-                            serverMessage.AppendString("GENDER");
-                            serverMessage.AppendString(array[0]);
-                            serverMessage.AppendString("FIGURE");
-                            serverMessage.AppendString(array[1]);
-                            serverMessage.AppendString("OUTFIT_NAME");
-                            serverMessage.AppendString(array[2]);
+                            await serverMessage.AppendStringAsync("GENDER");
+                            await serverMessage.AppendStringAsync(array[0]);
+                            await serverMessage.AppendStringAsync("FIGURE");
+                            await serverMessage.AppendStringAsync(array[1]);
+                            await serverMessage.AppendStringAsync("OUTFIT_NAME");
+                            await serverMessage.AppendStringAsync(array[2]);
                         }
                         else
                         {
-                            serverMessage.AppendString("GENDER");
-                            serverMessage.AppendString("");
-                            serverMessage.AppendString("FIGURE");
-                            serverMessage.AppendString("");
-                            serverMessage.AppendString("OUTFIT_NAME");
-                            serverMessage.AppendString("");
+                            await serverMessage.AppendStringAsync("GENDER");
+                            await serverMessage.AppendStringAsync("");
+                            await serverMessage.AppendStringAsync("FIGURE");
+                            await serverMessage.AppendStringAsync("");
+                            await serverMessage.AppendStringAsync("OUTFIT_NAME");
+                            await serverMessage.AppendStringAsync("");
                         }
 
                         break;
 
                     case Interaction.Pinata:
-                        serverMessage.AppendInteger(7);
+                        await serverMessage.AppendIntegerAsync(7);
                         if (ExtraData.Length <= 0)
                         {
-                            serverMessage.AppendString("6");
-                            serverMessage.AppendInteger(0);
-                            serverMessage.AppendInteger(100);
+                            await serverMessage.AppendStringAsync("6");
+                            await serverMessage.AppendIntegerAsync(0);
+                            await serverMessage.AppendIntegerAsync(100);
                         }
                         else
                         {
-                            serverMessage.AppendString((int.Parse(ExtraData) == 100) ? "8" : "6");
-                            serverMessage.AppendInteger(int.Parse(ExtraData));
-                            serverMessage.AppendInteger(100);
+                            await serverMessage.AppendStringAsync((int.Parse(ExtraData) == 100) ? "8" : "6");
+                            await serverMessage.AppendIntegerAsync(int.Parse(ExtraData));
+                            await serverMessage.AppendIntegerAsync(100);
                         }
 
                         break;
@@ -1563,15 +1563,15 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                         break;
 
                     case Interaction.YoutubeTv:
-                        serverMessage.AppendInteger(1);
-                        serverMessage.AppendInteger(1);
-                        serverMessage.AppendString("THUMBNAIL_URL");
-                        serverMessage.AppendString(ExtraSettings.WebSocketAddr + s);
+                        await serverMessage.AppendIntegerAsync(1);
+                        await serverMessage.AppendIntegerAsync(1);
+                        await serverMessage.AppendStringAsync("THUMBNAIL_URL");
+                        await serverMessage.AppendStringAsync(ExtraSettings.WebSocketAddr + s);
                         break;
 
                     default:
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendString(s);
+                        await serverMessage.AppendIntegerAsync(0);
+                        await serverMessage.AppendStringAsync(s);
                         break;
                 }
             }
@@ -1909,8 +1909,8 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         {
             if (!fromWired && GetRoom().GotWireds())
             {
-                GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerWalkOnFurni, user, this);
-                GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedStuff, this);
+                await GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerWalkOnFurni, user, this);
+                await GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedStuff, this);
             }
 
             user.LastItem = Id;
@@ -1925,7 +1925,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             Interactor.OnUserWalkOff(user.GetClient(), this, user);
 
             if (GetRoom().GotWireds())
-                GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerWalkOffFurni, user, this);
+                await GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerWalkOffFurni, user, this);
         }
     }
 }
