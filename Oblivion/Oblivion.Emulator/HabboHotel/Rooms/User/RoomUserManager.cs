@@ -372,7 +372,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="user">The session.</param>
         /// <param name="notifyClient">if set to <c>true</c> [notify client].</param>
         /// <param name="notifyKick">if set to <c>true</c> [notify kick].</param>
-        internal void RemoveUserFromRoom(RoomUser user, bool notifyClient, bool notifyKick)
+        internal async Task RemoveUserFromRoom(RoomUser user, bool notifyClient, bool notifyKick)
         {
             try
             {
@@ -394,13 +394,13 @@ namespace Oblivion.HabboHotel.Rooms.User
                         .GetResponse()
                         .Init(LibraryParser.OutgoingRequest("RoomErrorMessageComposer"));
                     client.GetMessageHandler().GetResponse().AppendInteger(4008);
-                    client.GetMessageHandler().SendResponse();
+                    await client.GetMessageHandler().SendResponse();
 
                     client.GetMessageHandler()
                         .GetResponse()
                         .Init(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer"));
                     client.GetMessageHandler().GetResponse().AppendShort(2);
-                    client.GetMessageHandler().SendResponse();
+                    await client.GetMessageHandler().SendResponse();
                 }
                 else if (notifyClient)
                 {
@@ -413,7 +413,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             .GetResponse()
                             .Init(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer"));
                         client.GetMessageHandler().GetResponse().AppendShort(2);
-                        client.GetMessageHandler().SendResponse();
+                        await client.GetMessageHandler().SendResponse();
                     }
                 }
 

@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.Catalogs;
 using Oblivion.HabboHotel.Catalogs.Composers;
@@ -46,7 +47,7 @@ namespace Oblivion.Messages.Handlers
                 message.AppendBool(current.Has2Color);
             }
 
-            SendResponse();
+            await SendResponse();
         }
 
         internal void GoRoom()
@@ -72,7 +73,7 @@ namespace Oblivion.Messages.Handlers
             GetResponse().Init(LibraryParser.OutgoingRequest("FavouriteRoomsUpdateMessageComposer"));
             GetResponse().AppendInteger(roomId);
             GetResponse().AppendBool(true);
-            SendResponse();
+            await SendResponse();
 
             Session.GetHabbo().Data.FavouritedRooms.Add(roomId);
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -92,7 +93,7 @@ namespace Oblivion.Messages.Handlers
             GetResponse().Init(LibraryParser.OutgoingRequest("FavouriteRoomsUpdateMessageComposer"));
             GetResponse().AppendInteger(roomId);
             GetResponse().AppendBool(false);
-            SendResponse();
+            await SendResponse();
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
@@ -134,7 +135,7 @@ namespace Oblivion.Messages.Handlers
             }
 
             GetResponse().EndArray();
-            SendResponse();
+            await SendResponse();
 
             var hotelView = Oblivion.GetGame().GetHotelView();
             if (hotelView.FurniRewardName != null)
@@ -246,18 +247,18 @@ namespace Oblivion.Messages.Handlers
                 }
 
             Response.EndArray();
-            SendResponse();
+            await SendResponse();
             using (var msg = RoomFloorAndWallComposer(CurrentLoadingRoom))
             {
                 Session.SendMessage(msg);
             }
 
-            SendResponse();
+            await SendResponse();
 
             Response.Init(LibraryParser.OutgoingRequest("RoomOwnershipMessageComposer"));
             Response.AppendInteger(CurrentLoadingRoom.RoomId);
             Response.AppendBool(CurrentLoadingRoom.CheckRights(Session, true));
-            SendResponse();
+            await SendResponse();
 
 
             /* TODO CHECK */
@@ -269,7 +270,7 @@ namespace Oblivion.Messages.Handlers
                 Response.AppendInteger(CurrentLoadingRoom.RoomId);
                 Response.AppendInteger(habbo.Id);
                 Response.AppendString(habbo.UserName);
-                SendResponse();
+                await SendResponse();
             }
 
             var serverMessage = CurrentLoadingRoom.GetRoomUserManager().SerializeStatusUpdates(true);
@@ -292,7 +293,7 @@ namespace Oblivion.Messages.Handlers
                             Response.Init(LibraryParser.OutgoingRequest("DanceStatusMessageComposer"));
                             Response.AppendInteger(current4.VirtualId);
                             Response.AppendInteger(current4.BotData.DanceId);
-                            SendResponse();
+                            await SendResponse();
                         }
                     }
                     else if (current4.IsDancing)
@@ -300,7 +301,7 @@ namespace Oblivion.Messages.Handlers
                         Response.Init(LibraryParser.OutgoingRequest("DanceStatusMessageComposer"));
                         Response.AppendInteger(current4.VirtualId);
                         Response.AppendInteger(current4.DanceId);
-                        SendResponse();
+                        await SendResponse();
                     }
 
                     if (current4.IsAsleep)
@@ -316,7 +317,7 @@ namespace Oblivion.Messages.Handlers
                         Response.Init(LibraryParser.OutgoingRequest("ApplyHanditemMessageComposer"));
                         Response.AppendInteger(current4.VirtualId);
                         Response.AppendInteger(current4.CarryTimer);
-                        SendResponse();
+                        await SendResponse();
                     }
 
                     if (current4.IsBot) continue;
@@ -331,7 +332,7 @@ namespace Oblivion.Messages.Handlers
                                 Response.AppendInteger(current4.VirtualId);
                                 Response.AppendInteger(current4.CurrentEffect);
                                 Response.AppendInteger(0);
-                                SendResponse();
+                                await SendResponse();
                             }
 
                             var serverMessage2 =
@@ -415,10 +416,10 @@ namespace Oblivion.Messages.Handlers
                     Response.Init(LibraryParser.OutgoingRequest("RoomEnterErrorMessageComposer"));
 
                     Response.AppendInteger(1);
-                    SendResponse();
+                    await SendResponse();
 
                     Response.Init(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer"));
-                    SendResponse();
+                    await SendResponse();
 
                     ClearRoomLoading();
                     return;
@@ -446,7 +447,7 @@ namespace Oblivion.Messages.Handlers
                         serverMessage2.AppendInteger(4);
                         Session.SendMessage(serverMessage2);
                         Response.Init(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer"));
-                        SendResponse();
+                        await SendResponse();
                         return;
                     }
 
@@ -489,13 +490,13 @@ namespace Oblivion.Messages.Handlers
                             .GetResponse()
                             .Init(LibraryParser.OutgoingRequest("RoomErrorMessageComposer"));
                         Session.GetMessageHandler().GetResponse().AppendInteger(-100002);
-                        Session.GetMessageHandler().SendResponse();
+                        await Session.GetMessageHandler().SendResponse();
 
                         Session.GetMessageHandler()
                             .GetResponse()
                             .Init(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer"));
                         Session.GetMessageHandler().GetResponse();
-                        Session.GetMessageHandler().SendResponse();
+                        await Session.GetMessageHandler().SendResponse();
                         return;
                     }
                 }
@@ -543,7 +544,7 @@ namespace Oblivion.Messages.Handlers
             Response.Init(LibraryParser.OutgoingRequest("InitialRoomInfoMessageComposer"));
             Response.AppendString(currentLoadingRoom.RoomData.ModelName);
             Response.AppendInteger(currentLoadingRoom.RoomId);
-            SendResponse();
+            await SendResponse();
 
             Response.Init(LibraryParser.OutgoingRequest("RoomGroupMessageComposer"));
             Response.AppendInteger(CurrentLoadingRoom.LoadedGroups.Count);
@@ -554,12 +555,12 @@ namespace Oblivion.Messages.Handlers
                 Response.AppendString(guild1.Value);
             }
 
-            SendResponse();
+            await SendResponse();
 
             if (Session.GetHabbo().SpectatorMode)
             {
                 Response.Init(LibraryParser.OutgoingRequest("SpectatorModeMessageComposer"));
-                SendResponse();
+                await SendResponse();
             }
 
             if (currentLoadingRoom.RoomData.WallPaper != "0.0")
@@ -567,7 +568,7 @@ namespace Oblivion.Messages.Handlers
                 Response.Init(LibraryParser.OutgoingRequest("RoomSpacesMessageComposer"));
                 Response.AppendString("wallpaper");
                 Response.AppendString(currentLoadingRoom.RoomData.WallPaper);
-                SendResponse();
+                await SendResponse();
             }
 
             if (currentLoadingRoom.RoomData.Floor != "0.0")
@@ -575,13 +576,13 @@ namespace Oblivion.Messages.Handlers
                 Response.Init(LibraryParser.OutgoingRequest("RoomSpacesMessageComposer"));
                 Response.AppendString("floor");
                 Response.AppendString(currentLoadingRoom.RoomData.Floor);
-                SendResponse();
+                await SendResponse();
             }
 
             Response.Init(LibraryParser.OutgoingRequest("RoomSpacesMessageComposer"));
             Response.AppendString("landscape");
             Response.AppendString(currentLoadingRoom.RoomData.LandScape);
-            SendResponse();
+            await SendResponse();
 
 
             if (Session?.GetHabbo()?.RatedRooms != null)
@@ -590,7 +591,7 @@ namespace Oblivion.Messages.Handlers
                 Response.AppendInteger(currentLoadingRoom.RoomData.Score);
                 Response.AppendBool(!Session.GetHabbo().RatedRooms.Contains(currentLoadingRoom.RoomId) &&
                                     !currentLoadingRoom.CheckRights(Session, true));
-                SendResponse();
+                await SendResponse();
             }
 
             
@@ -637,7 +638,7 @@ namespace Oblivion.Messages.Handlers
             Response.Init(LibraryParser.OutgoingRequest("CanCreateRoomMessageComposer"));
             Response.AppendInteger(Session.GetHabbo().Data.Rooms.Count >= 75 ? 1 : 0);
             Response.AppendInteger(75);
-            SendResponse();
+            await SendResponse();
         }
 
         internal void CreateRoom()
@@ -673,7 +674,7 @@ namespace Oblivion.Messages.Handlers
             Response.Init(LibraryParser.OutgoingRequest("OnCreateRoomInfoMessageComposer"));
             Response.AppendInteger(data.Id);
             Response.AppendString(data.Name);
-            SendResponse();
+            await SendResponse();
         }
 
         internal void GetRoomEditData()
@@ -713,7 +714,7 @@ namespace Oblivion.Messages.Handlers
             GetResponse().AppendInteger(room.RoomData.WhoCanMute);
             GetResponse().AppendInteger(room.RoomData.WhoCanKick);
             GetResponse().AppendInteger(room.RoomData.WhoCanBan);
-            SendResponse();
+            await SendResponse();
         }
 
         internal void RoomSettingsOkComposer(uint roomId)
@@ -722,7 +723,7 @@ namespace Oblivion.Messages.Handlers
                 return;
             GetResponse().Init(LibraryParser.OutgoingRequest("RoomSettingsSavedMessageComposer"));
             GetResponse().AppendInteger(roomId);
-            SendResponse();
+            await SendResponse();
         }
 
         internal void RoomUpdatedOkComposer(uint roomId)
@@ -731,7 +732,7 @@ namespace Oblivion.Messages.Handlers
                 return;
             GetResponse().Init(LibraryParser.OutgoingRequest("RoomUpdateMessageComposer"));
             GetResponse().AppendInteger(roomId);
-            SendResponse();
+            await SendResponse();
         }
 
         internal static ServerMessage RoomFloorAndWallComposer(Room room)
@@ -801,7 +802,7 @@ namespace Oblivion.Messages.Handlers
 
             Response.EndArray();
 
-            SendResponse();
+            await SendResponse();
         }
 
         internal void SaveRoomData()
@@ -943,7 +944,7 @@ namespace Oblivion.Messages.Handlers
                 Response.AppendString(habboForId.Look);
             }
 
-            SendResponse();
+            await SendResponse();
         }
 
         internal void UnbanUser()
@@ -960,7 +961,7 @@ namespace Oblivion.Messages.Handlers
             Response.Init(LibraryParser.OutgoingRequest("RoomUnbanUserMessageComposer"));
             Response.AppendInteger(num2);
             Response.AppendInteger(num);
-            SendResponse();
+            await SendResponse();
         }
 
         internal void GiveRights()
@@ -1003,7 +1004,7 @@ namespace Oblivion.Messages.Handlers
                 Response.AppendInteger(room.RoomId);
                 Response.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Id);
                 Response.AppendString(roomUserByHabbo.GetClient().GetHabbo().UserName);
-                SendResponse();
+                await SendResponse();
                 roomUserByHabbo.UpdateNeeded = true;
             }
 
@@ -1042,7 +1043,7 @@ namespace Oblivion.Messages.Handlers
                     Response.Init(LibraryParser.OutgoingRequest("RemoveRightsMessageComposer"));
                     Response.AppendInteger(room.RoomId);
                     Response.AppendInteger(num2);
-                    SendResponse();
+                    await SendResponse();
                 }
 
                 UsersWithRights();
@@ -1068,7 +1069,7 @@ namespace Oblivion.Messages.Handlers
                 Response.Init(LibraryParser.OutgoingRequest("RemoveRightsMessageComposer"));
                 Response.AppendInteger(room.RoomId);
                 Response.AppendInteger(num);
-                SendResponse();
+                await SendResponse();
                 if (roomUserByHabbo == null || roomUserByHabbo.IsBot)
                     continue;
                 Response.Init(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
@@ -1155,7 +1156,7 @@ namespace Oblivion.Messages.Handlers
                 Response.Init(LibraryParser.OutgoingRequest("HomeRoomMessageComposer"));
                 Response.AppendInteger(roomId);
                 Response.AppendInteger(0);
-                SendResponse();
+                await SendResponse();
             }
         }
 
@@ -1349,7 +1350,7 @@ namespace Oblivion.Messages.Handlers
             Response.Init(LibraryParser.OutgoingRequest("UpdateIgnoreStatusMessageComposer"));
             Response.AppendInteger(1);
             Response.AppendString(text);
-            SendResponse();
+            await SendResponse();
             Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_SelfModIgnoreSeen", 1);
         }
 
@@ -1367,7 +1368,7 @@ namespace Oblivion.Messages.Handlers
             Response.Init(LibraryParser.OutgoingRequest("UpdateIgnoreStatusMessageComposer"));
             Response.AppendInteger(3);
             Response.AppendString(text);
-            SendResponse();
+            await SendResponse();
         }
 
         internal void CanCreateRoomEvent()
@@ -1442,7 +1443,7 @@ namespace Oblivion.Messages.Handlers
                 Response.Init(LibraryParser.OutgoingRequest("RoomRatingMessageComposer"));
                 Response.AppendInteger(room.RoomData.Score);
                 Response.AppendBool(room.CheckRights(Session, true));
-                SendResponse();
+                await SendResponse();
             }
         }
 
@@ -1468,7 +1469,7 @@ namespace Oblivion.Messages.Handlers
                 Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.MassDance);
         }
 
-        internal void AnswerDoorbell()
+        internal async Task AnswerDoorbell()
         {
             var room = Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CheckRights(Session))
@@ -1490,7 +1491,7 @@ namespace Oblivion.Messages.Handlers
                 clientByUserName.GetMessageHandler()
                     .Response.Init(LibraryParser.OutgoingRequest("DoorbellOpenedMessageComposer"));
                 clientByUserName.GetMessageHandler().Response.AppendString("");
-                clientByUserName.GetMessageHandler().SendResponse();
+                await clientByUserName.GetMessageHandler().SendResponse();
                 return;
             }
 
@@ -1499,11 +1500,11 @@ namespace Oblivion.Messages.Handlers
                 clientByUserName.GetMessageHandler()
                     .Response.Init(LibraryParser.OutgoingRequest("DoorbellNoOneMessageComposer"));
                 clientByUserName.GetMessageHandler().Response.AppendString("");
-                clientByUserName.GetMessageHandler().SendResponse();
+                await clientByUserName.GetMessageHandler().SendResponse();
             }
         }
 
-        internal void AlterRoomFilter()
+        internal async Task AlterRoomFilter()
         {
             var num = Request.GetUInteger();
             var flag = Request.GetBool();
@@ -1530,7 +1531,7 @@ namespace Oblivion.Messages.Handlers
                 return;
             if (text.Contains("+"))
             {
-                Session.SendNotif(Oblivion.GetLanguage().GetVar("character_error_plus"));
+                await Session.SendNotifyAsync(Oblivion.GetLanguage().GetVar("character_error_plus"));
                 return;
             }
 
@@ -1559,7 +1560,7 @@ namespace Oblivion.Messages.Handlers
             foreach (var current in room.RoomData.WordFilter)
                 serverMessage.AppendString(current);
             Response = serverMessage;
-            SendResponse();
+            await SendResponse();
 
             Oblivion.GetGame()
                 .GetAchievementManager()
@@ -1717,7 +1718,7 @@ namespace Oblivion.Messages.Handlers
             }
 
             Response = serverMessage;
-            SendResponse();
+            await SendResponse();
         }
 
         internal void SaveHeightmap()
@@ -1884,7 +1885,7 @@ namespace Oblivion.Messages.Handlers
             var pet = CatalogManager.CreatePet(Session.GetHabbo().Id, "Monsterplant", 16, "0", "0", rarity);
             Response.Init(LibraryParser.OutgoingRequest("SendMonsterplantIdMessageComposer"));
             Response.AppendInteger(pet.PetId);
-            SendResponse();
+            await SendResponse();
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 var roomId = (room.RoomId <= 0) ? "NULL" : $"'{room.RoomId}'";
@@ -2013,7 +2014,7 @@ namespace Oblivion.Messages.Handlers
                 serverMessage.AppendInteger(num2);
                 serverMessage.AppendString(text);
                 Response = serverMessage;
-                SendResponse();
+                await SendResponse();
                 return;
             }
 
@@ -2026,7 +2027,7 @@ namespace Oblivion.Messages.Handlers
             serverMessage2.AppendString(bot.BotData.Name);
 
             Response = serverMessage2;
-            SendResponse();
+            await SendResponse();
         }
 
         internal void ManageBotActions()
@@ -2160,7 +2161,7 @@ namespace Oblivion.Messages.Handlers
             // TODO!
             Response.Init(LibraryParser.OutgoingRequest("SendRoomCampaignFurnitureMessageComposer"));
             Response.AppendInteger(0);
-            SendResponse();
+            await SendResponse();
         }
 
         internal void MuteAll()
@@ -2181,7 +2182,7 @@ namespace Oblivion.Messages.Handlers
             GetResponse().Init(LibraryParser.OutgoingRequest("HomeRoomMessageComposer"));
             GetResponse().AppendInteger(Session.GetHabbo().HomeRoom);
             GetResponse().AppendInteger(0);
-            SendResponse();
+            await SendResponse();
         }
 
         internal void RemoveFavouriteRoom()
@@ -2193,7 +2194,7 @@ namespace Oblivion.Messages.Handlers
             Response.Init(LibraryParser.OutgoingRequest("FavouriteRoomsUpdateMessageComposer"));
             Response.AppendInteger(num);
             Response.AppendBool(false);
-            SendResponse();
+            await SendResponse();
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
@@ -2233,7 +2234,7 @@ namespace Oblivion.Messages.Handlers
         {
             /*this.Response.Init(StaticClientMessageHandler.OutgoingRequest("297"));//Not in release
             this.Response.AppendInt32(0);
-            this.SendResponse();*/
+            this.await SendResponse();*/
         }
 
         internal void GetRoomData2()
@@ -2297,7 +2298,7 @@ namespace Oblivion.Messages.Handlers
             foreach (var roomItem in array)
                 roomItem.Serialize(Response);
 
-            SendResponse();
+            await SendResponse();
             Response.Init(LibraryParser.OutgoingRequest("RoomWallItemsMessageComposer"));
 
             Response.AppendInteger(1);
@@ -2308,7 +2309,7 @@ namespace Oblivion.Messages.Handlers
             foreach (var roomItem2 in array2)
                 roomItem2.Serialize(Response);
 
-            SendResponse();
+            await SendResponse();
 
             CurrentLoadingRoom.GetRoomUserManager().AddUserToRoom(Session, Session.GetHabbo().SpectatorMode);
             Session.GetHabbo().SpectatorMode = false;
@@ -2344,7 +2345,7 @@ namespace Oblivion.Messages.Handlers
                 poll.Serialize(Response);
             }
 
-            SendResponse();
+            await SendResponse();
         }
 
         internal void WidgetContainers()
@@ -2397,7 +2398,7 @@ namespace Oblivion.Messages.Handlers
             }
 
             GetResponse().EndArray();
-            SendResponse();
+            await SendResponse();
 
             if (hotelView.HotelViewPromosIndexers.Count <= 0)
                 return;
@@ -2435,7 +2436,7 @@ namespace Oblivion.Messages.Handlers
             }
 
             Response = serverMessage;
-            SendResponse();
+            await SendResponse();
         }
 
         internal void RefusePoll()
@@ -2686,7 +2687,7 @@ namespace Oblivion.Messages.Handlers
                 }
             }
 
-            SendResponse();
+            await SendResponse();
         }
 
         public void GetFloorPlanDoor()
@@ -2701,7 +2702,7 @@ namespace Oblivion.Messages.Handlers
             Response.AppendInteger(room.GetGameMap().Model.DoorY);
             Response.AppendInteger(room.GetGameMap().Model.DoorOrientation);
 
-            SendResponse();
+            await SendResponse();
         }
 
 

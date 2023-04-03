@@ -1330,9 +1330,9 @@ namespace Oblivion.Messages.Parsers
         /// Places the item.
         /// </summary>
         /// <param name="handler">The handler.</param>
-        internal static void PlaceItem(GameClientMessageHandler handler)
+        internal static async void PlaceItem(GameClientMessageHandler handler)
         {
-            handler.PlaceItem();
+            await handler.PlaceItem();
         }
 
         /// <summary>

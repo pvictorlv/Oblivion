@@ -138,14 +138,14 @@ namespace Oblivion.HabboHotel.Groups
                 queryReactor.AddParameter("desc", desc);
                 queryReactor.AddParameter("badge", badge);
 
-                var id = (uint) queryReactor.InsertQuery();
+                var id = (uint)queryReactor.InsertQuery();
 
                 queryReactor.RunFastQuery($"UPDATE rooms_data SET group_id='{id}' WHERE id='{roomId}' LIMIT 1");
 
                 var memberGroup = new GroupMember(user.Id, user.UserName, user.Look, id, 2,
                     Oblivion.GetUnixTimeStamp(), true);
                 Dictionary<uint, GroupMember> dictionary =
-                    new Dictionary<uint, GroupMember> {{session.GetHabbo().Id, memberGroup}};
+                    new Dictionary<uint, GroupMember> { { session.GetHabbo().Id, memberGroup } };
 
                 group = new Guild(id, name, desc, roomId, badge, Oblivion.GetUnixTimeStamp(), user.Id, colour1, colour2,
                     dictionary, emptyDictionary, emptyDictionary, 0, 1, false, name, desc, 0, 0.0, 0, string.Empty, 0,
@@ -217,12 +217,12 @@ namespace Oblivion.HabboHotel.Groups
                 /* TODO CHECK */
                 foreach (DataRow dataRow in groupMembersTable.Rows)
                 {
-                    userId = (uint) dataRow["user_id"];
+                    userId = (uint)dataRow["user_id"];
 
                     var rank = int.Parse(dataRow["rank"].ToString());
 
                     var membGroup = new GroupMember(userId, dataRow["username"].ToString(), dataRow["look"].ToString(),
-                        groupId, rank, (int) dataRow["date_join"], true);
+                        groupId, rank, (int)dataRow["date_join"], true);
 
                     members[userId] = membGroup;
 
@@ -235,7 +235,7 @@ namespace Oblivion.HabboHotel.Groups
                 /* TODO CHECK */
                 foreach (DataRow dataRow in groupRequestsTable.Rows)
                 {
-                    userId = (uint) dataRow["user_id"];
+                    userId = (uint)dataRow["user_id"];
 
                     var membGroup = new GroupMember(userId, dataRow["username"].ToString(), dataRow["look"].ToString(),
                         groupId, 0, Oblivion.GetUnixTimeStamp(), true);
@@ -243,17 +243,20 @@ namespace Oblivion.HabboHotel.Groups
                     requests[userId] = membGroup;
                 }
 
-                var group = new Guild((uint) row[0], row[1].ToString(), row[2].ToString(), (uint) row[6],
-                    row[3].ToString(), (int) row[5], (uint) row[4], (int) row[8], (int) row[9], members, requests,
-                    admins, Convert.ToUInt16(row[7]), Convert.ToUInt16(row[10]), row["has_forum"].ToString() == "1",
+                var group = new Guild((uint)row["id"], row["name"].ToString(), row["desc"].ToString(),
+                    (uint)row["room_id"],
+                    row["badge"].ToString(), (int)row["created"], (uint)row["owner_id"], (int)row["colour1"],
+                    (int)row["colour2"], members, requests,
+                    admins, Convert.ToUInt16(row["state"]), Convert.ToUInt16(row["admindeco"]),
+                    row["has_forum"].ToString() == "1",
                     row["forum_name"].ToString(), row["forum_description"].ToString(),
                     uint.Parse(row["forum_messages_count"].ToString()), double.Parse(row["forum_score"].ToString()),
                     uint.Parse(row["forum_lastposter_id"].ToString()), row["forum_lastposter_name"].ToString(),
                     int.Parse(row["forum_lastposter_timestamp"].ToString()),
-                    (int) row["who_can_read"], (int) row["who_can_post"], (int) row["who_can_thread"],
-                    (int) row["who_can_mod"], Oblivion.EnumToBool(row["has_chat"].ToString()));
+                    (int)row["who_can_read"], (int)row["who_can_post"], (int)row["who_can_thread"],
+                    (int)row["who_can_mod"], Oblivion.EnumToBool(row["has_chat"].ToString()));
 
-                Groups[(uint) row[0]] = group;
+                Groups[(uint)row["id"]] = group;
 
                 return group;
             }
@@ -278,7 +281,7 @@ namespace Oblivion.HabboHotel.Groups
                 /* TODO CHECK */
                 foreach (DataRow dataRow in table.Rows)
                     list.Add(new GroupMember(userId, dataRow["username"].ToString(), dataRow["look"].ToString(),
-                        (uint) dataRow["group_id"], Convert.ToInt16(dataRow["rank"]), (int) dataRow["date_join"],
+                        (uint)dataRow["group_id"], Convert.ToInt16(dataRow["rank"]), (int)dataRow["date_join"],
                         false));
             }
 
@@ -579,15 +582,15 @@ namespace Oblivion.HabboHotel.Groups
             if (colour1)
             {
                 if (SymbolColours.Contains(index))
-                    return ((GroupSymbolColours) SymbolColours[index]).Colour;
+                    return ((GroupSymbolColours)SymbolColours[index]).Colour;
 
                 return BackGroundColours.Contains(index)
-                    ? ((GroupBackGroundColours) BackGroundColours[index]).Colour
+                    ? ((GroupBackGroundColours)BackGroundColours[index]).Colour
                     : "4f8a00";
             }
 
             return BackGroundColours.Contains(index)
-                ? ((GroupBackGroundColours) BackGroundColours[index]).Colour
+                ? ((GroupBackGroundColours)BackGroundColours[index]).Colour
                 : "4f8a00";
         }
 
@@ -627,7 +630,7 @@ namespace Oblivion.HabboHotel.Groups
         /// <returns>List&lt;List&lt;GroupUser&gt;&gt;.</returns>
         private static List<List<GroupMember>> Split(IEnumerable<GroupMember> source)
         {
-            return (from x in source.Select((x, i) => new {Index = i, Value = x})
+            return (from x in source.Select((x, i) => new { Index = i, Value = x })
                 group x by x.Index / 14
                 into x
                 select (from v in x

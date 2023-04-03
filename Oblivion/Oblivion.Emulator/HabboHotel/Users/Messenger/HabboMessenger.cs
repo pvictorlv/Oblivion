@@ -361,7 +361,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             GetClient().GetMessageHandler().GetResponse().AppendInteger(1);
             GetClient().GetMessageHandler().GetResponse().AppendInteger(-1);
             GetClient().GetMessageHandler().GetResponse().AppendInteger(friend);
-            GetClient().GetMessageHandler().SendResponse();
+            GetClient().GetMessageHandler().await SendResponse();
         }
 
         /// <summary>
@@ -380,7 +380,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             GetClient().GetMessageHandler().GetResponse().AppendInteger(1);
             GetClient().GetMessageHandler().GetResponse().AppendInteger(-1);
             GetClient().GetMessageHandler().GetResponse().AppendInteger(-groupId);
-            GetClient().GetMessageHandler().SendResponse();
+            GetClient().GetMessageHandler().await SendResponse();
         }
 
 
@@ -445,7 +445,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
                     .Init(LibraryParser.OutgoingRequest("NotAcceptingRequestsMessageComposer"));
                 client.GetMessageHandler().GetResponse().AppendInteger(39);
                 client.GetMessageHandler().GetResponse().AppendInteger(3);
-                client.GetMessageHandler().SendResponse();
+                await client.GetMessageHandler().SendResponse();
                 return false;
             }
 

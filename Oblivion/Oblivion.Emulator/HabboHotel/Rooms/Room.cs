@@ -462,9 +462,7 @@ namespace Oblivion.HabboHotel.Rooms
                         {
                             Logging.LogCriticalException(e.ToString());
                         }
-
-                        var end = Oblivion.GetUnixTimeStamp() - start;
-                        await Task.Delay(225 - end);
+                        
                     }
                 }, TaskCreationOptions.LongRunning).Start();
             }
@@ -985,6 +983,18 @@ namespace Oblivion.HabboHotel.Rooms
                         if (user?.GetClient()?.GetConnection() != null && !user.IsBot)
                         {
                             user.GetClient().SendMessage(message);
+                        }
+                    }
+        }
+        internal async Task SendMessageAsync(ServerMessage message)
+        {
+            if (message != null)
+                if (_roomUserManager?.UserList != null)
+                    foreach (var user in _roomUserManager.UserList.Values)
+                    {
+                        if (user?.GetClient()?.GetConnection() != null && !user.IsBot)
+                        {
+                            await user.GetClient().SendMessageAsync(message);
                         }
                     }
         }

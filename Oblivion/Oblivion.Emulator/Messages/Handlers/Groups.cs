@@ -59,7 +59,7 @@ namespace Oblivion.Messages.Handlers
             Response.AppendInteger(0);
             Response.AppendInteger(0);
             Response.AppendInteger(0);
-            SendResponse();
+            await SendResponse();
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace Oblivion.Messages.Handlers
                 Response.AppendString(current5.Colour);
             }
 
-            SendResponse();
+            await SendResponse();
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace Oblivion.Messages.Handlers
             Response.Init(LibraryParser.OutgoingRequest("GroupRoomMessageComposer"));
             Response.AppendInteger(roomid);
             Response.AppendInteger(theGroup.Id);
-            SendResponse();
+            await SendResponse();
             roomData.Group = theGroup;
             roomData.GroupId = theGroup.Id;
             roomData.SerializeRoomData(Response, Session, true);
@@ -235,7 +235,7 @@ namespace Oblivion.Messages.Handlers
             Oblivion.GetGame().GetGroupManager()
                 .SerializeGroupMembers(Response, group, reqType, Session, searchVal, page);
 
-            SendResponse();
+            await SendResponse();
         }
 
         /// <summary>
@@ -259,7 +259,7 @@ namespace Oblivion.Messages.Handlers
             Response.Init(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
             Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 1u, Session);
 
-            SendResponse();
+            await SendResponse();
 
             Room room = Oblivion.GetGame().GetRoomManager().GetRoom(group.RoomId);
 
@@ -301,7 +301,7 @@ namespace Oblivion.Messages.Handlers
 
             Response.Init(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
             Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 0u, Session);
-            SendResponse();
+            await SendResponse();
 
             Room room = Oblivion.GetGame().GetRoomManager().GetRoom(group.RoomId);
             RoomUser roomUserByHabbo = room?.GetRoomUserManager()
@@ -358,7 +358,7 @@ namespace Oblivion.Messages.Handlers
             Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
             Response.Init(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
             Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 0u, Session);
-            SendResponse();
+            await SendResponse();
 
             using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.RunFastQuery(
@@ -387,7 +387,7 @@ namespace Oblivion.Messages.Handlers
 
             Response.Init(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
             Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 2u, Session);
-            SendResponse();
+            await SendResponse();
 
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(group.RoomId);
 
@@ -531,7 +531,7 @@ namespace Oblivion.Messages.Handlers
             Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
             Response.Init(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
             Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 0u, Session);
-            SendResponse();
+            await SendResponse();
 
             using (IQueryAdapter queryreactor3 = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryreactor3.RunFastQuery(string.Concat("DELETE FROM groups_members WHERE group_id=", num,
@@ -1163,7 +1163,7 @@ namespace Oblivion.Messages.Handlers
             Response.AppendString(theGroup.Badge);
             Response.AppendInteger(theGroup.Members.Count);
 
-            SendResponse();
+            await SendResponse();
         }
 
         /// <summary>
@@ -1369,7 +1369,7 @@ namespace Oblivion.Messages.Handlers
                 Response.Init(LibraryParser.OutgoingRequest("GroupAreYouSureMessageComposer"));
                 Response.AppendInteger(userId);
                 Response.AppendInteger(0);
-                SendResponse();
+                await SendResponse();
             }
         }
 
@@ -1427,7 +1427,7 @@ namespace Oblivion.Messages.Handlers
                     Response.AppendString(byeUser.Look);
                     Response.AppendString(string.Empty);
 
-                    SendResponse();
+                    await SendResponse();
                 }
 
                 if (byeUser != null && byeUser.FavouriteGroup == guild)
@@ -1446,13 +1446,13 @@ namespace Oblivion.Messages.Handlers
                     if (room != null)
                         room.SendMessage(Response);
                     else
-                        SendResponse();
+                        await SendResponse();
                 }
 
                 Response.Init(LibraryParser.OutgoingRequest("GroupRequestReloadMessageComposer"));
                 Response.AppendInteger(guild);
 
-                SendResponse();
+                await SendResponse();
             }
         }
 

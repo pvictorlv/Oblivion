@@ -123,7 +123,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     .GetResponse()
                     .Init(LibraryParser.OutgoingRequest("UpdateInventoryMessageComposer"));
 
-                GetClient().GetMessageHandler().SendResponse();
+                GetClient().GetMessageHandler().await SendResponse();
             });
         }
 
@@ -330,7 +330,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             _mClient.GetMessageHandler().GetResponse()
                 .Init(LibraryParser.OutgoingRequest("UpdateInventoryMessageComposer"));
 
-            _mClient.GetMessageHandler().SendResponse();
+            await _mClient.GetMessageHandler().SendResponse();
         }
 
         /// <summary>
@@ -487,7 +487,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             GetClient().GetMessageHandler().GetResponse().AppendInteger(item.VirtualId);
 
-            GetClient().GetMessageHandler().SendResponse();
+            GetClient().GetMessageHandler().await SendResponse();
             if (_mAddedItems.Contains(id))
                 _mAddedItems.Remove(id);
 
@@ -539,15 +539,18 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 serverMessage.AppendInteger(0);
                 serverMessage.AppendInteger(i >= 4500 ? 4500 : i);
 
-                foreach (var inventoryItem in _items.Values.Where(userItem => userItem != null)
-                             .TakeWhile(_ => totalSent != 4500))
+                foreach (var inventoryItem in _items.Values)
                 {
-                    totalSent++;
+                    if (inventoryItem != null)
+                    {
+                        if (totalSent == 4500) break;
+                        totalSent++;
 
-                    if (inventoryItem.IsWallItem)
-                        inventoryItem.SerializeWall(serverMessage, true);
-                    else
-                        inventoryItem.SerializeFloor(serverMessage, true);
+                        if (inventoryItem.IsWallItem)
+                            inventoryItem.SerializeWall(serverMessage, true);
+                        else
+                            inventoryItem.SerializeFloor(serverMessage, true);
+                    }
                 }
 
                 _mClient.SendMessage(serverMessage);

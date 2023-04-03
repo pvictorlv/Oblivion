@@ -411,7 +411,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 }
 
                 SendMessage(GetHabbo().GetAvatarEffectsInventoryComponent().GetPacket());
-                //                    queuedServerMessage.SendResponse();
+                //                    queuedServerMessage.await SendResponse();
 
                 if (GetHabbo().GetMessenger() != null)
                     GetHabbo().GetMessenger().OnStatusChanged(true);
@@ -499,6 +499,17 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         internal void SendNotif(string message, string title = "Aviso", string picture = "")
         {
             SendMessage(GetBytesNotif(message, title, picture));
+        }
+        
+        /// <summary>
+        ///     Sends the notif async.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="title">The title.</param>
+        /// <param name="picture">The picture.</param>
+        internal async Task SendNotifyAsync(string message, string title = "Aviso", string picture = "")
+        {
+            await SendMessageAsync(GetBytesNotif(message, title, picture));
         }
 
         internal ServerMessage GetBubble(string message, string title, string picture = "", bool isBubble = false)
@@ -603,10 +614,10 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             if (message == null)
                 return;
 
-            if (_connection == null)
+            if (_connection == null || !_connection.Channel.Active)
                 return;
 
-            _connection.Channel.WriteAndFlushAsync(message).Wait();
+            _connection.Send(message).Wait();
         }
 
         internal async Task SendMessageAsync(ServerMessage message)
@@ -614,12 +625,12 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             if (message == null)
                 return;
 
-            if (_connection == null)
+            if (_connection == null || !_connection.Channel.Active)
                 return;
 
             // var bytes = message.GetReversedBytes();
 
-            await _connection.Channel.WriteAndFlushAsync(message);
+            await _connection.Send(message);
         }
 
         /// <summary>
@@ -640,9 +651,9 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         ///     Sends the message.
         /// </summary>
         /// <param name="type">The type.</param>
-        internal async Task SendMessage(StaticMessage type)
+        internal Task SendMessage(StaticMessage type)
         {
-            _connection?.Send(StaticMessagesManager.Get(type)); ;
+            return _connection?.Send(StaticMessagesManager.Get(type)); ;
         }
     }
 }

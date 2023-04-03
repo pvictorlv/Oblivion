@@ -67,7 +67,7 @@ namespace Oblivion.Messages
         /// <summary>
         /// Sends the response.
         /// </summary>
-        internal void SendResponse()
+        internal void await SendResponse()
         {
             foreach (var packet in _packets)
                 _userConnection?.SendData(packet);

@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Rooms.User;
@@ -10,7 +11,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Interfaces
 
         void OnRemove(GameClient session, RoomItem item);
 
-        void OnTrigger(GameClient session, RoomItem item, int request, bool hasRights);
+        Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights);
 
         void OnUserWalk(GameClient session, RoomItem item, RoomUser user);
         void OnUserWalkOff(GameClient session, RoomItem item, RoomUser user);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Models;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -11,7 +12,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorMannequin : FurniInteractorModel
     {
-        public override void OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             if (!item.ExtraData.Contains(Convert.ToChar(5).ToString()))
                 return;
@@ -62,7 +63,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             session.GetMessageHandler().GetResponse().AppendString(session.GetHabbo().Gender.ToLower());
             session.GetMessageHandler().GetResponse().AppendString(session.GetHabbo().Motto);
             session.GetMessageHandler().GetResponse().AppendInteger(session.GetHabbo().AchievementPoints);
-            session.GetMessageHandler().SendResponse();
+            await session.GetMessageHandler().SendResponse();
 
             var roomUserByHabbo = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
 

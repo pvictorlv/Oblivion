@@ -22,7 +22,7 @@ namespace Oblivion.Messages.Handlers
             if (!Oblivion.GetGame().GetModerationTool().UsersHasPendingTicket(Session.GetHabbo().Id))
             {
                 Response.AppendInteger(0); // It's okay, the user may send an new issue
-                SendResponse();
+                await SendResponse();
                 return;
             }
 
@@ -36,7 +36,7 @@ namespace Oblivion.Messages.Handlers
             Response.AppendString(ticket.TicketId.ToString());
             Response.AppendString(ticket.Timestamp.ToString(CultureInfo.InvariantCulture));
             Response.AppendString(ticket.Message);
-            SendResponse();
+            await SendResponse();
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace Oblivion.Messages.Handlers
                 Response.AppendString(ticket.TicketId.ToString());
                 Response.AppendString(ticket.Timestamp.ToString(CultureInfo.InvariantCulture));
                 Response.AppendString(ticket.Message);
-                SendResponse();
+                await SendResponse();
 
                 return;
             }
@@ -81,7 +81,7 @@ namespace Oblivion.Messages.Handlers
                 Response.Init(LibraryParser.OutgoingRequest("TicketUserAlert"));
 
                 Response.AppendInteger(2);
-                SendResponse();
+                await SendResponse();
 
                 return;
             }
@@ -89,7 +89,7 @@ namespace Oblivion.Messages.Handlers
 //            Response.AppendInteger(0); // It's okay, the user may send an new issue
             Oblivion.GetGame().GetModerationTool().SendNewTicket(Session, category, 7, reportedUser, message, chats);
 
-//            SendResponse();
+//            await SendResponse();
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace Oblivion.Messages.Handlers
 
             Response.Init(LibraryParser.OutgoingRequest("OpenHelpToolMessageComposer"));
             Response.AppendInteger(0);
-            SendResponse();
+            await SendResponse();
         }
 
         /// <summary>

@@ -144,7 +144,7 @@ namespace Oblivion.Messages.Handlers
             Response.AppendInteger(2);
             Response.AppendInteger(40);
             Response.AppendInteger(99);
-            SendResponse();
+            await SendResponse();
         }
 
 

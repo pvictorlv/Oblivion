@@ -113,7 +113,7 @@ Request.GetString()
             Response.Init(LibraryParser.OutgoingRequest("ReloadEcotronMessageComposer"));
             Response.AppendInteger(1);
             Response.AppendInteger(0);
-            SendResponse();
+            await SendResponse();
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ Request.GetString()
             foreach (var i in GiftWrapper.OldGiftWrappers)
                 Response.AppendInteger(i);
 
-            SendResponse();
+            await SendResponse();
         }
 
         /// <summary>
@@ -183,7 +183,7 @@ Request.GetString()
                 }
             }
 
-            SendResponse();
+            await SendResponse();
         }
 
         /// <summary>
@@ -251,7 +251,7 @@ Request.GetString()
             Response.Init(LibraryParser.OutgoingRequest("CheckPetNameMessageComposer"));
             Response.AppendInteger(i);
             Response.AppendString(petName);
-            SendResponse();
+            await SendResponse();
         }
 
         /// <summary>
@@ -319,7 +319,7 @@ Request.GetString()
 
             responseList.Clear();
 
-            SendResponse();
+            await SendResponse();
         }
     }
 }

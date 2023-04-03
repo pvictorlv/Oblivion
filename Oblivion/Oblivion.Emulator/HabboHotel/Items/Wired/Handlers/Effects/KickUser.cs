@@ -90,7 +90,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     roomUser.GetClient().SendNotif(OtherString);
 
 
-                Room.GetRoomUserManager().RemoveUserFromRoom(roomUser, true, false);
+                await Room.GetRoomUserManager().RemoveUserFromRoom(roomUser, true, false);
 
             }
 

@@ -43,7 +43,7 @@ namespace Oblivion.Messages.Handlers
              GetResponse().AppendInteger(roomData.Id);
              GetResponse().AppendString(roomData.CcTs);
              GetResponse().AppendInteger(roomData.Id);
-             SendResponse();*/
+             await SendResponse();*/
         }
 
         /// <summary>
@@ -260,7 +260,7 @@ namespace Oblivion.Messages.Handlers
             GetResponse().Init(LibraryParser.OutgoingRequest("1491"));
             GetResponse().AppendInteger(0);
             roomData.Serialize(GetResponse());
-            SendResponse();
+            await SendResponse();
         }
 
        

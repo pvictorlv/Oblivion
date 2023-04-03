@@ -31,7 +31,7 @@ namespace Oblivion.Messages.Handlers
 
             Response.Init(LibraryParser.OutgoingRequest("BullyReportSentMessageComposer"));
             Response.AppendInteger(0);
-            SendResponse();
+            await SendResponse();
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Oblivion.Messages.Handlers
         {
             Response.Init(LibraryParser.OutgoingRequest("OpenBullyReportMessageComposer"));
             Response.AppendInteger(0);
-            SendResponse();
+            await SendResponse();
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace Oblivion.Messages.Handlers
             GetResponse().AppendString(Request.GetString());
             GetResponse().AppendInteger(4);
             GetResponse().AppendInteger(4);
-            SendResponse();
+            await SendResponse();
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Oblivion.Messages.Handlers
             Response.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Data.Tags.Count);
             foreach (var current in roomUserByHabbo.GetClient().GetHabbo().Data.Tags)
                 Response.AppendString(current);
-            SendResponse();
+            await SendResponse();
 
             if (Session != roomUserByHabbo.GetClient())
                 return;
@@ -158,7 +158,7 @@ namespace Oblivion.Messages.Handlers
 
                 msg.EndArray();
                 Session.SendMessage(msg);
-//                SendResponse();
+//                await SendResponse();
             }
         }
 
@@ -290,10 +290,10 @@ namespace Oblivion.Messages.Handlers
             GetResponse().AppendString(Session.GetHabbo().Gender.ToLower());
             GetResponse().AppendString(Session.GetHabbo().Motto);
             GetResponse().AppendInteger(Session.GetHabbo().AchievementPoints);
-            SendResponse();
+            await SendResponse();
             GetResponse().Init(LibraryParser.OutgoingRequest("AchievementPointsMessageComposer"));
             GetResponse().AppendInteger(Session.GetHabbo().AchievementPoints);
-            SendResponse();
+            await SendResponse();
         }
 
         /// <summary>
@@ -448,7 +448,7 @@ namespace Oblivion.Messages.Handlers
             Response.Init(LibraryParser.OutgoingRequest("SendCampaignBadgeMessageComposer"));
             Response.AppendString(text);
             Response.AppendBool(Session.GetHabbo().GetBadgeComponent().HasBadge(text));
-            SendResponse();
+            await SendResponse();
         }
 
         /// <summary>
@@ -584,7 +584,7 @@ namespace Oblivion.Messages.Handlers
                 .Init(LibraryParser.OutgoingRequest("UpdateAvatarAspectMessageComposer"));
             Session.GetMessageHandler().GetResponse().AppendString(Session.GetHabbo().Look);
             Session.GetMessageHandler().GetResponse().AppendString(Session.GetHabbo().Gender.ToUpper());
-            Session.GetMessageHandler().SendResponse();
+            await Session.GetMessageHandler().SendResponse();
             Session.GetMessageHandler()
                 .GetResponse()
                 .Init(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
@@ -593,7 +593,7 @@ namespace Oblivion.Messages.Handlers
             Session.GetMessageHandler().GetResponse().AppendString(Session.GetHabbo().Gender.ToLower());
             Session.GetMessageHandler().GetResponse().AppendString(Session.GetHabbo().Motto);
             Session.GetMessageHandler().GetResponse().AppendInteger(Session.GetHabbo().AchievementPoints);
-            Session.GetMessageHandler().SendResponse();
+            await Session.GetMessageHandler().SendResponse();
             if (!Session.GetHabbo().InRoom)
                 return;
             var currentRoom = Session.GetHabbo().CurrentRoom;
@@ -682,7 +682,7 @@ namespace Oblivion.Messages.Handlers
                     }
                 }
 
-                SendResponse();
+                await SendResponse();
             }
         }
 
@@ -729,7 +729,7 @@ namespace Oblivion.Messages.Handlers
         internal void GetBotsInventory()
         {
             Session.SendMessage(Session.GetHabbo().GetInventoryComponent().SerializeBotInventory());
-            SendResponse();
+            await SendResponse();
         }
 
 
@@ -745,7 +745,7 @@ namespace Oblivion.Messages.Handlers
                 Response.AppendInteger(0);
                 Response.AppendString(text);
                 Response.AppendInteger(0);
-                SendResponse();
+                await SendResponse();
                 return;
             }
 
@@ -763,7 +763,7 @@ namespace Oblivion.Messages.Handlers
                     Response.AppendInteger(4);
                     Response.AppendString(text);
                     Response.AppendInteger(0);
-                    SendResponse();
+                    await SendResponse();
                     return;
                 }
 
@@ -774,7 +774,7 @@ namespace Oblivion.Messages.Handlers
                     Response.AppendInteger(4);
                     Response.AppendString(text);
                     Response.AppendInteger(0);
-                    SendResponse();
+                    await SendResponse();
                 }
                 else if (text.Length > 15)
                 {
@@ -782,7 +782,7 @@ namespace Oblivion.Messages.Handlers
                     Response.AppendInteger(3);
                     Response.AppendString(text);
                     Response.AppendInteger(0);
-                    SendResponse();
+                    await SendResponse();
                 }
                 else if (text.Length < 3)
                 {
@@ -790,7 +790,7 @@ namespace Oblivion.Messages.Handlers
                     Response.AppendInteger(2);
                     Response.AppendString(text);
                     Response.AppendInteger(0);
-                    SendResponse();
+                    await SendResponse();
                 }
                 else if (string.IsNullOrWhiteSpace(@string))
                 {
@@ -798,7 +798,7 @@ namespace Oblivion.Messages.Handlers
                     Response.AppendInteger(0);
                     Response.AppendString(text);
                     Response.AppendInteger(0);
-                    SendResponse();
+                    await SendResponse();
                 }
                 else
                 {
@@ -811,7 +811,7 @@ namespace Oblivion.Messages.Handlers
                     /* TODO CHECK */
                     foreach (DataRow dataRow in table.Rows)
                         Response.AppendString($"{text}{dataRow[0]}");
-                    SendResponse();
+                    await SendResponse();
                 }
             }
         }
@@ -860,14 +860,14 @@ namespace Oblivion.Messages.Handlers
                 Response.AppendInteger(0);
                 Response.AppendString(text);
                 Response.AppendInteger(0);
-                SendResponse();
+                await SendResponse();
                 Response.Init(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
                 Response.AppendInteger(-1);
                 Response.AppendString(Session.GetHabbo().Look);
                 Response.AppendString(Session.GetHabbo().Gender.ToLower());
                 Response.AppendString(Session.GetHabbo().Motto);
                 Response.AppendInteger(Session.GetHabbo().AchievementPoints);
-                SendResponse();
+                await SendResponse();
                 Session.GetHabbo().CurrentRoom.GetRoomUserManager().UpdateUser(userName, text);
                 if (Session.GetHabbo().CurrentRoom != null)
                 {
@@ -975,7 +975,7 @@ namespace Oblivion.Messages.Handlers
             }
 
             Response.EndArray();
-            SendResponse();
+            await SendResponse();
         }
 
         /// <summary>
@@ -1243,7 +1243,7 @@ namespace Oblivion.Messages.Handlers
                 }
             }
 
-            SendResponse();
+            await SendResponse();
         }
 
         /// <summary>
@@ -1266,7 +1266,7 @@ namespace Oblivion.Messages.Handlers
             Response.Init(LibraryParser.OutgoingRequest("HotelViewCountdownMessageComposer"));
             Response.AppendString(time);
             Response.AppendInteger(Convert.ToInt32(diff.TotalSeconds));
-            SendResponse();
+            await SendResponse();
         }
 
         /// <summary>
@@ -1314,7 +1314,7 @@ namespace Oblivion.Messages.Handlers
             GetResponse().AppendInteger(Oblivion.GetGame().GetCameraManager().PurchaseCoinsPrice); //credits
             GetResponse().AppendInteger(Oblivion.GetGame().GetCameraManager().PurchaseDucketsPrice); //duckets
             GetResponse().AppendInteger(Oblivion.GetGame().GetCameraManager().PublishDucketsPrice); //duckets publish
-            SendResponse();
+            await SendResponse();
         }
 
         internal void GetHotelViewHallOfFame()
@@ -1338,7 +1338,7 @@ namespace Oblivion.Messages.Handlers
             }
 
             GetResponse().EndArray();
-            SendResponse();
+            await SendResponse();
         }
 
         internal void FriendRequestListLoad()

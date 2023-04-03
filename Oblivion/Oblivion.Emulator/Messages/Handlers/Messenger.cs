@@ -151,7 +151,7 @@ namespace Oblivion.Messages.Handlers
                 if (Session.GetHabbo().GetMessenger() == null) return;
                 Response.Init(LibraryParser.OutgoingRequest("FollowFriendErrorMessageComposer"));
                 Response.AppendInteger(2);
-                SendResponse();
+                await SendResponse();
                 Session.GetHabbo().GetMessenger().UpdateFriend(userId, clientByUserId, true);
                 return;
             }
@@ -161,7 +161,7 @@ namespace Oblivion.Messages.Handlers
             {
                 Response.Init(LibraryParser.OutgoingRequest("FollowFriendErrorMessageComposer"));
                 Response.AppendInteger(0);
-                SendResponse();
+                await SendResponse();
                 return;
             }
 

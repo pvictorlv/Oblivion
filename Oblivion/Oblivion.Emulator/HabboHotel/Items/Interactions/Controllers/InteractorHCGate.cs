@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.GameClients.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interactions.Models;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -9,7 +10,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorHcGate : FurniInteractorModel
     {
-        public override void OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             var user = session.GetHabbo();
             var ishc = user.Vip;

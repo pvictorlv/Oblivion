@@ -287,18 +287,7 @@ namespace Oblivion
             _defaultEncoding = Encoding.Default;
             MutedUsersByFilter = new Dictionary<uint, uint>();
             ChatEmotions.Initialize();
-
-#if !DEBUG
-            var ip = GetLocalIPAddress();
-            if (ip != "149.56.89.213" && ip!= "147.135.85.92" && ip != "192.95.5.60" && ip != "54.39.202.206" && ip != "10.158.0.2" && ip != "149.56.121.186" &&
-                !ip.StartsWith("192.168.") && ip != "147.135.27.245")
-            {
-                Console.WriteLine($"The ip {ip} is not allowed to use this program.");
-                Console.ReadKey();
-                return;
-            }
-#endif
-
+            
             CultureInfo = CultureInfo.CreateSpecificCulture("en-GB");
             try
             {

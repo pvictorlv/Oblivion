@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Models;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -7,7 +8,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorFreezeTile : FurniInteractorModel
     {
-        public override void OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             if (session == null || session.GetHabbo() == null || item.InteractingUser > 0U)
                 return;

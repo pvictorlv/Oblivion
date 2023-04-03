@@ -46,27 +46,27 @@ namespace Oblivion.HabboHotel.Support
             _bannedUsernames.Clear();
             _bannedIPs.Clear();
             _bannedMachines.Clear();
-            double num = Oblivion.GetUnixTimeStamp();
+            
 
-            dbClient.SetQuery($"SELECT bantype,value,reason,expire FROM users_bans WHERE expire > '{num}'");
+            dbClient.SetQuery($"SELECT ban_type,banned_value,message,banned_until FROM users_bans WHERE banned_until > NOW() AND is_active");
             var table = dbClient.GetTable();
 
             foreach (DataRow dataRow in table.Rows)
             {
-                var text = (string) dataRow["value"];
-                var reasonMessage = (string) dataRow["reason"];
-                var num2 = (double) dataRow["expire"];
-                var a = (string) dataRow["bantype"];
+                var text = (string) dataRow["banned_value"];
+                var reasonMessage = (string) dataRow["message"];
+                var num2 = (DateTime)dataRow["banned_until"];
+                var a = (string) dataRow["ban_type"];
 
                 ModerationBanType type;
 
                 switch (a)
                 {
-                    case "user":
+                    case "USER_ID":
                         type = ModerationBanType.UserName;
                         break;
 
-                    case "ip":
+                    case "IP_ADDRESS":
                         type = ModerationBanType.Ip;
                         break;
 
@@ -158,9 +158,9 @@ namespace Oblivion.HabboHotel.Support
             bool machine)
         {
             var type = ModerationBanType.UserName;
-            var text = client.GetHabbo().UserName;
+            var text = client.GetHabbo().Id.ToString();
             var typeStr = "user";
-            var num = Oblivion.GetUnixTimeStamp() + lengthSeconds;
+            var num = DateTime.Now.AddSeconds(lengthSeconds);
 
             if (ipBan)
             {

@@ -1,4 +1,5 @@
 ﻿using DotNetty.Transport.Channels;
+using Oblivion.Connection.Connection;
 using Oblivion.Messages;
 
 namespace Oblivion.Connection.Netty.WS;
@@ -11,6 +12,13 @@ public class WebSocketMessageHandler : SimpleChannelInboundHandler<ClientMessage
         context.Flush();
         base.ChannelReadComplete(context);
     }
+    public override void ChannelInactive(IChannelHandlerContext context)
+    {
+        SocketConnectionCheck.FreeConnection(context.Channel.RemoteAddress.ToString());
+        Oblivion.GetGame().GetClientManager().DisposeConnection(context.Channel.Id);
+        base.ChannelInactive(context);
+    }
+
 
     protected override void ChannelRead0(IChannelHandlerContext ctx, ClientMessage clientMessage)
     {

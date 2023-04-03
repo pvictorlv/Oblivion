@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Timers;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Models;
@@ -26,7 +27,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 //            item.ExtraData = "0";
         }
 
-        public override void OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             var room = session?.GetHabbo()?.CurrentRoom;
             if (room == null) return;

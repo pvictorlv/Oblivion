@@ -73,21 +73,31 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
 
                 foreach (var _ball in _balls.Values)
                 {
-                    if (!_ball.BallIsMoving || _ball?.InteractingBallUser == null) return false;
+                    if (!_ball.BallIsMoving)
+                    {
+                        await Task.Delay(175).ConfigureAwait(false);
+                        return true;
+                    }
 
-                    MoveBallProcess(_ball, _ball.InteractingBallUser);
+                        MoveBallProcess(_ball, _ball.InteractingBallUser);
+                    
 
                     if (_ball.ExtraData == "33")
                     {
-                        await Task.Delay(125);
+                        await Task.Delay(150);
+
                     }
                     else if (_ball.ExtraData == "22")
                     {
                         await Task.Delay(175);
                     }
+                    else if (_ball.ExtraData == "11")
+                    {
+                        await Task.Delay(200);
+                    }
                     else
                     {
-                        await Task.Delay(350);
+                        await Task.Delay(250);
                     }
                 }
             }

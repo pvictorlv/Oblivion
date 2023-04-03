@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.GameClients.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Models;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Rooms.Items.Games.Teams.Enums;
@@ -16,7 +17,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             item.UpdateState(false, true);
         }
 
-        public override void OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             if (!hasRights)
                 return;

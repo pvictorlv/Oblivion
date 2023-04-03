@@ -198,9 +198,8 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             /* TODO CHECK */
 
-            var relationShips = relationShipsTable.Rows.Cast<DataRow>()
-                .ToDictionary(row => (uint) row[0],
-                    row => new Relationship((uint) row[0], (uint) row[2], Convert.ToInt32(row[3].ToString())));
+            var relationShips = new Dictionary<uint, Relationship>();
+            foreach (DataRow row in relationShipsTable.Rows) relationShips.Add(Convert.ToUInt32(row[0]), new Relationship(Convert.ToUInt32(row[0]), Convert.ToUInt32(row[2]), Convert.ToInt32(row[3])));
 
             var user = HabboFactory.GenerateHabbo(dataRow, statsTable, groups);
             errorCode = 0;

@@ -110,7 +110,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             GetClient().GetMessageHandler().GetResponse().AppendInteger(type);
             GetClient().GetMessageHandler().GetResponse().AppendInteger(duration);
             GetClient().GetMessageHandler().GetResponse().AppendBool(duration == -1);
-            GetClient().GetMessageHandler().SendResponse();
+            GetClient().GetMessageHandler().await SendResponse();
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 .Init(LibraryParser.OutgoingRequest("StopAvatarEffectMessageComposer"));
 
             GetClient().GetMessageHandler().GetResponse().AppendInteger(effectId);
-            GetClient().GetMessageHandler().SendResponse();
+            GetClient().GetMessageHandler().await SendResponse();
 
             if (CurrentEffect >= 0)
                 ActivateCustomEffect(-1);

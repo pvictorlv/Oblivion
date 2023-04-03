@@ -25,7 +25,7 @@ namespace Oblivion.Messages.Handlers
             {
                 Response.Init(LibraryParser.OutgoingRequest("OnGuideSessionError"));
                 Response.AppendInteger(0);
-                SendResponse();
+                await SendResponse();
                 return;
             }
 
@@ -35,7 +35,7 @@ namespace Oblivion.Messages.Handlers
             {
                 Response.Init(LibraryParser.OutgoingRequest("OnGuideSessionError"));
                 Response.AppendInteger(0);
-                SendResponse();
+                await SendResponse();
                 return;
             }
 
@@ -108,7 +108,7 @@ namespace Oblivion.Messages.Handlers
             Response.AppendInteger(guideManager.GuidesCount);
             Response.AppendInteger(guideManager.HelpersCount);
             Response.AppendInteger(guideManager.GuardiansCount);
-            SendResponse();
+            await SendResponse();
         }
 
         /// <summary>
@@ -206,7 +206,7 @@ namespace Oblivion.Messages.Handlers
         internal void CancelCallGuide()
         {
             //Response.Init(3485);
-            //SendResponse();
+            //await SendResponse();
 
             // Request.GetBool();
 

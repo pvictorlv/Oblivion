@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.Achievements.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -1052,7 +1053,7 @@ namespace Oblivion.HabboHotel.Users
         /// <summary>
         ///     Updates the credits balance.
         /// </summary>
-        internal void UpdateCreditsBalance(bool inDb = false)
+        internal async Task UpdateCreditsBalance(bool inDb = false)
         {
             if (_mClient?.GetMessageHandler()?.GetResponse() == null)
                 return;
@@ -1060,7 +1061,7 @@ namespace Oblivion.HabboHotel.Users
             _mClient.GetMessageHandler().GetResponse()
                 .Init(LibraryParser.OutgoingRequest("CreditsBalanceMessageComposer"));
             _mClient.GetMessageHandler().GetResponse().AppendString($"{Credits}.0");
-            _mClient.GetMessageHandler().SendResponse();
+            await _mClient.GetMessageHandler().SendResponse();
 
 
             if (inDb)
@@ -1072,7 +1073,7 @@ namespace Oblivion.HabboHotel.Users
         /// <summary>
         ///     Updates the activity points balance.
         /// </summary>
-        internal void UpdateActivityPointsBalance(bool inDb = false)
+        internal async Task UpdateActivityPointsBalance(bool inDb = false)
         {
             if (_mClient?.GetMessageHandler()?.GetResponse() == null)
                 return;
@@ -1086,7 +1087,7 @@ namespace Oblivion.HabboHotel.Users
             _mClient.GetMessageHandler().GetResponse().AppendInteger(Diamonds);
             _mClient.GetMessageHandler().GetResponse().AppendInteger(102);
             _mClient.GetMessageHandler().GetResponse().AppendInteger(Graffiti);
-            _mClient.GetMessageHandler().SendResponse();
+            await _mClient.GetMessageHandler().SendResponse();
 
 
             if (inDb)
@@ -1098,7 +1099,7 @@ namespace Oblivion.HabboHotel.Users
         /// <summary>
         ///     Updates the seasonal currency balance.
         /// </summary>
-        internal void UpdateSeasonalCurrencyBalance(bool inDb = false)
+        internal async Task UpdateSeasonalCurrencyBalance(bool inDb = false)
         {
             if (_mClient?.GetMessageHandler()?.GetResponse() == null)
                 return;
@@ -1112,7 +1113,7 @@ namespace Oblivion.HabboHotel.Users
             _mClient.GetMessageHandler().GetResponse().AppendInteger(Diamonds);
             _mClient.GetMessageHandler().GetResponse().AppendInteger(102);
             _mClient.GetMessageHandler().GetResponse().AppendInteger(Graffiti);
-            _mClient.GetMessageHandler().SendResponse();
+            await _mClient.GetMessageHandler().SendResponse();
 
 
             if (inDb)
@@ -1136,7 +1137,7 @@ namespace Oblivion.HabboHotel.Users
             _mClient.GetMessageHandler().GetResponse().AppendInteger(ActivityPoints);
             _mClient.GetMessageHandler().GetResponse().AppendInteger(change);
             _mClient.GetMessageHandler().GetResponse().AppendInteger(0);
-            _mClient.GetMessageHandler().SendResponse();
+            await _mClient.GetMessageHandler().SendResponse();
         }
 
 
@@ -1155,7 +1156,7 @@ namespace Oblivion.HabboHotel.Users
                     .Init(LibraryParser.OutgoingRequest("VoucherValidMessageComposer"));
                 _mClient.GetMessageHandler().GetResponse().AppendString(productName);
                 _mClient.GetMessageHandler().GetResponse().AppendString(productDescription);
-                _mClient.GetMessageHandler().SendResponse();
+                await _mClient.GetMessageHandler().SendResponse();
                 return;
             }
 
@@ -1163,7 +1164,7 @@ namespace Oblivion.HabboHotel.Users
                 .GetResponse()
                 .Init(LibraryParser.OutgoingRequest("VoucherErrorMessageComposer"));
             _mClient.GetMessageHandler().GetResponse().AppendString("1");
-            _mClient.GetMessageHandler().SendResponse();
+            await _mClient.GetMessageHandler().SendResponse();
         }
 
         /// <summary>

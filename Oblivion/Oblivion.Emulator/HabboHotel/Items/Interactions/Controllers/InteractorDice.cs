@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Models;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -23,7 +24,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 item.ExtraData = "0";
         }
 
-        public override void OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             RoomUser roomUser = null;
             if (session != null)

@@ -1360,7 +1360,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             clientByUserId.GetMessageHandler()
                                 .GetResponse()
                                 .AppendInteger(clientByUserId.GetHabbo().AchievementPoints);
-                            clientByUserId.GetMessageHandler().SendResponse();
+                            clientByUserId.GetMessageHandler().await SendResponse();
 
                             using (var serverMessage = new ServerMessage())
                             {

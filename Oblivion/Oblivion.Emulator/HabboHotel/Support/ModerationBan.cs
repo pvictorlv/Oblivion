@@ -1,3 +1,5 @@
+using System;
+
 namespace Oblivion.HabboHotel.Support
 {
     /// <summary>
@@ -32,12 +34,12 @@ namespace Oblivion.HabboHotel.Support
         /// <param name="variable">The variable.</param>
         /// <param name="reasonMessage">The reason message.</param>
         /// <param name="expire">The expire.</param>
-        internal ModerationBan(ModerationBanType type, string variable, string reasonMessage, double expire)
+        internal ModerationBan(ModerationBanType type, string variable, string reasonMessage, DateTime expire)
         {
             Type = type;
             Variable = variable;
             ReasonMessage = reasonMessage;
-            Expire = expire;
+            Expire = expire.Millisecond;
         }
 
         /// <summary>

@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using System.Timers;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Models;
@@ -9,7 +10,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
     {
         private RoomItem _mItem;
 
-        public override void OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             var user = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
 

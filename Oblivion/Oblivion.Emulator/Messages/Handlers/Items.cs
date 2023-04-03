@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Catalogs;
 using Oblivion.HabboHotel.Items;
 using Oblivion.HabboHotel.Items.Datas;
@@ -183,14 +184,14 @@ namespace Oblivion.Messages.Handlers
             /*Session.GetMessageHandler().GetResponse().Init(Outgoing.RemovePetBreedingPanel);
             Session.GetMessageHandler().GetResponse().AppendUInt(itemId);
             Session.GetMessageHandler().GetResponse().AppendInt32(0);
-            Session.GetMessageHandler().SendResponse();*/
+            await Session.GetMessageHandler().SendResponse();*/
 
             Session.GetMessageHandler()
                 .GetResponse()
                 .Init(LibraryParser.OutgoingRequest("PetBreedResultMessageComposer"));
             Session.GetMessageHandler().GetResponse().AppendInteger(pet.PetId);
             Session.GetMessageHandler().GetResponse().AppendInteger(randomResult);
-            Session.GetMessageHandler().SendResponse();
+            await Session.GetMessageHandler().SendResponse();
 
             pet.X = item.X;
             pet.Y = item.Y;
@@ -251,7 +252,7 @@ namespace Oblivion.Messages.Handlers
             foreach (var sh in availableCommands)
                 Response.AppendInteger(sh);
 
-            SendResponse();
+            await SendResponse();
         }
 
         internal void PlacePostIt()
@@ -279,7 +280,7 @@ namespace Oblivion.Messages.Handlers
             }
         }
 
-        internal void PlaceItem()
+        internal async Task PlaceItem()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -293,7 +294,7 @@ namespace Oblivion.Messages.Handlers
 
                 if (!room.CheckRights(Session, false, true))
                 {
-                    Session.SendMessage(StaticMessage.ErrorCantSetNotOwner);
+                    await Session.SendMessage(StaticMessage.ErrorCantSetNotOwner);
                     return;
                 }
 
@@ -345,15 +346,6 @@ namespace Oblivion.Messages.Handlers
 
                         switch (item.BaseItem.InteractionType)
                         {
-                            case Interaction.Football:
-                            {
-                                if (room.GotSoccer())
-                                {
-                                    if (room.GetSoccer().GotBall())
-                                        goto CannotSetItem;
-                                }
-                                goto PlaceFloor;
-                            }
                             case Interaction.BreedingTerrier:
                             case Interaction.BreedingBear:
                             {
@@ -410,7 +402,7 @@ namespace Oblivion.Messages.Handlers
                     coordinate, room, Session.GetHabbo().Id, item.GroupId, false);
                 if (room.GetRoomItemHandler().SetWallItem(Session, roomItemWall))
                     Session.GetHabbo().GetInventoryComponent().RemoveItem(realId, true, room.RoomId);
-                Oblivion.GetGame().GetAchievementManager()
+                await Oblivion.GetGame().GetAchievementManager()
                     .ProgressUserAchievement(Session, "ACH_RoomDecoFurniCount", 1);
                 return;
                 PlaceFloor:
@@ -423,7 +415,7 @@ namespace Oblivion.Messages.Handlers
                 if (room.GetRoomItemHandler().SetFloorItem(Session, roomItem, x, y, rot, true, false, true))
                 {
                     Session.GetHabbo().GetInventoryComponent().RemoveItem(realId, true, room.RoomId);
-                    Oblivion.GetGame().GetAchievementManager()
+                    await Oblivion.GetGame().GetAchievementManager()
                         .ProgressUserAchievement(Session, "ACH_RoomDecoFurniCount", 1);
                     if (roomItem.IsWired)
                     {
@@ -434,28 +426,28 @@ namespace Oblivion.Messages.Handlers
                     switch (roomItem.GetBaseItem().Name)
                     {
                         case "es_skating_ice":
-                            Oblivion.GetGame()
+                            await Oblivion.GetGame()
                                 .GetAchievementManager()
                                 .ProgressUserAchievement(Session, "ACH_TagA", 1);
                             break;
                         case "val11_floor":
-                            Oblivion.GetGame()
+                            await Oblivion.GetGame()
                                 .GetAchievementManager()
                                 .ProgressUserAchievement(Session, "ACH_RbTagA", 1);
                             break;
                         case "easter11_grasspatc":
-                            Oblivion.GetGame()
+                            await Oblivion.GetGame()
                                 .GetAchievementManager()
                                 .ProgressUserAchievement(Session, "ACH_RbBunnyTag", 1);
                             break;
                         case "hole2":
                         case "hole":
-                            Oblivion.GetGame()
+                            await Oblivion.GetGame()
                                 .GetAchievementManager()
                                 .ProgressUserAchievement(Session, "ACH_RoomDecoHoleFurniCount", 1);
                             break;
                         case "snowb_slope":
-                            Oblivion.GetGame()
+                            await Oblivion.GetGame()
                                 .GetAchievementManager()
                                 .ProgressUserAchievement(Session, "ACH_snowBoardBuild", 1);
                             break;
@@ -772,7 +764,7 @@ namespace Oblivion.Messages.Handlers
             Response.Init(LibraryParser.OutgoingRequest("LoadPostItMessageComposer"));
             Response.AppendString(item.VirtualId.ToString());
             Response.AppendString(item.ExtraData);
-            SendResponse();
+            await SendResponse();
         }
 
         internal void SavePostit()
@@ -809,7 +801,7 @@ namespace Oblivion.Messages.Handlers
             room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
         }
 
-        internal void OpenGift()
+        internal async Task OpenGift()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -840,7 +832,7 @@ namespace Oblivion.Messages.Handlers
 
             var message = new ServerMessage(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer"));
             item.Serialize(message);
-            currentRoom.SendMessage(message);
+            await currentRoom.SendMessageAsync(message);
 
             Session.GetHabbo().LastGiftOpenTime = DateTime.Now;
             var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor();
@@ -885,7 +877,7 @@ namespace Oblivion.Messages.Handlers
                     Response.AppendString(item2.Type.ToString());
                     Response.AppendBool(true);
                     Response.AppendString(extraData);
-                    SendResponse();
+                    await SendResponse();
                     var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("AddFloorItemMessageComposer"));
                     item.Serialize(serverMessage);
                     serverMessage.AppendString(currentRoom.RoomData.Owner);
@@ -912,14 +904,14 @@ namespace Oblivion.Messages.Handlers
                 /* TODO CHECK */
                 foreach (var current in list)
                     Response.AppendInteger(current.VirtualId);
-                SendResponse();
+                await SendResponse();
                 Session.GetHabbo().GetInventoryComponent().UpdateItems(true);
             }
             Response.Init(LibraryParser.OutgoingRequest("UpdateInventoryMessageComposer"));
-            SendResponse();
+            await SendResponse();
         }
 
-        internal void GetMoodlight()
+        internal async Task GetMoodlight()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -953,7 +945,7 @@ namespace Oblivion.Messages.Handlers
                 Response.AppendInteger(current2.ColorIntensity);
             }
 
-            SendResponse();
+            await SendResponse();
         }
 
         internal void UpdateMoodlight()
@@ -1261,7 +1253,7 @@ namespace Oblivion.Messages.Handlers
                 Response.Init(LibraryParser.OutgoingRequest("RecyclingStateMessageComposer"));
                 Response.AppendInteger(1);
                 Response.AppendInteger(Oblivion.GetGame().GetItemManager().GetVirtualId(itemId));
-                SendResponse();
+                await SendResponse();
             }
         }
 
@@ -1308,7 +1300,7 @@ namespace Oblivion.Messages.Handlers
             room.GetRoomItemHandler().RemoveFurniture(null, item.Id, false);
             Session.GetHabbo().GetInventoryComponent().RemoveItem(item.Id, false, 0);
             Response.Init(LibraryParser.OutgoingRequest("UpdateInventoryMessageComposer"));
-            SendResponse();
+            await SendResponse();
         }
 
         internal void TriggerLoveLock(RoomItem loveLock)
@@ -2060,7 +2052,7 @@ namespace Oblivion.Messages.Handlers
             serverMessage.AppendInteger(0);
             serverMessage.AppendInteger(0);
             Response = serverMessage;
-            SendResponse();
+            await SendResponse();
         }
 
         internal void ChooseTvPlayerVideo()
@@ -2080,14 +2072,14 @@ namespace Oblivion.Messages.Handlers
             serverMessage.AppendInteger(0); // duration
             serverMessage.AppendInteger(0);
             Response = serverMessage;
-            SendResponse();
+            await SendResponse();
             var serverMessage2 = new ServerMessage();
             serverMessage2.Init(LibraryParser.OutgoingRequest("YouTubeLoadPlaylistsMessageComposer"));
             serverMessage2.AppendInteger(itemId);
             serverMessage2.AppendInteger(0);
             serverMessage2.AppendString(item.ExtraData);
             Response = serverMessage2;
-            SendResponse();
+            await SendResponse();
         }
 
         internal void PlaceBot()
@@ -2510,7 +2502,7 @@ namespace Oblivion.Messages.Handlers
              Session.GetHabbo().ClothingManager.Add(clothes.ItemName);
              GetResponse().Init(LibraryParser.OutgoingRequest("FigureSetIdsMessageComposer"));
              Session.GetHabbo().ClothingManager.Serialize(GetResponse());
-             SendResponse();*/
+             await SendResponse();*/
             room.GetRoomItemHandler().RemoveFurniture(Session, item.Id, false);
             Session.SendMessage(StaticMessage.FiguresetRedeemed);
 

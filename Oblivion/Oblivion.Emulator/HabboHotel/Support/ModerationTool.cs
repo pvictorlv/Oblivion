@@ -123,7 +123,7 @@ namespace Oblivion.HabboHotel.Support
                 .Init(LibraryParser.OutgoingRequest("ModerationActionResultMessageComposer"));
             clientByUserId.GetMessageHandler().GetResponse().AppendInteger(userId);
             clientByUserId.GetMessageHandler().GetResponse().AppendBool(false);
-            clientByUserId.GetMessageHandler().SendResponse();
+            clientByUserId.GetMessageHandler().await SendResponse();
         }
 
         /// <summary>
@@ -885,7 +885,7 @@ namespace Oblivion.HabboHotel.Support
                     .GetResponse()
                     .Init(LibraryParser.OutgoingRequest("ModerationTicketResponseMessageComposer"));
                 senderClient.GetMessageHandler().GetResponse().AppendInteger(statusCode);
-                senderClient.GetMessageHandler().SendResponse();
+                senderClient.GetMessageHandler().await SendResponse();
             }
             else
             {

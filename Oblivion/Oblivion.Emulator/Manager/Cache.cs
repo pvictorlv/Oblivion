@@ -52,7 +52,7 @@ namespace Oblivion.Manager
         {
             foreach (var user in Oblivion.UsersCached)
             {
-                if (user.Value == null)
+                if (user.Value?.GetClient() == null)
                 {
                     RemoveUser(user.Key);
                     continue;

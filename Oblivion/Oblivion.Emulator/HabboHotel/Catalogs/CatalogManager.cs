@@ -419,7 +419,7 @@ namespace Oblivion.HabboHotel.Catalogs
         /// <param name="giftColor">Color of the gift.</param>
         /// <param name="undef">if set to <c>true</c> [undef].</param>
         /// <param name="theGroup">The theGroup.</param>
-        internal void HandlePurchase(GameClient session, int pageId, uint itemId, string extraData, int priceAmount,
+        internal async Task HandlePurchase(GameClient session, int pageId, uint itemId, string extraData, int priceAmount,
             bool isGift, string giftUser, string giftMessage, int giftSpriteId, int giftLazo, int giftColor, bool undef,
             uint theGroup)
         {
@@ -501,13 +501,13 @@ namespace Oblivion.HabboHotel.Catalogs
                 if (item.CreditsCost > 0)
                 {
                     session.GetHabbo().Credits -= (int) item.CreditsCost * totalPrice;
-                    session.GetHabbo().UpdateCreditsBalance(true);
+                    await session.GetHabbo().UpdateCreditsBalance(true);
                 }
 
                 if (item.DucketsCost > 0)
                 {
                     session.GetHabbo().ActivityPoints -= (int) item.DucketsCost * totalPrice;
-                    session.GetHabbo().UpdateActivityPointsBalance(true);
+                    await session.GetHabbo().UpdateActivityPointsBalance(true);
                 }
 
                 if (item.DiamondsCost > 0)
@@ -649,7 +649,7 @@ namespace Oblivion.HabboHotel.Catalogs
                             .GetResponse()
                             .Init(LibraryParser.OutgoingRequest("GiftErrorMessageComposer"));
                         session.GetMessageHandler().GetResponse().AppendString(giftUser);
-                        session.GetMessageHandler().SendResponse();
+                        await session.GetMessageHandler().SendResponse();
                         return;
                     }
 
@@ -661,7 +661,7 @@ namespace Oblivion.HabboHotel.Catalogs
                             .GetResponse()
                             .Init(LibraryParser.OutgoingRequest("GiftErrorMessageComposer"));
                         session.GetMessageHandler().GetResponse().AppendString(giftUser);
-                        session.GetMessageHandler().SendResponse();
+                        await session.GetMessageHandler().SendResponse();
                         return;
                     }
 
@@ -983,7 +983,7 @@ namespace Oblivion.HabboHotel.Catalogs
                 session.GetMessageHandler().GetResponse()
                     .Init(LibraryParser.OutgoingRequest("UpdateInventoryMessageComposer"));
 
-                session.GetMessageHandler().SendResponse();
+                await session.GetMessageHandler().SendResponse();
 
                 session.SendMessage(CatalogPageComposer.PurchaseOk(item, item.Items));
 
@@ -1068,7 +1068,7 @@ namespace Oblivion.HabboHotel.Catalogs
                 foreach (var current3 in list)
                     session.GetMessageHandler().GetResponse().AppendInteger(current3.VirtualId);
 
-                session.GetMessageHandler().SendResponse();
+                await session.GetMessageHandler().SendResponse();
                 session.GetHabbo().GetInventoryComponent().UpdateItems(false);
 
                 if (InteractionTypes.AreFamiliar(GlobalInteractions.Pet, baseItem.InteractionType))
@@ -1090,7 +1090,7 @@ namespace Oblivion.HabboHotel.Catalogs
         /// <param name="limtot">The limtot.</param>
         /// <param name="songCode">The song code.</param>
         /// <returns>List&lt;UserItem&gt;.</returns>
-        internal List<UserItem> DeliverItems(GameClient session, Item item, int amount, string extraData, int limno,
+        internal async Task<List<UserItem>> DeliverItems(GameClient session, Item item, int amount, string extraData, int limno,
             int limtot, string songCode)
         {
             var list = new List<UserItem>();
@@ -1223,7 +1223,7 @@ namespace Oblivion.HabboHotel.Catalogs
                                     session.GetMessageHandler().GetResponse().AppendString(extraData);
                                     session.GetMessageHandler().GetResponse().AppendString("groupName");
                                     session.GetMessageHandler().GetResponse().AppendString(group.Name);
-                                    session.GetMessageHandler().SendResponse();
+                                    await session.GetMessageHandler().SendResponse();
 
                                     if (!group.HasForum)
                                     {

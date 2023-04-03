@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Achievements.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -66,7 +67,7 @@ namespace Oblivion.HabboHotel.Achievements
         /// </summary>
         /// <param name="session">The session.</param>
         /// <param name="talent">The talent.</param>
-        internal void CompleteUserTalent(GameClient session, Talent talent)
+        internal async Task CompleteUserTalent(GameClient session, Talent talent)
         {
             if (session?.GetHabbo() == null || session.GetHabbo().CurrentTalentLevel < talent.Level || session.GetHabbo().Data.Talents.ContainsKey(talent.Id))
                 return;
@@ -75,7 +76,7 @@ namespace Oblivion.HabboHotel.Achievements
                 return;
 
             if (!string.IsNullOrEmpty(talent.Prize) && talent.PrizeBaseItem > 0u)
-                Oblivion.GetGame().GetCatalog().DeliverItems(session, Oblivion.GetGame().GetItemManager().GetItem(talent.PrizeBaseItem), 1, string.Empty, 0, 0, string.Empty);
+               await Oblivion.GetGame().GetCatalog().DeliverItems(session, Oblivion.GetGame().GetItemManager().GetItem(talent.PrizeBaseItem), 1, string.Empty, 0, 0, string.Empty);
 
             session.GetHabbo().Data.Talents.Add(talent.Id, new UserTalent(talent.Id, 1));
 
