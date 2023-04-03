@@ -103,7 +103,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
                 fItem.OtherString = row["string"].ToString();
                 fItem.OtherBool = (row["bool"].ToString() == "1");
-                fItem.Delay = (int) row["delay"];
+                fItem.Delay = (int)row["delay"];
                 fItem.OtherExtraString = row["extra_string"].ToString();
                 fItem.OtherExtraString2 = row["extra_string_2"].ToString();
 
@@ -126,13 +126,19 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         public bool OtherBoxHasItem(IWiredItem Box, RoomItem boxItem)
         {
-            return GetEffects(Box)
-                .Where(item =>
-                    item.Item.Id != Box.Item.Id && (item.Type == Interaction.ActionMoveRotate ||
-                                                    item.Type == Interaction.ActionMoveToDir ||
-                                                    item.Type == Interaction.ActionChase ||
-                                                    item.Type == Interaction.ActionInverseChase))
-                .Where(item => item.Items != null && item.Items.Count > 0).Any(item => item.Items.Contains(boxItem));
+            foreach (var item in GetEffects(Box))
+            {
+                if (item.Item.Id == Box.Item.Id || (item.Type != Interaction.ActionMoveRotate &&
+                                                    item.Type != Interaction.ActionMoveToDir &&
+                                                    item.Type != Interaction.ActionChase &&
+                                                    item.Type != Interaction.ActionInverseChase)) continue;
+                if (item.Items != null && item.Items.Count > 0)
+                {
+                    if (item.Items.Contains(boxItem)) return true;
+                }
+            }
+
+            return false;
         }
 
         public static void SaveWired(IWiredItem fItem)
@@ -153,12 +159,9 @@ namespace Oblivion.HabboHotel.Items.Wired
                     num++;
                 }
 
-                if (fItem.OtherString == null)
-                    fItem.OtherString = string.Empty;
-                if (fItem.OtherExtraString == null)
-                    fItem.OtherExtraString = string.Empty;
-                if (fItem.OtherExtraString2 == null)
-                    fItem.OtherExtraString2 = string.Empty;
+                fItem.OtherString ??= string.Empty;
+                fItem.OtherExtraString ??= string.Empty;
+                fItem.OtherExtraString2 ??= string.Empty;
 
                 queryReactor.SetQuery(
                     "REPLACE INTO items_wireds VALUES (@id, @items, @delay, @string, @bool, @extrastring, @extrastring2)");
@@ -297,7 +300,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 }
                 else
                 {
-                    items = new ConcurrentList<IWiredItem> {item};
+                    items = new ConcurrentList<IWiredItem> { item };
                     Effects.TryAdd(point, items);
                 }
             }
@@ -311,7 +314,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 }
                 else
                 {
-                    items = new ConcurrentList<IWiredItem> {item};
+                    items = new ConcurrentList<IWiredItem> { item };
                     Conditions.TryAdd(point, items);
                 }
             }
@@ -324,7 +327,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 }
                 else
                 {
-                    items = new ConcurrentList<IWiredItem> {item};
+                    items = new ConcurrentList<IWiredItem> { item };
                     Specials.TryAdd(point, items);
                 }
             }

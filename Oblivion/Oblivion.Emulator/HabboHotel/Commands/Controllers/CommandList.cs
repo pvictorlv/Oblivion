@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -23,11 +24,11 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = -2;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             if (ExtraSettings.NewPageCommands)
             {
-                session.SendMessage(StaticMessage.NewWayToOpenCommandsList);
+                await session.SendStaticMessage(StaticMessage.NewWayToOpenCommandsList);
                 return true;
             }
 
@@ -65,7 +66,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 }
             }
 
-            session.SendNotifWithScroll(commandList);
+            await session.SendNotifWithScroll(commandList);
 
             return true;
         }

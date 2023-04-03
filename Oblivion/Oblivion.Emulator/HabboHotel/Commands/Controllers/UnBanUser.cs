@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
@@ -21,7 +22,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
 
             var user = pms[0];

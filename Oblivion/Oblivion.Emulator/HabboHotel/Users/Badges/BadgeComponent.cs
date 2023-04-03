@@ -82,7 +82,7 @@ namespace Oblivion.HabboHotel.Users.Badges
             }
 
             if (wiredReward)
-                session.SendMessage(SerializeBadgeReward(!HasBadge(badge)));
+                await session.SendMessage(SerializeBadgeReward(!HasBadge(badge)));
 
             if (HasBadge(badge))
                 return;
@@ -101,8 +101,8 @@ namespace Oblivion.HabboHotel.Users.Badges
 
             BadgeList.TryAdd(badge, new Badge(badge, 0));
 
-            session.SendMessage(SerializeBadge(badge));
-            session.SendMessage(Update(badge));
+            await session.SendMessage(SerializeBadge(badge));
+            await session.SendMessage(Update(badge));
         }
 
         /// <summary>
@@ -161,7 +161,7 @@ namespace Oblivion.HabboHotel.Users.Badges
             }
 
             BadgeList.TryRemove(badge, out _);
-            session.SendMessage(Serialize());
+            await session.SendMessage(Serialize());
         }
 
         /// <summary>

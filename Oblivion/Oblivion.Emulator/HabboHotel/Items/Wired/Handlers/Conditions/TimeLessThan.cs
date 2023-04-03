@@ -57,7 +57,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
         public int Delay { get; set; }
 
-        public Task<bool> Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
             
 

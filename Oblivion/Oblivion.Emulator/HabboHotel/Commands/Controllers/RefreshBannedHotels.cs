@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Security;
 
@@ -20,11 +21,11 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 0;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             BobbaFilter.InitSwearWord();
 
-            session.SendNotif(Oblivion.GetLanguage().GetVar("command_refresh_banned_hotels"));
+            await session.SendNotif(Oblivion.GetLanguage().GetVar("command_refresh_banned_hotels"));
             return true;
         }
     }

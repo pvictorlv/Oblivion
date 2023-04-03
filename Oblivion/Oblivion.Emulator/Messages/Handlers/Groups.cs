@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.Catalogs.Composers;
 using Oblivion.HabboHotel.Groups.Interfaces;
@@ -27,7 +28,7 @@ namespace Oblivion.Messages.Handlers
             var list = new List<RoomData>();
             foreach (var x in Session.GetHabbo().Data.Rooms)
             {
-                var current = Oblivion.GetGame().GetRoomManager().GenerateRoomData(x);
+                var current = await Oblivion.GetGame().GetRoomManager().GenerateRoomData(x);
                 if (current.Group == null) list.Add(current);
             }
 
@@ -133,7 +134,7 @@ namespace Oblivion.Messages.Handlers
             var guildBase = Request.GetInteger();
             var guildBaseColor = Request.GetInteger();
             var num6 = Request.GetInteger();
-            var roomData = Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomid);
+            var roomData = await Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomid);
 
             if (roomData.Owner != Session.GetHabbo().UserName)
                 return;
@@ -143,7 +144,7 @@ namespace Oblivion.Messages.Handlers
 
             var image = Oblivion.GetGame().GetGroupManager().GenerateGuildImage(guildBase, guildBaseColor, gStates);
 
-            Oblivion.GetGame().GetGroupManager().CreateGroup(name, description, roomid, image, Session,
+            await Oblivion.GetGame().GetGroupManager().CreateGroup(name, description, roomid, image, Session,
                 (!Oblivion.GetGame().GetGroupManager().SymbolColours.Contains(color)) ? 1 : color,
                 (!Oblivion.GetGame().GetGroupManager().BackGroundColours.Contains(num3)) ? 1 : num3, out var theGroup);
 
@@ -154,11 +155,11 @@ namespace Oblivion.Messages.Handlers
             await SendResponse();
             roomData.Group = theGroup;
             roomData.GroupId = theGroup.Id;
-            roomData.SerializeRoomData(Response, Session, true);
+            await roomData.SerializeRoomData(Response, Session, true);
 
             if (!Session.GetHabbo().InRoom || Session.GetHabbo().CurrentRoom.RoomId != roomData.Id)
             {
-                Session.GetMessageHandler().PrepareRoomForUser(roomData.Id, roomData.PassWord);
+                await Session.GetMessageHandler().PrepareRoomForUser(roomData.Id, roomData.PassWord);
                 Session.GetHabbo().CurrentRoomId = roomData.Id;
             }
 
@@ -182,7 +183,7 @@ namespace Oblivion.Messages.Handlers
                     serverMessage.AppendString(current.Value);
                 }
 
-                CurrentLoadingRoom.SendMessage(serverMessage);
+                await CurrentLoadingRoom.SendMessage(serverMessage);
             }
 
             if (CurrentLoadingRoom == null || Session.GetHabbo().FavouriteGroup != theGroup.Id)
@@ -197,7 +198,7 @@ namespace Oblivion.Messages.Handlers
             serverMessage2.AppendInteger(3);
             serverMessage2.AppendString(theGroup.Name);
 
-            CurrentLoadingRoom.SendMessage(serverMessage2);
+            await CurrentLoadingRoom.SendMessage(serverMessage2);
         }
 
         /// <summary>
@@ -273,7 +274,7 @@ namespace Oblivion.Messages.Handlers
 
                 Response.Init(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
                 Response.AppendInteger(1);
-                roomUserByHabbo.await GetClient().SendMessageAsync(GetResponse());
+                await roomUserByHabbo.GetClient().SendMessageAsync(GetResponse());
                 roomUserByHabbo.UpdateNeeded = true;
             }
 
@@ -314,7 +315,7 @@ namespace Oblivion.Messages.Handlers
 
                 Response.Init(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
                 Response.AppendInteger(0);
-                roomUserByHabbo.await GetClient().SendMessageAsync(GetResponse());
+                await roomUserByHabbo.GetClient().SendMessageAsync(GetResponse());
                 roomUserByHabbo.UpdateNeeded = true;
             }
 
@@ -481,7 +482,7 @@ namespace Oblivion.Messages.Handlers
                     queryReactor.RunFastQuery(string.Concat("DELETE FROM groups_members WHERE user_id=", num2,
                         " AND group_id=", num, " LIMIT 1"));
 
-                Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
+                await Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
 
                 if (Session.GetHabbo().FavouriteGroup == num)
                 {
@@ -492,13 +493,13 @@ namespace Oblivion.Messages.Handlers
 
                     Response.Init(LibraryParser.OutgoingRequest("FavouriteGroupMessageComposer"));
                     Response.AppendInteger(Session.GetHabbo().Id);
-                    Session.GetHabbo().CurrentRoom.SendMessage(Response);
+                    await Session.GetHabbo().CurrentRoom.SendMessage(Response);
                     Response.Init(LibraryParser.OutgoingRequest("ChangeFavouriteGroupMessageComposer"));
                     Response.AppendInteger(0);
                     Response.AppendInteger(-1);
                     Response.AppendInteger(-1);
                     Response.AppendString("");
-                    Session.GetHabbo().CurrentRoom.SendMessage(Response);
+                    await Session.GetHabbo().CurrentRoom.SendMessage(Response);
 
                     if (group.AdminOnlyDeco == 0u)
                     {
@@ -513,7 +514,7 @@ namespace Oblivion.Messages.Handlers
 
                         Response.AppendInteger(0);
 
-                        roomUserByHabbo.await GetClient().SendMessageAsync(GetResponse());
+                        await roomUserByHabbo.GetClient().SendMessageAsync(GetResponse());
                     }
                 }
 
@@ -528,7 +529,7 @@ namespace Oblivion.Messages.Handlers
             if (group.Admins.ContainsKey(num2))
                 group.Admins.Remove(num2);
 
-            Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
+            await Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
             Response.Init(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
             Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 0u, Session);
             await SendResponse();
@@ -554,7 +555,7 @@ namespace Oblivion.Messages.Handlers
                 return;
 
             Session.GetHabbo().FavouriteGroup = theGroup.Id;
-            Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(theGroup, Response, Session);
+            await Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(theGroup, Response, Session);
 
             using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.RunFastQuery(string.Concat("UPDATE users_stats SET favourite_group =", theGroup.Id,
@@ -579,7 +580,7 @@ namespace Oblivion.Messages.Handlers
                         Response.AppendString(current.Value);
                     }
 
-                    Session.GetHabbo().CurrentRoom.SendMessage(Response);
+                    await Session.GetHabbo().CurrentRoom.SendMessage(Response);
                 }
             }
 
@@ -601,7 +602,7 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().FavouriteGroup = 0u;
 
             using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery(
+                await queryReactor.RunFastQueryAsync(
                     $"UPDATE users_stats SET favourite_group=0 WHERE id={Session.GetHabbo().Id} LIMIT 1;");
 
             Response.Init(LibraryParser.OutgoingRequest("FavouriteGroupMessageComposer"));
@@ -1332,14 +1333,14 @@ namespace Oblivion.Messages.Handlers
                             current.RemoveStatus("flatctrl 1");
                             Response.Init(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
                             Response.AppendInteger(0);
-                            current.await GetClient().SendMessageAsync(GetResponse());
+                            await current.GetClient().SendMessageAsync(GetResponse());
                         }
                         else
                         {
                             current.AddStatus("flatctrl 1", "");
                             Response.Init(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
                             Response.AppendInteger(1);
-                            current.await GetClient().SendMessageAsync(GetResponse());
+                            await current.GetClient().SendMessageAsync(GetResponse());
                         }
 
                         current.UpdateNeeded = true;
@@ -1347,7 +1348,7 @@ namespace Oblivion.Messages.Handlers
                 }
             }
 
-            Oblivion.GetGame().GetGroupManager()
+            await Oblivion.GetGame().GetGroupManager()
                 .SerializeGroupInfo(theGroup, Response, Session, Session.GetHabbo().CurrentRoom);
         }
 

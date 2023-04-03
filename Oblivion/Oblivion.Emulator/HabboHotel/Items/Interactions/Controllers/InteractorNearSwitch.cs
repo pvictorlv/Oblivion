@@ -26,7 +26,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 return;
 
             }
-            Oblivion.GetGame().GetQuestManager().ProgressUserQuest(session, QuestType.FurniSwitch);
+            await Oblivion.GetGame().GetQuestManager().ProgressUserQuest(session, QuestType.FurniSwitch);
 
             int.TryParse(item.ExtraData, out var num2);
             int num3;

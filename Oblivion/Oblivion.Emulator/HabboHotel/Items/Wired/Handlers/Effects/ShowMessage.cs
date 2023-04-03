@@ -70,7 +70,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             set { }
         }
 
-        public Task<bool> Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
             
 

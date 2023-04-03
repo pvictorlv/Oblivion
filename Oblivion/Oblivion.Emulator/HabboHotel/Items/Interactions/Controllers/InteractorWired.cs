@@ -53,7 +53,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage2.AppendInteger(0);
                         serverMessage2.AppendInteger(0);
                         serverMessage2.AppendInteger(0);
-                        session.SendMessage(serverMessage2);
+                        await session.SendMessage(serverMessage2);
                         return;
                     }
                 case Interaction.TriggerGameEnd:
@@ -73,7 +73,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage3.AppendInteger(0);
                         serverMessage3.AppendInteger(0);
                         serverMessage3.AppendInteger(0);
-                        session.SendMessage(serverMessage3);
+                        await session.SendMessage(serverMessage3);
                         return;
                     }
                 case Interaction.TriggerGameStart:
@@ -93,7 +93,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage4.AppendInteger(0);
                         serverMessage4.AppendInteger(0);
                         serverMessage4.AppendInteger(0);
-                        session.SendMessage(serverMessage4);
+                        await session.SendMessage(serverMessage4);
                         return;
                     }
                 case Interaction.TriggerLongRepeater:
@@ -110,7 +110,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage.AppendInteger(0);
                         serverMessage.AppendInteger(12);
                         serverMessage.AppendInteger(0);
-                        session.SendMessage(serverMessage);
+                        await session.SendMessage(serverMessage);
                         return;
             }
                 case Interaction.ActionLeaveTeam:
@@ -132,7 +132,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage5.AppendInteger(6);
                         serverMessage5.AppendInteger(0);
                         serverMessage5.AppendInteger(0);
-                        session.SendMessage(serverMessage5);
+                        await session.SendMessage(serverMessage5);
                         return;
                     }
                 //backmen
@@ -158,7 +158,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage5.AppendInteger(0); //delay type
                         serverMessage5.AppendInteger(0);
                         serverMessage5.AppendInteger(6);
-                        session.SendMessage(serverMessage5);
+                        await session.SendMessage(serverMessage5);
                         return;*/
                         message.AppendBool(false);
                         message.AppendInteger(5);
@@ -176,7 +176,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         message.AppendInteger(0);
                         //                    foreach (var SpriteEx in WiredException)
                         //                        message.AppendInt32(SpriteEx);
-                        session.SendMessage(message);
+                        await session.SendMessage(message);
                         return;
                     }
 
@@ -198,7 +198,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage5.AppendInteger(team);
                         serverMessage5.AppendInteger(0);
                         serverMessage5.AppendInteger(6);
-                        session.SendMessage(serverMessage5);
+                        await session.SendMessage(serverMessage5);
                         return;
                     }
                 case Interaction.ConditionUserIsNotInTeam:
@@ -219,7 +219,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage5.AppendInteger(team); //delay type
                         serverMessage5.AppendInteger(0);
                         serverMessage5.AppendInteger(17);
-                        session.SendMessage(serverMessage5);
+                        await session.SendMessage(serverMessage5);
                         return;
                     }
                 /*  case Interaction.ActionJoinTeam:
@@ -235,7 +235,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                       serverMessage5.AppendInteger(0); //delay type
                       serverMessage5.AppendInteger(0);
                       serverMessage5.AppendInteger(6);
-                      session.SendMessage(serverMessage5);
+                      await session.SendMessage(serverMessage5);
                       return;
                   }*/
                 case Interaction.TriggerOnUserSay:
@@ -256,7 +256,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage6.AppendInteger(0);
                         serverMessage6.AppendInteger(0);
                         serverMessage6.AppendInteger(0);
-                        session.SendMessage(serverMessage6);
+                        await session.SendMessage(serverMessage6);
                         return;
                     }
                 case Interaction.TriggerScoreAchieved:
@@ -275,7 +275,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage7.AppendInteger(10);
                         serverMessage7.AppendInteger(0);
                         serverMessage7.AppendInteger(0);
-                        session.SendMessage(serverMessage7);
+                        await session.SendMessage(serverMessage7);
                         return;
                     }
                 case Interaction.TriggerStateChanged:
@@ -295,7 +295,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage8.AppendInteger(delay);
                         serverMessage8.AppendInteger(0);
                         serverMessage8.AppendInteger(0);
-                        session.SendMessage(serverMessage8);
+                        await session.SendMessage(serverMessage8);
                         return;
                     }
                 case Interaction.TriggerWalkOnFurni:
@@ -315,7 +315,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage9.AppendInteger(0);
                         serverMessage9.AppendInteger(0);
                         serverMessage9.AppendInteger(0);
-                        session.SendMessage(serverMessage9);
+                        await session.SendMessage(serverMessage9);
                         return;
                     }
                 case Interaction.ActionMuteUser:
@@ -334,7 +334,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage18.AppendInteger(20);
                         serverMessage18.AppendInteger(0);
                         serverMessage18.AppendInteger(0);
-                        session.SendMessage(serverMessage18);
+                        await session.SendMessage(serverMessage18);
                         return;
                     }
                 case Interaction.TriggerWalkOffFurni:
@@ -355,7 +355,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage10.AppendInteger(0);
                         serverMessage10.AppendInteger(0);
                         serverMessage10.AppendInteger(0);
-                        session.SendMessage(serverMessage10);
+                        await session.SendMessage(serverMessage10);
                         return;
                     }
 
@@ -372,7 +372,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage.AppendInteger(0);
                         serverMessage.AppendInteger(11);
                         serverMessage.AppendInteger(0);
-                        session.SendMessage(serverMessage);
+                        await session.SendMessage(serverMessage);
                         return;
                     }
 
@@ -404,7 +404,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage11.AppendInteger(0);
                         serverMessage11.AppendInteger(0);
                         serverMessage11.AppendInteger(0);
-                        session.SendMessage(serverMessage11);
+                        await session.SendMessage(serverMessage11);
                         return;
                     }
 
@@ -421,7 +421,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         message.AppendInteger(0);
                         message.AppendInteger(0);
                         message.AppendInteger(10);
-                        session.SendMessage(message);
+                        await session.SendMessage(message);
                         return;
                     }
 
@@ -454,7 +454,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         }
                         serverMessage21.AppendInteger(0);
                         serverMessage21.AppendInteger(0);
-                        session.SendMessage(serverMessage21);
+                        await session.SendMessage(serverMessage21);
                         return;
                     }
 
@@ -488,7 +488,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage12.AppendInteger(3);
                         serverMessage12.AppendInteger(delay); // Delay
                         serverMessage12.AppendInteger(0);
-                        session.SendMessage(serverMessage12);
+                        await session.SendMessage(serverMessage12);
                         return;
                     }
                 case Interaction.ActionMoveRotate:
@@ -511,7 +511,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage.AppendInteger(delay);
                         serverMessage.AppendInteger(0);
                         serverMessage.AppendInteger(0);
-                        session.SendMessage(serverMessage);
+                        await session.SendMessage(serverMessage);
                     }
                     break;
 
@@ -535,7 +535,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage.AppendInteger(delay);
                         serverMessage.AppendInteger(0);
                         serverMessage.AppendInteger(0);
-                        session.SendMessage(serverMessage);
+                        await session.SendMessage(serverMessage);
                     }
                     break;
 
@@ -555,7 +555,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage14.AppendInteger(delay);
                         serverMessage14.AppendInteger(0);
                         serverMessage14.AppendInteger(0);
-                        session.SendMessage(serverMessage14);
+                        await session.SendMessage(serverMessage14);
                         return;
                     }
                 case Interaction.ActionShowMessage:
@@ -579,7 +579,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage15.AppendInteger(delay);
                         serverMessage15.AppendInteger(0);
                         serverMessage15.AppendInteger(0);
-                        session.SendMessage(serverMessage15);
+                        await session.SendMessage(serverMessage15);
                         return;
                     }
                 case Interaction.ActionTeleportTo:
@@ -601,7 +601,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage16.AppendInteger(delay);
                         serverMessage16.AppendInteger(0);
                         serverMessage16.AppendByte(2);
-                        session.SendMessage(serverMessage16);
+                        await session.SendMessage(serverMessage16);
                         return;
                     }
                 case Interaction.ActionToggleState:
@@ -621,7 +621,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage17.AppendInteger(delay);
                         serverMessage17.AppendInteger(0);
                         serverMessage17.AppendInteger(0);
-                        session.SendMessage(serverMessage17);
+                        await session.SendMessage(serverMessage17);
                         return;
                     }
                 case Interaction.ActionGiveReward:
@@ -643,7 +643,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage18.AppendInteger(17);
                         serverMessage18.AppendInteger(0);
                         serverMessage18.AppendInteger(0);
-                        session.SendMessage(serverMessage18);
+                        await session.SendMessage(serverMessage18);
                         return;
                     }
 
@@ -670,7 +670,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage19.AppendBool(false);
                         serverMessage19.AppendInteger(0);
                         serverMessage19.AppendInteger(1290);
-                        session.SendMessage(serverMessage19);
+                        await session.SendMessage(serverMessage19);
                         return;
                     }
 
@@ -693,7 +693,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage19.AppendInteger(0);
                         serverMessage19.AppendBool(false);
                         serverMessage19.AppendBool(true);
-                        session.SendMessage(serverMessage19);
+                        await session.SendMessage(serverMessage19);
                         return;
                     }
 
@@ -716,7 +716,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage.AppendInteger(item.GetBaseItem().InteractionType == Interaction.ConditionFurniHasFurni
                             ? 7
                             : 18);
-                        session.SendMessage(serverMessage);
+                        await session.SendMessage(serverMessage);
                         return;
                     }
 
@@ -736,7 +736,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     serverMessage.AppendInteger(0); //bool
                     serverMessage.AppendInteger(0);
                     serverMessage.AppendInteger(14);
-                    session.SendMessage(serverMessage);
+                    await session.SendMessage(serverMessage);
                     return;
                 }
                     
@@ -759,7 +759,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                                                       Interaction.ConditionTimeMoreThan
                             ? 3
                             : 4);
-                        session.SendMessage(serverMessage21);
+                        await session.SendMessage(serverMessage21);
                         return;
                     }
 
@@ -779,7 +779,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage21.AppendInteger(effect);
                         serverMessage21.AppendInteger(0);
                         serverMessage21.AppendInteger(12);
-                        session.SendMessage(serverMessage21);
+                        await session.SendMessage(serverMessage21);
                         return;
                     }
 
@@ -798,7 +798,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage21.AppendInteger(0);
                         serverMessage21.AppendInteger(0);
                         serverMessage21.AppendInteger(11);
-                        session.SendMessage(serverMessage21);
+                        await session.SendMessage(serverMessage21);
                         return;
                     }
 
@@ -830,7 +830,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage21.AppendInteger(date2);
                         serverMessage21.AppendInteger(0);
                         serverMessage21.AppendInteger(24);
-                        session.SendMessage(serverMessage21);
+                        await session.SendMessage(serverMessage21);
                         return;
                     }
 
@@ -851,7 +851,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage2.AppendInteger(0);
                         serverMessage2.AppendInteger(0);
                         serverMessage2.AppendInteger(0);
-                        session.SendMessage(serverMessage2);
+                        await session.SendMessage(serverMessage2);
                         return;
                     }
                 case Interaction.TriggerBotReachedStuff:
@@ -871,7 +871,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage2.AppendInteger(0);
                         serverMessage2.AppendInteger(0);
                         serverMessage2.AppendInteger(0);
-                        session.SendMessage(serverMessage2);
+                        await session.SendMessage(serverMessage2);
                         return;
                     }
                 case Interaction.ActionBotClothes:
@@ -889,7 +889,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage15.AppendInteger(26);
                         serverMessage15.AppendInteger(0);
                         serverMessage15.AppendInteger(0);
-                        session.SendMessage(serverMessage15);
+                        await session.SendMessage(serverMessage15);
                         return;
                     }
                 case Interaction.ActionBotFollowAvatar:
@@ -907,7 +907,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage15.AppendInteger(25);
                         serverMessage15.AppendInteger(0);
                         serverMessage15.AppendInteger(0);
-                        session.SendMessage(serverMessage15);
+                        await session.SendMessage(serverMessage15);
                         return;
                     }
                 case Interaction.ActionBotGiveHanditem:
@@ -926,7 +926,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage15.AppendInteger(24);
                         serverMessage15.AppendInteger(0);
                         serverMessage15.AppendInteger(0);
-                        session.SendMessage(serverMessage15);
+                        await session.SendMessage(serverMessage15);
                         return;
                     }
                 case Interaction.ActionBotMove:
@@ -945,7 +945,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage15.AppendInteger(22);
                         serverMessage15.AppendInteger(0);
                         serverMessage15.AppendInteger(0);
-                        session.SendMessage(serverMessage15);
+                        await session.SendMessage(serverMessage15);
                         return;
                     }
                 case Interaction.ActionBotTalk:
@@ -964,7 +964,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage15.AppendInteger(23);
                         serverMessage15.AppendInteger(0);
                         serverMessage15.AppendInteger(0);
-                        session.SendMessage(serverMessage15);
+                        await session.SendMessage(serverMessage15);
                         return;
                     }
                 case Interaction.ActionBotTalkToAvatar:
@@ -983,7 +983,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage15.AppendInteger(27);
                         serverMessage15.AppendInteger(0);
                         serverMessage15.AppendInteger(0);
-                        session.SendMessage(serverMessage15);
+                        await session.SendMessage(serverMessage15);
                         return;
                     }
                 case Interaction.ActionBotTeleport:
@@ -1002,7 +1002,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage15.AppendInteger(21);
                         serverMessage15.AppendInteger(0);
                         serverMessage15.AppendInteger(0);
-                        session.SendMessage(serverMessage15);
+                        await session.SendMessage(serverMessage15);
                         return;
                     }
                 case Interaction.ActionChase:
@@ -1025,7 +1025,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
                         serverMessage.AppendInteger(0);
 
-                        session.SendMessage(serverMessage);
+                        await session.SendMessage(serverMessage);
                         return;
                     }
                 case Interaction.ConditionUserHasHanditem:
@@ -1041,7 +1041,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage21.AppendInteger(0);
                         serverMessage21.AppendInteger(0);
                         serverMessage21.AppendInteger(25);
-                        session.SendMessage(serverMessage21);
+                        await session.SendMessage(serverMessage21);
                         return;
                     }
                 case Interaction.ActionCallStacks:
@@ -1060,7 +1060,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage.AppendInteger(0);
                         serverMessage.AppendInteger(0);
                         serverMessage.AppendInteger(0);
-                        session.SendMessage(serverMessage);
+                        await session.SendMessage(serverMessage);
                         return;
                     }
 
@@ -1083,7 +1083,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         serverMessage25.AppendInteger(0);
                         serverMessage25.AppendInteger(0);
                         serverMessage25.AppendInteger(0);
-                        session.SendMessage(serverMessage25);
+                        await session.SendMessage(serverMessage25);
                         return;
                     }
                 default:

@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
@@ -19,11 +20,11 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 1;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             double speed;
             if (double.TryParse(pms[0], out speed)) session.GetHabbo().CurrentRoom.GetRoomItemHandler().SetSpeed(speed);
-            else session.SendWhisper(Oblivion.GetLanguage().GetVar("command_setspeed_error_numbers"));
+            else  await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_setspeed_error_numbers"));
 
             return true;
         }

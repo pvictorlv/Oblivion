@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Navigators;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Navigators;
 using Oblivion.HabboHotel.Navigators.Enums;
 using Oblivion.HabboHotel.Navigators.Interfaces;
 using Oblivion.HabboHotel.Rooms.Data;
@@ -54,10 +55,10 @@ namespace Oblivion.Messages.Handlers
             Request.GetInteger();
             uint roomId = Request.GetUInteger();
             Request.GetInteger();
-            RoomData roomData = Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId);
+            RoomData roomData =await Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId);
             if (roomData == null)
                 return;
-            PrepareRoomForUser(roomData.Id, "");
+            await PrepareRoomForUser(roomData.Id, "");
         }
 
         /// <summary>
@@ -67,7 +68,8 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session == null)
                 return;
-            Oblivion.GetGame().GetNavigator().EnableNewNavigator(Session);
+            
+           await Oblivion.GetGame().GetNavigator().EnableNewNavigator(Session);
         }
 
         /// <summary>
@@ -161,9 +163,9 @@ namespace Oblivion.Messages.Handlers
             message.AppendInteger(Session.GetHabbo().Data.Rooms.Count);
             foreach (var current in Session.GetHabbo().Data.Rooms)
             {
-                var data = Oblivion.GetGame().GetRoomManager().GenerateRoomData(current);
+                var data = await Oblivion.GetGame().GetRoomManager().GenerateRoomData(current);
 
-                data.Serialize(message);
+                await data.Serialize(message);
             }
             message.AppendBool(false);
 
@@ -181,7 +183,7 @@ namespace Oblivion.Messages.Handlers
             message.AppendInteger(rooms.Length);
             foreach (var data in rooms)
             {
-                data.Key.Serialize(message);
+                await data.Key.Serialize(message);
             }
             message.AppendBool(false);
 
@@ -254,7 +256,7 @@ namespace Oblivion.Messages.Handlers
             uint roomId = Request.GetUInteger();
             Request.GetBool();
             Request.GetBool();
-            RoomData roomData = Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId);
+            RoomData roomData = await Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId);
             if (roomData == null)
                 return;
             GetResponse().Init(LibraryParser.OutgoingRequest("1491"));
@@ -273,7 +275,7 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session.GetHabbo() == null)
                 return;
-            Oblivion.GetGame().GetNavigator().SerializeFlatCategories(Session);
+            await Oblivion.GetGame().GetNavigator().SerializeFlatCategories(Session);
         }
 
         /// <summary>
@@ -283,7 +285,7 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session.GetHabbo() == null)
                 return;
-            await Session.SendMessageAsync(Oblivion.GetGame().GetNavigator().SerializeFavoriteRooms(Session));
+            await Session.SendMessageAsync(await Oblivion.GetGame().GetNavigator().SerializeFavoriteRooms(Session));
         }
 
         /// <summary>
@@ -293,7 +295,7 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session.GetHabbo() == null)
                 return;
-            await Session.SendMessageAsync(Oblivion.GetGame().GetNavigator().SerializeRecentRooms(Session));
+            await Session.SendMessageAsync(await Oblivion.GetGame().GetNavigator().SerializeRecentRooms(Session));
         }
 
         /// <summary>
@@ -303,7 +305,7 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session.GetHabbo() == null)
                 return;
-            await Session.SendMessageAsync(Oblivion.GetGame().GetNavigator().SerializePopularRoomTags());
+            await Session.SendMessageAsync(await Oblivion.GetGame().GetNavigator().SerializePopularRoomTags());
         }
 
         /// <summary>
@@ -360,7 +362,7 @@ namespace Oblivion.Messages.Handlers
             var roomId = Request.GetUInteger();
             var pWd = Request.GetString();
 
-            PrepareRoomForUser(roomId, pWd);
+            await PrepareRoomForUser(roomId, pWd);
         }
 
         internal async Task ToggleStaffPick()
@@ -368,7 +370,7 @@ namespace Oblivion.Messages.Handlers
             var roomId = Request.GetUInteger();
             Request.GetBool();
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(roomId);
-            Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_Spr", 1, true);
+            await Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_Spr", 1, true);
             if (room == null) return;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
@@ -392,7 +394,7 @@ namespace Oblivion.Messages.Handlers
                     queryReactor.RunQuery();
                     Oblivion.GetGame().GetNavigator().RemovePublicItem(pubItem.Id);
                 }
-                room.RoomData.SerializeRoomData(Response, Session, false, true);
+                await room.RoomData.SerializeRoomData(Response, Session, false, true);
                 Oblivion.GetGame().GetNavigator().LoadNewPublicRooms();
             }
         }

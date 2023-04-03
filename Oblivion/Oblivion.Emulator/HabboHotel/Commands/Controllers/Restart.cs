@@ -20,7 +20,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 0;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             if (session.GetHabbo().UserName != "Dark") return false;
 

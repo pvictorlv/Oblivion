@@ -247,7 +247,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// </summary>
         /// <param name="user">The user.</param>
         /// <param name="coord">The coord.</param>
-        internal async Task AddUserToMap(RoomUser user, Point coord)
+        internal void AddUserToMap(RoomUser user, Point coord)
         {
             var coordKey = Formatter.PointToInt(coord);
             if (_userMap.TryGetValue(coordKey, out var users))
@@ -628,7 +628,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// </summary>
         /// <param name="item">The item.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool RemoveFromMap(RoomItem item) => RemoveFromMap(item, true);
+        internal async Task<bool> RemoveFromMap(RoomItem item) => await RemoveFromMap(item, true);
 
         /// <summary>
         ///     Adds the item to map.
@@ -636,7 +636,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="item">The item.</param>
         /// <param name="handleGameItem">if set to <c>true</c> [handle game item].</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal void AddItemToMap(RoomItem item, bool handleGameItem = true)
+        internal bool AddItemToMap(RoomItem item, bool handleGameItem = true)
         {
             if (handleGameItem)
             {

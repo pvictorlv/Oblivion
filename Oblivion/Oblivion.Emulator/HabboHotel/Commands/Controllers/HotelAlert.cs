@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
@@ -21,7 +22,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = -1;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
 
             var str = string.Join(" ", pms);
@@ -32,7 +33,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
            Oblivion.GetGame().GetClientManager().SendMessageAsync(message);
             
 
-            session.SendWhisper("Enviado!");
+             await Session.SendWhisperAsync("Enviado!");
             return true;
         }
     }

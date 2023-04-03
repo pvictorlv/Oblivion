@@ -31,7 +31,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             _yellowTeamItems = new QueuedDictionary<string, RoomItem>();
             _room = room;
         }
-        internal async Task UnlockGates()
+        internal void UnlockGates()
         {
             /* TODO CHECK */
             foreach (var current in _redTeamItems.Values) UnlockGate(current);
@@ -127,7 +127,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
                 await current.UpdateState();
             }
 
-            _room.GetWiredHandler().ExecuteWired(Interaction.TriggerScoreAchieved, user);
+            await _room.GetWiredHandler().ExecuteWired(Interaction.TriggerScoreAchieved, user);
         }
 
         internal async Task Reset()
@@ -253,8 +253,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             if (item == null) return;
             var score = GetScoreForTeam(team);
             /* TODO CHECK */
-            foreach (var winner in winners) item.HighscoreData.AddUserScore(item, winner.GetUserName(), score);
-            item.UpdateState(false, true);
+            foreach (var winner in winners) 
+                await item.HighscoreData.AddUserScore(item, winner.GetUserName(), score);
+            await item.UpdateState(false, true);
         }
 
         internal async Task StartGame()

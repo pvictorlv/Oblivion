@@ -773,10 +773,10 @@ namespace Oblivion.HabboHotel.Rooms.User
             await UnIdle();
             if (!IsPet && !IsBot)
             {
-                if (msg.StartsWith(":") && CommandsManager.TryExecute(msg.Substring(1), session))
+                if (msg.StartsWith(":") && await CommandsManager.TryExecute(msg.Substring(1), session))
                 {
                     if (GetRoom() != null && GetRoom().GotWireds())
-                       await GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSayCommand, this, msg);
+                        await GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSayCommand, this, msg);
 
                     return;
                 }
@@ -786,7 +786,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 var habbo = GetClient().GetHabbo();
 
 
-                if (!habbo.CanTalk(true)) return;
+                if (!await habbo.CanTalk(true)) return;
 
 
                 GetRoom().AddChatlog(session.GetHabbo().Id, msg, true);
@@ -828,17 +828,17 @@ namespace Oblivion.HabboHotel.Rooms.User
                 chatMsg.AppendInteger(textColor);
                 chatMsg.AppendInteger(0);
                 chatMsg.AppendInteger(count);
-                GetRoom().BroadcastChatMessageWithRange(chatMsg, this, session.GetHabbo().Id);
+                await GetRoom().BroadcastChatMessageWithRange(chatMsg, this, session.GetHabbo().Id);
                 if (needReChange)
                 {
                     ChangeName(GetUserName());
                 }
 
-                GetRoom().OnUserSay(this, msg, shout);
+                await GetRoom().OnUserSay(this, msg, shout);
             }
         }
 
-        private void ChangeName(string name)
+        private async Task ChangeName(string name)
         {
             using (var message =
                    new ServerMessage(LibraryParser.OutgoingRequest("UserUpdateNameInRoomMessageComposer")))
@@ -846,7 +846,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 message.AppendInteger(RoomId);
                 message.AppendInteger(VirtualId);
                 message.AppendString(name);
-                GetRoom().SendMessage(message);
+                await GetRoom().SendMessage(message);
             }
         }
 
@@ -889,7 +889,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="c">The c.</param>
         internal async Task MoveTo(Point c)
         {
-            MoveTo(c.X, c.Y);
+            await MoveTo(c.X, c.Y);
         }
 
         /// <summary>
@@ -997,7 +997,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             if (_mRoom == null)
                 return;
-            
+
             CarryItemId = item;
             CarryTimer = item > 0 ? 240 : 0;
             using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ApplyHanditemMessageComposer")))

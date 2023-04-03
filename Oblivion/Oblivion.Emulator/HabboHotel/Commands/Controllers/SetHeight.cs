@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
@@ -19,7 +20,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 1;
         }
 
-        public override bool Execute(GameClient client, string[] pms)
+        public override async Task<bool> Execute(GameClient client, string[] pms)
         {
             var currentRoom = client.GetHabbo().CurrentRoom;
             if (!int.TryParse(pms[0], out var height) || height >= 100)

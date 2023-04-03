@@ -120,9 +120,10 @@ namespace Oblivion.HabboHotel.Catalogs
         /// <param name="color">The color.</param>
         /// <param name="rarity">The rarity.</param>
         /// <returns>Pet.</returns>
-        internal static async Task<Pet> CreatePet(uint userId, string name, int type, string race, string color, int rarity = 0)
+        internal static async Task<Pet> CreatePet(uint userId, string name, int type, string race, string color,
+            int rarity = 0)
         {
-            var pet = new Pet(404u, userId, 0u, name, (uint) type, race, color, 0, 100, 150, 0,
+            var pet = new Pet(404u, userId, 0u, name, (uint)type, race, color, 0, 100, 150, 0,
                 Oblivion.GetUnixTimeStamp(),
                 0, 0, 0.0, false, 0, 0, -1, rarity, DateTime.Now.AddHours(36.0), DateTime.Now.AddHours(48.0), null)
             {
@@ -136,7 +137,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
                 queryReactor.AddParameter($"{pet.PetId}name", pet.Name);
 
-                pet.PetId = (uint) queryReactor.InsertQuery();
+                pet.PetId = (uint)queryReactor.InsertQuery();
 
                 queryReactor.SetQuery($"SELECT count(id) FROM pets_data WHERE id = {pet.PetId}");
                 var count = queryReactor.GetInteger();
@@ -151,7 +152,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
                     queryReactor.AddParameter($"{pet.PetId}race", pet.Race);
                     queryReactor.AddParameter($"{pet.PetId}color", pet.Color);
-                   await queryReactor.RunQueryAsync();
+                    await queryReactor.RunQueryAsync();
                 }
             }
 
@@ -165,7 +166,7 @@ namespace Oblivion.HabboHotel.Catalogs
             var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
 
             if (clientByUserId != null)
-                Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(clientByUserId, "ACH_PetLover", 1);
+                await Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(clientByUserId, "ACH_PetLover", 1);
 
             return pet;
         }
@@ -193,6 +194,7 @@ namespace Oblivion.HabboHotel.Catalogs
                     {
                         return null;
                     }
+
                     moplaBreed = new MoplaBreed(row);
                 }
             }
@@ -206,14 +208,15 @@ namespace Oblivion.HabboHotel.Catalogs
             {
                 roomId = 0;
             }
+
             return new Pet(Convert.ToUInt32(Row["id"]), Convert.ToUInt32(Row["user_id"]),
-                roomId, (string) Row["name"], Convert.ToUInt32(mRow["type"]),
-                (string) mRow["race"], (string) mRow["color"], (int) mRow["experience"], (int) mRow["energy"],
-                (int) mRow["nutrition"], (int) mRow["respect"], Convert.ToDouble(mRow["createstamp"]), (int) Row["x"],
-                (int) Row["y"], Convert.ToDouble(Row["z"]), (int) mRow["have_saddle"] == 1, (int) mRow["anyone_ride"],
-                (int) mRow["hairdye"], (int) mRow["pethair"], (int) mRow["rarity"],
-                Oblivion.UnixToDateTime((int) mRow["lasthealth_stamp"]),
-                Oblivion.UnixToDateTime((int) mRow["untilgrown_stamp"]), moplaBreed);
+                roomId, (string)Row["name"], Convert.ToUInt32(mRow["type"]),
+                (string)mRow["race"], (string)mRow["color"], (int)mRow["experience"], (int)mRow["energy"],
+                (int)mRow["nutrition"], (int)mRow["respect"], Convert.ToDouble(mRow["createstamp"]), (int)Row["x"],
+                (int)Row["y"], Convert.ToDouble(Row["z"]), (int)mRow["have_saddle"] == 1, (int)mRow["anyone_ride"],
+                (int)mRow["hairdye"], (int)mRow["pethair"], (int)mRow["rarity"],
+                Oblivion.UnixToDateTime((int)mRow["lasthealth_stamp"]),
+                Oblivion.UnixToDateTime((int)mRow["untilgrown_stamp"]), moplaBreed);
         }
 
         public Dictionary<uint, ServerMessage> IndexMessages;
@@ -233,24 +236,13 @@ namespace Oblivion.HabboHotel.Catalogs
             return result ?? (Oblivion.GetGame().GetCatalog().GetItem(Convert.ToUInt32(offerId)));
         }
 
-        /// <summary>
-        ///     Initializes the specified database client.
-        /// </summary>
-        /// <param name="dbClient">The database client.</param>
-        /// <param name="pageLoaded">The page loaded.</param>
-        internal async Task Initialize(IQueryAdapter dbClient, out uint pageLoaded)
-        {
-            Initialize(dbClient);
-            pageLoaded = (uint) Categories.Count;
-        }
-
         public List<DataRow> IndexText;
 
         /// <summary>
         ///     Initializes the specified database client.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal async Task Initialize(IQueryAdapter dbClient)
+        internal async Task<int> Initialize(IQueryAdapter dbClient)
         {
             try
             {
@@ -296,6 +288,7 @@ namespace Oblivion.HabboHotel.Catalogs
                             {
                                 Console.WriteLine("Item id too high:" + firstItem);
                             }
+
                             if (!Oblivion.GetGame().GetItemManager().GetItem(itemId, out var item))
                             {
                                 continue;
@@ -345,10 +338,10 @@ namespace Oblivion.HabboHotel.Catalogs
                         Categories.Add(Convert.ToInt32(dataRow2["id"]),
                             new CatalogPage(Convert.ToUInt32(dataRow2["id"]),
                                 int.Parse(dataRow2["parent_id"].ToString()),
-                                (string) dataRow2["page_link"], (string) dataRow2["caption"], visible, enabled, false,
-                                Convert.ToUInt32(dataRow2["min_rank"]), (int) dataRow2["icon_image"],
-                                (string) dataRow2["page_layout"], (string) dataRow2["page_strings_1"],
-                                (string) dataRow2["page_strings_2"], (int) dataRow2["order_num"], ref Offers,
+                                (string)dataRow2["page_link"], (string)dataRow2["caption"], visible, enabled, false,
+                                Convert.ToUInt32(dataRow2["min_rank"]), (int)dataRow2["icon_image"],
+                                (string)dataRow2["page_layout"], (string)dataRow2["page_strings_1"],
+                                (string)dataRow2["page_strings_2"], (int)dataRow2["order_num"], ref Offers,
                                 dataRow2["blockBad"].ToString() == "1"));
                     }
                 }
@@ -387,6 +380,8 @@ namespace Oblivion.HabboHotel.Catalogs
             {
                 Console.WriteLine(e);
             }
+
+            return Categories.Count;
         }
 
         /// <summary>
@@ -419,19 +414,20 @@ namespace Oblivion.HabboHotel.Catalogs
         /// <param name="giftColor">Color of the gift.</param>
         /// <param name="undef">if set to <c>true</c> [undef].</param>
         /// <param name="theGroup">The theGroup.</param>
-        internal async Task HandlePurchase(GameClient session, int pageId, uint itemId, string extraData, int priceAmount,
+        internal async Task HandlePurchase(GameClient session, int pageId, uint itemId, string extraData,
+            int priceAmount,
             bool isGift, string giftUser, string giftMessage, int giftSpriteId, int giftLazo, int giftColor, bool undef,
             uint theGroup)
         {
             if (session.GetHabbo().LastSqlQuery + 1 >= Oblivion.GetUnixTimeStamp())
             {
-                session.SendNotif("Espere um pouco");
+                await session.SendNotif("Espere um pouco");
                 return;
             }
 
             if (session.GetHabbo().GetInventoryComponent().TotalItems >= 4500)
             {
-                session.SendNotif("Você chegou ao limite de mobis, retire alguns antes de continuar!");
+                await session.SendNotif("Você chegou ao limite de mobis, retire alguns antes de continuar!");
                 return;
             }
 
@@ -496,30 +492,30 @@ namespace Oblivion.HabboHotel.Catalogs
                 else
                     dayLength = 31;
 
-                session.GetHabbo().GetSubscriptionManager().AddSubscription(dayLength);
+                await session.GetHabbo().GetSubscriptionManager().AddSubscription(dayLength);
 
                 if (item.CreditsCost > 0)
                 {
-                    session.GetHabbo().Credits -= (int) item.CreditsCost * totalPrice;
+                    session.GetHabbo().Credits -= (int)item.CreditsCost * totalPrice;
                     await session.GetHabbo().UpdateCreditsBalance(true);
                 }
 
                 if (item.DucketsCost > 0)
                 {
-                    session.GetHabbo().ActivityPoints -= (int) item.DucketsCost * totalPrice;
+                    session.GetHabbo().ActivityPoints -= (int)item.DucketsCost * totalPrice;
                     await session.GetHabbo().UpdateActivityPointsBalance(true);
                 }
 
                 if (item.DiamondsCost > 0)
                 {
-                    session.GetHabbo().Diamonds -= (int) item.DiamondsCost * totalPrice;
-                    session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
+                    session.GetHabbo().Diamonds -= (int)item.DiamondsCost * totalPrice;
+                    await session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
                 }
 
                 if (item.EmeraldsCost > 0)
                 {
-                    session.GetHabbo().Graffiti -= (int) item.EmeraldsCost * totalPrice;
-                    session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
+                    session.GetHabbo().Graffiti -= (int)item.EmeraldsCost * totalPrice;
+                    await session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
                 }
 
                 return;
@@ -531,7 +527,7 @@ namespace Oblivion.HabboHotel.Catalogs
             {
                 if (!BobbaFilter.CanUsePrefix(session, extraData))
                 {
-                    session.SendNotif("Prefixo inválido, tente outro!");
+                    await session.SendNotif("Prefixo inválido, tente outro!");
 
                     return;
                 }
@@ -540,10 +536,10 @@ namespace Oblivion.HabboHotel.Catalogs
             if (item.ClubOnly && !session.GetHabbo().GetSubscriptionManager().HasSubscription)
             {
                 using (var serverMessage =
-                    new ServerMessage(LibraryParser.OutgoingRequest("CatalogPurchaseNotAllowedMessageComposer")))
+                       new ServerMessage(LibraryParser.OutgoingRequest("CatalogPurchaseNotAllowedMessageComposer")))
                 {
                     serverMessage.AppendInteger(1);
-                    session.SendMessage(serverMessage);
+                    await session.SendMessage(serverMessage);
                     return;
                 }
             }
@@ -562,7 +558,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
                 if (item.LimitedSelled >= item.LimitedStack)
                 {
-                    session.SendMessage(new ServerMessage(
+                    await session.SendMessage(new ServerMessage(
                         LibraryParser.OutgoingRequest("CatalogLimitedItemSoldOutMessageComposer")));
                     return;
                 }
@@ -596,26 +592,26 @@ namespace Oblivion.HabboHotel.Catalogs
 
             if (item.CreditsCost > 0 && !isGift)
             {
-                session.GetHabbo().Credits -= (int) item.CreditsCost * totalPrice;
-                session.GetHabbo().UpdateCreditsBalance(true);
+                session.GetHabbo().Credits -= (int)item.CreditsCost * totalPrice;
+                await session.GetHabbo().UpdateCreditsBalance(true);
             }
 
             if (item.DucketsCost > 0 && !isGift)
             {
-                session.GetHabbo().ActivityPoints -= (int) item.DucketsCost * totalPrice;
-                session.GetHabbo().UpdateActivityPointsBalance(true);
+                session.GetHabbo().ActivityPoints -= (int)item.DucketsCost * totalPrice;
+                await session.GetHabbo().UpdateActivityPointsBalance(true);
             }
 
             if (item.DiamondsCost > 0 && !isGift)
             {
-                session.GetHabbo().Diamonds -= (int) item.DiamondsCost * totalPrice;
-                session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
+                session.GetHabbo().Diamonds -= (int)item.DiamondsCost * totalPrice;
+                await session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
             }
 
             if (item.EmeraldsCost > 0 && !isGift)
             {
                 session.GetHabbo().Graffiti -= item.EmeraldsCost * totalPrice;
-                session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
+                await session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
             }
 
             session.GetHabbo().LastSqlQuery = Oblivion.GetUnixTimeStamp();
@@ -627,7 +623,7 @@ namespace Oblivion.HabboHotel.Catalogs
                 {
                     if ((DateTime.Now - session.GetHabbo().LastGiftPurchaseTime).TotalSeconds <= 15.0)
                     {
-                        session.SendNotif(Oblivion.GetLanguage().GetVar("user_send_gift"));
+                        await session.SendNotif(Oblivion.GetLanguage().GetVar("user_send_gift"));
                         return;
                     }
 
@@ -667,32 +663,32 @@ namespace Oblivion.HabboHotel.Catalogs
 
                     if (item.CreditsCost > 0 && isGift)
                     {
-                        session.GetHabbo().Credits -= (int) item.CreditsCost * totalPrice;
-                        session.GetHabbo().UpdateCreditsBalance(true);
+                        session.GetHabbo().Credits -= (int)item.CreditsCost * totalPrice;
+                        await session.GetHabbo().UpdateCreditsBalance(true);
                     }
 
                     if (item.DucketsCost > 0 && isGift)
                     {
-                        session.GetHabbo().ActivityPoints -= (int) item.DucketsCost * totalPrice;
-                        session.GetHabbo().UpdateActivityPointsBalance(true);
+                        session.GetHabbo().ActivityPoints -= (int)item.DucketsCost * totalPrice;
+                        await session.GetHabbo().UpdateActivityPointsBalance(true);
                     }
 
                     if (item.DiamondsCost > 0 && isGift)
                     {
-                        session.GetHabbo().Diamonds -= (int) item.DiamondsCost * totalPrice;
-                        session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
+                        session.GetHabbo().Diamonds -= (int)item.DiamondsCost * totalPrice;
+                        await session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
                     }
 
                     if (item.EmeraldsCost > 0 && isGift)
                     {
-                        session.GetHabbo().Graffiti -= (int) item.EmeraldsCost * totalPrice;
-                        session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
+                        session.GetHabbo().Graffiti -= (int)item.EmeraldsCost * totalPrice;
+                        await session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
                     }
                 }
 
                 if (isGift && baseItem.Type == 'e')
                 {
-                    session.SendNotif(Oblivion.GetLanguage().GetVar("user_send_gift_effect"));
+                    await session.SendNotif(Oblivion.GetLanguage().GetVar("user_send_gift_effect"));
                     return;
                 }
 
@@ -703,12 +699,12 @@ namespace Oblivion.HabboHotel.Catalogs
 
                     session.GetHabbo().BuildersItemsMax += furniAmount;
                     using (var update =
-                        new ServerMessage(LibraryParser.OutgoingRequest("BuildersClubMembershipMessageComposer")))
+                           new ServerMessage(LibraryParser.OutgoingRequest("BuildersClubMembershipMessageComposer")))
                     {
                         update.AppendInteger(session.GetHabbo().BuildersExpire);
                         update.AppendInteger(session.GetHabbo().BuildersItemsMax);
                         update.AppendInteger(2);
-                        session.SendMessage(update);
+                        await session.SendMessage(update);
                     }
 
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -716,12 +712,12 @@ namespace Oblivion.HabboHotel.Catalogs
                         queryReactor.SetQuery("UPDATE users SET builders_items_max = @max WHERE id = @userId");
                         queryReactor.AddParameter("max", session.GetHabbo().BuildersItemsMax);
                         queryReactor.AddParameter("userId", session.GetHabbo().Id);
-                        queryReactor.RunQuery();
+                        await queryReactor.RunQueryAsync();
                     }
 
 
-                    session.SendMessage(CatalogPageComposer.PurchaseOk(item, item.Items));
-                    session.SendNotif("${notification.builders_club.membership_extended.message}",
+                    await session.SendMessage(CatalogPageComposer.PurchaseOk(item, item.Items));
+                    await session.SendNotif("${notification.builders_club.membership_extended.message}",
                         "${notification.builders_club.membership_extended.title}", "builders_club_membership_extended");
                     return;
                 }
@@ -739,7 +735,7 @@ namespace Oblivion.HabboHotel.Catalogs
                     update.AppendInteger(session.GetHabbo().BuildersExpire);
                     update.AppendInteger(session.GetHabbo().BuildersItemsMax);
                     update.AppendInteger(2);
-                    session.SendMessage(update);
+                    await session.SendMessage(update);
 
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
@@ -749,8 +745,8 @@ namespace Oblivion.HabboHotel.Catalogs
                         queryReactor.RunQuery();
                     }
 
-                    session.SendMessage(CatalogPageComposer.PurchaseOk(item, item.Items));
-                    session.SendNotif("${notification.builders_club.membership_extended.message}",
+                    await session.SendMessage(CatalogPageComposer.PurchaseOk(item, item.Items));
+                    await session.SendNotif("${notification.builders_club.membership_extended.message}",
                         "${notification.builders_club.membership_extended.title}", "builders_club_membership_extended");
                     return;
                 }
@@ -819,7 +815,7 @@ namespace Oblivion.HabboHotel.Catalogs
                                 $"UPDATE users SET prefixes = @prefixes WHERE id = '{session.GetHabbo().Id}'");
                             dbClient.AddParameter("prefixes", prefixStr);
                             dbClient.RunQuery();
-                            session.SendMessage(CatalogPageComposer.PurchaseOk(item, item.Items));
+                            await session.SendMessage(CatalogPageComposer.PurchaseOk(item, item.Items));
 
                             return;
                         }
@@ -835,7 +831,7 @@ namespace Oblivion.HabboHotel.Catalogs
                                 $"UPDATE users SET prefixes = @prefixes WHERE id = '{session.GetHabbo().Id}'");
                             dbClient.AddParameter("prefixes", prefixStr);
                             dbClient.RunQuery();
-                            session.SendMessage(CatalogPageComposer.PurchaseOk(item, item.Items));
+                            await session.SendMessage(CatalogPageComposer.PurchaseOk(item, item.Items));
 
                             return;
                         }
@@ -852,7 +848,7 @@ namespace Oblivion.HabboHotel.Catalogs
                                 $"UPDATE users SET prefixes = @prefixes WHERE id = '{session.GetHabbo().Id}'");
                             dbClient.AddParameter("prefixes", prefixStr);
                             dbClient.RunQuery();
-                            session.SendMessage(CatalogPageComposer.PurchaseOk(item, item.Items));
+                            await session.SendMessage(CatalogPageComposer.PurchaseOk(item, item.Items));
 
                             return;
                         }
@@ -905,7 +901,8 @@ namespace Oblivion.HabboHotel.Catalogs
                             return;
                         if (color.Length != 6)
                             return;
-                        Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(session, "ACH_PetLover", 1);
+                        await Oblivion.GetGame().GetAchievementManager()
+                            .ProgressUserAchievement(session, "ACH_PetLover", 1);
                         break;
 
                     case Interaction.Mannequin:
@@ -1030,11 +1027,11 @@ namespace Oblivion.HabboHotel.Catalogs
 
                     if (clientByUserId != null)
                     {
-                        clientByUserId.GetHabbo().GetInventoryComponent().AddNewItem(insertId,
+                        await clientByUserId.GetHabbo().GetInventoryComponent().AddNewItem(insertId,
                             itemBySprite.ItemId,
-                            string.Concat(session.GetHabbo().Id, (char) 9, giftMessage, (char) 9, giftLazo, (char) 9,
-                                giftColor, (char) 9, ((undef) ? "1" : "0"), (char) 9, session.GetHabbo().UserName,
-                                (char) 9, session.GetHabbo().Look, (char) 9, item.Name), 0u, false, false, 0, 0);
+                            string.Concat(session.GetHabbo().Id, (char)9, giftMessage, (char)9, giftLazo, (char)9,
+                                giftColor, (char)9, ((undef) ? "1" : "0"), (char)9, session.GetHabbo().UserName,
+                                (char)9, session.GetHabbo().Look, (char)9, item.Name), 0u, false, false, 0, 0);
 
                         if (clientByUserId.GetHabbo().Id != session.GetHabbo().Id)
                             await Oblivion.GetGame().GetAchievementManager()
@@ -1058,7 +1055,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
                 session.GetMessageHandler().GetResponse().AppendInteger(i);
 
-                var list = await DeliverItems(session, baseItem, priceAmount * (int) item.Items[baseItem], extraData,
+                var list = await DeliverItems(session, baseItem, priceAmount * (int)item.Items[baseItem], extraData,
                     limitedId,
                     limtot, text);
 
@@ -1090,7 +1087,8 @@ namespace Oblivion.HabboHotel.Catalogs
         /// <param name="limtot">The limtot.</param>
         /// <param name="songCode">The song code.</param>
         /// <returns>List&lt;UserItem&gt;.</returns>
-        internal async Task<List<UserItem>> DeliverItems(GameClient session, Item item, int amount, string extraData, int limno,
+        internal async Task<List<UserItem>> DeliverItems(GameClient session, Item item, int amount, string extraData,
+            int limno,
             int limtot, string songCode)
         {
             var list = new List<UserItem>();
@@ -1201,6 +1199,7 @@ namespace Oblivion.HabboHotel.Catalogs
                             {
                                 extra = 0;
                             }
+
                             list.Add(new UserItem(itemId, item.ItemId, extraData, extra, songCode,
                                 limno, limtot));
                             break;
@@ -1297,7 +1296,8 @@ namespace Oblivion.HabboHotel.Catalogs
                         "hr-9534-39.hd-600-1.ch-819-92.lg-3058-64.sh-3064-110.wa-2005",
                         "Sacia a sede e você pode dançar!", "f", true);
                     session.GetHabbo().GetInventoryComponent().AddBot(bot);
-                    await session.SendMessageAsync(await session.GetHabbo().GetInventoryComponent().SerializeBotInventory());
+                    await session.SendMessageAsync(await session.GetHabbo().GetInventoryComponent()
+                        .SerializeBotInventory());
                 }
                 else
                 {
@@ -1305,7 +1305,8 @@ namespace Oblivion.HabboHotel.Catalogs
                         "hr-3020-34.hd-3091-2.ch-225-92.lg-3058-100.sh-3089-1338.ca-3084-78-108.wa-2005",
                         "Fala, caminhadas, danças e vestidos", "m", false);
                     session.GetHabbo().GetInventoryComponent().AddBot(bot2);
-                    await session.SendMessageAsync(await session.GetHabbo().GetInventoryComponent().SerializeBotInventory());
+                    await session.SendMessageAsync(await session.GetHabbo().GetInventoryComponent()
+                        .SerializeBotInventory());
                 }
             }
 

@@ -19,7 +19,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             {
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("CustomUserNotificationMessageComposer"));
                 message.AppendInteger(3);
-                session.SendMessage(message);
+                await session.SendMessage(message);
                 return;
             }
 

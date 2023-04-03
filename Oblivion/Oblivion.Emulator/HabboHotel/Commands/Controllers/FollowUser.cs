@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
@@ -21,12 +22,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 1;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
             if (client?.GetHabbo()?.CurrentRoom == null)
             {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
+                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
            
@@ -36,7 +37,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var roomFwd =
                 new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
             roomFwd.AppendInteger(client.GetHabbo().CurrentRoom.RoomId);
-            session.SendMessage(roomFwd);
+            await session.SendMessage(roomFwd);
 
             return true;
         }

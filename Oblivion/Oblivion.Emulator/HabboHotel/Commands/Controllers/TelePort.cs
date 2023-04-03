@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
@@ -19,7 +20,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 0;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             var room = session.GetHabbo().CurrentRoom;
 
@@ -36,7 +37,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 room.GetGameMap().GenerateMaps();
                 return true;
             }
-            session.SendWhisper(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
+             await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
             return true;
         }
     }

@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
@@ -19,14 +20,14 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 0;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 Oblivion.GetGame().GetAchievementManager().LoadAchievements(dbClient);
             }
 
-            session.SendNotif(Oblivion.GetLanguage().GetVar("command_refresh_achievements"));
+            await session.SendNotif(Oblivion.GetLanguage().GetVar("command_refresh_achievements"));
             return true;
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages;
@@ -17,7 +18,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 1;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             var name = pms[0];
             var user = Oblivion.GetGame().GetClientManager().GetClientByUserName(name);
@@ -40,8 +41,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             response.AppendString(habbo.LastOnline.ToString(CultureInfo.InvariantCulture));
             response.AppendBool(true);
             response.AppendBool(false);
-            
-            habbo.await GetClient().SendMessageAsync(response);
+
+            await habbo.GetClient().SendMessageAsync(response);
 
             user.GetHabbo().LastChange = 0;
             return true;

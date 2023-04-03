@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.PathFinding;
 
@@ -20,7 +21,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 0;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             var room = session.GetHabbo().CurrentRoom;
 
@@ -29,7 +30,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             if (room.RoomData.DisablePush)
             {
-                session.SendWhisper("Realizar Push Foi Desativado pelo Dono do Quarto");
+                 await Session.SendWhisperAsync("Realizar Push Foi Desativado pelo Dono do Quarto");
                 return true;
             }
 
@@ -44,13 +45,13 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             if (user2 == null) return true;
             if (user2.TeleportEnabled)
             {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
+                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
                 return true;
             }
 
             if (PathFinder.GetDistance(user.X, user.Y, user2.X, user2.Y) > 2)
             {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("command_pull_error_far_away"));
+                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_pull_error_far_away"));
                 return true;
             }
 

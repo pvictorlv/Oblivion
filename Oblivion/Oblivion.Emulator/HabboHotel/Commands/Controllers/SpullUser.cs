@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
@@ -19,7 +20,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 1;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             var room = session.GetHabbo().CurrentRoom;
             var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
@@ -28,19 +29,19 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
             if (client == null)
             {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
+                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
             if (client.GetHabbo().Id == session.GetHabbo().Id)
             {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("command_pull_error_own"));
+                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_pull_error_own"));
                 return true;
             }
             var user2 = room.GetRoomUserManager().GetRoomUserByHabbo(client.GetHabbo().Id);
             if (user2 == null) return true;
             if (user2.TeleportEnabled)
             {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
+                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
                 return true;
             }
 

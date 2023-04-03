@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.User;
@@ -39,7 +40,7 @@ namespace Oblivion.HabboHotel.RoomBots
         /// <param name="baseId">The base identifier.</param>
         /// <param name="user">The user.</param>
         /// <param name="room">The room.</param>
-        internal async Task Init(uint baseId, int roomUserId, uint roomId, RoomUser user, Room room)
+        internal void Init(uint baseId, int roomUserId, uint roomId, RoomUser user, Room room)
         {
             BaseId = baseId;
             _roomUser = user;

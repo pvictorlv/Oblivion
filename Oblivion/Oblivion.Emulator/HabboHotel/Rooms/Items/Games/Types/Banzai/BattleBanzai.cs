@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.Enclosure;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -96,11 +97,11 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             }
 
             if (IsBanzaiActive)
-                    HandleBanzaiTiles(User.Coordinate, User.Team, User);
+                await HandleBanzaiTiles(User.Coordinate, User.Team, User);
             
         }
 
-        public void BanzaiStart()
+        public async Task BanzaiStart()
         {
             if (IsBanzaiActive)
                 return;
@@ -118,14 +119,14 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                 tile.ExtraData = "1";
                 tile.Value = 0;
                 tile.Team = Team.None;
-                tile.UpdateState();
+                await tile.UpdateState();
             }
 
             ResetTiles();
             IsBanzaiActive = true;
 
             if (_room.GotWireds())
-                _room.GetWiredHandler().ExecuteWired(Interaction.TriggerGameStart);
+                await _room.GetWiredHandler().ExecuteWired(Interaction.TriggerGameStart);
 
             /* TODO CHECK */
             foreach (var user in _room.GetRoomUserManager().GetRoomUsers())
@@ -152,14 +153,14 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             }
         }
 
-        public void BanzaiEnd(bool userTriggered = false)
+        public async Task BanzaiEnd(bool userTriggered = false)
         {
             IsBanzaiActive = false;
-            _room.GetGameManager().StopGame();
+            await _room.GetGameManager().StopGame();
             _floorMap = null;
 
             if (!userTriggered && _room.GotWireds())
-                _room.GetWiredHandler().ExecuteWired(Interaction.TriggerGameEnd);
+                await _room.GetWiredHandler().ExecuteWired(Interaction.TriggerGameEnd);
 
             var winners = _room.GetGameManager().GetWinningTeam();
             _room.GetGameManager().UnlockGates();
@@ -174,7 +175,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                 else if (tile.Team == Team.None)
                 {
                     tile.ExtraData = "0";
-                    tile.UpdateState();
+                    await tile.UpdateState();
                 }
 
             if (winners != Team.None)
@@ -187,17 +188,17 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                     if (User.Team != Team.None)
                         if (Oblivion.GetUnixTimeStamp() - _timestarted > 5)
                         {
-                            Oblivion.GetGame()
+                           await Oblivion.GetGame()
                                 .GetAchievementManager()
                                 .ProgressUserAchievement(User.GetClient(), "ACH_BattleBallTilesLocked",
                                     User.LockedTilesCount);
-                            Oblivion.GetGame()
+                           await Oblivion.GetGame()
                                 .GetAchievementManager()
                                 .ProgressUserAchievement(User.GetClient(), "ACH_BattleBallPlayer", 1);
                         }
 
                     if (Oblivion.GetUnixTimeStamp() - _timestarted > 5)
-                        Oblivion.GetGame()
+                        await Oblivion.GetGame()
                             .GetAchievementManager()
                             .ProgressUserAchievement(User.GetClient(), "ACH_BattleBallWinner", 1);
 
@@ -211,7 +212,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             }
         }
 
-        public void MovePuck(RoomItem item, GameClient mover, int newX, int newY, Team Team)
+        public async Task MovePuck(RoomItem item, GameClient mover, int newX, int newY, Team Team)
         {
             if (!_room.GetGameMap().ItemCanBePlacedHere(newX, newY))
                 return;
@@ -224,7 +225,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
 
             item.ExtraData = Convert.ToInt32(Team).ToString();
             item.UpdateNeeded = true;
-            item.UpdateState();
+            await item.UpdateState();
 
             double newZ = _room.GetGameMap().Model.SqFloorHeight[newX][newY];
 
@@ -240,14 +241,14 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             serverMessage.AppendInteger(-1);
             await _room.SendMessage(serverMessage);
 
-            _room.GetRoomItemHandler().SetFloorItem(mover, item, newX, newY, item.Rot, false, false, false);
+            await _room.GetRoomItemHandler().SetFloorItem(mover, item, newX, newY, item.Rot, false, false, false);
 
             if (mover?.GetHabbo() == null)
                 return;
 
             var user = mover.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(mover.GetHabbo().Id);
             if (IsBanzaiActive)
-                HandleBanzaiTiles(new Point(newX, newY), Team, user);
+                await HandleBanzaiTiles(new Point(newX, newY), Team, user);
         }
 
         internal async Task MovePuck(RoomItem item, GameClient client, Point user, Point ball, int length, Team Team)
@@ -288,14 +289,14 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                         client.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(client.GetHabbo().Id);
                     /* TODO CHECK */
                     foreach (var point in list)
-                        HandleBanzaiTiles(point, Team, roomUserByHabbo);
+                        await HandleBanzaiTiles(point, Team, roomUserByHabbo);
                     if (x != ball.X || y != ball.Y)
-                        MovePuck(item, client, x, y, Team);
+                        await MovePuck(item, client, x, y, Team);
                 }
             }
         }
 
-        private void SetTile(RoomItem item, Team Team, RoomUser user)
+        private async Task SetTile(RoomItem item, Team Team, RoomUser user)
         {
             if (item == null || user == null || _room == null) return;
             if (item.Team == Team)
@@ -308,7 +309,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                         var teamByte = Convert.ToByte(Team);
                         
                         user.LockedTilesCount++;
-                        _room.GetGameManager().AddPointToTeam(item.Team, user);
+                        await _room.GetGameManager().AddPointToTeam(item.Team, user);
                         _field?.UpdateLocation(item.X, item.Y, teamByte);
                         var gfield = _field?.DoUpdate()?.ToList();
                         if (gfield == null) return;
@@ -346,7 +347,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             item.ExtraData = newColor.ToString();
         }
 
-        private void HandleBanzaiTiles(Point coord, Team Team, RoomUser user)
+        private async Task HandleBanzaiTiles(Point coord, Team Team, RoomUser user)
         {
             if (Team == Team.None)
                 return;
@@ -361,7 +362,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                     if (_item.GetBaseItem().InteractionType != Interaction.BanzaiFloor)
                     {
                         user.Team = Team.None;
-                        user.ApplyEffect(0);
+                        await user.ApplyEffect(0);
                         continue;
                     }
 
@@ -375,15 +376,15 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                     if (_item.X != coord.X || _item.Y != coord.Y)
                         continue;
 
-                    SetTile(_item, Team, user);
+                    await SetTile(_item, Team, user);
                     if (_item.ExtraData.Equals("5") || _item.ExtraData.Equals("8") || _item.ExtraData.Equals("11") ||
                         _item.ExtraData.Equals("14"))
                         i++;
-                    _item.UpdateState(false, true);
+                    await _item.UpdateState(false, true);
                 }
 
                 if (i == _banzaiTiles.Count)
-                    BanzaiEnd();
+                    await BanzaiEnd();
             }
         }
 

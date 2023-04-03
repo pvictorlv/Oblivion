@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
@@ -19,7 +20,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 0;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             var room = session.GetHabbo().CurrentRoom;
             var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
@@ -28,7 +29,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             if (room.RoomData.DisablePull)
             {
-                session.SendWhisper("Realizar Pull Foi Desativado pelo Dono do Quarto");
+                 await Session.SendWhisperAsync("Realizar Pull Foi Desativado pelo Dono do Quarto");
                 return true;
             }
 
@@ -40,12 +41,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             if (user2 == null) return true;
             if (user2.TeleportEnabled)
             {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
+                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
                 return true;
             }
             if (user2.TeleportEnabled)
             {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
+                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
                 return true;
             }
             

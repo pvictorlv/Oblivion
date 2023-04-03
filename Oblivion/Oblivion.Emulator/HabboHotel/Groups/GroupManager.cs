@@ -502,7 +502,7 @@ namespace Oblivion.HabboHotel.Groups
             response.AppendBool(group.AdminOnlyDeco == 0u);
             response.AppendInteger(group.Requests.Count);
             response.AppendBool(group.HasForum);
-            session.SendMessage(response);
+            await session.SendMessage(response);
         }
 
         /// <summary>

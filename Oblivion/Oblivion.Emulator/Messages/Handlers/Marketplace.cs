@@ -347,7 +347,7 @@ namespace Oblivion.Messages.Handlers
                     msg.AppendInteger(dictionary2[pair.Value.SpriteId]);
                 }
             msg.AppendInteger(dictionary.Count);
-            session.SendMessage(msg);
+            await session.SendMessage(msg);
         }
 
         public void CancelOffer()

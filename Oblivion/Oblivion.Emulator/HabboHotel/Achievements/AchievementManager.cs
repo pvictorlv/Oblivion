@@ -32,11 +32,11 @@ namespace Oblivion.HabboHotel.Achievements
         /// </summary>
         /// <param name="dbClient">The database client.</param>
         /// <param name="loadedAchs">The loaded achs.</param>
-        internal AchievementManager(IQueryAdapter dbClient, out uint loadedAchs)
+        internal AchievementManager()
         {
             Achievements = new Dictionary<string, Achievement>();
-            LoadAchievements(dbClient);
-            loadedAchs = (uint)Achievements.Count;
+          //  LoadAchievements(dbClient);
+//            loadedAchs = (uint)Achievements.Count;
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Oblivion.HabboHotel.Achievements
                 }
             }
 
-            AchievementDataCached.AppendInteger(0);
+            await AchievementDataCached.AppendIntegerAsync(0);
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace Oblivion.HabboHotel.Achievements
         /// <param name="message">The message.</param>
         internal async Task GetList(GameClient session, ClientMessage message)
         {
-            session.SendMessage(AchievementListComposer.Compose(session, Achievements.Values));
+            await session.SendMessage(AchievementListComposer.Compose(session, Achievements.Values));
         }
 
         /// <summary>
@@ -94,14 +94,14 @@ namespace Oblivion.HabboHotel.Achievements
 
             if (loginAch == null)
             {
-                ProgressUserAchievement(session, "ACH_Login", 1, true);
+                await ProgressUserAchievement(session, "ACH_Login", 1, true);
                 return;
             }
 
             var daysBtwLastLogin = Oblivion.GetUnixTimeStamp() - session.GetHabbo().PreviousOnline;
 
             if (daysBtwLastLogin >= 51840 && daysBtwLastLogin <= 112320)
-                ProgressUserAchievement(session, "ACH_Login", 1);
+                await ProgressUserAchievement(session, "ACH_Login", 1);
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace Oblivion.HabboHotel.Achievements
 
             if (regAch == null)
             {
-                ProgressUserAchievement(session, "ACH_RegistrationDuration", 1, true);
+                await ProgressUserAchievement(session, "ACH_RegistrationDuration", 1, true);
                 return;
             }
 
@@ -136,7 +136,7 @@ namespace Oblivion.HabboHotel.Achievements
             if (days < 1)
                 return;
 
-            ProgressUserAchievement(session, "ACH_RegistrationDuration", days);
+            await ProgressUserAchievement(session, "ACH_RegistrationDuration", days);
         }
 
         /// <summary>
@@ -233,9 +233,9 @@ namespace Oblivion.HabboHotel.Achievements
 
                 var userBadgeComponent = Session.GetHabbo().GetBadgeComponent();
                 if (TargetLevel != 1)
-                    userBadgeComponent.RemoveBadge(Convert.ToString($"{AchievementGroup}{TargetLevel - 1}"), Session);
+                    await userBadgeComponent.RemoveBadge(Convert.ToString($"{AchievementGroup}{TargetLevel - 1}"), Session);
 
-                userBadgeComponent.GiveBadge($"{AchievementGroup}{TargetLevel}", true, Session);
+                await userBadgeComponent.GiveBadge($"{AchievementGroup}{TargetLevel}", true, Session);
 
 
                 if (NewTarget > TotalLevels)

@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
@@ -21,7 +22,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             var name = pms[0];
             if (name == "room")
@@ -30,44 +31,44 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
                 if (!CommandsManager.CommandsDictionary.ContainsKey(cmd))
                 {
-                    session.SendWhisper("Comando não encontrado!");
+                     await Session.SendWhisperAsync("Comando não encontrado!");
                     return false;
                 }
                 if (!session.GetHabbo().CurrentRoom.RoomData.BlockedCommands.Contains(cmd))
                 {
                     session.GetHabbo().CurrentRoom.RoomData.BlockedCommands.Add(cmd);
-                    session.SendWhisper("Sucesso!");
+                     await Session.SendWhisperAsync("Sucesso!");
                     return true;
                 }
-                session.SendWhisper("Comando já bloqueado");
+                 await Session.SendWhisperAsync("Comando já bloqueado");
                 return false;
             }
             if (session.GetHabbo().Rank < 7)
             {
-                session.SendWhisper("Comando incorreto, digite :block room [comando] para bloquear um comando.");
+                 await Session.SendWhisperAsync("Comando incorreto, digite :block room [comando] para bloquear um comando.");
                 return false;
             }
             var word = pms[1];
 
             if (!CommandsManager.CommandsDictionary.ContainsKey(word))
             {
-                session.SendWhisper("Comando não encontrado!");
+                 await Session.SendWhisperAsync("Comando não encontrado!");
                 return false;
             }
             var user = Oblivion.GetHabboForName(name);
             if (user == null)
             {
-                session.SendWhisper("Usuário não encontrado!");
+                 await Session.SendWhisperAsync("Usuário não encontrado!");
                 return false;
             }
             if (user.Rank >= session.GetHabbo().Rank)
             {
-                session.SendWhisper("Não bloqueie um superior!");
+                 await Session.SendWhisperAsync("Não bloqueie um superior!");
                 return false;
             }
             if (user.Data.BlockedCommands.Contains(word))
             {
-                session.SendWhisper("Comando já bloqueado!");
+                 await Session.SendWhisperAsync("Comando já bloqueado!");
                 return false;
             }
             user.Data.BlockedCommands.Add(word);
@@ -78,7 +79,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 dbClient.AddParameter("command", word);
                 dbClient.RunQuery();
             }
-            session.SendWhisper("Sucesso!");
+             await Session.SendWhisperAsync("Sucesso!");
 
             return true;
         }

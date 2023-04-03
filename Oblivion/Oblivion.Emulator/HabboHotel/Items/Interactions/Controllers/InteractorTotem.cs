@@ -16,7 +16,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             if (session == null || !hasRights || num <= 0 || item.GetBaseItem().InteractionType == Interaction.Pinata)
                 return;
 
-            Oblivion.GetGame().GetQuestManager().ProgressUserQuest(session, QuestType.FurniSwitch);
+            await Oblivion.GetGame().GetQuestManager().ProgressUserQuest(session, QuestType.FurniSwitch);
 
             int.TryParse(item.ExtraData, out var num2);
             int num3;
@@ -74,7 +74,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 return;
             if (Oblivion.GetUnixTimeStamp() - session.GetHabbo().LastTotem <= 1800)
             {
-                session.SendWhisper("Hey, você só pode receber um efeito a cada meia hora!");
+                 await Session.SendWhisperAsync("Hey, você só pode receber um efeito a cada meia hora!");
                 return;
             }
             if (currentPlanet == 0 && (currentLeg == 3 || currentLeg == 7 || currentLeg == 11) &&
@@ -97,7 +97,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             {
                 return;
             }
-            session.SendWhisper("Você recebeu 1 efeito!");
+             await Session.SendWhisperAsync("Você recebeu 1 efeito!");
             session.GetHabbo().SaveLastTotem();
         }
 

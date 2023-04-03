@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
@@ -21,10 +22,10 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             session.GetHabbo().SpectatorMode = true;
-            session.SendNotif("In next room you enter you will be invisible.");
+            await session.SendNotif("In next room you enter you will be invisible.");
 
             return true;
         }

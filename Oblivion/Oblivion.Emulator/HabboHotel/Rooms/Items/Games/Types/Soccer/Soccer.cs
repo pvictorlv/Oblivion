@@ -306,7 +306,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                 item.ComeDirection = ComeDirection.GetComeDirection(user, item.Coordinate);
 
                 if (item.ComeDirection != IComeDirection.Null)
-                    MoveBallProcess(item, client);
+                    await MoveBallProcess(item, client);
             }
             catch (Exception e)
             {
@@ -376,7 +376,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                         continue;
                     }
 
-                if (MoveBall(item, client, newX, newY))
+                if (await MoveBall(item, client, newX, newY))
                 {
                     item.BallIsMoving = false;
                     break;

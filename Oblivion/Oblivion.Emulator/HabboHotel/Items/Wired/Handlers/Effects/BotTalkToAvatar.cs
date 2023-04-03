@@ -55,7 +55,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
-        public Task<bool> Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
             
 
@@ -82,11 +82,11 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 whisp.AppendInteger(2);
                 whisp.AppendInteger(0);
                 whisp.AppendInteger(-1);
-                roomawait user.GetClient().SendMessageAsync(whisp);
+                await roomUser.GetClient().SendMessageAsync(whisp);
             }
             else
             {
-                _bot.Chat(null, roomUser.GetUserName() + " : " + OtherExtraString, false, 0);
+                await _bot.Chat(null, roomUser.GetUserName() + " : " + OtherExtraString, false, 0);
             }
 
             return true;

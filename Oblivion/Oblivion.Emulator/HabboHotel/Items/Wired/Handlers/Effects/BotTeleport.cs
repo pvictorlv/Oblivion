@@ -107,7 +107,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             Requested = false;
             return true;
         }
-        public Task<bool> Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
             var item = (Interaction) stuff[1];
 

@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
@@ -21,17 +22,17 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             var user = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
             if (user?.GetHabbo() == null)
             {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
+                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
             if (user.GetHabbo().Rank >= session.GetHabbo().Rank)
             {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("user_is_higher_rank"));
+                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_is_higher_rank"));
                 return true;
             }
             try

@@ -108,7 +108,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <summary>
         ///     Starts the connection.
         /// </summary>
-        internal async Task StartConnection()
+        internal void StartConnection()
         {
             if (_messageHandler == null)
                 InitHandler();
@@ -128,7 +128,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <summary>
         ///     Initializes the handler.
         /// </summary>
-        internal async Task InitHandler()
+        internal void InitHandler()
         {
             _messageHandler = new GameClientMessageHandler(this);
         }

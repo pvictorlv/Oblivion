@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
@@ -20,12 +21,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = -1;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             var messageUrl = pms[0];
             var messageStr = string.Join(" ", pms.Skip(1));
 
-            Oblivion.GetGame()
+           await Oblivion.GetGame()
                 .GetClientManager()
                 .SendSuperNotif("${catalog.alert.external.link.title}", messageStr, "game_promo_small", session,
                     messageUrl, "${facebook.create_link_in_web}", true, false);

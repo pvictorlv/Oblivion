@@ -21,7 +21,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 1;
         }
 
-        public override bool Execute(GameClient client, string[] pms)
+        public override async Task<bool> Execute(GameClient client, string[] pms)
         {
             var room = client?.GetHabbo()?.CurrentRoom;
             if (room == null) return true;

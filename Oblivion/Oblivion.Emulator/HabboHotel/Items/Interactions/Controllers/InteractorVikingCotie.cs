@@ -47,7 +47,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 timer.Enabled = true;
             }
             else
-                session.SendNotif(Oblivion.GetLanguage().GetVar("user_viking_error"));
+                await session.SendNotif(Oblivion.GetLanguage().GetVar("user_viking_error"));
         }
 
         private void OnElapse(object sender, ElapsedEventArgs e)

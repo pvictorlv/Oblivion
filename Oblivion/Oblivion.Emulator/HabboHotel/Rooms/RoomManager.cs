@@ -380,7 +380,7 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 try
                 {
-                    Oblivion.GetGame().GetRoomManager().UnloadRoom(current, "RemoveAllRooms void called");
+                    await Oblivion.GetGame().GetRoomManager().UnloadRoom(current, "RemoveAllRooms void called");
                 }
                 catch
                 {

@@ -61,7 +61,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             set { }
         }
 
-        public Task<bool> Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
             
 
@@ -80,7 +80,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                     if (!current.Execute(null))
                         return false;
 
-                    WiredHandler.OnEvent(current);
+                    await WiredHandler.OnEvent(current);
                 }
 
             if (effects.Count > 0)
@@ -98,8 +98,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                         if (selectedBox == null || !selectedBox.Execute())
                             return false;
 
-                        WiredHandler.OnEvent(specialBox);
-                        WiredHandler.OnEvent(selectedBox);
+                        await WiredHandler.OnEvent(specialBox);
+                        await WiredHandler.OnEvent(selectedBox);
                     }
                 }
                 else
@@ -109,11 +109,11 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                         if (current3.Type == Interaction.ActionBotTeleport || current3.Type == Interaction.ActionBotMove) continue;
 
                         current3.Execute(null, Type);
-                        WiredHandler.OnEvent(current3);
+                        await WiredHandler.OnEvent(current3);
                     }
                 }
             }
-            WiredHandler.OnEvent(this);
+            await WiredHandler.OnEvent(this);
             return true;
         }
     }

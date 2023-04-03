@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.GameClients.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.GameClients.Interfaces;
 
 namespace Oblivion.HabboHotel.Commands.Interfaces
 {
@@ -44,6 +45,6 @@ namespace Oblivion.HabboHotel.Commands.Interfaces
         /// <param name="client">The client.</param>
         /// <param name="pms">The PMS.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public abstract bool Execute(GameClient client, string[] pms);
+        public abstract Task<bool> Execute(GameClient client, string[] pms);
     }
 }

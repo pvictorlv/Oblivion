@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
@@ -19,7 +20,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 1;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             var room = session.GetHabbo().CurrentRoom;
             if (!room.CheckRights(session, true))
@@ -28,18 +29,18 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             if (!ushort.TryParse(pms[0], out var maxUsers) || maxUsers == 0 || maxUsers > (150 * Oblivion.Multipy))
             {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("command_setmax_error_number"));
+                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_setmax_error_number"));
                 return true;
             }
 
             if (maxUsers > 75 * Oblivion.Multipy && !(session.GetHabbo().Vip || session.GetHabbo().HasFuse("fuse_vip_commands")))
             {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("command_setmax_error_max"));
+                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_setmax_error_max"));
                 return true;
             }
             if (maxUsers < 10 && !(session.GetHabbo().Vip || session.GetHabbo().HasFuse("fuse_vip_commands")))
             {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("command_setmax_error_min"));
+                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_setmax_error_min"));
                 return true;
             }
 

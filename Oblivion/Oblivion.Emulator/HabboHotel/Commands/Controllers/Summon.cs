@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
@@ -20,19 +21,19 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 1;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             var userName = pms[0];
             if (string.Equals(userName, session.GetHabbo().UserName,
                 StringComparison.CurrentCultureIgnoreCase))
             {
-                session.SendNotif(Oblivion.GetLanguage().GetVar("summon_yourself"));
+                await session.SendNotif(Oblivion.GetLanguage().GetVar("summon_yourself"));
                 return true;
             }
             var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(userName);
             if (client == null)
             {
-                session.SendNotif(Oblivion.GetLanguage().GetVar("user_not_found"));
+                await session.SendNotif(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
             if (session.GetHabbo().CurrentRoom != null &&

@@ -24,7 +24,7 @@ namespace Oblivion.HabboHotel.Achievements
         ///     Initializes the specified database client.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal async Task Initialize(IQueryAdapter dbClient)
+        internal void Initialize(IQueryAdapter dbClient)
         {
             dbClient.SetQuery("SELECT * FROM achievements_talents ORDER BY `order_num` ASC");
 
@@ -104,13 +104,13 @@ namespace Oblivion.HabboHotel.Achievements
                 serverMessage.AppendInteger(0);
             }
 
-            session.SendMessage(serverMessage);
+            await session.SendMessage(serverMessage);
 
             if (talent.Type == "citizenship" && talent.Level == 3)
-                Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(session, "ACH_Citizenship", 1, false, true);
+                await Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(session, "ACH_Citizenship", 1, false, true);
             else if (talent.Type == "citizenship" && talent.Level == 4)
             {
-                session.GetHabbo().GetSubscriptionManager().AddSubscription(7);
+                await session.GetHabbo().GetSubscriptionManager().AddSubscription(7);
 
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     queryReactor.RunFastQuery($"UPDATE users SET talent_status = 'helper' WHERE id = '{session.GetHabbo().Id}'");

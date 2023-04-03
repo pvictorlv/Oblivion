@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
@@ -19,22 +20,22 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 2;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
             if (client == null)
             {
-                session.SendNotif(Oblivion.GetLanguage().GetVar("user_not_found"));
+                await session.SendNotif(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
             if (!client.GetHabbo().GetBadgeComponent().HasBadge(pms[1]))
             {
-                session.SendNotif(Oblivion.GetLanguage().GetVar("command_badge_remove_error"));
+                await session.SendNotif(Oblivion.GetLanguage().GetVar("command_badge_remove_error"));
                 return true;
             }
-            client.GetHabbo().GetBadgeComponent().RemoveBadge(pms[1], client);
-            session.SendNotif(Oblivion.GetLanguage().GetVar("command_badge_remove_done"));
-            Oblivion.GetGame()
+            await client.GetHabbo().GetBadgeComponent().RemoveBadge(pms[1], client);
+            await session.SendNotif(Oblivion.GetLanguage().GetVar("command_badge_remove_done"));
+            await Oblivion.GetGame()
                 .GetModerationTool()
                 .LogStaffEntry(session.GetHabbo().UserName, client.GetHabbo().UserName,
                     "Badge Taken", string.Format("Badge taken from user [{0}]", pms[1]));

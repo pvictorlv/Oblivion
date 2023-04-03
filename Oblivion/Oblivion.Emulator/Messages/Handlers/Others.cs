@@ -67,7 +67,7 @@ namespace Oblivion.Messages.Handlers
         ///     Handles the request.
         /// </summary>
         /// <param name="request">The request.</param>
-        internal async Task HandleRequest(ClientMessage request)
+        internal void HandleRequest(ClientMessage request)
         {
             Request = request;
             LibraryParser.HandlePacket(this, request);
@@ -435,13 +435,13 @@ namespace Oblivion.Messages.Handlers
                        Oblivion.EscapeJSONString(Session.GetHabbo().UserName) + "\", \"s\":\"" +
                        Session.GetHabbo().Id + "\", \"u\":\"" + preview.Id + "\", \"t\":\"" + preview.CreatedAt + "\"}";
 
-            var item = Session.GetHabbo()
+            var item = await Session.GetHabbo()
                 .GetInventoryComponent()
                 .AddNewItem("0", Oblivion.GetGame().GetCameraManager().PhotoPoster.ItemId, data, 0, true, false, 0, 0);
-            Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
-            Session.GetHabbo().GetInventoryComponent().SendNewItems(item.VirtualId);
+            await Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
+            await Session.GetHabbo().GetInventoryComponent().SendNewItems(item.VirtualId);
 
-            Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_CameraPhotoCount", 1);
+            await Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_CameraPhotoCount", 1);
 
             Response.Init(LibraryParser.OutgoingRequest("CameraPurchaseOk"));
             await SendResponse();
@@ -606,12 +606,12 @@ namespace Oblivion.Messages.Handlers
                            Session.GetHabbo().Id + "\", \"u\":\"" + preview.Id + "\", \"t\":\"" + preview.CreatedAt +
                            "\"}";
 
-                var item = Session.GetHabbo()
+                var item = await Session.GetHabbo()
                     .GetInventoryComponent()
                     .AddNewItem("0", Oblivion.GetGame().GetCameraManager().PhotoPoster.ItemId, data, 0, true, false, 0,
                         0);
-                Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
-                Session.GetHabbo().GetInventoryComponent().SendNewItems(item.VirtualId);
+                await Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
+                await Session.GetHabbo().GetInventoryComponent().SendNewItems(item.VirtualId);
 
 
                 var thumb = new ServerMessage(LibraryParser.OutgoingRequest("ThumbnailSuccessMessageComposer"));

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.Commands.Controllers;
 using Oblivion.HabboHotel.Commands.Interfaces;
@@ -182,12 +183,7 @@ namespace Oblivion.HabboHotel.Commands
             CommandsDictionary.Add("disco", new Disco());
             CommandsDictionary.Add("about", new About());
             CommandsDictionary.Add("block", new BlockCommand());
-
-            if (ExtraSettings.WebSocketAddr.Length > 10)
-            {
-                CommandsDictionary.Add("roomvideo", new RoomVideo());
-
-            }
+            
             //CommandsDictionary.Add("test", new Test());
             UpdateInfo();
         }
@@ -250,7 +246,7 @@ namespace Oblivion.HabboHotel.Commands
         /// <param name="str">The string.</param>
         /// <param name="client">The client.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public static bool TryExecute(string str, GameClient client)
+        public static async Task<bool> TryExecute(string str, GameClient client)
         {
             try
             {
@@ -305,7 +301,7 @@ namespace Oblivion.HabboHotel.Commands
                 if (command.MinParams == -2 || (command.MinParams == -1 && pms.Length > 1) ||
                     command.MinParams != -1 && command.MinParams == pms.Length - 1)
                 {
-                    if (command.Execute(client, pms.Skip(1).ToArray()))
+                    if (await command.Execute(client, pms.Skip(1).ToArray()))
                     {
                         client.GetHabbo().CurrentRoom?.AddChatlog(client.GetHabbo().Id, $"Executou o comando: {commandName}", false);
                         return true;

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.HabboHotel.Rooms.Data;
 using Oblivion.HabboHotel.Support;
@@ -26,7 +27,8 @@ namespace Oblivion.Messages.Handlers
                 return;
             }
 
-            SupportTicket ticket = Oblivion.GetGame().GetModerationTool().GetPendingTicketForUser(Session.GetHabbo().Id);
+            SupportTicket ticket =
+                Oblivion.GetGame().GetModerationTool().GetPendingTicketForUser(Session.GetHabbo().Id);
 
             if (ticket == null) // null check to be sure
                 return;
@@ -66,7 +68,8 @@ namespace Oblivion.Messages.Handlers
             {
                 Response.Init(LibraryParser.OutgoingRequest("TicketUserAlert"));
 
-                SupportTicket ticket = Oblivion.GetGame().GetModerationTool().GetPendingTicketForUser(Session.GetHabbo().Id);
+                SupportTicket ticket = Oblivion.GetGame().GetModerationTool()
+                    .GetPendingTicketForUser(Session.GetHabbo().Id);
                 Response.AppendInteger(1);
                 Response.AppendString(ticket.TicketId.ToString());
                 Response.AppendString(ticket.Timestamp.ToString(CultureInfo.InvariantCulture));
@@ -76,7 +79,8 @@ namespace Oblivion.Messages.Handlers
                 return;
             }
 
-            if (Oblivion.GetGame().GetModerationTool().UsersHasAbusiveCooldown(Session.GetHabbo().Id)) // the previous issue of the user was abusive
+            if (Oblivion.GetGame().GetModerationTool()
+                .UsersHasAbusiveCooldown(Session.GetHabbo().Id)) // the previous issue of the user was abusive
             {
                 Response.Init(LibraryParser.OutgoingRequest("TicketUserAlert"));
 
@@ -86,8 +90,8 @@ namespace Oblivion.Messages.Handlers
                 return;
             }
 
-//            Response.AppendInteger(0); // It's okay, the user may send an new issue
-            Oblivion.GetGame().GetModerationTool().SendNewTicket(Session, category, 7, reportedUser, message, chats);
+            //            Response.AppendInteger(0); // It's okay, the user may send an new issue
+            await Oblivion.GetGame().GetModerationTool().SendNewTicket(Session, category, 7, reportedUser, message, chats);
 
 //            await SendResponse();
         }
@@ -100,7 +104,7 @@ namespace Oblivion.Messages.Handlers
             if (!Oblivion.GetGame().GetModerationTool().UsersHasPendingTicket(Session.GetHabbo().Id))
                 return;
 
-            Oblivion.GetGame().GetModerationTool().DeletePendingTicketForUser(Session.GetHabbo().Id);
+            await Oblivion.GetGame().GetModerationTool().DeletePendingTicketForUser(Session.GetHabbo().Id);
 
             Response.Init(LibraryParser.OutgoingRequest("OpenHelpToolMessageComposer"));
             Response.AppendInteger(0);
@@ -131,7 +135,7 @@ namespace Oblivion.Messages.Handlers
             if (!Session.GetHabbo().HasFuse("fuse_chatlogs"))
                 return;
 
-            await Session.SendMessageAsync(ModerationTool.SerializeUserChatlog(Request.GetUInteger()));
+            await Session.SendMessageAsync(await ModerationTool.SerializeUserChatlog(Request.GetUInteger()));
         }
 
         /// <summary>
@@ -149,7 +153,7 @@ namespace Oblivion.Messages.Handlers
             var roomId = Request.GetUInteger();
 
             if (Oblivion.GetGame().GetRoomManager().GetRoom(roomId) != null)
-                await Session.SendMessageAsync(ModerationTool.SerializeRoomChatlog(roomId));
+                await Session.SendMessageAsync(await ModerationTool.SerializeRoomChatlog(roomId));
         }
 
         /// <summary>
@@ -161,9 +165,9 @@ namespace Oblivion.Messages.Handlers
                 return;
 
             var roomId = Request.GetUInteger();
-            var data = Oblivion.GetGame().GetRoomManager().GenerateNullableRoomData(roomId);
+            var data = await Oblivion.GetGame().GetRoomManager().GenerateNullableRoomData(roomId);
 
-            await Session.SendMessageAsync(ModerationTool.SerializeRoomTool(data));
+            await Session.SendMessageAsync(await ModerationTool.SerializeRoomTool(data));
         }
 
         /// <summary>
@@ -177,7 +181,7 @@ namespace Oblivion.Messages.Handlers
             Request.GetInteger();
             var ticketId = Request.GetUInteger();
 
-            Oblivion.GetGame().GetModerationTool().PickTicket(Session, ticketId);
+            await Oblivion.GetGame().GetModerationTool().PickTicket(Session, ticketId);
         }
 
         ///<summary>
@@ -191,7 +195,7 @@ namespace Oblivion.Messages.Handlers
             int ticketCount = Request.GetInteger();
 
             for (int i = 0; i < ticketCount; i++)
-                Oblivion.GetGame().GetModerationTool().ReleaseTicket(Session, Request.GetUInteger());
+                await Oblivion.GetGame().GetModerationTool().ReleaseTicket(Session, Request.GetUInteger());
         }
 
         /// <summary>
@@ -211,7 +215,7 @@ namespace Oblivion.Messages.Handlers
             if (ticketId <= 0)
                 return;
 
-            Oblivion.GetGame().GetModerationTool().CloseTicket(Session, ticketId, result);
+            await Oblivion.GetGame().GetModerationTool().CloseTicket(Session, ticketId, result);
         }
 
         /// <summary>
@@ -227,12 +231,13 @@ namespace Oblivion.Messages.Handlers
             if (ticket == null)
                 return;
 
-            RoomData roomData = Oblivion.GetGame().GetRoomManager().GenerateNullableRoomData(ticket.RoomId);
+            RoomData roomData = await Oblivion.GetGame().GetRoomManager().GenerateNullableRoomData(ticket.RoomId);
 
             if (roomData == null)
                 return;
 
-            await Session.SendMessageAsync(ModerationTool.SerializeTicketChatlog(ticket, roomData, ticket.Timestamp));
+            await Session.SendMessageAsync(
+                await ModerationTool.SerializeTicketChatlog(ticket, roomData, ticket.Timestamp));
         }
 
         /// <summary>
@@ -245,7 +250,7 @@ namespace Oblivion.Messages.Handlers
                 uint userId = Request.GetUInteger();
 
                 if (userId > 0)
-                    await Session.SendMessageAsync(ModerationTool.SerializeRoomVisits(userId));
+                    await Session.SendMessageAsync(await ModerationTool.SerializeRoomVisits(userId));
             }
         }
 
@@ -261,7 +266,8 @@ namespace Oblivion.Messages.Handlers
 
             string message = Request.GetString();
 
-            ServerMessage serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
+            ServerMessage serverMessage =
+                new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
             serverMessage.AppendString("admin");
             serverMessage.AppendInteger(3);
             serverMessage.AppendString("message");
@@ -272,8 +278,9 @@ namespace Oblivion.Messages.Handlers
             serverMessage.AppendString("ok");
 
             Room room = Session.GetHabbo().CurrentRoom;
-
-            room?.SendMessage(serverMessage);
+            
+            if (room != null)
+                await room.SendMessage(serverMessage);
         }
 
         /// <summary>
@@ -289,7 +296,7 @@ namespace Oblivion.Messages.Handlers
             bool inappropriateRoom = Request.GetIntegerAsBool();
             bool kickUsers = Request.GetIntegerAsBool();
 
-            ModerationTool.PerformRoomAction(Session, roomId, kickUsers, lockRoom, inappropriateRoom, Response);
+            await ModerationTool.PerformRoomAction(Session, roomId, kickUsers, lockRoom, inappropriateRoom, Response);
         }
 
         /// <summary>
@@ -303,7 +310,7 @@ namespace Oblivion.Messages.Handlers
             var userId = Request.GetUInteger();
             var message = Request.GetString();
 
-            ModerationTool.AlertUser(Session, userId, message, true);
+            await ModerationTool.AlertUser(Session, userId, message, true);
         }
 
         /// <summary>
@@ -317,7 +324,7 @@ namespace Oblivion.Messages.Handlers
             var userId = Request.GetUInteger();
             var message = Request.GetString();
 
-            ModerationTool.AlertUser(Session, userId, message, false);
+            await ModerationTool.AlertUser(Session, userId, message, false);
         }
 
         /// <summary>
@@ -333,7 +340,7 @@ namespace Oblivion.Messages.Handlers
             var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
 
             clientByUserId.GetHabbo().Mute();
-            clientByUserId.SendNotif(message);
+            await clientByUserId.SendNotif(message);
         }
 
         /// <summary>
@@ -348,7 +355,7 @@ namespace Oblivion.Messages.Handlers
             var message = Request.GetString();
             var length = (Request.GetInteger() * 3600);
 
-            ModerationTool.LockTrade(Session, userId, message, length);
+            await ModerationTool.LockTrade(Session, userId, message, length);
         }
 
         /// <summary>
@@ -362,7 +369,7 @@ namespace Oblivion.Messages.Handlers
             var userId = Request.GetUInteger();
             var message = Request.GetString();
 
-            ModerationTool.KickUser(Session, userId, message, false);
+            await ModerationTool.KickUser(Session, userId, message, false);
         }
 
         /// <summary>
@@ -379,7 +386,7 @@ namespace Oblivion.Messages.Handlers
             var message = Request.GetString();
             var length = (Request.GetInteger() * 3600);
 
-            ModerationTool.BanUser(Session, userId, length, message);
+            await ModerationTool.BanUser(Session, userId, length, message);
         }
     }
 }

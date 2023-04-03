@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Text;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
@@ -15,7 +16,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 1;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             DataTable data;
             var name = pms[0];
@@ -41,7 +42,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 builder.Append("Online: " + Oblivion.EnumToBool(row["online"].ToString() == "1" ? "Yes" : "No") + "\r\r");
                 builder.AppendLine("------------------");
             }
-            session.SendNotifWithScroll(builder.ToString());
+            await session.SendNotifWithScroll(builder.ToString());
             return true;
         }
     }

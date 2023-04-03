@@ -181,11 +181,11 @@ namespace Oblivion.HabboHotel.GameClients
 
             if (broadCast)
             {
-                SendMessageAsync(serverMessage);
+                await SendMessageAsync(serverMessage);
                 return;
             }
 
-            client.SendMessage(serverMessage);
+            await client.SendMessage(serverMessage);
         }
 
         /// <summary>
@@ -232,7 +232,7 @@ namespace Oblivion.HabboHotel.GameClients
         }
 
 
-        internal async Task CreateAndStartClient(IChannelHandlerContext channel)
+        internal void CreateAndStartClient(IChannelHandlerContext channel)
         {
             var session = new Session(channel.Channel, null);
 
@@ -260,7 +260,7 @@ namespace Oblivion.HabboHotel.GameClients
         ///     Disposes the connection.
         /// </summary>
         /// <param name="clientId">The client identifier.</param>
-        internal async Task DisposeConnection(IChannelId clientId)
+        internal void DisposeConnection(IChannelId clientId)
         {
             if (!Clients.TryRemove(clientId, out var client))
                 return;

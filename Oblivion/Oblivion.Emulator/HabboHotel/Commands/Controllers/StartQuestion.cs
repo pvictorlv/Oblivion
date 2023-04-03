@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Polls;
@@ -24,7 +25,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 1;
         }
 
-        public override bool Execute(GameClient client, string[] pms)
+        public override async Task<bool> Execute(GameClient client, string[] pms)
         {
             var id = uint.Parse(pms[0]);
             var poll = Oblivion.GetGame().GetPollManager().TryGetPollById(id);

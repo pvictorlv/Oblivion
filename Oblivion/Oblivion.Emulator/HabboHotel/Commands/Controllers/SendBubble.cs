@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System.Threading.Tasks;
+using System.Web;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages;
@@ -22,7 +23,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 1;
         }
 
-        public override bool Execute(GameClient client, string[] pms)
+        public override async Task<bool> Execute(GameClient client, string[] pms)
         {
             var room = client?.GetHabbo()?.CurrentRoom;
             if (room == null)

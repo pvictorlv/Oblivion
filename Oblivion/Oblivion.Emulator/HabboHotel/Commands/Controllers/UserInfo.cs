@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
@@ -20,7 +21,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 1;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             var userName = pms[0];
             if (string.IsNullOrEmpty(userName)) return true;
@@ -36,10 +37,10 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
                     if (row == null)
                     {
-                        session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
+                         await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
                         return true;
                     }
-                    session.SendNotif(string.Format((Oblivion.GetLanguage().GetVar("user_info_all")), userName, row["id"],
+                    await session.SendNotif(string.Format((Oblivion.GetLanguage().GetVar("user_info_all")), userName, row["id"],
                         row["rank"], row["credits"], row["activity_points"], row["diamonds"], row["mail"]));
                 }
                 return true;
@@ -53,7 +54,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
                 if (row == null)
                 {
-                    session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
+                     await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
                     return true;
                 }
 
@@ -68,7 +69,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                         string.Concat("Current Users: ", habbo.CurrentRoom.UserCount, "/",
                             habbo.CurrentRoom.RoomData.UsersMax));
                 }
-                session.SendNotif(string.Concat("User info for: ", userName, " \rUser ID: ", habbo.Id, "\rEmail: ",
+                await session.SendNotif(string.Concat("User info for: ", userName, " \rUser ID: ", habbo.Id, "\rEmail: ",
                     row[0], ":\rRank: ",
                     habbo.Rank, "\rCurrentTalentLevel: ", habbo.CurrentTalentLevel, " \rCurrent Room: ",
                     habbo.CurrentRoomId,

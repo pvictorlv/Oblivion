@@ -99,7 +99,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             return true;
         }
 
-        public Task<bool> Execute(params object[] Params)
+        public async Task<bool> Execute(params object[] Params)
         {
             if (Disposed) return false;
 

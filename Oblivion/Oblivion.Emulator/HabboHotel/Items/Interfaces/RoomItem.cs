@@ -853,7 +853,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                 num--;
                                 InteractionCountHelper = 0;
                                 ExtraData = num.ToString();
-                                UpdateState();
+                                await UpdateState();
                             }
                             else InteractionCountHelper++;
 
@@ -884,7 +884,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
 
                             InteractingUser = 0u;
                             ExtraData = "0";
-                            UpdateState(false, true);
+                            await UpdateState(false, true);
                         }
 
                         break;
@@ -893,7 +893,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                         if (ExtraData == "1")
                         {
                             ExtraData = "0";
-                            UpdateState(false, true);
+                            await UpdateState(false, true);
                         }
 
                         break;
@@ -906,11 +906,11 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                         if (roomUser3 != null && roomUser3.X == X && roomUser3.Y == Y)
                         {
                             ExtraData = "1";
-                            roomUser3.MoveTo(SquareBehind);
+                            await roomUser3.MoveTo(SquareBehind);
                             roomUser3.InteractingGate = false;
                             roomUser3.GateId = "0u";
                             ReqUpdate(1, false);
-                            UpdateState(false, true);
+                            await UpdateState(false, true);
                         }
                         else if (roomUser3 != null && roomUser3.Coordinate == SquareBehind)
                         {
@@ -919,12 +919,12 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             InteractingUser = 0u;
                             roomUser3.InteractingGate = false;
                             roomUser3.GateId = "0u";
-                            UpdateState(false, true);
+                            await UpdateState(false, true);
                         }
                         else if (ExtraData == "1")
                         {
                             ExtraData = "0";
-                            UpdateState(false, true);
+                            await UpdateState(false, true);
                         }
 
                         if (roomUser3 == null) InteractingUser = 0u;
@@ -938,22 +938,22 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                         }
                         else ExtraData = "-1";
 
-                        UpdateState(false, true);
+                        await UpdateState(false, true);
                         return;
 
                     case Interaction.HabboWheel:
                         ExtraData = RandomNumber.Get(1, 10).ToString();
-                        UpdateState();
+                        await UpdateState();
                         return;
 
                     case Interaction.Dice:
                         ExtraData = RandomNumber.Get(1, 7).ToString();
-                        UpdateState();
+                        await UpdateState();
                         return;
 
                     case Interaction.Bottle:
                         ExtraData = RandomNumber.Get(0, 7).ToString();
-                        UpdateState();
+                        await UpdateState();
                         return;
 
                     case Interaction.Hopper:
@@ -1004,7 +1004,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                         roomUser4.ClearMovement();
                                     roomUser4.CanWalk = false;
                                     roomUser4.AllowOverride = true;
-                                    roomUser4.MoveTo(Coordinate.X, Coordinate.Y, true);
+                                    await roomUser4.MoveTo(Coordinate.X, Coordinate.Y, true);
                                 }
                                 else InteractingUser = 0u;
                             }
@@ -1018,7 +1018,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             {
                                 flag2 = true;
                                 roomUserByHabbo.UnlockWalking();
-                                roomUserByHabbo.MoveTo(SquareInFront);
+                                    await await roomUserByHabbo.MoveTo(SquareInFront);
                             }
 
                             InteractingUser2 = 0u;
@@ -1029,7 +1029,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             if (ExtraData != "1")
                             {
                                 ExtraData = "1";
-                                UpdateState(false, true);
+                                await UpdateState(false, true);
                             }
                         }
                         else if (flag)
@@ -1037,7 +1037,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             if (ExtraData != "2")
                             {
                                 ExtraData = "2";
-                                UpdateState(false, true);
+                                await UpdateState(false, true);
                             }
                         }
                         else if (ExtraData != "0")
@@ -1045,7 +1045,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             if (num2 == 0)
                             {
                                 ExtraData = "0";
-                                UpdateState(false, true);
+                                await UpdateState(false, true);
                             }
                             else num2--;
                         }
@@ -1084,7 +1084,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                                 user.SetPos(item.X, item.Y, item.Z);
                                                 user.SetRot(item.Rot, false);
                                                 item.ExtraData = "2";
-                                                item.UpdateState(false, true);
+                                                await item.UpdateState(false, true);
                                                 item.InteractingUser2 = InteractingUser;
                                                 _mRoom.GetGameMap().GameMap[X, Y] = 1;
                                             }
@@ -1097,7 +1097,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                                 user.GetClient().GetHabbo().IsTeleporting = true;
                                                 user.GetClient().GetHabbo().TeleportingRoomId = teleRoomId;
                                                 user.GetClient().GetHabbo().TeleporterId = TeleporterId;
-                                                user.GetClient()
+                                                await user.GetClient()
                                                     .GetMessageHandler()
                                                     .PrepareRoomForUser(teleRoomId, string.Empty);
                                                 _mRoom.GetGameMap().GameMap[X, Y] = 1;
@@ -1123,7 +1123,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                     user.AllowOverride = true;
                                     _mRoom.GetGameMap().GameMap[X, Y] = 1;
 
-                                    user.MoveTo(X, Y, true);
+                                    await user.MoveTo(X, Y, true);
                                 }
                                 else
                                 {
@@ -1154,7 +1154,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             if (ExtraData != "1")
                             {
                                 ExtraData = "1";
-                                UpdateState(false, true);
+                                await UpdateState(false, true);
                             }
                         }
                         else if (showTeleEffect)
@@ -1162,13 +1162,13 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             if (ExtraData != "2")
                             {
                                 ExtraData = "2";
-                                UpdateState(false, true);
+                                await UpdateState(false, true);
                             }
                         }
                         else if (ExtraData != "0")
                         {
                             ExtraData = "0";
-                            UpdateState(false, true);
+                            await UpdateState(false, true);
                         }
 
                         ReqUpdate(1, false);
@@ -1207,7 +1207,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                 InteractionCountHelper += 1;
                             }
 
-                            UpdateState();
+                            await UpdateState();
                             InteractionCount += 1;
                             if (InteractionCount < 16)
                             {
@@ -1270,7 +1270,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                     }
                     case Interaction.BanzaiTele:
                         ExtraData = string.Empty;
-                        UpdateState();
+                        await UpdateState();
                         return;
 
                     case Interaction.BanzaiPuck:
@@ -1297,7 +1297,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                 InteractionCountHelper = 0;
                                 if (!GetRoom().GetFreeze().GameStarted) break;
                                 ExtraData = num5.ToString();
-                                UpdateState();
+                                await UpdateState();
                             }
                             else InteractionCountHelper += 1;
 
@@ -1313,7 +1313,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                         if (InteractingUser > 0u)
                         {
                             ExtraData = "11000";
-                            UpdateState(false, true);
+                            await UpdateState(false, true);
                             GetRoom().GetFreeze().OnFreezeTiles(this, FreezePowerUp, InteractingUser);
                             InteractingUser = 0u;
                             InteractionCountHelper = 0;
@@ -1324,7 +1324,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                     case Interaction.WearItem:
                     {
                         ExtraData = "1";
-                        UpdateState();
+                        await UpdateState();
                         var text = string.Empty;
                         var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(InteractingUser);
                         {
@@ -1429,13 +1429,13 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                     case Interaction.ConditionDateRangeActive:
                     case Interaction.ConditionUserHasFurni:
                         ExtraData = "0";
-                        UpdateState(false, true);
+                        await UpdateState(false, true);
                         break;
 
                     case Interaction.PressurePadBed:
                     case Interaction.PressurePad:
                         ExtraData = "1";
-                        UpdateState();
+                        await UpdateState();
                         return;
 
                     case Interaction.Gift:
@@ -1452,7 +1452,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// </summary>
         /// <param name="cycles">The cycles.</param>
         /// <param name="setUpdate">if set to <c>true</c> [set update].</param>
-        internal async Task ReqUpdate(int cycles, bool setUpdate)
+        internal void ReqUpdate(int cycles, bool setUpdate)
         {
             UpdateCounter = cycles;
             if (setUpdate) UpdateNeeded = true;
@@ -1500,7 +1500,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             }
 
             if (inDb)
-                await GetRoom().GetRoomItemHandler().AddOrUpdateItem(Id);
+                GetRoom().GetRoomItemHandler().AddOrUpdateItem(Id);
             if (!inRoom) return;
             ServerMessage serverMessage;
             if (!IsWallItem)

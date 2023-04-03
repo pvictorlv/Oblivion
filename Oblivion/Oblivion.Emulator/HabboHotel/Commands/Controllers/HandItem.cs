@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
@@ -19,7 +20,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 1;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             if (!ushort.TryParse(pms[0], out var itemId)) return true;
 
@@ -28,7 +29,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 .GetRoomUserByVirtualId(session.CurrentRoomUserId);
             if (user.RidingHorse)
             {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("horse_handitem_error"));
+                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("horse_handitem_error"));
                 return true;
             }
             if (user.IsLyingDown)

@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
@@ -19,16 +20,16 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 2;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
             if (client == null)
             {
-                session.SendNotif(Oblivion.GetLanguage().GetVar("user_not_found"));
+                await session.SendNotif(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
             client.GetHabbo().GetBadgeComponent().GiveBadge(pms[1], true, client);
-            session.SendNotif(Oblivion.GetLanguage().GetVar("command_badge_give_done"));
+            await session.SendNotif(Oblivion.GetLanguage().GetVar("command_badge_give_done"));
             Oblivion.GetGame()
                 .GetModerationTool()
                 .LogStaffEntry(session.GetHabbo().UserName, client.GetHabbo().UserName,

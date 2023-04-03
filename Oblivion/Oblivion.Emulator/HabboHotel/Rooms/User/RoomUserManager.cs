@@ -142,14 +142,14 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="bot">The bot.</param>
         /// <param name="petData">The pet data.</param>
         /// <returns>RoomUser.</returns>
-        internal RoomUser DeployBot(RoomBot bot, Pet petData)
+        internal async Task<RoomUser> DeployBot(RoomBot bot, Pet petData)
         {
             var virtualId = _primaryPrivateUserId++;
             var roomUser = new RoomUser(0u, _room.RoomId, virtualId, _room, false);
             var num = _secondaryPrivateUserId++;
             roomUser.InternalRoomId = num;
             UserList.TryAdd(num, roomUser);
-            OnUserAdd(roomUser);
+            await OnUserAdd(roomUser);
 
             var model = _room.GetGameMap().Model;
             var coord = new Point(bot.X, bot.Y);
@@ -182,7 +182,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 roomUser.BotAi.Init(bot.BotId, roomUser.VirtualId, _room.RoomId, roomUser, _room);
             }
 
-            UpdateUserStatus(roomUser, false);
+            await UpdateUserStatus(roomUser, false);
             roomUser.UpdateNeeded = true;
             using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer")))
             {
@@ -926,7 +926,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
         }
 
-        internal bool UserGoToTile(RoomUser user, bool invalidStep)
+        internal async Task<bool> UserGoToTile(RoomUser user, bool invalidStep)
         {
             var roomUser = user;
 
@@ -938,7 +938,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 roomUser.IsWalking = false;
                 roomUser.ClearMovement();
                 roomUser.HandelingBallStatus = 0;
-                RoomUserBreedInteraction(roomUser);
+                await RoomUserBreedInteraction(roomUser);
 
                 // Check if he is in a Horse, and if if Erase Horse and User Movement Data
                 if ((roomUser.RidingHorse) && (!roomUser.IsPet))
@@ -951,7 +951,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer")))
                         {
                             horseStopWalkRidingPetMessage.AppendInteger(1);
-                            horseStopWalkRidingPet.SerializeStatus(horseStopWalkRidingPetMessage, "");
+                            await horseStopWalkRidingPet.SerializeStatus(horseStopWalkRidingPetMessage, "");
                             await _room.SendMessage(horseStopWalkRidingPetMessage);
 
                             horseStopWalkRidingPet.IsWalking = false;
@@ -961,7 +961,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 }
 
                 // Finally Update User Status
-                UpdateUserStatus(roomUser, false);
+                await UpdateUserStatus(roomUser, false);
             }
             else
             {
@@ -1014,8 +1014,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                     if (roomUser.RidingHorse)
                     {
                         // Set User Position Data
-                        UserSetPositionData(roomUser, nextStep);
-                        CheckUserSittableLayable(roomUser);
+                        await UserSetPositionData(roomUser, nextStep);
+                        await CheckUserSittableLayable(roomUser);
 
                         // Add Status of Walking
                         roomUser.AddStatus("mv",
@@ -1037,9 +1037,9 @@ namespace Oblivion.HabboHotel.Rooms.User
                             var horseRidingPetMessage =
                                 new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
                             horseRidingPetMessage.AppendInteger(2);
-                            roomUser.SerializeStatus(horseRidingPetMessage, theUser);
-                            horseRidingPet.SerializeStatus(horseRidingPetMessage, thePet);
-                            await _room.SendMessage(horseRidingPetMessage);
+                            await roomUser.SerializeStatus(horseRidingPetMessage, theUser);
+                            await horseRidingPet.SerializeStatus(horseRidingPetMessage, thePet);
+                            await _room.SendMessageAsync(horseRidingPetMessage);
 
                             horseRidingPet.RotBody = roomUser.RotBody;
                             horseRidingPet.RotHead = roomUser.RotBody;
@@ -1049,7 +1049,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             horseRidingPet.SetStep = true;
 
                             //                            UpdateUserEffect(horseRidingPet, horseRidingPet.SetX, horseRidingPet.SetY);
-                            UpdateUserStatus(horseRidingPet, false);
+                            await UpdateUserStatus(horseRidingPet, false);
                         }
                     }
 
@@ -1057,8 +1057,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                     if (!roomUser.RidingHorse)
                     {
                         // Set User Position Data
-                        UserSetPositionData(roomUser, nextStep);
-                        CheckUserSittableLayable(roomUser);
+                        await UserSetPositionData(roomUser, nextStep);
+                        await CheckUserSittableLayable(roomUser);
 
                         // Add Status of Walking
                         roomUser.AddStatus("mv",
@@ -1075,7 +1075,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                     // If user is in soccer proccess.
                     if (_room.GotSoccer())
-                        _room.GetSoccer().OnUserWalk(roomUser);
+                        await _room.GetSoccer().OnUserWalk(roomUser);
 
 
                     return true;
@@ -1088,7 +1088,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             return true;
         }
 
-        internal bool UserCanWalkInTile(RoomUser roomUsers)
+        internal async Task<bool> UserCanWalkInTile(RoomUser roomUsers)
         {
             try
             {
@@ -1110,7 +1110,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     (roomUsers.RidingHorse) || hasGroup)
                 {
                     // Let's Update his Movement...
-                    _room.GetGameMap()
+                    await _room.GetGameMap()
                         .UpdateUserMovement(new Point(roomUsers.Coordinate.X, roomUsers.Coordinate.Y),
                             new Point(roomUsers.SetX, roomUsers.SetY), roomUsers);
 
@@ -1125,11 +1125,11 @@ namespace Oblivion.HabboHotel.Rooms.User
                     // Check Sub Items Interactionables
                     foreach (var roomItem in hasItemInPlace)
                     {
-                        roomItem.UserWalksOffFurni(roomUsers);
+                        await roomItem.UserWalksOffFurni(roomUsers);
                     }
 
                     // Let's Update user Status..
-                    UpdateUserStatus(roomUsers, true, false);
+                    await UpdateUserStatus(roomUsers, true, false);
                     return false;
                 }
             }
@@ -1224,7 +1224,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
 
                     // Check Elegibility of Walk In Tile
-                    invalidStep = UserCanWalkInTile(roomUsers);
+                    invalidStep = await UserCanWalkInTile(roomUsers);
 
                     // User isn't Anymore Set a Tile to Walk
                     roomUsers.SetStep = false;
@@ -1242,7 +1242,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         var horseStopWalkRidingPetMessage =
                             new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
                         horseStopWalkRidingPetMessage.AppendInteger(1);
-                        horseStopWalkRidingPet.SerializeStatus(horseStopWalkRidingPetMessage, "");
+                        await horseStopWalkRidingPet.SerializeStatus(horseStopWalkRidingPetMessage, "");
                         await _room.SendMessage(horseStopWalkRidingPetMessage);
 
                         horseStopWalkRidingPet.IsWalking = false;
@@ -1256,7 +1256,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     roomUsers.IsWalking = false;
                     roomUsers.ClearMovement();
                     roomUsers.SetStep = false;
-                    UpdateUserStatus(roomUsers, false);
+                    await UpdateUserStatus(roomUsers, false);
                 }
                 else
                 {
@@ -1280,7 +1280,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
 
                             // Let's go to The Tile! And Walk :D
-                            if (UserGoToTile(roomUsers, invalidStep))
+                            if (await UserGoToTile(roomUsers, invalidStep))
                             {
                                 // If User isn't Riding, Must Update Statusses...
                                 if (!roomUsers.RidingHorse)
@@ -1306,7 +1306,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         {
                             if (roomUsers.FollowingOwner != null)
                             {
-                                roomUsers.MoveTo(_room.GetGameMap()
+                                await roomUsers.MoveTo(_room.GetGameMap()
                                     .SquareIsOpen(roomUsers.FollowingOwner.SquareInFront.X,
                                         roomUsers.FollowingOwner.SquareInFront.Y, false)
                                     ? roomUsers.FollowingOwner.SquareInFront
@@ -1320,7 +1320,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             {
                                 var user = users[0];
 
-                                _room.GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedAvatar, user);
+                                await _room.GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedAvatar, user);
                             }
                         }
 
@@ -1521,9 +1521,9 @@ namespace Oblivion.HabboHotel.Rooms.User
                         var msg = new ServerMessage(
                             LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
                         msg.AppendInteger(4);
-                        session.SendMessage(msg);
+                        await session.SendMessage(msg);
                         msg = new ServerMessage(LibraryParser.OutgoingRequest("HasOwnerRightsMessageComposer"));
-                        session.SendMessage(msg);
+                        await session.SendMessage(msg);
                         user.AddStatus("flatctrl 4", string.Empty);
                     }
                     else if (_room.CheckRights(session, false, true))
@@ -1531,7 +1531,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         var msg = new ServerMessage(
                             LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
                         msg.AppendInteger(1);
-                        session.SendMessage(msg);
+                        await session.SendMessage(msg);
                         user.AddStatus("flatctrl 3", string.Empty);
                     }
                     else
@@ -1539,10 +1539,10 @@ namespace Oblivion.HabboHotel.Rooms.User
                         var msg = new ServerMessage(
                             LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
                         msg.AppendInteger(0);
-                        session.SendMessage(msg);
+                        await session.SendMessage(msg);
                         msg = new ServerMessage(
                             LibraryParser.OutgoingRequest("YouAreNotControllerMessageComposer"));
-                        session.SendMessage(msg);
+                        await session.SendMessage(msg);
                     }
 
                     user.CurrentItemEffect = 0;

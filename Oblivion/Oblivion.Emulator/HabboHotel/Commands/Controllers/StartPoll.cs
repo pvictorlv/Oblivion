@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Polls;
 using Oblivion.Messages;
@@ -16,7 +17,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = -1;
         }
 
-        public override bool Execute(GameClient client, string[] pms)
+        public override async Task<bool> Execute(GameClient client, string[] pms)
         {
             var title = string.Join(" ", pms);
 

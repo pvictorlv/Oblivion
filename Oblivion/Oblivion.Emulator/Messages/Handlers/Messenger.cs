@@ -100,7 +100,7 @@ namespace Oblivion.Messages.Handlers
             if (Session?.GetHabbo()?.GetMessenger() == null) return;
 
             if (Session.GetHabbo().GetMessenger().RequestBuddy(Request.GetString()))
-                Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.SocialFriend);
+                await Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.SocialFriend);
         }
 
         /// <summary>

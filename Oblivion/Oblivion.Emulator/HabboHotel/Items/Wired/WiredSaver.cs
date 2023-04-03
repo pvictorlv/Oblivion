@@ -362,7 +362,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     if (startDate == 0)
                     {
                         wired.OtherString = string.Empty;
-                        session.SendNotif(Oblivion.GetLanguage().GetVar("user_wired_con_date_range"));
+                        await session.SendNotif(Oblivion.GetLanguage().GetVar("user_wired_con_date_range"));
                     }
 
                     wiredHandler.ReloadWired(wired);
@@ -536,7 +536,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 }
             }
 
-            session.SendMessage(new ServerMessage(LibraryParser.OutgoingRequest("SaveWiredMessageComposer")));
+            await session.SendMessage(new ServerMessage(LibraryParser.OutgoingRequest("SaveWiredMessageComposer")));
         }
 
         private static ConcurrentList<RoomItem> GetFurniItems(ClientMessage request, Room room)

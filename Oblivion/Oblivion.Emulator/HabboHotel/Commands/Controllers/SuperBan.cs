@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
@@ -22,19 +23,19 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
 
             var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
             if (client == null)
             {
-                session.SendNotif(Oblivion.GetLanguage().GetVar("user_not_found"));
+                await session.SendNotif(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
 
             if (client.GetHabbo().Rank >= session.GetHabbo().Rank)
             {
-                session.SendNotif(Oblivion.GetLanguage().GetVar("user_is_higher_rank"));
+                await session.SendNotif(Oblivion.GetLanguage().GetVar("user_is_higher_rank"));
                 return true;
             }
             Oblivion.GetGame()

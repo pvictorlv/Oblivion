@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.PathFinding;
 
@@ -20,7 +21,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 0;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             var room = session?.GetHabbo()?.CurrentRoom;
             if (room == null) return true;
@@ -28,13 +29,13 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var user2 = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().LastSelectedUser);
             if (user2 == null)
             {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
+                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
 
             if (session.GetHabbo().LastCustomCommand + 30 >= Oblivion.GetUnixTimeStamp())
             {
-                session.SendWhisper("Espere um pouco!");
+                 await Session.SendWhisperAsync("Espere um pouco!");
                 return true;
             }
 
@@ -42,14 +43,14 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
             if (PathFinder.GetDistance(user.X, user.Y, user2.X, user2.Y) > 1)
             {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("kil_command_error_1"));
+                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("kil_command_error_1"));
 
                 return true;
             }
 
             if (user2.IsLyingDown || user2.IsSitting)
             {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("kil_command_error_2"));
+                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("kil_command_error_2"));
                 return true;
             }
 

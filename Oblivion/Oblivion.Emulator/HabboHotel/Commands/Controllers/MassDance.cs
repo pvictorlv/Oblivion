@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
@@ -21,14 +22,14 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 1;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             ushort danceId;
             ushort.TryParse(pms[0], out danceId);
 
             if (danceId > 4)
             {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("command_dance_wrong_syntax"));
+                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_dance_wrong_syntax"));
                 return true;
             }
             var room = session.GetHabbo().CurrentRoom;

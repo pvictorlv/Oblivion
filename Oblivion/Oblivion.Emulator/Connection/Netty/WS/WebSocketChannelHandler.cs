@@ -36,7 +36,7 @@ public class WebSocketChannelHandler : ChannelHandlerAdapter
         Oblivion.GetGame().GetClientManager().DisposeConnection(context.Channel.Id);
         base.ChannelInactive(context);
     }
-
+    
     private void HandleHandshake(IChannelHandlerContext ctx, IFullHttpRequest req)
     {
         WebSocketServerHandshaker serverHandshake;

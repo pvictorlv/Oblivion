@@ -275,7 +275,7 @@ namespace Oblivion.Connection.Net
                         if (roomId == clientByUserId.GetHabbo().CurrentRoomId)
                             break;
 
-                        var room = Oblivion.GetGame().GetRoomManager().LoadRoom(roomId);
+                        var room = await Oblivion.GetGame().GetRoomManager().LoadRoom(roomId);
                         if (room == null)
                         {
                             clientByUserId.SendNotif("Failed to find the requested room!");

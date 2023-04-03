@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
@@ -17,17 +18,17 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 0;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             try
             {
-                session.GetHabbo().GetInventoryComponent().Redeemcredits(session);
-                session.SendNotif(Oblivion.GetLanguage().GetVar("command_redeem_credits"));
+                await session.GetHabbo().GetInventoryComponent().Redeemcredits(session);
+                await session.SendNotif(Oblivion.GetLanguage().GetVar("command_redeem_credits"));
             }
             catch (Exception e)
             {
                 Writer.Writer.LogException(e.ToString());
-                session.SendNotif(Oblivion.GetLanguage().GetVar("command_redeem_credits"));
+                await session.SendNotif(Oblivion.GetLanguage().GetVar("command_redeem_credits"));
             }
             return true;
         }

@@ -59,7 +59,7 @@ namespace Oblivion.Security
                     session.GetHabbo().BobbaFiltered++;
 
                 if (session.GetHabbo().BobbaFiltered <= 5)
-                    session.SendNotif(
+                    await session.SendNotif(
                         "Your language is inappropriate. If you do not change this , measures are being taken by the automated system of Habbo.");
                 else if (session.GetHabbo().BobbaFiltered >= 6)
                 {
@@ -68,13 +68,13 @@ namespace Oblivion.Security
                         if (!isMuted)
                             Oblivion.MutedUsersByFilter.Add(session.GetHabbo().Id,
                                 uint.Parse((Oblivion.GetUnixTimeStamp() + (300 * 60)).ToString()));
-                        session.SendNotif(
+                        await session.SendNotif(
                             "Now you can not talk for 5 minutes . This is because your exhibits inappropriate language in Habbo Hotel.");
                         return false;
                     }
 
                     if (session.GetHabbo().BobbaFiltered == 8)
-                        session.SendNotif("You risk a ban if you continue to scold it . This is your last warning");
+                        await session.SendNotif("You risk a ban if you continue to scold it . This is your last warning");
                     else if (session.GetHabbo().BobbaFiltered >= 9)
                     {
                         session.GetHabbo().BobbaFiltered = 0;
@@ -98,7 +98,7 @@ namespace Oblivion.Security
 
                     session.GetHabbo().BobbaFiltered = 0;
 
-                    session.SendNotif("Damn! you can't talk for " +
+                    await session.SendNotif("Damn! you can't talk for " +
                                       timeStillBanned.Minutes.ToString().Replace("-", "") + " minutes and " +
                                       timeStillBanned.Seconds.ToString().Replace("-", "") + " seconds.");
                     return false;

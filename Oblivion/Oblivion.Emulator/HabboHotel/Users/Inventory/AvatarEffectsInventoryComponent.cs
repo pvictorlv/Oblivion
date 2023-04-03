@@ -138,7 +138,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             if (effectId < 1)
             {
-                ActivateCustomEffect(effectId);
+                await ActivateCustomEffect(effectId);
                 return;
             }
 
@@ -147,10 +147,10 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 where x.EffectId == effectId
                 select x).Last();
 
-            avatarEffect.Activate();
+            await avatarEffect.Activate();
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery(
+                await queryReactor.RunFastQueryAsync(
                     string.Concat("UPDATE users_effects SET is_activated = '1', activated_stamp = ",
                         Oblivion.GetUnixTimeStamp(), " WHERE user_id = ", _userId, " AND effect_id = ", effectId));
 
@@ -185,7 +185,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             var list = _effects.Where(current => current.HasExpired).ToList();
             /* TODO CHECK */
             foreach (var current2 in list)
-                StopEffect(current2.EffectId);
+                await StopEffect(current2.EffectId);
             list.Clear();
         }
 
@@ -211,15 +211,15 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 return;
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery(string.Concat("DELETE FROM users_effects WHERE user_id = ", _userId,
+                await queryReactor.RunFastQueryAsync(string.Concat("DELETE FROM users_effects WHERE user_id = ", _userId,
                     " AND effect_id = ", effectId, " AND is_activated = 1"));
 
             _effects.Remove(effect);
 
-            GetClient()
+            await GetClient()
                 .GetMessageHandler()
                 .GetResponse()
-                .Init(LibraryParser.OutgoingRequest("StopAvatarEffectMessageComposer"));
+                .InitAsync(LibraryParser.OutgoingRequest("StopAvatarEffectMessageComposer"));
 
             GetClient().GetMessageHandler().GetResponse().AppendInteger(effectId);
             await GetClient().GetMessageHandler().SendResponse();
@@ -275,7 +275,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// </summary>
         /// <param name="effectId">The effect identifier.</param>
         /// <param name="setAsCurrentEffect">if set to <c>true</c> [set as current effect].</param>
-        private void EnableInClient(int effectId, uint userId)
+        private async Task EnableInClient(int effectId, uint userId)
         {
             var userRoom = GetUserRoom();
 
@@ -288,7 +288,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             serverMessage.AppendInteger(roomUserByHabbo.VirtualId);
             serverMessage.AppendInteger(effectId);
             serverMessage.AppendInteger(0);
-            roomUserByHabbo.await GetClient().SendMessageAsync(serverMessage);
+            await roomUserByHabbo.GetClient().SendMessageAsync(serverMessage);
         }
 
         /// <summary>

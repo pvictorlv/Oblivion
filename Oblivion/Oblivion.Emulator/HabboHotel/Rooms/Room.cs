@@ -1092,8 +1092,8 @@ namespace Oblivion.HabboHotel.Rooms
                 Bans.Add(userId, ((Oblivion.GetUnixTimeStamp()) + time));
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.RunFastQuery("REPLACE INTO rooms_bans VALUES (" + userId + ", " + RoomId + ", '" +
-                                          (Oblivion.GetUnixTimeStamp() + time) + "')");
+                await queryReactor.RunFastQueryAsync("REPLACE INTO rooms_bans VALUES (" + userId + ", " + RoomId + ", '" +
+                                                     (Oblivion.GetUnixTimeStamp() + time) + "')");
         }
 
         /// <summary>

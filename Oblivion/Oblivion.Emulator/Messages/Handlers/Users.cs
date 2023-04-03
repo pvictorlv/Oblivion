@@ -178,7 +178,7 @@ namespace Oblivion.Messages.Handlers
             if (roomUserByHabbo.GetClient().GetHabbo().Id == Session.GetHabbo().Id ||
                 roomUserByHabbo.IsBot)
                 return;
-            Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.SocialRespect);
+            await Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.SocialRespect);
             Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_RespectGiven", 1, true);
             Oblivion.GetGame()
                 .GetAchievementManager()
@@ -400,7 +400,7 @@ namespace Oblivion.Messages.Handlers
                 }
             }
 
-            Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.ProfileBadge);
+            await Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.ProfileBadge);
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UserBadgesMessageComposer"));
             serverMessage.AppendInteger(Session.GetHabbo().Id);
 
@@ -638,7 +638,7 @@ namespace Oblivion.Messages.Handlers
                 queryReactor.RunQuery();
             }
 
-            Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.ProfileChangeMotto);
+            await Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.ProfileChangeMotto);
             if (Session.GetHabbo().InRoom)
             {
                 var currentRoom = Session.GetHabbo().CurrentRoom;
@@ -730,7 +730,7 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal async Task GetBotsInventory()
         {
-            await Session.SendMessageAsync(Session.GetHabbo().GetInventoryComponent().SerializeBotInventory());
+            await Session.SendMessageAsync(await Session.GetHabbo().GetInventoryComponent().SerializeBotInventory());
             await SendResponse();
         }
 
@@ -870,7 +870,7 @@ namespace Oblivion.Messages.Handlers
                 Response.AppendString(Session.GetHabbo().Motto);
                 Response.AppendInteger(Session.GetHabbo().AchievementPoints);
                 await SendResponse();
-                Session.GetHabbo().CurrentRoom.GetRoomUserManager().UpdateUser(userName, text);
+                await Session.GetHabbo().CurrentRoom.GetRoomUserManager().UpdateUser(userName, text);
                 if (Session.GetHabbo().CurrentRoom != null)
                 {
                     Response.Init(LibraryParser.OutgoingRequest("UserUpdateNameInRoomMessageComposer"));
@@ -882,9 +882,9 @@ namespace Oblivion.Messages.Handlers
                 /* TODO CHECK */
                 foreach (var data in Session.GetHabbo().Data.Rooms.ToList())
                 {
-                    var current = Oblivion.GetGame().GetRoomManager().GenerateRoomData(data);
+                    var current = await Oblivion.GetGame().GetRoomManager().GenerateRoomData(data);
                     current.Owner = text;
-                    current.SerializeRoomData(Response, Session, false, true);
+                    await current.SerializeRoomData(Response, Session, false, true);
                     var room = Oblivion.GetGame().GetRoomManager().GetRoom(current.Id);
                     if (room != null)
                         room.RoomData.Owner = text;
@@ -902,7 +902,7 @@ namespace Oblivion.Messages.Handlers
                         foreach (var current3 in list)
                         {
                             current3.UserName = text;
-                            current3.Serialize(Response, Session);
+                            await current3.Serialize(Response, Session);
                         }
                     }
                 }
@@ -1112,14 +1112,14 @@ namespace Oblivion.Messages.Handlers
                 return;
             }
 
-            var item = Session.GetHabbo().GetInventoryComponent()
+            var item = await Session.GetHabbo().GetInventoryComponent()
                 .AddNewItem("0", ExtraSettings.NewUserGiftYttv2Id, "", 0, true, false, 0, 0);
-            Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
+            await Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
 
             Session.GetHabbo().Diamonds += 25;
-            Session.GetHabbo().UpdateSeasonalCurrencyBalance();
+            await Session.GetHabbo().UpdateSeasonalCurrencyBalance();
             if (item != null)
-                Session.GetHabbo().GetInventoryComponent().SendNewItems(item.VirtualId);
+                await Session.GetHabbo().GetInventoryComponent().SendNewItems(item.VirtualId);
 
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                 dbClient.RunFastQuery(

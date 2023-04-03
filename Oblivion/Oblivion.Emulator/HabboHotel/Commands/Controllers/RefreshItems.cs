@@ -1,4 +1,5 @@
-﻿using Oblivion.Configuration;
+﻿using System.Threading.Tasks;
+using Oblivion.Configuration;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
@@ -20,10 +21,10 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 0;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             Oblivion.GetGame().ReloadItems();
-            session.SendNotif(Oblivion.GetLanguage().GetVar("command_refresh_items"));
+            await session.SendNotif(Oblivion.GetLanguage().GetVar("command_refresh_items"));
             return true;
         }
     }

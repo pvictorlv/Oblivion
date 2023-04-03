@@ -163,7 +163,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             }
             SendMessageToUsers(new ServerMessage(LibraryParser.OutgoingRequest("TradeConfirmationMessageComposer")));
             _tradeStage++;
-            ClearAccepted();
+            await ClearAccepted();
         }
 
         /// <summary>
@@ -181,7 +181,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("TradeAcceptMessageComposer"));
             serverMessage.AppendInteger(userId);
             serverMessage.AppendInteger(0);
-            SendMessageToUsers(serverMessage);
+            await SendMessageToUsers(serverMessage);
         }
 
         /// <summary>
@@ -291,27 +291,32 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             if (userOne?.GetClient()?.GetHabbo() == null || userTwo?.GetClient()?.GetHabbo() == null) return;
             var offeredItems = userOne.OfferedItems;
             var offeredItems2 = userTwo.OfferedItems;
-            if (offeredItems.Any(current => userOne.GetClient().GetHabbo().GetInventoryComponent().GetItem(current.Id) == null))
+            foreach (var current in offeredItems)
             {
-                userOne.GetClient().SendNotif("El tradeo ha fallado.");
-                userTwo.GetClient().SendNotif("El tradeo ha fallado.");
-                return;
+                if (userOne.GetClient().GetHabbo().GetInventoryComponent().GetItem(current.Id) == null)
+                {
+                    await userOne.GetClient().SendNotif("El tradeo ha fallado.");
+                    await userTwo.GetClient().SendNotif("El tradeo ha fallado.");
+                    return;
+                }
             }
-            if (
-                offeredItems2.Any(
-                    current2 =>
-                        userTwo.GetClient().GetHabbo().GetInventoryComponent().GetItem(current2.Id) == null))
+
+            foreach (var current2 in offeredItems2)
             {
-                userOne.GetClient().SendNotif("El tradeo ha fallado.");
-                userTwo.GetClient().SendNotif("El tradeo ha fallado.");
-                return;
+                if (userTwo.GetClient().GetHabbo().GetInventoryComponent().GetItem(current2.Id) == null)
+                {
+                    await userOne.GetClient().SendNotif("El tradeo ha fallado.");
+                    await userTwo.GetClient().SendNotif("El tradeo ha fallado.");
+                    return;
+                }
             }
-            userTwo.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
-            userOne.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
+
+            await userTwo.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
+            await userOne.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
             /* TODO CHECK */ foreach (var current3 in offeredItems)
             {
-                userOne.GetClient().GetHabbo().GetInventoryComponent().RemoveItem(current3.Id, false, 0);
-                userTwo
+                await userOne.GetClient().GetHabbo().GetInventoryComponent().RemoveItem(current3.Id, false, 0);
+               await userTwo
                     .GetClient()
                     .GetHabbo()
                     .GetInventoryComponent()
@@ -322,8 +327,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
 
            foreach (var current4 in offeredItems2)
             {
-                userTwo.GetClient().GetHabbo().GetInventoryComponent().RemoveItem(current4.Id, false, 0);
-                userOne
+                await userTwo.GetClient().GetHabbo().GetInventoryComponent().RemoveItem(current4.Id, false, 0);
+                await userOne
                     .GetClient()
                     .GetHabbo()
                     .GetInventoryComponent()
@@ -332,22 +337,27 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
                         current4.SongCode);
             }
 
-            userOne.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
-            userTwo.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
+            await userOne.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
+            await userTwo.GetClient().GetHabbo().GetInventoryComponent().RunDbUpdate();
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("NewInventoryObjectMessageComposer"));
             serverMessage.AppendInteger(1);
             var i = 1;
-            if (offeredItems.Any(current5 => current5.BaseItem.Type.ToString().ToLower() != "s"))
+            foreach (var current5 in offeredItems)
             {
-                i = 2;
+                if (current5.BaseItem.Type.ToString().ToLower() != "s")
+                {
+                    i = 2;
+                    break;
+                }
             }
+
             serverMessage.AppendInteger(i);
             serverMessage.AppendInteger(offeredItems.Count);
             /* TODO CHECK */ foreach (var current6 in offeredItems)
             {
                 serverMessage.AppendInteger(current6.VirtualId);
             }
-            userTwo.await GetClient().SendMessageAsync(serverMessage);
+            await userTwo.GetClient().SendMessageAsync(serverMessage);
             var serverMessage2 = new ServerMessage(LibraryParser.OutgoingRequest("NewInventoryObjectMessageComposer"));
             serverMessage2.AppendInteger(1);
             i = 1;
@@ -361,9 +371,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             {
                 serverMessage2.AppendInteger(current8.VirtualId);
             }
-            userOne.await GetClient().SendMessageAsync(serverMessage2);
-            userOne.GetClient().GetHabbo().GetInventoryComponent().UpdateItems(false);
-            userTwo.GetClient().GetHabbo().GetInventoryComponent().UpdateItems(false);
+            await userOne.GetClient().SendMessageAsync(serverMessage2);
+            await userOne.GetClient().GetHabbo().GetInventoryComponent().UpdateItems(false);
+            await userTwo.GetClient().GetHabbo().GetInventoryComponent().UpdateItems(false);
         }
 
         /// <summary>
@@ -372,13 +382,17 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         internal async Task CloseTradeClean()
         {
             {
-                /* TODO CHECK */ foreach (
-                    var tradeUser in _users.Where(tradeUser => tradeUser?.GetRoomUser() != null))
+                /* TODO CHECK */
+                foreach (var tradeUser in _users)
                 {
-                    tradeUser.GetRoomUser().RemoveStatus("trd");
-                    tradeUser.GetRoomUser().UpdateNeeded = true;
+                    if (tradeUser?.GetRoomUser() != null)
+                    {
+                        tradeUser.GetRoomUser().RemoveStatus("trd");
+                        tradeUser.GetRoomUser().UpdateNeeded = true;
+                    }
                 }
-                SendMessageToUsers(new ServerMessage(LibraryParser.OutgoingRequest("TradeCompletedMessageComposer")));
+
+                await SendMessageToUsers(new ServerMessage(LibraryParser.OutgoingRequest("TradeCompletedMessageComposer")));
                 GetRoom().ActiveTrades.Remove(this);
             }
         }
@@ -399,7 +413,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("TradeCloseMessageComposer"));
                 serverMessage.AppendInteger(userId);
                 serverMessage.AppendInteger(0);
-                SendMessageToUsers(serverMessage);
+                await SendMessageToUsers(serverMessage);
             }
         }
 
@@ -414,10 +428,11 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
                 return;
             }
 
+            foreach (var tradeUser in _users)
             {
-                /* TODO CHECK */ foreach (var tradeUser in _users.Where(tradeUser => tradeUser?.GetClient() != null))
+                if (tradeUser?.GetClient() != null)
                 {
-                    tradeawait user.GetClient().SendMessageAsync(message);
+                    await tradeUser.GetClient().SendMessageAsync(message);
                 }
             }
         }
@@ -425,12 +440,15 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         /// <summary>
         ///     Finnitoes this instance.
         /// </summary>
-        private void Finnito()
+        private async Task Finnito()
         {
             try
             {
-                Task.Factory.StartNew(DeliverItems);
-                CloseTradeClean();
+                await Task.Run(async () =>
+                {
+                    await DeliverItems();
+                });
+                await CloseTradeClean();
 
             }
             catch (Exception ex)

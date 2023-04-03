@@ -604,7 +604,7 @@ namespace Oblivion.HabboHotel.Users
         ///     Initializes the information.
         /// </summary>
         /// <param name="data">The data.</param>
-        internal async Task InitInformation(UserData data)
+        internal void InitInformation(UserData data)
         {
 //            _subscriptionManager = new SubscriptionManager(Id, data);
             _messenger = new HabboMessenger(Id);
@@ -618,7 +618,7 @@ namespace Oblivion.HabboHotel.Users
 
         private int _floodCount;
 
-        internal bool CanTalk(bool inRoom = false)
+        internal async Task<bool> CanTalk(bool inRoom = false)
         {
             if (IsFlooded)
             {
@@ -647,7 +647,7 @@ namespace Oblivion.HabboHotel.Users
                     using (var msg = new ServerMessage(LibraryParser.OutgoingRequest("FloodFilterMessageComposer")))
                     {
                         var i = SpamProtectionTime - span.Seconds;
-                        msg.AppendInteger(i);
+                        await msg.AppendIntegerAsync(i);
                         IsFlooded = true;
                         FloodExpiryTime = Oblivion.GetUnixTimeStamp() + i;
                         await GetClient().SendMessageAsync(msg);
@@ -673,7 +673,7 @@ namespace Oblivion.HabboHotel.Users
                             SpamProtectionTime = 10 * (SpamProtectionCount - 1);
                         SpamProtectionBol = true;
                         var j = SpamProtectionTime - span.Seconds;
-                        msg.AppendInteger(j);
+                        await msg.AppendIntegerAsync(j);
                         IsFlooded = true;
                         FloodExpiryTime = Oblivion.GetUnixTimeStamp() + j;
                         await GetClient().SendMessageAsync(msg);
@@ -694,7 +694,7 @@ namespace Oblivion.HabboHotel.Users
         /// </summary>
         /// <param name="client">The client.</param>
         /// <param name="data">The data.</param>
-        internal async Task Init(GameClient client, UserData data)
+        internal void Init(GameClient client, UserData data)
         {
             _mClient = client;
             _subscriptionManager = new SubscriptionManager(Id, data);
@@ -766,8 +766,8 @@ namespace Oblivion.HabboHotel.Users
             if (client?.GetHabbo()?.GetSubscriptionManager() == null) return;
             using (var serverMessage = new ServerMessage())
             {
-                serverMessage.Init(LibraryParser.OutgoingRequest("SubscriptionStatusMessageComposer"));
-                serverMessage.AppendString("club_habbo");
+                await serverMessage.InitAsync(LibraryParser.OutgoingRequest("SubscriptionStatusMessageComposer"));
+                await serverMessage.AppendStringAsync("club_habbo");
                 if (client.GetHabbo().GetSubscriptionManager().HasSubscription)
                 {
                     double num = client.GetHabbo().GetSubscriptionManager().GetSubscription().ExpireTime;
@@ -784,27 +784,27 @@ namespace Oblivion.HabboHotel.Users
                     if (num4 >= 1)
                         num4--;
 
-                    serverMessage.AppendInteger(num3 - num4 * 31);
-                    serverMessage.AppendInteger(1);
-                    serverMessage.AppendInteger(num4);
-                    serverMessage.AppendInteger(1);
+                    await serverMessage.AppendIntegerAsync(num3 - num4 * 31);
+                    await serverMessage.AppendIntegerAsync(1);
+                    await serverMessage.AppendIntegerAsync(num4);
+                    await serverMessage.AppendIntegerAsync(1);
                     serverMessage.AppendBool(true);
                     serverMessage.AppendBool(true);
-                    serverMessage.AppendInteger(i);
-                    serverMessage.AppendInteger(i);
-                    serverMessage.AppendInteger(10);
+                    await serverMessage.AppendIntegerAsync(i);
+                    await serverMessage.AppendIntegerAsync(i);
+                    await serverMessage.AppendIntegerAsync(10);
                 }
                 else
                 {
-                    serverMessage.AppendInteger(0);
-                    serverMessage.AppendInteger(0);
-                    serverMessage.AppendInteger(0);
-                    serverMessage.AppendInteger(0);
+                    await serverMessage.AppendIntegerAsync(0);
+                    await serverMessage.AppendIntegerAsync(0);
+                    await serverMessage.AppendIntegerAsync(0);
+                    await serverMessage.AppendIntegerAsync(0);
                     serverMessage.AppendBool(false);
                     serverMessage.AppendBool(false);
-                    serverMessage.AppendInteger(0);
-                    serverMessage.AppendInteger(0);
-                    serverMessage.AppendInteger(0);
+                    await serverMessage.AppendIntegerAsync(0);
+                    await serverMessage.AppendIntegerAsync(0);
+                    await serverMessage.AppendIntegerAsync(0);
                 }
 
                 client.SendMessage(serverMessage);
@@ -813,8 +813,8 @@ namespace Oblivion.HabboHotel.Users
                 using (var serverMessage2 =
                     new ServerMessage(LibraryParser.OutgoingRequest("UserClubRightsMessageComposer")))
                 {
-                    serverMessage2.AppendInteger(GetSubscriptionManager().HasSubscription ? 2 : 0);
-                    serverMessage2.AppendInteger(Rank);
+                    await serverMessage2.AppendIntegerAsync(GetSubscriptionManager().HasSubscription ? 2 : 0);
+                    await serverMessage2.AppendIntegerAsync(Rank);
                     serverMessage2.AppendBool(
                         Rank >= Convert.ToUInt32(Oblivion.GetDbConfig().DbData["ambassador.minrank"]));
 
@@ -942,7 +942,7 @@ namespace Oblivion.HabboHotel.Users
 
                 using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    dbClient.RunFastQuery(queryBuilder.ToString());
+                    await dbClient.RunFastQueryAsync(queryBuilder.ToString());
                 }
             }
 
@@ -980,17 +980,17 @@ namespace Oblivion.HabboHotel.Users
                                           ", online_seconds = online_seconds + " +
                                           secondsToGive + "  WHERE id=" + Id + " LIMIT 1;");
                     queryReactor.AddParameter("navilogs", navilogs);
-                    queryReactor.RunQuery();
+                    await queryReactor.RunQueryAsync();
 
 
                     if (Rank >= 4)
-                        queryReactor.RunFastQuery(
+                        await queryReactor.RunFastQueryAsync(
                             $"UPDATE moderation_tickets SET status='open', moderator_id=0 WHERE status='picked' AND moderator_id={Id}");
 
-                    queryReactor.RunFastQuery("UPDATE users SET block_newfriends = '" +
-                                              Convert.ToInt32(HasFriendRequestsDisabled) + "', hide_online = '" +
-                                              Convert.ToInt32(AppearOffline) + "', hide_inroom = '" +
-                                              Convert.ToInt32(HideInRoom) + "' WHERE id = " + Id);
+                    await queryReactor.RunFastQueryAsync("UPDATE users SET block_newfriends = '" +
+                                                         Convert.ToInt32(HasFriendRequestsDisabled) + "', hide_online = '" +
+                                                         Convert.ToInt32(AppearOffline) + "', hide_inroom = '" +
+                                                         Convert.ToInt32(HideInRoom) + "' WHERE id = " + Id);
                 }
             }
 
@@ -1058,9 +1058,9 @@ namespace Oblivion.HabboHotel.Users
             if (_mClient?.GetMessageHandler()?.GetResponse() == null)
                 return;
 
-            _mClient.GetMessageHandler().GetResponse()
-                .Init(LibraryParser.OutgoingRequest("CreditsBalanceMessageComposer"));
-            _mClient.GetMessageHandler().GetResponse().AppendString($"{Credits}.0");
+            await _mClient.GetMessageHandler().GetResponse()
+                .InitAsync(LibraryParser.OutgoingRequest("CreditsBalanceMessageComposer"));
+            await _mClient.GetMessageHandler().GetResponse().AppendStringAsync($"{Credits}.0");
             await _mClient.GetMessageHandler().SendResponse();
 
 
@@ -1078,15 +1078,15 @@ namespace Oblivion.HabboHotel.Users
             if (_mClient?.GetMessageHandler()?.GetResponse() == null)
                 return;
 
-            _mClient.GetMessageHandler().GetResponse()
-                .Init(LibraryParser.OutgoingRequest("ActivityPointsMessageComposer"));
-            _mClient.GetMessageHandler().GetResponse().AppendInteger(3);
-            _mClient.GetMessageHandler().GetResponse().AppendInteger(0);
-            _mClient.GetMessageHandler().GetResponse().AppendInteger(ActivityPoints);
-            _mClient.GetMessageHandler().GetResponse().AppendInteger(5);
-            _mClient.GetMessageHandler().GetResponse().AppendInteger(Diamonds);
-            _mClient.GetMessageHandler().GetResponse().AppendInteger(102);
-            _mClient.GetMessageHandler().GetResponse().AppendInteger(Graffiti);
+            await _mClient.GetMessageHandler().GetResponse()
+                .InitAsync(LibraryParser.OutgoingRequest("ActivityPointsMessageComposer"));
+            await _mClient.GetMessageHandler().GetResponse().AppendIntegerAsync(3);
+            await _mClient.GetMessageHandler().GetResponse().AppendIntegerAsync(0);
+            await _mClient.GetMessageHandler().GetResponse().AppendIntegerAsync(ActivityPoints);
+            await _mClient.GetMessageHandler().GetResponse().AppendIntegerAsync(5);
+            await _mClient.GetMessageHandler().GetResponse().AppendIntegerAsync(Diamonds);
+            await _mClient.GetMessageHandler().GetResponse().AppendIntegerAsync(102);
+            await _mClient.GetMessageHandler().GetResponse().AppendIntegerAsync(Graffiti);
             await _mClient.GetMessageHandler().SendResponse();
 
 
@@ -1104,15 +1104,15 @@ namespace Oblivion.HabboHotel.Users
             if (_mClient?.GetMessageHandler()?.GetResponse() == null)
                 return;
 
-            _mClient.GetMessageHandler().GetResponse()
-                .Init(LibraryParser.OutgoingRequest("ActivityPointsMessageComposer"));
-            _mClient.GetMessageHandler().GetResponse().AppendInteger(3);
-            _mClient.GetMessageHandler().GetResponse().AppendInteger(0);
-            _mClient.GetMessageHandler().GetResponse().AppendInteger(ActivityPoints);
-            _mClient.GetMessageHandler().GetResponse().AppendInteger(5);
-            _mClient.GetMessageHandler().GetResponse().AppendInteger(Diamonds);
-            _mClient.GetMessageHandler().GetResponse().AppendInteger(102);
-            _mClient.GetMessageHandler().GetResponse().AppendInteger(Graffiti);
+            await _mClient.GetMessageHandler().GetResponse()
+                .InitAsync(LibraryParser.OutgoingRequest("ActivityPointsMessageComposer"));
+            await _mClient.GetMessageHandler().GetResponse().AppendIntegerAsync(3);
+            await _mClient.GetMessageHandler().GetResponse().AppendIntegerAsync(0);
+            await _mClient.GetMessageHandler().GetResponse().AppendIntegerAsync(ActivityPoints);
+            await _mClient.GetMessageHandler().GetResponse().AppendIntegerAsync(5);
+            await _mClient.GetMessageHandler().GetResponse().AppendIntegerAsync(Diamonds);
+            await _mClient.GetMessageHandler().GetResponse().AppendIntegerAsync(102);
+            await _mClient.GetMessageHandler().GetResponse().AppendIntegerAsync(Graffiti);
             await _mClient.GetMessageHandler().SendResponse();
 
 
@@ -1131,12 +1131,12 @@ namespace Oblivion.HabboHotel.Users
             if (_mClient?.GetMessageHandler() == null || _mClient.GetMessageHandler().GetResponse() == null)
                 return;
 
-            _mClient.GetMessageHandler()
+            await _mClient.GetMessageHandler()
                 .GetResponse()
-                .Init(LibraryParser.OutgoingRequest("ActivityPointsNotificationMessageComposer"));
-            _mClient.GetMessageHandler().GetResponse().AppendInteger(ActivityPoints);
-            _mClient.GetMessageHandler().GetResponse().AppendInteger(change);
-            _mClient.GetMessageHandler().GetResponse().AppendInteger(0);
+                .InitAsync(LibraryParser.OutgoingRequest("ActivityPointsNotificationMessageComposer"));
+            await _mClient.GetMessageHandler().GetResponse().AppendIntegerAsync(ActivityPoints);
+            await _mClient.GetMessageHandler().GetResponse().AppendIntegerAsync(change);
+            await _mClient.GetMessageHandler().GetResponse().AppendIntegerAsync(0);
             await _mClient.GetMessageHandler().SendResponse();
         }
 
@@ -1151,26 +1151,26 @@ namespace Oblivion.HabboHotel.Users
         {
             if (isValid)
             {
-                _mClient.GetMessageHandler()
+                await _mClient.GetMessageHandler()
                     .GetResponse()
-                    .Init(LibraryParser.OutgoingRequest("VoucherValidMessageComposer"));
-                _mClient.GetMessageHandler().GetResponse().AppendString(productName);
-                _mClient.GetMessageHandler().GetResponse().AppendString(productDescription);
+                    .InitAsync(LibraryParser.OutgoingRequest("VoucherValidMessageComposer"));
+                await _mClient.GetMessageHandler().GetResponse().AppendStringAsync(productName);
+                await _mClient.GetMessageHandler().GetResponse().AppendStringAsync(productDescription);
                 await _mClient.GetMessageHandler().SendResponse();
                 return;
             }
 
-            _mClient.GetMessageHandler()
+            await _mClient.GetMessageHandler()
                 .GetResponse()
-                .Init(LibraryParser.OutgoingRequest("VoucherErrorMessageComposer"));
-            _mClient.GetMessageHandler().GetResponse().AppendString("1");
+                .InitAsync(LibraryParser.OutgoingRequest("VoucherErrorMessageComposer"));
+            await _mClient.GetMessageHandler().GetResponse().AppendStringAsync("1");
             await _mClient.GetMessageHandler().SendResponse();
         }
 
         /// <summary>
         ///     Mutes this instance.
         /// </summary>
-        internal async Task Mute()
+        internal void Mute()
         {
             if (!Muted)
                 Muted = true;
@@ -1182,7 +1182,7 @@ namespace Oblivion.HabboHotel.Users
         internal async Task UnMute()
         {
             if (Muted)
-                GetClient().SendNotif("You were unmuted.");
+                await GetClient().SendNotifyAsync("You were unmuted.");
 
             Muted = false;
 
@@ -1227,7 +1227,7 @@ namespace Oblivion.HabboHotel.Users
         {
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                dbClient.RunFastQuery(
+                await dbClient.RunFastQueryAsync(
                     $"UPDATE users SET last_online = '{Oblivion.GetUnixTimeStamp()}', activity_points = '{ActivityPoints}', credits = '{Credits}', diamonds = '{Diamonds}', {Oblivion.GetDbConfig().DbData["emerald.column"]} = '{Graffiti}' WHERE id = '{Id}' LIMIT 1; ");
             }
         }

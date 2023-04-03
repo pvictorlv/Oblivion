@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Navigators.Enums;
@@ -370,7 +371,7 @@ namespace Oblivion.HabboHotel.Navigators
             navigatorMetaDataParser.AppendInteger(0);
             navigatorMetaDataParser.AppendString("myworld_view");
             navigatorMetaDataParser.AppendInteger(0);
-            session.SendMessage(navigatorMetaDataParser);
+            await session.SendMessage(navigatorMetaDataParser);
 
             var navigatorLiftedRoomsParser =
                 new ServerMessage(LibraryParser.OutgoingRequest("NavigatorLiftedRoomsComposer"));
@@ -385,7 +386,7 @@ namespace Oblivion.HabboHotel.Navigators
                 navigatorLiftedRoomsParser.AppendString(navHeader.Caption);
             }
 
-            session.SendMessage(navigatorLiftedRoomsParser);
+            await session.SendMessage(navigatorLiftedRoomsParser);
 
             var collapsedCategoriesMessageParser =
                 new ServerMessage(LibraryParser.OutgoingRequest("NavigatorCategorys"));
@@ -399,7 +400,7 @@ namespace Oblivion.HabboHotel.Navigators
             collapsedCategoriesMessageParser.AppendString("new_ads");
             collapsedCategoriesMessageParser.AppendString("staffpicks");
             collapsedCategoriesMessageParser.AppendString("official");
-            session.SendMessage(collapsedCategoriesMessageParser);
+            await session.SendMessage(collapsedCategoriesMessageParser);
 
             var searches = new ServerMessage(LibraryParser.OutgoingRequest("NavigatorSavedSearchesComposer"));
             searches.AppendInteger(session.GetHabbo().NavigatorLogs.Count);
@@ -413,8 +414,8 @@ namespace Oblivion.HabboHotel.Navigators
                 searches.AppendString("");
             }
 
-            session.SendMessage(searches);
-            //session.SendMessage(SerlializeNewNavigator("official", "", session));
+            await session.SendMessage(searches);
+            //await session.SendMessage(SerlializeNewNavigator("official", "", session));
 
             var packetName = new ServerMessage(LibraryParser.OutgoingRequest("NewNavigatorSizeMessageComposer"));
             var pref = session.GetHabbo().Preferences;
@@ -426,7 +427,7 @@ namespace Oblivion.HabboHotel.Navigators
             packetName.AppendBool(false);
             packetName.AppendInteger(1);
 
-            session.SendMessage(packetName);
+            await session.SendMessage(packetName);
         }
 
         /// <summary>
@@ -462,7 +463,7 @@ namespace Oblivion.HabboHotel.Navigators
 
 //            serverMessage.EndArray();
 
-            session.SendMessage(serverMessage);
+            await session.SendMessage(serverMessage);
         }
 
         /// <summary>
@@ -529,7 +530,7 @@ namespace Oblivion.HabboHotel.Navigators
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns>ServerMessage.</returns>
-        internal ServerMessage SerializeFavoriteRooms(GameClient session)
+        internal async Task<ServerMessage> SerializeFavoriteRooms(GameClient session)
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("NavigatorListingsMessageComposer"));
             serverMessage.AppendInteger(6);
@@ -539,10 +540,11 @@ namespace Oblivion.HabboHotel.Navigators
             var array = session.GetHabbo().Data.FavouritedRooms.ToList();
 
             /* TODO CHECK */
-            foreach (var roomData in array
-                .Select(roomId => Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId))
-                .Where(roomData => roomData != null))
-                roomData.Serialize(serverMessage);
+            foreach (var roomId in array)
+            {
+                var roomData = await Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId);
+                if (roomData != null) await roomData.Serialize(serverMessage);
+            }
 
             serverMessage.AppendBool(false);
 
@@ -554,7 +556,7 @@ namespace Oblivion.HabboHotel.Navigators
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns>ServerMessage.</returns>
-        internal ServerMessage SerializeRecentRooms(GameClient session)
+        internal async Task<ServerMessage> SerializeRecentRooms(GameClient session)
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("NavigatorListingsMessageComposer"));
             serverMessage.AppendInteger(7);
@@ -563,9 +565,9 @@ namespace Oblivion.HabboHotel.Navigators
             serverMessage.StartArray();
 
             /* TODO CHECK */
-            foreach (var roomData in session.GetHabbo().RecentlyVisitedRooms
-                .Select(current => Oblivion.GetGame().GetRoomManager().GenerateRoomData(current)))
+            foreach (var current in session.GetHabbo().RecentlyVisitedRooms)
             {
+                var roomData = await Oblivion.GetGame().GetRoomManager().GenerateRoomData(current);
                 roomData.Serialize(serverMessage);
                 serverMessage.SaveArray();
             }
@@ -616,7 +618,7 @@ namespace Oblivion.HabboHotel.Navigators
         ///     Serializes the popular room tags.
         /// </summary>
         /// <returns>ServerMessage.</returns>
-        internal ServerMessage SerializePopularRoomTags()
+        internal async Task<ServerMessage> SerializePopularRoomTags()
         {
             var dictionary = new Dictionary<string, uint>();
 
@@ -643,7 +645,7 @@ namespace Oblivion.HabboHotel.Navigators
             list2.Sort((firstPair, nextPair) => firstPair.Value.CompareTo(nextPair.Value));
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("PopularRoomTagsMessageComposer"));
-            serverMessage.AppendInteger(list2.Count);
+            await serverMessage.AppendIntegerAsync(list2.Count);
 
             /* TODO CHECK */
             foreach (var current2 in list2)
@@ -683,7 +685,7 @@ namespace Oblivion.HabboHotel.Navigators
         /// </summary>
         /// <param name="reply">The reply.</param>
         /// <param name="rooms">The rooms.</param>
-        private static void SerializeNavigatorRooms(ref ServerMessage reply, ICollection<RoomData> rooms)
+        private static async Task SerializeNavigatorRooms(ServerMessage reply, ICollection<RoomData> rooms)
         {
             reply.AppendString(string.Empty);
 
@@ -699,10 +701,12 @@ namespace Oblivion.HabboHotel.Navigators
 
             /* TODO CHECK */
             foreach (var pair in rooms)
-                pair.Serialize(reply);
+                await pair.Serialize(reply);
 
             reply.AppendBool(false);
-        }   private static void SerializeNavigatorRooms(ref ServerMessage reply, ICollection<uint> rooms)
+        }  
+        
+        private static async Task SerializeNavigatorRooms(ServerMessage reply, ICollection<uint> rooms)
         {
             reply.AppendString(string.Empty);
 
@@ -717,9 +721,10 @@ namespace Oblivion.HabboHotel.Navigators
             reply.AppendInteger(rooms.Count);
 
             /* TODO CHECK */
-            foreach (var current in rooms.Select(pair => Oblivion.GetGame().GetRoomManager().GenerateRoomData(pair)))
+            foreach (var pair in rooms)
             {
-                current.Serialize(reply);
+                var current = await Oblivion.GetGame().GetRoomManager().GenerateRoomData(pair);
+                await current.Serialize(reply);
             }
 
             reply.AppendBool(false);
@@ -754,7 +759,7 @@ namespace Oblivion.HabboHotel.Navigators
         /// </summary>
         /// <param name="reply">The reply.</param>
         /// <param name="rooms">The rooms.</param>
-        private static void SerializeNavigatorRooms(ref ServerMessage reply,
+        private static async Task SerializeNavigatorRooms(ServerMessage reply,
             ICollection<KeyValuePair<RoomData, int>> rooms)
         {
             reply.AppendString(string.Empty);
@@ -771,7 +776,7 @@ namespace Oblivion.HabboHotel.Navigators
 
             /* TODO CHECK */
             foreach (var pair in rooms)
-                pair.Key.Serialize(reply);
+                await pair.Key.Serialize(reply);
 
             reply.AppendBool(false);
         }

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Oblivion.Connection;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 

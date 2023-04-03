@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
@@ -18,22 +19,23 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             Usage = ":mute [USERNAME]";
             MinParams = 1;
             BlockBad = true;
-
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
             if (client?.GetHabbo() == null)
             {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
+                await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
+
             if (client.GetHabbo().Rank >= 4)
             {
-                session.SendNotif(Oblivion.GetLanguage().GetVar("user_is_higher_rank"));
+                await session.SendNotif(Oblivion.GetLanguage().GetVar("user_is_higher_rank"));
             }
-            Oblivion.GetGame()
+
+            await Oblivion.GetGame()
                 .GetModerationTool().LogStaffEntry(session.GetHabbo().UserName, client.GetHabbo().UserName,
                     "Mute", "Muted user");
             client.GetHabbo().Mute();

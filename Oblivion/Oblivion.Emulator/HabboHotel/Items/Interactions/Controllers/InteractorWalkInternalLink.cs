@@ -27,7 +27,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             var message = new ServerMessage(LibraryParser.OutgoingRequest("InternalLinkMessageComposer"));
 
             message.AppendString(data[3]);
-            session.SendMessage(message);
+            await session.SendMessage(message);
         }
     }
 }

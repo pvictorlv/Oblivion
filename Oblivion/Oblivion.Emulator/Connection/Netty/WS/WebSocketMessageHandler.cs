@@ -1,4 +1,5 @@
-﻿using DotNetty.Transport.Channels;
+﻿using System.Threading.Tasks;
+using DotNetty.Transport.Channels;
 using Oblivion.Connection.Connection;
 using Oblivion.Messages;
 

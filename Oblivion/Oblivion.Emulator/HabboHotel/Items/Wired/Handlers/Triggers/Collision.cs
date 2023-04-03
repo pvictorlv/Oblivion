@@ -58,7 +58,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public bool OtherBool { get; set; }
 
-        public Task<bool> Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
             var roomUser = (RoomUser) stuff[0];
 
@@ -68,7 +68,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             if (conditions.Count > 0)
                 foreach (var current in conditions)
                 {
-                    WiredHandler.OnEvent(current);
+                    await WiredHandler.OnEvent(current);
                     if (!current.Execute(roomUser))
                         return true;
                 }
@@ -88,8 +88,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                         if (selectedBox == null || !selectedBox.Execute())
                             return false;
 
-                        WiredHandler.OnEvent(specialBox);
-                        WiredHandler.OnEvent(selectedBox);
+                        await WiredHandler.OnEvent(specialBox);
+                        await WiredHandler.OnEvent(selectedBox);
                     }
                 }
                 else
@@ -102,7 +102,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                             current3.Type != Interaction.ActionInverseChase)
                         {
                              current3.Execute(roomUser, Type);
-                             WiredHandler.OnEvent(current3);
+                             await WiredHandler.OnEvent(current3);
                         }
                     }
                 }

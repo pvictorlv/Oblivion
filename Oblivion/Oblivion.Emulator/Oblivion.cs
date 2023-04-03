@@ -194,7 +194,7 @@ namespace Oblivion
 
             var plugins = new List<IPlugin>(pluginTypes.Count);
 
-            plugins.AddRange(pluginTypes.Select(type => (IPlugin) Activator.CreateInstance(type)));
+            plugins.AddRange(pluginTypes.Select(type => (IPlugin)Activator.CreateInstance(type)));
 
             return plugins;
         }
@@ -226,7 +226,7 @@ namespace Oblivion
                 if (UsersCached.TryGetValue(userId, out var user))
                     return user;
 
-                var userData = UserDataFactory.GetUserData((int) userId);
+                var userData = UserDataFactory.GetUserData((int)userId);
 
 
                 if (userData?.User == null)
@@ -287,20 +287,23 @@ namespace Oblivion
             _defaultEncoding = Encoding.Default;
             MutedUsersByFilter = new Dictionary<uint, uint>();
             ChatEmotions.Initialize();
-            
+
             CultureInfo = CultureInfo.CreateSpecificCulture("en-GB");
             try
             {
                 ConfigurationData.Load(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings/main.ini"));
-                ConfigurationData.Load(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings/Welcome/settings.ini"), true);
+                ConfigurationData.Load(
+                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings/Welcome/settings.ini"), true);
 
                 DatabaseConnectionType = ConfigurationData.Data["db.type"];
-                
+
 
                 Handler.Initialize(CryptoKeys.N, CryptoKeys.D, CryptoKeys.E);
 
-                Manager = new DatabaseManager(ConfigurationData.Data["db.hostname"], uint.Parse(ConfigurationData.Data["db.port"]), ConfigurationData.Data["db.username"]
-                , ConfigurationData.Data["db.password"], ConfigurationData.Data["db.name"], uint.Parse(ConfigurationData.Data["db.pool.maxsize"]));
+                Manager = new DatabaseManager(ConfigurationData.Data["db.hostname"],
+                    uint.Parse(ConfigurationData.Data["db.port"]), ConfigurationData.Data["db.username"]
+                    , ConfigurationData.Data["db.password"], ConfigurationData.Data["db.name"],
+                    uint.Parse(ConfigurationData.Data["db.pool.maxsize"]));
 
                 using (var queryReactor = GetDatabaseManager().GetQueryReactor())
                 {
@@ -313,12 +316,12 @@ namespace Oblivion
 
                 ConsoleTimer = int.Parse(ConfigurationData.Data["console.clear.time"]);
                 ConsoleTimerOn = bool.Parse(ConfigurationData.Data["console.clear.enabled"]);
-                FriendRequestLimit = (uint) int.Parse(ConfigurationData.Data["client.maxrequests"]);
+                FriendRequestLimit = (uint)int.Parse(ConfigurationData.Data["client.maxrequests"]);
 
                 LibraryParser.RegisterAll();
 
                 Plugins = new Dictionary<string, IPlugin>();
-                
+
                 var plugins = LoadPlugins();
 
                 if (plugins != null)
@@ -329,20 +332,20 @@ namespace Oblivion
                         Out.WriteLine("Loaded Plugin: " + item.PluginName + " Version: " + item.PluginVersion,
                             "Oblivion.Plugins", ConsoleColor.DarkBlue);
                     }
-                    
-                
-                
+
+
                 ExtraSettings.RunExtraSettings();
                 CrossDomainPolicy.Set();
 
                 _game = new Game();
+                await _game.Init();
                 _game.GetNavigator().LoadNewPublicRooms();
-                _game.ContinueLoading();
+                await _game.ContinueLoading();
 
                 ServerLanguage = Convert.ToString(ConfigurationData.Data["system.lang"]);
                 _languages = new Languages(ServerLanguage);
                 Out.WriteLine("Loaded " + _languages.Count() + " Languages Vars", "Oblivion.Lang");
-                
+
                 if (plugins != null)
                     foreach (var itemTwo in plugins)
                         itemTwo?.message_void();
@@ -357,13 +360,13 @@ namespace Oblivion
                     "Starting up asynchronous sockets server for game connections for port " +
                     int.Parse(ConfigurationData.Data["game.tcp.port"]), "Server.AsyncSocketListener");
 
-                                _connectionManager = new ConnectionHandling(int.Parse(ConfigurationData.Data["game.tcp.port"]),
-                                    int.Parse(ConfigurationData.Data["game.tcp.conlimit"]),
-                                    int.Parse(ConfigurationData.Data["game.tcp.conperip"]),
-                                    ConfigurationData.Data["game.tcp.antiddos"].ToLower() == "true",
-                                    ConfigurationData.Data["game.tcp.enablenagles"].ToLower() == "true");
+                _connectionManager = new ConnectionHandling(int.Parse(ConfigurationData.Data["game.tcp.port"]),
+                    int.Parse(ConfigurationData.Data["game.tcp.conlimit"]),
+                    int.Parse(ConfigurationData.Data["game.tcp.conperip"]),
+                    ConfigurationData.Data["game.tcp.antiddos"].ToLower() == "true",
+                    ConfigurationData.Data["game.tcp.enablenagles"].ToLower() == "true");
 
-                                await _connectionManager.StartServer();
+                await _connectionManager.StartServer();
 
                 Console.WriteLine();
 
@@ -384,7 +387,7 @@ namespace Oblivion
 
                 if (ConsoleTimerOn)
                 {
-                    Timer = new Timer {Interval = ConsoleTimer};
+                    Timer = new Timer { Interval = ConsoleTimer };
                     Timer.Elapsed += TimerElapsed;
                     Timer.Start();
                 }
@@ -427,7 +430,7 @@ namespace Oblivion
                 }
             }
         }
-        
+
 
         public static string GetLocalIPAddress()
         {
@@ -476,8 +479,8 @@ namespace Oblivion
         ///     Get's the Actual Timestamp in Unix Format
         /// </summary>
         /// <returns>System.Int32.</returns>
-        internal static int GetUnixTimeStamp() => (int) (DateTime.UtcNow -
-                                                         new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
+        internal static int GetUnixTimeStamp() => (int)(DateTime.UtcNow -
+                                                        new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
             .TotalSeconds;
 
         /// <summary>
@@ -510,6 +513,7 @@ namespace Oblivion
         /// <returns>System.Int32.</returns>
         internal static int DateTimeToUnix(DateTime target) => Convert.ToInt32(
             (target - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds);
+
         /// <summary>
         ///     Convert's a String to Unix TimeStamp
         /// </summary>
@@ -526,9 +530,8 @@ namespace Oblivion
         ///     Get the Actual Time
         /// </summary>
         /// <returns>System.Int64.</returns>
-        internal static long Now() => (long) (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds;
+        internal static long Now() => (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds;
 
-      
 
         /// <summary>
         ///     Filter's the Habbo Avatars Figure
@@ -569,7 +572,7 @@ namespace Oblivion
 
                 if (id > 0)
                 {
-                    var result = GetHabboById((uint) id);
+                    var result = GetHabboById((uint)id);
 
                     return result;
                 }
@@ -661,7 +664,7 @@ namespace Oblivion
         /// </summary>
         /// <param name="restart">if set to <c>true</c> [restart].</param>
         /// Set a Different Message in Hotel
-        internal static void PerformShutDown(bool restart)
+        internal static async Task PerformShutDown(bool restart)
         {
             try
             {
@@ -670,7 +673,7 @@ namespace Oblivion
                 Cache.StopProcess();
 
                 ShutdownStarted = true;
-                Task.Factory.StartNew(() =>
+                await Task.Run(async () =>
                 {
                     var serverMessage =
                         new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
@@ -683,13 +686,13 @@ namespace Oblivion
                         restart
                             ? "<b>The hotel is shutting down for a break.<)/b>\nYou may come back later.\r\n<b>So long!</b>"
                             : "<b>The hotel is shutting down for a break.</b><br />You may come back soon. Don't worry, everything's going to be saved..<br /><b>So long!</b>\r\n~ This session was powered by OblivionEmulator");
-                    GetGame().GetClientManager().SendMessageAsync(serverMessage);
+                   await GetGame().GetClientManager().SendMessageAsync(serverMessage);
                 });
                 Console.Title = "Oblivion Emulator | Shutting down...";
 
                 _game.StopGameLoop();
-                _game.GetRoomManager().RemoveAllRooms();
-                _game.GetClientManager().CloseAll();
+                await _game.GetRoomManager().RemoveAllRooms();
+                await _game.GetClientManager().CloseAll();
 
                 GetConnectionManager().Destroy();
 
@@ -698,7 +701,7 @@ namespace Oblivion
 
                 using (var queryReactor = Manager.GetQueryReactor())
                 {
-                    queryReactor.RunFastQuery("UPDATE users SET online = '0'");
+                    await queryReactor.RunFastQueryAsync("UPDATE users SET online = '0'");
                 }
 
                 _connectionManager.Destroy();

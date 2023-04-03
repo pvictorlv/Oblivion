@@ -62,7 +62,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             set { }
         }
         
-        public Task<bool> Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
             var roomUser = (RoomUser) stuff[0];
             var roomItem = stuff[1];
@@ -90,8 +90,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 /* TODO CHECK */
                 foreach (var current2 in conditions)
                 {
-                    if (!current2.Execute(roomUser, item)) return false;
-                    WiredHandler.OnEvent(current2);
+                    if (!await current2.Execute(roomUser, item)) return false;
+                    await WiredHandler.OnEvent(current2);
                 }
 
             if (effects.Count > 0)
@@ -106,24 +106,24 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                             ? Room.GetWiredHandler().GetRandomEffect(effects)
                             : Room.GetWiredHandler().GetRandomUnseenEffect(effects);
 
-                        if (selectedBox == null || !selectedBox.Execute())
+                        if (selectedBox == null || !await selectedBox.Execute())
                             return false;
 
-                        WiredHandler.OnEvent(specialBox);
-                        WiredHandler.OnEvent(selectedBox);
+                        await WiredHandler.OnEvent(specialBox);
+                        await WiredHandler.OnEvent(selectedBox);
                     }
                 }
                 else
                 {
                     foreach (var current3 in effects)
                     {
-                        current3.Execute(roomUser, Type);
-                        WiredHandler.OnEvent(current3);
+                        await current3.Execute(roomUser, Type);
+                        await WiredHandler.OnEvent(current3);
                     }
                 }
             }
 
-            WiredHandler.OnEvent(this);
+            await WiredHandler.OnEvent(this);
 
             _mNext = Oblivion.Now() + Delay;
 

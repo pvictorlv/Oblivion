@@ -55,7 +55,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
-        public Task<bool> Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
             var roomUser = (RoomUser) stuff[0];
 
@@ -67,7 +67,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 if (!item.IsWired || !Room.GetRoomItemHandler().FloorItems.Values.Contains(item)) continue;
                 var wired = Room.GetWiredHandler().GetWired(item);
                 if (wired == null || _bannedList.Contains(wired.Type)) continue;
-                WiredHandler.OnEvent(wired);
+                await WiredHandler.OnEvent(wired);
                 wired.Execute(roomUser, Type);
 
             }

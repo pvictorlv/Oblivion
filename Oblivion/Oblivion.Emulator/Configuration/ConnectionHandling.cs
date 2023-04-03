@@ -64,7 +64,7 @@ namespace Oblivion.Configuration
 
             Manager.OnConnectionClosed += (session) => OnClientDisconnected(session, null);
 
-            Manager.OnMessageReceived += (session, body) =>
+            Manager.OnMessageReceived += async (session, body) =>
             {
                 if (session?.UserData?.PacketParser == null) return;
 
@@ -74,12 +74,12 @@ namespace Oblivion.Configuration
                 }
             };
 
-            Manager.OnConnectionOpened += session =>
+            Manager.OnConnectionOpened += async session =>
             {
                 //                if (SocketConnectionCheck.CheckConnection(session.GetIp(), connectionsPerIp, true))
                 {
 
-                    Oblivion.GetGame().GetClientManager().CreateAndStartClient(session);
+                    await Oblivion.GetGame().GetClientManager().CreateAndStartClient(session);
                 }
                 //                else
                 {
@@ -130,7 +130,7 @@ namespace Oblivion.Configuration
         /// <summary>
         /// Destroys this instance.
         /// </summary>
-        internal async Task Destroy()
+        internal void Destroy()
         {
             Manager.Stop();
         }

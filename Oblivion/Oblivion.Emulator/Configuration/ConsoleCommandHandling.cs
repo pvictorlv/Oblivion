@@ -54,7 +54,7 @@ namespace Oblivion.Configuration
         ///     Invokes the command.
         /// </summary>
         /// <param name="inputData">The input data.</param>
-        internal static void InvokeCommand(string inputData)
+        internal static async Task InvokeCommand(string inputData)
         {
             if (string.IsNullOrEmpty(inputData) && Logging.DisabledState)
                 return;
@@ -74,7 +74,7 @@ namespace Oblivion.Configuration
                     case "close":
                         Logging.DisablePrimaryWriting(true);
                         Out.WriteLine("Shutdown Initalized", "Oblivion.Life", ConsoleColor.DarkYellow);
-                        Oblivion.PerformShutDown(false);
+                        await Oblivion.PerformShutDown(false);
                         Console.WriteLine();
                         break;
 
@@ -82,7 +82,7 @@ namespace Oblivion.Configuration
                         Logging.LogMessage($"Server Restarting at {DateTime.Now}");
                         Logging.DisablePrimaryWriting(true);
                         Out.WriteLine("Restart Initialized", "Oblivion.Life", ConsoleColor.DarkYellow);
-                        Oblivion.PerformShutDown(true);
+                        await Oblivion.PerformShutDown(true);
                         Console.WriteLine();
                         break;
 
@@ -103,7 +103,7 @@ namespace Oblivion.Configuration
                         var message = new ServerMessage(LibraryParser.OutgoingRequest("BroadcastNotifMessageComposer"));
                         message.AppendString(str);
                         message.AppendString(string.Empty);
-                        GetGame().GetClientManager().SendMessageAsync(message);
+                        await GetGame().GetClientManager().SendMessageAsync(message);
                         Console.WriteLine("[{0}] was sent!", str);
                         return;
                     }
@@ -161,12 +161,12 @@ namespace Oblivion.Configuration
                     case "lag":
                         if (Oblivion.DebugMode)
                         {
-                            new Task(() =>
+                            new Task(async () =>
                             {
                                 for (uint i = 0; i < 5000; i++)
                                     try
                                     {
-                                        Oblivion.GetGame().GetRoomManager().LoadRoom(i);
+                                        await Oblivion.GetGame().GetRoomManager().LoadRoom(i);
                                     }
                                     catch (Exception exception)
                                     {
@@ -241,16 +241,16 @@ namespace Oblivion.Configuration
                     case "catalogus":
                         using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
                         {
-                            GetGame().GetItemManager().LoadItems(adapter);
-                            GetGame().GetCatalog().Initialize(adapter);
-                            GetGame().ReloadItems();
+                            await GetGame().GetItemManager().LoadItems(adapter);
+                            await GetGame().GetCatalog().Initialize(adapter);
+                            await GetGame().ReloadItems();
 //                            GetGame().GetCrackableEggHandler().Initialize(adapter);
                         }
                         var msg = new ServerMessage(LibraryParser.OutgoingRequest("PublishShopMessageComposer"));
                         msg.AppendBool(false);
-                        GetGame()
+                        await GetGame()
                             .GetClientManager()
-                            .SendMessage(msg);
+                            .SendMessageAsync(msg);
 
                         Console.WriteLine("Catalogue was re-loaded.");
                         Console.WriteLine();
@@ -265,7 +265,7 @@ namespace Oblivion.Configuration
                     case "bans":
                         using (var adapter3 = Oblivion.GetDatabaseManager().GetQueryReactor())
                         {
-                            GetGame().GetBanManager().LoadBans(adapter3);
+                            await GetGame().GetBanManager().LoadBans(adapter3);
                         }
                         Console.WriteLine("Bans were re-loaded");
                         Console.WriteLine();

@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.Commands.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
 namespace Oblivion.HabboHotel.Commands.Controllers
@@ -19,18 +20,18 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 2;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
             if (client == null)
             {
-                session.SendNotif(Oblivion.GetLanguage().GetVar("user_not_found"));
+                await session.SendNotif(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
             int amount;
             if (!int.TryParse(pms[1], out amount))
             {
-                session.SendNotif(Oblivion.GetLanguage().GetVar("enter_numbers"));
+                await session.SendNotif(Oblivion.GetLanguage().GetVar("enter_numbers"));
                 return true;
             }
             client.GetHabbo().ActivityPoints += amount;

@@ -17,7 +17,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             if (session == null || !hasRights || num <= 0 || item.GetBaseItem().InteractionType == Interaction.Pinata)
                 return;
 
-            Oblivion.GetGame().GetQuestManager().ProgressUserQuest(session, QuestType.FurniSwitch);
+            await Oblivion.GetGame().GetQuestManager().ProgressUserQuest(session, QuestType.FurniSwitch);
 
             int.TryParse(item.ExtraData, out var num2);
             int num3;

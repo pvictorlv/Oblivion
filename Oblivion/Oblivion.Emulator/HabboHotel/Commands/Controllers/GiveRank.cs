@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Commands.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 
@@ -20,7 +21,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 2;
         }
 
-        public override bool Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
          
 
@@ -28,13 +29,13 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             if (user == null)
             {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("user_not_found"));
+                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
 
             if (user.GetHabbo().Rank >= session.GetHabbo().Rank)
             {
-                session.SendWhisper(Oblivion.GetLanguage().GetVar("user_is_higher_rank"));
+                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_is_higher_rank"));
                 return true;
             }
 
@@ -49,7 +50,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
 
             user.GetHabbo().Rank = Convert.ToUInt32(pms[1]);
-            session.SendWhisper(Oblivion.GetLanguage().GetVar("user_rank_update"));
+             await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_rank_update"));
             return true;
         }
     }

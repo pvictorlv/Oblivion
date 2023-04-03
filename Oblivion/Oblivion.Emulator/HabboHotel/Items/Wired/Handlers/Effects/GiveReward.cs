@@ -53,7 +53,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
-        public Task<bool> Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
             var user = (RoomUser) stuff?[0];
             if (user?.GetClient()?.GetHabbo()?.GetBadgeComponent() == null) return false;

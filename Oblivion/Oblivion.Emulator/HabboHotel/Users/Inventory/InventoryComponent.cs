@@ -403,7 +403,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <param name="limtot">The limtot.</param>
         /// <param name="songCode">The song code.</param>
         /// <returns>UserItem.</returns>
-        internal UserItem AddNewItem(string id, uint baseItem, string extraData, uint thGroup, bool insert,
+        internal async Task<UserItem> AddNewItem(string id, uint baseItem, string extraData, uint thGroup, bool insert,
             bool fromRoom,
             int limno, int limtot, string songCode = "")
         {
@@ -429,7 +429,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                         queryReactor.RunQuery();
                         var virtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(id);
 
-                        SendNewItems(virtualId);
+                        await SendNewItems(virtualId);
                     }
                 }
             }
@@ -486,15 +486,15 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <param name="roomId">the room who is placed the item</param>
         internal async Task RemoveItem(string id, bool placedInroom, uint roomId)
         {
-            GetClient()
+            await GetClient()
                 .GetMessageHandler()
                 .GetResponse()
-                .Init(LibraryParser.OutgoingRequest("RemoveInventoryObjectMessageComposer"));
+                .InitAsync(LibraryParser.OutgoingRequest("RemoveInventoryObjectMessageComposer"));
 
             var item = GetItem(id);
             if (item == null) return;
 
-            GetClient().GetMessageHandler().GetResponse().AppendInteger(item.VirtualId);
+            await GetClient().GetMessageHandler().GetResponse().AppendIntegerAsync(item.VirtualId);
 
             await GetClient().GetMessageHandler().SendResponse();
             if (_mAddedItems.Contains(id))
@@ -506,10 +506,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             }
 
             _items?.TryRemove(item.Id, out _);
-
-            if (_mRemovedItems.Contains(item))
-                return;
-
+            
             _mRemovedItems?.Add(item);
         }
 
@@ -528,14 +525,14 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 message.AppendInteger(1);
                 message.AppendInteger(0);
                 message.AppendInteger(0);
-                session.SendMessage(message);
+                await session.SendMessage(message);
             }
 
 
             int totalSent = 0;
 
             if (i > 4500)
-                _mClient.SendMessage(StaticMessage.AdviceMaxItems);
+                _mClient.SendStaticMessage(StaticMessage.AdviceMaxItems);
 
 
 
@@ -750,7 +747,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
                     using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        dbClient.RunFastQuery(builder.ToString());
+                        await dbClient.RunFastQueryAsync(builder.ToString());
                     }
 
                     _mAddedItems.Clear();
