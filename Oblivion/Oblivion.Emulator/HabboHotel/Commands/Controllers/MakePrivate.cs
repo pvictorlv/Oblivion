@@ -35,7 +35,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
 
             /* TODO CHECK */ foreach (var user in users.Where(user => user?.GetClient() != null))
-                user.GetClient().SendMessage(roomFwd);
+                await user.GetClient().SendMessageAsync(roomFwd);
 
             return true;
         }

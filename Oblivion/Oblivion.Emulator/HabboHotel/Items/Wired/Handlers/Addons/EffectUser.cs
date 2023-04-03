@@ -1,4 +1,5 @@
-﻿using Oblivion.Collections;
+﻿using System.Threading.Tasks;
+using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
@@ -39,7 +40,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
 
         public bool OtherBool { get; set; }
 
-        public bool Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             var roomUser = (RoomUser) stuff?[0];
             if (roomUser == null) return false;

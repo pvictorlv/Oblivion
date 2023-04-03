@@ -357,7 +357,7 @@ namespace Oblivion.HabboHotel.Navigators
         ///     Enables the new navigator.
         /// </summary>
         /// <param name="session">The session.</param>
-        internal void EnableNewNavigator(GameClient session)
+        internal async Task EnableNewNavigator(GameClient session)
         {
             var navigatorMetaDataParser = new ServerMessage(LibraryParser.OutgoingRequest("NavigatorMetaDataComposer"));
 
@@ -434,7 +434,7 @@ namespace Oblivion.HabboHotel.Navigators
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns>ServerMessage.</returns>
-        internal void SerializeFlatCategories(GameClient session)
+        internal async Task SerializeFlatCategories(GameClient session)
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FlatCategoriesMessageComposer"));
 

@@ -45,7 +45,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         ///     Adds the specified clothing.
         /// </summary>
         /// <param name="clothing">The clothing.</param>
-        internal void Add(string clothing)
+        internal async Task Add(string clothing)
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
@@ -62,7 +62,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         ///     Serializes the specified message.
         /// </summary>
         /// <param name="message">The message.</param>
-        internal void Serialize(ServerMessage message)
+        internal async Task Serialize(ServerMessage message)
         {
             message.StartArray();
             /* TODO CHECK */ foreach (

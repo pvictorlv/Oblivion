@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -193,7 +194,7 @@ namespace Oblivion.HabboHotel.Items.Wired
             }
         }
 
-        public bool ExecuteWired(Interaction type, params object[] stuff)
+        public async Task<bool> ExecuteWired(Interaction type, params object[] stuff)
         {
             try
             {
@@ -205,7 +206,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 {
                     if (current == null || current.Type != type) continue;
 
-                    if (current.Execute(stuff))
+                    if (await current.Execute(stuff))
                     {
                         b = true;
                     }

@@ -80,7 +80,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 serverMessage.AppendString(num.ToString(Oblivion.CultureInfo));
                 serverMessage.AppendInteger(0);
 
-                room.SendMessage(serverMessage);
+                await room.SendMessage(serverMessage);
 
                 item.GetRoom()
                     .GetRoomItemHandler()

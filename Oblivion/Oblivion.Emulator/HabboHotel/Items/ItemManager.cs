@@ -47,7 +47,7 @@ namespace Oblivion.HabboHotel.Items
         /// </summary>
         /// <param name="dbClient">The database client.</param>
         /// <param name="itemLoaded">The item loaded.</param>
-        internal void LoadItems(IQueryAdapter dbClient, out uint itemLoaded)
+        internal async Task LoadItems(IQueryAdapter dbClient, out uint itemLoaded)
         {
             LoadItems(dbClient);
             itemLoaded = (uint) _items.Count;
@@ -104,7 +104,7 @@ namespace Oblivion.HabboHotel.Items
         ///     Loads the items.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal void LoadItems(IQueryAdapter dbClient)
+        internal async Task LoadItems(IQueryAdapter dbClient)
         {
             _items.Clear();
 

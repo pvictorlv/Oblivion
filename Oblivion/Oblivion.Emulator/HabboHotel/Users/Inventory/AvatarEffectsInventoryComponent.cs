@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.Messages;
@@ -93,7 +94,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <param name="effectId">The effect identifier.</param>
         /// <param name="duration">The duration.</param>
         /// <param name="type">The type.</param>
-        internal void AddNewEffect(int effectId, int duration, short type)
+        internal async Task AddNewEffect(int effectId, int duration, short type)
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.RunFastQuery(
@@ -110,7 +111,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             GetClient().GetMessageHandler().GetResponse().AppendInteger(type);
             GetClient().GetMessageHandler().GetResponse().AppendInteger(duration);
             GetClient().GetMessageHandler().GetResponse().AppendBool(duration == -1);
-            GetClient().GetMessageHandler().await SendResponse();
+            await GetClient().GetMessageHandler().SendResponse();
         }
 
         /// <summary>
@@ -127,7 +128,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         ///     Activates the effect.
         /// </summary>
         /// <param name="effectId">The effect identifier.</param>
-        internal void ActivateEffect(int effectId)
+        internal async Task ActivateEffect(int effectId)
         {
             if (!_session.GetHabbo().InRoom)
                 return;
@@ -153,7 +154,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     string.Concat("UPDATE users_effects SET is_activated = '1', activated_stamp = ",
                         Oblivion.GetUnixTimeStamp(), " WHERE user_id = ", _userId, " AND effect_id = ", effectId));
 
-            EnableInRoom(effectId);
+            await EnableInRoom(effectId);
         }
 
         /// <summary>
@@ -161,15 +162,15 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// </summary>
         /// <param name="effectId">The effect identifier.</param>
         /// <param name="setAsCurrentEffect">if set to <c>true</c> [set as current effect].</param>
-        internal void ActivateCustomEffect(int effectId, bool setAsCurrentEffect = true)
+        internal async Task ActivateCustomEffect(int effectId, bool setAsCurrentEffect = true)
         {
-            EnableInRoom(effectId, setAsCurrentEffect);
+            await EnableInRoom(effectId, setAsCurrentEffect);
         }
 
         /// <summary>
         ///     Called when [room exit].
         /// </summary>
-        internal void OnRoomExit()
+        internal async Task OnRoomExit()
         {
             CurrentEffect = 0;
         }
@@ -177,7 +178,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <summary>
         ///     Checks the expired.
         /// </summary>
-        internal void CheckExpired()
+        internal async Task CheckExpired()
         {
             if (!_effects.Any())
                 return;
@@ -192,12 +193,14 @@ namespace Oblivion.HabboHotel.Users.Inventory
         ///     Stops the effect.
         /// </summary>
         /// <param name="effectId">The effect identifier.</param>
-        internal void StopEffect(int effectId)
+        internal async Task StopEffect(int effectId)
         {
-            var avatarEffect = (
-                from x in _effects
-                where x.EffectId == effectId
-                select x).ToList();
+            var avatarEffect = new List<AvatarEffect>();
+            foreach (AvatarEffect x in _effects)
+            {
+                if (x.EffectId == effectId) 
+                    avatarEffect.Add(x);
+            }
 
             if (!avatarEffect.Any())
                 return;
@@ -219,16 +222,16 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 .Init(LibraryParser.OutgoingRequest("StopAvatarEffectMessageComposer"));
 
             GetClient().GetMessageHandler().GetResponse().AppendInteger(effectId);
-            GetClient().GetMessageHandler().await SendResponse();
+            await GetClient().GetMessageHandler().SendResponse();
 
             if (CurrentEffect >= 0)
-                ActivateCustomEffect(-1);
+                await ActivateCustomEffect(-1);
         }
 
         /// <summary>
         ///     Disposes this instance.
         /// </summary>
-        internal void Dispose()
+        internal async Task Dispose()
         {
             _effects.Clear();
             _effects = null;
@@ -249,7 +252,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// </summary>
         /// <param name="effectId">The effect identifier.</param>
         /// <param name="setAsCurrentEffect">if set to <c>true</c> [set as current effect].</param>
-        private void EnableInRoom(int effectId, bool setAsCurrentEffect = true)
+        private async Task EnableInRoom(int effectId, bool setAsCurrentEffect = true)
         {
             var userRoom = GetUserRoom();
 
@@ -265,7 +268,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             serverMessage.AppendInteger(roomUserByHabbo.VirtualId);
             serverMessage.AppendInteger(effectId);
             serverMessage.AppendInteger(0);
-            userRoom.SendMessage(serverMessage);
+            await userRoom.SendMessageAsync(serverMessage);
         }
         /// <summary>
         ///     Enables the in room.
@@ -285,7 +288,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             serverMessage.AppendInteger(roomUserByHabbo.VirtualId);
             serverMessage.AppendInteger(effectId);
             serverMessage.AppendInteger(0);
-            roomUserByHabbo.GetClient().SendMessage(serverMessage);
+            roomUserByHabbo.await GetClient().SendMessageAsync(serverMessage);
         }
 
         /// <summary>

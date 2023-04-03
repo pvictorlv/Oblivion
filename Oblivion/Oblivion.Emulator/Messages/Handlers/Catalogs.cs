@@ -25,8 +25,8 @@ namespace Oblivion.Messages.Handlers
 
             if (rank < 1)
                 rank = 1;
-            Session.SendMessage(CatalogPageComposer.ComposeIndex(rank, Request.GetString().ToUpper(), Session));
-            Session.SendMessage(StaticMessage.CatalogOffersConfiguration);
+            await Session.SendMessageAsync(CatalogPageComposer.ComposeIndex(rank, Request.GetString().ToUpper(), Session));
+            await Session.SendMessageAsync(StaticMessage.CatalogOffersConfiguration);
 
             if (Session.IsAir)
                 Oblivion.GetGame().GetNavigator().SerializeFlatCategories(Session);
@@ -63,8 +63,8 @@ Request.GetString()
             if (rank < 1)
                 rank = 1;
 
-            Session.SendMessage(CatalogPageComposer.ComposeIndex(rank, pageType, allowedPages, Session));
-            Session.SendMessage(StaticMessage.CatalogOffersConfiguration);
+            await Session.SendMessageAsync(CatalogPageComposer.ComposeIndex(rank, pageType, allowedPages, Session));
+            await Session.SendMessageAsync(StaticMessage.CatalogOffersConfiguration);
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ Request.GetString()
 
             var message = CatalogPageComposer.ComposePage(Session, cPage, CataMode);
             if (message == null) return;
-            Session.SendMessage(message);
+            await Session.SendMessageAsync(message);
         }
 
 
@@ -100,7 +100,7 @@ Request.GetString()
                 return;
             var requestType = Request.GetInteger();
 
-            Session.SendMessage(CatalogPageComposer.ComposeClubPurchasePage(Session, requestType));
+            await Session.SendMessageAsync(CatalogPageComposer.ComposeClubPurchasePage(Session, requestType));
         }
 
         /// <summary>
@@ -196,8 +196,8 @@ Request.GetString()
 
             if (Session.GetHabbo().GetInventoryComponent().TotalItems >= 3500)
             {
-                Session.SendMessage(CatalogPageComposer.PurchaseOk(0, string.Empty, 0));
-                Session.SendMessage(StaticMessage.AdvicePurchaseMaxItems);
+                await Session.SendMessageAsync(CatalogPageComposer.PurchaseOk(0, string.Empty, 0));
+                await Session.SendMessageAsync(StaticMessage.AdvicePurchaseMaxItems);
                 return;
             }
 
@@ -273,13 +273,13 @@ Request.GetString()
             var message = new ServerMessage(LibraryParser.OutgoingRequest("CatalogOfferMessageComposer"));
 
             CatalogPageComposer.ComposeItem(Session, catalogItem, message);
-            Session.SendMessage(message);
+            await Session.SendMessageAsync(message);
         }
 
         /// <summary>
         ///     Serializes the group furni page.
         /// </summary>
-        internal void SerializeGroupFurniPage()
+        internal async Task SerializeGroupFurniPage()
         {
             var userGroups = Oblivion.GetGame().GetGroupManager().GetUserGroups(Session.GetHabbo().Id);
 

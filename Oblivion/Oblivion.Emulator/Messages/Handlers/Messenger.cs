@@ -14,14 +14,14 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Initializes the messenger.
         /// </summary>
-        internal void InitMessenger()
+        internal async Task InitMessenger()
         {
         }
 
         /// <summary>
         /// Friendses the list update.
         /// </summary>
-        internal void FriendsListUpdate()
+        internal async Task FriendsListUpdate()
         {
             Session.GetHabbo().GetMessenger();
         }
@@ -29,7 +29,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Removes the buddy.
         /// </summary>
-        internal void RemoveBuddy()
+        internal async Task RemoveBuddy()
         {
             if (Session.GetHabbo().GetMessenger() == null) return;
             var num = Request.GetInteger();
@@ -38,7 +38,7 @@ namespace Oblivion.Messages.Handlers
                 var num2 = Request.GetUInteger();
                 if (Session.GetHabbo().Data.Relations.ContainsKey(Convert.ToUInt32(num2)))
                 {
-                    Session.SendNotif(Oblivion.GetLanguage().GetVar("buddy_error_1"));
+                    await Session.SendNotifyAsync(Oblivion.GetLanguage().GetVar("buddy_error_1"));
                     return;
                 }
 
@@ -49,16 +49,16 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Searches the habbo.
         /// </summary>
-        internal void SearchHabbo()
+        internal async Task SearchHabbo()
         {
             if (Session.GetHabbo().GetMessenger() == null) return;
-            Session.SendMessage(Session.GetHabbo().GetMessenger().PerformSearch(Request.GetString()));
+            await Session.SendMessageAsync(Session.GetHabbo().GetMessenger().PerformSearch(Request.GetString()));
         }
 
         /// <summary>
         /// Accepts the request.
         /// </summary>
-        internal void AcceptRequest()
+        internal async Task AcceptRequest()
         {
             if (Session.GetHabbo().GetMessenger() == null) return;
             var num = Request.GetInteger();
@@ -77,7 +77,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Declines the request.
         /// </summary>
-        internal void DeclineRequest()
+        internal async Task DeclineRequest()
         {
             if (Session.GetHabbo().GetMessenger() == null) return;
             var flag = Request.GetBool();
@@ -95,7 +95,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Requests the buddy.
         /// </summary>
-        internal void RequestBuddy()
+        internal async Task RequestBuddy()
         {
             if (Session?.GetHabbo()?.GetMessenger() == null) return;
 
@@ -106,7 +106,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Sends the instant messenger.
         /// </summary>
-        internal void SendInstantMessenger()
+        internal async Task SendInstantMessenger()
         {
             var toId = Request.GetInteger();
             var text = Request.GetString();
@@ -127,7 +127,7 @@ namespace Oblivion.Messages.Handlers
 
                 if (!gp.HasChat)
                 {
-                    Session.SendNotif("Não foi possível enviar mensagem para esse grupo!");
+                    await Session.SendNotifyAsync("Não foi possível enviar mensagem para esse grupo!");
                     return;
                 }
 
@@ -138,7 +138,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Follows the buddy.
         /// </summary>
-        internal void FollowBuddy()
+        internal async Task FollowBuddy()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -167,14 +167,14 @@ namespace Oblivion.Messages.Handlers
 
             var roomFwd = new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
             roomFwd.AppendInteger(clientByUserId.GetHabbo().CurrentRoom.RoomId);
-            Session.SendMessage(roomFwd);
+            await Session.SendMessageAsync(roomFwd);
         }
 
 
         /// <summary>
         /// Sends the instant invite.
         /// </summary>
-        internal void SendInstantInvite()
+        internal async Task SendInstantInvite()
         {
             if (Session?.GetHabbo() == null)
                 return;

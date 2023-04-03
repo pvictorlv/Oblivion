@@ -28,7 +28,7 @@ namespace Oblivion.HabboHotel.Items.Handlers
         ///     Initializes the specified database client.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal void Initialize(IQueryAdapter dbClient)
+        internal async Task Initialize(IQueryAdapter dbClient)
         {
             dbClient.SetQuery("SELECT * FROM items_pinatas");
             Pinatas = new Dictionary<uint, PinataItem>();
@@ -47,7 +47,7 @@ namespace Oblivion.HabboHotel.Items.Handlers
         /// <param name="user">The user.</param>
         /// <param name="room">The room.</param>
         /// <param name="item">The item.</param>
-        internal void DeliverRandomPinataItem(RoomUser user, Room room, RoomItem item)
+        internal async Task DeliverRandomPinataItem(RoomUser user, Room room, RoomItem item)
         {
             if (room == null || item == null || item.GetBaseItem().InteractionType != Interaction.Pinata ||
                 !Pinatas.ContainsKey(item.GetBaseItem().ItemId))

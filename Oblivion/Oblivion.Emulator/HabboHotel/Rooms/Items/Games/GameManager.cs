@@ -31,7 +31,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             _yellowTeamItems = new QueuedDictionary<string, RoomItem>();
             _room = room;
         }
-        internal void UnlockGates()
+        internal async Task UnlockGates()
         {
             /* TODO CHECK */
             foreach (var current in _redTeamItems.Values) UnlockGate(current);
@@ -111,12 +111,12 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             return (Team) result;
         }
 
-        internal void AddPointToTeam(Team team, RoomUser user)
+        internal async Task AddPointToTeam(Team team, RoomUser user)
         {
-            AddPointToTeam(team, 1, user);
+            await AddPointToTeam(team, 1, user);
         }
 
-        internal void AddPointToTeam(Team team, int points, RoomUser user)
+        internal async Task AddPointToTeam(Team team, int points, RoomUser user)
         {
             /* TODO CHECK */
             foreach (
@@ -124,19 +124,19 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
                 GetFurniItems(team).Values.Where(current => !IsSoccerGoal(current.GetBaseItem().InteractionType)))
             {
                 current.ExtraData = TeamPoints[(int) team].ToString();
-                current.UpdateState();
+                await current.UpdateState();
             }
 
             _room.GetWiredHandler().ExecuteWired(Interaction.TriggerScoreAchieved, user);
         }
 
-        internal void Reset()
+        internal async Task Reset()
         {
             {
-                AddPointToTeam(Team.Blue, GetScoreForTeam(Team.Blue) * -1, null);
-                AddPointToTeam(Team.Green, GetScoreForTeam(Team.Green) * -1, null);
-                AddPointToTeam(Team.Red, GetScoreForTeam(Team.Red) * -1, null);
-                AddPointToTeam(Team.Yellow, GetScoreForTeam(Team.Yellow) * -1, null);
+               await AddPointToTeam(Team.Blue, GetScoreForTeam(Team.Blue) * -1, null);
+                await AddPointToTeam(Team.Green, GetScoreForTeam(Team.Green) * -1, null);
+                await AddPointToTeam(Team.Red, GetScoreForTeam(Team.Red) * -1, null);
+                await AddPointToTeam(Team.Yellow, GetScoreForTeam(Team.Yellow) * -1, null);
             }
         }
 
@@ -225,7 +225,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
         }
         
 
-        internal void StopGame()
+        internal async Task StopGame()
         {
             if (_room == null) return;
             var team = GetWinningTeam();
@@ -257,14 +257,14 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             item.UpdateState(false, true);
         }
 
-        internal void StartGame()
+        internal async Task StartGame()
         {
             GetRoom().GetWiredHandler().ResetExtraString(Interaction.ActionGiveScore);
         }
 
         internal Room GetRoom() => _room;
 
-        internal void Destroy()
+        internal async Task Destroy()
         {
             Array.Clear(TeamPoints, 0, TeamPoints.Length);
             _redTeamItems.Destroy();

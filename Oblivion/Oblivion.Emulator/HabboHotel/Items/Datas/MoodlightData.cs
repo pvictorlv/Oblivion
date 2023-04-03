@@ -112,7 +112,7 @@ namespace Oblivion.HabboHotel.Items.Datas
         /// <summary>
         ///     Enables this instance.
         /// </summary>
-        internal void Enable()
+        internal async Task Enable()
         {
             Enabled = true;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -122,7 +122,7 @@ namespace Oblivion.HabboHotel.Items.Datas
         /// <summary>
         ///     Disables this instance.
         /// </summary>
-        internal void Disable()
+        internal async Task Disable()
         {
             Enabled = false;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -137,7 +137,7 @@ namespace Oblivion.HabboHotel.Items.Datas
         /// <param name="intensity">The intensity.</param>
         /// <param name="bgOnly">if set to <c>true</c> [bg only].</param>
         /// <param name="hax">if set to <c>true</c> [hax].</param>
-        internal void UpdatePreset(int preset, string color, int intensity, bool bgOnly, bool hax = false)
+        internal async Task UpdatePreset(int preset, string color, int intensity, bool bgOnly, bool hax = false)
         {
             if (!IsValidColor(color) || (!IsValidIntensity(intensity) && !hax))
                 return;

@@ -397,7 +397,7 @@ namespace Oblivion.HabboHotel.RoomBots
                         {
                             var alert = new ServerMessage(LibraryParser.OutgoingRequest("PetBreedErrorMessageComposer"));
                             alert.AppendInteger(0);
-                            user.GetClient().SendMessage(alert);
+                            await user.GetClient().SendMessageAsync(alert);
 
                             return;
                         }

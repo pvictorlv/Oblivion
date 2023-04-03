@@ -104,11 +104,11 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <summary>
         ///     Clears the items.
         /// </summary>
-        internal void ClearItems()
+        internal Task ClearItems()
         {
-            Task.Factory.StartNew(() =>
+           return Task.Factory.StartNew(async () =>
             {
-                UpdateItems(true);
+                await UpdateItems(true);
 
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     queryReactor.RunNoLockFastQuery(
@@ -119,11 +119,11 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 _items.Clear();
                 _inventoryPets.Clear();
 
-                _mClient.GetMessageHandler()
+                await _mClient.GetMessageHandler()
                     .GetResponse()
-                    .Init(LibraryParser.OutgoingRequest("UpdateInventoryMessageComposer"));
+                    .InitAsync(LibraryParser.OutgoingRequest("UpdateInventoryMessageComposer"));
 
-                GetClient().GetMessageHandler().await SendResponse();
+                await GetClient().GetMessageHandler().SendResponse();
             });
         }
 
@@ -131,7 +131,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         ///     Redeemcreditses the specified session.
         /// </summary>
         /// <param name="session">The session.</param>
-        internal void Redeemcredits(GameClient session)
+        internal async Task Redeemcredits(GameClient session)
         {
             var currentRoom = session.GetHabbo().CurrentRoom;
 
@@ -162,19 +162,19 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     currentRoom.GetRoomItemHandler().RemoveItem(item.Id);
 
 
-                    RemoveItem(item.Id, false, 0);
+                    await RemoveItem(item.Id, false, 0);
 
                     if (num <= 0)
                         continue;
                     if (item.BaseItem.Name.StartsWith("DFD_"))
                     {
                         session.GetHabbo().Diamonds += num;
-                        session.GetHabbo().UpdateSeasonalCurrencyBalance();
+                        await session.GetHabbo().UpdateSeasonalCurrencyBalance();
                     }
                     else
                     {
                         session.GetHabbo().Credits += num;
-                        session.GetHabbo().UpdateCreditsBalance();
+                        await session.GetHabbo().UpdateCreditsBalance();
                     }
                 }
             }
@@ -193,11 +193,11 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// </summary>
         /// <param name="petId">The pet identifier.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool RemovePet(uint petId)
+        internal async Task<bool> RemovePet(uint petId)
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("RemovePetFromInventoryComposer"));
-            serverMessage.AppendInteger(petId);
-            GetClient().SendMessage(serverMessage);
+            await serverMessage.AppendIntegerAsync(petId);
+            await GetClient().SendMessageAsync(serverMessage);
             _inventoryPets.TryRemove(petId, out _);
             return true;
         }
@@ -206,9 +206,9 @@ namespace Oblivion.HabboHotel.Users.Inventory
         ///     Moves the pet to room.
         /// </summary>
         /// <param name="petId">The pet identifier.</param>
-        internal void MovePetToRoom(uint petId)
+        internal async Task MovePetToRoom(uint petId)
         {
-            RemovePet(petId);
+            await RemovePet(petId);
         }
 
         /// <summary>
@@ -227,7 +227,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <summary>
         ///     Loads the inventory.
         /// </summary>
-        internal void LoadInventory()
+        internal async Task LoadInventory()
         {
             _items.Clear();
 
@@ -319,16 +319,25 @@ namespace Oblivion.HabboHotel.Users.Inventory
         ///     Updates the items.
         /// </summary>
         /// <param name="fromDatabase">if set to <c>true</c> [from database].</param>
-        internal void UpdateItems(bool fromDatabase)
+        internal async Task UpdateItems(bool fromDatabase)
         {
             if (fromDatabase)
             {
-                RunDbUpdate();
-                LoadInventory();
+                await Task.Run(async () =>
+                {
+                    await RunDbUpdate();
+                    await LoadInventory();
+
+                    await _mClient.GetMessageHandler().GetResponse()
+                        .InitAsync(LibraryParser.OutgoingRequest("UpdateInventoryMessageComposer"));
+
+                    await _mClient.GetMessageHandler().SendResponse();
+                });
+                return;
             }
 
-            _mClient.GetMessageHandler().GetResponse()
-                .Init(LibraryParser.OutgoingRequest("UpdateInventoryMessageComposer"));
+            await _mClient.GetMessageHandler().GetResponse()
+                .InitAsync(LibraryParser.OutgoingRequest("UpdateInventoryMessageComposer"));
 
             await _mClient.GetMessageHandler().SendResponse();
         }
@@ -475,7 +484,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <param name="id">The identifier.</param>
         /// <param name="placedInroom">if set to <c>true</c> [placed inroom].</param>
         /// <param name="roomId">the room who is placed the item</param>
-        internal void RemoveItem(string id, bool placedInroom, uint roomId)
+        internal async Task RemoveItem(string id, bool placedInroom, uint roomId)
         {
             GetClient()
                 .GetMessageHandler()
@@ -487,7 +496,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             GetClient().GetMessageHandler().GetResponse().AppendInteger(item.VirtualId);
 
-            GetClient().GetMessageHandler().await SendResponse();
+            await GetClient().GetMessageHandler().SendResponse();
             if (_mAddedItems.Contains(id))
                 _mAddedItems.Remove(id);
 
@@ -508,7 +517,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         ///     Serializes the floor item inventory.
         /// </summary>
         /// <returns>ServerMessage.</returns>
-        internal void SerializeFloorItemInventory(GameClient session)
+        internal async Task SerializeFloorItemInventory(GameClient session)
         {
             if (_items == null) return;
             var i = _items.Count;
@@ -558,7 +567,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         }
 
 
-        internal void AddItemToItemInventory(RoomItem item, bool dbUpdate)
+        internal async Task AddItemToItemInventory(RoomItem item, bool dbUpdate)
         {
             var userItem = new UserItem(item.Id, item.BaseItem.ItemId, item.ExtraData, item.GroupId, item.SongCode,
                 item.LimitedNo, item.LimitedTot);
@@ -613,7 +622,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             }
         }
 
-        internal void AddItemToItemInventory(UserItem userItem)
+        internal async Task AddItemToItemInventory(UserItem userItem)
         {
             using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FurniListAddMessageComposer")))
             {
@@ -688,10 +697,10 @@ namespace Oblivion.HabboHotel.Users.Inventory
         ///     Serializes the bot inventory.
         /// </summary>
         /// <returns>ServerMessage.</returns>
-        internal ServerMessage SerializeBotInventory()
+        internal async Task<ServerMessage> SerializeBotInventory()
         {
             var serverMessage = new ServerMessage();
-            serverMessage.Init(LibraryParser.OutgoingRequest("BotInventoryMessageComposer"));
+            await serverMessage.InitAsync(LibraryParser.OutgoingRequest("BotInventoryMessageComposer"));
 
             var list = _inventoryBots.Values;
             serverMessage.AppendInteger(list.Count);
@@ -712,14 +721,14 @@ namespace Oblivion.HabboHotel.Users.Inventory
         ///     Adds the item.
         /// </summary>
         /// <param name="item">The item.</param>
-        internal void AddItem(RoomItem item) => AddNewItem(item.Id, item.BaseItem.ItemId, item.ExtraData, item.GroupId,
+        internal async Task AddItem(RoomItem item) => AddNewItem(item.Id, item.BaseItem.ItemId, item.ExtraData, item.GroupId,
             true,
             true, 0, 0, item.SongCode);
 
         /// <summary>
         ///     Runs the database update.
         /// </summary>
-        internal void RunDbUpdate()
+        internal async Task RunDbUpdate()
         {
             try
             {
@@ -820,7 +829,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         ///     Sends the new items.
         /// </summary>
         /// <param name="id">The identifier.</param>
-        internal void SendNewItems(uint id)
+        internal async Task SendNewItems(uint id)
         {
             using (var serverMessage = new ServerMessage())
             {
@@ -833,7 +842,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             }
         }
 
-        internal void Dispose()
+        internal async Task Dispose()
         {
             _mClient = null;
             _inventoryBots?.Clear();

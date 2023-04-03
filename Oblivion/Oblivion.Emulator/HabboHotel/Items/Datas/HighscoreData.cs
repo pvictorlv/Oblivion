@@ -91,7 +91,7 @@ namespace Oblivion.HabboHotel.Items.Datas
         /// <param name="item">The item.</param>
         /// <param name="username">The username.</param>
         /// <param name="score">The score.</param>
-        internal void AddUserScore(RoomItem item, string username, int score)
+        internal async Task AddUserScore(RoomItem item, string username, int score)
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {

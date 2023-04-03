@@ -446,7 +446,7 @@ namespace Oblivion.HabboHotel
         /// <summary>
         ///     Continues the loading.
         /// </summary>
-        internal void ContinueLoading()
+        internal async Task ContinueLoading()
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
@@ -464,7 +464,7 @@ namespace Oblivion.HabboHotel
         /// <summary>
         ///     Starts the game loop.
         /// </summary>
-        internal void StartGameLoop()
+        internal async Task StartGameLoop()
         {
             GameLoopActiveExt = true;
             _gameLoop = new Thread(MainGameLoop);
@@ -474,7 +474,7 @@ namespace Oblivion.HabboHotel
         /// <summary>
         ///     Stops the game loop.
         /// </summary>
-        internal void StopGameLoop()
+        internal async Task StopGameLoop()
         {
             GameLoopActiveExt = false;
             RoomManagerCycleEnded = true;
@@ -485,7 +485,7 @@ namespace Oblivion.HabboHotel
         /// <summary>
         ///     Destroys this instance.
         /// </summary>
-        internal void Destroy()
+        internal async Task Destroy()
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 DatabaseCleanup(queryReactor);
@@ -496,7 +496,7 @@ namespace Oblivion.HabboHotel
         /// <summary>
         ///     Reloaditemses this instance.
         /// </summary>
-        internal void ReloadItems()
+        internal async Task ReloadItems()
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {

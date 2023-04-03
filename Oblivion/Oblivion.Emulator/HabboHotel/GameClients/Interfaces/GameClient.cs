@@ -108,7 +108,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <summary>
         ///     Starts the connection.
         /// </summary>
-        internal void StartConnection()
+        internal async Task StartConnection()
         {
             if (_messageHandler == null)
                 InitHandler();
@@ -128,7 +128,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <summary>
         ///     Initializes the handler.
         /// </summary>
-        internal void InitHandler()
+        internal async Task InitHandler()
         {
             _messageHandler = new GameClientMessageHandler(this);
         }
@@ -411,7 +411,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 }
 
                 SendMessage(GetHabbo().GetAvatarEffectsInventoryComponent().GetPacket());
-                //                    queuedServerMessage.await SendResponse();
+                //                    queuedServerMessageSendResponse();
 
                 if (GetHabbo().GetMessenger() != null)
                     GetHabbo().GetMessenger().OnStatusChanged(true);
@@ -436,7 +436,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         ///     Sends the notif with scroll.
         /// </summary>
         /// <param name="message">The message.</param>
-        internal void SendNotifWithScroll(string message)
+        internal async Task SendNotifWithScroll(string message)
         {
             using (var serverMessage =
                 new ServerMessage(LibraryParser.OutgoingRequest("MOTDNotificationMessageComposer")))
@@ -451,7 +451,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         ///     Sends the moderator message.
         /// </summary>
         /// <param name="message">The message.</param>
-        internal void SendModeratorMessage(string message)
+        internal async Task SendModeratorMessage(string message)
         {
             using (var serverMessage =
                 new ServerMessage(LibraryParser.OutgoingRequest("AlertNotificationMessageComposer")))
@@ -489,6 +489,29 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 SendMessage(whisp);
             }
         }
+        internal async Task SendWhisperAsync(string message, bool fromWired = false)
+        {
+            if (GetHabbo() == null || GetHabbo().CurrentRoom == null)
+                return;
+
+            var roomUserByHabbo = GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(GetHabbo().UserName);
+
+            if (roomUserByHabbo == null)
+                return;
+
+            using (var whisp = new ServerMessage())
+            {
+                await whisp.InitAsync(LibraryParser.OutgoingRequest("WhisperMessageComposer"));
+                await whisp.AppendIntegerAsync(roomUserByHabbo.VirtualId);
+                await whisp.AppendStringAsync(message);
+                await whisp.AppendIntegerAsync(0);
+                await whisp.AppendIntegerAsync(fromWired ? 34 : roomUserByHabbo.LastBubble);
+                await whisp.AppendIntegerAsync(0);
+                await whisp.AppendIntegerAsync(fromWired);
+
+                await SendMessageAsync(whisp);
+            }
+        }
 
         /// <summary>
         ///     Sends the notif.
@@ -496,7 +519,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <param name="message">The message.</param>
         /// <param name="title">The title.</param>
         /// <param name="picture">The picture.</param>
-        internal void SendNotif(string message, string title = "Aviso", string picture = "")
+        internal async Task SendNotif(string message, string title = "Aviso", string picture = "")
         {
             SendMessage(GetBytesNotif(message, title, picture));
         }
@@ -585,7 +608,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         ///     Disconnects the specified reason.
         /// </summary>
         /// <param name="reason">The reason.</param>
-        internal void Disconnect(string reason)
+        internal async Task Disconnect(string reason)
         {
             try
             {
@@ -609,7 +632,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         ///     Sends the message.
         /// </summary>
         /// <param name="message">The message.</param>
-        internal void SendMessage(ServerMessage message)
+        internal async Task SendMessage(ServerMessage message)
         {
             if (message == null)
                 return;
@@ -620,17 +643,17 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             _connection.Send(message).Wait();
         }
 
-        internal async Task SendMessageAsync(ServerMessage message)
+        internal Task SendMessageAsync(ServerMessage message)
         {
             if (message == null)
-                return;
+                return Task.CompletedTask;
 
             if (_connection == null || !_connection.Channel.Active)
-                return;
+                return Task.CompletedTask;
 
             // var bytes = message.GetReversedBytes();
 
-            await _connection.Send(message);
+            return _connection.Send(message);
         }
 
         /// <summary>
@@ -651,7 +674,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         ///     Sends the message.
         /// </summary>
         /// <param name="type">The type.</param>
-        internal Task SendMessage(StaticMessage type)
+        internal Task SendStaticMessage(StaticMessage type)
         {
             return _connection?.Send(StaticMessagesManager.Get(type)); ;
         }

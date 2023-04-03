@@ -41,7 +41,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     new ServerMessage(LibraryParser.OutgoingRequest("DanceStatusMessageComposer"));
                 message.AppendInteger(roomUser.VirtualId);
                 message.AppendInteger(danceId);
-                room.SendMessage(message);
+                await room.SendMessage(message);
                 roomUser.DanceId = danceId;
             }
             return true;

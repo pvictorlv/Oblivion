@@ -21,7 +21,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Retrieves the song identifier.
         /// </summary>
-        internal void RetrieveSongId()
+        internal async Task RetrieveSongId()
         {
             string text = Request.GetString();
 
@@ -32,14 +32,14 @@ namespace Oblivion.Messages.Handlers
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("RetrieveSongIDMessageComposer"));
                 serverMessage.AppendString(text);
                 serverMessage.AppendInteger(songId);
-                Session.SendMessage(serverMessage);
+                await Session.SendMessageAsync(serverMessage);
             }
         }
 
         /// <summary>
         /// Gets the music data.
         /// </summary>
-        internal void GetMusicData()
+        internal async Task GetMusicData()
         {
             int num = Request.GetInteger();
 
@@ -53,7 +53,7 @@ namespace Oblivion.Messages.Handlers
                     list.Add(song);
             }
 
-            Session.SendMessage(SoundMachineComposer.Compose(list));
+            await Session.SendMessageAsync(SoundMachineComposer.Compose(list));
 
             list.Clear();
         }
@@ -61,7 +61,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Adds the playlist item.
         /// </summary>
-        internal void AddPlaylistItem()
+        internal async Task AddPlaylistItem()
         {
             if (Session?.GetHabbo() == null || Session.GetHabbo().CurrentRoom == null)
                 return;
@@ -97,13 +97,13 @@ namespace Oblivion.Messages.Handlers
             using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.RunFastQuery($"UPDATE items_rooms SET user_id=NULL WHERE id='{num}' LIMIT 1");
 
-            Session.SendMessage(SoundMachineComposer.Compose(roomMusicController.PlaylistCapacity, roomMusicController.Playlist.Values.ToList()));
+            await Session.SendMessageAsync(SoundMachineComposer.Compose(roomMusicController.PlaylistCapacity, roomMusicController.Playlist.Values.ToList()));
         }
 
         /// <summary>
         /// Removes the playlist item.
         /// </summary>
-        internal void RemovePlaylistItem()
+        internal async Task RemovePlaylistItem()
         {
             if (Session?.GetHabbo() == null || Session.GetHabbo().CurrentRoom == null)
                 return;
@@ -130,14 +130,14 @@ namespace Oblivion.Messages.Handlers
             using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.RunFastQuery($"UPDATE items_rooms SET user_id='{Session.GetHabbo().Id}' WHERE id='{songItem.ItemId}' LIMIT 1;");
 
-            Session.SendMessage(SoundMachineComposer.SerializeSongInventory(Session.GetHabbo().GetInventoryComponent().GetDisks()));
-            Session.SendMessage(SoundMachineComposer.Compose(roomMusicController.PlaylistCapacity, roomMusicController.Playlist.Values.ToList()));
+            await Session.SendMessageAsync(SoundMachineComposer.SerializeSongInventory(Session.GetHabbo().GetInventoryComponent().GetDisks()));
+            await Session.SendMessageAsync(SoundMachineComposer.Compose(roomMusicController.PlaylistCapacity, roomMusicController.Playlist.Values.ToList()));
         }
 
         /// <summary>
         /// Gets the disks.
         /// </summary>
-        internal void GetDisks()
+        internal async Task GetDisks()
         {
             if (Session?.GetHabbo() == null || Session.GetHabbo().GetInventoryComponent() == null)
                 return;
@@ -146,13 +146,13 @@ namespace Oblivion.Messages.Handlers
             if (disks.Count == 0)
                 return;
 
-            Session.SendMessage(SoundMachineComposer.SerializeSongInventory(disks));
+            await Session.SendMessageAsync(SoundMachineComposer.SerializeSongInventory(disks));
         }
 
         /// <summary>
         /// Gets the Play lists.
         /// </summary>
-        internal void GetPlaylists()
+        internal async Task GetPlaylists()
         {
             if (Session?.GetHabbo() == null || Session.GetHabbo().CurrentRoom == null)
                 return;
@@ -163,7 +163,7 @@ namespace Oblivion.Messages.Handlers
                 return;
 
             SoundMachineManager roomMusicController = currentRoom.GetRoomMusicController();
-            Session.SendMessage(SoundMachineComposer.Compose(roomMusicController.PlaylistCapacity, roomMusicController.Playlist.Values.ToList()));
+            await Session.SendMessageAsync(SoundMachineComposer.Compose(roomMusicController.PlaylistCapacity, roomMusicController.Playlist.Values.ToList()));
         }
     }
 }

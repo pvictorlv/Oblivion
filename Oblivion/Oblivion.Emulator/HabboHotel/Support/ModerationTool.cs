@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Rooms.Chat;
@@ -65,12 +66,12 @@ namespace Oblivion.HabboHotel.Support
         ///     Sends the ticket to moderators.
         /// </summary>
         /// <param name="ticket">The ticket.</param>
-        internal static void SendTicketToModerators(SupportTicket ticket)
+        internal static async Task SendTicketToModerators(SupportTicket ticket)
         {
             var message = new ServerMessage(LibraryParser.OutgoingRequest("ModerationToolIssueMessageComposer"));
             message = ticket.Serialize(message);
 
-            Oblivion.GetGame().GetClientManager().StaffAlert(message);
+            await Oblivion.GetGame().GetClientManager().StaffAlert(message);
         }
 
         /// <summary>
@@ -115,7 +116,7 @@ namespace Oblivion.HabboHotel.Support
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <param name="result">if set to <c>true</c> [result].</param>
-        internal static void ModActionResult(uint userId, bool result)
+        internal static async Task ModActionResult(uint userId, bool result)
         {
             var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
             clientByUserId.GetMessageHandler()
@@ -123,7 +124,7 @@ namespace Oblivion.HabboHotel.Support
                 .Init(LibraryParser.OutgoingRequest("ModerationActionResultMessageComposer"));
             clientByUserId.GetMessageHandler().GetResponse().AppendInteger(userId);
             clientByUserId.GetMessageHandler().GetResponse().AppendBool(false);
-            clientByUserId.GetMessageHandler().await SendResponse();
+            await clientByUserId.GetMessageHandler().SendResponse();
         }
 
         /// <summary>
@@ -650,7 +651,7 @@ namespace Oblivion.HabboHotel.Support
         ///     Loads the message presets.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal void LoadMessagePresets(IQueryAdapter dbClient)
+        internal async Task LoadMessagePresets(IQueryAdapter dbClient)
         {
             UserMessagePresets.Clear();
             RoomMessagePresets.Clear();
@@ -708,7 +709,7 @@ namespace Oblivion.HabboHotel.Support
         /// <param name="reportedUser">The reported user.</param>
         /// <param name="message">The message.</param>
         /// <param name="messages">The messages.</param>
-        internal void SendNewTicket(GameClient session, int category, int type, uint reportedUser, string message,
+        internal async Task SendNewTicket(GameClient session, int category, int type, uint reportedUser, string message,
             List<string> messages)
         {
             uint id;
@@ -732,7 +733,7 @@ namespace Oblivion.HabboHotel.Support
                     "", Oblivion.GetUnixTimeStamp(), messages);
 
                 Tickets.Add(ticket);
-                SendTicketToModerators(ticket);
+                await SendTicketToModerators(ticket);
             }
             else
             {
@@ -757,7 +758,7 @@ namespace Oblivion.HabboHotel.Support
                     data.Id, data.Name, Oblivion.GetUnixTimeStamp(), messages);
 
                 Tickets.Add(ticket2);
-                SendTicketToModerators(ticket2);
+                await SendTicketToModerators(ticket2);
             }
         }
         /// <summary>
@@ -775,15 +776,15 @@ namespace Oblivion.HabboHotel.Support
         /// </summary>
         /// <param name="session">The session.</param>
         /// <param name="ticketId">The ticket identifier.</param>
-        internal void PickTicket(GameClient session, uint ticketId)
+        internal async Task PickTicket(GameClient session, uint ticketId)
         {
             var ticket = GetTicket(ticketId);
 
             if (ticket == null || ticket.Status != TicketStatus.Open)
                 return;
 
-            ticket.Pick(session.GetHabbo().Id, true);
-            SendTicketToModerators(ticket);
+            await ticket.Pick(session.GetHabbo().Id, true);
+            await SendTicketToModerators(ticket);
         }
 
         /// <summary>
@@ -791,15 +792,15 @@ namespace Oblivion.HabboHotel.Support
         /// </summary>
         /// <param name="session">The session.</param>
         /// <param name="ticketId">The ticket identifier.</param>
-        internal void ReleaseTicket(GameClient session, uint ticketId)
+        internal async Task ReleaseTicket(GameClient session, uint ticketId)
         {
             var ticket = GetTicket(ticketId);
 
             if (ticket == null || ticket.Status != TicketStatus.Picked || ticket.ModeratorId != session.GetHabbo().Id)
                 return;
 
-            ticket.Release(true);
-            SendTicketToModerators(ticket);
+            await ticket.Release(true);
+            await SendTicketToModerators(ticket);
         }
 
         /// <summary>
@@ -808,7 +809,7 @@ namespace Oblivion.HabboHotel.Support
         /// <param name="session">The session.</param>
         /// <param name="ticketId">The ticket identifier.</param>
         /// <param name="result">The result.</param>
-        internal void CloseTicket(GameClient session, uint ticketId, int result)
+        internal async Task CloseTicket(GameClient session, uint ticketId, int result)
         {
             var ticket = GetTicket(ticketId);
 
@@ -863,9 +864,9 @@ namespace Oblivion.HabboHotel.Support
                         current => current.ReportedId == ticket.ReportedId && current.Status == TicketStatus.Picked)
                 )
                 {
-                    current2.Delete(true);
-                    SendTicketToModerators(current2);
-                    current2.Close(newStatus, true);
+                    await current2.Delete(true);
+                    await SendTicketToModerators(current2);
+                    await current2.Close(newStatus, true);
                 }
 
                 senderClient.GetMessageHandler()
@@ -885,7 +886,7 @@ namespace Oblivion.HabboHotel.Support
                     .GetResponse()
                     .Init(LibraryParser.OutgoingRequest("ModerationTicketResponseMessageComposer"));
                 senderClient.GetMessageHandler().GetResponse().AppendInteger(statusCode);
-                senderClient.GetMessageHandler().await SendResponse();
+                await senderClient.GetMessageHandler().SendResponse();
             }
             else
             {
@@ -896,9 +897,9 @@ namespace Oblivion.HabboHotel.Support
                         current => current.ReportedId == ticket.ReportedId && current.Status == TicketStatus.Picked)
                 )
                 {
-                    current2.Delete(true);
-                    SendTicketToModerators(current2);
-                    current2.Close(newStatus, true);
+                    await current2.Delete(true);
+                    await SendTicketToModerators(current2);
+                    await current2.Close(newStatus, true);
                 }
             }
 
@@ -936,14 +937,14 @@ namespace Oblivion.HabboHotel.Support
         ///     Deletes the pending ticket for user.
         /// </summary>
         /// <param name="id">The identifier.</param>
-        internal void DeletePendingTicketForUser(uint id)
+        internal async Task DeletePendingTicketForUser(uint id)
         {
             /* TODO CHECK */
             foreach (var current in Tickets)
             {
                 if (current.SenderId != id) continue;
-                current.Delete(true);
-                SendTicketToModerators(current);
+                await current.Delete(true);
+                await SendTicketToModerators(current);
                 break;
             }
         }
@@ -965,7 +966,7 @@ namespace Oblivion.HabboHotel.Support
         /// <param name="target">The target.</param>
         /// <param name="type">The type.</param>
         /// <param name="description">The description.</param>
-        internal void LogStaffEntry(string modName, string target, string type, string description)
+        internal async Task LogStaffEntry(string modName, string target, string type, string description)
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {

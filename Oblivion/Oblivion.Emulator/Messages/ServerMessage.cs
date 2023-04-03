@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using DotNetty.Buffers;
 using DotNetty.Codecs.Http.WebSockets;
 
@@ -53,7 +54,7 @@ namespace Oblivion.Messages
         {
             Init(header);
         }
-
+        
         ~ServerMessage()
         {
             Dispose();
@@ -82,6 +83,13 @@ namespace Oblivion.Messages
             _buffer.SetLength(0);
             Id = header;
             AppendShort(header);
+        }   
+        
+        public async Task InitAsync(int header)
+        {
+            _buffer.SetLength(0);
+            Id = header;
+            await AppendShortAsync(header);
         }
 
         /// <summary>
@@ -187,6 +195,12 @@ namespace Oblivion.Messages
 
             AppendBytes(BitConverter.GetBytes(value), true);
         }
+        public Task AppendShortAsync(int i)
+        {
+            Int16 value = (short) i;
+
+            return AppendBytesAsync(BitConverter.GetBytes(value), true);
+        }
 
         /// <summary>
         /// Appends the integer.
@@ -195,6 +209,14 @@ namespace Oblivion.Messages
         public void AppendInteger(int value)
         {
             AppendBytes(BitConverter.GetBytes(value), true);
+        }
+        public Task AppendIntegerAsync(int value)
+        {
+            return AppendBytesAsync(BitConverter.GetBytes(value), true);
+        }
+        public Task AppendIntegerAsync(uint value)
+        {
+            return AppendIntegerAsync((int) value);
         }
 
         /// <summary>
@@ -213,6 +235,10 @@ namespace Oblivion.Messages
         public void AppendInteger(bool i)
         {
             AppendInteger(i ? 1 : 0);
+        }
+        public Task AppendIntegerAsync(bool i)
+        {
+            return AppendIntegerAsync(i ? 1 : 0);
         }
         public void AppendPacketString(string packet)
         {
@@ -277,7 +303,6 @@ namespace Oblivion.Messages
         {
             AppendByte(b ? 1 : 0);
         }
-
         /// <summary>
         /// Appends the string.
         /// </summary>
@@ -291,6 +316,16 @@ namespace Oblivion.Messages
             byte[] bytes = encoding.GetBytes(s);
             AppendShort(bytes.Length);
             AppendBytes(bytes, false);
+        }
+        
+        public async Task AppendStringAsync(string s, bool isUtf8 = false)
+        {
+
+            Encoding encoding = isUtf8 ? Encoding.UTF8 : Oblivion.GetDefaultEncoding();
+
+            byte[] bytes = encoding.GetBytes(s);
+            await AppendShortAsync(bytes.Length);
+            await AppendBytesAsync(bytes, false);
         }
 
         /// <summary>
@@ -306,6 +341,16 @@ namespace Oblivion.Messages
             }
 
             CurrentMessage.Write(b, 0, b.Length);
+        }
+             
+        public Task AppendBytesAsync(byte[] b, bool isInt)
+        {
+            if (isInt)
+            {
+                Array.Reverse(b);
+            }
+
+            return CurrentMessage.WriteAsync(b, 0, b.Length);
         }
         
 

@@ -58,7 +58,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Destroys this instance.
         /// </summary>
-        internal void Destroy()
+        internal async Task Destroy()
         {
             Session = null;
         }
@@ -67,7 +67,7 @@ namespace Oblivion.Messages.Handlers
         ///     Handles the request.
         /// </summary>
         /// <param name="request">The request.</param>
-        internal void HandleRequest(ClientMessage request)
+        internal async Task HandleRequest(ClientMessage request)
         {
             Request = request;
             LibraryParser.HandlePacket(this, request);
@@ -86,7 +86,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Gets the client version message event.
         /// </summary>
-        internal void ReleaseVersion()
+        internal async Task ReleaseVersion()
         {
             var release = Request.GetString();
 
@@ -97,7 +97,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Pongs this instance.
         /// </summary>
-        internal void Pong()
+        internal async Task Pong()
         {
             if (Session == null) return;
 
@@ -107,7 +107,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Disconnects the event.
         /// </summary>
-        internal void DisconnectEvent()
+        internal async Task DisconnectEvent()
         {
             Session.Dispose();
         }
@@ -115,7 +115,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Latencies the test.
         /// </summary>
-        internal void LatencyTest()
+        internal async Task LatencyTest()
         {
             if (Session == null)
                 return;
@@ -133,7 +133,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Initializes the crypto.
         /// </summary>
-        internal void InitCrypto()
+        internal async Task InitCrypto()
         {
             if (Session.IsAir)
             {
@@ -148,7 +148,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Secrets the key.
         /// </summary>
-        internal void SecretKey()
+        internal async Task SecretKey()
         {
             var cipherKey = Request.GetString();
             var sharedKey = Handler.CalculateDiffieHellmanSharedKey(cipherKey);
@@ -173,7 +173,7 @@ namespace Oblivion.Messages.Handlers
             */
         }
 
-        internal void InitConsole()
+        internal async Task InitConsole()
         {
             Session.GetHabbo().InitMessenger();
         }
@@ -181,7 +181,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Machines the identifier.
         /// </summary>
-        internal void MachineId()
+        internal async Task MachineId()
         {
             Request.GetString();
             var machineId = Request.GetString();
@@ -195,7 +195,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Logins the with ticket.
         /// </summary>
-        internal void LoginWithTicket()
+        internal async Task LoginWithTicket()
         {
             if (Session == null || Session.GetHabbo() != null)
                 return;
@@ -216,7 +216,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Informations the retrieve.
         /// </summary>
-        internal void InfoRetrieve()
+        internal async Task InfoRetrieve()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -340,12 +340,12 @@ namespace Oblivion.Messages.Handlers
             if (Session.GetHabbo().CurrentQuestId != 0)
             {
                 var quest = Oblivion.GetGame().GetQuestManager().GetQuest(Session.GetHabbo().CurrentQuestId);
-                Session.SendMessage(QuestStartedComposer.Compose(Session, quest));
+                await Session.SendMessageAsync(QuestStartedComposer.Compose(Session, quest));
             }
         }
 
 
-        internal void OpenXmasCalendar()
+        internal async Task OpenXmasCalendar()
         {
             var eventName = Request.GetString();
             var giftDay = Request.GetInteger();
@@ -392,7 +392,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Habboes the camera.
         /// </summary>
-        internal void HabboCamera()
+        internal async Task HabboCamera()
         {
             if (!Session.GetHabbo().InRoom ||
                 Session.GetHabbo().Credits < Oblivion.GetGame().GetCameraManager().PurchaseCoinsPrice ||
@@ -450,7 +450,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Called when [click].
         /// </summary>
-        internal void OnClick()
+        internal async Task OnClick()
         {
             //uselss only for debug reasons
         }
@@ -474,7 +474,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Targeteds the offer buy.
         /// </summary>
-        internal void PurchaseTargetedOffer()
+        internal async Task PurchaseTargetedOffer()
         {
             Request.GetInteger();
             var quantity = Request.GetInteger();
@@ -500,7 +500,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Goes the name of to room by.
         /// </summary>
-        internal void GoToRoomByName()
+        internal async Task GoToRoomByName()
         {
             var name = Request.GetString();
             uint roomId = 0;
@@ -537,7 +537,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Gets the uc panel.
         /// </summary>
-        internal void GetUcPanel()
+        internal async Task GetUcPanel()
         {
             var name = Request.GetString();
             switch (name)
@@ -551,7 +551,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Gets the uc panel hotel.
         /// </summary>
-        internal void GetUcPanelHotel()
+        internal async Task GetUcPanelHotel()
         {
             var id = Request.GetInteger();
         }
@@ -559,7 +559,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Saves the room thumbnail.
         /// </summary>
-        internal void SaveRoomThumbnail()
+        internal async Task SaveRoomThumbnail()
         {
             try
             {
@@ -617,11 +617,11 @@ namespace Oblivion.Messages.Handlers
                 var thumb = new ServerMessage(LibraryParser.OutgoingRequest("ThumbnailSuccessMessageComposer"));
                 thumb.AppendBool(true);
                 thumb.AppendBool(false);
-                Session.SendMessage(thumb);
+                await Session.SendMessageAsync(thumb);
             }
             catch
             {
-                Session.SendNotif("Por favor tente novamente, a área da foto possui muitos itens.");
+                await Session.SendNotifyAsync("Por favor tente novamente, a área da foto possui muitos itens.");
             }
         }
 

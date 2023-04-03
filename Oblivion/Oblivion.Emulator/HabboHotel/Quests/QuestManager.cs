@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Quests.Composer;
@@ -103,7 +104,7 @@ namespace Oblivion.HabboHotel.Quests
         /// <param name="session">The session.</param>
         /// <param name="questType">Type of the quest.</param>
         /// <param name="eventData">The event data.</param>
-        internal void ProgressUserQuest(GameClient session, QuestType questType, uint eventData = 0u)
+        internal async Task ProgressUserQuest(GameClient session, QuestType questType, uint eventData = 0u)
         {
             if (session == null || session.GetHabbo() == null || session.GetHabbo().CurrentQuestId <= 0u)
                 return;
@@ -148,16 +149,16 @@ namespace Oblivion.HabboHotel.Quests
                             session.GetHabbo().Id));
                 }
                 session.GetHabbo().Data.Quests[session.GetHabbo().CurrentQuestId] = num;
-                session.SendMessage(QuestStartedComposer.Compose(session, quest));
+                await session.SendMessageAsync(QuestStartedComposer.Compose(session, quest));
                 if (!flag)
                     return;
                 session.GetHabbo().CurrentQuestId = 0u;
                 session.GetHabbo().LastQuestCompleted = quest.Id;
-                session.SendMessage(QuestCompletedComposer.Compose(session, quest));
+                await session.SendMessageAsync(QuestCompletedComposer.Compose(session, quest));
                 session.GetHabbo().ActivityPoints += quest.Reward;
-                session.GetHabbo().NotifyNewPixels(quest.Reward);
-                session.GetHabbo().UpdateSeasonalCurrencyBalance();
-                GetList(session, null);
+                await session.GetHabbo().NotifyNewPixels(quest.Reward);
+                await session.GetHabbo().UpdateSeasonalCurrencyBalance();
+                await GetList(session, null);
             }
         }
 
@@ -190,9 +191,9 @@ namespace Oblivion.HabboHotel.Quests
         /// </summary>
         /// <param name="session">The session.</param>
         /// <param name="message">The message.</param>
-        internal void GetList(GameClient session, ClientMessage message)
+        internal async Task GetList(GameClient session, ClientMessage message)
         {
-            session.SendMessage(QuestListComposer.Compose(session, _quests.Values.ToList(), message != null));
+            await session.SendMessageAsync(QuestListComposer.Compose(session, _quests.Values.ToList(), message != null));
         }
 
         /// <summary>
@@ -200,7 +201,7 @@ namespace Oblivion.HabboHotel.Quests
         /// </summary>
         /// <param name="session">The session.</param>
         /// <param name="message">The message.</param>
-        internal void ActivateQuest(GameClient session, ClientMessage message)
+        internal async Task ActivateQuest(GameClient session, ClientMessage message)
         {
             var quest = GetQuest(message.GetUInteger());
             if (quest == null)
@@ -214,7 +215,7 @@ namespace Oblivion.HabboHotel.Quests
             }
             session.GetHabbo().CurrentQuestId = quest.Id;
             GetList(session, null);
-            session.SendMessage(QuestStartedComposer.Compose(session, quest));
+            await session.SendMessageAsync(QuestStartedComposer.Compose(session, quest));
         }
 
         /// <summary>
@@ -222,7 +223,7 @@ namespace Oblivion.HabboHotel.Quests
         /// </summary>
         /// <param name="session">The session.</param>
         /// <param name="message">The message.</param>
-        internal void GetCurrentQuest(GameClient session, ClientMessage message)
+        internal async Task GetCurrentQuest(GameClient session, ClientMessage message)
         {
             if (!session.GetHabbo().InRoom)
                 return;
@@ -240,7 +241,7 @@ namespace Oblivion.HabboHotel.Quests
             }
             session.GetHabbo().CurrentQuestId = nextQuestInSeries.Id;
             GetList(session, null);
-            session.SendMessage(QuestStartedComposer.Compose(session, nextQuestInSeries));
+            await session.SendMessageAsync(QuestStartedComposer.Compose(session, nextQuestInSeries));
         }
 
         /// <summary>
@@ -248,7 +249,7 @@ namespace Oblivion.HabboHotel.Quests
         /// </summary>
         /// <param name="session">The session.</param>
         /// <param name="message">The message.</param>
-        internal void CancelQuest(GameClient session, ClientMessage message)
+        internal async Task CancelQuest(GameClient session, ClientMessage message)
         {
             var quest = GetQuest(session.GetHabbo().CurrentQuestId);
             if (quest == null)
@@ -258,7 +259,7 @@ namespace Oblivion.HabboHotel.Quests
                     session.GetHabbo().Id, " AND quest_id = ", quest.Id, ";UPDATE users_stats SET quest_id=0 WHERE id=",
                     session.GetHabbo().Id));
             session.GetHabbo().CurrentQuestId = 0u;
-            session.SendMessage(QuestAbortedComposer.Compose());
+            await session.SendMessageAsync(QuestAbortedComposer.Compose());
             GetList(session, null);
         }
 

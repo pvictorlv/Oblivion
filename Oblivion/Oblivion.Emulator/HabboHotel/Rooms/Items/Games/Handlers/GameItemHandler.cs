@@ -62,7 +62,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         /// </summary>
         /// <param name="item">The item.</param>
         /// <param name="itemId">The item identifier.</param>
-        internal void AddPyramid(RoomItem item, string itemId)
+        internal async Task AddPyramid(RoomItem item, string itemId)
         {
             _banzaiPyramids[itemId] = item;
         }
@@ -100,7 +100,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         /// </summary>
         /// <param name="user">The user.</param>
         /// <param name="item">The item.</param>
-        internal void OnTeleportRoomUserEnter(RoomUser user, RoomItem item)
+        internal async Task OnTeleportRoomUserEnter(RoomUser user, RoomItem item)
         {
             var items = _banzaiTeleports.Inner.Values.Where(p => p.Id != item.Id).ToList();
 
@@ -122,11 +122,11 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
                     }
                     current.ExtraData = "1";
                     current.UpdateNeeded = true;
-                    _room.GetGameMap().TeleportToItem(user, current);
+                    await _room.GetGameMap().TeleportToItem(user, current);
                     item.ExtraData = "1";
                     item.UpdateNeeded = true;
-                    current.UpdateState();
-                    item.UpdateState();
+                    await current.UpdateState();
+                    await item.UpdateState();
 
                     break;
                 }
@@ -136,7 +136,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         /// <summary>
         ///     Destroys this instance.
         /// </summary>
-        internal void Destroy()
+        internal async Task Destroy()
         {
             _banzaiTeleports?.Destroy();
             _banzaiPyramids?.Clear();

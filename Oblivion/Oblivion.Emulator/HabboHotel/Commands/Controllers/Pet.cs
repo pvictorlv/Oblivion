@@ -38,12 +38,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             {
                 var messageRemove = new ServerMessage(LibraryParser.OutgoingRequest("UserLeftRoomMessageComposer"));
                 messageRemove.AppendString(roomUser.VirtualId.ToString());
-                room.SendMessage(messageRemove);
+                await room.SendMessage(messageRemove);
 
                 var messageNormal = new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer"));
                 messageNormal.AppendInteger(1);
                 roomUser.Serialize(messageNormal);
-                room.SendMessage(messageNormal);
+                await room.SendMessage(messageNormal);
                 return true;
             }
             if (!int.TryParse(pms[0], out var petId))
@@ -56,7 +56,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var color = $"{random.Next(0x1000000):X6}";
             var message = new ServerMessage(LibraryParser.OutgoingRequest("UserLeftRoomMessageComposer"));
             message.AppendString(roomUser.VirtualId.ToString());
-            room.SendMessage(message);
+            await room.SendMessage(message);
 
             var serverMessage =
                 new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer"));
@@ -80,7 +80,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             serverMessage.AppendInteger(0);
             serverMessage.AppendInteger(0);
             serverMessage.AppendString("");
-            room.SendMessage(serverMessage);
+            await room.SendMessage(serverMessage);
             return true;
         }
     }

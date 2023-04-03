@@ -76,7 +76,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <summary>
         ///     Activates this instance.
         /// </summary>
-        internal void Activate()
+        internal async Task Activate()
         {
             Activated = true;
             StampActivated = Oblivion.GetUnixTimeStamp();

@@ -64,7 +64,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
         }
 
 
-        internal void OnUserWalk(RoomUser User)
+        internal async Task OnUserWalk(RoomUser User)
         {
             if (User == null) return;
             /* TODO CHECK */
@@ -205,7 +205,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                     var waveAtWin = new ServerMessage(LibraryParser.OutgoingRequest("RoomUserActionMessageComposer"));
                     waveAtWin.AppendInteger(User.VirtualId);
                     waveAtWin.AppendInteger(1);
-                    _room.SendMessage(waveAtWin);
+                    await _room.SendMessage(waveAtWin);
                 }
                 _field?.Destroy();
             }
@@ -238,7 +238,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
             serverMessage.AppendString(TextHandling.GetString(item.Z));
             serverMessage.AppendString(TextHandling.GetString(newZ));
             serverMessage.AppendInteger(-1);
-            _room.SendMessage(serverMessage);
+            await _room.SendMessage(serverMessage);
 
             _room.GetRoomItemHandler().SetFloorItem(mover, item, newX, newY, item.Rot, false, false, false);
 
@@ -250,7 +250,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                 HandleBanzaiTiles(new Point(newX, newY), Team, user);
         }
 
-        internal void MovePuck(RoomItem item, GameClient client, Point user, Point ball, int length, Team Team)
+        internal async Task MovePuck(RoomItem item, GameClient client, Point user, Point ball, int length, Team Team)
         {
             var num = user.X - ball.X;
             var num2 = user.Y - ball.Y;

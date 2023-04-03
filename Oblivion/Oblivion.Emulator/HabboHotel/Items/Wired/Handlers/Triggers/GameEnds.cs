@@ -62,7 +62,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             set { }
         }
 
-        public bool Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 

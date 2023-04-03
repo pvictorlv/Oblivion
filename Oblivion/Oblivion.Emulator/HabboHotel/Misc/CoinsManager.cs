@@ -17,7 +17,7 @@ namespace Oblivion.HabboHotel.Misc
         /// <summary>
         ///     Starts the timer.
         /// </summary>
-        internal void StartTimer()
+        internal async Task StartTimer()
         {
             if (!ExtraSettings.CurrencyLoopEnabled)
                 return;
@@ -31,7 +31,7 @@ namespace Oblivion.HabboHotel.Misc
         /// </summary>
         /// <param name="source">The source.</param>
         /// <param name="e">The <see cref="ElapsedEventArgs" /> instance containing the event data.</param>
-        internal void GiveCoins(object source, ElapsedEventArgs e)
+        internal async Task GiveCoins(object source, ElapsedEventArgs e)
         {
             try
             {
@@ -61,7 +61,7 @@ namespace Oblivion.HabboHotel.Misc
         /// <summary>
         ///     Destroys this instance.
         /// </summary>
-        internal void Destroy()
+        internal async Task Destroy()
         {
             _timer.Dispose();
             _timer = null;

@@ -1,4 +1,5 @@
-﻿using Oblivion.Collections;
+﻿using System.Threading.Tasks;
+using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
@@ -54,7 +55,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
-        public bool Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 
@@ -81,7 +82,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 whisp.AppendInteger(2);
                 whisp.AppendInteger(0);
                 whisp.AppendInteger(-1);
-                roomUser.GetClient().SendMessage(whisp);
+                roomawait user.GetClient().SendMessageAsync(whisp);
             }
             else
             {

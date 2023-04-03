@@ -1,6 +1,7 @@
 #region
 
 using System;
+using System.Threading.Tasks;
 using MySqlConnector;
 
 #endregion
@@ -10,6 +11,7 @@ namespace Oblivion.Database.Manager.Database.Session_Details.Interfaces
     public interface IDatabaseClient : IDisposable
     {
         void Connect();
+        Task ConnectAsync();
 
         void Disconnect();
 

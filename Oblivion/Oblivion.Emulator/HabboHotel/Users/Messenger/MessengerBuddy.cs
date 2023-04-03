@@ -93,7 +93,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <summary>
         ///     Updates the user.
         /// </summary>
-        internal void UpdateUser()
+        internal async Task UpdateUser()
         {
             Client = Oblivion.GetGame().GetClientManager().GetClientByUserId(Id);
 
@@ -121,7 +121,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="session">The session.</param>
-        internal void Serialize(ServerMessage message, GameClient session)
+        internal async Task Serialize(ServerMessage message, GameClient session)
         {
             if (session?.GetHabbo()?.Data?.Relations == null) return;
 

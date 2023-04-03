@@ -41,7 +41,7 @@ namespace Oblivion.HabboHotel.Support
         ///     Loads the bans.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal void LoadBans(IQueryAdapter dbClient)
+        internal async Task LoadBans(IQueryAdapter dbClient)
         {
             _bannedUsernames.Clear();
             _bannedIPs.Clear();
@@ -154,7 +154,7 @@ namespace Oblivion.HabboHotel.Support
         /// <param name="reason">The reason.</param>
         /// <param name="ipBan">if set to <c>true</c> [ip ban].</param>
         /// <param name="machine">if set to <c>true</c> [machine].</param>
-        internal void BanUser(GameClient client, string moderator, double lengthSeconds, string reason, bool ipBan,
+        internal async Task BanUser(GameClient client, string moderator, double lengthSeconds, string reason, bool ipBan,
             bool machine)
         {
             var type = ModerationBanType.UserName;
@@ -253,7 +253,7 @@ namespace Oblivion.HabboHotel.Support
         ///     Unbans the user.
         /// </summary>
         /// <param name="userNameOrIp">The username or ip.</param>
-        internal void UnbanUser(string userNameOrIp)
+        internal async Task UnbanUser(string userNameOrIp)
         {
             _bannedUsernames.Remove(userNameOrIp);
             _bannedIPs.Remove(userNameOrIp);

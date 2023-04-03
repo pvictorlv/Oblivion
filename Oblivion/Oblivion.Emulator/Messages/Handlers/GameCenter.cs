@@ -2,6 +2,7 @@
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.Messages.Parsers;
 using Oblivion.Util;
@@ -16,7 +17,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Games the center load game.
         /// </summary>
-        internal void GameCenterLoadGame()
+        internal async Task GameCenterLoadGame()
         {
             var GameId = Request.GetInteger();
 
@@ -24,12 +25,12 @@ namespace Oblivion.Messages.Handlers
             gamesLeft.AppendInteger(GameId);
             gamesLeft.AppendInteger(-1);
             gamesLeft.AppendInteger(0);
-            Session.SendMessage(gamesLeft);
+            await Session.SendMessageAsync(gamesLeft);
 
             ServerMessage enterInGame = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterEnterInGameMessageComposer"));
             enterInGame.AppendInteger(GameId);
             enterInGame.AppendInteger(0);
-            Session.SendMessage(enterInGame);
+            await Session.SendMessageAsync(enterInGame);
 
             ServerMessage achievements = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterGameAchievementsMessageComposer"));
             achievements.AppendInteger(GameId);
@@ -48,7 +49,7 @@ namespace Oblivion.Messages.Handlers
             achievements.AppendInteger(1);
             achievements.AppendInteger(0);
             achievements.AppendString("");
-            Session.SendMessage(achievements);
+            await Session.SendMessageAsync(achievements);
 /*
             ServerMessage weeklyLeaderboard = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterLeaderboardMessageComposer"));
             weeklyLeaderboard.AppendInteger(2014);
@@ -65,7 +66,7 @@ namespace Oblivion.Messages.Handlers
             weeklyLeaderboard.AppendString(Session.GetHabbo().Gender);
             weeklyLeaderboard.AppendInteger(1);
             weeklyLeaderboard.AppendInteger(18);
-            Session.SendMessage(weeklyLeaderboard);
+            await Session.SendMessageAsync(weeklyLeaderboard);
 
             ServerMessage weeklyLeaderboard2 = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterLeaderboard2MessageComposer"));
             weeklyLeaderboard2.AppendInteger(2014);
@@ -82,7 +83,7 @@ namespace Oblivion.Messages.Handlers
             weeklyLeaderboard2.AppendString(Session.GetHabbo().Gender);
             weeklyLeaderboard2.AppendInteger(0);
             weeklyLeaderboard2.AppendInteger(18);
-            Session.SendMessage(weeklyLeaderboard2);
+            await Session.SendMessageAsync(weeklyLeaderboard2);
 
             ServerMessage weeklyLeaderboard3 = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterLeaderboard2MessageComposer"));
             weeklyLeaderboard3.AppendInteger(2014);
@@ -99,7 +100,7 @@ namespace Oblivion.Messages.Handlers
             weeklyLeaderboard3.AppendString(Session.GetHabbo().Gender);
             weeklyLeaderboard3.AppendInteger(0);
             weeklyLeaderboard3.AppendInteger(18);
-            Session.SendMessage(weeklyLeaderboard3);
+            await Session.SendMessageAsync(weeklyLeaderboard3);
 
 
 
@@ -113,14 +114,14 @@ namespace Oblivion.Messages.Handlers
             previousWinner.AppendInteger(0);
             previousWinner.AppendInteger(0);
 
-            Session.SendMessage(previousWinner);
+            await Session.SendMessageAsync(previousWinner);
 
             /*ServerMessage Products = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterProductsMessageComposer"));
             Products.AppendInteger(18);//gameId
             Products.AppendInteger(0);//count
             Products.AppendInteger(6526);
             Products.AppendBool(false);
-            Session.SendMessage(Products);#1#
+            await Session.SendMessageAsync(Products);#1#
 
             ServerMessage allAchievements = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterAllAchievementsMessageComposer"));
             allAchievements.AppendInteger(0);//count
@@ -138,16 +139,16 @@ namespace Oblivion.Messages.Handlers
             allAchievements.AppendString("SnowWarTotalScore");//achName
             allAchievements.AppendInteger(0);//levels
 
-            Session.SendMessage(allAchievements);*/
+            await Session.SendMessageAsync(allAchievements);*/
 
 
         }
 
-        internal void InitializeGameCenter()
+        internal async Task InitializeGameCenter()
         {
             
         }
-        internal void GetGameListing()
+        internal async Task GetGameListing()
         {
 
             var game = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterGamesListMessageComposer"));
@@ -158,17 +159,17 @@ namespace Oblivion.Messages.Handlers
             game.AppendString("");
             game.AppendString(ExtraSettings.GameCenterBaseJumpUrl);
             game.AppendString("");
-            Session.SendMessage(game);
+            await Session.SendMessageAsync(game);
         }
         /// <summary>
         /// Games the center join queue.
         /// </summary>
-        internal void GameCenterJoinQueue()
+        internal async Task GameCenterJoinQueue()
         {
             var gameId = Request.GetInteger();
             ServerMessage joinQueue = new ServerMessage(LibraryParser.OutgoingRequest("GameCenterJoinGameQueueMessageComposer"));
             joinQueue.AppendInteger(gameId);
-            Session.SendMessage(joinQueue);
+            await Session.SendMessageAsync(joinQueue);
 
             var habboId = Session.GetHabbo().Id;
             string ssoTicket;
@@ -215,7 +216,7 @@ namespace Oblivion.Messages.Handlers
             loadGame.AppendString("socketPolicyPort");
             loadGame.AppendString(ExtraSettings.BaseJumpHost);
 
-            Session.SendMessage(loadGame);
+            await Session.SendMessageAsync(loadGame);
         }
 
 

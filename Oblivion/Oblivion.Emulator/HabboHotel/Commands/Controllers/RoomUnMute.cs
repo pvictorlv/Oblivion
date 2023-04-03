@@ -35,9 +35,9 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             message.Init(LibraryParser.OutgoingRequest("AlertNotificationMessageComposer"));
             message.AppendString("Room is now UnMuted.");
             message.AppendString("");
-            room.SendMessage(message);*/
+            await room.SendMessage(message);*/
 
-            room.SendMessage(GameClient.GetBytesNotif("Este quarto foi des-selenciado."));
+            await room.SendMessage(GameClient.GetBytesNotif("Este quarto foi des-selenciado."));
 
             Oblivion.GetGame()
                 .GetModerationTool().LogStaffEntry(session.GetHabbo().UserName, string.Empty,

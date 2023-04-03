@@ -82,7 +82,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public int Delay { get; set; }
 
-        public bool Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 

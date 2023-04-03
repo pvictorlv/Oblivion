@@ -170,7 +170,7 @@ namespace Oblivion.HabboHotel.Navigators.Interfaces
         ///     Serializes the specified message.
         /// </summary>
         /// <param name="message">The message.</param>
-        internal void Serialize(ServerMessage message)
+        internal async Task Serialize(ServerMessage message)
         {
             try
             {
@@ -225,7 +225,7 @@ namespace Oblivion.HabboHotel.Navigators.Interfaces
         ///     Serializes the new.
         /// </summary>
         /// <param name="message">The message.</param>
-        internal void SerializeNew(ServerMessage message)
+        internal async Task SerializeNew(ServerMessage message)
         {
             message.AppendInteger(RoomId);
             message.AppendInteger(12);

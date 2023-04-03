@@ -22,7 +22,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Serializes the group purchase page.
         /// </summary>
-        internal void SerializeGroupPurchasePage()
+        internal async Task SerializeGroupPurchasePage()
         {
             var list = new List<RoomData>();
             foreach (var x in Session.GetHabbo().Data.Rooms)
@@ -65,7 +65,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Serializes the group purchase parts.
         /// </summary>
-        internal void SerializeGroupPurchaseParts()
+        internal async Task SerializeGroupPurchaseParts()
         {
             Response.Init(LibraryParser.OutgoingRequest("GroupPurchasePartsMessageComposer"));
             Response.AppendInteger(Oblivion.GetGame().GetGroupManager().Bases.Count);
@@ -116,7 +116,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Purchases the group.
         /// </summary>
-        internal void PurchaseGroup()
+        internal async Task PurchaseGroup()
         {
             if (Session == null || Session.GetHabbo().Credits < 10)
                 return;
@@ -147,7 +147,7 @@ namespace Oblivion.Messages.Handlers
                 (!Oblivion.GetGame().GetGroupManager().SymbolColours.Contains(color)) ? 1 : color,
                 (!Oblivion.GetGame().GetGroupManager().BackGroundColours.Contains(num3)) ? 1 : num3, out var theGroup);
 
-            Session.SendMessage(CatalogPageComposer.PurchaseOk(0u, "CREATE_GUILD", 10));
+            await Session.SendMessageAsync(CatalogPageComposer.PurchaseOk(0u, "CREATE_GUILD", 10));
             Response.Init(LibraryParser.OutgoingRequest("GroupRoomMessageComposer"));
             Response.AppendInteger(roomid);
             Response.AppendInteger(theGroup.Id);
@@ -203,7 +203,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Serializes the group information.
         /// </summary>
-        internal void SerializeGroupInfo()
+        internal async Task SerializeGroupInfo()
         {
             uint groupId = Request.GetUInteger();
             bool newWindow = Request.GetBool();
@@ -219,7 +219,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Serializes the group members.
         /// </summary>
-        internal void SerializeGroupMembers()
+        internal async Task SerializeGroupMembers()
         {
             uint groupId = Request.GetUInteger();
             int page = Request.GetInteger();
@@ -241,7 +241,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Makes the group admin.
         /// </summary>
-        internal void MakeGroupAdmin()
+        internal async Task MakeGroupAdmin()
         {
             uint num = Request.GetUInteger();
             uint num2 = Request.GetUInteger();
@@ -273,7 +273,7 @@ namespace Oblivion.Messages.Handlers
 
                 Response.Init(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
                 Response.AppendInteger(1);
-                roomUserByHabbo.GetClient().SendMessage(GetResponse());
+                roomUserByHabbo.await GetClient().SendMessageAsync(GetResponse());
                 roomUserByHabbo.UpdateNeeded = true;
             }
 
@@ -285,7 +285,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Removes the group admin.
         /// </summary>
-        internal void RemoveGroupAdmin()
+        internal async Task RemoveGroupAdmin()
         {
             uint num = Request.GetUInteger();
             uint num2 = Request.GetUInteger();
@@ -314,7 +314,7 @@ namespace Oblivion.Messages.Handlers
 
                 Response.Init(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
                 Response.AppendInteger(0);
-                roomUserByHabbo.GetClient().SendMessage(GetResponse());
+                roomUserByHabbo.await GetClient().SendMessageAsync(GetResponse());
                 roomUserByHabbo.UpdateNeeded = true;
             }
 
@@ -326,7 +326,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Accepts the membership.
         /// </summary>
-        internal void AcceptMembership()
+        internal async Task AcceptMembership()
         {
             uint groupId = Request.GetUInteger();
             uint userId = Request.GetUInteger();
@@ -372,7 +372,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Declines the membership.
         /// </summary>
-        internal void DeclineMembership()
+        internal async Task DeclineMembership()
         {
             var groupId = Request.GetUInteger();
             var userId = Request.GetUInteger();
@@ -411,7 +411,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Joins the group.
         /// </summary>
-        internal void JoinGroup()
+        internal async Task JoinGroup()
         {
             uint groupId = Request.GetUInteger();
 
@@ -462,7 +462,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Removes the member.
         /// </summary>
-        internal void RemoveMember()
+        internal async Task RemoveMember()
         {
             uint num = Request.GetUInteger();
             uint num2 = Request.GetUInteger();
@@ -513,7 +513,7 @@ namespace Oblivion.Messages.Handlers
 
                         Response.AppendInteger(0);
 
-                        roomUserByHabbo.GetClient().SendMessage(GetResponse());
+                        roomUserByHabbo.await GetClient().SendMessageAsync(GetResponse());
                     }
                 }
 
@@ -541,7 +541,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Makes the fav.
         /// </summary>
-        internal void MakeFav()
+        internal async Task MakeFav()
         {
             uint groupId = Request.GetUInteger();
 
@@ -562,7 +562,7 @@ namespace Oblivion.Messages.Handlers
 
             Response.Init(LibraryParser.OutgoingRequest("FavouriteGroupMessageComposer"));
             Response.AppendInteger(Session.GetHabbo().Id);
-            Session.SendMessage(Response);
+            await Session.SendMessageAsync(Response);
 
             if (Session.GetHabbo().CurrentRoom != null)
             {
@@ -589,13 +589,13 @@ namespace Oblivion.Messages.Handlers
             Response.AppendInteger(3);
             Response.AppendString(theGroup.Name);
 
-            Session.SendMessage(Response);
+            await Session.SendMessageAsync(Response);
         }
 
         /// <summary>
         /// Removes the fav.
         /// </summary>
-        internal void RemoveFav()
+        internal async Task RemoveFav()
         {
             Request.GetUInteger();
             Session.GetHabbo().FavouriteGroup = 0u;
@@ -606,20 +606,20 @@ namespace Oblivion.Messages.Handlers
 
             Response.Init(LibraryParser.OutgoingRequest("FavouriteGroupMessageComposer"));
             Response.AppendInteger(Session.GetHabbo().Id);
-            Session.SendMessage(Response);
+            await Session.SendMessageAsync(Response);
             Response.Init(LibraryParser.OutgoingRequest("ChangeFavouriteGroupMessageComposer"));
             Response.AppendInteger(0);
             Response.AppendInteger(-1);
             Response.AppendInteger(-1);
             Response.AppendString(string.Empty);
 
-            Session.SendMessage(Response);
+            await Session.SendMessageAsync(Response);
         }
 
         /// <summary>
         /// Publishes the forum thread.
         /// </summary>
-        internal void PublishForumThread()
+        internal async Task PublishForumThread()
         {
             if ((Oblivion.GetUnixTimeStamp() - Session.GetHabbo().LastSqlQuery) < 20)
                 return;
@@ -645,7 +645,7 @@ namespace Oblivion.Messages.Handlers
                     DataRow row = dbClient.GetRow();
                     if (row["locked"].ToString() == "1" || row["hidden"].ToString() == "1")
                     {
-                        Session.SendNotif(Oblivion.GetLanguage().GetVar("forums_cancel"));
+                        await Session.SendNotifyAsync(Oblivion.GetLanguage().GetVar("forums_cancel"));
                         return;
                     }
                 }
@@ -691,7 +691,7 @@ namespace Oblivion.Messages.Handlers
                 message.AppendInteger(1);
                 message.AppendString("");
                 message.AppendInteger(42);
-                Session.SendMessage(message);
+                await Session.SendMessageAsync(message);
             }
             else
             {
@@ -709,14 +709,14 @@ namespace Oblivion.Messages.Handlers
                 message.AppendInteger(0);
                 message.AppendString("");
                 message.AppendInteger(0);
-                Session.SendMessage(message);
+                await Session.SendMessageAsync(message);
             }
         }
 
         /// <summary>
         /// Updates the state of the thread.
         /// </summary>
-        internal void UpdateThreadState()
+        internal async Task UpdateThreadState()
         {
             uint groupId = Request.GetUInteger();
             uint threadId = Request.GetUInteger();
@@ -752,7 +752,7 @@ namespace Oblivion.Messages.Handlers
 
                     notif.AppendString((pin) ? "forums.thread.pinned" : "forums.thread.unpinned");
                     notif.AppendInteger(0);
-                    Session.SendMessage(notif);
+                    await Session.SendMessageAsync(notif);
                 }
 
                 if (thread.Locked != Lock)
@@ -761,7 +761,7 @@ namespace Oblivion.Messages.Handlers
 
                     notif2.AppendString((Lock) ? "forums.thread.locked" : "forums.thread.unlocked");
                     notif2.AppendInteger(0);
-                    Session.SendMessage(notif2);
+                    await Session.SendMessageAsync(notif2);
                 }
 
                 if (thread.ParentId != 0)
@@ -787,14 +787,14 @@ namespace Oblivion.Messages.Handlers
                 message.AppendString(thread.Hider);
                 message.AppendInteger(0);
 
-                Session.SendMessage(message);
+                await Session.SendMessageAsync(message);
             }
         }
 
         /// <summary>
         /// Alters the state of the forum thread.
         /// </summary>
-        internal void AlterForumThreadState()
+        internal async Task AlterForumThreadState()
         {
             uint groupId = Request.GetUInteger();
             uint threadId = Request.GetUInteger();
@@ -824,7 +824,7 @@ namespace Oblivion.Messages.Handlers
 
                 notif.AppendString((stateToSet == 20) ? "forums.thread.hidden" : "forums.thread.restored");
                 notif.AppendInteger(0);
-                Session.SendMessage(notif);
+                await Session.SendMessageAsync(notif);
 
                 if (thread.ParentId != 0)
                     return;
@@ -849,14 +849,14 @@ namespace Oblivion.Messages.Handlers
                 message.AppendString(thread.Hider);
                 message.AppendInteger(0);
 
-                Session.SendMessage(message);
+                await Session.SendMessageAsync(message);
             }
         }
 
         /// <summary>
         /// Reads the forum thread.
         /// </summary>
-        internal void ReadForumThread()
+        internal async Task ReadForumThread()
         {
             uint groupId = Request.GetUInteger();
             uint threadId = Request.GetUInteger();
@@ -932,7 +932,7 @@ namespace Oblivion.Messages.Handlers
                     messageBuffer.AppendInteger(0);
                 }
 
-                Session.SendMessage(messageBuffer);
+                await Session.SendMessageAsync(messageBuffer);
             }
         }
 
@@ -940,7 +940,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Gets the group forum thread root.
         /// </summary>
-        internal void GetGroupForumThreadRoot()
+        internal async Task GetGroupForumThreadRoot()
         {
             uint groupId = Request.GetUInteger();
             int startIndex = Request.GetInteger();
@@ -990,27 +990,27 @@ namespace Oblivion.Messages.Handlers
                     message.AppendInteger(0);
                 }
 
-                Session.SendMessage(message);
+                await Session.SendMessageAsync(message);
             }
         }
 
         /// <summary>
         /// Gets the group forum data.
         /// </summary>
-        internal void GetGroupForumData()
+        internal async Task GetGroupForumData()
         {
             uint groupId = Request.GetUInteger();
 
             Guild theGroup = Oblivion.GetGame().GetGroupManager().GetGroup(groupId);
 
             if (theGroup != null && theGroup.HasForum)
-                Session.SendMessage(theGroup.ForumDataMessage(Session.GetHabbo().Id));
+                await Session.SendMessageAsync(theGroup.ForumDataMessage(Session.GetHabbo().Id));
         }
 
         /// <summary>
         /// Gets the group forums.
         /// </summary>
-        internal void GetGroupForums()
+        internal async Task GetGroupForums()
         {
             int selectType = Request.GetInteger();
             int startIndex = Request.GetInteger();
@@ -1052,7 +1052,7 @@ namespace Oblivion.Messages.Handlers
                         foreach (Guild theGroup in groupList)
                             theGroup.SerializeForumRoot(message);
 
-                        Session.SendMessage(message);
+                        await Session.SendMessageAsync(message);
                     }
 
                     break;
@@ -1074,14 +1074,14 @@ namespace Oblivion.Messages.Handlers
                     foreach (Guild theGroup in groupList)
                         theGroup.SerializeForumRoot(message);
 
-                    Session.SendMessage(message);
+                    await Session.SendMessageAsync(message);
                     break;
 
                 default:
                     message.AppendInteger(1);
                     message.AppendInteger(startIndex);
                     message.AppendInteger(0);
-                    Session.SendMessage(message);
+                    await Session.SendMessageAsync(message);
                     break;
             }
         }
@@ -1089,7 +1089,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Manages the group.
         /// </summary>
-        internal void ManageGroup()
+        internal async Task ManageGroup()
         {
             var groupId = Request.GetUInteger();
             var theGroup = Oblivion.GetGame().GetGroupManager().GetGroup(groupId);
@@ -1169,7 +1169,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Updates the name of the group.
         /// </summary>
-        internal void UpdateGroupName()
+        internal async Task UpdateGroupName()
         {
             uint num = Request.GetUInteger();
             string text = Request.GetString();
@@ -1199,7 +1199,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Updates the group badge.
         /// </summary>
-        internal void UpdateGroupBadge()
+        internal async Task UpdateGroupBadge()
         {
             uint guildId = Request.GetUInteger();
 
@@ -1237,7 +1237,7 @@ namespace Oblivion.Messages.Handlers
                         Response.AppendString(current2.Value);
                     }
 
-                    room.SendMessage(Response);
+                    await room.SendMessage(Response);
 
                     Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(guild, Response, Session, room);
 
@@ -1274,7 +1274,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Updates the group colours.
         /// </summary>
-        internal void UpdateGroupColours()
+        internal async Task UpdateGroupColours()
         {
             uint groupId = Request.GetUInteger();
             int num = Request.GetInteger();
@@ -1299,7 +1299,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Updates the group settings.
         /// </summary>
-        internal void UpdateGroupSettings()
+        internal async Task UpdateGroupSettings()
         {
             uint groupId = Request.GetUInteger();
             uint num = Request.GetUInteger();
@@ -1332,14 +1332,14 @@ namespace Oblivion.Messages.Handlers
                             current.RemoveStatus("flatctrl 1");
                             Response.Init(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
                             Response.AppendInteger(0);
-                            current.GetClient().SendMessage(GetResponse());
+                            current.await GetClient().SendMessageAsync(GetResponse());
                         }
                         else
                         {
                             current.AddStatus("flatctrl 1", "");
                             Response.Init(LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
                             Response.AppendInteger(1);
-                            current.GetClient().SendMessage(GetResponse());
+                            current.await GetClient().SendMessageAsync(GetResponse());
                         }
 
                         current.UpdateNeeded = true;
@@ -1354,7 +1354,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Requests the leave group.
         /// </summary>
-        internal void RequestLeaveGroup()
+        internal async Task RequestLeaveGroup()
         {
             uint groupId = Request.GetUInteger();
             uint userId = Request.GetUInteger();
@@ -1376,7 +1376,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Confirms the leave group.
         /// </summary>
-        internal void ConfirmLeaveGroup()
+        internal async Task ConfirmLeaveGroup()
         {
             uint guild = Request.GetUInteger();
             uint userId = Request.GetUInteger();
@@ -1388,7 +1388,7 @@ namespace Oblivion.Messages.Handlers
 
             if (byeGuild.CreatorId == userId)
             {
-                Session.SendNotif(Oblivion.GetLanguage().GetVar("user_room_video_true"));
+                await Session.SendNotifyAsync(Oblivion.GetLanguage().GetVar("user_room_video_true"));
                 return;
             }
 
@@ -1444,7 +1444,7 @@ namespace Oblivion.Messages.Handlers
                     Response.AppendInteger(byeUser.Id);
 
                     if (room != null)
-                        room.SendMessage(Response);
+                        await room.SendMessage(Response);
                     else
                         await SendResponse();
                 }
@@ -1457,7 +1457,7 @@ namespace Oblivion.Messages.Handlers
         }
 
 
-        internal void UpdateForumSettings()
+        internal async Task UpdateForumSettings()
         {
             if (Session?.GetHabbo() == null) return;
 
@@ -1495,7 +1495,7 @@ namespace Oblivion.Messages.Handlers
                 queryReactor.RunQuery();
             }
 
-            Session.SendMessage(group.ForumDataMessage(Session.GetHabbo().Id));
+            await Session.SendMessageAsync(group.ForumDataMessage(Session.GetHabbo().Id));
 
             Oblivion.GetGame()
                 .GetAchievementManager()
@@ -1511,7 +1511,7 @@ namespace Oblivion.Messages.Handlers
                 .ProgressUserAchievement(Session, "ACH_SelfModForumCanModerateSeen", 1);
         }
 
-        internal void DeleteGroup()
+        internal async Task DeleteGroup()
         {
             uint groupId = Request.GetUInteger();
             var group = Oblivion.GetGame().GetGroupManager().GetGroup(groupId);
@@ -1522,7 +1522,7 @@ namespace Oblivion.Messages.Handlers
 
             if (room?.RoomData?.Group == null)
             {
-                Session.SendNotif(Oblivion.GetLanguage().GetVar("command_group_has_no_room"));
+                await Session.SendNotifyAsync(Oblivion.GetLanguage().GetVar("command_group_has_no_room"));
             }
             else
             {
@@ -1551,7 +1551,7 @@ namespace Oblivion.Messages.Handlers
                 var deleteGroup = new ServerMessage(LibraryParser.OutgoingRequest("GroupDeletedMessageComposer"));
 
                 deleteGroup.AppendInteger(groupId);
-                room.SendMessage(deleteGroup);
+                await room.SendMessage(deleteGroup);
 
                 room.GetRoomItemHandler().RemoveAllFurniture(Session);
 

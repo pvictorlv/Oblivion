@@ -10,7 +10,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorHcGate : FurniInteractorModel
     {
-        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             var user = session.GetHabbo();
             var ishc = user.Vip;
@@ -48,7 +48,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             item.UpdateState();
             item.GetRoom().GetGameMap().UpdateMapForItem(item);
             if (item.GetRoom().GotWireds())
-                item.GetRoom()
+                await item.GetRoom()
                     .GetWiredHandler()
                     .ExecuteWired(Interaction.TriggerStateChanged,
                         item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id), item);

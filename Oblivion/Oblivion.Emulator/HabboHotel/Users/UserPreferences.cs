@@ -59,7 +59,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             ChatColor = Convert.ToInt32(row["chat_color"]);
         }
 
-        internal void Save()
+        internal async Task Save()
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {

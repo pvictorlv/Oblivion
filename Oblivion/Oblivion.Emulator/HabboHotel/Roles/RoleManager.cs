@@ -41,7 +41,7 @@ namespace Oblivion.HabboHotel.Roles
         ///     Loads the rights.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal void LoadRights(IQueryAdapter dbClient)
+        internal async Task LoadRights(IQueryAdapter dbClient)
         {
             ClearRights();
             dbClient.SetQuery("SELECT command,rank FROM server_fuses;");
@@ -156,7 +156,7 @@ namespace Oblivion.HabboHotel.Roles
         /// <summary>
         ///     Clears the rights.
         /// </summary>
-        internal void ClearRights()
+        internal async Task ClearRights()
         {
             _rights.Clear();
             _cmdRights.Clear();

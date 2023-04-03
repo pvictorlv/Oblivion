@@ -14,26 +14,26 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Gets the flat cats.
         /// </summary>
-        internal void GetFlatCats() //GetEventCategoriesMessageEvent
+        internal async Task GetFlatCats() //GetEventCategoriesMessageEvent
         {
             if (Session?.GetHabbo() == null)
             {
                 return;
             }
-            Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializePromotionCategories());
+            await Session.SendMessageAsync(Oblivion.GetGame().GetNavigator().SerializePromotionCategories());
         }
 
         /// <summary>
         /// Enters the inquired room.
         /// </summary>
-        internal void EnterInquiredRoom()
+        internal async Task EnterInquiredRoom()
         {
         }
 
         /// <summary>
         /// Gets the pub.
         /// </summary>
-        internal void GetPub()
+        internal async Task GetPub()
         {
             /* uint roomId = Request.GetUInteger();
              RoomData roomData = Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId);
@@ -49,7 +49,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Opens the pub.
         /// </summary>
-        internal void OpenPub()
+        internal async Task OpenPub()
         {
             Request.GetInteger();
             uint roomId = Request.GetUInteger();
@@ -63,7 +63,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// News the navigator.
         /// </summary>
-        internal void NewNavigator()
+        internal async Task NewNavigator()
         {
             if (Session == null)
                 return;
@@ -73,7 +73,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Searches the new navigator.
         /// </summary>
-        internal void SearchNewNavigator()
+        internal async Task SearchNewNavigator()
         {
             if (Session == null)
                 return;
@@ -82,17 +82,17 @@ namespace Oblivion.Messages.Handlers
             string junk = Request.GetString();
             var rooms = Oblivion.GetGame().GetNavigator().SerializeNewNavigator(name, junk, Session);
             if (rooms == null) return;
-            Session.SendMessage(rooms);
+            await Session.SendMessageAsync(rooms);
         }
 
         /// <summary>
         /// Saveds the search.
         /// </summary>
-        internal void SavedSearch()
+        internal async Task SavedSearch()
         {
             if (Session.GetHabbo().NavigatorLogs.Count > 50)
             {
-                Session.SendNotif(Oblivion.GetLanguage().GetVar("navigator_max"));
+                await Session.SendNotifyAsync(Oblivion.GetLanguage().GetVar("navigator_max"));
                 return;
             }
             string value1 = Request.GetString();
@@ -110,7 +110,7 @@ namespace Oblivion.Messages.Handlers
                 message.AppendString(navi.Value2);
                 message.AppendString("");
             }
-            Session.SendMessage(message);
+            await Session.SendMessageAsync(message);
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         /// <param name="textOne">The text one.</param>
         /// <param name="textTwo">The text two.</param>
-        internal void SerializeSavedSearch(string textOne, string textTwo)
+        internal async Task SerializeSavedSearch(string textOne, string textTwo)
         {
             GetResponse().AppendString(textOne);
             GetResponse().AppendString(textTwo);
@@ -128,7 +128,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// News the navigator resize.
         /// </summary>
-        internal void NewNavigatorResize()
+        internal async Task NewNavigatorResize()
         {
             int x = Request.GetInteger();
             int y = Request.GetInteger();
@@ -145,7 +145,7 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         private int count;
 
-        internal void HabboAirGetUserRooms()
+        internal async Task HabboAirGetUserRooms()
         {
             if (count <= 4)
             {
@@ -167,10 +167,10 @@ namespace Oblivion.Messages.Handlers
             }
             message.AppendBool(false);
 
-            Session.SendMessage(message);
+            await Session.SendMessageAsync(message);
         }
 
-        internal void HabboAirGetAllRooms()
+        internal async Task HabboAirGetAllRooms()
         {
             var message = new ServerMessage(LibraryParser.OutgoingRequest("HabboAirGetRoomUsersComposer"));
 
@@ -185,13 +185,13 @@ namespace Oblivion.Messages.Handlers
             }
             message.AppendBool(false);
 
-            Session.SendMessage(message);
+            await Session.SendMessageAsync(message);
         }
 
         /// <summary>
         /// News the navigator add saved search.
         /// </summary>
-        internal void NewNavigatorAddSavedSearch()
+        internal async Task NewNavigatorAddSavedSearch()
         {
             SavedSearch();
         }
@@ -199,7 +199,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// News the navigator delete saved search.
         /// </summary>
-        internal void NewNavigatorDeleteSavedSearch()
+        internal async Task NewNavigatorDeleteSavedSearch()
         {
             int searchId = Request.GetInteger();
             if (!Session.GetHabbo().NavigatorLogs.ContainsKey(searchId))
@@ -215,13 +215,13 @@ namespace Oblivion.Messages.Handlers
                 message.AppendString(navi.Value2);
                 message.AppendString("");
             }
-            Session.SendMessage(message);
+            await Session.SendMessageAsync(message);
         }
 
         /// <summary>
         /// News the navigator collapse category.
         /// </summary>
-        internal void NewNavigatorCollapseCategory()
+        internal async Task NewNavigatorCollapseCategory()
         {
             Request.GetString();
         }
@@ -229,7 +229,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// News the navigator uncollapse category.
         /// </summary>
-        internal void NewNavigatorUncollapseCategory()
+        internal async Task NewNavigatorUncollapseCategory()
         {
             Request.GetString();
         }
@@ -237,17 +237,17 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Gets the pubs.
         /// </summary>
-        internal void GetPubs()
+        internal async Task GetPubs()
         {
             if (Session.GetHabbo() == null)
                 return;
-            Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializePublicRooms());
+            await Session.SendMessageAsync(Oblivion.GetGame().GetNavigator().SerializePublicRooms());
         }
 
         /// <summary>
         /// Gets the room information.
         /// </summary>
-        internal void GetRoomInfo()
+        internal async Task GetRoomInfo()
         {
             if (Session.GetHabbo() == null)
                 return;
@@ -269,7 +269,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// News the navigator flat cats.
         /// </summary>
-        internal void NewNavigatorFlatCats()
+        internal async Task NewNavigatorFlatCats()
         {
             if (Session.GetHabbo() == null)
                 return;
@@ -279,80 +279,80 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Gets the favorite rooms.
         /// </summary>
-        internal void GetFavoriteRooms()
+        internal async Task GetFavoriteRooms()
         {
             if (Session.GetHabbo() == null)
                 return;
-            Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializeFavoriteRooms(Session));
+            await Session.SendMessageAsync(Oblivion.GetGame().GetNavigator().SerializeFavoriteRooms(Session));
         }
 
         /// <summary>
         /// Gets the recent rooms.
         /// </summary>
-        internal void GetRecentRooms()
+        internal async Task GetRecentRooms()
         {
             if (Session.GetHabbo() == null)
                 return;
-            Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializeRecentRooms(Session));
+            await Session.SendMessageAsync(Oblivion.GetGame().GetNavigator().SerializeRecentRooms(Session));
         }
 
         /// <summary>
         /// Gets the popular tags.
         /// </summary>
-        internal void GetPopularTags()
+        internal async Task GetPopularTags()
         {
             if (Session.GetHabbo() == null)
                 return;
-            Session.SendMessage(Oblivion.GetGame().GetNavigator().SerializePopularRoomTags());
+            await Session.SendMessageAsync(Oblivion.GetGame().GetNavigator().SerializePopularRoomTags());
         }
 
         /// <summary>
         /// Gets the event rooms.
         /// </summary>
-        internal void GetEventRooms()
+        internal async Task GetEventRooms()
         {
             if (Session.GetHabbo() == null)
                 return;
-            Session.SendMessage(NavigatorManager.SerializePromoted(Session, Request.GetInteger()));
+            await Session.SendMessageAsync(NavigatorManager.SerializePromoted(Session, Request.GetInteger()));
         }
 
         /// <summary>
         /// Performs the search.
         /// </summary>
-        internal void PerformSearch()
+        internal async Task PerformSearch()
         {
             if (Session.GetHabbo() == null)
                 return;
-            Session.SendMessage(
+            await Session.SendMessageAsync(
                 NavigatorManager.SerializeSearchResults(Request.GetString()));
         }
 
         /// <summary>
         /// Searches the by tag.
         /// </summary>
-        internal void SearchByTag()
+        internal async Task SearchByTag()
         {
             if (Session.GetHabbo() == null)
                 return;
-            Session.SendMessage(NavigatorManager.SerializeSearchResults(
+            await Session.SendMessageAsync(NavigatorManager.SerializeSearchResults(
                 $"tag:{Request.GetString()}"));
         }
 
         /// <summary>
         /// Performs the search2.
         /// </summary>
-        internal void PerformSearch2()
+        internal async Task PerformSearch2()
         {
             if (Session.GetHabbo() == null)
                 return;
             Request.GetInteger();
-            Session.SendMessage(NavigatorManager.SerializeSearchResults(Request.GetString()));
+            await Session.SendMessageAsync(NavigatorManager.SerializeSearchResults(Request.GetString()));
         }
 
         /// <summary>
         /// Opens the flat.
         /// </summary>
-        internal void OpenFlat()
+        internal async Task OpenFlat()
         {
             if (Session.GetHabbo() == null)
                 return;
@@ -363,7 +363,7 @@ namespace Oblivion.Messages.Handlers
             PrepareRoomForUser(roomId, pWd);
         }
 
-        internal void ToggleStaffPick()
+        internal async Task ToggleStaffPick()
         {
             var roomId = Request.GetUInteger();
             Request.GetBool();

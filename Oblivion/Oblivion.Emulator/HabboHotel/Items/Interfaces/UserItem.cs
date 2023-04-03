@@ -91,7 +91,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="inventory">if set to <c>true</c> [inventory].</param>
-        internal void SerializeWall(ServerMessage message, bool inventory)
+        internal async Task SerializeWall(ServerMessage message, bool inventory)
         {
             message.AppendInteger(VirtualId);
             message.AppendString(BaseItem.Type.ToString().ToUpper());
@@ -123,7 +123,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="inventory">if set to <c>true</c> [inventory].</param>
-        internal void SerializeFloor(ServerMessage message, bool inventory)
+        internal async Task SerializeFloor(ServerMessage message, bool inventory)
         {
             message.AppendInteger(VirtualId);
             message.AppendString(BaseItem.Type.ToString(CultureInfo.InvariantCulture).ToUpper());

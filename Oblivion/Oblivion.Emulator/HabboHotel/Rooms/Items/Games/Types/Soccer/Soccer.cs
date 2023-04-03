@@ -79,7 +79,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                         return true;
                     }
 
-                        MoveBallProcess(_ball, _ball.InteractingBallUser);
+                        await MoveBallProcess(_ball, _ball.InteractingBallUser);
                     
 
                     if (_ball.ExtraData == "33")
@@ -162,7 +162,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                                 tile => tile.X == gameItemCoord.X && tile.Y == gameItemCoord.Y));
         }
 
-        internal void OnUserWalk(RoomUser user)
+        internal async Task OnUserWalk(RoomUser user)
         {
             foreach (var _ball in _balls.Values)
             {
@@ -206,7 +206,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                     _ball.ExtraData = "55";
                     _ball.BallIsMoving = true;
                     _ball.BallValue = 1;
-                    MoveBall(_ball, user.GetClient(), userPoint);
+                    await MoveBall(_ball, user.GetClient(), userPoint);
                 }
                 else
                 {
@@ -238,13 +238,13 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                         _ball.ExtraData = "11";
 //                        if (!_room.GetGameMap().ItemCanBePlacedHere(newX, newY))
 //                            return;
-                        MoveBall(_ball, user.GetClient(), newX, newY);
+                        await MoveBall(_ball, user.GetClient(), newX, newY);
                     }
                 }
             }
         }
 
-        internal bool MoveBall(RoomItem item, GameClient mover, int newX, int newY)
+        internal async Task<bool> MoveBall(RoomItem item, GameClient mover, int newX, int newY)
         {
             if (item?.GetBaseItem() == null /*|| mover == null || mover.GetHabbo() == null*/)
                 return false;
@@ -281,7 +281,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                 mMessage.AppendInteger(0);
                 mMessage.AppendInteger(_room.RoomData.OwnerId);
                 mMessage.AppendInteger(item.VirtualId);
-                _room.SendMessage(mMessage);
+                await _room.SendMessage(mMessage);
 
                 if (oldRoomCoord.X == newX && oldRoomCoord.Y == newY)
                     return false;
@@ -299,7 +299,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             }
         }
 
-        internal void MoveBall(RoomItem item, GameClient client, Point user)
+        internal async Task MoveBall(RoomItem item, GameClient client, Point user)
         {
             try
             {
@@ -314,7 +314,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             }
         }
 
-        internal void MoveBallProcess(RoomItem item, GameClient client)
+        internal async Task MoveBallProcess(RoomItem item, GameClient client)
         {
             if (item == null) return;
 //            if (!_balls.Contains(item)) return;
@@ -429,7 +429,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             _gates[3] = item;
         }
 
-        internal void UnRegisterGate(RoomItem item)
+        internal async Task UnRegisterGate(RoomItem item)
         {
             switch (item.Team)
             {

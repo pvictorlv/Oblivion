@@ -151,7 +151,7 @@ namespace Oblivion.HabboHotel.Support
         /// </summary>
         /// <param name="pModeratorId">The p moderator identifier.</param>
         /// <param name="updateInDb">if set to <c>true</c> [update in database].</param>
-        internal void Pick(uint pModeratorId, bool updateInDb)
+        internal async Task Pick(uint pModeratorId, bool updateInDb)
         {
             Status = TicketStatus.Picked;
             ModeratorId = pModeratorId;
@@ -171,7 +171,7 @@ namespace Oblivion.HabboHotel.Support
         /// </summary>
         /// <param name="newStatus">The new status.</param>
         /// <param name="updateInDb">if set to <c>true</c> [update in database].</param>
-        internal void Close(TicketStatus newStatus, bool updateInDb)
+        internal async Task Close(TicketStatus newStatus, bool updateInDb)
         {
             Status = newStatus;
 
@@ -215,7 +215,7 @@ namespace Oblivion.HabboHotel.Support
         ///     Releases the specified update in database.
         /// </summary>
         /// <param name="updateInDb">if set to <c>true</c> [update in database].</param>
-        internal void Release(bool updateInDb)
+        internal async Task Release(bool updateInDb)
         {
             Status = TicketStatus.Open;
 
@@ -230,7 +230,7 @@ namespace Oblivion.HabboHotel.Support
         ///     Deletes the specified update in database.
         /// </summary>
         /// <param name="updateInDb">if set to <c>true</c> [update in database].</param>
-        internal void Delete(bool updateInDb)
+        internal async Task Delete(bool updateInDb)
         {
             Status = TicketStatus.Deleted;
 

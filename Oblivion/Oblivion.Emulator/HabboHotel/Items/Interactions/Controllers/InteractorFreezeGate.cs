@@ -42,7 +42,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 new ServerMessage(
                     LibraryParser.OutgoingRequest("UserIsPlayingFreezeMessageComposer"));
             serverMessage33.AppendBool(user.Team != Team.None);
-            user.GetClient().SendMessage(serverMessage33);
+            await user.GetClient().SendMessageAsync(serverMessage33);
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Groups.Interfaces;
 using Oblivion.HabboHotel.Quests;
@@ -49,7 +50,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             _userId = userId;
         }
 
-        internal void Init()
+        internal async Task Init()
         {
             DataTable friendsTable;
             DataTable friendsRequestsTable;
@@ -103,7 +104,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <summary>
         ///     Clears the requests.
         /// </summary>
-        internal void ClearRequests()
+        internal async Task ClearRequests()
         {
             Requests.Clear();
         }
@@ -119,7 +120,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <summary>
         ///     Destroys this instance.
         /// </summary>
-        internal void Destroy()
+        internal async Task Destroy()
         {
             foreach (var current in Friends.Values.ToList())
             {
@@ -145,7 +146,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         ///     Called when [status changed].
         /// </summary>
         /// <param name="notification">if set to <c>true</c> [notification].</param>
-        internal void OnStatusChanged(bool notification)
+        internal async Task OnStatusChanged(bool notification)
         {
             if (Friends == null)
                 return;
@@ -167,7 +168,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="userid">The userid.</param>
         /// <param name="client">The client.</param>
         /// <param name="notification">if set to <c>true</c> [notification].</param>
-        internal void UpdateFriend(uint userid, GameClient client, bool notification)
+        internal async Task UpdateFriend(uint userid, GameClient client, bool notification)
         {
             if (Friends == null) return;
 
@@ -187,7 +188,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <summary>
         ///     Handles all requests.
         /// </summary>
-        internal void HandleAllRequests()
+        internal async Task HandleAllRequests()
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.RunFastQuery("DELETE FROM messenger_requests WHERE from_id = " + _userId + " OR to_id = " +
@@ -200,7 +201,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         ///     Handles the request.
         /// </summary>
         /// <param name="sender">The sender.</param>
-        internal void HandleRequest(uint sender)
+        internal async Task HandleRequest(uint sender)
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.RunFastQuery(string.Concat("DELETE FROM messenger_requests WHERE (from_id = ", _userId,
@@ -213,7 +214,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         ///     Creates the friendship.
         /// </summary>
         /// <param name="friendId">The friend identifier.</param>
-        internal void CreateFriendship(uint friendId)
+        internal async Task CreateFriendship(uint friendId)
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.RunFastQuery(
@@ -240,7 +241,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         ///     Destroys the friendship.
         /// </summary>
         /// <param name="friendId">The friend identifier.</param>
-        internal void DestroyFriendship(uint friendId)
+        internal async Task DestroyFriendship(uint friendId)
         {
             var habbo = GetClient().GetHabbo();
 
@@ -284,7 +285,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         ///     Called when [new friendship].
         /// </summary>
         /// <param name="friendId">The friend identifier.</param>
-        internal void OnNewFriendship(uint friendId)
+        internal async Task OnNewFriendship(uint friendId)
         {
             var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(friendId);
             MessengerBuddy messengerBuddy;
@@ -315,7 +316,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             Friends[friendId] = messengerBuddy;
 
-            GetClient().SendMessage(SerializeUpdate(messengerBuddy));
+            await GetClient().SendMessageAsync(SerializeUpdate(messengerBuddy));
         }
 
 
@@ -348,7 +349,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         ///     Called when [destroy friendship].
         /// </summary>
         /// <param name="friend">The friend.</param>
-        internal void OnDestroyFriendship(uint friend)
+        internal async Task OnDestroyFriendship(uint friend)
         {
             Friends.Remove(friend);
             GetClient()
@@ -361,14 +362,14 @@ namespace Oblivion.HabboHotel.Users.Messenger
             GetClient().GetMessageHandler().GetResponse().AppendInteger(1);
             GetClient().GetMessageHandler().GetResponse().AppendInteger(-1);
             GetClient().GetMessageHandler().GetResponse().AppendInteger(friend);
-            GetClient().GetMessageHandler().await SendResponse();
+            await GetClient().GetMessageHandler().SendResponse();
         }
 
         /// <summary>
         ///     Remove user from group chat
         /// </summary>
         /// <param name="groupId">The group.</param>
-        internal void OnDisableChat(int groupId)
+        internal async Task OnDisableChat(int groupId)
         {
             GetClient()
                 .GetMessageHandler()
@@ -380,7 +381,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             GetClient().GetMessageHandler().GetResponse().AppendInteger(1);
             GetClient().GetMessageHandler().GetResponse().AppendInteger(-1);
             GetClient().GetMessageHandler().GetResponse().AppendInteger(-groupId);
-            GetClient().GetMessageHandler().await SendResponse();
+            await GetClient().GetMessageHandler().SendResponse();
         }
 
 
@@ -391,7 +392,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="userQuery">The user query.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool RequestBuddy(string userQuery)
+        internal async Task<bool> RequestBuddy(string userQuery)
         {
             var client = GetClient();
 
@@ -401,7 +402,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             }
             if (_lastRequest + 3 >= Oblivion.GetUnixTimeStamp())
             {
-                client.SendNotif("Espere um pouco!");
+                await client.SendNotifyAsync("Espere um pouco!");
                 return false;
             }
 
@@ -451,7 +452,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             if (RequestExists(userId))
             {
-                client.SendNotif("Ya le has enviado una petición anteriormente.");
+                await client.SendNotifyAsync("Ya le has enviado una petición anteriormente.");
                 return true;
             }
 
@@ -483,7 +484,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="friendId">The friend identifier.</param>
         /// <param name="friendRequest"></param>
-        internal void OnNewRequest(uint friendId, MessengerRequest friendRequest)
+        internal async Task OnNewRequest(uint friendId, MessengerRequest friendRequest)
         {
             if (!Requests.ContainsKey(friendId))
                 Requests.Add(friendId, friendRequest);
@@ -494,7 +495,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="gp">To identifier.</param>
         /// <param name="message">The message.</param>
-        internal void SendInstantMessage(Guild gp, string message)
+        internal async Task SendInstantMessage(Guild gp, string message)
         {
             if (!BobbaFilter.CanTalk(GetClient(), message))
             {
@@ -530,7 +531,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <summary>
         /// send the instant invite for everyone
         /// </summary>
-        internal void SendInstantInviteForAll(string msg)
+        internal async Task SendInstantInviteForAll(string msg)
         {
             var session = GetClient();
             if (session?.GetHabbo() == null)
@@ -555,7 +556,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="toId">To identifier.</param>
         /// <param name="message">The message.</param>
-        internal void SendInstantMessage(uint toId, string message)
+        internal async Task SendInstantMessage(uint toId, string message)
         {
             if (!BobbaFilter.CanTalk(GetClient(), message))
             {
@@ -622,14 +623,14 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="convoId">The convo identifier.</param>
-        internal void DeliverInstantMessage(string message, uint convoId)
+        internal async Task DeliverInstantMessage(string message, uint convoId)
         {
             using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleChatMessageComposer")))
             {
                 serverMessage.AppendInteger(convoId);
                 serverMessage.AppendString(message);
                 serverMessage.AppendInteger(0);
-                GetClient().SendMessage(serverMessage);
+                await GetClient().SendMessageAsync(serverMessage);
             }
         }
 
@@ -638,7 +639,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="GroupId">the group id.</param>
-        internal void DeliverInstantMessage(int GroupId, string message, int UserId, string Username,
+        internal async Task DeliverInstantMessage(int GroupId, string message, int UserId, string Username,
             string figure)
         {
             using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleChatMessageComposer")))
@@ -647,7 +648,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 serverMessage.AppendString(message);
                 serverMessage.AppendInteger(0);
                 serverMessage.AppendString(Username + "/" + figure + "/" + UserId);
-                GetClient().SendMessage(serverMessage);
+                await GetClient().SendMessageAsync(serverMessage);
             }
         }
 
@@ -656,7 +657,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="errorId">The error identifier.</param>
         /// <param name="conversationId">The conversation identifier.</param>
-        internal void DeliverInstantMessageError(int errorId, uint conversationId)
+        internal async Task DeliverInstantMessageError(int errorId, uint conversationId)
         {
             using (var serverMessage =
                 new ServerMessage(LibraryParser.OutgoingRequest("ConsoleChatErrorMessageComposer")))
@@ -664,7 +665,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 serverMessage.AppendInteger(errorId);
                 serverMessage.AppendInteger(conversationId);
                 serverMessage.AppendString("");
-                GetClient().SendMessage(serverMessage);
+                await GetClient().SendMessageAsync(serverMessage);
             }
         }
 

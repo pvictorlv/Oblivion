@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Models;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -6,7 +7,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorFreezeTimer : FurniInteractorModel
     {
-        public override void OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             if (!item.GetRoom().CheckRights(session))
                 return;
@@ -71,14 +72,14 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     item.UpdateNeeded = !item.UpdateNeeded;
 
                     if (item.UpdateNeeded)
-                        item.GetRoom().GetFreeze().StartGame();
+                        await item.GetRoom().GetFreeze().StartGame();
 //                    item.GetRoom().GetSoccer().StartGame();
                     item.PendingReset = true;
                 }
             }
 
             item.ExtraData = num.ToString();
-            item.UpdateState();
+            await item.UpdateState();
         }
     }
 }

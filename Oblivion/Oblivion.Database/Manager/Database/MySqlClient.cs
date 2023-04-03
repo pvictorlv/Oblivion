@@ -1,5 +1,6 @@
 #region
 
+using System.Threading.Tasks;
 using Oblivion.Database.Manager.Database.Session_Details;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using MySqlConnector;
@@ -23,6 +24,11 @@ namespace Oblivion.Database.Manager.Database
         {
             _mySqlConnection.Open();
         }
+        
+        public Task ConnectAsync()
+        {
+            return _mySqlConnection.OpenAsync();
+        }
 
         public void Disconnect()
         {
@@ -33,6 +39,18 @@ namespace Oblivion.Database.Manager.Database
             catch
             {
             }
+        }
+        public Task DisconnectAsync()
+        {
+            try
+            {
+                return _mySqlConnection.CloseAsync();
+            }
+            catch
+            {
+            }
+
+            return Task.CompletedTask;
         }
 
         public void Dispose()

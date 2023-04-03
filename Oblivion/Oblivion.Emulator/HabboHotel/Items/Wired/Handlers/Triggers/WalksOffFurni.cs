@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -59,7 +60,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
 
         public bool Disposed { get; set; }
 
-        public bool Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             if (stuff.Length < 2) return false;
 

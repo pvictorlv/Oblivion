@@ -19,7 +19,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 serverMessage.AppendString(item.Id.ToString());
                 serverMessage.AppendInteger(0);
                 serverMessage.AppendString("0");
-                user.GetClient().SendMessage(serverMessage);
+                await user.GetClient().SendMessageAsync(serverMessage);
                 user.OnCampingTent = false;
             }
         }
@@ -40,7 +40,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 serverMessage22.AppendString(item.Id.ToString());
                 serverMessage22.AppendInteger(0);
                 serverMessage22.AppendString("1");
-                user.GetClient().SendMessage(serverMessage22);
+                await user.GetClient().SendMessageAsync(serverMessage22);
                 user.OnCampingTent = true;
                 user.LastItem = item.Id;
                 user.OnCampingTent = true;

@@ -43,7 +43,7 @@ namespace Oblivion.HabboHotel.Achievements
         ///     Loads the achievements.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal void LoadAchievements(IQueryAdapter dbClient)
+        internal async Task LoadAchievements(IQueryAdapter dbClient)
         {
             Achievements.Clear();
 
@@ -76,7 +76,7 @@ namespace Oblivion.HabboHotel.Achievements
         /// </summary>
         /// <param name="session">The session.</param>
         /// <param name="message">The message.</param>
-        internal void GetList(GameClient session, ClientMessage message)
+        internal async Task GetList(GameClient session, ClientMessage message)
         {
             session.SendMessage(AchievementListComposer.Compose(session, Achievements.Values));
         }
@@ -85,7 +85,7 @@ namespace Oblivion.HabboHotel.Achievements
         ///     Tries the progress login achievements.
         /// </summary>
         /// <param name="session">The session.</param>
-        internal void TryProgressLoginAchievements(GameClient session)
+        internal async Task TryProgressLoginAchievements(GameClient session)
         {
             if (session.GetHabbo() == null)
                 return;
@@ -108,7 +108,7 @@ namespace Oblivion.HabboHotel.Achievements
         ///     Tries the progress registration achievements.
         /// </summary>
         /// <param name="session">The session.</param>
-        internal void TryProgressRegistrationAchievements(GameClient session)
+        internal async Task TryProgressRegistrationAchievements(GameClient session)
         {
             if (session.GetHabbo() == null)
                 return;

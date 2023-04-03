@@ -12,7 +12,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Calls the guide.
         /// </summary>
-        internal void CallGuide()
+        internal async Task CallGuide()
         {
             Request.GetBool();
 
@@ -44,7 +44,7 @@ namespace Oblivion.Messages.Handlers
             onGuideSessionAttached.AppendInteger(userId);
             onGuideSessionAttached.AppendString(message);
             onGuideSessionAttached.AppendInteger(30);
-            Session.SendMessage(onGuideSessionAttached);
+            await Session.SendMessageAsync(onGuideSessionAttached);
 
             lock (guide)
             {
@@ -65,7 +65,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Answers the guide request.
         /// </summary>
-        internal void AnswerGuideRequest()
+        internal async Task AnswerGuideRequest()
         {
             var state = Request.GetBool();
 
@@ -82,13 +82,13 @@ namespace Oblivion.Messages.Handlers
             message.AppendString(Session.GetHabbo().UserName);
             message.AppendString(Session.GetHabbo().Look);
             requester.SendMessage(message);
-            Session.SendMessage(message);
+            await Session.SendMessageAsync(message);
         }
 
         /// <summary>
         /// Opens the guide tool.
         /// </summary>
-        internal void OpenGuideTool()
+        internal async Task OpenGuideTool()
         {
             var guideManager = Oblivion.GetGame().GetGuideManager();
             var onDuty = Request.GetBool();
@@ -114,7 +114,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Invites to room.
         /// </summary>
-        internal void InviteToRoom()
+        internal async Task InviteToRoom()
         {
             var requester = Session.GetHabbo().GuideOtherUser;
 
@@ -134,13 +134,13 @@ namespace Oblivion.Messages.Handlers
             }
 
             requester.SendMessage(message);
-            Session.SendMessage(message);
+            await Session.SendMessageAsync(message);
         }
 
         /// <summary>
         /// Visits the room.
         /// </summary>
-        internal void VisitRoom()
+        internal async Task VisitRoom()
         {
             if (Session.GetHabbo().GuideOtherUser == null)
                 return;
@@ -148,13 +148,13 @@ namespace Oblivion.Messages.Handlers
             var requester = Session.GetHabbo().GuideOtherUser;
             var visitRoom = new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
             visitRoom.AppendInteger(requester.GetHabbo().CurrentRoomId);
-            Session.SendMessage(visitRoom);
+            await Session.SendMessageAsync(visitRoom);
         }
 
         /// <summary>
         /// Guides the speak.
         /// </summary>
-        internal void GuideSpeak()
+        internal async Task GuideSpeak()
         {
             var message = Request.GetString();
             var requester = Session.GetHabbo().GuideOtherUser;
@@ -162,14 +162,14 @@ namespace Oblivion.Messages.Handlers
             messageC.AppendString(message);
             messageC.AppendInteger(Session.GetHabbo().Id);
             requester.SendMessage(messageC);
-            Session.SendMessage(messageC);
+            await Session.SendMessageAsync(messageC);
         }
 
         /// <summary>
         /// BETA
         /// Closes the guide request.
         /// </summary>
-        internal void CloseGuideRequest()
+        internal async Task CloseGuideRequest()
         {
             //Request.GetBool();
 
@@ -183,11 +183,11 @@ namespace Oblivion.Messages.Handlers
             /* user - close session */
             var message2 = new ServerMessage(LibraryParser.OutgoingRequest("OnGuideSessionDetachedMessageComposer"));
             message.AppendInteger(0);
-            Session.SendMessage(message2);
+            await Session.SendMessageAsync(message2);
 
             /* user - detach session */
             var message3 = new ServerMessage(LibraryParser.OutgoingRequest("OnGuideSessionDetachedMessageComposer"));
-            Session.SendMessage(message3);
+            await Session.SendMessageAsync(message3);
 
             /* guide - detach session */
             var message4 = new ServerMessage(LibraryParser.OutgoingRequest("OnGuideSessionDetachedMessageComposer"));
@@ -203,7 +203,7 @@ namespace Oblivion.Messages.Handlers
         /// Cancels the call guide.
         /// BETA
         /// </summary>
-        internal void CancelCallGuide()
+        internal async Task CancelCallGuide()
         {
             //Response.Init(3485);
             //await SendResponse();
@@ -215,18 +215,18 @@ namespace Oblivion.Messages.Handlers
             /* user - cancell session */
             var message = new ServerMessage(LibraryParser.OutgoingRequest("OnGuideSessionDetachedMessageComposer"));
             message.AppendInteger(2);
-            Session.SendMessage(message);
+            await Session.SendMessageAsync(message);
 
         }
 
         /// <summary>
         /// Guides the feedback.
         /// </summary>
-        internal void GuideFeedback()
+        internal async Task GuideFeedback()
         {
             var message = new ServerMessage(LibraryParser.OutgoingRequest("OnGuideSessionDetachedMessageComposer"));
 
-            Session.SendMessage(message);
+            await Session.SendMessageAsync(message);
 
             Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_GuideFeedbackGiver", 1);
         }
@@ -234,7 +234,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Ambassadors the alert.
         /// </summary>
-        internal void AmbassadorAlert()
+        internal async Task AmbassadorAlert()
         {
             if (Session.GetHabbo().Rank < Convert.ToUInt32(Oblivion.GetDbConfig().DbData["ambassador.minrank"]))
                 return;

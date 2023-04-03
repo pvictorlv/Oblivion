@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.Events;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -82,9 +83,10 @@ namespace Oblivion.HabboHotel.Rooms
 
         internal RoomCompetitionManager GetCompetitionManager() => _competitionManager;
 
-        internal void LoadCompetitionManager()
+        internal async Task LoadCompetitionManager()
         {
             _competitionManager = new RoomCompetitionManager();
+            await _competitionManager.RefreshCompetitions();
         }
 
         /// <summary>
@@ -106,14 +108,14 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         /// <param name="roomId">The room identifier.</param>
         /// <returns>RoomData.</returns>
-        internal RoomData GenerateNullableRoomData(uint roomId)
+        internal async Task<RoomData> GenerateNullableRoomData(uint roomId)
         {
-            var data = GenerateRoomData(roomId);
+            var data = await GenerateRoomData(roomId);
             if (data != null)
                 return data;
 
             data = new RoomData();
-            data.FillNull(roomId);
+            await data.FillNull(roomId);
             return data;
         }
 
@@ -122,7 +124,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         /// <param name="roomId">The room identifier.</param>
         /// <returns>RoomData.</returns>
-        internal RoomData GenerateRoomData(uint roomId)
+        internal async Task<RoomData> GenerateRoomData(uint roomId)
         {
             if (LoadedRoomData.TryGetValue(roomId, out var room))
             {
@@ -143,7 +145,7 @@ namespace Oblivion.HabboHotel.Rooms
                 if (dataRow == null)
                     return null;
 
-                roomData.Fill(dataRow);
+                await roomData.Fill(dataRow);
                 LoadedRoomData.TryAdd(roomId, roomData);
             }
 
@@ -162,7 +164,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="id">The identifier.</param>
         /// <param name="forceLoad"></param>
         /// <returns>Room.</returns>
-        internal Room LoadRoom(uint id, bool forceLoad = false)
+        internal async Task<Room> LoadRoom(uint id, bool forceLoad = false)
         {
             try
             {
@@ -170,7 +172,7 @@ namespace Oblivion.HabboHotel.Rooms
                 if (data != null)
                     return data;
 
-                var roomData = GenerateRoomData(id);
+                var roomData = await GenerateRoomData(id);
                 if (roomData == null)
                     return null;
 
@@ -178,7 +180,7 @@ namespace Oblivion.HabboHotel.Rooms
 
                 LoadedRooms.AddOrUpdate(id, room, (key, value) => room);
 
-                room.Start(roomData, forceLoad);
+                await room.Start(roomData, forceLoad);
                 
                 return room;
             }
@@ -189,7 +191,7 @@ namespace Oblivion.HabboHotel.Rooms
             }
         }
 
-        internal void RemoveRoomData(uint id) => LoadedRoomData.TryRemove(id, out _);
+        internal async Task RemoveRoomData(uint id) => LoadedRoomData.TryRemove(id, out _);
 
         /// <summary>
         ///     Fetches the room data.
@@ -230,7 +232,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="maxVisitors">The maximum visitors.</param>
         /// <param name="tradeState">State of the trade.</param>
         /// <returns>RoomData.</returns>
-        internal RoomData CreateRoom(GameClient session, string name, string desc, string model, int category,
+        internal async Task<RoomData> CreateRoom(GameClient session, string name, string desc, string model, int category,
             int maxVisitors, int tradeState)
         {
             uint roomId;
@@ -245,10 +247,10 @@ namespace Oblivion.HabboHotel.Rooms
                 dbClient.AddParameter("cat", category);
                 dbClient.AddParameter("usmax", maxVisitors);
                 dbClient.AddParameter("tstate", tradeState.ToString());
-                roomId = (uint) dbClient.InsertQuery();
+                roomId = (uint) await dbClient.InsertQueryAsync();
             }
 
-            var data = GenerateRoomData(roomId);
+            var data = await GenerateRoomData(roomId);
 
             session.GetHabbo().Data.Rooms.Add(roomId);
             return data;
@@ -308,7 +310,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <summary>
         ///     Called when [cycle].
         /// </summary>
-        internal void OnCycle()
+        internal async Task OnCycle()
         {
             try
             {
@@ -337,7 +339,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Queues the active room update.
         /// </summary>
         /// <param name="data">The data.</param>
-        internal void QueueActiveRoomUpdate(RoomData data)
+        internal async Task QueueActiveRoomUpdate(RoomData data)
         {
             lock (_activeRoomsUpdateQueue.SyncRoot)
             {
@@ -349,7 +351,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Queues the active room add.
         /// </summary>
         /// <param name="data">The data.</param>
-        internal void QueueActiveRoomAdd(RoomData data)
+        internal async Task QueueActiveRoomAdd(RoomData data)
         {
             lock (_activeRoomsAddQueue.SyncRoot)
             {
@@ -361,7 +363,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Queues the active room remove.
         /// </summary>
         /// <param name="data">The data.</param>
-        internal void QueueActiveRoomRemove(RoomData data)
+        internal async Task QueueActiveRoomRemove(RoomData data)
         {
             lock (ActiveRoomsRemoveQueue.SyncRoot)
             {
@@ -372,7 +374,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <summary>
         ///     Removes all rooms.
         /// </summary>
-        internal void RemoveAllRooms()
+        internal async Task RemoveAllRooms()
         {
             foreach (var current in LoadedRooms.Values)
             {
@@ -394,7 +396,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         /// <param name="room">The room.</param>
         /// <param name="reason">The reason.</param>
-        internal void UnloadRoom(Room room, string reason)
+        internal async Task UnloadRoom(Room room, string reason)
         {
             if (room?.RoomData == null || room.Disposed)
                 return;

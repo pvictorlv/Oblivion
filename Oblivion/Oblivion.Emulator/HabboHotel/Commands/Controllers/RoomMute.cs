@@ -34,9 +34,9 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var message = new ServerMessage(LibraryParser.OutgoingRequest("AlertNotificationMessageComposer"));
             message.AppendString(string.Format("The room was muted due to:\r{0}", string.Join(" ", pms)));
             message.AppendString(string.Empty);
-            room.SendMessage(message);*/
+            await room.SendMessage(message);*/
 
-            room.SendMessage(GameClient.GetBytesNotif(
+            await room.SendMessage(GameClient.GetBytesNotif(
                 $"Este quarto foi silenciado pelo motivo:\r{string.Join(" ", pms)}"));
 
             Oblivion.GetGame()

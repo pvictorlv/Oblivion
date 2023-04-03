@@ -88,7 +88,7 @@ namespace Oblivion.HabboHotel.Polls
         ///     Serializes the specified message.
         /// </summary>
         /// <param name="message">The message.</param>
-        internal void Serialize(ServerMessage message)
+        internal async Task Serialize(ServerMessage message)
         {
             message.AppendInteger(Id);
             message.AppendString(string.Empty); //?

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Datas;
@@ -769,7 +770,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         internal IFurniInteractor Interactor;
 
 
-        internal void SetState(int x, int y, double z)
+        internal async Task SetState(int x, int y, double z)
         {
             SetState(x, y, z, Gamemap.GetAffectedTiles(GetBaseItem().Length,
                 GetBaseItem().Width, x, y, Rot));
@@ -825,7 +826,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <summary>
         ///     Processes the updates.
         /// </summary>
-        internal void ProcessUpdates()
+        internal async Task ProcessUpdates()
         {
             UpdateCounter--;
             if (UpdateCounter <= 0 || IsTrans)
@@ -983,7 +984,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                                     LibraryParser.OutgoingRequest("RoomForwardMessageComposer")))
                                             {
                                                 roomFwd.AppendInteger(aHopper);
-                                                roomUser4.GetClient().SendMessage(roomFwd);
+                                                await roomUser4.GetClient().SendMessageAsync(roomFwd);
                                             }
 
                                             InteractingUser = 0u;
@@ -1255,7 +1256,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                 InteractionCountHelper = 0;
                                 if (!GetRoom().GetBanzai().IsBanzaiActive) break;
                                 ExtraData = num4.ToString();
-                                UpdateState();
+                                await UpdateState();
                             }
                             else InteractionCountHelper += 1;
 
@@ -1360,7 +1361,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             clientByUserId.GetMessageHandler()
                                 .GetResponse()
                                 .AppendInteger(clientByUserId.GetHabbo().AchievementPoints);
-                            clientByUserId.GetMessageHandler().await SendResponse();
+                            await clientByUserId.GetMessageHandler().SendResponse();
 
                             using (var serverMessage = new ServerMessage())
                             {
@@ -1370,7 +1371,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                 serverMessage.AppendString(clientByUserId.GetHabbo().Gender.ToLower());
                                 serverMessage.AppendString(clientByUserId.GetHabbo().Motto);
                                 serverMessage.AppendInteger(clientByUserId.GetHabbo().AchievementPoints);
-                                GetRoom().SendMessage(serverMessage);
+                                await GetRoom().SendMessageAsync(serverMessage);
                             }
 
                             return;
@@ -1451,7 +1452,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// </summary>
         /// <param name="cycles">The cycles.</param>
         /// <param name="setUpdate">if set to <c>true</c> [set update].</param>
-        internal void ReqUpdate(int cycles, bool setUpdate)
+        internal async Task ReqUpdate(int cycles, bool setUpdate)
         {
             UpdateCounter = cycles;
             if (setUpdate) UpdateNeeded = true;
@@ -1467,9 +1468,9 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <summary>
         ///     Updates the state.
         /// </summary>
-        internal void UpdateState()
+        internal async Task UpdateState()
         {
-            UpdateState(true, true);
+            await UpdateState(true, true);
         }
 
         /// <summary>
@@ -1477,7 +1478,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// </summary>
         /// <param name="inDb">if set to <c>true</c> [in database].</param>
         /// <param name="inRoom">if set to <c>true</c> [in room].</param>
-        internal void UpdateState(bool inDb, bool inRoom)
+        internal async Task UpdateState(bool inDb, bool inRoom)
         {
             //todo: recode to new inventory system :)
             if (_mRoom == null) return;
@@ -1499,7 +1500,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             }
 
             if (inDb)
-                GetRoom().GetRoomItemHandler().AddOrUpdateItem(Id);
+                await GetRoom().GetRoomItemHandler().AddOrUpdateItem(Id);
             if (!inRoom) return;
             ServerMessage serverMessage;
             if (!IsWallItem)
@@ -1580,7 +1581,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                 Serialize(serverMessage);
             }
 
-            GetRoom().SendMessage(serverMessage);
+            await GetRoom().SendMessage(serverMessage);
         }
 
         /// <summary>
@@ -1904,7 +1905,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         ///     Users the walks on furni.
         /// </summary>
         /// <param name="user">The user.</param>
-        internal void UserWalksOnFurni(RoomUser user, bool fromWired = false)
+        internal async Task UserWalksOnFurni(RoomUser user, bool fromWired = false)
         {
             if (!fromWired && GetRoom().GotWireds())
             {
@@ -1919,7 +1920,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         ///     Users the walks off furni.
         /// </summary>
         /// <param name="user">The user.</param>
-        internal void UserWalksOffFurni(RoomUser user)
+        internal async Task UserWalksOffFurni(RoomUser user)
         {
             Interactor.OnUserWalkOff(user.GetClient(), this, user);
 

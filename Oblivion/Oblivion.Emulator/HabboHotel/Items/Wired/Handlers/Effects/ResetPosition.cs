@@ -175,7 +175,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             }
 
         }
-        public bool Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             _mNext = Oblivion.Now() + Delay;
             Requested = true;

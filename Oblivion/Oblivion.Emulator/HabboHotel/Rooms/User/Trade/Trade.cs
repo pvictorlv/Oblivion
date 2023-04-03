@@ -108,7 +108,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <param name="item">The item.</param>
-        internal void OfferItem(uint userId, UserItem item)
+        internal async Task OfferItem(uint userId, UserItem item)
         {
             var tradeUser = GetTradeUser(userId);
             if (tradeUser == null || item == null || !item.BaseItem.AllowTrade || tradeUser.HasAccepted ||
@@ -129,7 +129,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <param name="item">The item.</param>
-        internal void TakeBackItem(uint userId, UserItem item)
+        internal async Task TakeBackItem(uint userId, UserItem item)
         {
             var tradeUser = GetTradeUser(userId);
             if (tradeUser == null || item == null || tradeUser.HasAccepted || _tradeStage != 1)
@@ -145,7 +145,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         ///     Accepts the specified user identifier.
         /// </summary>
         /// <param name="userId">The user identifier.</param>
-        internal void Accept(uint userId)
+        internal async Task Accept(uint userId)
         {
             var tradeUser = GetTradeUser(userId);
             if (tradeUser == null || _tradeStage != 1)
@@ -170,7 +170,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         ///     Unaccepts the specified user identifier.
         /// </summary>
         /// <param name="userId">The user identifier.</param>
-        internal void Unaccept(uint userId)
+        internal async Task Unaccept(uint userId)
         {
             var tradeUser = GetTradeUser(userId);
             if (tradeUser == null || _tradeStage != 1 || AllUsersAccepted)
@@ -188,7 +188,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         ///     Completes the trade.
         /// </summary>
         /// <param name="userId">The user identifier.</param>
-        internal void CompleteTrade(uint userId)
+        internal async Task CompleteTrade(uint userId)
         {
             var tradeUser = GetTradeUser(userId);
             if (tradeUser == null || _tradeStage != 2)
@@ -211,7 +211,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         /// <summary>
         ///     Clears the accepted.
         /// </summary>
-        internal void ClearAccepted()
+        internal async Task ClearAccepted()
         {
             var users = _users;
             /* TODO CHECK */ foreach (var tradeUser in users)
@@ -223,7 +223,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         /// <summary>
         ///     Updates the trade window.
         /// </summary>
-        internal void UpdateTradeWindow()
+        internal async Task UpdateTradeWindow()
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("TradeUpdateMessageComposer"));
             var firstUser = _users.First();
@@ -284,7 +284,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         /// <summary>
         ///     Delivers the items.
         /// </summary>
-        internal void DeliverItems()
+        internal async Task DeliverItems()
         {
             var userOne = GetTradeUser(_oneId);
             var userTwo = GetTradeUser(_twoId);
@@ -347,7 +347,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             {
                 serverMessage.AppendInteger(current6.VirtualId);
             }
-            userTwo.GetClient().SendMessage(serverMessage);
+            userTwo.await GetClient().SendMessageAsync(serverMessage);
             var serverMessage2 = new ServerMessage(LibraryParser.OutgoingRequest("NewInventoryObjectMessageComposer"));
             serverMessage2.AppendInteger(1);
             i = 1;
@@ -361,7 +361,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             {
                 serverMessage2.AppendInteger(current8.VirtualId);
             }
-            userOne.GetClient().SendMessage(serverMessage2);
+            userOne.await GetClient().SendMessageAsync(serverMessage2);
             userOne.GetClient().GetHabbo().GetInventoryComponent().UpdateItems(false);
             userTwo.GetClient().GetHabbo().GetInventoryComponent().UpdateItems(false);
         }
@@ -369,7 +369,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         /// <summary>
         ///     Closes the trade clean.
         /// </summary>
-        internal void CloseTradeClean()
+        internal async Task CloseTradeClean()
         {
             {
                 /* TODO CHECK */ foreach (
@@ -387,7 +387,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         ///     Closes the trade.
         /// </summary>
         /// <param name="userId">The user identifier.</param>
-        internal void CloseTrade(uint userId)
+        internal async Task CloseTrade(uint userId)
         {
             {
                 /* TODO CHECK */ foreach (
@@ -407,7 +407,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         ///     Sends the message to users.
         /// </summary>
         /// <param name="message">The message.</param>
-        internal void SendMessageToUsers(ServerMessage message)
+        internal async Task SendMessageToUsers(ServerMessage message)
         {
             if (_users == null)
             {
@@ -417,7 +417,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             {
                 /* TODO CHECK */ foreach (var tradeUser in _users.Where(tradeUser => tradeUser?.GetClient() != null))
                 {
-                    tradeUser.GetClient().SendMessage(message);
+                    tradeawait user.GetClient().SendMessageAsync(message);
                 }
             }
         }

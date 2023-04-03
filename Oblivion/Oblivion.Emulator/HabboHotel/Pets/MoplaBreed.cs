@@ -567,7 +567,7 @@ namespace Oblivion.HabboHotel.Pets
         /// <summary>
         ///     Kills the plant.
         /// </summary>
-        internal void KillPlant()
+        internal async Task KillPlant()
         {
             LiveState = MoplaState.Dead;
             _dbUpdateNeeded = true;
@@ -578,7 +578,7 @@ namespace Oblivion.HabboHotel.Pets
         /// </summary>
         /// <param name="lastHealth">The last health.</param>
         /// <param name="untilGrown">The until grown.</param>
-        internal void OnTimerTick(DateTime lastHealth, DateTime untilGrown)
+        internal async Task OnTimerTick(DateTime lastHealth, DateTime untilGrown)
         {
             if (LiveState != 0)
                 return;
@@ -647,7 +647,7 @@ namespace Oblivion.HabboHotel.Pets
             return true;
         }
 
-        internal void UpdateInDb()
+        internal async Task UpdateInDb()
         {
             using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
             {

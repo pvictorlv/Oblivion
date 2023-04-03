@@ -54,7 +54,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
         }
 
         public bool Disposed { get; set; }
-        public bool Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 

@@ -15,7 +15,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Initializes the help tool.
         /// </summary>
-        internal void InitHelpTool()
+        internal async Task InitHelpTool()
         {
             Response.Init(LibraryParser.OutgoingRequest("OpenHelpToolMessageComposer"));
 
@@ -42,7 +42,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Submits the help ticket.
         /// </summary>
-        internal void SubmitHelpTicket()
+        internal async Task SubmitHelpTicket()
         {
             string message = Request.GetString();
             int category = Request.GetInteger();
@@ -95,7 +95,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Deletes the pending CFH.
         /// </summary>
-        internal void DeletePendingCfh()
+        internal async Task DeletePendingCfh()
         {
             if (!Oblivion.GetGame().GetModerationTool().UsersHasPendingTicket(Session.GetHabbo().Id))
                 return;
@@ -110,38 +110,38 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Mods the get user information.
         /// </summary>
-        internal void ModGetUserInfo()
+        internal async Task ModGetUserInfo()
         {
             if (Session.GetHabbo().HasFuse("fuse_mod"))
             {
                 var num = Request.GetUInteger();
 
                 if (Oblivion.GetGame().GetClientManager().GetNameById(num) != "Unknown User")
-                    Session.SendMessage(ModerationTool.SerializeUserInfo(num));
+                    await Session.SendMessageAsync(ModerationTool.SerializeUserInfo(num));
                 else
-                    Session.SendNotif(Oblivion.GetLanguage().GetVar("help_information_error"));
+                    await Session.SendNotifyAsync(Oblivion.GetLanguage().GetVar("help_information_error"));
             }
         }
 
         /// <summary>
         /// Mods the get user chatlog.
         /// </summary>
-        internal void ModGetUserChatlog()
+        internal async Task ModGetUserChatlog()
         {
             if (!Session.GetHabbo().HasFuse("fuse_chatlogs"))
                 return;
 
-            Session.SendMessage(ModerationTool.SerializeUserChatlog(Request.GetUInteger()));
+            await Session.SendMessageAsync(ModerationTool.SerializeUserChatlog(Request.GetUInteger()));
         }
 
         /// <summary>
         /// Mods the get room chatlog.
         /// </summary>
-        internal void ModGetRoomChatlog()
+        internal async Task ModGetRoomChatlog()
         {
             if (!Session.GetHabbo().HasFuse("fuse_chatlogs"))
             {
-                Session.SendNotif(Oblivion.GetLanguage().GetVar("help_information_error_rank_low"));
+                await Session.SendNotifyAsync(Oblivion.GetLanguage().GetVar("help_information_error_rank_low"));
                 return;
             }
 
@@ -149,13 +149,13 @@ namespace Oblivion.Messages.Handlers
             var roomId = Request.GetUInteger();
 
             if (Oblivion.GetGame().GetRoomManager().GetRoom(roomId) != null)
-                Session.SendMessage(ModerationTool.SerializeRoomChatlog(roomId));
+                await Session.SendMessageAsync(ModerationTool.SerializeRoomChatlog(roomId));
         }
 
         /// <summary>
         /// Mods the get room tool.
         /// </summary>
-        internal void ModGetRoomTool()
+        internal async Task ModGetRoomTool()
         {
             if (!Session.GetHabbo().HasFuse("fuse_mod"))
                 return;
@@ -163,13 +163,13 @@ namespace Oblivion.Messages.Handlers
             var roomId = Request.GetUInteger();
             var data = Oblivion.GetGame().GetRoomManager().GenerateNullableRoomData(roomId);
 
-            Session.SendMessage(ModerationTool.SerializeRoomTool(data));
+            await Session.SendMessageAsync(ModerationTool.SerializeRoomTool(data));
         }
 
         /// <summary>
         /// Mods the pick ticket.
         /// </summary>
-        internal void ModPickTicket()
+        internal async Task ModPickTicket()
         {
             if (!Session.GetHabbo().HasFuse("fuse_mod"))
                 return;
@@ -183,7 +183,7 @@ namespace Oblivion.Messages.Handlers
         ///<summary>
         ///Mods the release ticket.
         ///</summary>
-        internal void ModReleaseTicket()
+        internal async Task ModReleaseTicket()
         {
             if (!Session.GetHabbo().HasFuse("fuse_mod"))
                 return;
@@ -197,7 +197,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Mods the close ticket.
         /// </summary>
-        internal void ModCloseTicket()
+        internal async Task ModCloseTicket()
         {
             if (!Session.GetHabbo().HasFuse("fuse_mod"))
                 return;
@@ -217,7 +217,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Mods the get ticket chatlog.
         /// </summary>
-        internal void ModGetTicketChatlog()
+        internal async Task ModGetTicketChatlog()
         {
             if (!Session.GetHabbo().HasFuse("fuse_mod"))
                 return;
@@ -232,27 +232,27 @@ namespace Oblivion.Messages.Handlers
             if (roomData == null)
                 return;
 
-            Session.SendMessage(ModerationTool.SerializeTicketChatlog(ticket, roomData, ticket.Timestamp));
+            await Session.SendMessageAsync(ModerationTool.SerializeTicketChatlog(ticket, roomData, ticket.Timestamp));
         }
 
         /// <summary>
         /// Mods the get room visits.
         /// </summary>
-        internal void ModGetRoomVisits()
+        internal async Task ModGetRoomVisits()
         {
             if (Session.GetHabbo().HasFuse("fuse_mod"))
             {
                 uint userId = Request.GetUInteger();
 
                 if (userId > 0)
-                    Session.SendMessage(ModerationTool.SerializeRoomVisits(userId));
+                    await Session.SendMessageAsync(ModerationTool.SerializeRoomVisits(userId));
             }
         }
 
         /// <summary>
         /// Mods the send room alert.
         /// </summary>
-        internal void ModSendRoomAlert()
+        internal async Task ModSendRoomAlert()
         {
             if (!Session.GetHabbo().HasFuse("fuse_alert"))
                 return;
@@ -279,7 +279,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Mods the perform room action.
         /// </summary>
-        internal void ModPerformRoomAction()
+        internal async Task ModPerformRoomAction()
         {
             if (!Session.GetHabbo().HasFuse("fuse_mod"))
                 return;
@@ -295,7 +295,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Mods the send user caution.
         /// </summary>
-        internal void ModSendUserCaution()
+        internal async Task ModSendUserCaution()
         {
             if (!Session.GetHabbo().HasFuse("fuse_alert"))
                 return;
@@ -309,7 +309,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Mods the send user message.
         /// </summary>
-        internal void ModSendUserMessage()
+        internal async Task ModSendUserMessage()
         {
             if (!Session.GetHabbo().HasFuse("fuse_alert"))
                 return;
@@ -323,7 +323,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Mods the mute user.
         /// </summary>
-        internal void ModMuteUser()
+        internal async Task ModMuteUser()
         {
             if (!Session.GetHabbo().HasFuse("fuse_mute"))
                 return;
@@ -339,7 +339,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Mods the lock trade.
         /// </summary>
-        internal void ModLockTrade()
+        internal async Task ModLockTrade()
         {
             if (!Session.GetHabbo().HasFuse("fuse_lock_trade"))
                 return;
@@ -354,7 +354,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Mods the kick user.
         /// </summary>
-        internal void ModKickUser()
+        internal async Task ModKickUser()
         {
             if (!Session.GetHabbo().HasFuse("fuse_kick"))
                 return;
@@ -368,7 +368,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Mods the ban user.
         /// </summary>
-        internal void ModBanUser()
+        internal async Task ModBanUser()
         {
             if (Session?.GetHabbo() == null) return;
 

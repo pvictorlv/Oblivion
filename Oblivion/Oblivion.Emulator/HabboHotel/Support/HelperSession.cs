@@ -42,7 +42,7 @@ namespace Oblivion.HabboHotel.Support
         /// </summary>
         /// <param name="responseClient">The response client.</param>
         /// <param name="response">The response.</param>
-        internal void Response(GameClient responseClient, string response)
+        internal async Task Response(GameClient responseClient, string response)
         {
         }
     }

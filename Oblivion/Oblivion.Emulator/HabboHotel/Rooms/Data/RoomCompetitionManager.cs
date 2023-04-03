@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Users;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
@@ -24,18 +25,23 @@ namespace Oblivion.HabboHotel.Rooms.Data
             RequiredFurnis = requiredFurnis.Split(';');
             Entries = new Dictionary<uint, RoomData>();
 
+        }
+
+        public async Task InitAsync()
+        {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 queryReactor.SetQuery("SELECT * FROM rooms_competitions_entries WHERE competition_id = " + Id);
                 var table = queryReactor.GetTable();
                 if (table == null) return;
-                /* TODO CHECK */ foreach (DataRow row in table.Rows)
+
+                foreach (DataRow row in table.Rows)
                 {
-                    var roomId = (uint) row["room_id"];
-                    var roomData = Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId);
+                    var roomId = (uint)row["room_id"];
+                    var roomData = await Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId);
                     if (roomData == null) return;
-                    roomData.CompetitionStatus = (int) row["status"];
-                    roomData.CompetitionVotes = (int) row["votes"];
+                    roomData.CompetitionStatus = (int)row["status"];
+                    roomData.CompetitionVotes = (int)row["votes"];
                     if (Entries.ContainsKey(roomId)) return;
                     Entries.Add(roomId, roomData);
                 }
@@ -114,10 +120,9 @@ namespace Oblivion.HabboHotel.Rooms.Data
 
         public RoomCompetitionManager()
         {
-            RefreshCompetitions();
         }
 
-        public void RefreshCompetitions()
+        public async Task RefreshCompetitions()
         {
             Competition = null;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -129,6 +134,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                     return;
 
                 Competition = new RoomCompetition((int) row["id"], (string) row["name"], (string) row["required_furnis"]);
+                await Competition.InitAsync();
             }
         }
     }

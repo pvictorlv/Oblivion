@@ -604,7 +604,7 @@ namespace Oblivion.HabboHotel.Users
         ///     Initializes the information.
         /// </summary>
         /// <param name="data">The data.</param>
-        internal void InitInformation(UserData data)
+        internal async Task InitInformation(UserData data)
         {
 //            _subscriptionManager = new SubscriptionManager(Id, data);
             _messenger = new HabboMessenger(Id);
@@ -650,7 +650,7 @@ namespace Oblivion.HabboHotel.Users
                         msg.AppendInteger(i);
                         IsFlooded = true;
                         FloodExpiryTime = Oblivion.GetUnixTimeStamp() + i;
-                        GetClient().SendMessage(msg);
+                        await GetClient().SendMessageAsync(msg);
 
                         return false;
                     }
@@ -676,7 +676,7 @@ namespace Oblivion.HabboHotel.Users
                         msg.AppendInteger(j);
                         IsFlooded = true;
                         FloodExpiryTime = Oblivion.GetUnixTimeStamp() + j;
-                        GetClient().SendMessage(msg);
+                        await GetClient().SendMessageAsync(msg);
 
                         return false;
                     }
@@ -694,7 +694,7 @@ namespace Oblivion.HabboHotel.Users
         /// </summary>
         /// <param name="client">The client.</param>
         /// <param name="data">The data.</param>
-        internal void Init(GameClient client, UserData data)
+        internal async Task Init(GameClient client, UserData data)
         {
             _mClient = client;
             _subscriptionManager = new SubscriptionManager(Id, data);
@@ -717,7 +717,7 @@ namespace Oblivion.HabboHotel.Users
         ///     Loads the data.
         /// </summary>
         /// <param name="data">The data.</param>
-        internal void LoadData(UserData data)
+        internal async Task LoadData(UserData data)
         {
             Data = data;
         }
@@ -760,7 +760,7 @@ namespace Oblivion.HabboHotel.Users
         /// <summary>
         ///     Serializes the club.
         /// </summary>
-        internal void SerializeClub()
+        internal async Task SerializeClub()
         {
             var client = GetClient();
             if (client?.GetHabbo()?.GetSubscriptionManager() == null) return;
@@ -834,7 +834,7 @@ namespace Oblivion.HabboHotel.Users
         }
 
 
-        internal void Dispose()
+        internal async Task Dispose()
         {
             _myGroups?.Clear();
             _myGroups = null;
@@ -914,7 +914,7 @@ namespace Oblivion.HabboHotel.Users
         ///     Called when [disconnect].
         /// </summary>
         /// <param name="reason">The reason.</param>
-        internal void OnDisconnect(string reason)
+        internal async Task OnDisconnect(string reason)
         {
             if (Disconnected)
                 return;
@@ -1006,7 +1006,7 @@ namespace Oblivion.HabboHotel.Users
         /// <summary>
         ///     Initializes the messenger.
         /// </summary>
-        internal void InitMessenger()
+        internal async Task InitMessenger()
         {
             var client = GetClient();
 
@@ -1126,7 +1126,7 @@ namespace Oblivion.HabboHotel.Users
         ///     Notifies the new pixels.
         /// </summary>
         /// <param name="change">The change.</param>
-        internal void NotifyNewPixels(int change)
+        internal async Task NotifyNewPixels(int change)
         {
             if (_mClient?.GetMessageHandler() == null || _mClient.GetMessageHandler().GetResponse() == null)
                 return;
@@ -1147,7 +1147,7 @@ namespace Oblivion.HabboHotel.Users
         /// <param name="isValid">if set to <c>true</c> [is valid].</param>
         /// <param name="productName">Name of the product.</param>
         /// <param name="productDescription">The product description.</param>
-        internal void NotifyVoucher(bool isValid, string productName, string productDescription)
+        internal async Task NotifyVoucher(bool isValid, string productName, string productDescription)
         {
             if (isValid)
             {
@@ -1170,7 +1170,7 @@ namespace Oblivion.HabboHotel.Users
         /// <summary>
         ///     Mutes this instance.
         /// </summary>
-        internal void Mute()
+        internal async Task Mute()
         {
             if (!Muted)
                 Muted = true;
@@ -1179,7 +1179,7 @@ namespace Oblivion.HabboHotel.Users
         /// <summary>
         ///     Uns the mute.
         /// </summary>
-        internal void UnMute()
+        internal async Task UnMute()
         {
             if (Muted)
                 GetClient().SendNotif("You were unmuted.");
@@ -1223,7 +1223,7 @@ namespace Oblivion.HabboHotel.Users
         /// <summary>
         ///     Runs the database update.
         /// </summary>
-        internal void RunDbUpdate()
+        internal async Task RunDbUpdate()
         {
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
@@ -1272,7 +1272,7 @@ namespace Oblivion.HabboHotel.Users
         /// <summary>
         ///     _s the load my groups.
         /// </summary>
-        internal void _LoadMyGroups()
+        internal async Task _LoadMyGroups()
         {
             DataTable dTable;
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())

@@ -304,7 +304,7 @@ namespace Oblivion.HabboHotel.RoomBots
         /// <returns>System.String.</returns>
         internal string GetRandomSpeech(bool mixPhrases)
         {
-            if (!RandomSpeech.Any())
+            if (RandomSpeech.Count <= 0)
                 return "";
 
             {

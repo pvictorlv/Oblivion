@@ -272,7 +272,7 @@ namespace Oblivion.HabboHotel.Groups.Interfaces
         ///     Serializes the forum root.
         /// </summary>
         /// <param name="message">The message.</param>
-        internal void SerializeForumRoot(ServerMessage message)
+        internal async Task SerializeForumRoot(ServerMessage message)
         {
             message.AppendInteger(Id);
             message.AppendString(Name);
@@ -291,7 +291,7 @@ namespace Oblivion.HabboHotel.Groups.Interfaces
         /// <summary>
         ///     Updates the forum.
         /// </summary>
-        internal void UpdateForum()
+        internal async Task UpdateForum()
         {
             if (!HasForum)
                 return;

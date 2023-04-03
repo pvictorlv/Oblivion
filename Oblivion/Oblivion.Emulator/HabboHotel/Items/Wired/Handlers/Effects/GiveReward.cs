@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -52,7 +53,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
-        public bool Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             var user = (RoomUser) stuff?[0];
             if (user?.GetClient()?.GetHabbo()?.GetBadgeComponent() == null) return false;
@@ -75,7 +76,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("WiredRewardAlertMessageComposer"));
 
                 message.AppendInteger(0);
-                user.GetClient().SendMessage(message);
+                await user.GetClient().SendMessageAsync(message);
 
                 return true;
             }
@@ -113,7 +114,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     if (user.GetClient().GetHabbo().GetBadgeComponent().HasBadge(code))
                     {
                         message.AppendInteger(1);
-                        user.GetClient().SendMessage(message);
+                        await user.GetClient().SendMessageAsync(message);
                     }
                     else
                     {
@@ -123,7 +124,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                             .GiveBadge(code, true, user.GetClient(), true);
 
                         message.AppendInteger(7);
-                        user.GetClient().SendMessage(message);
+                        await user.GetClient().SendMessageAsync(message);
                     }
                 }
                 else //item or effect
@@ -148,7 +149,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     }
 
                     message.AppendInteger(6);
-                    user.GetClient().SendMessage(message);
+                    await user.GetClient().SendMessageAsync(message);
                 }
             }
 
@@ -156,7 +157,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             {
                 var message = new ServerMessage(LibraryParser.OutgoingRequest("WiredRewardAlertMessageComposer"));
                 message.AppendInteger(4);
-                user.GetClient().SendMessage(message);
+                await user.GetClient().SendMessageAsync(message);
             }
             else if (amountLeft > 1)
             {

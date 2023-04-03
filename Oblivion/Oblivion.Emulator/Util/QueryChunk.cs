@@ -56,7 +56,7 @@ namespace Oblivion.Util
         /// Adds the query.
         /// </summary>
         /// <param name="query">The query.</param>
-        internal void AddQuery(string query)
+        internal async Task AddQuery(string query)
         {
             {
                 _queryCount++;
@@ -83,7 +83,7 @@ namespace Oblivion.Util
         /// </summary>
         /// <param name="parameterName">Name of the parameter.</param>
         /// <param name="value">The value.</param>
-        internal void AddParameter(string parameterName, object value)
+        internal async Task AddParameter(string parameterName, object value)
         {
             _parameters.Add(parameterName, value);
         }
@@ -92,7 +92,7 @@ namespace Oblivion.Util
         /// Executes the specified database client.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal void Execute(IQueryAdapter dbClient)
+        internal async Task Execute(IQueryAdapter dbClient)
         {
             if (_queryCount == 0)
                 return;
@@ -109,7 +109,7 @@ namespace Oblivion.Util
         /// Executes the specified database client with no lock.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal void ExecuteNoLock(IQueryAdapter dbClient)
+        internal async Task ExecuteNoLock(IQueryAdapter dbClient)
         {
             if (_queryCount == 0)
                 return;
@@ -127,7 +127,7 @@ namespace Oblivion.Util
         /// <summary>
         /// Disposes this instance.
         /// </summary>
-        internal void Dispose()
+        internal async Task Dispose()
         {
             _parameters.Clear();
             _queries.Clear();

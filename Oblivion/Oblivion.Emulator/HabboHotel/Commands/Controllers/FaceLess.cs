@@ -53,7 +53,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             roomUpdate.AppendString(session.GetHabbo().Gender.ToLower());
             roomUpdate.AppendString(session.GetHabbo().Motto);
             roomUpdate.AppendInteger(session.GetHabbo().AchievementPoints);
-            room.SendMessage(roomUpdate);
+            await room.SendMessage(roomUpdate);
 
             return true;
         }

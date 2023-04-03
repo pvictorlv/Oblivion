@@ -56,7 +56,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         ///     Serializes the specified request.
         /// </summary>
         /// <param name="request">The request.</param>
-        internal void Serialize(ServerMessage request)
+        internal async Task Serialize(ServerMessage request)
         {
             request.AppendInteger(From);
             request.AppendString(_userName);

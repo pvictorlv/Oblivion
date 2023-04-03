@@ -41,7 +41,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             response.AppendBool(true);
             response.AppendBool(false);
             
-            habbo.GetClient().SendMessage(response);
+            habbo.await GetClient().SendMessageAsync(response);
 
             user.GetHabbo().LastChange = 0;
             return true;

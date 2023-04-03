@@ -186,7 +186,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             /* TODO CHECK */ foreach (var user in toRemove)
             {
                 room.GetRoomUserManager().RemoveUserFromRoom(user, true, false);
-                user.GetClient().SendMessage(serverMessage);
+                await user.GetClient().SendMessageAsync(serverMessage);
             }
 
             _mItem.OnCannonActing = false;

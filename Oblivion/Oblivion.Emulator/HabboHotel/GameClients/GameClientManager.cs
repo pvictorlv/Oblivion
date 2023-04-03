@@ -135,7 +135,7 @@ namespace Oblivion.HabboHotel.GameClients
         /// <param name="linkTitle">The link title.</param>
         /// <param name="broadCast">if set to <c>true</c> [broad cast].</param>
         /// <param name="Event">if set to <c>true</c> [event].</param>
-        internal void SendSuperNotif(string title, string notice, string picture, GameClient client, string link,
+        internal async Task SendSuperNotif(string title, string notice, string picture, GameClient client, string link,
             string linkTitle, bool broadCast, bool Event)
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
@@ -193,20 +193,20 @@ namespace Oblivion.HabboHotel.GameClients
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="exclude">The exclude.</param>
-        internal void StaffAlert(ServerMessage message, uint exclude = 0u)
+        internal async Task StaffAlert(ServerMessage message, uint exclude = 0u)
         {
             var gameClients = Clients.Values.Where(x =>
                 x.GetHabbo() != null && x.GetHabbo().Rank >= Oblivion.StaffAlertMinRank && x.GetHabbo().Id != exclude);
 
             foreach (var current in gameClients)
-                current.SendMessage(message);
+                await current.SendMessageAsync(message);
         }
 
         /// <summary>
         ///     Mods the alert.
         /// </summary>
         /// <param name="message">The message.</param>
-        internal void ModAlert(ServerMessage message)
+        internal async Task ModAlert(ServerMessage message)
         {
             //var bytes = message.GetReversedBytes();
 
@@ -221,7 +221,7 @@ namespace Oblivion.HabboHotel.GameClients
         /// </summary>
         /// <param name="clientId">The client identifier.</param>
         /// <param name="connection">The connection.</param>
-        internal void CreateAndStartClient(ISession<GameClient> connection)
+        internal async Task CreateAndStartClient(ISession<GameClient> connection)
         {
             var gameClient = new GameClient(connection.Channel.Id, connection);
             gameClient.PacketParser = new GamePacketParser();
@@ -232,7 +232,7 @@ namespace Oblivion.HabboHotel.GameClients
         }
 
 
-        internal void CreateAndStartClient(IChannelHandlerContext channel)
+        internal async Task CreateAndStartClient(IChannelHandlerContext channel)
         {
             var session = new Session(channel.Channel, null);
 
@@ -260,7 +260,7 @@ namespace Oblivion.HabboHotel.GameClients
         ///     Disposes the connection.
         /// </summary>
         /// <param name="clientId">The client identifier.</param>
-        internal void DisposeConnection(IChannelId clientId)
+        internal async Task DisposeConnection(IChannelId clientId)
         {
             if (!Clients.TryRemove(clientId, out var client))
                 return;
@@ -295,7 +295,7 @@ namespace Oblivion.HabboHotel.GameClients
         ///     Logs the clones out.
         /// </summary>
         /// <param name="userId">The user identifier.</param>
-        internal void LogClonesOut(uint userId)
+        internal async Task LogClonesOut(uint userId)
         {
             var clientByUserId = GetClientByUserId(userId);
             clientByUserId?.Disconnect("user null LogClonesOut");
@@ -307,7 +307,7 @@ namespace Oblivion.HabboHotel.GameClients
         /// <param name="client">The client.</param>
         /// <param name="userId">The user identifier.</param>
         /// <param name="userName">Name of the user.</param>
-        internal void RegisterClient(GameClient client, uint userId, string userName)
+        internal async Task RegisterClient(GameClient client, uint userId, string userName)
         {
             _userNameRegister[userName.ToLower()] = client;
             _userIdRegister[userId] = client;
@@ -318,7 +318,7 @@ namespace Oblivion.HabboHotel.GameClients
         /// </summary>
         /// <param name="userid">The userid.</param>
         /// <param name="userName">The username.</param>
-        internal void UnregisterClient(uint userid, string userName)
+        internal async Task UnregisterClient(uint userid, string userName)
         {
             _userIdRegister.TryRemove(userid, out _);
             _userNameRegister.TryRemove(userName.ToLower(), out _);
@@ -330,7 +330,7 @@ namespace Oblivion.HabboHotel.GameClients
         /// <summary>
         ///     Closes all.
         /// </summary>
-        internal void CloseAll()
+        internal async Task CloseAll()
         {
             var stringBuilder = new StringBuilder();
             var flag = false;
@@ -399,7 +399,7 @@ namespace Oblivion.HabboHotel.GameClients
         /// </summary>
         /// <param name="oldName">The old name.</param>
         /// <param name="newName">The new name.</param>
-        internal void UpdateClient(string oldName, string newName)
+        internal async Task UpdateClient(string oldName, string newName)
         {
             if (!_userNameRegister.TryRemove(oldName.ToLower(), out var old))
                 return;

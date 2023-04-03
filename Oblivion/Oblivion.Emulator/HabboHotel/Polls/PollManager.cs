@@ -25,7 +25,7 @@ namespace Oblivion.HabboHotel.Polls
         /// </summary>
         /// <param name="dbClient">The database client.</param>
         /// <param name="pollLoaded">The poll loaded.</param>
-        internal void Init(IQueryAdapter dbClient, out uint pollLoaded)
+        internal async Task Init(IQueryAdapter dbClient, out uint pollLoaded)
         {
             Init(dbClient);
             pollLoaded = (uint) Polls.Count;
@@ -35,7 +35,7 @@ namespace Oblivion.HabboHotel.Polls
         ///     Initializes the specified database client.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal void Init(IQueryAdapter dbClient)
+        internal async Task Init(IQueryAdapter dbClient)
         {
             Polls.Clear();
 

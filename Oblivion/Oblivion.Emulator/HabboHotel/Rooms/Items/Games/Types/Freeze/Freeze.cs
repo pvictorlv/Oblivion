@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -62,7 +63,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
         }
         
 
-        internal void StartGame()
+        internal async Task StartGame()
         {
             GameStarted = true;
             CountTeamPoints();
@@ -80,7 +81,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
                 _room.GetGameMap().TeleportToItem(user, ExitTeleport);
         }
 
-        internal void StopGame()
+        internal async Task StopGame()
         {
             GameStarted = false;
             _room.GetGameManager().UnlockGates();
@@ -95,29 +96,25 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
                 var waveAtWin = new ServerMessage(LibraryParser.OutgoingRequest("RoomUserActionMessageComposer"));
                 waveAtWin.AppendInteger(avatar.VirtualId);
                 waveAtWin.AppendInteger(1);
-                _room.SendMessage(waveAtWin);
+                await _room.SendMessage(waveAtWin);
             }
         }
 
-        internal void ResetGame()
+        internal async Task ResetGame()
         {
-            /* TODO CHECK */ foreach (
-                var roomItem in
-                    _freezeBlocks.Values.Where(
-                        roomItem =>
-                            !string.IsNullOrEmpty(roomItem.ExtraData) &&
-                            !roomItem.GetBaseItem().InteractionType.Equals(Interaction.FreezeBlueGate) &&
-                            (!roomItem.GetBaseItem().InteractionType.Equals(Interaction.FreezeRedGate) &&
-                             !roomItem.GetBaseItem().InteractionType.Equals(Interaction.FreezeGreenGate)) &&
-                            !roomItem.GetBaseItem().InteractionType.Equals(Interaction.FreezeYellowGate)))
+            /* TODO CHECK */
+            foreach (var roomItem in _freezeBlocks.Values)
             {
-                roomItem.ExtraData = string.Empty;
-                roomItem.UpdateState(false, true);
-                _room.GetGameMap().AddItemToMap(roomItem, false);
+                if (!string.IsNullOrEmpty(roomItem.ExtraData) && !roomItem.GetBaseItem().InteractionType.Equals(Interaction.FreezeBlueGate) && (!roomItem.GetBaseItem().InteractionType.Equals(Interaction.FreezeRedGate) && !roomItem.GetBaseItem().InteractionType.Equals(Interaction.FreezeGreenGate)) && !roomItem.GetBaseItem().InteractionType.Equals(Interaction.FreezeYellowGate))
+                {
+                    roomItem.ExtraData = string.Empty;
+                    await roomItem.UpdateState(false, true);
+                    await _room.GetGameMap().AddItemToMap(roomItem, false);
+                }
             }
         }
 
-        internal void OnUserWalk(RoomUser user)
+        internal async Task OnUserWalk(RoomUser user)
         {
             if (!GameStarted || user == null || user.Team == Team.None) return;
 
@@ -131,10 +128,10 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
                 {
                     roomItem.InteractionCountHelper = 1;
                     roomItem.ExtraData = "1000";
-                    roomItem.UpdateState();
+                    await roomItem.UpdateState();
                     roomItem.InteractingUser = user.UserId;
                     roomItem.FreezePowerUp = user.BanzaiPowerUp;
-                    roomItem.ReqUpdate(4, true);
+                    await roomItem.ReqUpdate(4, true);
                     switch (user.BanzaiPowerUp)
                     {
                         case FreezePowerUp.GreenArrow:
@@ -144,16 +141,15 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
                     }
                 }
             }
-            /* TODO CHECK */ foreach (
-                var roomItem in
-                    _freezeBlocks.Values.Where(
-                        roomItem =>
-                            roomItem != null && user.X == roomItem.X && user.Y == roomItem.Y &&
-                            roomItem.FreezePowerUp != FreezePowerUp.None))
-                PickUpPowerUp(roomItem, user);
+            /* TODO CHECK */
+            foreach (var roomItem in _freezeBlocks.Values)
+            {
+                if (roomItem != null && user.X == roomItem.X && user.Y == roomItem.Y && roomItem.FreezePowerUp != FreezePowerUp.None) 
+                    PickUpPowerUp(roomItem, user);
+            }
         }
 
-        internal void OnFreezeTiles(RoomItem item, FreezePowerUp powerUp, uint userId)
+        internal async Task OnFreezeTiles(RoomItem item, FreezePowerUp powerUp, uint userId)
         {
             if (_room.GetRoomUserManager().GetRoomUserByHabbo(userId) == null || item == null) return;
 
@@ -180,27 +176,27 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
             HandleBanzaiFreezeItems(items);
         }
 
-        internal void AddFreezeTile(RoomItem item)
+        internal async Task AddFreezeTile(RoomItem item)
         {
             _freezeTiles.AddOrUpdate(item.Id, item, (k, v) => item);
         }
 
-        internal void RemoveFreezeTile(string itemId)
+        internal async Task RemoveFreezeTile(string itemId)
         {
             _freezeTiles.TryRemove(itemId, out _);
         }
 
-        internal void AddFreezeBlock(RoomItem item)
+        internal async Task AddFreezeBlock(RoomItem item)
         {
             _freezeBlocks.AddOrUpdate(item.Id, item, (k, v) => item);
         }
 
-        internal void RemoveFreezeBlock(string itemId)
+        internal async Task RemoveFreezeBlock(string itemId)
         {
             _freezeBlocks.TryRemove(itemId, out _);
         }
 
-        internal void Destroy()
+        internal async Task Destroy()
         {
             _freezeBlocks.Clear();
             _freezeTiles.Clear();
@@ -252,7 +248,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
                 serverMessage.Init(LibraryParser.OutgoingRequest("UpdateFreezeLivesMessageComposer"));
                 serverMessage.AppendInteger(roomUser.InternalRoomId);
                 serverMessage.AppendInteger(roomUser.FreezeLives);
-                roomUser.GetClient().SendMessage(serverMessage);
+                roomawait user.GetClient().SendMessageAsync(serverMessage);
             }
         }
 
@@ -346,7 +342,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
                     serverMessage.Init(LibraryParser.OutgoingRequest("UpdateFreezeLivesMessageComposer"));
                     serverMessage.AppendInteger(user.InternalRoomId);
                     serverMessage.AppendInteger(user.FreezeLives);
-                    user.GetClient().SendMessage(serverMessage);
+                    await user.GetClient().SendMessageAsync(serverMessage);
                     break;
             }
             item.FreezePowerUp = FreezePowerUp.None;
@@ -371,7 +367,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
             FreezeUser(user);
         }
 
-        private void FreezeUser(RoomUser user)
+        private async Task FreezeUser(RoomUser user)
         {
             if (user.IsBot || user.ShieldActive || user.Team == Team.None || user.Freezed)
                 return;
@@ -386,7 +382,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
                 serverMessage.Init(LibraryParser.OutgoingRequest("UpdateFreezeLivesMessageComposer"));
                 serverMessage.AppendInteger(user.InternalRoomId);
                 serverMessage.AppendInteger(user.FreezeLives);
-                user.GetClient().SendMessage(serverMessage);
+                await user.GetClient().SendMessageAsync(serverMessage);
                 user.ApplyEffect(-1);
                 _room.GetGameManager().AddPointToTeam(user.Team, -10, user);
                 var managerForFreeze = _room.GetTeamManagerForFreeze();
@@ -417,12 +413,12 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
             else
             {
                 _room.GetGameManager().AddPointToTeam(user.Team, -10, user);
-                user.ApplyEffect(12);
+                await user.ApplyEffect(12);
                 var serverMessage = new ServerMessage();
                 serverMessage.Init(LibraryParser.OutgoingRequest("UpdateFreezeLivesMessageComposer"));
                 serverMessage.AppendInteger(user.InternalRoomId);
                 serverMessage.AppendInteger(user.FreezeLives);
-                user.GetClient().SendMessage(serverMessage);
+                await user.GetClient().SendMessageAsync(serverMessage);
             }
         }
 

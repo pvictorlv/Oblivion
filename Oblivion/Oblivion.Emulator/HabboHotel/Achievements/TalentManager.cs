@@ -24,7 +24,7 @@ namespace Oblivion.HabboHotel.Achievements
         ///     Initializes the specified database client.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal void Initialize(IQueryAdapter dbClient)
+        internal async Task Initialize(IQueryAdapter dbClient)
         {
             dbClient.SetQuery("SELECT * FROM achievements_talents ORDER BY `order_num` ASC");
 

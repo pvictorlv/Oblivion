@@ -54,7 +54,7 @@ namespace Oblivion.HabboHotel.Rooms.Chat
         /// </summary>
         /// <param name="queryChunk"></param>
         /// <param name="id">Auto increment</param>
-        internal void Save(uint roomId, IQueryAdapter dbClient)
+        internal async Task Save(uint roomId, IQueryAdapter dbClient)
         {
             if (IsSaved)
                 return;
@@ -72,7 +72,7 @@ namespace Oblivion.HabboHotel.Rooms.Chat
             IsSaved = true;
         }
 
-        internal void Serialize(ref ServerMessage message)
+        internal async Task Serialize(ref ServerMessage message)
         {
             var habbo = Oblivion.GetHabboById(UserId);
             message.AppendString(TimeStamp.ToString("h:mm:ss"));

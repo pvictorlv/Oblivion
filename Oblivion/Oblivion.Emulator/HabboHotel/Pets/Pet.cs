@@ -330,7 +330,7 @@ namespace Oblivion.HabboHotel.Pets
         /// <summary>
         ///     Called when [respect].
         /// </summary>
-        internal void OnRespect()
+        internal async Task OnRespect()
         {
             {
                 Respect++;
@@ -364,7 +364,7 @@ namespace Oblivion.HabboHotel.Pets
         ///     Adds the experience.
         /// </summary>
         /// <param name="amount">The amount.</param>
-        internal void AddExperience(int amount)
+        internal async Task AddExperience(int amount)
         {
             {
                 var oldExperienceGoal = ExperienceGoal;
@@ -421,7 +421,7 @@ namespace Oblivion.HabboHotel.Pets
         ///     Pets the energy.
         /// </summary>
         /// <param name="add">if set to <c>true</c> [add].</param>
-        internal void PetEnergy(bool add)
+        internal async Task PetEnergy(bool add)
         {
             {
                 int num;
@@ -462,7 +462,7 @@ namespace Oblivion.HabboHotel.Pets
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="levelAfterName">if set to <c>true</c> [level after name].</param>
-        internal void SerializeInventory(ServerMessage message, bool levelAfterName = false)
+        internal async Task SerializeInventory(ServerMessage message, bool levelAfterName = false)
         {
             message.AppendInteger(PetId);
             message.AppendString(Name);
@@ -487,7 +487,7 @@ namespace Oblivion.HabboHotel.Pets
         /// <summary>
         ///     Manages the gestures.
         /// </summary>
-        internal void ManageGestures()
+        internal async Task ManageGestures()
         {
         }
 

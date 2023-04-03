@@ -53,7 +53,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         ///     Searializes the specified reply.
         /// </summary>
         /// <param name="reply">The reply.</param>
-        internal void Searialize(ServerMessage reply)
+        internal async Task Searialize(ServerMessage reply)
         {
             reply.AppendInteger(UserId);
             reply.AppendString(UserName);

@@ -28,7 +28,7 @@ namespace Oblivion.HabboHotel.Camera
 
         internal Item PhotoPoster => _photoPoster;
 
-        internal void Init(ItemManager itemDataManager)
+        internal async Task Init(ItemManager itemDataManager)
         {
             ConfigurationData.Data.TryGetValue("camera.path.preview", out _previewPath);
             ConfigurationData.Data.TryGetValue("camera.path.purchased", out _purchasedPath);

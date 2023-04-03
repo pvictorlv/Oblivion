@@ -1,4 +1,5 @@
-﻿using Oblivion.Collections;
+﻿using System.Threading.Tasks;
+using Oblivion.Collections;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Items.Wired.Interfaces;
@@ -42,7 +43,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
 
         public bool OtherBool { get; set; }
 
-        public bool Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
             
 
@@ -58,7 +59,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
             message.Init(LibraryParser.OutgoingRequest("DanceStatusMessageComposer"));
             message.AppendInteger(roomUser.GetClient().CurrentRoomUserId);
             message.AppendInteger(danceId);
-            roomUser.GetClient().GetHabbo().CurrentRoom.SendMessage(message);
+            await roomUser.GetClient().GetHabbo().CurrentRoom.SendMessageAsync(message);
             roomUser.DanceId = danceId;
 
             return true;

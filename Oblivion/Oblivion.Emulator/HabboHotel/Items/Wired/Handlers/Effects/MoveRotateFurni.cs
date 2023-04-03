@@ -100,7 +100,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         }
         public bool Requested;
 
-        public bool Execute(params object[] Params)
+        public Task<bool> Execute(params object[] Params)
         {
             if (Item == null || Items.Count == 0)
                 return false;

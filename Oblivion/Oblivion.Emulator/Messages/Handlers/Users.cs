@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.Quests;
 using Oblivion.HabboHotel.Quests.Composer;
@@ -22,10 +23,10 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Sends the bully report.
         /// </summary>
-        public void SendBullyReport()
+        public async Task SendBullyReport()
         {
             var reportedId = Request.GetUInteger();
-            Oblivion.GetGame()
+            await Oblivion.GetGame()
                 .GetModerationTool()
                 .SendNewTicket(Session, 104, 9, reportedId, "", new List<string>());
 
@@ -37,7 +38,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Opens the bully reporting.
         /// </summary>
-        public void OpenBullyReporting()
+        public async Task OpenBullyReporting()
         {
             Response.Init(LibraryParser.OutgoingRequest("OpenBullyReportMessageComposer"));
             Response.AppendInteger(0);
@@ -47,15 +48,15 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Opens the quests.
         /// </summary>
-        public void OpenQuests()
+        public async Task OpenQuests()
         {
-            Oblivion.GetGame().GetQuestManager().GetList(Session, Request);
+          await  Oblivion.GetGame().GetQuestManager().GetList(Session, Request);
         }
 
         /// <summary>
         /// Retrieves the citizenship.
         /// </summary>
-        internal void RetrieveCitizenship()
+        internal async Task RetrieveCitizenship()
         {
             GetResponse().Init(LibraryParser.OutgoingRequest("CitizenshipStatusMessageComposer"));
             GetResponse().AppendString(Request.GetString());
@@ -67,7 +68,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Loads the club gifts.
         /// </summary>
-        internal void LoadClubGifts()
+        internal async Task LoadClubGifts()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -79,12 +80,13 @@ namespace Oblivion.Messages.Handlers
             serverMessage.AppendInteger(0); // i
             serverMessage.AppendInteger(0); // i2
             serverMessage.AppendInteger(1);
+            await Session.SendMessageAsync(serverMessage);
         }
 
         /// <summary>
         /// Chooses the club gift.
         /// </summary>
-        internal void ChooseClubGift()
+        internal async Task ChooseClubGift()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -94,7 +96,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Gets the user tags.
         /// </summary>
-        internal void GetUserTags()
+        internal async Task GetUserTags()
         {
             var room = Session.GetHabbo().CurrentRoom;
             var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Request.GetUInteger());
@@ -110,7 +112,7 @@ namespace Oblivion.Messages.Handlers
             if (Session != roomUserByHabbo.GetClient())
                 return;
             if (Session.GetHabbo().Data.Tags.Count >= 5)
-                Oblivion.GetGame()
+                await Oblivion.GetGame()
                     .GetAchievementManager()
                     .ProgressUserAchievement(roomUserByHabbo.GetClient(), "ACH_UserTags", 5);
         }
@@ -118,7 +120,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Gets the user badges.
         /// </summary>
-        internal void GetUserBadges()
+        internal async Task GetUserBadges()
         {
             if (Session?.GetHabbo() == null) return;
 
@@ -157,7 +159,7 @@ namespace Oblivion.Messages.Handlers
                 }
 
                 msg.EndArray();
-                Session.SendMessage(msg);
+                await Session.SendMessageAsync(msg);
 //                await SendResponse();
             }
         }
@@ -165,7 +167,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Gives the respect.
         /// </summary>
-        internal void GiveRespect()
+        internal async Task GiveRespect()
         {
             var room = Session.GetHabbo().CurrentRoom;
             if (room == null || Session.GetHabbo().DailyRespectPoints <= 0)
@@ -191,20 +193,20 @@ namespace Oblivion.Messages.Handlers
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("GiveRespectsMessageComposer"));
             serverMessage.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Id);
             serverMessage.AppendInteger(roomUserByHabbo.GetClient().GetHabbo().Respect);
-            room.SendMessage(serverMessage);
+            await room.SendMessage(serverMessage);
 
             var roomUser = room.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().UserName);
             if (roomUser == null) return;
             var thumbsUp = new ServerMessage(LibraryParser.OutgoingRequest("RoomUserActionMessageComposer"));
             thumbsUp.AppendInteger(roomUser.VirtualId);
             thumbsUp.AppendInteger(7);
-            room.SendMessage(thumbsUp);
+            await room.SendMessage(thumbsUp);
         }
 
         /// <summary>
         /// Applies the effect.
         /// </summary>
-        internal void ApplyEffect()
+        internal async Task ApplyEffect()
         {
             var effectId = Request.GetInteger();
             if (Session?.GetHabbo()?.CurrentRoom == null) return;
@@ -218,7 +220,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Enables the effect.
         /// </summary>
-        internal void EnableEffect()
+        internal async Task EnableEffect()
         {
             if (Session?.GetHabbo()?.CurrentRoom == null) return;
 
@@ -243,7 +245,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Mutes the user.
         /// </summary>
-        internal void MuteUser()
+        internal async Task MuteUser()
         {
             var num = Request.GetUInteger();
             Request.GetUInteger();
@@ -282,7 +284,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Gets the user information.
         /// </summary>
-        internal void GetUserInfo()
+        internal async Task GetUserInfo()
         {
             GetResponse().Init(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
             GetResponse().AppendInteger(-1);
@@ -299,7 +301,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Gets the balance.
         /// </summary>
-        internal void GetBalance()
+        internal async Task GetBalance()
         {
             if (Session?.GetHabbo() == null) return;
 
@@ -310,7 +312,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Gets the subscription data.
         /// </summary>
-        internal void GetSubscriptionData()
+        internal async Task GetSubscriptionData()
         {
             Session.GetHabbo().SerializeClub();
         }
@@ -318,7 +320,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Loads the settings.
         /// </summary>
-        internal void LoadSettings()
+        internal async Task LoadSettings()
         {
             var preferences = Session.GetHabbo().Preferences;
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("LoadVolumeMessageComposer"));
@@ -330,13 +332,13 @@ namespace Oblivion.Messages.Handlers
             serverMessage.AppendBool(preferences.DisableCameraFollow);
             serverMessage.AppendInteger(0); // collapse friends (3 = no)
             serverMessage.AppendInteger(preferences.ChatColor); //bubble
-            Session.SendMessage(serverMessage);
+            await Session.SendMessageAsync(serverMessage);
         }
 
         /// <summary>
         /// Saves the settings.
         /// </summary>
-        internal void SaveSettings()
+        internal async Task SaveSettings()
         {
             var num = Request.GetInteger();
             var num2 = Request.GetInteger();
@@ -347,19 +349,19 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Sets the chat preferrence.
         /// </summary>
-        internal void SetChatPreferrence()
+        internal async Task SetChatPreferrence()
         {
             bool enable = Request.GetBool();
             Session.GetHabbo().Preferences.PreferOldChat = enable;
         }
 
-        internal void SetInvitationsPreference()
+        internal async Task SetInvitationsPreference()
         {
             bool enable = Request.GetBool();
             Session.GetHabbo().Preferences.IgnoreRoomInvite = enable;
         }
 
-        internal void SetRoomCameraPreferences()
+        internal async Task SetRoomCameraPreferences()
         {
             bool enable = Request.GetBool();
             Session.GetHabbo().Preferences.DisableCameraFollow = enable;
@@ -368,7 +370,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Gets the badges.
         /// </summary>
-        internal void GetBadges()
+        internal async Task GetBadges()
         {
             Session?.SendMessage(Session?.GetHabbo()?.GetBadgeComponent()?.Serialize());
         }
@@ -376,7 +378,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Updates the badges.
         /// </summary>
-        internal void UpdateBadges()
+        internal async Task UpdateBadges()
         {
             Session.GetHabbo().GetBadgeComponent().ResetSlots();
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -428,13 +430,13 @@ namespace Oblivion.Messages.Handlers
                 return;
             }
 
-            Session.SendMessage(serverMessage);
+            await Session.SendMessageAsync(serverMessage);
         }
 
         /// <summary>
         /// Gets the achievements.
         /// </summary>
-        internal void GetAchievements()
+        internal async Task GetAchievements()
         {
             Oblivion.GetGame().GetAchievementManager().GetList(Session, Request);
         }
@@ -442,7 +444,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Prepares the campaing.
         /// </summary>
-        internal void PrepareCampaing()
+        internal async Task PrepareCampaing()
         {
             var text = Request.GetString();
             Response.Init(LibraryParser.OutgoingRequest("SendCampaignBadgeMessageComposer"));
@@ -454,7 +456,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Loads the profile.
         /// </summary>
-        internal void LoadProfile()
+        internal async Task LoadProfile()
         {
             var userId = Request.GetUInteger();
             Request.GetBool();
@@ -464,7 +466,7 @@ namespace Oblivion.Messages.Handlers
             var habbo = Oblivion.GetHabboById(userId);
             if (habbo?.GetMessenger() == null)
             {
-                Session.SendNotif(Oblivion.GetLanguage().GetVar("user_not_found"));
+                await Session.SendNotifyAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return;
             }
 
@@ -535,7 +537,7 @@ namespace Oblivion.Messages.Handlers
                 msg.AppendInteger((Oblivion.GetUnixTimeStamp() - habbo.LastOnline));
 
             msg.AppendBool(true);
-            Session.SendMessage(msg);
+            await Session.SendMessageAsync(msg);
 
             if (habbo.GetBadgeComponent()?.BadgeList == null) return;
 
@@ -552,19 +554,19 @@ namespace Oblivion.Messages.Handlers
 
             msg2.EndArray();
 
-            Session.SendMessage(msg2);
+            await Session.SendMessageAsync(msg2);
         }
 
         /// <summary>
         /// Changes the look.
         /// </summary>
-        internal void ChangeLook()
+        internal async Task ChangeLook()
         {
             var text = Request.GetString().ToUpper();
             var text2 = Request.GetString();
             text2 = Oblivion.FilterFigure(text2);
 
-            Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.ProfileChangeLook);
+            await Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.ProfileChangeLook);
             Session.GetHabbo().Look = text2;
             Session.GetHabbo().Gender = text.ToLower() == "f" ? "f" : "m";
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -576,9 +578,9 @@ namespace Oblivion.Messages.Handlers
                 queryReactor.RunQuery();
             }
 
-            Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_AvatarLooks", 1);
+            await Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_AvatarLooks", 1);
             if (Session.GetHabbo().Look.Contains("ha-1006"))
-                Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.WearHat);
+                await Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.WearHat);
             Session.GetMessageHandler()
                 .GetResponse()
                 .Init(LibraryParser.OutgoingRequest("UpdateAvatarAspectMessageComposer"));
@@ -607,15 +609,15 @@ namespace Oblivion.Messages.Handlers
             serverMessage.AppendString(Session.GetHabbo().Gender.ToLower());
             serverMessage.AppendString(Session.GetHabbo().Motto);
             serverMessage.AppendInteger(Session.GetHabbo().AchievementPoints);
-            currentRoom.SendMessage(serverMessage);
+            await currentRoom.SendMessageAsync(serverMessage);
 
-            if (Session.GetHabbo().GetMessenger() != null) Session.GetHabbo().GetMessenger().OnStatusChanged(true);
+            if (Session.GetHabbo().GetMessenger() != null) await Session.GetHabbo().GetMessenger().OnStatusChanged(true);
         }
 
         /// <summary>
         /// Changes the motto.
         /// </summary>
-        internal void ChangeMotto()
+        internal async Task ChangeMotto()
         {
             var text = Request.GetString();
             if (text == Session.GetHabbo().Motto)
@@ -659,7 +661,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Gets the wardrobe.
         /// </summary>
-        internal void GetWardrobe()
+        internal async Task GetWardrobe()
         {
             GetResponse().Init(LibraryParser.OutgoingRequest("LoadWardrobeMessageComposer"));
             GetResponse().AppendInteger(0);
@@ -689,7 +691,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Saves the wardrobe.
         /// </summary>
-        internal void SaveWardrobe()
+        internal async Task SaveWardrobe()
         {
             var num = Request.GetUInteger();
             var text = Request.GetString();
@@ -716,19 +718,19 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Gets the pets inventory.
         /// </summary>
-        internal void GetPetsInventory()
+        internal async Task GetPetsInventory()
         {
             if (Session.GetHabbo().GetInventoryComponent() == null)
                 return;
-            Session.SendMessage(Session.GetHabbo().GetInventoryComponent().SerializePetInventory());
+            await Session.SendMessageAsync(Session.GetHabbo().GetInventoryComponent().SerializePetInventory());
         }
 
         /// <summary>
         /// Gets the bots inventory.
         /// </summary>
-        internal void GetBotsInventory()
+        internal async Task GetBotsInventory()
         {
-            Session.SendMessage(Session.GetHabbo().GetInventoryComponent().SerializeBotInventory());
+            await Session.SendMessageAsync(Session.GetHabbo().GetInventoryComponent().SerializeBotInventory());
             await SendResponse();
         }
 
@@ -736,7 +738,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Checks the name.
         /// </summary>
-        internal void CheckName()
+        internal async Task CheckName()
         {
             var text = Request.GetString();
             if (string.Equals(text, Session.GetHabbo().UserName, StringComparison.CurrentCultureIgnoreCase))
@@ -819,7 +821,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Changes the name.
         /// </summary>
-        internal void ChangeName()
+        internal async Task ChangeName()
         {
             var text = Request.GetString();
             if (text == null) return;
@@ -910,7 +912,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Gets the relationships.
         /// </summary>
-        internal void GetRelationships()
+        internal async Task GetRelationships()
         {
             var userId = Request.GetUInteger();
             var habboForId = Oblivion.GetHabboById(userId);
@@ -981,7 +983,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Sets the relationship.
         /// </summary>
-        internal void SetRelationship()
+        internal async Task SetRelationship()
         {
             var num = Request.GetUInteger();
             var num2 = Request.GetInteger();
@@ -1037,7 +1039,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Starts the quest.
         /// </summary>
-        public void StartQuest()
+        public async Task StartQuest()
         {
             Oblivion.GetGame().GetQuestManager().ActivateQuest(Session, Request);
         }
@@ -1045,7 +1047,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Stops the quest.
         /// </summary>
-        public void StopQuest()
+        public async Task StopQuest()
         {
             Oblivion.GetGame().GetQuestManager().CancelQuest(Session, Request);
         }
@@ -1053,7 +1055,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Gets the current quest.
         /// </summary>
-        public void GetCurrentQuest()
+        public async Task GetCurrentQuest()
         {
             Oblivion.GetGame().GetQuestManager().GetCurrentQuest(Session, Request);
         }
@@ -1061,7 +1063,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Starts the seasonal quest.
         /// </summary>
-        public void StartSeasonalQuest()
+        public async Task StartSeasonalQuest()
         {
             RoomData roomData;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -1074,7 +1076,7 @@ namespace Oblivion.Messages.Handlers
                 queryReactor.RunFastQuery(string.Concat("UPDATE users_stats SET quest_id = ", quest.Id, " WHERE id = ",
                     Session.GetHabbo().Id));
                 Session.GetHabbo().CurrentQuestId = quest.Id;
-                Session.SendMessage(QuestStartedComposer.Compose(Session, quest));
+                await Session.SendMessageAsync(QuestStartedComposer.Compose(Session, quest));
                 Oblivion.GetGame().GetQuestManager().ActivateQuest(Session, Request);
 //                queryReactor.SetQuery("SELECT id FROM rooms_data WHERE state='open' ORDER BY users_now DESC LIMIT 1");
 //                var @string = queryReactor.GetString();
@@ -1090,23 +1092,23 @@ namespace Oblivion.Messages.Handlers
                 return;
             }
 
-            Session.SendNotif(Oblivion.GetLanguage().GetVar("start_quest_need_room"));
+            await Session.SendNotifyAsync(Oblivion.GetLanguage().GetVar("start_quest_need_room"));
         }
 
         /// <summary>
         /// Receives the nux gifts.
         /// </summary>
-        public void ReceiveNuxGifts()
+        public async Task ReceiveNuxGifts()
         {
             if (!ExtraSettings.NewUsersGiftsEnabled)
             {
-                Session.SendNotif(Oblivion.GetLanguage().GetVar("nieuwe_gebruiker_kado_error_1"));
+                await Session.SendNotifyAsync(Oblivion.GetLanguage().GetVar("nieuwe_gebruiker_kado_error_1"));
                 return;
             }
 
             if (Session.GetHabbo().Vip)
             {
-                Session.SendNotif(Oblivion.GetLanguage().GetVar("nieuwe_gebruiker_kado_error_2"));
+                await Session.SendNotifyAsync(Oblivion.GetLanguage().GetVar("nieuwe_gebruiker_kado_error_2"));
                 return;
             }
 
@@ -1131,7 +1133,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Accepts the nux gifts.
         /// </summary>
-        public void AcceptNuxGifts()
+        public async Task AcceptNuxGifts()
         {
             if (ExtraSettings.NewUsersGiftsEnabled == false || Request.GetInteger() != 0)
                 return;
@@ -1168,14 +1170,14 @@ namespace Oblivion.Messages.Handlers
             nuxGifts.AppendString("nux_gift_vip_1_day");
             nuxGifts.AppendString("");
 
-            Session.SendMessage(nuxGifts);
+            await Session.SendMessageAsync(nuxGifts);
         }
 
         /// <summary>
         /// Talentses this instance.
         /// </summary>
         /// <exception cref="System.NullReferenceException"></exception>
-        internal void Talents()
+        internal async Task Talents()
         {
             var trackType = Request.GetString();
             var talents = Oblivion.GetGame().GetTalentManager().GetTalents(trackType, -1);
@@ -1249,16 +1251,16 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Completes the safety quiz.
         /// </summary>
-        internal void CompleteSafetyQuiz()
+        internal async Task CompleteSafetyQuiz()
         {
             Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_SafetyQuizGraduate", 1);
-            Session.SendMessage(new ServerMessage(2873));
+            await Session.SendMessageAsync(new ServerMessage(2873));
         }
 
         /// <summary>
         /// Hotels the view countdown.
         /// </summary>
-        internal void HotelViewCountdown()
+        internal async Task HotelViewCountdown()
         {
             string time = Request.GetString();
             DateTime.TryParse(time, out var date);
@@ -1272,11 +1274,11 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Hotels the view dailyquest.
         /// </summary>
-        internal void HotelViewDailyquest()
+        internal async Task HotelViewDailyquest()
         {
         }
 
-        internal void FindMoreFriends()
+        internal async Task FindMoreFriends()
         {
             var allRooms = Oblivion.GetGame().GetRoomManager().GetActiveRooms();
             if (allRooms != null)
@@ -1287,19 +1289,19 @@ namespace Oblivion.Messages.Handlers
                 if (randomRoom == null)
                 {
                     success.AppendBool(false);
-                    Session.SendMessage(success);
+                    await Session.SendMessageAsync(success);
                     return;
                 }
 
                 success.AppendBool(true);
-                Session.SendMessage(success);
+                await Session.SendMessageAsync(success);
                 var roomFwd = new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
                 roomFwd.AppendInteger(randomRoom.Id);
-                Session.SendMessage(roomFwd);
+                await Session.SendMessageAsync(roomFwd);
             }
         }
 
-        internal void HotelViewRequestBadge()
+        internal async Task HotelViewRequestBadge()
         {
             string name = Request.GetString();
             var hotelViewBadges = Oblivion.GetGame().GetHotelView().HotelViewBadges;
@@ -1308,7 +1310,7 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().GetBadgeComponent().GiveBadge(badge, true, Session, true);
         }
 
-        internal void GetCameraPrice()
+        internal async Task GetCameraPrice()
         {
             GetResponse().Init(LibraryParser.OutgoingRequest("SetCameraPriceMessageComposer"));
             GetResponse().AppendInteger(Oblivion.GetGame().GetCameraManager().PurchaseCoinsPrice); //credits
@@ -1317,7 +1319,7 @@ namespace Oblivion.Messages.Handlers
             await SendResponse();
         }
 
-        internal void GetHotelViewHallOfFame()
+        internal async Task GetHotelViewHallOfFame()
         {
             string code = Request.GetString();
             GetResponse().Init(LibraryParser.OutgoingRequest("HotelViewHallOfFameMessageComposer"));
@@ -1341,7 +1343,7 @@ namespace Oblivion.Messages.Handlers
             await SendResponse();
         }
 
-        internal void FriendRequestListLoad()
+        internal async Task FriendRequestListLoad()
         {
         }
     }

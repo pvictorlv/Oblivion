@@ -68,7 +68,7 @@ namespace Oblivion.HabboHotel.Events
         /// <summary>
         ///     Called when [cycle].
         /// </summary>
-        internal void OnCycle()
+        internal async Task OnCycle()
         {
             WorkRemoveQueue();
             WorkAddQueue();
@@ -84,7 +84,7 @@ namespace Oblivion.HabboHotel.Events
         /// </summary>
         /// <param name="data">The data.</param>
         /// <param name="roomEventCategory">The room event category.</param>
-        internal void QueueAddEvent(RoomData data, int roomEventCategory)
+        internal async Task QueueAddEvent(RoomData data, int roomEventCategory)
         {
             lock (_addQueue.SyncRoot)
                 _addQueue.Enqueue(data);
@@ -97,7 +97,7 @@ namespace Oblivion.HabboHotel.Events
         /// </summary>
         /// <param name="data">The data.</param>
         /// <param name="roomEventCategory">The room event category.</param>
-        internal void QueueRemoveEvent(RoomData data, int roomEventCategory)
+        internal async Task QueueRemoveEvent(RoomData data, int roomEventCategory)
         {
             lock (_removeQueue.SyncRoot)
                 _removeQueue.Enqueue(data);
@@ -110,7 +110,7 @@ namespace Oblivion.HabboHotel.Events
         /// </summary>
         /// <param name="data">The data.</param>
         /// <param name="roomEventCategory">The room event category.</param>
-        internal void QueueUpdateEvent(RoomData data, int roomEventCategory)
+        internal async Task QueueUpdateEvent(RoomData data, int roomEventCategory)
         {
             lock (_updateQueue.SyncRoot)
                 _updateQueue.Enqueue(data);

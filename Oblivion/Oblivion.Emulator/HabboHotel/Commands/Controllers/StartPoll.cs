@@ -36,7 +36,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 result.AppendInteger(endPoll.AnswersNegative);
                 result.AppendString("1");
                 result.AppendInteger(endPoll.AnswersPositive);
-                room.SendMessage(result);
+                await room.SendMessage(result);
 
                 Oblivion.GetGame().GetPollManager().Polls.Remove(room.RoomId);
 

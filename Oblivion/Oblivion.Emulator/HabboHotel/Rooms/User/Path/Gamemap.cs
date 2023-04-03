@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -246,7 +247,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// </summary>
         /// <param name="user">The user.</param>
         /// <param name="coord">The coord.</param>
-        internal void AddUserToMap(RoomUser user, Point coord)
+        internal async Task AddUserToMap(RoomUser user, Point coord)
         {
             var coordKey = Formatter.PointToInt(coord);
             if (_userMap.TryGetValue(coordKey, out var users))
@@ -266,10 +267,10 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// </summary>
         /// <param name="user">The user.</param>
         /// <param name="item">The item.</param>
-        internal void TeleportToItem(RoomUser user, RoomItem item, bool fromWired = false)
+        internal async Task TeleportToItem(RoomUser user, RoomItem item, bool fromWired = false)
         {
             GameMap[user.X, user.Y] = user.SqState;
-            UpdateUserMovement(new Point(user.X, user.Y),
+            await UpdateUserMovement(new Point(user.X, user.Y),
                 new Point(item.X, item.Y), user);
             user.X = item.X;
             user.Y = item.Y;
@@ -284,7 +285,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             user.IsWalking = false;
             user.UpdateNeeded = true;
             if (!fromWired)
-                item.UserWalksOnFurni(user);
+                await item.UserWalksOnFurni(user);
         }
 
         /// <summary>
@@ -293,7 +294,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="oldCoord">The old coord.</param>
         /// <param name="newCoord">The new coord.</param>
         /// <param name="user">The user.</param>
-        internal void UpdateUserMovement(Point oldCoord, Point newCoord, RoomUser user)
+        internal async Task UpdateUserMovement(Point oldCoord, Point newCoord, RoomUser user)
         {
             RemoveUserFromMap(user, oldCoord);
             AddUserToMap(user, newCoord);
@@ -304,7 +305,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// </summary>
         /// <param name="user">The user.</param>
         /// <param name="coord">The coord.</param>
-        internal void RemoveUserFromMap(RoomUser user, Point coord)
+        internal async Task RemoveUserFromMap(RoomUser user, Point coord)
         {
             var coordKey = Formatter.PointToInt(coord);
             if (_userMap.TryGetValue(coordKey, out var users))
@@ -363,7 +364,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         ///     Adds to map.
         /// </summary>
         /// <param name="item">The item.</param>
-        internal void AddToMap(RoomItem item)
+        internal async Task AddToMap(RoomItem item)
         {
             AddItemToMap(item);
         }
@@ -372,7 +373,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         ///     Updates the map for item.
         /// </summary>
         /// <param name="item">The item.</param>
-        internal void UpdateMapForItem(RoomItem item)
+        internal async Task UpdateMapForItem(RoomItem item)
         {
             RemoveFromMap(item, false);
             AddToMap(item);
@@ -584,9 +585,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         }
 
 
-        internal bool RemoveFromMap(RoomItem item, bool removed)
+        internal async Task<bool> RemoveFromMap(RoomItem item, bool removed)
         {
-            RemoveSpecialItem(item, removed);
+            await RemoveSpecialItem(item, removed);
             if (_room.GotSoccer())
                 _room.GetSoccer().OnGateRemove(item);
             var result = false;
@@ -616,7 +617,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             }
 
             GuildGates.Remove(item.Coordinate);
-            _room.GetRoomItemHandler().OnHeightMapUpdate(hybridDictionary.Keys);
+            await _room.GetRoomItemHandler().OnHeightMapUpdate(hybridDictionary.Keys);
             hybridDictionary.Clear();
 
             return result;
@@ -635,7 +636,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="item">The item.</param>
         /// <param name="handleGameItem">if set to <c>true</c> [handle game item].</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool AddItemToMap(RoomItem item, bool handleGameItem = true)
+        internal void AddItemToMap(RoomItem item, bool handleGameItem = true)
         {
             if (handleGameItem)
             {
@@ -1194,7 +1195,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <summary>
         ///     Destroys this instance.
         /// </summary>
-        internal void Dispose()
+        internal async Task Dispose()
         {
             _userMap?.Clear();
             CoordinatedItems?.Clear();
@@ -1404,7 +1405,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         ///     Removes the special item.
         /// </summary>
         /// <param name="item">The item.</param>
-        internal void RemoveSpecialItem(RoomItem item, bool removed)
+        internal async Task RemoveSpecialItem(RoomItem item, bool removed)
         {
             switch (item.GetBaseItem().InteractionType)
             {

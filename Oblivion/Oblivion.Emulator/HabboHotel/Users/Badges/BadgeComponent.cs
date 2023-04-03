@@ -74,7 +74,7 @@ namespace Oblivion.HabboHotel.Users.Badges
         /// <param name="inDatabase">if set to <c>true</c> [in database].</param>
         /// <param name="session">The session.</param>
         /// <param name="wiredReward">if set to <c>true</c> [wired reward].</param>
-        internal void GiveBadge(string badge, bool inDatabase, GameClient session, bool wiredReward = false)
+        internal async Task GiveBadge(string badge, bool inDatabase, GameClient session, bool wiredReward = false)
         {
             if (session == null)
             {
@@ -135,7 +135,7 @@ namespace Oblivion.HabboHotel.Users.Badges
         /// <summary>
         ///     Resets the slots.
         /// </summary>
-        internal void ResetSlots()
+        internal async Task ResetSlots()
         {
             /* TODO CHECK */
             foreach (Badge badge in BadgeList.Values)
@@ -147,7 +147,7 @@ namespace Oblivion.HabboHotel.Users.Badges
         /// </summary>
         /// <param name="badge">The badge.</param>
         /// <param name="session">The session.</param>
-        internal void RemoveBadge(string badge, GameClient session)
+        internal async Task RemoveBadge(string badge, GameClient session)
         {
             if (session == null || !HasBadge(badge))
                 return;

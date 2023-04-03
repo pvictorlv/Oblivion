@@ -218,7 +218,7 @@ namespace Oblivion.HabboHotel.Rooms
 
         internal string RoomVideo;
 
-        internal void Start(RoomData data, bool forceLoad = false)
+        internal async Task Start(RoomData data, bool forceLoad = false)
         {
             InitializeFromRoomData(data, forceLoad);
             GetRoomItemHandler().LoadFurniture();
@@ -354,7 +354,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <summary>
         /// Starts the room processing.
         /// </summary>
-        internal void StartRoomProcessing()
+        internal async Task StartRoomProcessing()
         {
             if (_mainProcessSource == null)
             {
@@ -391,7 +391,7 @@ namespace Oblivion.HabboHotel.Rooms
         private bool _processingWireds;
         private bool _processingBall;
 
-        internal void StartWiredsProcess()
+        internal async Task StartWiredsProcess()
         {
             if (_processingWireds || _mainProcessSource == null) return;
 
@@ -436,7 +436,7 @@ namespace Oblivion.HabboHotel.Rooms
             _wiredHandler = null;
         }
 
-        internal void StartBallProcess()
+        internal async Task StartBallProcess()
         {
             if (_processingBall || _mainProcessSource == null) return;
 
@@ -476,7 +476,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <summary>
         ///     Initializes the user bots.
         /// </summary>
-        internal void InitUserBots()
+        internal async Task InitUserBots()
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
@@ -514,7 +514,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <summary>
         ///     Clears the tags.
         /// </summary>
-        internal void ClearTags()
+        internal async Task ClearTags()
         {
             RoomData.Tags.Clear();
         }
@@ -523,7 +523,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Adds the tag range.
         /// </summary>
         /// <param name="tags">The tags.</param>
-        internal void AddTagRange(List<string> tags)
+        internal async Task AddTagRange(List<string> tags)
         {
             RoomData.Tags.AddRange(tags);
         }
@@ -533,7 +533,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Queues the room kick.
         /// </summary>
         /// <param name="kick">The kick.</param>
-        internal void QueueRoomKick(RoomKick kick)
+        internal async Task QueueRoomKick(RoomKick kick)
         {
             lock (_roomKick.SyncRoot)
             {
@@ -544,7 +544,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <summary>
         ///     Called when [room kick].
         /// </summary>
-        internal void OnRoomKick()
+        internal async Task OnRoomKick()
         {
             foreach (var t in _roomUserManager.UserList.Values)
             {
@@ -560,7 +560,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Called when [user enter].
         /// </summary>
         /// <param name="user">The user.</param>
-        internal void OnUserEnter(RoomUser user)
+        internal async Task OnUserEnter(RoomUser user)
         {
             if (GotWireds())
                 GetWiredHandler().ExecuteWired(Interaction.TriggerRoomEnter, user);
@@ -577,7 +577,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="user">The user.</param>
         /// <param name="message">The message.</param>
         /// <param name="shout">if set to <c>true</c> [shout].</param>
-        internal void OnUserSay(RoomUser user, string message, bool shout)
+        internal async Task OnUserSay(RoomUser user, string message, bool shout)
         {
             foreach (var current in _roomUserManager.Bots.Values)
             {
@@ -613,7 +613,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <summary>
         ///     Loads the music.
         /// </summary>
-        internal void LoadMusic()
+        internal async Task LoadMusic()
         {
             DataTable table;
 
@@ -668,7 +668,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <summary>
         ///     Loads the rights.
         /// </summary>
-        internal void LoadRights()
+        internal async Task LoadRights()
         {
             UsersWithRights = new List<uint>();
             DataTable dataTable;
@@ -693,7 +693,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <summary>
         ///     Loads the bans.
         /// </summary>
-        internal void LoadBans()
+        internal async Task LoadBans()
         {
             Bans = new Dictionary<long, double>();
             DataTable table;
@@ -830,10 +830,10 @@ namespace Oblivion.HabboHotel.Rooms
                     var idle = 0;
                     if (UserCount > 0)
                     {
-                        GetRoomItemHandler().OnCycle();
+                        await GetRoomItemHandler().OnCycle();
                     }
 
-                    GetRoomUserManager().OnCycle(ref idle);
+                    idle = await GetRoomUserManager().OnCycle(idle);
 
                     if (idle > 0)
                         _idleTime++;
@@ -880,7 +880,7 @@ namespace Oblivion.HabboHotel.Rooms
         }
 
 
-        internal void SendWebSocketMessage(string message)
+        internal async Task SendWebSocketMessage(string message)
         {
             foreach (var user in _roomUserManager.UserList.Values)
             {
@@ -896,7 +896,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Sends the message.
         /// </summary>
         /// <param name="message">The message.</param>
-        internal void SendMessageWithRange(Vector2D currentLocation, ServerMessage message)
+        internal async Task SendMessageWithRange(Vector2D currentLocation, ServerMessage message)
         {
             try
             {
@@ -910,7 +910,7 @@ namespace Oblivion.HabboHotel.Rooms
                         if (Gamemap.TileDistance(currentLocation.X, currentLocation.Y, user.X, user.Y) >
                             distance) continue;
 
-                        user.GetClient().SendMessage(message);
+                        await user.GetClient().SendMessageAsync(message);
                     }
                 }
             }
@@ -926,7 +926,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="chatMsg">The chat MSG.</param>
         /// <param name="roomUser">The room user.</param>
         /// <param name="p">The p.</param>
-        internal void BroadcastChatMessageWithRange(ServerMessage chatMsg, RoomUser roomUser, uint p)
+        internal async Task BroadcastChatMessageWithRange(ServerMessage chatMsg, RoomUser roomUser, uint p)
         {
             try
             {
@@ -974,7 +974,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Sends the message.
         /// </summary>
         /// <param name="message">The message.</param>
-        internal void SendMessage(ServerMessage message)
+        internal async Task SendMessage(ServerMessage message)
         {
             if (message != null)
                 if (_roomUserManager?.UserList != null)
@@ -982,7 +982,7 @@ namespace Oblivion.HabboHotel.Rooms
                     {
                         if (user?.GetClient()?.GetConnection() != null && !user.IsBot)
                         {
-                            user.GetClient().SendMessage(message);
+                            await user.GetClient().SendMessageAsync(message);
                         }
                     }
         }
@@ -1003,7 +1003,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Sends the message.
         /// </summary>
         /// <param name="messages">The messages.</param>
-        internal void SendMessage(List<ServerMessage> messages)
+        internal async Task SendMessage(List<ServerMessage> messages)
         {
             if (messages.Count == 0)
                 return;
@@ -1027,7 +1027,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Sends the message to users with rights.
         /// </summary>
         /// <param name="message">The message.</param>
-        internal void SendMessageToUsersWithRights(ServerMessage message)
+        internal async Task SendMessageToUsersWithRights(ServerMessage message)
         {
             try
             {
@@ -1055,7 +1055,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <summary>
         ///     Destroys this instance.
         /// </summary>
-        internal void Destroy()
+        internal async Task Destroy()
         {
             using (var msg = new ServerMessage(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer")))
             {
@@ -1076,7 +1076,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Removes the ban.
         /// </summary>
         /// <param name="pId">The p identifier.</param>
-        internal void RemoveBan(uint pId)
+        internal async Task RemoveBan(uint pId)
         {
             Bans.Remove(pId);
         }
@@ -1086,7 +1086,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <param name="time">The time.</param>
-        internal void AddBan(int userId, long time)
+        internal async Task AddBan(int userId, long time)
         {
             if (!Bans.ContainsKey(Convert.ToInt32(userId)))
                 Bans.Add(userId, ((Oblivion.GetUnixTimeStamp()) + time));
@@ -1130,7 +1130,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Unbans the specified user identifier.
         /// </summary>
         /// <param name="userId">The user identifier.</param>
-        internal void Unban(uint userId)
+        internal async Task Unban(uint userId)
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 queryReactor.RunFastQuery("DELETE FROM rooms_bans WHERE user_id=" + userId + " AND room_id=" + RoomId +
@@ -1171,7 +1171,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         /// <param name="userOne">The user one.</param>
         /// <param name="userTwo">The user two.</param>
-        internal void TryStartTrade(RoomUser userOne, RoomUser userTwo)
+        internal async Task TryStartTrade(RoomUser userOne, RoomUser userTwo)
         {
             if (userOne == null || userTwo == null || userOne.IsBot || userTwo.IsBot || userOne.IsTrading ||
                 userTwo.IsTrading || HasActiveTrade(userOne) || HasActiveTrade(userTwo))
@@ -1183,7 +1183,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Tries the stop trade.
         /// </summary>
         /// <param name="userId">The user identifier.</param>
-        internal void TryStopTrade(uint userId)
+        internal async Task TryStopTrade(uint userId)
         {
             var userTrade = GetUserTrade(userId);
             if (userTrade == null)
@@ -1196,7 +1196,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Sets the maximum users.
         /// </summary>
         /// <param name="maxUsers">The maximum users.</param>
-        internal void SetMaxUsers(uint maxUsers)
+        internal async Task SetMaxUsers(uint maxUsers)
         {
             RoomData.UsersMax = maxUsers;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -1248,7 +1248,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="wallHeight">Height of the wall.</param>
         /// <param name="wallThick">The wall thick.</param>
         /// <param name="floorThick">The floor thick.</param>
-        internal void ResetGameMap(string newModelName, int wallHeight, int wallThick, int floorThick)
+        internal async Task ResetGameMap(string newModelName, int wallHeight, int wallThick, int floorThick)
         {
             RoomData.ModelName = newModelName;
             RoomData.ModelName = newModelName;

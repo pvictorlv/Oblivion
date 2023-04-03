@@ -188,7 +188,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 serverMessage.AppendInteger(1);
                 roomUser.Serialize(serverMessage);
-                _room.SendMessage(serverMessage);
+                await _room.SendMessage(serverMessage);
                 roomUser.BotAi.OnSelfEnterRoom();
                 if (roomUser.IsPet)
                 {
@@ -207,7 +207,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 serverMessage.Init(LibraryParser.OutgoingRequest("DanceStatusMessageComposer"));
                 serverMessage.AppendInteger(roomUser.VirtualId);
                 serverMessage.AppendInteger(roomUser.BotData.DanceId);
-                _room.SendMessage(serverMessage);
+                await _room.SendMessage(serverMessage);
                 PetCount++;
 
                 return roomUser;
@@ -229,7 +229,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="speak">if set to <c>true</c> [speak].</param>
         /// <param name="speechDelay">The speech delay.</param>
         /// <param name="mix">if set to <c>true</c> [mix].</param>
-        internal void UpdateBot(int virtualId, RoomUser roomUser, string name, string motto, string look, string gender,
+        internal async Task UpdateBot(int virtualId, RoomUser roomUser, string name, string motto, string look, string gender,
             List<string> speech, List<string> responses, bool speak, int speechDelay, bool mix)
         {
             var bot = GetRoomUserByVirtualId(virtualId);
@@ -256,7 +256,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         /// <param name="virtualId">The virtual identifier.</param>
         /// <param name="kicked">if set to <c>true</c> [kicked].</param>
-        internal void RemoveBot(int virtualId, bool kicked)
+        internal async Task RemoveBot(int virtualId, bool kicked)
         {
             var roomUserByVirtualId = GetRoomUserByVirtualId(virtualId);
             if (roomUserByVirtualId == null || !roomUserByVirtualId.IsBot) return;
@@ -274,8 +274,8 @@ namespace Oblivion.HabboHotel.Rooms.User
             roomUserByVirtualId.BotAi.OnSelfLeaveRoom(kicked);
             using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UserLeftRoomMessageComposer")))
             {
-                serverMessage.AppendString(roomUserByVirtualId.VirtualId.ToString());
-                _room.SendMessage(serverMessage);
+                await serverMessage.AppendStringAsync(roomUserByVirtualId.VirtualId.ToString());
+                await _room.SendMessageAsync(serverMessage);
 
                 UserList.TryRemove(roomUserByVirtualId.InternalRoomId, out _);
             }
@@ -300,7 +300,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="session">The session.</param>
         /// <param name="spectator">if set to <c>true</c> [spectator].</param>
         /// <param name="snow">if set to <c>true</c> [snow].</param>
-        internal void AddUserToRoom(GameClient session, bool spectator, bool snow = false)
+        internal async Task AddUserToRoom(GameClient session, bool spectator, bool snow = false)
         {
             if (Disposed) 
                 return;
@@ -337,7 +337,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         /// <param name="oldName">The old name.</param>
         /// <param name="newName">The new name.</param>
-        internal void UpdateUser(string oldName, string newName)
+        internal async Task UpdateUser(string oldName, string newName)
         {
             if (oldName == newName)
                 return;
@@ -356,7 +356,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="session">The session.</param>
         /// <param name="notifyClient">if set to <c>true</c> [notify client].</param>
         /// <param name="notifyKick">if set to <c>true</c> [notify kick].</param>
-        internal void RemoveUserFromRoom(GameClient session, bool notifyClient, bool notifyKick)
+        internal async Task RemoveUserFromRoom(GameClient session, bool notifyClient, bool notifyKick)
         {
             if (session?.GetHabbo()?.UserName != null)
             {
@@ -471,7 +471,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     Removes the room user.
         /// </summary>
         /// <param name="user">The user.</param>
-        internal void RemoveRoomUser(RoomUser user)
+        internal async Task RemoveRoomUser(RoomUser user)
         {
             if (user == null) return;
 
@@ -483,7 +483,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UserLeftRoomMessageComposer")))
             {
                 serverMessage.AppendString(user.VirtualId.ToString());
-                _room.SendMessage(serverMessage);
+                await _room.SendMessage(serverMessage);
 
                 OnRemove(user);
             }
@@ -514,7 +514,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     Updates the user count.
         /// </summary>
         /// <param name="count">The count.</param>
-        internal void UpdateUserCount(uint count)
+        internal async Task UpdateUserCount(uint count)
         {
             _roomUserCount = count;
             if (_room?.RoomData == null)
@@ -566,7 +566,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     Saves the pets.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal void SavePets(IQueryAdapter dbClient)
+        internal async Task SavePets(IQueryAdapter dbClient)
         {
             try
             {
@@ -584,7 +584,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     Appends the pets update string.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal void AppendPetsUpdateString(IQueryAdapter dbClient)
+        internal async Task AppendPetsUpdateString(IQueryAdapter dbClient)
         {
             var queryChunk = new QueryChunk("INSERT INTO bots (id,user_id,room_id,name,x,y,z) VALUES ");
             var queryChunk2 =
@@ -694,7 +694,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         /// <param name="user">The user.</param>
         /// <param name="cycleGameItems">if set to <c>true</c> [cyclegameitems].</param>
-        internal void UpdateUserStatus(RoomUser user, bool cycleGameItems, bool removeStatusses = true)
+        internal async Task UpdateUserStatus(RoomUser user, bool cycleGameItems, bool removeStatusses = true)
         {
             if (user?.Statusses == null)
                 return;
@@ -736,7 +736,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                     if (cycleGameItems)
                     {
-                        item.UserWalksOnFurni(user);
+                        await item.UserWalksOnFurni(user);
                     }
 
                     item.Interactor.OnUserWalk(user.GetClient(), item, user);
@@ -798,7 +798,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         new ServerMessage(LibraryParser.OutgoingRequest("RoomUserIdleMessageComposer"));
                     sleepEffectMessage.AppendInteger(roomUsers.VirtualId);
                     sleepEffectMessage.AppendBool(true);
-                    _room.SendMessage(sleepEffectMessage);
+                    await _room.SendMessage(sleepEffectMessage);
                 }
             }
             catch (Exception e)
@@ -807,7 +807,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
         }
 
-        internal void RoomUserBreedInteraction(RoomUser roomUsers)
+        internal async Task RoomUserBreedInteraction(RoomUser roomUsers)
         {
             if ((roomUsers.IsPet) && ((roomUsers.PetData.Type == 3) || (roomUsers.PetData.Type == 4)) &&
                 (roomUsers.PetData.WaitingForBreading > 0) &&
@@ -868,7 +868,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
         }
 
-        internal void UserSetPositionData(RoomUser roomUsers, Vector2D nextStep)
+        internal async Task UserSetPositionData(RoomUser roomUsers, Vector2D nextStep)
         {
             // Check if the User is in a Horse or Not..
             if ((roomUsers.RidingHorse) && (!roomUsers.IsPet))
@@ -906,7 +906,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
         }
 
-        internal void CheckUserSittableLayable(RoomUser roomUsers)
+        internal async Task CheckUserSittableLayable(RoomUser roomUsers)
         {
             if (roomUsers == null) return;
             // Check if User Is ina  Special Action..
@@ -952,7 +952,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         {
                             horseStopWalkRidingPetMessage.AppendInteger(1);
                             horseStopWalkRidingPet.SerializeStatus(horseStopWalkRidingPetMessage, "");
-                            _room.SendMessage(horseStopWalkRidingPetMessage);
+                            await _room.SendMessage(horseStopWalkRidingPetMessage);
 
                             horseStopWalkRidingPet.IsWalking = false;
                             horseStopWalkRidingPet.ClearMovement();
@@ -1039,7 +1039,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             horseRidingPetMessage.AppendInteger(2);
                             roomUser.SerializeStatus(horseRidingPetMessage, theUser);
                             horseRidingPet.SerializeStatus(horseRidingPetMessage, thePet);
-                            _room.SendMessage(horseRidingPetMessage);
+                            await _room.SendMessage(horseRidingPetMessage);
 
                             horseRidingPet.RotBody = roomUser.RotBody;
                             horseRidingPet.RotHead = roomUser.RotBody;
@@ -1146,7 +1146,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     Turns the user thread
         /// </summary>
         /// <param name="roomUsers"></param>
-        internal void UserCycleOnRoom(RoomUser roomUsers)
+        internal async Task UserCycleOnRoom(RoomUser roomUsers)
         {
             try
             {
@@ -1243,7 +1243,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer"));
                         horseStopWalkRidingPetMessage.AppendInteger(1);
                         horseStopWalkRidingPet.SerializeStatus(horseStopWalkRidingPetMessage, "");
-                        _room.SendMessage(horseStopWalkRidingPetMessage);
+                        await _room.SendMessage(horseStopWalkRidingPetMessage);
 
                         horseStopWalkRidingPet.IsWalking = false;
                         horseStopWalkRidingPet.ClearMovement();
@@ -1369,7 +1369,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     Called when [cycle].
         /// </summary>
         /// <param name="idleCount">The idle count.</param>
-        internal void OnCycle(ref int idleCount)
+        internal async Task<int> OnCycle(int idleCount)
         {
             // User in Room Count for foreach
             uint userInRoomCount = 0;
@@ -1394,7 +1394,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             new ServerMessage(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer")))
                         {
                             tonerItem.Serialize(tonerComposingMessage);
-                            _room.SendMessage(tonerComposingMessage);
+                            await _room.SendMessage(tonerComposingMessage);
                         }
                     }
                 }
@@ -1408,7 +1408,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             foreach (var roomUsers in UserList.Values)
             {
                 // User Main OnCycle
-                UserCycleOnRoom(roomUsers);
+                await UserCycleOnRoom(roomUsers);
 
                 // If is a Valid user, We must increase the User Count..
                 if ((!roomUsers.IsPet) && (!roomUsers.IsBot))
@@ -1427,9 +1427,9 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                 // Remove User from Room..
                 if (userRemovableClient != null)
-                    RemoveUserFromRoom(userToRemove, true, false);
+                  await  RemoveUserFromRoom(userToRemove, true, false);
                 else
-                    RemoveRoomUser(userToRemove);
+                    await  RemoveRoomUser(userToRemove);
             }
 
             if (userInRoomCount == 0)
@@ -1441,22 +1441,24 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 if (_roomUserCount != userInRoomCount * (uint)Oblivion.Multipy)
                 {
-                    UpdateUserCount(userInRoomCount * (uint)Oblivion.Multipy);
+                    await UpdateUserCount(userInRoomCount * (uint)Oblivion.Multipy);
                 }
             }
             else
             {
                 if (_roomUserCount != userInRoomCount)
                 {
-                    UpdateUserCount(userInRoomCount);
+                    await UpdateUserCount(userInRoomCount);
                 }
             }
+
+            return idleCount;
         }
 
         /// <summary>
         ///     Updates the user effect.
         /// </summary>
-        private static void UpdateUserEffect(RoomUser user, RoomItem roomItem)
+        private async Task UpdateUserEffect(RoomUser user, RoomItem roomItem)
         {
             var baseItem = roomItem?.GetBaseItem();
             if (baseItem == null) return;
@@ -1475,14 +1477,14 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (b == user.CurrentItemEffect)
                     return;
 
-                inv.ActivateCustomEffect(b);
+                await inv.ActivateCustomEffect(b);
                 user.CurrentItemEffect = b;
             }
             else
             {
                 if (user.CurrentItemEffect == 0 || b != 0)
                     return;
-                inv.ActivateCustomEffect(-1);
+                await inv.ActivateCustomEffect(-1);
                 user.CurrentItemEffect = 0;
             }
         }
@@ -1491,7 +1493,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     Handles the <see cref="E:UserAdd" /> event.
         /// </summary>
         /// <param name="user"></param>
-        private void OnUserAdd(RoomUser user)
+        private async Task OnUserAdd(RoomUser user)
         {
             try
             {
@@ -1502,8 +1504,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (client.IsAir)
                 {
                     var msg = new ServerMessage();
-                    _room.RoomData.SerializeRoomData(msg, client, true);
-                    client.SendMessage(msg);
+                    await _room.RoomData.SerializeRoomData(msg, client, true);
+                    await client.SendMessageAsync(msg);
                 }
 
                 if (!user.IsSpectator)
@@ -1591,7 +1593,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         {
                             serverMessage.AppendInteger(1);
                             if (!user.Serialize(serverMessage)) return;
-                            _room.SendMessage(serverMessage);
+                            await _room.SendMessage(serverMessage);
                         }
                     }
 
@@ -1605,7 +1607,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             serverMessage2.AppendString(client.GetHabbo().Gender.ToLower());
                             serverMessage2.AppendString(client.GetHabbo().Motto);
                             serverMessage2.AppendInteger(client.GetHabbo().AchievementPoints);
-                            _room.SendMessage(serverMessage2);
+                            await _room.SendMessage(serverMessage2);
                         }
                     }
 
@@ -1642,7 +1644,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <summary>
         ///     Destroys this instance.
         /// </summary>
-        internal void Destroy()
+        internal async Task Destroy()
         {
             try
             {

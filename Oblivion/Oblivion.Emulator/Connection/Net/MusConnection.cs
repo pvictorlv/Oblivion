@@ -20,7 +20,7 @@ namespace Oblivion.Connection.Net
             conn.BeginReceive(_dataBuffering, 0, _dataBuffering.Length, SocketFlags.None, RecieveData, _conn);
         }
 
-        internal void RecieveData(IAsyncResult iAr)
+        internal async Task RecieveData(IAsyncResult iAr)
         {
             try
             {

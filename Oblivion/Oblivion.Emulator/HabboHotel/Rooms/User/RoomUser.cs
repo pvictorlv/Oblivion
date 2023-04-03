@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.Camera;
 using Oblivion.HabboHotel.Commands;
@@ -676,18 +677,18 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <summary>
         ///     Uns the idle.
         /// </summary>
-        internal void UnIdle()
+        internal async Task UnIdle()
         {
             IdleTime = 0;
             if (!IsAsleep)
                 return;
             IsAsleep = false;
-            ApplyEffect(0);
+            await ApplyEffect(0);
             using (var sleep = new ServerMessage(LibraryParser.OutgoingRequest("RoomUserIdleMessageComposer")))
             {
                 sleep.AppendInteger(VirtualId);
                 sleep.AppendBool(false);
-                GetRoom().SendMessage(sleep);
+                await GetRoom().SendMessage(sleep);
             }
         }
 
@@ -696,7 +697,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <summary>
         ///     Disposes this instance.
         /// </summary>
-        internal void Dispose()
+        internal async Task Dispose()
         {
             if (_disposed) return;
             Statusses?.Clear();
@@ -724,7 +725,8 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="shout">if set to <c>true</c> [shout].</param>
         /// <param name="count">The count.</param>
         /// <param name="textColor">Color of the text.</param>
-        internal void Chat(GameClient session, string msg, bool shout, int count, int textColor = 0, bool ignoreMute = false)
+        internal async Task Chat(GameClient session, string msg, bool shout, int count, int textColor = 0,
+            bool ignoreMute = false)
         {
             if (IsPet || IsBot)
             {
@@ -756,7 +758,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
 
             if (GetRoom().GotWireds())
-                if (GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSay, this, msg))
+                if (await GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSay, this, msg))
                     return;
 
             if (!((msg.StartsWith(":deleteblackword ") || msg.StartsWith("ban")) && session.GetHabbo().Rank > 4) &&
@@ -764,17 +766,17 @@ namespace Oblivion.HabboHotel.Rooms.User
                 return;
 
             if (!ignoreMute)
-            if (session.GetHabbo().Rank < 4 && GetRoom().CheckMute(session))
-                return;
+                if (session.GetHabbo().Rank < 4 && GetRoom().CheckMute(session))
+                    return;
 
 
-            UnIdle();
+            await UnIdle();
             if (!IsPet && !IsBot)
             {
                 if (msg.StartsWith(":") && CommandsManager.TryExecute(msg.Substring(1), session))
                 {
                     if (GetRoom() != null && GetRoom().GotWireds())
-                        GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSayCommand, this, msg);
+                       await GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerOnUserSayCommand, this, msg);
 
                     return;
                 }
@@ -785,7 +787,6 @@ namespace Oblivion.HabboHotel.Rooms.User
 
 
                 if (!habbo.CanTalk(true)) return;
-
 
 
                 GetRoom().AddChatlog(session.GetHabbo().Id, msg, true);
@@ -840,7 +841,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         private void ChangeName(string name)
         {
             using (var message =
-                new ServerMessage(LibraryParser.OutgoingRequest("UserUpdateNameInRoomMessageComposer")))
+                   new ServerMessage(LibraryParser.OutgoingRequest("UserUpdateNameInRoomMessageComposer")))
             {
                 message.AppendInteger(RoomId);
                 message.AppendInteger(VirtualId);
@@ -886,7 +887,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     Moves to.
         /// </summary>
         /// <param name="c">The c.</param>
-        internal void MoveTo(Point c)
+        internal async Task MoveTo(Point c)
         {
             MoveTo(c.X, c.Y);
         }
@@ -897,7 +898,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="x">The p x.</param>
         /// <param name="y">The p y.</param>
         /// <param name="pOverride">if set to <c>true</c> [p override].</param>
-        internal void MoveTo(int x, int y, bool pOverride)
+        internal async Task MoveTo(int x, int y, bool pOverride)
         {
             if (x >= GetRoom().GetGameMap().GameMap.GetLength(0) ||
                 y >= GetRoom().GetGameMap().GameMap.GetLength(1))
@@ -905,21 +906,22 @@ namespace Oblivion.HabboHotel.Rooms.User
 
             if (TeleportEnabled)
             {
-                UnIdle();
+                await UnIdle();
                 using (var msg = _mRoom
-                    .GetRoomItemHandler()
-                    .UpdateUserOnRoller(this, new Point(x, y), 0u,
-                        GetRoom().GetGameMap().SqAbsoluteHeight(GoalX, GoalY)))
+                           .GetRoomItemHandler()
+                           .UpdateUserOnRoller(this, new Point(x, y), 0u,
+                               GetRoom().GetGameMap().SqAbsoluteHeight(GoalX, GoalY)))
                 {
                     if (msg == null) return;
-                    _mRoom?
-                        .SendMessage(msg);
+                    if (_mRoom != null)
+                        await _mRoom
+                            .SendMessageAsync(msg);
                 }
 
 
                 if (Statusses.ContainsKey("sit")) Z -= 0.35;
                 UpdateNeeded = true;
-                GetRoom().GetRoomUserManager().UpdateUserStatus(this, false);
+                await GetRoom().GetRoomUserManager().UpdateUserStatus(this, false);
                 return;
             }
 
@@ -935,17 +937,17 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 var allRoomItemForSquare = GetRoom().GetGameMap().GetCoordinatedHeighestItems(coord);
                 if (allRoomItemForSquare.Any(current =>
-                    current.GetBaseItem().IsSeat ||
-                    current.GetBaseItem().InteractionType == Interaction.LowPool ||
-                    current.GetBaseItem().InteractionType == Interaction.Pool ||
-                    current.GetBaseItem().InteractionType == Interaction.HaloweenPool ||
-                    current.GetBaseItem().InteractionType == Interaction.Bed ||
-                    current.GetBaseItem().InteractionType == Interaction.PressurePadBed ||
-                    current.GetBaseItem().InteractionType == Interaction.Guillotine))
+                        current.GetBaseItem().IsSeat ||
+                        current.GetBaseItem().InteractionType == Interaction.LowPool ||
+                        current.GetBaseItem().InteractionType == Interaction.Pool ||
+                        current.GetBaseItem().InteractionType == Interaction.HaloweenPool ||
+                        current.GetBaseItem().InteractionType == Interaction.Bed ||
+                        current.GetBaseItem().InteractionType == Interaction.PressurePadBed ||
+                        current.GetBaseItem().InteractionType == Interaction.Guillotine))
                     return;
             }
 
-            UnIdle();
+            await UnIdle();
             GoalX = x;
             GoalY = y;
             LastSelectedX = x;
@@ -960,9 +962,9 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         /// <param name="pX">The p x.</param>
         /// <param name="pY">The p y.</param>
-        internal void MoveTo(int pX, int pY)
+        internal async Task MoveTo(int pX, int pY)
         {
-            MoveTo(pX, pY, false);
+            await MoveTo(pX, pY, false);
         }
 
         /// <summary>
@@ -991,15 +993,18 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     Carries the item.
         /// </summary>
         /// <param name="item">The item.</param>
-        internal void CarryItem(int item)
+        internal async Task CarryItem(int item)
         {
+            if (_mRoom == null)
+                return;
+            
             CarryItemId = item;
             CarryTimer = item > 0 ? 240 : 0;
             using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ApplyHanditemMessageComposer")))
             {
                 serverMessage.AppendInteger(VirtualId);
                 serverMessage.AppendInteger(item);
-                _mRoom?.SendMessage(serverMessage);
+                await _mRoom.SendMessageAsync(serverMessage);
             }
         }
 
@@ -1072,12 +1077,12 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     Applies the effect.
         /// </summary>
         /// <param name="effectId">The effect identifier.</param>
-        internal void ApplyEffect(int effectId)
+        internal async Task ApplyEffect(int effectId)
         {
             if (IsBot || GetClient() == null || GetClient().GetHabbo() == null ||
                 GetClient().GetHabbo().GetAvatarEffectsInventoryComponent() == null)
                 return;
-            GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(effectId);
+            await GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(effectId);
         }
 
         /// <summary>
@@ -1194,7 +1199,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     Serializes the status.
         /// </summary>
         /// <param name="message">The message.</param>
-        internal void SerializeStatus(ServerMessage message)
+        internal async Task SerializeStatus(ServerMessage message)
         {
             if (Statusses == null) return;
             message.AppendInteger(VirtualId);
@@ -1238,7 +1243,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="status">The status.</param>
-        internal void SerializeStatus(ServerMessage message, string status)
+        internal async Task SerializeStatus(ServerMessage message, string status)
         {
             if (IsSpectator)
                 return;

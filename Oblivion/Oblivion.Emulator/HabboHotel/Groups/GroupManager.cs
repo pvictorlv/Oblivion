@@ -51,7 +51,7 @@ namespace Oblivion.HabboHotel.Groups
         /// <summary>
         ///     Initializes the groups.
         /// </summary>
-        internal void InitGroups()
+        internal async Task InitGroups()
         {
             Bases = new HashSet<GroupBases>();
             Symbols = new HashSet<GroupSymbols>();
@@ -104,7 +104,7 @@ namespace Oblivion.HabboHotel.Groups
         /// <summary>
         ///     Clears the information.
         /// </summary>
-        internal void ClearInfo()
+        internal async Task ClearInfo()
         {
             Bases.Clear();
             Symbols.Clear();
@@ -124,7 +124,7 @@ namespace Oblivion.HabboHotel.Groups
         /// <param name="colour1">The colour1.</param>
         /// <param name="colour2">The colour2.</param>
         /// <param name="group">The theGroup.</param>
-        internal void CreateGroup(string name, string desc, uint roomId, string badge, GameClient session, int colour1,
+        internal async Task CreateGroup(string name, string desc, uint roomId, string badge, GameClient session, int colour1,
             int colour2, out Guild group)
         {
             Habbo user = session.GetHabbo();
@@ -288,7 +288,7 @@ namespace Oblivion.HabboHotel.Groups
             return list;
         }
 
-        internal void AddGroupMemberIntoResponse(ServerMessage response, GroupMember member)
+        internal async Task AddGroupMemberIntoResponse(ServerMessage response, GroupMember member)
         {
             response.AppendInteger(member.Rank == 2 ? 0 : member.Rank == 1 ? 1 : 2);
             response.AppendInteger(member.Id);
@@ -463,7 +463,7 @@ namespace Oblivion.HabboHotel.Groups
         /// <param name="response">The response.</param>
         /// <param name="session">The session.</param>
         /// <param name="newWindow">if set to <c>true</c> [new window].</param>
-        internal void SerializeGroupInfo(Guild group, ServerMessage response, GameClient session,
+        internal async Task SerializeGroupInfo(Guild group, ServerMessage response, GameClient session,
             bool newWindow = false)
         {
             if (group == null || session == null)
@@ -513,7 +513,7 @@ namespace Oblivion.HabboHotel.Groups
         /// <param name="session">The session.</param>
         /// <param name="room">The room.</param>
         /// <param name="newWindow">if set to <c>true</c> [new window].</param>
-        internal void SerializeGroupInfo(Guild group, ServerMessage response, GameClient session, Room room,
+        internal async Task SerializeGroupInfo(Guild group, ServerMessage response, GameClient session, Room room,
             bool newWindow = false)
         {
             if (room == null || group == null)
@@ -551,7 +551,7 @@ namespace Oblivion.HabboHotel.Groups
             response.AppendBool(group.AdminOnlyDeco == 0u);
             response.AppendInteger(group.Requests.Count);
             response.AppendBool(group.HasForum);
-            room.SendMessage(response);
+            await room.SendMessage(response);
         }
 
         /// <summary>
@@ -598,7 +598,7 @@ namespace Oblivion.HabboHotel.Groups
         ///     Deletes the theGroup.
         /// </summary>
         /// <param name="id">The identifier.</param>
-        internal void DeleteGroup(uint id)
+        internal async Task DeleteGroup(uint id)
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {

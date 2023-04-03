@@ -2,6 +2,7 @@
 
 using System;
 using System.Data;
+using System.Threading.Tasks;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 using Oblivion.Database.Manager.Session_Details.Interfaces;
 using MySqlConnector;
@@ -172,12 +173,38 @@ namespace Oblivion.Database.Manager.Database.Session_Details
             return lastInsertedId;
         }
 
+        public async Task<long> InsertQueryAsync()
+        {
+            if (!DbEnabled)
+                return 0L;
+            var lastInsertedId = 0L;
+
+            try
+            {
+                await CommandMySql.ExecuteScalarAsync();
+                lastInsertedId = CommandMySql.LastInsertedId;
+            }
+            catch (Exception exception)
+            {
+                Writer.Writer.LogQueryError(exception, CommandMySql.CommandText);
+            }
+            return lastInsertedId;
+        }
+
         public void RunFastQuery(string query)
         {
             if (!DbEnabled)
                 return;
             SetQuery(query);
             RunQuery();
+        }
+        public Task RunFastQueryAsync(string query)
+        {
+            if (!DbEnabled)
+                return Task.CompletedTask;
+            
+            SetQuery(query);
+            return RunQueryAsync();
         }
 
         public void RunNoLockFastQuery(string query)
@@ -187,6 +214,15 @@ namespace Oblivion.Database.Manager.Database.Session_Details
             SetNoLockQuery(query);
             
             RunQuery();
+        }
+        
+        public Task RunNoLockFastQueryAsync(string query)
+        {
+            if (!DbEnabled)
+                return Task.CompletedTask;
+            SetNoLockQuery(query);
+            
+            return RunQueryAsync();
         }
 
         public void RunQuery()
@@ -202,6 +238,22 @@ namespace Oblivion.Database.Manager.Database.Session_Details
             {
                 Writer.Writer.LogQueryError(exception, CommandMySql?.CommandText);
             }
+        }
+        public Task RunQueryAsync()
+        {
+            if (!DbEnabled)
+                return Task.CompletedTask;
+
+            try
+            {
+                return CommandMySql.ExecuteNonQueryAsync();
+            }
+            catch (Exception exception)
+            {
+                Writer.Writer.LogQueryError(exception, CommandMySql?.CommandText);
+            }
+            
+            return Task.CompletedTask;
         }
 
         public void SetQuery(string query)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Groups.Interfaces;
@@ -233,7 +234,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         /// <summary>
         ///     Resets the model.
         /// </summary>
-        internal void ResetModel()
+        internal async Task ResetModel()
         {
             _model = Oblivion.GetGame().GetRoomManager().GetModel(ModelName, Id);
         }
@@ -242,7 +243,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         ///     Fills the null.
         /// </summary>
         /// <param name="id">The identifier.</param>
-        internal void FillNull(uint id)
+        internal async Task FillNull(uint id)
         {
             Id = id;
             Name = "Unknown Room";
@@ -285,7 +286,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         ///     Fills the specified row.
         /// </summary>
         /// <param name="row">The row.</param>
-        internal void Fill(DataRow row, uint user = 0u)
+        internal async Task Fill(DataRow row, uint user = 0u)
         {
             try
             {
@@ -391,7 +392,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         /// <param name="message">The message.</param>
         /// <param name="showEvents">if set to <c>true</c> [show events].</param>
         /// <param name="enterRoom"></param>
-        internal void Serialize(ServerMessage message, bool showEvents = false, bool enterRoom = false)
+        internal async Task Serialize(ServerMessage message, bool showEvents = false, bool enterRoom = false)
         {
             if (message == null || Tags == null) return;
 
@@ -444,22 +445,22 @@ namespace Oblivion.HabboHotel.Rooms.Data
         /// <param name="isNotReload">if set to <c>true</c> [from view].</param>
         /// <param name="sendRoom">if set to <c>true</c> [send room].</param>
         /// <param name="show">if set to <c>true</c> [show].</param>
-        internal void SerializeRoomData(ServerMessage message, GameClient session, bool isNotReload,
+        internal async Task SerializeRoomData(ServerMessage message, GameClient session, bool isNotReload,
             bool? sendRoom = false, bool show = true)
         {
             var room = session.GetHabbo().CurrentRoom;
 
-            message.Init(LibraryParser.OutgoingRequest("RoomDataMessageComposer"));
+            await message.InitAsync(LibraryParser.OutgoingRequest("RoomDataMessageComposer"));
             message.AppendBool(show); //flatId
-            Serialize(message, true, !isNotReload);
+            await Serialize(message, true, !isNotReload);
             message.AppendBool(isNotReload);
             message.AppendBool(Oblivion.GetGame().GetNavigator() != null &&
                                Oblivion.GetGame().GetNavigator().GetPublicItem(Id) != null); // staffPick
             message.AppendBool(!isNotReload || session.GetHabbo().HasFuse("fuse_mod")); // bypass bell, pass ...
             message.AppendBool(room != null && room.RoomMuted); //roomMuted
-            message.AppendInteger(WhoCanMute);
-            message.AppendInteger(WhoCanKick);
-            message.AppendInteger(WhoCanBan);
+            await message.AppendIntegerAsync(WhoCanMute);
+            await message.AppendIntegerAsync(WhoCanKick);
+            await message.AppendIntegerAsync(WhoCanBan);
             message.AppendBool(room != null && room.CheckRights(session, true));
             message.AppendInteger(ChatType);
             message.AppendInteger(ChatBalloon);
@@ -471,9 +472,10 @@ namespace Oblivion.HabboHotel.Rooms.Data
             if (sendRoom.Value)
             {
                 room = Oblivion.GetGame().GetRoomManager().GetRoom(Id);
-                room?.SendMessage(message);
+                if (room != null)
+                    await room.SendMessageAsync(message);
             }
-            else session.SendMessage(message);
+            else await session.SendMessageAsync(message);
         }
 
         public void Dispose()

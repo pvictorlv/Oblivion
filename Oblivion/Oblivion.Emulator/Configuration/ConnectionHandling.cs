@@ -130,7 +130,7 @@ namespace Oblivion.Configuration
         /// <summary>
         /// Destroys this instance.
         /// </summary>
-        internal void Destroy()
+        internal async Task Destroy()
         {
             Manager.Stop();
         }

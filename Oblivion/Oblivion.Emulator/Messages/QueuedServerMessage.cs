@@ -47,7 +47,7 @@ namespace Oblivion.Messages
         /// Appends the response.
         /// </summary>
         /// <param name="message">The message.</param>
-        internal void AppendResponse(ServerMessage message)
+        internal async Task AppendResponse(ServerMessage message)
         {
             if (message == null) return;
             AppendBytes(message.GetReversedBytes());
@@ -58,7 +58,7 @@ namespace Oblivion.Messages
         /// Adds the bytes.
         /// </summary>
         /// <param name="bytes">The bytes.</param>
-        internal void AddBytes(List<byte[]> bytes)
+        internal async Task AddBytes(List<byte[]> bytes)
         {
             foreach (byte[] byteArray in bytes)
                 AppendBytes(byteArray);
@@ -67,7 +67,7 @@ namespace Oblivion.Messages
         /// <summary>
         /// Sends the response.
         /// </summary>
-        internal void await SendResponse()
+        internal async Task await SendResponse()
         {
             foreach (var packet in _packets)
                 _userConnection?.SendData(packet);

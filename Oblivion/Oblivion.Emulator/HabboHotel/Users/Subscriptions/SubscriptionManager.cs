@@ -48,7 +48,7 @@ namespace Oblivion.HabboHotel.Users.Subscriptions
         ///     Adds the subscription.
         /// </summary>
         /// <param name="dayLength">Length of the day.</param>
-        internal void AddSubscription(double dayLength)
+        internal async Task AddSubscription(double dayLength)
         {
             var num = ((int) Math.Round(dayLength));
 
@@ -84,7 +84,7 @@ namespace Oblivion.HabboHotel.Users.Subscriptions
         /// <summary>
         ///     Reloads the subscription.
         /// </summary>
-        internal void ReloadSubscription()
+        internal async Task ReloadSubscription()
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {

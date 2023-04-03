@@ -127,7 +127,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             return true;
         }
 
-        public bool Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             Requested = true;
             return true;

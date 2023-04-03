@@ -121,7 +121,7 @@ namespace Oblivion.Messages
         /// <summary>
         /// Initializes the specified message identifier.
         /// </summary>
-        internal void Init(int messageId, byte[] body, int position, int packetLength)
+        internal async Task Init(int messageId, byte[] body, int position, int packetLength)
         {
             Id = messageId;
             _body = body;
@@ -129,7 +129,7 @@ namespace Oblivion.Messages
             _length = packetLength;
         }
 
-        internal void Init(byte[] body)
+        internal async Task Init(byte[] body)
         {
             _body = body;
             Id = GetInteger16();

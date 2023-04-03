@@ -69,7 +69,7 @@ namespace Oblivion.HabboHotel.SoundMachine.Songs
         ///     Saves to database.
         /// </summary>
         /// <param name="roomId">The room identifier.</param>
-        internal void SaveToDatabase(uint roomId)
+        internal async Task SaveToDatabase(uint roomId)
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
@@ -81,7 +81,7 @@ namespace Oblivion.HabboHotel.SoundMachine.Songs
         /// <summary>
         ///     Removes from database.
         /// </summary>
-        internal void RemoveFromDatabase()
+        internal async Task RemoveFromDatabase()
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {

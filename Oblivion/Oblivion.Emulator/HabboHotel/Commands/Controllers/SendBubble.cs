@@ -51,7 +51,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             if (client.GetHabbo().Rank < 6)
             {
                 if (room.CheckRights(client, true))
-                    room.SendMessage(msg);
+                    await room.SendMessage(msg);
             }
             else
             {

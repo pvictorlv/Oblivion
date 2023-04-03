@@ -66,7 +66,7 @@ namespace Oblivion.HabboHotel.Events.Interfaces
         /// <summary>
         ///     Called when [cycle].
         /// </summary>
-        internal void OnCycle()
+        internal async Task OnCycle()
         {
             WorkRemoveQueue();
             WorkAddQueue();
@@ -78,7 +78,7 @@ namespace Oblivion.HabboHotel.Events.Interfaces
         ///     Queues the add event.
         /// </summary>
         /// <param name="data">The data.</param>
-        internal void QueueAddEvent(RoomData data)
+        internal async Task QueueAddEvent(RoomData data)
         {
             lock (_addQueue.SyncRoot)
                 _addQueue.Enqueue(data);
@@ -88,7 +88,7 @@ namespace Oblivion.HabboHotel.Events.Interfaces
         ///     Queues the remove event.
         /// </summary>
         /// <param name="data">The data.</param>
-        internal void QueueRemoveEvent(RoomData data)
+        internal async Task QueueRemoveEvent(RoomData data)
         {
             lock (_removeQueue.SyncRoot)
                 _removeQueue.Enqueue(data);
@@ -98,7 +98,7 @@ namespace Oblivion.HabboHotel.Events.Interfaces
         ///     Queues the update event.
         /// </summary>
         /// <param name="data">The data.</param>
-        internal void QueueUpdateEvent(RoomData data)
+        internal async Task QueueUpdateEvent(RoomData data)
         {
             lock (_updateQueue.SyncRoot)
                 _updateQueue.Enqueue(data);

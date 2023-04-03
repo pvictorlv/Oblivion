@@ -287,7 +287,7 @@ namespace Oblivion.HabboHotel.SoundMachine
         ///     Broadcasts the current song data.
         /// </summary>
         /// <param name="instance">The instance.</param>
-        internal void BroadcastCurrentSongData(Room instance)
+        internal async Task BroadcastCurrentSongData(Room instance)
         {
             if (CurrentSong != null)
             {
@@ -303,19 +303,19 @@ namespace Oblivion.HabboHotel.SoundMachine
         ///     Called when [new user enter].
         /// </summary>
         /// <param name="user">The user.</param>
-        internal void OnNewUserEnter(RoomUser user)
+        internal async Task OnNewUserEnter(RoomUser user)
         {
             if (user.IsBot || user.GetClient() == null || CurrentSong == null)
                 return;
 
-            user.GetClient().SendMessage(SoundMachineComposer.ComposePlayingComposer(CurrentSong.SongData.Id,
+            await user.GetClient().SendMessageAsync(SoundMachineComposer.ComposePlayingComposer(CurrentSong.SongData.Id,
                 SongQueuePosition, SongSyncTimestamp));
         }
 
         /// <summary>
         ///     Destroys this instance.
         /// </summary>
-        internal void Destroy()
+        internal async Task Destroy()
         {
             _mLoadedDisks?.Clear();
 

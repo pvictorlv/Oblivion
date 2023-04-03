@@ -45,7 +45,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         /// <param name="session">The session.</param>
         /// <param name="time">The time.</param>
         /// <param name="category">The category.</param>
-        internal void AddNewEvent(uint roomId, string eventName, string eventDesc, GameClient session, int time = 7200,
+        internal async Task AddNewEvent(uint roomId, string eventName, string eventDesc, GameClient session, int time = 7200,
             int category = 1)
         {
             {
@@ -103,7 +103,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         ///     Removes the event.
         /// </summary>
         /// <param name="roomId">The room identifier.</param>
-        internal void RemoveEvent(uint roomId)
+        internal async Task RemoveEvent(uint roomId)
         {
             _events.Remove(roomId);
             SerializeEventInfo(roomId);
@@ -142,7 +142,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         ///     Serializes the event information.
         /// </summary>
         /// <param name="roomId">The room identifier.</param>
-        internal void SerializeEventInfo(uint roomId)
+        internal async Task SerializeEventInfo(uint roomId)
         {
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(roomId);
             if (room == null)
@@ -172,14 +172,14 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 ((int) Math.Floor((@event.Time - Oblivion.GetUnixTimeStamp())/60.0)));
 
             serverMessage.AppendInteger(@event.Category);
-            room.SendMessage(serverMessage);
+            await room.SendMessage(serverMessage);
         }
 
         /// <summary>
         ///     Updates the event.
         /// </summary>
         /// <param name="Event">The event.</param>
-        internal void UpdateEvent(RoomEvent Event)
+        internal async Task UpdateEvent(RoomEvent Event)
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
