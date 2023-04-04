@@ -37,7 +37,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
                     if (row == null)
                     {
-                         await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
+                         await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
                         return true;
                     }
                     await session.SendNotif(string.Format((Oblivion.GetLanguage().GetVar("user_info_all")), userName, row["id"],
@@ -54,7 +54,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
                 if (row == null)
                 {
-                     await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
+                     await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
                     return true;
                 }
 

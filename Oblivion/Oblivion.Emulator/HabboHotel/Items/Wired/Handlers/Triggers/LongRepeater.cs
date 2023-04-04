@@ -46,7 +46,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             if (conditions.Count > 0)
                 foreach (var current in conditions)
                 {
-                    if (!current.Execute(null))
+                    if (!await current.Execute(null))
                         return false;
 
                     await WiredHandler.OnEvent(current);
@@ -64,7 +64,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                             ? Room.GetWiredHandler().GetRandomEffect(effects)
                             : Room.GetWiredHandler().GetRandomUnseenEffect(effects);
 
-                        if (selectedBox == null || !selectedBox.Execute())
+                        if (selectedBox == null || ! await selectedBox.Execute())
                             return false;
 
                         await WiredHandler.OnEvent(specialBox);
@@ -75,7 +75,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                 {
                     foreach (var current3 in effects)
                     {
-                        current3.Execute(null, Type);
+                        await current3.Execute(null, Type);
                         await WiredHandler.OnEvent(current3);
                     }
                 }

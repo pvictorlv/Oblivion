@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Oblivion.Messages;
 
 namespace Oblivion.HabboHotel.Users.Messenger

@@ -22,7 +22,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override async Task<bool> Execute(GameClient session, string[] pms)
         {
-            session.GetHabbo().GetInventoryComponent().ClearItems();
+            await session.GetHabbo().GetInventoryComponent().ClearItems();
             return true;
         }
     }

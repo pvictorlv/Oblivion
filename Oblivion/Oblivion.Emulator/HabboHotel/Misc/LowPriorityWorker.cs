@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 
 namespace Oblivion.HabboHotel.Misc
@@ -32,7 +33,7 @@ namespace Oblivion.HabboHotel.Misc
         /// <summary>
         ///     Processes the specified caller.
         /// </summary>
-        internal static void Process()
+        internal static async Task Process()
         {
             if (_lowPriorityStopWatch.ElapsedMilliseconds >= 60000 || !_isExecuted)
             {
@@ -52,11 +53,11 @@ namespace Oblivion.HabboHotel.Misc
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
                         _userPeak = clientCount;
-                        queryReactor.RunFastQuery(string.Concat("UPDATE server_status SET stamp = '",
+                        await queryReactor.RunFastQueryAsync(string.Concat("UPDATE server_status SET stamp = '",
                             Oblivion.GetUnixTimeStamp(), "', users_online = ", clientCount, ", rooms_loaded = ",
                             loadedRoomsCount, ", server_ver = 'Oblivion Emulator', userpeak = ", _userPeak));
                     }
-                    Oblivion.GetGame().GetNavigator().LoadNewPublicRooms();
+                    await Oblivion.GetGame().GetNavigator().LoadNewPublicRooms();
                 }
                 catch (Exception e)
                 {

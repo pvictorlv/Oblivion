@@ -214,7 +214,7 @@ namespace Oblivion.HabboHotel.Quests
                     session.GetHabbo().Id));
             }
             session.GetHabbo().CurrentQuestId = quest.Id;
-            GetList(session, null);
+            await GetList(session, null);
             await session.SendMessageAsync(QuestStartedComposer.Compose(session, quest));
         }
 
@@ -240,7 +240,7 @@ namespace Oblivion.HabboHotel.Quests
                     " WHERE id = ", session.GetHabbo().Id));
             }
             session.GetHabbo().CurrentQuestId = nextQuestInSeries.Id;
-            GetList(session, null);
+            await GetList(session, null);
             await session.SendMessageAsync(QuestStartedComposer.Compose(session, nextQuestInSeries));
         }
 
@@ -260,7 +260,7 @@ namespace Oblivion.HabboHotel.Quests
                     session.GetHabbo().Id));
             session.GetHabbo().CurrentQuestId = 0u;
             await session.SendMessageAsync(QuestAbortedComposer.Compose());
-            GetList(session, null);
+            await GetList(session, null);
         }
 
         /// <summary>

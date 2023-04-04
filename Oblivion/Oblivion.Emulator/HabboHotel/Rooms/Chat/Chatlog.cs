@@ -73,7 +73,7 @@ namespace Oblivion.HabboHotel.Rooms.Chat
             IsSaved = true;
         }
 
-        internal async Task Serialize(ServerMessage message)
+        internal async Task<ServerMessage> Serialize(ServerMessage message)
         {
             var habbo = Oblivion.GetHabboById(UserId);
             await message.AppendStringAsync(TimeStamp.ToString("h:mm:ss"));

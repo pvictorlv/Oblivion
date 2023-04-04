@@ -29,7 +29,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             if (room.RoomData.DisablePull)
             {
-                 await Session.SendWhisperAsync("Realizar Pull Foi Desativado pelo Dono do Quarto");
+                 await session.SendWhisperAsync("Realizar Pull Foi Desativado pelo Dono do Quarto");
                 return true;
             }
 
@@ -41,12 +41,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             if (user2 == null) return true;
             if (user2.TeleportEnabled)
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
                 return true;
             }
             if (user2.TeleportEnabled)
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
                 return true;
             }
             

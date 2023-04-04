@@ -24,7 +24,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         {
             double speed;
             if (double.TryParse(pms[0], out speed)) session.GetHabbo().CurrentRoom.GetRoomItemHandler().SetSpeed(speed);
-            else  await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_setspeed_error_numbers"));
+            else  await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_setspeed_error_numbers"));
 
             return true;
         }

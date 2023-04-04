@@ -147,7 +147,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 where x.EffectId == effectId
                 select x).Last();
 
-            await avatarEffect.Activate();
+            avatarEffect.Activate();
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 await queryReactor.RunFastQueryAsync(

@@ -69,7 +69,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
                 if (currentRoom.RoomData.Group != null)
                 {
-                    Oblivion.GetGame().GetGroupManager().DeleteGroup(currentRoom.RoomData.Group.Id);
+                    await Oblivion.GetGame().GetGroupManager().DeleteGroup(currentRoom.RoomData.Group.Id);
                 }
                 //Change Room Owners
                 currentRoom.RoomData.OwnerId = (int)user.Id;
@@ -81,13 +81,13 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 if (type == "c")
                 {
                     user.Credits -= cost;
-                    user.UpdateCreditsBalance();
+                    await user.UpdateCreditsBalance();
 
                 }
                 else
                 {
                     user.Diamonds -= cost;
-                    user.UpdateSeasonalCurrencyBalance();
+                    await user.UpdateSeasonalCurrencyBalance();
                 }
 
 
@@ -95,12 +95,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 if (type == "c")
                 {
                     roomOwner.GetClient().GetHabbo().Credits += cost;
-                    roomOwner.GetClient().GetHabbo().UpdateCreditsBalance();
+                    await roomOwner.GetClient().GetHabbo().UpdateCreditsBalance();
                 }
                 else 
                 {
                     roomOwner.GetClient().GetHabbo().Diamonds += cost;
-                    roomOwner.GetClient().GetHabbo().UpdateSeasonalCurrencyBalance();
+                    await roomOwner.GetClient().GetHabbo().UpdateSeasonalCurrencyBalance();
                 }
 
                 currentRoom.RoomData.RoomForSale = false;
@@ -108,10 +108,10 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 currentRoom.RoomData.RoomSaleType = "";
                 using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
-                    currentRoom.GetRoomItemHandler().SaveFurniture(dbClient);
+                    await currentRoom.GetRoomItemHandler().SaveFurniture(dbClient);
 
                 }
-                Oblivion.GetGame().GetRoomManager().UnloadRoom(currentRoom, "purchase");
+                await Oblivion.GetGame().GetRoomManager().UnloadRoom(currentRoom, "purchase");
                
             }
             else

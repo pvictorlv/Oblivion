@@ -29,7 +29,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             if (danceId > 4)
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_dance_wrong_syntax"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_dance_wrong_syntax"));
                 return true;
             }
             var room = session.GetHabbo().CurrentRoom;

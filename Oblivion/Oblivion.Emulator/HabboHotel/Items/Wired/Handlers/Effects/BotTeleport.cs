@@ -45,7 +45,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
-        private void Teleport(RoomUser user)
+        private async Task Teleport(RoomUser user)
         {
             if (Items == null || Items.Count < 0)
                 return;
@@ -63,12 +63,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (roomItem == null) return;
 
             int oldX = user.X, oldY = user.Y;
-            Room.GetGameMap().TeleportToItem(user, roomItem);
-            Room.GetRoomUserManager().OnUserUpdateStatus(oldX, oldY);
-            Room.GetRoomUserManager().OnUserUpdateStatus(roomItem.X, roomItem.Y);
+            await Room.GetGameMap().TeleportToItem(user, roomItem);
+            await Room.GetRoomUserManager().OnUserUpdateStatus(oldX, oldY);
+            await Room.GetRoomUserManager().OnUserUpdateStatus(roomItem.X, roomItem.Y);
 
 
-            Room.GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedStuff, roomItem);
+            await Room.GetWiredHandler().ExecuteWired(Interaction.TriggerBotReachedStuff, roomItem);
         }
 
 
@@ -101,7 +101,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (_bot == null)
                 return false;
 
-            Teleport(_bot);
+            await Teleport(_bot);
 
             _mNext = Oblivion.Now() + Delay;
             Requested = false;

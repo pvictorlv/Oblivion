@@ -25,7 +25,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var room = session.GetHabbo().CurrentRoom;
             if (!session.GetHabbo().CurrentRoom.RoomMuted)
             {
-                 await Session.SendWhisperAsync("Room isn't muted.");
+                 await session.SendWhisperAsync("Room isn't muted.");
                 return true;
             }
 
@@ -38,9 +38,10 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             message.AppendString("");
             await room.SendMessage(message);*/
 
-            await room.SendMessage(GameClient.GetBytesNotif("Este quarto foi des-selenciado."));
+            
+            await room.SendMessage(GameClient.GetBytesNotif("Este quarto foi des-desmutado."));
 
-            Oblivion.GetGame()
+            await Oblivion.GetGame()
                 .GetModerationTool().LogStaffEntry(session.GetHabbo().UserName, string.Empty,
                     "Room Unmute", "Room UnMuted");
             return true;

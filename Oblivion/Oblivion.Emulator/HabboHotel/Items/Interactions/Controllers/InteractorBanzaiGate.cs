@@ -26,7 +26,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 user.Team = item.Team;
                 teamManagerForBanzai.AddUser(user);
                 if (avatarEffectsInventoryComponent.CurrentEffect != effect)
-                    avatarEffectsInventoryComponent.ActivateCustomEffect(effect);
+                    await avatarEffectsInventoryComponent.ActivateCustomEffect(effect);
                 return;
             }
 
@@ -34,14 +34,14 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             {
                 teamManagerForBanzai.OnUserLeave(user);
                 user.Team = Team.None;
-                avatarEffectsInventoryComponent.ActivateCustomEffect(0);
+                await avatarEffectsInventoryComponent.ActivateCustomEffect(0);
                 return;
             }
 
             teamManagerForBanzai.OnUserLeave(user);
 
             if (avatarEffectsInventoryComponent.CurrentEffect == effect)
-                avatarEffectsInventoryComponent.ActivateCustomEffect(0);
+                await avatarEffectsInventoryComponent.ActivateCustomEffect(0);
             user.Team = Team.None;
         }
     }

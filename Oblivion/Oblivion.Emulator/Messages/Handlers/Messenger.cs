@@ -187,7 +187,7 @@ namespace Oblivion.Messages.Handlers
             for (var i = 0; i < num; i++) list.Add(Request.GetUInteger());
             var s = Request.GetString();
 
-            if (!BobbaFilter.CanTalk(Session, s)) return;
+            if (!await BobbaFilter.CanTalk(Session, s)) return;
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleInvitationMessageComposer"));
             await serverMessage.AppendIntegerAsync(Session.GetHabbo().Id);

@@ -25,7 +25,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var reason = string.Join(" ", pms);
 
             var messageBytes =
-                GameClient.GetBytesNotif(string.Format("You have all been summoned by\r- {0}:\r\n{1}",
+                GameClient.GetBytesNotif(string.Format("Você foi puxado por \r- {0}:\r\n{1}",
                     session.GetHabbo().UserName, reason));
             /* TODO CHECK */ foreach (var client in Oblivion.GetGame().GetClientManager().Clients.Values)
             {
@@ -33,7 +33,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     session.GetHabbo().CurrentRoomId == client.GetHabbo().CurrentRoomId)
                     continue;
 
-                client.GetMessageHandler()
+                await client.GetMessageHandler()
                     .PrepareRoomForUser(session.GetHabbo().CurrentRoom.RoomId,
                         session.GetHabbo().CurrentRoom.RoomData.PassWord);
                 await client.SendMessage(messageBytes);

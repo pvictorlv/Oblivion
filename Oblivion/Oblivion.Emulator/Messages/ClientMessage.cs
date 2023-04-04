@@ -72,13 +72,7 @@ namespace Oblivion.Messages
                 this.Id = 0;
             }
         }
-
-        internal ClientMessage(byte[] body, int position, int packetLength)
-        {
-            _body = body;
-            Id = GetInteger16();
-            Init(Id, body, position, packetLength);
-        }
+        
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -122,7 +116,7 @@ namespace Oblivion.Messages
         /// <summary>
         /// Initializes the specified message identifier.
         /// </summary>
-        internal async Task Init(int messageId, byte[] body, int position, int packetLength)
+        internal void Init(int messageId, byte[] body, int position, int packetLength)
         {
             Id = messageId;
             _body = body;
@@ -130,7 +124,7 @@ namespace Oblivion.Messages
             _length = packetLength;
         }
 
-        internal async Task Init(byte[] body)
+        internal void Init(byte[] body)
         {
             _body = body;
             Id = GetInteger16();

@@ -10,9 +10,9 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorChair : FurniInteractorModel
     {
-        public override async Task OnUserWalk(GameClient session, RoomItem item, RoomUser user)
+        public override Task OnUserWalk(GameClient session, RoomItem item, RoomUser user)
         {
-            if (session == null || item == null || user?.Statusses == null) return;
+            if (session == null || item == null || user?.Statusses == null) return Task.CompletedTask;
 
             if (!user.Statusses.ContainsKey("sit"))
             {
@@ -43,6 +43,8 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 user.RotBody = item.Rot;
                 user.UpdateNeeded = true;
             }
+
+            return Task.CompletedTask;
         }
     }
 }

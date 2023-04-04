@@ -76,7 +76,7 @@ namespace Oblivion.HabboHotel.Events
             WorkUpdate();
             SortCollection();
 
-            /* TODO CHECK */ 
+            /* TODO CHECK */
             foreach (var current in _eventCategories.Values)
                 await current.OnCycle();
         }
@@ -86,12 +86,12 @@ namespace Oblivion.HabboHotel.Events
         /// </summary>
         /// <param name="data">The data.</param>
         /// <param name="roomEventCategory">The room event category.</param>
-        internal async Task QueueAddEvent(RoomData data, int roomEventCategory)
+        internal void QueueAddEvent(RoomData data, int roomEventCategory)
         {
             lock (_addQueue.SyncRoot)
                 _addQueue.Enqueue(data);
 
-            await _eventCategories[roomEventCategory].QueueAddEvent(data);
+            _eventCategories[roomEventCategory].QueueAddEvent(data);
         }
 
         /// <summary>
@@ -99,12 +99,12 @@ namespace Oblivion.HabboHotel.Events
         /// </summary>
         /// <param name="data">The data.</param>
         /// <param name="roomEventCategory">The room event category.</param>
-        internal async Task QueueRemoveEvent(RoomData data, int roomEventCategory)
+        internal void QueueRemoveEvent(RoomData data, int roomEventCategory)
         {
             lock (_removeQueue.SyncRoot)
                 _removeQueue.Enqueue(data);
 
-            await _eventCategories[roomEventCategory].QueueRemoveEvent(data);
+            _eventCategories[roomEventCategory].QueueRemoveEvent(data);
         }
 
         /// <summary>
@@ -112,12 +112,12 @@ namespace Oblivion.HabboHotel.Events
         /// </summary>
         /// <param name="data">The data.</param>
         /// <param name="roomEventCategory">The room event category.</param>
-        internal async Task QueueUpdateEvent(RoomData data, int roomEventCategory)
+        internal void QueueUpdateEvent(RoomData data, int roomEventCategory)
         {
             lock (_updateQueue.SyncRoot)
                 _updateQueue.Enqueue(data);
 
-            await _eventCategories[roomEventCategory].QueueUpdateEvent(data);
+            _eventCategories[roomEventCategory].QueueUpdateEvent(data);
         }
 
         /// <summary>

@@ -33,7 +33,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
            Oblivion.GetGame().GetClientManager().SendMessageAsync(message);
             
 
-             await Session.SendWhisperAsync("Enviado!");
+             await session.SendWhisperAsync("Enviado!");
             return true;
         }
     }

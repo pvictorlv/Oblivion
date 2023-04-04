@@ -159,8 +159,9 @@ namespace Oblivion.HabboHotel.RoomBots
         ///     Called when [user enter room].
         /// </summary>
         /// <param name="user">The user.</param>
-        internal override void OnUserEnterRoom(RoomUser user)
+        internal override Task OnUserEnterRoom(RoomUser user)
         {
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -394,7 +395,7 @@ namespace Oblivion.HabboHotel.RoomBots
         /// </summary>
         /// <param name="user">The user.</param>
         /// <param name="message">The message.</param>
-        internal override void OnUserShout(RoomUser user, string message)
+        internal override async Task OnUserShout(RoomUser user, string message)
         {
 
             if (Disposed)
@@ -404,7 +405,7 @@ namespace Oblivion.HabboHotel.RoomBots
 
             if (_isBartender)
             {
-                GetRoomUser()
+                await GetRoomUser()
                     .Chat(null, "Não precisa gritar, caramba! Se precisa de algo basta vir aqui.", false, 0);
             }
         }
@@ -427,7 +428,7 @@ namespace Oblivion.HabboHotel.RoomBots
             }
         }
 
-        internal override void OnChatTick()
+        internal override async Task OnChatTick()
         {
             if (GetBotData() == null || GetRoomUser() == null || GetBotData().WasPicked ||
                 GetBotData().RandomSpeech == null ||
@@ -504,7 +505,7 @@ namespace Oblivion.HabboHotel.RoomBots
                 if (GetBotData() != null) randomSpeech = randomSpeech.Replace("%name%", GetBotData().Name);
                 if (user == null) return;
 
-                user.Chat(null, randomSpeech, false, 0);
+                await user.Chat(null, randomSpeech, false, 0);
             }
             catch (Exception e)
             {
@@ -516,9 +517,9 @@ namespace Oblivion.HabboHotel.RoomBots
         ///     Chats the timer tick.
         /// </summary>
         /// <param name="o">The o.</param>
-        private void ChatTimerTick(object o)
+        private async void ChatTimerTick(object o)
         {
-            OnChatTick();
+            await OnChatTick();
         }
     }
 }

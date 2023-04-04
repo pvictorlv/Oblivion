@@ -181,7 +181,7 @@ public class ConnectionManager<T> : IServer<T>
     }
     public void Stop()
     {
-        DoStop();
+        DoStop().Wait();
     }
 
     private async Task DoStop()

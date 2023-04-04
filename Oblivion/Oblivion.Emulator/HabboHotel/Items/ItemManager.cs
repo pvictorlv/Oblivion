@@ -48,9 +48,9 @@ namespace Oblivion.HabboHotel.Items
         /// </summary>
         /// <param name="dbClient">The database client.</param>
         /// <param name="itemLoaded">The item loaded.</param>
-        internal async Task LoadItems(IQueryAdapter dbClient, out uint itemLoaded)
+        internal async Task LoadItems(IQueryAdapter dbClient, uint itemLoaded)
         {
-            await LoadItems(dbClient);
+            LoadItems(dbClient);
             itemLoaded = (uint) _items.Count;
             _itemsByVirtualId = new ConcurrentDictionary<uint, string>();
             _itemsByRealId = new ConcurrentDictionary<string, uint>();
@@ -105,7 +105,7 @@ namespace Oblivion.HabboHotel.Items
         ///     Loads the items.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal async Task LoadItems(IQueryAdapter dbClient)
+        internal void LoadItems(IQueryAdapter dbClient)
         {
             _items.Clear();
 

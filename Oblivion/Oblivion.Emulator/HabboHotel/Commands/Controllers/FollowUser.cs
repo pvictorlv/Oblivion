@@ -27,7 +27,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
             if (client?.GetHabbo()?.CurrentRoom == null)
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
            

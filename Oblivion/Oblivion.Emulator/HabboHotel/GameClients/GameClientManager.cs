@@ -213,7 +213,7 @@ namespace Oblivion.HabboHotel.GameClients
             foreach (var current in Clients.Values.Where(current => current?.GetHabbo() != null).Where(current =>
                          (current.GetHabbo().Rank == 4u || current.GetHabbo().Rank == 5u) ||
                          current.GetHabbo().Rank == 6u))
-                current.GetConnection().Send(message);
+                await current.GetConnection().Send(message);
         }
 
         /// <summary>
@@ -247,7 +247,7 @@ namespace Oblivion.HabboHotel.GameClients
 
             channel.GetAttribute(attr2).Set(channel.Channel.Id);
             */
-            
+
             session.UserData = gameClient;
 
             Clients.AddOrUpdate(channel.Channel.Id, gameClient, (key, value) => gameClient);
@@ -268,26 +268,17 @@ namespace Oblivion.HabboHotel.GameClients
             client?.Dispose();
         }
 
-
-        /// <summary>
-        /// Send message for all users
-        /// </summary>
-        /// <param name="packet"></param>
-        public void SendMessage(ServerMessage packet)
-        {
-            foreach (var client in Clients.Values)
-            {
-                client?.GetConnection()?.Send(packet); ;
-            }
-        }
+        
 
         public async Task SendMessageAsync(ServerMessage packet)
         {
-            var bytes = packet.GetReversedBytes();
+         //   var bytes = packet.GetReversedBytes();
 
             foreach (var client in Clients.Values)
             {
-                client?.GetConnection()?.Send(packet);
+                var conn = client.GetConnection();
+                if (conn != null)
+                    await conn.Send(packet);
             }
         }
 
@@ -295,7 +286,7 @@ namespace Oblivion.HabboHotel.GameClients
         ///     Logs the clones out.
         /// </summary>
         /// <param name="userId">The user identifier.</param>
-        internal async Task LogClonesOut(uint userId)
+        internal void LogClonesOut(uint userId)
         {
             var clientByUserId = GetClientByUserId(userId);
             clientByUserId?.Disconnect("user null LogClonesOut");
@@ -307,7 +298,7 @@ namespace Oblivion.HabboHotel.GameClients
         /// <param name="client">The client.</param>
         /// <param name="userId">The user identifier.</param>
         /// <param name="userName">Name of the user.</param>
-        internal async Task RegisterClient(GameClient client, uint userId, string userName)
+        internal void RegisterClient(GameClient client, uint userId, string userName)
         {
             _userNameRegister[userName.ToLower()] = client;
             _userIdRegister[userId] = client;
@@ -324,7 +315,7 @@ namespace Oblivion.HabboHotel.GameClients
             _userNameRegister.TryRemove(userName.ToLower(), out _);
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                queryReactor.SetQuery($"UPDATE users SET online='0' WHERE id={userid} LIMIT 1");
+                await queryReactor.RunFastQueryAsync($"UPDATE users SET online='0' WHERE id={userid} LIMIT 1");
         }
 
         /// <summary>
@@ -341,8 +332,8 @@ namespace Oblivion.HabboHotel.GameClients
             {
                 try
                 {
-                    current2.GetHabbo().GetInventoryComponent().RunDbUpdate();
-                    current2.GetHabbo().RunDbUpdate();
+                    await current2.GetHabbo().GetInventoryComponent().RunDbUpdate();
+                    await current2.GetHabbo().RunDbUpdate();
                     stringBuilder.Append(current2.GetHabbo().GetQueryString());
                     flag = true;
                     Console.ForegroundColor = ConsoleColor.DarkMagenta;
@@ -399,7 +390,7 @@ namespace Oblivion.HabboHotel.GameClients
         /// </summary>
         /// <param name="oldName">The old name.</param>
         /// <param name="newName">The new name.</param>
-        internal async Task UpdateClient(string oldName, string newName)
+        internal void UpdateClient(string oldName, string newName)
         {
             if (!_userNameRegister.TryRemove(oldName.ToLower(), out var old))
                 return;

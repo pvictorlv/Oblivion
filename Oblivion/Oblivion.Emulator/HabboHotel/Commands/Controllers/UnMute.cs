@@ -25,12 +25,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
             if (client?.GetHabbo() == null)
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
             if (client.GetHabbo().Rank >= 4)
             {
-                 await Session.SendWhisperAsync("You are not allowed to mute that user.");
+                 await session.SendWhisperAsync("You are not allowed to mute that user.");
             }
 
             client.GetHabbo().BobbaFiltered = 0;

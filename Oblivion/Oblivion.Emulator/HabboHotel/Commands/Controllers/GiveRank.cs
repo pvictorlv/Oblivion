@@ -29,13 +29,13 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             if (user == null)
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
 
             if (user.GetHabbo().Rank >= session.GetHabbo().Rank)
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_is_higher_rank"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_is_higher_rank"));
                 return true;
             }
 
@@ -50,7 +50,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
 
             user.GetHabbo().Rank = Convert.ToUInt32(pms[1]);
-             await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_rank_update"));
+             await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_rank_update"));
             return true;
         }
     }

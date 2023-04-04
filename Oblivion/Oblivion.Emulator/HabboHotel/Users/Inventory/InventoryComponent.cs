@@ -106,7 +106,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// </summary>
         internal Task ClearItems()
         {
-           return Task.Factory.StartNew(async () =>
+            return Task.Factory.StartNew(async () =>
             {
                 await UpdateItems(true);
 
@@ -156,7 +156,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     var array = item.BaseItem.Name.Split('_');
                     var num = int.Parse(array[1]);
 
-                    await queryreactor2.RunNoLockFastQueryAsync($"DELETE FROM items_rooms WHERE id='{item.Id}' LIMIT 1;");
+                    await queryreactor2.RunNoLockFastQueryAsync(
+                        $"DELETE FROM items_rooms WHERE id='{item.Id}' LIMIT 1;");
 
 
                     currentRoom.GetRoomItemHandler().RemoveItem(item.Id);
@@ -439,7 +440,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
 
             if (UserHoldsItem(id))
-                RemoveItem(id, false, 0);
+                await RemoveItem(id, false, 0);
 
             if (userItem.BaseItem == null) return null;
 
@@ -456,15 +457,15 @@ namespace Oblivion.HabboHotel.Users.Inventory
         }
 
 
-        public void AddNewItem(UserItem userItem)
+        public async void AddNewItem(UserItem userItem)
         {
             var virtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(userItem.Id);
-            SendNewItems(virtualId);
+            await SendNewItems(virtualId);
 
             var id = userItem.Id;
 
             if (UserHoldsItem(id))
-                RemoveItem(id, false, 0);
+                await RemoveItem(id, false, 0);
 
             if (userItem.BaseItem == null) return;
 
@@ -506,7 +507,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             }
 
             _items?.TryRemove(item.Id, out _);
-            
+
             _mRemovedItems?.Add(item);
         }
 
@@ -532,9 +533,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             int totalSent = 0;
 
             if (i > 4500)
-                _mClient.SendStaticMessage(StaticMessage.AdviceMaxItems);
-
-
+                await _mClient.SendStaticMessage(StaticMessage.AdviceMaxItems);
 
 
             using (var serverMessage = new ServerMessage())
@@ -553,13 +552,13 @@ namespace Oblivion.HabboHotel.Users.Inventory
                         totalSent++;
 
                         if (inventoryItem.IsWallItem)
-                            inventoryItem.SerializeWall(serverMessage, true);
+                            await inventoryItem.SerializeWall(serverMessage, true);
                         else
-                            inventoryItem.SerializeFloor(serverMessage, true);
+                            await inventoryItem.SerializeFloor(serverMessage, true);
                     }
                 }
 
-                _mClient.SendMessage(serverMessage);
+                await _mClient.SendMessage(serverMessage);
             }
         }
 
@@ -604,7 +603,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
                 var id = item.Id;
                 if (UserHoldsItem(id))
-                    RemoveItem(id, false, 0);
+                    await RemoveItem(id, false, 0);
 
 
                 _items.TryAdd(userItem.Id, userItem);
@@ -615,7 +614,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 if (!_mAddedItems.Contains(id))
                     _mAddedItems.Add(id);
 
-                _mClient.SendMessage(serverMessage);
+                await _mClient.SendMessage(serverMessage);
             }
         }
 
@@ -657,7 +656,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
                 var id = userItem.Id;
                 if (UserHoldsItem(id))
-                    RemoveItem(id, false, 0);
+                    await RemoveItem(id, false, 0);
 
 
                 _items.TryAdd(userItem.Id, userItem);
@@ -668,7 +667,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 if (!_mAddedItems.Contains(id))
                     _mAddedItems.Add(id);
 
-                _mClient.SendMessage(serverMessage);
+                await _mClient.SendMessage(serverMessage);
             }
         }
 
@@ -677,7 +676,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         ///     Serializes the pet inventory.
         /// </summary>
         /// <returns>ServerMessage.</returns>
-        internal ServerMessage SerializePetInventory()
+        internal async Task<ServerMessage> SerializePetInventory()
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("PetInventoryMessageComposer"));
             serverMessage.AppendInteger(1);
@@ -685,7 +684,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             var list = _inventoryPets.Values;
             serverMessage.AppendInteger(list.Count);
             foreach (var current in list)
-                current.SerializeInventory(serverMessage);
+                serverMessage = await current.SerializeInventory(serverMessage);
 
             return serverMessage;
         }
@@ -718,7 +717,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
         ///     Adds the item.
         /// </summary>
         /// <param name="item">The item.</param>
-        internal async Task AddItem(RoomItem item) => AddNewItem(item.Id, item.BaseItem.ItemId, item.ExtraData, item.GroupId,
+        internal async Task AddItem(RoomItem item) => await AddNewItem(item.Id, item.BaseItem.ItemId, item.ExtraData,
+            item.GroupId,
             true,
             true, 0, 0, item.SongCode);
 
@@ -789,17 +789,17 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     {
                         if (current.DbState == DatabaseUpdateState.NeedsUpdate)
                         {
-                            queryChunk.AddParameter($"{current.PetId}name", current.Name);
-                            queryChunk.AddParameter($"{current.PetId}race", current.Race);
-                            queryChunk.AddParameter($"{current.PetId}color", current.Color);
+                            await queryChunk.AddParameter($"{current.PetId}name", current.Name);
+                            await queryChunk.AddParameter($"{current.PetId}race", current.Race);
+                            await queryChunk.AddParameter($"{current.PetId}color", current.Color);
 
 
                             var roomId = (current.RoomId <= 0) ? "NULL" : current.RoomId.ToString();
-                            queryChunk.AddQuery(string.Concat("UPDATE bots SET room_id = ", roomId, ", name = @",
+                            await queryChunk.AddQuery(string.Concat("UPDATE bots SET room_id = ", roomId, ", name = @",
                                 current.PetId, "name, x = ", current.X, ", Y = ", current.Y, ", Z = ", current.Z,
                                 " WHERE id = ", current.PetId));
 
-                            queryChunk.AddQuery(string.Concat("UPDATE pets_data SET race = @", current.PetId,
+                            await queryChunk.AddQuery(string.Concat("UPDATE pets_data SET race = @", current.PetId,
                                 "race, color = @", current.PetId, "color, type = ", current.Type, ", experience = ",
                                 current.Experience, ", energy = ", current.Energy, ", nutrition = ", current.Nutrition,
                                 ", respect = ", current.Respect, ", createstamp = '", current.CreationStamp,
@@ -812,7 +812,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                     }
 
                     using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
-                        queryChunk.Execute(queryreactor2);
+                        await queryChunk.Execute(queryreactor2);
                 }
             }
             catch (Exception ex)
@@ -835,7 +835,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                 await serverMessage.AppendIntegerAsync(1);
                 await serverMessage.AppendIntegerAsync(1);
                 await serverMessage.AppendIntegerAsync(id);
-                _mClient.SendMessage(serverMessage);
+                await _mClient.SendMessage(serverMessage);
             }
         }
 

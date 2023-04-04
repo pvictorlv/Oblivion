@@ -83,8 +83,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
         public bool IsAir { get; set; }
 
-        public ARC4 ServerRc4
-        { get; set; }
+        public ARC4 ServerRc4 { get; set; }
 
         /// <summary>
         ///     Gets the connection.
@@ -138,7 +137,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// </summary>
         /// <param name="authTicket">The authentication ticket.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool TryLogin(string authTicket)
+        internal async Task<bool> TryLogin(string authTicket)
         {
             try
             {
@@ -165,7 +164,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
                 Oblivion.GetGame().GetClientManager().RegisterClient(this, userData.UserId, userData.User.UserName);
                 _habbo = userData.User;
-                _habbo.LoadData(userData);
+                await _habbo.LoadData(userData);
 
                 if (MachineId == null)
                     MachineId = "";
@@ -175,7 +174,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 {
                     var banReason = Oblivion.GetGame().GetBanManager()
                         .GetBanReason(_habbo.UserName, ip, MachineId);
-                    SendNotifWithScroll(banReason);
+                    await SendNotifWithScroll(banReason);
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
                         queryReactor.SetQuery($"SELECT ip_last FROM users WHERE id={_habbo.Id} LIMIT 1");
@@ -187,68 +186,70 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                         var integer = queryReactor.GetInteger();
 
                         if (integer > 0)
-                            queryReactor.RunFastQuery("UPDATE users_bans_access SET attempts = attempts + 1, ip='" +
-                                                      supaString + "' WHERE user_id=" + _habbo.Id + " LIMIT 1");
+                            await queryReactor.RunFastQueryAsync(
+                                "UPDATE users_bans_access SET attempts = attempts + 1, ip='" +
+                                supaString + "' WHERE user_id=" + _habbo.Id + " LIMIT 1");
                         else
-                            queryReactor.RunFastQuery("INSERT INTO users_bans_access (user_id, ip) VALUES (" +
-                                                      GetHabbo().Id + ", '" + supaString + "')");
+                            await queryReactor.RunFastQueryAsync(
+                                "INSERT INTO users_bans_access (user_id, ip) VALUES (" +
+                                GetHabbo().Id + ", '" + supaString + "')");
                     }
 
                     return false;
                 }
 
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                    queryReactor.RunFastQuery(
+                    await queryReactor.RunFastQueryAsync(
                         $"UPDATE users SET ip_last='{ip}', online = '1' WHERE id={GetHabbo().Id}");
 
                 _habbo.Init(this, userData);
                 using (var msg =
-                    new ServerMessage(LibraryParser.OutgoingRequest("AuthenticationOKMessageComposer")))
+                       new ServerMessage(LibraryParser.OutgoingRequest("AuthenticationOKMessageComposer")))
                 {
-                    SendMessage(msg);
+                    await SendMessage(msg);
                 }
 
                 using (var serverMessage = new ServerMessage())
                 {
-                    serverMessage.Init(LibraryParser.OutgoingRequest("HomeRoomMessageComposer"));
-                    serverMessage.AppendInteger(_habbo.HomeRoom);
-                    serverMessage.AppendInteger(_habbo.HomeRoom);
-                    SendMessage(serverMessage);
+                    await serverMessage.InitAsync(LibraryParser.OutgoingRequest("HomeRoomMessageComposer"));
+                    await serverMessage.AppendIntegerAsync(_habbo.HomeRoom);
+                    await serverMessage.AppendIntegerAsync(_habbo.HomeRoom);
+                    await SendMessage(serverMessage);
 
 
-                    serverMessage.Init(LibraryParser.OutgoingRequest("FavouriteRoomsMessageComposer"));
-                    serverMessage.AppendInteger(30);
+                    await serverMessage.InitAsync(LibraryParser.OutgoingRequest("FavouriteRoomsMessageComposer"));
+                    await serverMessage.AppendIntegerAsync(30);
 
                     if (_habbo.Data.FavouritedRooms == null || _habbo.Data.FavouritedRooms.Count <= 0)
-                        serverMessage.AppendInteger(0);
+                        await serverMessage.AppendIntegerAsync(0);
                     else
                     {
-                        serverMessage.AppendInteger(_habbo.Data.FavouritedRooms.Count);
+                        await serverMessage.AppendIntegerAsync(_habbo.Data.FavouritedRooms.Count);
 
                         /* TODO CHECK */
                         foreach (var i in _habbo.Data.FavouritedRooms)
-                            serverMessage.AppendInteger(i);
+                            await serverMessage.AppendIntegerAsync(i);
                     }
 
-                    SendMessage(serverMessage);
+                    await SendMessage(serverMessage);
                     if (_habbo.GetSubscriptionManager() != null)
                     {
-                        serverMessage.Init(LibraryParser.OutgoingRequest("UserClubRightsMessageComposer"));
-                        serverMessage.AppendInteger(_habbo.GetSubscriptionManager().HasSubscription ? 2 : 0);
-                        serverMessage.AppendInteger(_habbo.Rank);
-                        serverMessage.AppendInteger(0); //Is an ambassador
-                        SendMessage(serverMessage);
+                        await serverMessage.InitAsync(LibraryParser.OutgoingRequest("UserClubRightsMessageComposer"));
+                        await serverMessage.AppendIntegerAsync(_habbo.GetSubscriptionManager().HasSubscription ? 2 : 0);
+                        await serverMessage.AppendIntegerAsync(_habbo.Rank);
+                        await serverMessage.AppendIntegerAsync(0); //Is an ambassador
+                        await SendMessage(serverMessage);
                     }
 
-                    serverMessage.Init(LibraryParser.OutgoingRequest("UserRightsMessageComposer"));
+                    await serverMessage.InitAsync(LibraryParser.OutgoingRequest("UserRightsMessageComposer"));
                     serverMessage.AppendBool(true);
                     serverMessage.AppendBool(false);
                     serverMessage.AppendBool(true);
-                    SendMessage(serverMessage);
+                    await SendMessage(serverMessage);
 
-                    serverMessage.Init(LibraryParser.OutgoingRequest("EnableNotificationsMessageComposer"));
+                    await serverMessage.InitAsync(LibraryParser.OutgoingRequest("EnableNotificationsMessageComposer"));
                     serverMessage.AppendBool(true);
-                    SendMessage(serverMessage);
+                    await SendMessage(serverMessage);
 
                     /*var xmasGift =
        new ServerMessage(LibraryParser.OutgoingRequest("CampaignCalendarDataMessageComposer"));
@@ -284,142 +285,144 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
        queuedServerMessage.AppendResponse(xmasGift);
     }*/
 
-                    serverMessage.Init(LibraryParser.OutgoingRequest("CfhTopicsInitMessageComposer"));
-                    serverMessage.AppendInteger(6);
-                    serverMessage.AppendString("sexual_content");
-                    serverMessage.AppendInteger(8);
-                    serverMessage.AppendString("pii_meeting_irl");
-                    serverMessage.AppendInteger(1);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("sexual_webcam_images_auto");
-                    serverMessage.AppendInteger(2);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("explicit_sexual_talk");
-                    serverMessage.AppendInteger(3);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("cybersex");
-                    serverMessage.AppendInteger(4);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("cybersex_auto");
-                    serverMessage.AppendInteger(5);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("meet_some");
-                    serverMessage.AppendInteger(6);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("meet_irl");
-                    serverMessage.AppendInteger(7);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("email_or_phone");
-                    serverMessage.AppendInteger(8);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("scamming");
-                    serverMessage.AppendInteger(3);
-                    serverMessage.AppendString("stealing");
-                    serverMessage.AppendInteger(9);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("scamsites");
-                    serverMessage.AppendInteger(10);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("selling_buying_accounts_or_furni");
-                    serverMessage.AppendInteger(11);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("trolling_bad_behavior");
-                    serverMessage.AppendInteger(11);
-                    serverMessage.AppendString("hate_speech");
-                    serverMessage.AppendInteger(12);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("violent_roleplay");
-                    serverMessage.AppendInteger(13);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("swearing");
-                    serverMessage.AppendInteger(14);
-                    serverMessage.AppendString("auto_reply");
-                    serverMessage.AppendString("drugs");
-                    serverMessage.AppendInteger(15);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("gambling");
-                    serverMessage.AppendInteger(16);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("self_threatening");
-                    serverMessage.AppendInteger(17);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("mild_staff_impersonation");
-                    serverMessage.AppendInteger(18);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("severe_staff_impersonation");
-                    serverMessage.AppendInteger(19);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("habbo_name");
-                    serverMessage.AppendInteger(20);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("minors_access");
-                    serverMessage.AppendInteger(21);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("bullying");
-                    serverMessage.AppendInteger(22);
-                    serverMessage.AppendString("guardians");
-                    serverMessage.AppendString("game_interruption");
-                    serverMessage.AppendInteger(2);
-                    serverMessage.AppendString("flooding");
-                    serverMessage.AppendInteger(23);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("doors");
-                    serverMessage.AppendInteger(24);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("room");
-                    serverMessage.AppendInteger(1);
-                    serverMessage.AppendString("room_report");
-                    serverMessage.AppendInteger(25);
-                    serverMessage.AppendString("mods");
-                    serverMessage.AppendString("help");
-                    serverMessage.AppendInteger(2);
-                    serverMessage.AppendString("help_habbo");
-                    serverMessage.AppendInteger(26);
-                    serverMessage.AppendString("auto_reply");
-                    serverMessage.AppendString("help_payments");
-                    serverMessage.AppendInteger(27);
-                    serverMessage.AppendString("auto_reply");
-                    SendMessage(serverMessage);
+                    await serverMessage.InitAsync(LibraryParser.OutgoingRequest("CfhTopicsInitMessageComposer"));
+                    await serverMessage.AppendIntegerAsync(6);
+                    await serverMessage.AppendStringAsync("sexual_content");
+                    await serverMessage.AppendIntegerAsync(8);
+                    await serverMessage.AppendStringAsync("pii_meeting_irl");
+                    await serverMessage.AppendIntegerAsync(1);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("sexual_webcam_images_auto");
+                    await serverMessage.AppendIntegerAsync(2);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("explicit_sexual_talk");
+                    await serverMessage.AppendIntegerAsync(3);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("cybersex");
+                    await serverMessage.AppendIntegerAsync(4);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("cybersex_auto");
+                    await serverMessage.AppendIntegerAsync(5);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("meet_some");
+                    await serverMessage.AppendIntegerAsync(6);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("meet_irl");
+                    await serverMessage.AppendIntegerAsync(7);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("email_or_phone");
+                    await serverMessage.AppendIntegerAsync(8);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("scamming");
+                    await serverMessage.AppendIntegerAsync(3);
+                    await serverMessage.AppendStringAsync("stealing");
+                    await serverMessage.AppendIntegerAsync(9);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("scamsites");
+                    await serverMessage.AppendIntegerAsync(10);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("selling_buying_accounts_or_furni");
+                    await serverMessage.AppendIntegerAsync(11);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("trolling_bad_behavior");
+                    await serverMessage.AppendIntegerAsync(11);
+                    await serverMessage.AppendStringAsync("hate_speech");
+                    await serverMessage.AppendIntegerAsync(12);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("violent_roleplay");
+                    await serverMessage.AppendIntegerAsync(13);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("swearing");
+                    await serverMessage.AppendIntegerAsync(14);
+                    await serverMessage.AppendStringAsync("auto_reply");
+                    await serverMessage.AppendStringAsync("drugs");
+                    await serverMessage.AppendIntegerAsync(15);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("gambling");
+                    await serverMessage.AppendIntegerAsync(16);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("self_threatening");
+                    await serverMessage.AppendIntegerAsync(17);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("mild_staff_impersonation");
+                    await serverMessage.AppendIntegerAsync(18);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("severe_staff_impersonation");
+                    await serverMessage.AppendIntegerAsync(19);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("habbo_name");
+                    await serverMessage.AppendIntegerAsync(20);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("minors_access");
+                    await serverMessage.AppendIntegerAsync(21);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("bullying");
+                    await serverMessage.AppendIntegerAsync(22);
+                    await serverMessage.AppendStringAsync("guardians");
+                    await serverMessage.AppendStringAsync("game_interruption");
+                    await serverMessage.AppendIntegerAsync(2);
+                    await serverMessage.AppendStringAsync("flooding");
+                    await serverMessage.AppendIntegerAsync(23);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("doors");
+                    await serverMessage.AppendIntegerAsync(24);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("room");
+                    await serverMessage.AppendIntegerAsync(1);
+                    await serverMessage.AppendStringAsync("room_report");
+                    await serverMessage.AppendIntegerAsync(25);
+                    await serverMessage.AppendStringAsync("mods");
+                    await serverMessage.AppendStringAsync("help");
+                    await serverMessage.AppendIntegerAsync(2);
+                    await serverMessage.AppendStringAsync("help_habbo");
+                    await serverMessage.AppendIntegerAsync(26);
+                    await serverMessage.AppendStringAsync("auto_reply");
+                    await serverMessage.AppendStringAsync("help_payments");
+                    await serverMessage.AppendIntegerAsync(27);
+                    await serverMessage.AppendStringAsync("auto_reply");
+                    await SendMessage(serverMessage);
 
-                    _habbo.UpdateCreditsBalance();
+                    await _habbo.UpdateCreditsBalance();
 
-                    serverMessage.Init(LibraryParser.OutgoingRequest("ActivityPointsMessageComposer"));
-                    serverMessage.AppendInteger(2);
-                    serverMessage.AppendInteger(0);
-                    serverMessage.AppendInteger(_habbo.ActivityPoints);
-                    serverMessage.AppendInteger(5);
-                    serverMessage.AppendInteger(_habbo.Diamonds);
+                    await serverMessage.InitAsync(LibraryParser.OutgoingRequest("ActivityPointsMessageComposer"));
+                    await serverMessage.AppendIntegerAsync(2);
+                    await serverMessage.AppendIntegerAsync(0);
+                    await serverMessage.AppendIntegerAsync(_habbo.ActivityPoints);
+                    await serverMessage.AppendIntegerAsync(5);
+                    await serverMessage.AppendIntegerAsync(_habbo.Diamonds);
 
-                    serverMessage.AppendInteger(102);
-                    serverMessage.AppendInteger(_habbo.Graffiti);
+                    await serverMessage.AppendIntegerAsync(102);
+                    await serverMessage.AppendIntegerAsync(_habbo.Graffiti);
 
-                    SendMessage(serverMessage);
+                    await SendMessage(serverMessage);
 
 
                     if (_habbo.HasFuse("fuse_mod"))
-                        SendMessage(Oblivion.GetGame().GetModerationTool()
+                        await SendMessage(Oblivion.GetGame().GetModerationTool()
                             .SerializeTool(this));
 
-                    SendMessage(Oblivion.GetGame().GetAchievementManager()
+                    await SendMessage(Oblivion.GetGame().GetAchievementManager()
                         .AchievementDataCached);
 
                     if (!GetHabbo().Vip && ExtraSettings.NewUsersGiftsEnabled)
-                    {//todo
-                        serverMessage.Init(LibraryParser.OutgoingRequest("NuxSuggestFreeGiftsMessageComposer"));
-                        SendMessage(serverMessage);
+                    {
+                        //todo
+                        await serverMessage.InitAsync(
+                            LibraryParser.OutgoingRequest("NuxSuggestFreeGiftsMessageComposer"));
+                        await SendMessage(serverMessage);
                     }
                 }
 
-                SendMessage(GetHabbo().GetAvatarEffectsInventoryComponent().GetPacket());
+                await SendMessage(GetHabbo().GetAvatarEffectsInventoryComponent().GetPacket());
                 //                    queuedServerMessageSendResponse();
 
                 if (GetHabbo().GetMessenger() != null)
-                    GetHabbo().GetMessenger().OnStatusChanged(true);
+                    await GetHabbo().GetMessenger().OnStatusChanged(true);
 
 
-                Oblivion.GetGame().GetAchievementManager().TryProgressHabboClubAchievements(this);
-                Oblivion.GetGame().GetAchievementManager().TryProgressRegistrationAchievements(this);
-                Oblivion.GetGame().GetAchievementManager().TryProgressLoginAchievements(this);
+                await Oblivion.GetGame().GetAchievementManager().TryProgressHabboClubAchievements(this);
+                await Oblivion.GetGame().GetAchievementManager().TryProgressRegistrationAchievements(this);
+                await Oblivion.GetGame().GetAchievementManager().TryProgressLoginAchievements(this);
 
 
                 return true;
@@ -439,11 +442,11 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         internal async Task SendNotifWithScroll(string message)
         {
             using (var serverMessage =
-                new ServerMessage(LibraryParser.OutgoingRequest("MOTDNotificationMessageComposer")))
+                   new ServerMessage(LibraryParser.OutgoingRequest("MOTDNotificationMessageComposer")))
             {
                 await serverMessage.AppendIntegerAsync(1);
                 await serverMessage.AppendStringAsync(System.Net.WebUtility.HtmlDecode(message), true);
-                SendMessage(serverMessage);
+                await SendMessage(serverMessage);
             }
         }
 
@@ -454,11 +457,11 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         internal async Task SendModeratorMessage(string message)
         {
             using (var serverMessage =
-                new ServerMessage(LibraryParser.OutgoingRequest("AlertNotificationMessageComposer")))
+                   new ServerMessage(LibraryParser.OutgoingRequest("AlertNotificationMessageComposer")))
             {
                 await serverMessage.AppendStringAsync(message);
                 await serverMessage.AppendStringAsync(string.Empty);
-                SendMessage(serverMessage);
+                await SendMessage(serverMessage);
             }
         }
 
@@ -467,7 +470,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="fromWired"></param>
-        internal void SendWhisper(string message, bool fromWired = false)
+        internal async Task SendWhisper(string message, bool fromWired = false)
         {
             if (GetHabbo() == null || GetHabbo().CurrentRoom == null)
                 return;
@@ -479,16 +482,17 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
             using (var whisp = new ServerMessage(LibraryParser.OutgoingRequest("WhisperMessageComposer")))
             {
-                whisp.AppendInteger(roomUserByHabbo.VirtualId);
-                whisp.AppendString(message);
-                whisp.AppendInteger(0);
-                whisp.AppendInteger(fromWired ? 34 : roomUserByHabbo.LastBubble);
-                whisp.AppendInteger(0);
-                whisp.AppendInteger(fromWired);
+                await whisp.AppendIntegerAsync(roomUserByHabbo.VirtualId);
+                await whisp.AppendStringAsync(message);
+                await whisp.AppendIntegerAsync(0);
+                await whisp.AppendIntegerAsync(fromWired ? 34 : roomUserByHabbo.LastBubble);
+                await whisp.AppendIntegerAsync(0);
+                await whisp.AppendIntegerAsync(fromWired);
 
-                SendMessage(whisp);
+                await SendMessage(whisp);
             }
         }
+
         internal async Task SendWhisperAsync(string message, bool fromWired = false)
         {
             if (GetHabbo() == null || GetHabbo().CurrentRoom == null)
@@ -521,9 +525,23 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <param name="picture">The picture.</param>
         internal async Task SendNotif(string message, string title = "Aviso", string picture = "")
         {
-            SendMessage(GetBytesNotif(message, title, picture));
+            using (var serverMessage =
+                   new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer")))
+            {
+                serverMessage.AppendString(picture);
+                serverMessage.AppendInteger(4);
+                serverMessage.AppendString("title");
+                serverMessage.AppendString(title);
+                serverMessage.AppendString("message");
+                serverMessage.AppendString(message);
+                serverMessage.AppendString("linkUrl");
+                serverMessage.AppendString("event:");
+                serverMessage.AppendString("linkTitle");
+                serverMessage.AppendString("ok");
+                await SendMessage(serverMessage);
+            }
         }
-        
+
         /// <summary>
         ///     Sends the notif async.
         /// </summary>
@@ -532,7 +550,22 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <param name="picture">The picture.</param>
         internal async Task SendNotifyAsync(string message, string title = "Aviso", string picture = "")
         {
-            await SendMessageAsync(GetBytesNotif(message, title, picture));
+
+            using (var serverMessage =
+                   new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer")))
+            {
+                serverMessage.AppendString(picture);
+                serverMessage.AppendInteger(4);
+                serverMessage.AppendString("title");
+                serverMessage.AppendString(title);
+                serverMessage.AppendString("message");
+                serverMessage.AppendString(message);
+                serverMessage.AppendString("linkUrl");
+                serverMessage.AppendString("event:");
+                serverMessage.AppendString("linkTitle");
+                serverMessage.AppendString("ok");
+                await SendMessage(serverMessage);
+            }
         }
 
         internal ServerMessage GetBubble(string message, string title, string picture = "", bool isBubble = false)
@@ -562,22 +595,20 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <returns>System.Byte[].</returns>
         public static ServerMessage GetBytesNotif(string message, string title = "Aviso", string picture = "")
         {
-            using (var serverMessage =
-                new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer")))
-            {
-                serverMessage.AppendString(picture);
-                serverMessage.AppendInteger(4);
-                serverMessage.AppendString("title");
-                serverMessage.AppendString(title);
-                serverMessage.AppendString("message");
-                serverMessage.AppendString(message);
-                serverMessage.AppendString("linkUrl");
-                serverMessage.AppendString("event:");
-                serverMessage.AppendString("linkTitle");
-                serverMessage.AppendString("ok");
+            var serverMessage =
+                new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
+            serverMessage.AppendString(picture);
+            serverMessage.AppendInteger(4);
+            serverMessage.AppendString("title");
+            serverMessage.AppendString(title);
+            serverMessage.AppendString("message");
+            serverMessage.AppendString(message);
+            serverMessage.AppendString("linkUrl");
+            serverMessage.AppendString("event:");
+            serverMessage.AppendString("linkTitle");
+            serverMessage.AppendString("ok");
 
-                return serverMessage;
-            }
+            return serverMessage;
         }
 
         /// <summary>
@@ -612,7 +643,9 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         {
             try
             {
-                _habbo?.OnDisconnect(reason);
+                var habbo = _habbo;
+                if (habbo != null)
+                    await _habbo.OnDisconnect(reason);
 
                 if (_disconnected)
                     return;
@@ -640,7 +673,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             if (_connection == null || !_connection.Channel.Active)
                 return;
 
-            _connection.Send(message).Wait();
+            await _connection.Send(message);
         }
 
         internal Task SendMessageAsync(ServerMessage message)
@@ -660,23 +693,24 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         ///     Sends the message.
         /// </summary>
         /// <param name="bytes">The bytes.</param>
-       /* internal async Task SendMessage(byte[] bytes)
-        {
-            _connection?.Send(bytes); ;
-        }
-
-        internal async Task SendMessage(ArraySegment<byte> bytes)
-        {
-            _connection?.Send(bytes.Array); ;
-        }
-       */
+        /* internal async Task SendMessage(byte[] bytes)
+         {
+             _connection?.Send(bytes); ;
+         }
+ 
+         internal async Task SendMessage(ArraySegment<byte> bytes)
+         {
+             _connection?.Send(bytes.Array); ;
+         }
+        */
         /// <summary>
         ///     Sends the message.
         /// </summary>
         /// <param name="type">The type.</param>
         internal Task SendStaticMessage(StaticMessage type)
         {
-            return _connection?.Send(StaticMessagesManager.Get(type)); ;
+            return _connection?.Send(StaticMessagesManager.Get(type));
+            ;
         }
     }
 }

@@ -28,7 +28,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             if (result > 4)
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_dance_false"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_dance_false"));
                 result = 0;
             }
             var room = session.GetHabbo().CurrentRoom;

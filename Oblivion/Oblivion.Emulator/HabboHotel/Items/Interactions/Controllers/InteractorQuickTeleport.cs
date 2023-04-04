@@ -10,10 +10,10 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
     {
         public override async Task OnUserWalkOff(GameClient session, RoomItem item, RoomUser user)
         {
-            OnUserWalk(session, item, user);
+            await OnUserWalk(session, item, user);
         }
 
-        public override async Task OnPlace(GameClient session, RoomItem item)
+        public override Task OnPlace(GameClient session, RoomItem item)
         {
             item.ExtraData = "0";
 
@@ -32,7 +32,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
 
             if (item.InteractingUser2 == 0u)
-                return;
+                return Task.CompletedTask;
 
             var roomUserByHabbo2 = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(item.InteractingUser2);
 
@@ -44,9 +44,10 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
 
             item.InteractingUser2 = 0u;
+            return Task.CompletedTask;
         }
 
-        public override async Task OnRemove(GameClient session, RoomItem item)
+        public override Task OnRemove(GameClient session, RoomItem item)
         {
             item.ExtraData = "0";
 
@@ -60,13 +61,14 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
 
             if (item.InteractingUser2 == 0u)
-                return;
+                return Task.CompletedTask;
 
             var roomUserByHabbo2 = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(item.InteractingUser2);
 
             roomUserByHabbo2?.UnlockWalking();
 
             item.InteractingUser2 = 0u;
+            return Task.CompletedTask;
         }
 
         public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
@@ -81,7 +83,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             if (!(roomUserByHabbo.Coordinate == item.Coordinate) && !(roomUserByHabbo.Coordinate == item.SquareInFront))
             {
-                roomUserByHabbo.MoveTo(item.SquareInFront);
+                await roomUserByHabbo.MoveTo(item.SquareInFront);
                 return;
             }
 
@@ -103,7 +105,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             if (!(roomUserByHabbo.Coordinate == item.Coordinate) && !(roomUserByHabbo.Coordinate == item.SquareInFront))
             {
-                roomUserByHabbo.MoveTo(item.SquareInFront);
+                await roomUserByHabbo.MoveTo(item.SquareInFront);
                 return;
             }
 

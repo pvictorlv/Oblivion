@@ -126,7 +126,6 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             if (!Requested) return false;
             if (_queue == null || _queue.Count <= 0) return false;
 
-            await Task.Yield();
 
             var num = Oblivion.Now();
 
@@ -142,7 +141,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     continue;
                 }
 
-                Teleport(roomUser);
+                await Teleport(roomUser);
             }
 
             _mNext = Oblivion.Now() + Delay;
@@ -152,7 +151,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         }
 
 
-        private void Teleport(RoomUser user)
+        private async Task Teleport(RoomUser user)
         {
             if (Items == null || Items.Count < 0)
                 return;
@@ -178,9 +177,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             }
 
             int oldX = user.X, oldY = user.Y;
-            Room.GetGameMap().TeleportToItem(user, roomItem, true);
-            Room.GetRoomUserManager().OnUserUpdateStatus(oldX, oldY);
-            Room.GetRoomUserManager().OnUserUpdateStatus(roomItem.X, roomItem.Y);
+            await Room.GetGameMap().TeleportToItem(user, roomItem, true);
+            await Room.GetRoomUserManager().OnUserUpdateStatus(oldX, oldY);
+            await Room.GetRoomUserManager().OnUserUpdateStatus(roomItem.X, roomItem.Y);
         }
     }
 }

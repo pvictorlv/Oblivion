@@ -745,7 +745,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     await botChatmsg.AppendIntegerAsync(VirtualId);
 
                     var location = new Vector2D(X, Y);
-                    GetRoom().SendMessageWithRange(location, botChatmsg);
+                    await GetRoom().SendMessageWithRange(location, botChatmsg);
                     return;
                 }
             }
@@ -762,7 +762,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     return;
 
             if (!((msg.StartsWith(":deleteblackword ") || msg.StartsWith("ban")) && session.GetHabbo().Rank > 4) &&
-                !BobbaFilter.CanTalk(session, msg))
+                !await BobbaFilter.CanTalk(session, msg))
                 return;
 
             if (!ignoreMute)
@@ -813,7 +813,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (colorPrefix != "#000000" || !string.IsNullOrWhiteSpace(prefix) || colorBubble != "#000000")
             {
                 name = $"<font color='#{colorPrefix}'>{prefix}</font> <font color='#{colorBubble}'>{name}</font>";
-                ChangeName(name);
+                await ChangeName(name);
                 needReChange = true;
             }
 
@@ -831,7 +831,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 await GetRoom().BroadcastChatMessageWithRange(chatMsg, this, session.GetHabbo().Id);
                 if (needReChange)
                 {
-                    ChangeName(GetUserName());
+                    await ChangeName(GetUserName());
                 }
 
                 await GetRoom().OnUserSay(this, msg, shout);
@@ -907,7 +907,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             if (TeleportEnabled)
             {
                 await UnIdle();
-                using (var msg = _mRoom
+                using (var msg = await _mRoom
                            .GetRoomItemHandler()
                            .UpdateUserOnRoller(this, new Point(x, y), 0u,
                                GetRoom().GetGameMap().SqAbsoluteHeight(GoalX, GoalY)))

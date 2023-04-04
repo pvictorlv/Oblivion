@@ -180,7 +180,7 @@ namespace Oblivion.Connection.Net
                 int oldHeader = messageId;
 //           
 
-                using (var clientMessage =
+                using (var clientMessage = 
                     ClientMessageFactory.GetClientMessage(messageId, packetContent, position, packetLength))
                 {
                     if (messageId == 0 && _currentClient.IsAir)

@@ -44,7 +44,7 @@ namespace Oblivion
                 Console.CursorVisible = true;
 
 
-                ConsoleCommandHandling.InvokeCommand(Console.ReadLine());
+                await ConsoleCommandHandling.InvokeCommand(Console.ReadLine());
             }
         }
 

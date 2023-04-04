@@ -1069,7 +1069,7 @@ namespace Oblivion.HabboHotel.Catalogs
                 await session.GetHabbo().GetInventoryComponent().UpdateItems(false);
 
                 if (InteractionTypes.AreFamiliar(GlobalInteractions.Pet, baseItem.InteractionType))
-                    await session.SendMessage(session.GetHabbo().GetInventoryComponent().SerializePetInventory());
+                    await session.SendMessage(await session.GetHabbo().GetInventoryComponent().SerializePetInventory());
             }
 
             if (item.Badge.Length >= 1)

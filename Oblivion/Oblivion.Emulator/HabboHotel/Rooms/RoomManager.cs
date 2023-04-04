@@ -191,7 +191,7 @@ namespace Oblivion.HabboHotel.Rooms
             }
         }
 
-        internal async Task RemoveRoomData(uint id) => LoadedRoomData.TryRemove(id, out _);
+        internal void RemoveRoomData(uint id) => LoadedRoomData.TryRemove(id, out _);
 
         /// <summary>
         ///     Fetches the room data.
@@ -199,7 +199,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="roomId">The room identifier.</param>
         /// <param name="dRow">The d row.</param>
         /// <returns>RoomData.</returns>
-        internal RoomData FetchRoomData(uint roomId, DataRow dRow, uint user = 0u)
+        internal async Task<RoomData> FetchRoomData(uint roomId, DataRow dRow, uint user = 0u)
         {
             if (LoadedRoomData.TryGetValue(roomId, out var roomData))
             {
@@ -209,7 +209,7 @@ namespace Oblivion.HabboHotel.Rooms
 
             roomData = new RoomData();
 
-            roomData.Fill(dRow, user);
+            await roomData.Fill(dRow, user);
             LoadedRoomData.TryAdd(roomId, roomData);
             return roomData;
         }
@@ -310,7 +310,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <summary>
         ///     Called when [cycle].
         /// </summary>
-        internal async Task OnCycle()
+        internal void OnCycle()
         {
             try
             {
@@ -339,7 +339,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Queues the active room update.
         /// </summary>
         /// <param name="data">The data.</param>
-        internal async Task QueueActiveRoomUpdate(RoomData data)
+        internal void QueueActiveRoomUpdate(RoomData data)
         {
             lock (_activeRoomsUpdateQueue.SyncRoot)
             {
@@ -351,7 +351,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Queues the active room add.
         /// </summary>
         /// <param name="data">The data.</param>
-        internal async Task QueueActiveRoomAdd(RoomData data)
+        internal void QueueActiveRoomAdd(RoomData data)
         {
             lock (_activeRoomsAddQueue.SyncRoot)
             {
@@ -363,7 +363,7 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Queues the active room remove.
         /// </summary>
         /// <param name="data">The data.</param>
-        internal async Task QueueActiveRoomRemove(RoomData data)
+        internal void QueueActiveRoomRemove(RoomData data)
         {
             lock (ActiveRoomsRemoveQueue.SyncRoot)
             {
@@ -506,7 +506,7 @@ namespace Oblivion.HabboHotel.Rooms
                         {
                             if (current.GetClient() != null)
                             {
-                                room.GetRoomUserManager().RemoveUserFromRoom(current, true, false);
+                                await room.GetRoomUserManager().RemoveUserFromRoom(current, true, false);
                                 current.GetClient().CurrentRoomUserId = -1;
                             }
                         }
@@ -515,7 +515,7 @@ namespace Oblivion.HabboHotel.Rooms
             }
 
             LoadedRooms.TryRemove(room.RoomId, out _);
-            room.Destroy();
+            await room.Destroy();
             room = null;
         }
 

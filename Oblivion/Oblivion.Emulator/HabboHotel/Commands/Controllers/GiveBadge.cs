@@ -28,9 +28,9 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 await session.SendNotif(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
-            client.GetHabbo().GetBadgeComponent().GiveBadge(pms[1], true, client);
+            await client.GetHabbo().GetBadgeComponent().GiveBadge(pms[1], true, client);
             await session.SendNotif(Oblivion.GetLanguage().GetVar("command_badge_give_done"));
-            Oblivion.GetGame()
+            await Oblivion.GetGame()
                 .GetModerationTool()
                 .LogStaffEntry(session.GetHabbo().UserName, client.GetHabbo().UserName,
                     "Badge", $"Badge given to user [{pms[1]}]");

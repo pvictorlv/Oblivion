@@ -270,7 +270,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         internal async Task TeleportToItem(RoomUser user, RoomItem item, bool fromWired = false)
         {
             GameMap[user.X, user.Y] = user.SqState;
-            await UpdateUserMovement(new Point(user.X, user.Y),
+            UpdateUserMovement(new Point(user.X, user.Y),
                 new Point(item.X, item.Y), user);
             user.X = item.X;
             user.Y = item.Y;
@@ -294,7 +294,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="oldCoord">The old coord.</param>
         /// <param name="newCoord">The new coord.</param>
         /// <param name="user">The user.</param>
-        internal async Task UpdateUserMovement(Point oldCoord, Point newCoord, RoomUser user)
+        internal void UpdateUserMovement(Point oldCoord, Point newCoord, RoomUser user)
         {
             RemoveUserFromMap(user, oldCoord);
             AddUserToMap(user, newCoord);
@@ -305,7 +305,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// </summary>
         /// <param name="user">The user.</param>
         /// <param name="coord">The coord.</param>
-        internal async Task RemoveUserFromMap(RoomUser user, Point coord)
+        internal void RemoveUserFromMap(RoomUser user, Point coord)
         {
             var coordKey = Formatter.PointToInt(coord);
             if (_userMap.TryGetValue(coordKey, out var users))
@@ -364,7 +364,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         ///     Adds to map.
         /// </summary>
         /// <param name="item">The item.</param>
-        internal async Task AddToMap(RoomItem item)
+        internal void AddToMap(RoomItem item)
         {
             AddItemToMap(item);
         }
@@ -587,7 +587,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
 
         internal async Task<bool> RemoveFromMap(RoomItem item, bool removed)
         {
-            await RemoveSpecialItem(item, removed);
+            RemoveSpecialItem(item, removed);
             if (_room.GotSoccer())
                 _room.GetSoccer().OnGateRemove(item);
             var result = false;
@@ -1195,7 +1195,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <summary>
         ///     Destroys this instance.
         /// </summary>
-        internal async Task Dispose()
+        internal void Dispose()
         {
             _userMap?.Clear();
             CoordinatedItems?.Clear();
@@ -1405,7 +1405,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         ///     Removes the special item.
         /// </summary>
         /// <param name="item">The item.</param>
-        internal async Task RemoveSpecialItem(RoomItem item, bool removed)
+        internal void RemoveSpecialItem(RoomItem item, bool removed)
         {
             switch (item.GetBaseItem().InteractionType)
             {

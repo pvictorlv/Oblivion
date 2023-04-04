@@ -138,7 +138,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             }
             ClearAccepted();
             tradeUser.OfferedItems.Remove(item);
-            UpdateTradeWindow();
+            await UpdateTradeWindow();
         }
 
         /// <summary>
@@ -156,14 +156,14 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("TradeAcceptMessageComposer"));
             await serverMessage.AppendIntegerAsync(userId);
             await serverMessage.AppendIntegerAsync(1);
-            SendMessageToUsers(serverMessage);
+            await SendMessageToUsers(serverMessage);
             if (!AllUsersAccepted)
             {
                 return;
             }
-            SendMessageToUsers(new ServerMessage(LibraryParser.OutgoingRequest("TradeConfirmationMessageComposer")));
+            await SendMessageToUsers(new ServerMessage(LibraryParser.OutgoingRequest("TradeConfirmationMessageComposer")));
             _tradeStage++;
-            await ClearAccepted();
+            ClearAccepted();
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("TradeAcceptMessageComposer"));
             await serverMessage.AppendIntegerAsync(userId);
             await serverMessage.AppendIntegerAsync(1);
-            SendMessageToUsers(serverMessage);
+            await SendMessageToUsers(serverMessage);
             if (!AllUsersAccepted)
             {
                 return;
@@ -211,7 +211,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         /// <summary>
         ///     Clears the accepted.
         /// </summary>
-        internal async Task ClearAccepted()
+        internal void ClearAccepted()
         {
             var users = _users;
             /* TODO CHECK */ foreach (var tradeUser in users)
@@ -278,7 +278,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             await serverMessage.AppendIntegerAsync(0);
             await serverMessage.AppendIntegerAsync(0);
 
-            SendMessageToUsers(serverMessage);
+            await SendMessageToUsers(serverMessage);
         }
 
         /// <summary>
@@ -440,7 +440,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         /// <summary>
         ///     Finnitoes this instance.
         /// </summary>
-        private async Task Finnito()
+        private async void Finnito()
         {
             try
             {

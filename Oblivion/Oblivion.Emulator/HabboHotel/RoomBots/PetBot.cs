@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Oblivion.Configuration;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
+using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Pets;
 using Oblivion.HabboHotel.Pets.Enums;
 using Oblivion.HabboHotel.Rooms.User;
@@ -50,12 +51,12 @@ namespace Oblivion.HabboHotel.RoomBots
         /// <summary>
         ///     Called when [self enter room].
         /// </summary>
-        internal override void OnSelfEnterRoom()
+        internal override async void OnSelfEnterRoom()
         {
             var randomWalkableSquare = GetRoom().GetGameMap().GetRandomWalkableSquare();
             if (GetRoomUser() != null && GetRoomUser().PetData.Type != 16u)
             {
-                GetRoomUser().MoveTo(randomWalkableSquare.X, randomWalkableSquare.Y);
+                await GetRoomUser().MoveTo(randomWalkableSquare.X, randomWalkableSquare.Y);
             }
         }
 
@@ -67,8 +68,9 @@ namespace Oblivion.HabboHotel.RoomBots
         {
         }
 
-        internal override void OnChatTick()
+        internal override Task OnChatTick()
         {
+            return Task.CompletedTask;
         }
 
         internal override void StopTimerTick()
@@ -86,7 +88,7 @@ namespace Oblivion.HabboHotel.RoomBots
         ///     Called when [user enter room].
         /// </summary>
         /// <param name="user">The user.</param>
-        internal override void OnUserEnterRoom(RoomUser user)
+        internal override async Task OnUserEnterRoom(RoomUser user)
         {
             if (user.GetClient() == null || user.GetClient().GetHabbo() == null)
                 return;
@@ -100,7 +102,7 @@ namespace Oblivion.HabboHotel.RoomBots
             var message = value[random.Next(0, (value.Length - 1))];
 
             message += user.GetUserName();
-            roomUser.Chat(null, message, false, 0);
+            await roomUser.Chat(null, message, false, 0);
         }
 
         /// <summary>
@@ -153,7 +155,7 @@ namespace Oblivion.HabboHotel.RoomBots
                         }
 
                         RemovePetStatus();
-                        roomUser.PetData.AddExperience(10);
+                        await roomUser.PetData.AddExperience(10);
                         roomUser.Statusses.TryAdd("sit", "");
                         roomUser.Statusses.TryAdd("gst", "joy");
                         roomUser.UpdateNeeded = true;
@@ -177,7 +179,7 @@ namespace Oblivion.HabboHotel.RoomBots
                         }
 
                         RemovePetStatus();
-                        roomUser.PetData.AddExperience(10);
+                        await roomUser.PetData.AddExperience(10);
                         roomUser.Statusses.TryAdd("lay", "");
                         roomUser.Statusses.TryAdd("gst", "sml");
                         roomUser.UpdateNeeded = true;
@@ -207,7 +209,7 @@ namespace Oblivion.HabboHotel.RoomBots
                         }
 
                         RemovePetStatus();
-                        roomUser.PetData.AddExperience(11);
+                        await roomUser.PetData.AddExperience(11);
                         await roomUser.MoveTo(user.SquareInFront);
                         roomUser.Statusses.TryAdd("gst", "sml");
                         roomUser.UpdateNeeded = true;
@@ -231,7 +233,7 @@ namespace Oblivion.HabboHotel.RoomBots
                         }
 
                         RemovePetStatus();
-                        roomUser.PetData.AddExperience(25);
+                        await roomUser.PetData.AddExperience(25);
                         roomUser.Statusses.TryAdd("std", "");
                         roomUser.UpdateNeeded = true;
 
@@ -260,7 +262,7 @@ namespace Oblivion.HabboHotel.RoomBots
                         }
 
                         RemovePetStatus();
-                        roomUser.PetData.AddExperience(35);
+                        await roomUser.PetData.AddExperience(35);
                         roomUser.Statusses.TryAdd("jmp", "");
                         roomUser.Statusses.TryAdd("gst", "joy");
                         roomUser.UpdateNeeded = true;
@@ -321,7 +323,7 @@ namespace Oblivion.HabboHotel.RoomBots
                                 break;
                         }
 
-                        roomUser.PetData.AddExperience(35);
+                        await roomUser.PetData.AddExperience(35);
                         roomUser.Statusses.TryAdd("gst", "sml");
                         roomUser.UpdateNeeded = true;
                         break;
@@ -340,7 +342,7 @@ namespace Oblivion.HabboHotel.RoomBots
                         }
 
                         RemovePetStatus();
-                        roomUser.PetData.AddExperience(11);
+                        await roomUser.PetData.AddExperience(11);
                         roomUser.Statusses.TryAdd("beg", "");
                         roomUser.Statusses.TryAdd("gst", "sml");
                         roomUser.UpdateNeeded = true;
@@ -367,18 +369,17 @@ namespace Oblivion.HabboHotel.RoomBots
                         _energyTimer = 10;
                         roomUser.Statusses.TryAdd("gst", "sml");
                         roomUser.UpdateNeeded = true;
-                        roomUser.PetData.AddExperience(35);
+                        await roomUser.PetData.AddExperience(35);
                         SubtractAttributes();
                         break;
 
                     case 10:
                         RemovePetStatus();
 
-                        var petNest =
-                            GetRoom()
-                                .GetRoomItemHandler()
-                                .FloorItems.Values.FirstOrDefault(x =>
-                                    x.GetBaseItem().InteractionType == Interaction.PetNest);
+                        RoomItem petNest = GetRoom()
+                            .GetRoomItemHandler()
+                            .FloorItems.Values.FirstOrDefault(x => x.GetBaseItem().InteractionType == Interaction.PetNest);
+
                         if (petNest == null)
                         {
                             lazy = true;
@@ -386,7 +387,7 @@ namespace Oblivion.HabboHotel.RoomBots
                         }
 
                         await roomUser.MoveTo(petNest.X, petNest.Y);
-                        roomUser.PetData.AddExperience(40);
+                        await roomUser.PetData.AddExperience(40);
                         var rndmEnergy = new Random().Next(25, 51);
                         if (roomUser.PetData.Energy < (Pet.MaxEnergy - rndmEnergy))
                         {
@@ -428,7 +429,7 @@ namespace Oblivion.HabboHotel.RoomBots
                         }
 
                         await roomUser.MoveTo(coord);
-                        roomUser.PetData.AddExperience(0);
+                        await roomUser.PetData.AddExperience(0);
                         roomUser.PetData.PetEnergy(true);
 
                         _actionTimer = 25;
@@ -452,28 +453,28 @@ namespace Oblivion.HabboHotel.RoomBots
                 var value = PetLocale.GetValue("tired");
                 var message = value[new Random().Next(0, (value.Length - 1))];
 
-                roomUser.Chat(null, message, false, 0);
+                await roomUser.Chat(null, message, false, 0);
             }
             else if (unknown)
             {
                 var value = PetLocale.GetValue("pet.unknowncommand");
                 var message = value[new Random().Next(0, (value.Length - 1))];
 
-                roomUser.Chat(null, message, false, 0);
+                await roomUser.Chat(null, message, false, 0);
             }
             else if (lazy)
             {
                 var value = PetLocale.GetValue("pet.lazy");
                 var message = value[new Random().Next(0, (value.Length - 1))];
 
-                roomUser.Chat(null, message, false, 0);
+                await roomUser.Chat(null, message, false, 0);
             }
             else
             {
                 var value = PetLocale.GetValue("pet.done");
                 var message = value[new Random().Next(0, (value.Length - 1))];
 
-                roomUser.Chat(null, message, false, 0);
+                await roomUser.Chat(null, message, false, 0);
             }
         }
 
@@ -482,8 +483,9 @@ namespace Oblivion.HabboHotel.RoomBots
         /// </summary>
         /// <param name="user">The user.</param>
         /// <param name="message">The message.</param>
-        internal override void OnUserShout(RoomUser user, string message)
+        internal override Task OnUserShout(RoomUser user, string message)
         {
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -502,7 +504,7 @@ namespace Oblivion.HabboHotel.RoomBots
                     RemovePetStatus();
                     var value = PetLocale.GetValue($"speech.pet{roomUser.PetData.Type}");
                     var text = value[random.Next(0, value.Length - 1)];
-                    if (GetRoom() != null && !GetRoom().MutedPets) roomUser.Chat(null, text, false, 0);
+                    if (GetRoom() != null && !GetRoom().MutedPets) await roomUser.Chat(null, text, false, 0);
                     else roomUser.Statusses.TryAdd(text, TextHandling.GetString(roomUser.Z));
                 }
 

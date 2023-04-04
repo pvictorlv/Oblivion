@@ -33,7 +33,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             
             client.GetHabbo().Credits += 15;
             await client.SendWhisperAsync("Você recebeu 15 moedas!");
-            client.GetHabbo().UpdateCreditsBalance();
+            await client.GetHabbo().UpdateCreditsBalance();
 
 
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -43,9 +43,9 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 await dbClient.RunQueryAsync();
             }
 
-            Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(client, Oblivion.GetDbConfig().DbData["badge.code"], 1, true);
-            
-            Oblivion.GetGame()
+            await Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(client, Oblivion.GetDbConfig().DbData["badge.code"], 1, true);
+
+            await Oblivion.GetGame()
                 .GetModerationTool()
                 .LogStaffEntry(session.GetHabbo().UserName, client.GetHabbo().UserName,
                     "EventPoints", $"Rewarded user [{pms[0]}] in event");

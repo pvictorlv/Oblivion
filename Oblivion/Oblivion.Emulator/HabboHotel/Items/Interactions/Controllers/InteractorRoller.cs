@@ -1,4 +1,5 @@
-﻿using Oblivion.HabboHotel.GameClients.Interfaces;
+﻿using System.Threading.Tasks;
+using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Models;
 using Oblivion.HabboHotel.Items.Interfaces;
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.Catalogs.Composers;
 using Oblivion.HabboHotel.Catalogs.Marketplace;
 using Oblivion.HabboHotel.GameClients.Interfaces;
@@ -15,7 +16,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Get marketplace offers
         /// </summary>
-        public void GetOffers()
+        public async Task GetOffers()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -134,7 +135,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Catalogues the offer configuration.
         /// </summary>
-        public void CatalogueOfferConfig()
+        public async Task CatalogueOfferConfig()
         {
             Response.Init(LibraryParser.OutgoingRequest("CatalogueOfferConfigMessageComposer"));
             Response.AppendInteger(100);
@@ -148,7 +149,7 @@ namespace Oblivion.Messages.Handlers
         }
 
 
-        public void PurchaseOffer()
+        public async Task PurchaseOffer()
         {
             var OfferId = Request.GetInteger();
 
@@ -163,14 +164,14 @@ namespace Oblivion.Messages.Handlers
 
             if (Row == null)
             {
-                ReloadOffers(Session);
+                await ReloadOffers(Session);
                 return;
             }
 
             if (Convert.ToString(Row["state"]) == "2")
             {
                 await Session.SendNotifyAsync("Opa, esta oferta não é mais válida.");
-                ReloadOffers(Session);
+                await ReloadOffers(Session);
                 return;
             }
 
@@ -178,7 +179,7 @@ namespace Oblivion.Messages.Handlers
                 Convert.ToDouble(Row["timestamp"]))
             {
                 await Session.SendNotifyAsync("Que pena, essa oferta expirou.");
-                ReloadOffers(Session);
+                await ReloadOffers(Session);
                 return;
             }
 
@@ -186,7 +187,7 @@ namespace Oblivion.Messages.Handlers
             if (Item == null)
             {
                 await Session.SendNotifyAsync("Este item não existe mais aqui.");
-                ReloadOffers(Session);
+                await ReloadOffers(Session);
                 return;
             }
             if (Convert.ToInt32(Row["user_id"]) == Session.GetHabbo().Id)
@@ -203,13 +204,13 @@ namespace Oblivion.Messages.Handlers
             }
             var price = Convert.ToInt32(Row["total_price"]);
             Session.GetHabbo().Diamonds -= price;
-            Session.GetHabbo().UpdateSeasonalCurrencyBalance();
+            await Session.GetHabbo().UpdateSeasonalCurrencyBalance();
 
 
-            Session.GetHabbo().GetInventoryComponent().AddNewItem("0", Item.ItemId,
+            await Session.GetHabbo().GetInventoryComponent().AddNewItem("0", Item.ItemId,
                 Convert.ToString(Row["extra_data"]), 0, true, false, Convert.ToInt32(Row["limited_number"]),
                 Convert.ToInt32(Row["limited_stack"]));
-            Session.GetHabbo().GetInventoryComponent().UpdateItems(true);
+            await Session.GetHabbo().GetInventoryComponent().UpdateItems(true);
             await Session.SendMessageAsync(CatalogPageComposer.PurchaseOk(Convert.ToUInt32(Row["furni_id"]), Item.PublicName,
                 (uint) price));
 
@@ -260,11 +261,11 @@ namespace Oblivion.Messages.Handlers
                 }
             }
 
-            ReloadOffers(Session);
+            await ReloadOffers(Session);
         }
 
 
-        private static void ReloadOffers(GameClient session)
+        private static async Task ReloadOffers(GameClient session)
         {
             const string SearchQuery = "";
             DataTable table;
@@ -350,7 +351,7 @@ namespace Oblivion.Messages.Handlers
             await session.SendMessage(msg);
         }
 
-        public void CancelOffer()
+        public async Task CancelOffer()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -398,10 +399,10 @@ namespace Oblivion.Messages.Handlers
                 return;
             }
 
-            var userItem = Session.GetHabbo().GetInventoryComponent().AddNewItem("0", item.ItemId,
+            var userItem = await Session.GetHabbo().GetInventoryComponent().AddNewItem("0", item.ItemId,
                 Convert.ToString(row["extra_data"]), 0, true, false, Convert.ToInt32(row["limited_number"]),
                 Convert.ToInt32(row["limited_stack"]));
-            Session.GetHabbo().GetInventoryComponent().AddItemToItemInventory(userItem);
+            await Session.GetHabbo().GetInventoryComponent().AddItemToItemInventory(userItem);
 //            Session.GetHabbo().GetInventoryComponent().UpdateItems(true);
 
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -413,7 +414,7 @@ namespace Oblivion.Messages.Handlers
                 dbClient.RunQuery();
             }
 
-            Session.GetHabbo().GetInventoryComponent().UpdateItems(true);
+            await Session.GetHabbo().GetInventoryComponent().UpdateItems(true);
             var sucessMessage =
                 new ServerMessage(LibraryParser.OutgoingRequest("MarketplaceCancelOfferResultMessageComposer"));
             sucessMessage.AppendInteger(offerId);
@@ -425,7 +426,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Check if user can make offer
         /// </summary>
-        public void CanMakeOffer()
+        public async Task CanMakeOffer()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -443,7 +444,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Configure marketplace
         /// </summary>
-        public void MarketPlaceConfiguration()
+        public async Task MarketPlaceConfiguration()
         {
             if (Session?.GetHabbo() == null)
                 return;
@@ -460,7 +461,7 @@ namespace Oblivion.Messages.Handlers
         }
 
 
-        public void GetItemStats()
+        public async Task GetItemStats()
         {
             var ItemId = Request.GetInteger();
             var SpriteId = Request.GetInteger();
@@ -484,7 +485,7 @@ namespace Oblivion.Messages.Handlers
             await Session.SendMessageAsync(msg);
         }
 
-        public void GetMyOffers()
+        public async Task GetMyOffers()
         {
             if (Session.GetHabbo() == null) return;
 
@@ -541,7 +542,7 @@ namespace Oblivion.Messages.Handlers
             }
         }
 
-        public void MakeOffer()
+        public async Task MakeOffer()
         {
             var SellingPrice = Request.GetInteger();
             Request.GetInteger();
@@ -588,13 +589,13 @@ namespace Oblivion.Messages.Handlers
                                   Session.GetHabbo().Id + "' LIMIT 1");
             }
 
-            Session.GetHabbo().GetInventoryComponent().RemoveItem(ItemId, false, 0);
+            await Session.GetHabbo().GetInventoryComponent().RemoveItem(ItemId, false, 0);
 
             msg.AppendInteger(1);
             await Session.SendMessageAsync(msg);
         }
 
-        public void ReedemCredits()
+        public async Task ReedemCredits()
         {
             var CreditsOwed = 0;
 
@@ -613,7 +614,7 @@ namespace Oblivion.Messages.Handlers
                 if (CreditsOwed >= 1)
                 {
                     Session.GetHabbo().Diamonds += CreditsOwed;
-                    Session.GetHabbo().UpdateSeasonalCurrencyBalance();
+                    await Session.GetHabbo().UpdateSeasonalCurrencyBalance();
                 }
 
                 using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())

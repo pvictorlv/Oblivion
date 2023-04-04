@@ -122,8 +122,8 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                         await serverMessage.AppendStringAsync(item.Z.ToString(Oblivion.CultureInfo));
                         await serverMessage.AppendStringAsync(NewZ.ToString(Oblivion.CultureInfo));
                         await serverMessage.AppendIntegerAsync(0);
-                        Room.SendMessage(serverMessage);
-                        Room.GetRoomItemHandler().SetFloorItem(item, Point.X, Point.Y, NewZ);
+                        await Room.SendMessage(serverMessage);
+                        await Room.GetRoomItemHandler().SetFloorItem(item, Point.X, Point.Y, NewZ);
                     }
                 }
 

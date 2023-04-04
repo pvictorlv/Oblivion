@@ -11,7 +11,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
         public override async Task OnUserWalk(GameClient session, RoomItem item, RoomUser user)
         {
             if (user.IsWalking)
-                user.GetRoom().GetGameItemHandler().OnTeleportRoomUserEnter(user, item);
+                await user.GetRoom().GetGameItemHandler().OnTeleportRoomUserEnter(user, item);
         }
 
 

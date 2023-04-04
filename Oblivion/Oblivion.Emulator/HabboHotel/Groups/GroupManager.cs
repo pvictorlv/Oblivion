@@ -52,7 +52,7 @@ namespace Oblivion.HabboHotel.Groups
         /// <summary>
         ///     Initializes the groups.
         /// </summary>
-        internal async Task InitGroups()
+        internal void InitGroups()
         {
             Bases = new HashSet<GroupBases>();
             Symbols = new HashSet<GroupSymbols>();
@@ -105,7 +105,7 @@ namespace Oblivion.HabboHotel.Groups
         /// <summary>
         ///     Clears the information.
         /// </summary>
-        internal async Task ClearInfo()
+        internal void ClearInfo()
         {
             Bases.Clear();
             Symbols.Clear();
@@ -125,8 +125,8 @@ namespace Oblivion.HabboHotel.Groups
         /// <param name="colour1">The colour1.</param>
         /// <param name="colour2">The colour2.</param>
         /// <param name="group">The theGroup.</param>
-        internal async Task CreateGroup(string name, string desc, uint roomId, string badge, GameClient session, int colour1,
-            int colour2, out Guild group)
+        internal async Task<Guild> CreateGroup(string name, string desc, uint roomId, string badge, GameClient session, int colour1,
+            int colour2)
         {
             Habbo user = session.GetHabbo();
             Dictionary<uint, GroupMember> emptyDictionary = new Dictionary<uint, GroupMember>();
@@ -148,7 +148,7 @@ namespace Oblivion.HabboHotel.Groups
                 Dictionary<uint, GroupMember> dictionary =
                     new Dictionary<uint, GroupMember> { { session.GetHabbo().Id, memberGroup } };
 
-                group = new Guild(id, name, desc, roomId, badge, Oblivion.GetUnixTimeStamp(), user.Id, colour1, colour2,
+                var  group = new Guild(id, name, desc, roomId, badge, Oblivion.GetUnixTimeStamp(), user.Id, colour1, colour2,
                     dictionary, emptyDictionary, emptyDictionary, 0, 1, false, name, desc, 0, 0.0, 0, string.Empty, 0,
                     0, 1, 1, 2, true);
 
@@ -171,7 +171,10 @@ namespace Oblivion.HabboHotel.Groups
                 await queryReactor.RunFastQueryAsync(
                     $"UPDATE users_stats SET favourite_group='{id}' WHERE id='{user.Id}' LIMIT 1");
                 await queryReactor.RunFastQueryAsync($"DELETE FROM rooms_rights WHERE room_id='{roomId}'");
+
+                return group;
             }
+
         }
 
         /// <summary>
@@ -308,7 +311,7 @@ namespace Oblivion.HabboHotel.Groups
         /// <param name="searchVal">The search value.</param>
         /// <param name="page">The page.</param>
         /// <returns>ServerMessage.</returns>
-        internal ServerMessage SerializeGroupMembers(ServerMessage response, Guild theGroup, uint reqType,
+        internal async Task<ServerMessage> SerializeGroupMembers(ServerMessage response, Guild theGroup, uint reqType,
             GameClient session, string searchVal = "", int page = 0)
         {
             if (theGroup == null || session == null)
@@ -338,7 +341,7 @@ namespace Oblivion.HabboHotel.Groups
                         {
                             var current = enumerator.Current;
 
-                            AddGroupMemberIntoResponse(response, current);
+                            await AddGroupMemberIntoResponse(response, current);
                         }
                     }
                 }
@@ -361,7 +364,7 @@ namespace Oblivion.HabboHotel.Groups
                         {
                             var current = enumerator.Current;
 
-                            AddGroupMemberIntoResponse(response, current);
+                            await AddGroupMemberIntoResponse(response, current);
                         }
                     }
                 }

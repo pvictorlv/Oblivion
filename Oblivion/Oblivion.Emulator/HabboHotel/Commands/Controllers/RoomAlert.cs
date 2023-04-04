@@ -21,7 +21,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var alert = string.Join(" ", pms);
 
             if (!room.CheckRights(session, true) && !session.GetHabbo().HasFuse("fuse_mod")) return false;
-            session.GetHabbo().CurrentRoom.SendMessage(GameClient.GetBytesNotif(alert));
+            await session.GetHabbo().CurrentRoom.SendMessage(GameClient.GetBytesNotif(alert));
 
             return true;
         }

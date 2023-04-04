@@ -46,18 +46,18 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
 
 
-            Oblivion.GetGame().GetAchievementManager()
+            await Oblivion.GetGame().GetAchievementManager()
                 .ProgressUserAchievement(session, "ACH_PinataWhacker", 1, true);
 
             if (itemData >= maxCracks)
             {
-                Oblivion.GetGame().GetAchievementManager()
+                await Oblivion.GetGame().GetAchievementManager()
                     .ProgressUserAchievement(session, "ACH_PinataBreaker", 1, true);
                 var prize = crackableHandler.GetRandomPrize(0, maxCracks);
                 if (prize == 0) return;
-                room.GetRoomItemHandler().DeleteRoomItem(item);
-                session.GetHabbo().GetInventoryComponent().AddNewItem("0", prize, "", 0, true, false, 0, 0);
-                session.GetHabbo().GetInventoryComponent().UpdateItems(true);
+                await room.GetRoomItemHandler().DeleteRoomItem(item);
+                await session.GetHabbo().GetInventoryComponent().AddNewItem("0", prize, "", 0, true, false, 0, 0);
+                await session.GetHabbo().GetInventoryComponent().UpdateItems(true);
             }
         }
 
@@ -71,13 +71,13 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 var num6 = num5 + 1;
                 item.ExtraData = num6.ToString();
                 await  item.UpdateState();
-                Oblivion.GetGame()
+                await Oblivion.GetGame()
                     .GetAchievementManager()
                     .ProgressUserAchievement(user.GetClient(), "ACH_PinataWhacker", 1);
                 if (num6 == 100)
                 {
-                    Oblivion.GetGame().GetPinataHandler().DeliverRandomPinataItem(user, item.GetRoom(), item);
-                    Oblivion.GetGame()
+                    await Oblivion.GetGame().GetPinataHandler().DeliverRandomPinataItem(user, item.GetRoom(), item);
+                    await Oblivion.GetGame()
                         .GetAchievementManager()
                         .ProgressUserAchievement(user.GetClient(), "ACH_PinataBreaker", 1);
                 }

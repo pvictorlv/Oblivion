@@ -25,13 +25,13 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
             if (client == null)
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
             int amount;
             if (!int.TryParse(pms[1], out amount))
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("enter_numbers"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("enter_numbers"));
                 return true;
             }
             client.GetHabbo().Credits += amount;

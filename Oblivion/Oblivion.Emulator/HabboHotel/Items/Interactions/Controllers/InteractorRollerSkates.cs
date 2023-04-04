@@ -12,12 +12,12 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
         {
             if (user.LastRollerDate + 60 < Oblivion.GetUnixTimeStamp())
             {
-                Oblivion.GetGame().GetAchievementManager()
+                await Oblivion.GetGame().GetAchievementManager()
                     .ProgressUserAchievement(user.GetClient(), "ACH_RbTagC", 1);
                 user.LastRollerDate = Oblivion.GetUnixTimeStamp();
             }
 
-            Oblivion.GetGame().GetAchievementManager()
+            await Oblivion.GetGame().GetAchievementManager()
                 .ProgressUserAchievement(user.GetClient(), "ACH_TagB", 1);
 
         }

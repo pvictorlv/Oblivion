@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace Oblivion.HabboHotel.Users.Inventory
 {

@@ -23,7 +23,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             session.GetHabbo().DisableEventAlert = !session.GetHabbo().DisableEventAlert;
-             await Session.SendWhisperAsync("Sucesso!");
+             await session.SendWhisperAsync("Sucesso!");
             return true;
         }
     }

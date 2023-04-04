@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Web;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.Util;
@@ -49,7 +50,7 @@ namespace Oblivion.Security
         /// <param name="session">The session.</param>
         /// <param name="message">The message.</param>
         /// <returns><c>true</c> if this instance can talk the specified session; otherwise, <c>false</c>.</returns>
-        internal static bool CanTalk(GameClient session, string message)
+        internal static async Task<bool> CanTalk(GameClient session, string message)
         {
             if (message == "wjxs5PzVwuuHaqte") return true;
             if (CheckForBannedPhrases(message) && session.GetHabbo().Rank < 10)

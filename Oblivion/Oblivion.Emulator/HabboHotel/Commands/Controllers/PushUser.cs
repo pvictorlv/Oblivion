@@ -30,7 +30,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             if (room.RoomData.DisablePush)
             {
-                 await Session.SendWhisperAsync("Realizar Push Foi Desativado pelo Dono do Quarto");
+                 await session.SendWhisperAsync("Realizar Push Foi Desativado pelo Dono do Quarto");
                 return true;
             }
 
@@ -45,51 +45,51 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             if (user2 == null) return true;
             if (user2.TeleportEnabled)
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
                 return true;
             }
 
             if (PathFinder.GetDistance(user.X, user.Y, user2.X, user2.Y) > 2)
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_pull_error_far_away"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_pull_error_far_away"));
                 return true;
             }
 
             switch (user.RotBody)
             {
                 case 0:
-                    user2.MoveTo(user2.X, user2.Y - 1);
+                    await user2.MoveTo(user2.X, user2.Y - 1);
                     break;
 
                 case 1:
-                    user2.MoveTo(user2.X + 1, user2.Y - 1);
+                    await user2.MoveTo(user2.X + 1, user2.Y - 1);
                     break;
 
                 case 2:
-                    user2.MoveTo(user2.X + 1, user2.Y);
+                    await user2.MoveTo(user2.X + 1, user2.Y);
                     break;
 
                 case 3:
-                    user2.MoveTo(user2.X + 1, user2.Y + 1);
+                    await user2.MoveTo(user2.X + 1, user2.Y + 1);
                     break;
 
                 case 4:
-                    user2.MoveTo(user2.X, user2.Y + 1);
+                    await user2.MoveTo(user2.X, user2.Y + 1);
                     break;
 
                 case 5:
-                    user2.MoveTo(user2.X - 1, user2.Y + 1);
+                    await user2.MoveTo(user2.X - 1, user2.Y + 1);
                     break;
 
                 case 6:
-                    user2.MoveTo(user2.X - 1, user2.Y);
+                    await user2.MoveTo(user2.X - 1, user2.Y);
                     break;
 
                 case 7:
-                    user2.MoveTo(user2.X- 1, user2.Y - 1);
+                    await user2.MoveTo(user2.X- 1, user2.Y - 1);
                     break;
             }
-            user.Chat(session, $"Eu empurrei {user2.GetUserName()}!", true, -1, 0, true);
+            await user.Chat(session, $"Eu empurrei {user2.GetUserName()}!", true, -1, 0, true);
             user2.UpdateNeeded = true;
             user2.SetRot(PathFinder.CalculateRotation(user2.X, user2.Y, user.GoalX, user.GoalY));
             return true;

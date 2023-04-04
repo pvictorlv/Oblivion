@@ -338,7 +338,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         /// <param name="oldName">The old name.</param>
         /// <param name="newName">The new name.</param>
-        internal async Task UpdateUser(string oldName, string newName)
+        internal void UpdateUser(string oldName, string newName)
         {
             if (oldName == newName)
                 return;
@@ -348,7 +348,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
             UsersByUserName.TryAdd(newName, user);
 
-            await Oblivion.GetGame().GetClientManager().UpdateClient(oldName, newName);
+            Oblivion.GetGame().GetClientManager().UpdateClient(oldName, newName);
         }
 
         /// <summary>
@@ -363,7 +363,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 var roomUser = GetRoomUserByHabbo(session.GetHabbo().UserName);
                 if (roomUser == null) return;
-                RemoveUserFromRoom(roomUser, notifyClient, notifyKick);
+                await RemoveUserFromRoom(roomUser, notifyClient, notifyKick);
             }
         }
 
@@ -389,7 +389,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     var model = room.GetGameMap().Model;
                     if (model == null) return;
 
-                    user.MoveTo(model.DoorX, model.DoorY);
+                    await user.MoveTo(model.DoorX, model.DoorY);
                     user.CanWalk = false;
                     await client.GetMessageHandler()
                         .GetResponse()
@@ -441,17 +441,17 @@ namespace Oblivion.HabboHotel.Rooms.User
                     user.IsLyingDown = false;
                 }
 
-                RemoveRoomUser(user);
+                await RemoveRoomUser(user);
                 if (!user.IsSpectator)
                 {
                     if (user.CurrentItemEffect != 0)
                         user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().CurrentEffect =
                             -1;
                     if (room.HasActiveTrade(habbo.Id))
-                        room.TryStopTrade(habbo.Id);
+                        await room.TryStopTrade(habbo.Id);
                     habbo.CurrentRoomId = 0;
                     if (habbo.GetMessenger() != null)
-                        habbo.GetMessenger().OnStatusChanged(true);
+                        await habbo.GetMessenger().OnStatusChanged(true);
 
 
                     UsersByUserName?.TryRemove(habbo.UserName.ToLower(), out _);
@@ -462,7 +462,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
             catch (Exception ex)
             {
-                RemoveRoomUser(user);
+                await RemoveRoomUser(user);
 
                 Logging.LogCriticalException($"Error during removing user from room:{ex}");
             }
@@ -514,7 +514,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     Updates the user count.
         /// </summary>
         /// <param name="count">The count.</param>
-        internal async Task UpdateUserCount(uint count)
+        internal void UpdateUserCount(uint count)
         {
             _roomUserCount = count;
             if (_room?.RoomData == null)
@@ -522,7 +522,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
             _room.RoomData.UsersNow = count;
 
-            await Oblivion.GetGame().GetRoomManager().QueueActiveRoomUpdate(_room.RoomData);
+            Oblivion.GetGame().GetRoomManager().QueueActiveRoomUpdate(_room.RoomData);
         }
 
         /// <summary>
@@ -753,11 +753,11 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (cycleGameItems)
                 {
                     if (_room.GotSoccer())
-                        _room.GetSoccer().OnUserWalk(user);
+                        await _room.GetSoccer().OnUserWalk(user);
                     if (_room.GotBanzai())
-                        _room.GetBanzai().OnUserWalk(user);
+                        await _room.GetBanzai().OnUserWalk(user);
                     if (_room.GotFreeze())
-                        _room.GetFreeze().OnUserWalk(user);
+                        await _room.GetFreeze().OnUserWalk(user);
                 }
             }
             catch (Exception e)
@@ -782,7 +782,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     var ownerClient = Oblivion.GetGame().GetClientManager().GetClientByUserId(roomOwner);
                     if (ownerClient != null)
                     {
-                        Oblivion.GetGame().GetAchievementManager()
+                        await Oblivion.GetGame().GetAchievementManager()
                             .ProgressUserAchievement(ownerClient, "ACH_RoomDecoHosting", 1, true);
                     }
 
@@ -855,7 +855,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         break;
                 }
 
-                UpdateUserStatus(roomUsers, false);
+                await UpdateUserStatus(roomUsers, false);
             }
             else if ((roomUsers.IsPet) && ((roomUsers.PetData.Type == 3) || (roomUsers.PetData.Type == 4)) &&
                      (roomUsers.PetData.WaitingForBreading > 0) &&
@@ -865,7 +865,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 roomUsers.Freezed = false;
                 roomUsers.PetData.WaitingForBreading = 0;
                 roomUsers.PetData.BreadingTile = new Point();
-                UpdateUserStatus(roomUsers, false);
+                await UpdateUserStatus(roomUsers, false);
             }
         }
 
@@ -1111,7 +1111,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                     (roomUsers.RidingHorse) || hasGroup)
                 {
                     // Let's Update his Movement...
-                    await _room.GetGameMap()
+                    _room.GetGameMap()
                         .UpdateUserMovement(new Point(roomUsers.Coordinate.X, roomUsers.Coordinate.Y),
                             new Point(roomUsers.SetX, roomUsers.SetY), roomUsers);
 
@@ -1442,14 +1442,14 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 if (_roomUserCount != userInRoomCount * (uint)Oblivion.Multipy)
                 {
-                    await UpdateUserCount(userInRoomCount * (uint)Oblivion.Multipy);
+                    UpdateUserCount(userInRoomCount * (uint)Oblivion.Multipy);
                 }
             }
             else
             {
                 if (_roomUserCount != userInRoomCount)
                 {
-                    await UpdateUserCount(userInRoomCount);
+                    UpdateUserCount(userInRoomCount);
                 }
             }
 
@@ -1719,10 +1719,10 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <summary>
         ///     Called when [user update status].
         /// </summary>
-        public void OnUserUpdateStatus()
+        public async Task OnUserUpdateStatus()
         {
             foreach (var current in UserList.Values)
-                UpdateUserStatus(current, false);
+                await UpdateUserStatus(current, false);
         }
 
         /// <summary>
@@ -1730,10 +1730,10 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     <param name="x">x position</param>
         ///     <param name="y">y position</param>
         /// </summary>
-        public void OnUserUpdateStatus(int x, int y)
+        public async Task OnUserUpdateStatus(int x, int y)
         {
             foreach (var current in _room.GetGameMap().GetRoomUsers(new Point(x, y)))
-                UpdateUserStatus(current, false);
+                await UpdateUserStatus(current, false);
         }
 
         /// <summary>

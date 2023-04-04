@@ -27,8 +27,8 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 Oblivion.GetGame().GetItemManager().LoadItems(adapter);
-                Oblivion.GetGame().GetCatalog().Initialize(adapter);
-                Oblivion.GetGame().ReloadItems();
+                await Oblivion.GetGame().GetCatalog().Initialize(adapter);
+                await Oblivion.GetGame().ReloadItems();
             }
             var msg = new ServerMessage(LibraryParser.OutgoingRequest("PublishShopMessageComposer"));
             msg.AppendBool(false);

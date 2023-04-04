@@ -568,7 +568,7 @@ namespace Oblivion.HabboHotel.Pets
         /// <summary>
         ///     Kills the plant.
         /// </summary>
-        internal async Task KillPlant()
+        internal void KillPlant()
         {
             LiveState = MoplaState.Dead;
             _dbUpdateNeeded = true;
@@ -632,7 +632,7 @@ namespace Oblivion.HabboHotel.Pets
             if (!_dbUpdateNeeded)
                 return;
 
-            UpdateInDb();
+            await UpdateInDb();
         }
 
         /// <summary>

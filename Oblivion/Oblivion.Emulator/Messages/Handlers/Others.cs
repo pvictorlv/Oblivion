@@ -58,7 +58,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Destroys this instance.
         /// </summary>
-        internal async Task Destroy()
+        internal void Destroy()
         {
             Session = null;
         }
@@ -86,7 +86,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Gets the client version message event.
         /// </summary>
-        internal async Task ReleaseVersion()
+        internal void ReleaseVersion()
         {
             var release = Request.GetString();
 
@@ -119,8 +119,12 @@ namespace Oblivion.Messages.Handlers
         {
             if (Session == null)
                 return;
-            Oblivion.GetGame().GetAchievementManager()
-                .ProgressUserAchievement(Session, "ACH_AllTimeHotelPresence", 1, true);
+
+            if (Session.TimePingedReceived.AddMinutes(1) <= DateTime.Now)
+            {
+                await Oblivion.GetGame().GetAchievementManager()
+                    .ProgressUserAchievement(Session, "ACH_AllTimeHotelPresence", 1, true);
+            }
 
             Session.TimePingedReceived = DateTime.Now;
 
@@ -175,7 +179,7 @@ namespace Oblivion.Messages.Handlers
 
         internal async Task InitConsole()
         {
-            Session.GetHabbo().InitMessenger();
+            await Session.GetHabbo().InitMessenger();
         }
 
         /// <summary>
@@ -202,7 +206,7 @@ namespace Oblivion.Messages.Handlers
 
             var sso = Request.GetString();
 
-            if (string.IsNullOrEmpty(sso) || string.IsNullOrWhiteSpace(sso) || sso.Length < 5 || !Session.TryLogin(sso))
+            if (string.IsNullOrEmpty(sso) || string.IsNullOrWhiteSpace(sso) || sso.Length < 5 || !await Session.TryLogin(sso))
             {
                 Session?.Disconnect("Invalid sso or banned");
                 return;

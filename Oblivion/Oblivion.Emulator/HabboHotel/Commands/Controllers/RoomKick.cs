@@ -28,7 +28,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             var alert = string.Join(" ", pms);
             var kick = new RoomKick(alert, session.GetHabbo().Rank);
-            Oblivion.GetGame()
+            await Oblivion.GetGame()
                 .GetModerationTool().LogStaffEntry(session.GetHabbo().UserName, string.Empty,
                     "Room kick", "Kicked the whole room");
             room.QueueRoomKick(kick);

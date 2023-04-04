@@ -76,7 +76,7 @@ namespace Oblivion.Connection.Net
                         if (Amount == 0)
                             break;
 
-                        Oblivion.GetGame().GetAchievementManager()
+                        await Oblivion.GetGame().GetAchievementManager()
                             .ProgressUserAchievement(clientByUserId, Type, Amount);
                         break;
                     }
@@ -91,7 +91,7 @@ namespace Oblivion.Connection.Net
                             break;
 
                         clientByUserId.GetHabbo().Credits -= int.Parse(Quantity);
-                        clientByUserId.GetHabbo().UpdateCreditsBalance();
+                        await clientByUserId.GetHabbo().UpdateCreditsBalance();
                         break;
                     }
 
@@ -101,7 +101,7 @@ namespace Oblivion.Connection.Net
                         var hotelAlert =
                             new ServerMessage(LibraryParser.OutgoingRequest("BroadcastNotifMessageComposer"));
                         hotelAlert.AppendString($"{param}\r\n- Hotel Management");
-                        Oblivion.GetGame().GetClientManager().SendMessage(hotelAlert);
+                        await Oblivion.GetGame().GetClientManager().SendMessageAsync(hotelAlert);
                         break;
 
                     case "alert":
@@ -152,7 +152,7 @@ namespace Oblivion.Connection.Net
                         }
 
                         clientByUserId.GetHabbo().Diamonds = diamonds;
-                        clientByUserId.GetHabbo().UpdateActivityPointsBalance();
+                        await clientByUserId.GetHabbo().UpdateActivityPointsBalance();
                         break;
                     }
 

@@ -13,7 +13,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
     {
         public override async Task OnUserWalkOff(GameClient session, RoomItem item, RoomUser user)
         {
-            OnUserWalk(session, item, user);
+            await OnUserWalk(session, item, user);
         }
         public override async Task OnUserWalk(GameClient session, RoomItem item, RoomUser user)
         {

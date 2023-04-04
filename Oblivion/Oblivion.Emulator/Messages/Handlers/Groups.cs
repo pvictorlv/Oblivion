@@ -144,9 +144,9 @@ namespace Oblivion.Messages.Handlers
 
             var image = Oblivion.GetGame().GetGroupManager().GenerateGuildImage(guildBase, guildBaseColor, gStates);
 
-            await Oblivion.GetGame().GetGroupManager().CreateGroup(name, description, roomid, image, Session,
+            var theGroup = await Oblivion.GetGame().GetGroupManager().CreateGroup(name, description, roomid, image, Session,
                 (!Oblivion.GetGame().GetGroupManager().SymbolColours.Contains(color)) ? 1 : color,
-                (!Oblivion.GetGame().GetGroupManager().BackGroundColours.Contains(num3)) ? 1 : num3, out var theGroup);
+                (!Oblivion.GetGame().GetGroupManager().BackGroundColours.Contains(num3)) ? 1 : num3);
 
             await Session.SendMessageAsync(CatalogPageComposer.PurchaseOk(0u, "CREATE_GUILD", 10));
             await Response.InitAsync(LibraryParser.OutgoingRequest("GroupRoomMessageComposer"));
@@ -258,7 +258,7 @@ namespace Oblivion.Messages.Handlers
             group.Admins.Add(num2, group.Members[num2]);
 
             await Response.InitAsync(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
-            Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 1u, Session);
+            await Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 1u, Session);
 
             await SendResponse();
 
@@ -301,7 +301,7 @@ namespace Oblivion.Messages.Handlers
             group.Admins.Remove(num2);
 
             await Response.InitAsync(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
-            Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 0u, Session);
+            await Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 0u, Session);
             await SendResponse();
 
             Room room = Oblivion.GetGame().GetRoomManager().GetRoom(group.RoomId);
@@ -358,7 +358,7 @@ namespace Oblivion.Messages.Handlers
 
             Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
             await Response.InitAsync(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
-            Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 0u, Session);
+            await Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 0u, Session);
             await SendResponse();
 
             using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -387,7 +387,7 @@ namespace Oblivion.Messages.Handlers
             group.Requests.Remove(userId);
 
             await Response.InitAsync(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
-            Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 2u, Session);
+            await Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 2u, Session);
             await SendResponse();
 
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(group.RoomId);
@@ -531,7 +531,7 @@ namespace Oblivion.Messages.Handlers
 
             await Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
             await Response.InitAsync(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
-            Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 0u, Session);
+            await Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 0u, Session);
             await SendResponse();
 
             using (IQueryAdapter queryreactor3 = Oblivion.GetDatabaseManager().GetQueryReactor())

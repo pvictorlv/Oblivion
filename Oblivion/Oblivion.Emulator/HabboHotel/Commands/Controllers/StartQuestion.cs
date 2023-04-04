@@ -36,13 +36,13 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             poll.AnswersPositive = 0;
             poll.AnswersNegative = 0;
-            MatchingPollAnswer(client, poll);
-            var showPoll = new Thread(delegate () { MatchingPollResults(client, poll); });
+            await MatchingPollAnswer(client, poll);
+            var showPoll = new Thread(async delegate () { await MatchingPollResults(client, poll); });
             showPoll.Start();
             return true;
         }
 
-        internal static void MatchingPollAnswer(GameClient client, Poll poll)
+        internal static async Task MatchingPollAnswer(GameClient client, Poll poll)
         {
             if (poll == null || poll.Type != PollType.Matching)
                 return;
@@ -55,10 +55,10 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             message.AppendInteger(29);
             message.AppendInteger(5);
             message.AppendString(poll.PollName);
-            client.GetHabbo().CurrentRoom.SendMessage(message);
+            await client.GetHabbo().CurrentRoom.SendMessage(message);
         }
 
-        internal static void MatchingPollResults(GameClient client, Poll poll)
+        internal static async Task MatchingPollResults(GameClient client, Poll poll)
         {
             var room = client.GetHabbo().CurrentRoom;
             if (poll == null || poll.Type != PollType.Matching || room == null)

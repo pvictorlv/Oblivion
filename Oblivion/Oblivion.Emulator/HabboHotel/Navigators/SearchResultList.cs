@@ -231,7 +231,7 @@ namespace Oblivion.HabboHotel.Navigators
                             }
                             message.AppendInteger(rooms.Length);
                             /* TODO CHECK */
-                            foreach (var room in rooms) room.Key.Serialize(message);
+                            foreach (var room in rooms) await room.Key.Serialize(message);
                         }
                         catch (Exception e)
                         {
@@ -248,7 +248,7 @@ namespace Oblivion.HabboHotel.Navigators
                             rooms = Oblivion.GetGame().GetRoomManager().GetEventRooms();
                             await message.AppendIntegerAsync(rooms.Length);
                             /* TODO CHECK */
-                            foreach (var room in rooms) room.Key.Serialize(message);
+                            foreach (var room in rooms) await room.Key.Serialize(message);
                         }
                         catch
                         {
@@ -300,7 +300,7 @@ namespace Oblivion.HabboHotel.Navigators
                     {
                         if (staticId.StartsWith("category__"))
                         {
-                            SerializeSearchResultListFlatcats(
+                            await SerializeSearchResultListFlatcats(
                                 Oblivion.GetGame()
                                     .GetNavigator()
                                     .GetFlatCatIdByName(staticId.Replace("category__", "")), true, message);
@@ -319,7 +319,7 @@ namespace Oblivion.HabboHotel.Navigators
         /// <param name="searchQuery">The search query.</param>
         /// <param name="message">The message.</param>
         /// <param name="session">The session.</param>
-        internal static void SerializeSearches(string searchQuery, ServerMessage message, GameClient session)
+        internal static async Task SerializeSearches(string searchQuery, ServerMessage message, GameClient session)
         {
             message.AppendString("");
             message.AppendString(searchQuery);
@@ -360,9 +360,13 @@ namespace Oblivion.HabboHotel.Navigators
                 if (initforeach)
                 {
                     /* TODO CHECK */
-                    foreach (var rms in activeRooms.TakeWhile(rms => rooms.Count < 50).Where(rms => rms.Key.Name.ToLower().Contains(searchQuery.ToLower())))
+                    foreach (var rms in activeRooms)
                     {
-                        rooms.Add(rms.Key);
+                        if (rooms.Count >= 50) break;
+                        if (rms.Key.Name.ToLower().Contains(searchQuery.ToLower()))
+                        {
+                            rooms.Add(rms.Key);
+                        }
                     }
                 }
             }
@@ -395,18 +399,16 @@ namespace Oblivion.HabboHotel.Navigators
                 }
                 if (dTable != null)
                 {
-                    /* TODO CHECK */ foreach (
-                        var rData in
-                            dTable.Rows.Cast<DataRow>()
-                                .Select(
-                                    row =>
-                                        Oblivion.GetGame().GetRoomManager().FetchRoomData(Convert.ToUInt32(row["id"]), row))
-                                .Where(rData => !rooms.Contains(rData)))
-                        rooms.Add(rData);
+                    /* TODO CHECK */
+                    foreach (DataRow row in dTable.Rows)
+                    {
+                        var rData =await Oblivion.GetGame().GetRoomManager().FetchRoomData(Convert.ToUInt32(row["id"]), row);
+                        if (!rooms.Contains((RoomData)rData)) rooms.Add(rData);
+                    }
                 }
             }
             message.AppendInteger(rooms.Count);
-            /* TODO CHECK */ foreach (var data in rooms.Where(data => data != null)) data.Serialize(message);
+            /* TODO CHECK */ foreach (var data in rooms.Where(data => data != null)) await data.Serialize(message);
         }
     }
 }

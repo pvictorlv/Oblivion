@@ -47,7 +47,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             if (!member.HasChat)
             {
-                client.GetHabbo().GetMessenger().OnDisableChat((int) gp.Id);
+                await client.GetHabbo().GetMessenger().OnDisableChat((int) gp.Id);
             }
             else
             {

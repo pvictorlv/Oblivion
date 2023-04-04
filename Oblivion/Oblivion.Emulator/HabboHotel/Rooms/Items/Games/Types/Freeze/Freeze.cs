@@ -173,30 +173,30 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
                     items = await GetVerticalItems(item.X, item.Y, 3);
                     break;
             }
-            HandleBanzaiFreezeItems(items);
+            await HandleBanzaiFreezeItems(items);
         }
 
-        internal async Task AddFreezeTile(RoomItem item)
+        internal void AddFreezeTile(RoomItem item)
         {
             _freezeTiles.AddOrUpdate(item.Id, item, (k, v) => item);
         }
 
-        internal async Task RemoveFreezeTile(string itemId)
+        internal void RemoveFreezeTile(string itemId)
         {
             _freezeTiles.TryRemove(itemId, out _);
         }
 
-        internal async Task AddFreezeBlock(RoomItem item)
+        internal void AddFreezeBlock(RoomItem item)
         {
             _freezeBlocks.AddOrUpdate(item.Id, item, (k, v) => item);
         }
 
-        internal async Task RemoveFreezeBlock(string itemId)
+        internal void RemoveFreezeBlock(string itemId)
         {
             _freezeBlocks.TryRemove(itemId, out _);
         }
 
-        internal async Task Destroy()
+        internal void Destroy()
         {
             _freezeBlocks.Clear();
             _freezeTiles.Clear();
@@ -208,18 +208,16 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
         }
         
 
-        private static void ActivateShield(RoomUser user)
+        private static async Task ActivateShield(RoomUser user)
         {
-            user.ApplyEffect((int) (user.Team + 48));
+            await user.ApplyEffect((int) (user.Team + 48));
             user.ShieldActive = true;
             user.ShieldCounter = 0;
         }
 
         private static bool SquareGotFreezeTile(IEnumerable<RoomItem> items)
         {
-            return
-                items.Any(
-                    roomItem => roomItem != null && roomItem.GetBaseItem().InteractionType == Interaction.FreezeTile);
+            return items.Any(roomItem => roomItem != null && roomItem.GetBaseItem().InteractionType == Interaction.FreezeTile);
         }
 
         private static bool SquareGotFreezeBlock(IEnumerable<RoomItem> items)
@@ -253,19 +251,19 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
             }
         }
 
-        private void HandleBanzaiFreezeItems(IEnumerable<RoomItem> items)
+        private async Task HandleBanzaiFreezeItems(IEnumerable<RoomItem> items)
         {
             /* TODO CHECK */ foreach (var roomItem in items)
             {
                 switch (roomItem.GetBaseItem().InteractionType)
                 {
                     case Interaction.FreezeTileBlock:
-                        SetRandomPowerUp(roomItem);
-                        roomItem.UpdateState(false, true);
+                        await SetRandomPowerUp(roomItem);
+                        await roomItem.UpdateState(false, true);
                         continue;
                     case Interaction.FreezeTile:
                         roomItem.ExtraData = "11000";
-                        roomItem.UpdateState(false, true);
+                        await roomItem.UpdateState(false, true);
                         continue;
                     default:
                         continue;
@@ -328,7 +326,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
                     break;
 
                 case FreezePowerUp.Shield:
-                    ActivateShield(user);
+                    await ActivateShield(user);
                     break;
 
                 case FreezePowerUp.Heart:
@@ -389,7 +387,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
                 var managerForFreeze = _room.GetTeamManagerForFreeze();
                 managerForFreeze.OnUserLeave(user);
                 user.Team = Team.None;
-                if (ExitTeleport != null) _room.GetGameMap().TeleportToItem(user, ExitTeleport);
+                if (ExitTeleport != null) await _room.GetGameMap().TeleportToItem(user, ExitTeleport);
                 user.Freezed = false;
                 user.SetStep = false;
                 user.IsWalking = false;

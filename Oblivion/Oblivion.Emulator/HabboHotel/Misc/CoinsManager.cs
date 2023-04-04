@@ -18,7 +18,7 @@ namespace Oblivion.HabboHotel.Misc
         /// <summary>
         ///     Starts the timer.
         /// </summary>
-        internal async Task StartTimer()
+        internal void StartTimer()
         {
             if (!ExtraSettings.CurrencyLoopEnabled)
                 return;

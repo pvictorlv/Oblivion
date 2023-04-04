@@ -7,15 +7,17 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorHabboWheel : FurniInteractorModel
     {
-        public override async Task OnPlace(GameClient session, RoomItem item)
+        public override Task OnPlace(GameClient session, RoomItem item)
         {
             item.ExtraData = "-1";
             item.ReqUpdate(10, true);
+            return Task.CompletedTask;
         }
 
-        public override async Task OnRemove(GameClient session, RoomItem item)
+        public override Task OnRemove(GameClient session, RoomItem item)
         {
             item.ExtraData = "-1";
+            return Task.CompletedTask;
         }
 
         public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)

@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Enums;
@@ -12,7 +13,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 {
     public static class WiredSaver
     {
-        public static void SaveWired(GameClient session, RoomItem item, ClientMessage request)
+        public static async Task SaveWired(GameClient session, RoomItem item, ClientMessage request)
         {
             if (item == null || !item.IsWired)
                 return;

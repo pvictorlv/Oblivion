@@ -75,7 +75,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             await serverMessage.AppendStringAsync(session.GetHabbo().Motto);
             await serverMessage.AppendIntegerAsync(session.GetHabbo().AchievementPoints);
 
-            session.GetHabbo().CurrentRoom.SendMessage(serverMessage);
+            await session.GetHabbo().CurrentRoom.SendMessage(serverMessage);
         }
     }
 }

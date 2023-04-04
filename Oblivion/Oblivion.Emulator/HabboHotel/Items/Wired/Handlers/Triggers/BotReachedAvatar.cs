@@ -105,7 +105,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
                     {
                         if (current3.Type == Interaction.ActionBotFollowAvatar ||
                             current3.Type == Interaction.ActionBotMove) continue;
-                        current3.Execute(user, Type);
+                        await current3.Execute(user, Type);
                         await WiredHandler.OnEvent(current3);
                     }
                 }

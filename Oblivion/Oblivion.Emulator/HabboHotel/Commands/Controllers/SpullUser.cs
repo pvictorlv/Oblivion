@@ -29,19 +29,19 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
             if (client == null)
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
             if (client.GetHabbo().Id == session.GetHabbo().Id)
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_pull_error_own"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_pull_error_own"));
                 return true;
             }
             var user2 = room.GetRoomUserManager().GetRoomUserByHabbo(client.GetHabbo().Id);
             if (user2 == null) return true;
             if (user2.TeleportEnabled)
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
                 return true;
             }
 

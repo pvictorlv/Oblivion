@@ -25,34 +25,34 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             var userName = pms[0];
-            var userSession = Oblivion.GetGame().GetClientManager().GetClientByUserName(userName);
-            if (userSession == null)
+            var usersession = Oblivion.GetGame().GetClientManager().GetClientByUserName(userName);
+            if (usersession == null)
             {
                  await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
-            if (session.GetHabbo().Rank <= userSession.GetHabbo().Rank)
+            if (session.GetHabbo().Rank <= usersession.GetHabbo().Rank)
             {
                 await session.SendNotif(Oblivion.GetLanguage().GetVar("user_is_higher_rank"));
                 return true;
             }
-            if (userSession.GetHabbo().CurrentRoomId < 1)
+            if (usersession.GetHabbo().CurrentRoomId < 1)
             {
                 await session.SendNotif(Oblivion.GetLanguage().GetVar("command_kick_user_not_in_room"));
                 return true;
             }
-            var room = Oblivion.GetGame().GetRoomManager().GetRoom(userSession.GetHabbo().CurrentRoomId);
+            var room = Oblivion.GetGame().GetRoomManager().GetRoom(usersession.GetHabbo().CurrentRoomId);
             if (room == null) return true;
 
-            await room.GetRoomUserManager().RemoveUserFromRoom(userSession, true, false);
-            userSession.CurrentRoomUserId = -1;
+            await room.GetRoomUserManager().RemoveUserFromRoom(usersession, true, false);
+            usersession.CurrentRoomUserId = -1;
             if (pms.Length > 1)
             {
-                await userSession.SendNotif(
+                await usersession.SendNotif(
                     string.Format(Oblivion.GetLanguage().GetVar("command_kick_user_mod_default") + "{0}.",
                         string.Join(" ", pms.Skip(1))));
             }
-            else await userSession.SendNotif(Oblivion.GetLanguage().GetVar("command_kick_user_mod_default"));
+            else await usersession.SendNotif(Oblivion.GetLanguage().GetVar("command_kick_user_mod_default"));
 
             return true;
         }

@@ -99,7 +99,7 @@ namespace Oblivion.HabboHotel.RoomBots
         ///     Called when [user enter room].
         /// </summary>
         /// <param name="user">The user.</param>
-        internal abstract void OnUserEnterRoom(RoomUser user);
+        internal abstract Task OnUserEnterRoom(RoomUser user);
 
         /// <summary>
         ///     Called when [user leave room].

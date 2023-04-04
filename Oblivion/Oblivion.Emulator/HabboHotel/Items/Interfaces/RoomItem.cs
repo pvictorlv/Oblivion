@@ -770,7 +770,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         internal IFurniInteractor Interactor;
 
 
-        internal async Task SetState(int x, int y, double z)
+        internal void SetState(int x, int y, double z)
         {
             SetState(x, y, z, Gamemap.GetAffectedTiles(GetBaseItem().Length,
                 GetBaseItem().Width, x, y, Rot));
@@ -796,7 +796,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <summary>
         ///     Destroys this instance.
         /// </summary>
-        internal void Dispose(bool removeVirtual)
+        internal new void Dispose(bool removeVirtual)
         {
            // base.Dispose(removeVirtual);
 
@@ -879,7 +879,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                                 var drink =
                                     GetBaseItem().VendingIds[
                                         Oblivion.GetRandomNumber(0, (GetBaseItem().VendingIds.Count - 1))];
-                                user.CarryItem(drink);
+                                await user.CarryItem(drink);
                             }
 
                             InteractingUser = 0u;
@@ -1143,7 +1143,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                             {
                                 keepDoorOpen = true;
                                 user2.UnlockWalking();
-                                user2.MoveTo(SquareInFront);
+                                await user2.MoveTo(SquareInFront);
                             }
 
                             InteractingUser2 = 0;
@@ -1265,7 +1265,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                         }
 
                         UpdateCounter = 0;
-                        GetRoom().GetBanzai().BanzaiEnd();
+                        await GetRoom().GetBanzai().BanzaiEnd();
                         return;
                     }
                     case Interaction.BanzaiTele:
@@ -1306,7 +1306,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                         }
 
                         UpdateNeeded = false;
-                        GetRoom().GetFreeze().StopGame();
+                        await GetRoom().GetFreeze().StopGame();
                         return;
                     }
                     case Interaction.FreezeTile:
@@ -1314,7 +1314,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
                         {
                             ExtraData = "11000";
                             await UpdateState(false, true);
-                            GetRoom().GetFreeze().OnFreezeTiles(this, FreezePowerUp, InteractingUser);
+                            await GetRoom().GetFreeze().OnFreezeTiles(this, FreezePowerUp, InteractingUser);
                             InteractingUser = 0u;
                             InteractionCountHelper = 0;
                         }
@@ -1922,7 +1922,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         /// <param name="user">The user.</param>
         internal async Task UserWalksOffFurni(RoomUser user)
         {
-            Interactor.OnUserWalkOff(user.GetClient(), this, user);
+            await Interactor.OnUserWalkOff(user.GetClient(), this, user);
 
             if (GetRoom().GotWireds())
                 await GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerWalkOffFurni, user, this);

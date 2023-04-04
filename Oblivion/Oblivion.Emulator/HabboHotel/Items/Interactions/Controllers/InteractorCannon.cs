@@ -17,15 +17,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
         private HashSet<Point> _mCoords;
         private RoomItem _mItem;
 
-        public override async Task OnPlace(GameClient session, RoomItem item)
-        {
-//            item.ExtraData = "0";
-        }
-
-        public override async Task OnRemove(GameClient session, RoomItem item)
-        {
-//            item.ExtraData = "0";
-        }
+        
 
         public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {

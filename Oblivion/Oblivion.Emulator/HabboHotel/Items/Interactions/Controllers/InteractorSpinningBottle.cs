@@ -13,9 +13,10 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             await item.UpdateState(true, false);
         }
 
-        public override async Task OnRemove(GameClient session, RoomItem item)
+        public override Task OnRemove(GameClient session, RoomItem item)
         {
             item.ExtraData = "0";
+            return Task.CompletedTask;
         }
 
         public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)

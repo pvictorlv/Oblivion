@@ -29,7 +29,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 .GetRoomUserByVirtualId(session.CurrentRoomUserId);
             if (user.RidingHorse)
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("horse_handitem_error"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("horse_handitem_error"));
                 return true;
             }
             if (user.IsLyingDown)

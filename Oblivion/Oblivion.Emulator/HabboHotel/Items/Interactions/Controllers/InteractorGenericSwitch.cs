@@ -35,7 +35,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             item.ExtraData = num3.ToString();
             await  item.UpdateState();
             if (item.GetRoom().GotWireds())
-                item.GetRoom()
+                await item.GetRoom()
                     .GetWiredHandler()
                     .ExecuteWired(Interaction.TriggerStateChanged,
                         item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id), item);

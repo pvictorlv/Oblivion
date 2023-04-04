@@ -54,7 +54,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                             item.UpdateNeeded = !item.UpdateNeeded;
 
                             if (item.UpdateNeeded)
-                                item.GetRoom().GetBanzai().BanzaiStart();
+                                await item.GetRoom().GetBanzai().BanzaiStart();
 
                             item.PendingReset = true;
                         }
@@ -63,7 +63,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                             item.UpdateNeeded = !item.UpdateNeeded;
 
                             if (item.UpdateNeeded)
-                                item.GetRoom().GetBanzai().BanzaiEnd();
+                                await item.GetRoom().GetBanzai().BanzaiEnd();
 
                             item.PendingReset = true;
                         }
@@ -82,7 +82,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 item.UpdateNeeded = !item.UpdateNeeded;
 
                 if (item.UpdateNeeded)
-                    item.GetRoom().GetBanzai().BanzaiStart();
+                    await item.GetRoom().GetBanzai().BanzaiStart();
 
                 item.PendingReset = true;
             }
@@ -90,7 +90,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             item.UpdateNeeded = !item.UpdateNeeded;
 
             if (item.UpdateNeeded)
-                item.GetRoom().GetBanzai().BanzaiEnd();
+                await item.GetRoom().GetBanzai().BanzaiEnd();
 
             item.PendingReset = true;
         }

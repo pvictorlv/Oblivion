@@ -33,11 +33,11 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 if (client?.GetHabbo() == null) continue;
                 var habbo = client.GetHabbo();
                 habbo.Diamonds += amount;
-                client.GetHabbo().UpdateSeasonalCurrencyBalance();
+                await client.GetHabbo().UpdateSeasonalCurrencyBalance();
                 await client.SendNotif(Oblivion.GetLanguage().GetVar("command_diamonds_one_give") + amount +
                                  (Oblivion.GetLanguage().GetVar("command_diamonds_two_give")));
             }
-            Oblivion.GetGame()
+            await Oblivion.GetGame()
                 .GetModerationTool()
                 .LogStaffEntry(session.GetHabbo().UserName, "ALL ONLINES",
                     "Diamonds", $"Diamonds given to everyone");

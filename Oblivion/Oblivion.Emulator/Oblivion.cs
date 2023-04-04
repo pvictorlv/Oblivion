@@ -339,7 +339,7 @@ namespace Oblivion
 
                 _game = new Game();
                 await _game.Init();
-                _game.GetNavigator().LoadNewPublicRooms();
+                await _game.GetNavigator().LoadNewPublicRooms();
                 await _game.ContinueLoading();
 
                 ServerLanguage = Convert.ToString(ConfigurationData.Data["system.lang"]);

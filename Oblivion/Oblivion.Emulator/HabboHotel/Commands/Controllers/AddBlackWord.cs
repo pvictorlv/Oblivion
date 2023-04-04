@@ -29,7 +29,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             if (string.IsNullOrEmpty(word))
             {
-                 await Session.SendWhisperAsync("Palabra inválida.");
+                 await session.SendWhisperAsync("Palabra inválida.");
                 return true;
             }
             BobbaFilter.AddBlackWord(word);

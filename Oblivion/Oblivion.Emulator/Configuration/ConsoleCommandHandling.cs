@@ -241,7 +241,7 @@ namespace Oblivion.Configuration
                     case "catalogus":
                         using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
                         {
-                            await GetGame().GetItemManager().LoadItems(adapter);
+                            GetGame().GetItemManager().LoadItems(adapter);
                             await GetGame().GetCatalog().Initialize(adapter);
                             await GetGame().ReloadItems();
 //                            GetGame().GetCrackableEggHandler().Initialize(adapter);

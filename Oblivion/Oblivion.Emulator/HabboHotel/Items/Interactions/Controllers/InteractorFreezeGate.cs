@@ -28,14 +28,14 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     user.Team = item.Team;
                     teamManagerForFreeze.AddUser(user);
                     if (avatarEffectsInventoryComponent2.CurrentEffect != num4)
-                        avatarEffectsInventoryComponent2.ActivateCustomEffect(num4);
+                        await avatarEffectsInventoryComponent2.ActivateCustomEffect(num4);
                 }
             }
             else
             {
                 teamManagerForFreeze.OnUserLeave(user);
                 if (avatarEffectsInventoryComponent2.CurrentEffect == num4)
-                    avatarEffectsInventoryComponent2.ActivateCustomEffect(0);
+                    await avatarEffectsInventoryComponent2.ActivateCustomEffect(0);
                 user.Team = Team.None;
             }
 

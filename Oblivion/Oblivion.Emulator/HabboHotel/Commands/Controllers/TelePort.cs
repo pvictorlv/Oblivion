@@ -37,7 +37,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 room.GetGameMap().GenerateMaps();
                 return true;
             }
-             await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
+             await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_error_teleport_enable"));
             return true;
         }
     }

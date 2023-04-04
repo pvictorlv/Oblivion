@@ -28,17 +28,17 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(pms[0]);
             if (client == null)
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
             if (client.GetHabbo().Rank >= session.GetHabbo().Rank)
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_is_higher_rank"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_is_higher_rank"));
                 return true;
             }
             if (!int.TryParse(pms[1], out _))
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("enter_numbers"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("enter_numbers"));
                 return true;
             }
 

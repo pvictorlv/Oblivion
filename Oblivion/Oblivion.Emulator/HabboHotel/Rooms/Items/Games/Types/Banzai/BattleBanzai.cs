@@ -86,11 +86,11 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Banzai
                         if (item.InteractingUser == User.UserId && _room.GetGameMap().ValidTile(x, y))
                         {
                             item.InteractingUser = 0;
-                            MovePuck(item, User.GetClient(), User.Coordinate, item.Coordinate, 6, User.Team);
+                            await MovePuck(item, User.GetClient(), User.Coordinate, item.Coordinate, 6, User.Team);
                         }
                         else if (_room.GetGameMap().ValidTile(x, y))
                         {
-                            MovePuck(item, User.GetClient(), x, y, User.Team);
+                            await MovePuck(item, User.GetClient(), x, y, User.Team);
                         }
                     }
                 }

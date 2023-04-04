@@ -176,7 +176,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                     _ball.ExtraData = "55";
                     _ball.BallIsMoving = true;
                     _ball.BallValue = 1;
-                    MoveBall(_ball, user.GetClient(), userPoint);
+                    await MoveBall(_ball, user.GetClient(), userPoint);
                 }
                 else if (user.SetX == _ball.X && user.SetY == _ball.Y && user.GoalX == _ball.X &&
                          user.GoalY == _ball.Y && user.HandelingBallStatus == 1) // super chute quando para de andar
@@ -196,7 +196,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                             _ball.BallIsMoving = true;
                             _ball.BallValue = 1;
                             _ball.InteractingBallUser = user.GetClient();
-                            MoveBall(_ball, user.GetClient(), userPoint);
+                            await MoveBall(_ball, user.GetClient(), userPoint);
                         }
                     }
                 }
@@ -294,7 +294,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                 if (itemIsOnGameItem || mover?.GetHabbo() == null)
                     return true;
 
-                HandleFootballGameItems(new Point(newX, newY), roomUser);
+                await HandleFootballGameItems(new Point(newX, newY), roomUser);
                 return false;
             }
         }
@@ -454,7 +454,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             }
         }
 
-        private void HandleFootballGameItems(Point ballItemCoord, RoomUser user)
+        private async Task HandleFootballGameItems(Point ballItemCoord, RoomUser user)
         {
             if (user == null || _room?.GetGameManager() == null) return;
             using (var serverMessage =
@@ -467,7 +467,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                 foreach (var value in current.AffectedTiles.Values)
                     if (value.X == ballItemCoord.X && value.Y == ballItemCoord.Y)
                     {
-                        _room.GetGameManager().AddPointToTeam(Team.Red, user);
+                        await _room.GetGameManager().AddPointToTeam(Team.Red, user);
                         break;
                     }
 
@@ -477,7 +477,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                 foreach (var value in current3.AffectedTiles.Values)
                 {
                     if (value.X != ballItemCoord.X || value.Y != ballItemCoord.Y) continue;
-                    _room.GetGameManager().AddPointToTeam(Team.Green, user);
+                    await _room.GetGameManager().AddPointToTeam(Team.Green, user);
                     break;
                 }
 
@@ -487,7 +487,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                 foreach (var value in current5.AffectedTiles.Values)
                     if (value.X == ballItemCoord.X && value.Y == ballItemCoord.Y)
                     {
-                        _room.GetGameManager().AddPointToTeam(Team.Blue, user);
+                        await _room.GetGameManager().AddPointToTeam(Team.Blue, user);
                         break;
                     }
 
@@ -497,13 +497,13 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                 foreach (var value in current5.AffectedTiles.Values)
                     if (value.X == ballItemCoord.X && value.Y == ballItemCoord.Y)
                     {
-                        _room.GetGameManager().AddPointToTeam(Team.Yellow, user);
+                        await _room.GetGameManager().AddPointToTeam(Team.Yellow, user);
                         break;
                     }
 
                 serverMessage.AppendInteger(user.VirtualId);
                 serverMessage.AppendInteger(0);
-                user.GetClient().GetHabbo().CurrentRoom.SendMessage(serverMessage);
+                await user.GetClient().GetHabbo().CurrentRoom.SendMessage(serverMessage);
             }
         }
     }

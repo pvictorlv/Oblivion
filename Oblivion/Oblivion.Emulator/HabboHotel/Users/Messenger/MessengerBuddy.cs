@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Rooms;
 using Oblivion.Messages;
@@ -93,7 +94,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <summary>
         ///     Updates the user.
         /// </summary>
-        internal async Task UpdateUser()
+        internal void UpdateUser()
         {
             Client = Oblivion.GetGame().GetClientManager().GetClientByUserId(Id);
 

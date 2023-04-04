@@ -150,9 +150,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     if (newRot != Item.Rot)
                     {
                         Item.Rot = newRot;
-                        Item.UpdateState(false, true);
+                        await Item.UpdateState(false, true);
                         Item.SetState(Item.X, Item.Y, newZ);
-                        Room.GetRoomItemHandler()
+                        await Room.GetRoomItemHandler()
                             .SetFloorItem(Item, Item.X, Item.Y, newZ, Item.Rot, true);
                     }
                     continue;
@@ -167,9 +167,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     if (newRot != Item.Rot)
                     {
                         Item.Rot = newRot;
-                        Item.UpdateState(false, true);
+                        await Item.UpdateState(false, true);
                         Item.SetState(Item.X, Item.Y, newZ);
-                        Room.GetRoomItemHandler()
+                        await Room.GetRoomItemHandler()
                             .SetFloorItem(Item, Item.X, Item.Y, newZ, Item.Rot, true);
                     }
 
@@ -205,9 +205,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                         await serverMessage.AppendStringAsync(Item.Z.ToString(Oblivion.CultureInfo));
                         await serverMessage.AppendStringAsync(newZ.ToString(Oblivion.CultureInfo));
                         await serverMessage.AppendIntegerAsync(0);
-                        Room.SendMessage(serverMessage);
+                        await Room.SendMessage(serverMessage);
 
-                        Room.GetRoomItemHandler().SetFloorItem(Item, Point.X, Point.Y, newZ);
+                        await Room.GetRoomItemHandler().SetFloorItem(Item, Point.X, Point.Y, newZ);
                     }
                     await Room.GetWiredHandler().OnUserFurniCollision(Room, Item);
                 }

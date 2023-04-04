@@ -55,14 +55,14 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             await  item.UpdateState();
            
             if (item.GetRoom().GotWireds())
-                item.GetRoom()
+                await item.GetRoom()
                     .GetWiredHandler()
                     .ExecuteWired(Interaction.TriggerStateChanged,
                         item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id), item);
 
             if (item.GetBaseItem().Width > 1 || item.GetBaseItem().Length > 1)
             {
-                item.GetRoom().GetGameMap().UpdateMapForItem(item);
+                await item.GetRoom().GetGameMap().UpdateMapForItem(item);
             }
         }
 
@@ -111,7 +111,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             await  item.UpdateState();
             if (item.GetBaseItem().Width > 1 || item.GetBaseItem().Length > 1)
             {
-                item.GetRoom().GetGameMap().UpdateMapForItem(item);
+                await item.GetRoom().GetGameMap().UpdateMapForItem(item);
             }
         }
     }

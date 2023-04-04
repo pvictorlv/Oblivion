@@ -23,7 +23,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             Oblivion.GetGame().GetItemManager().ResetVirtualIds();
-             await Session.SendWhisperAsync("foi");
+             await session.SendWhisperAsync("foi");
             return true;
         }
     }

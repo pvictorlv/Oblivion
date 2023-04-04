@@ -31,44 +31,44 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
                 if (!CommandsManager.CommandsDictionary.ContainsKey(cmd))
                 {
-                     await Session.SendWhisperAsync("Comando não encontrado!");
+                     await session.SendWhisperAsync("Comando não encontrado!");
                     return false;
                 }
                 if (!session.GetHabbo().CurrentRoom.RoomData.BlockedCommands.Contains(cmd))
                 {
                     session.GetHabbo().CurrentRoom.RoomData.BlockedCommands.Add(cmd);
-                     await Session.SendWhisperAsync("Sucesso!");
+                     await session.SendWhisperAsync("Sucesso!");
                     return true;
                 }
-                 await Session.SendWhisperAsync("Comando já bloqueado");
+                 await session.SendWhisperAsync("Comando já bloqueado");
                 return false;
             }
             if (session.GetHabbo().Rank < 7)
             {
-                 await Session.SendWhisperAsync("Comando incorreto, digite :block room [comando] para bloquear um comando.");
+                 await session.SendWhisperAsync("Comando incorreto, digite :block room [comando] para bloquear um comando.");
                 return false;
             }
             var word = pms[1];
 
             if (!CommandsManager.CommandsDictionary.ContainsKey(word))
             {
-                 await Session.SendWhisperAsync("Comando não encontrado!");
+                 await session.SendWhisperAsync("Comando não encontrado!");
                 return false;
             }
             var user = Oblivion.GetHabboForName(name);
             if (user == null)
             {
-                 await Session.SendWhisperAsync("Usuário não encontrado!");
+                 await session.SendWhisperAsync("Usuário não encontrado!");
                 return false;
             }
             if (user.Rank >= session.GetHabbo().Rank)
             {
-                 await Session.SendWhisperAsync("Não bloqueie um superior!");
+                 await session.SendWhisperAsync("Não bloqueie um superior!");
                 return false;
             }
             if (user.Data.BlockedCommands.Contains(word))
             {
-                 await Session.SendWhisperAsync("Comando já bloqueado!");
+                 await session.SendWhisperAsync("Comando já bloqueado!");
                 return false;
             }
             user.Data.BlockedCommands.Add(word);
@@ -79,7 +79,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 dbClient.AddParameter("command", word);
                 await dbClient.RunQueryAsync();
             }
-             await Session.SendWhisperAsync("Sucesso!");
+             await session.SendWhisperAsync("Sucesso!");
 
             return true;
         }

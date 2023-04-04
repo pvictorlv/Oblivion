@@ -25,7 +25,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var room = session.GetHabbo().CurrentRoom;
             if (room.RoomMuted)
             {
-                 await Session.SendWhisperAsync("Room is already muted.");
+                 await session.SendWhisperAsync("Room is already muted.");
                 return true;
             }
 
@@ -40,7 +40,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             await room.SendMessage(GameClient.GetBytesNotif(
                 $"Este quarto foi silenciado pelo motivo:\r{string.Join(" ", pms)}"));
 
-            Oblivion.GetGame()
+            await Oblivion.GetGame()
                 .GetModerationTool().LogStaffEntry(session.GetHabbo().UserName, string.Empty,
                     "Room Mute", "Room muted");
             return true;

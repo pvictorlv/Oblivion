@@ -348,7 +348,7 @@ namespace Oblivion.HabboHotel.Pets
                 serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("PetRespectNotificationMessageComposer"));
                 await serverMessage.AppendIntegerAsync(1);
                 await serverMessage.AppendIntegerAsync(VirtualId);
-                await SerializeInventory(serverMessage);
+                serverMessage = await SerializeInventory(serverMessage);
                 await Room.SendMessage(serverMessage);
 
                 if (DbState != DatabaseUpdateState.NeedsInsert)
@@ -392,7 +392,7 @@ namespace Oblivion.HabboHotel.Pets
                 if (ownerSession == null)
                     return;
                 var levelNotify = new ServerMessage(LibraryParser.OutgoingRequest("NotifyNewPetLevelMessageComposer"));
-                await SerializeInventory(levelNotify, true);
+                levelNotify = await SerializeInventory(levelNotify, true);
                 await ownerSession.SendMessage(levelNotify);
 
                 var tp = new ServerMessage();
@@ -463,7 +463,7 @@ namespace Oblivion.HabboHotel.Pets
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="levelAfterName">if set to <c>true</c> [level after name].</param>
-        internal async Task SerializeInventory(ServerMessage message, bool levelAfterName = false)
+        internal async Task<ServerMessage> SerializeInventory(ServerMessage message, bool levelAfterName = false)
         {
             await message.AppendIntegerAsync(PetId);
             await message.AppendStringAsync(Name);
@@ -479,10 +479,12 @@ namespace Oblivion.HabboHotel.Pets
                 foreach (var s in array)
                     await message.AppendIntegerAsync(int.Parse(s));
                 await message.AppendIntegerAsync(MoplaBreed.GrowingStatus);
-                return;
+                return message;
             }
             await message.AppendIntegerAsync(0);
             await message.AppendIntegerAsync(0);
+
+            return message;
         }
 
         /// <summary>

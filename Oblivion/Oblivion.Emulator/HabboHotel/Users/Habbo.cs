@@ -354,7 +354,7 @@ namespace Oblivion.HabboHotel.Users
         ///     The trade lock expire
         /// </summary>
         internal int TradeLockExpire;
-        
+
 
         /// <summary>
         ///     The user groups
@@ -539,8 +539,8 @@ namespace Oblivion.HabboHotel.Users
                     $"SELECT group_id, rank, date_join, has_chat FROM groups_members WHERE user_id = {Id}");
                 var groupsTable = dbClient.GetTable();
                 UserGroups = (from DataRow row in groupsTable.Rows
-                    select new GroupMember(Id, UserName, Look, (uint) row["group_id"], Convert.ToInt16(row["rank"]),
-                        (int) row["date_join"], Oblivion.EnumToBool(row["has_chat"].ToString()))).ToList();
+                    select new GroupMember(Id, UserName, Look, (uint)row["group_id"], Convert.ToInt16(row["rank"]),
+                        (int)row["date_join"], Oblivion.EnumToBool(row["has_chat"].ToString()))).ToList();
             }
 
             LoadedGroups = true;
@@ -772,11 +772,11 @@ namespace Oblivion.HabboHotel.Users
                 {
                     double num = client.GetHabbo().GetSubscriptionManager().GetSubscription().ExpireTime;
                     var num2 = num - Oblivion.GetUnixTimeStamp();
-                    var num3 = (int) Math.Ceiling(num2 / 86400.0);
+                    var num3 = (int)Math.Ceiling(num2 / 86400.0);
                     var i =
                         (int)
                         Math.Ceiling((Oblivion.GetUnixTimeStamp() -
-                                      (double) client.GetHabbo().GetSubscriptionManager().GetSubscription()
+                                      (double)client.GetHabbo().GetSubscriptionManager().GetSubscription()
                                           .ActivateTime) /
                                      86400.0);
                     var num4 = num3 / 31;
@@ -811,7 +811,7 @@ namespace Oblivion.HabboHotel.Users
 
                 if (GetSubscriptionManager() == null) return;
                 using (var serverMessage2 =
-                    new ServerMessage(LibraryParser.OutgoingRequest("UserClubRightsMessageComposer")))
+                       new ServerMessage(LibraryParser.OutgoingRequest("UserClubRightsMessageComposer")))
                 {
                     await serverMessage2.AppendIntegerAsync(GetSubscriptionManager().HasSubscription ? 2 : 0);
                     await serverMessage2.AppendIntegerAsync(Rank);
@@ -854,8 +854,8 @@ namespace Oblivion.HabboHotel.Users
             {
                 if (_inventoryComponent != null)
                 {
-                    _inventoryComponent.RunDbUpdate();
-                    _inventoryComponent.Dispose();
+                    await _inventoryComponent.RunDbUpdate();
+                    await _inventoryComponent.Dispose();
                     _inventoryComponent = null;
                 }
             }
@@ -870,7 +870,7 @@ namespace Oblivion.HabboHotel.Users
             if (_messenger != null)
             {
                 _messenger.AppearOffline = true;
-                _messenger.Destroy();
+                await _messenger.Destroy();
                 _messenger = null;
             }
 
@@ -957,7 +957,7 @@ namespace Oblivion.HabboHotel.Users
                 navilogs = navilogs.Remove(navilogs.Length - 1);
             }
 
-            Oblivion.GetGame().GetClientManager().UnregisterClient(Id, UserName);
+            await Oblivion.GetGame().GetClientManager().UnregisterClient(Id, UserName);
 
             var getOnlineSeconds = DateTime.Now - TimeLoggedOn;
             var secondsToGive = getOnlineSeconds.Seconds;
@@ -988,7 +988,8 @@ namespace Oblivion.HabboHotel.Users
                             $"UPDATE moderation_tickets SET status='open', moderator_id=0 WHERE status='picked' AND moderator_id={Id}");
 
                     await queryReactor.RunFastQueryAsync("UPDATE users SET block_newfriends = '" +
-                                                         Convert.ToInt32(HasFriendRequestsDisabled) + "', hide_online = '" +
+                                                         Convert.ToInt32(HasFriendRequestsDisabled) +
+                                                         "', hide_online = '" +
                                                          Convert.ToInt32(AppearOffline) + "', hide_inroom = '" +
                                                          Convert.ToInt32(HideInRoom) + "' WHERE id = " + Id);
                 }
@@ -998,7 +999,7 @@ namespace Oblivion.HabboHotel.Users
                 CurrentRoom?.GetRoomUserManager()?.RemoveUserFromRoom(_mClient, false, false);
 
 
-            Dispose();
+            await Dispose();
         }
 
         internal uint LastBellId;
@@ -1023,7 +1024,7 @@ namespace Oblivion.HabboHotel.Users
                 await client.SendMessage(message);
             }
 
-            using (var message = _messenger.SerializeRequests())
+            using (var message = await _messenger.SerializeRequests())
             {
                 await client.SendMessage(message);
             }
@@ -1066,7 +1067,7 @@ namespace Oblivion.HabboHotel.Users
 
             if (inDb)
             {
-                RunDbUpdate();
+                await RunDbUpdate();
             }
         }
 
@@ -1265,14 +1266,14 @@ namespace Oblivion.HabboHotel.Users
             return
                 Data.Talents.Values
                     .Select(current => Oblivion.GetGame().GetTalentManager().GetTalent(current.TalentId).Level)
-                    .Concat(new[] {1})
+                    .Concat(new[] { 1 })
                     .Max();
         }
 
         /// <summary>
         ///     _s the load my groups.
         /// </summary>
-        internal async Task _LoadMyGroups()
+        internal void _LoadMyGroups()
         {
             DataTable dTable;
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -1305,7 +1306,7 @@ namespace Oblivion.HabboHotel.Users
 
             if (TradeLockExpire - Oblivion.GetUnixTimeStamp() > 0)
                 return false;
-            
+
             TradeLocked = false;
             return true;
         }

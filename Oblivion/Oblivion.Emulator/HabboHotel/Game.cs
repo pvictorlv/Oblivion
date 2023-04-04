@@ -151,7 +151,7 @@ namespace Oblivion.HabboHotel
         /// <summary>
         ///     The _game loop
         /// </summary>
-        private Task _gameLoop;
+        private Thread _gameLoop;
 
         /// <summary>
         ///     The client manager cycle ended
@@ -214,7 +214,7 @@ namespace Oblivion.HabboHotel
 
                 Progress(bar, wait, end, "Loading Groups...");
                 _groupManager = new GroupManager();
-                await _groupManager.InitGroups();
+                _groupManager.InitGroups();
 
                 Progress(bar, wait, end, "Loading PixelManager...");
                 _pixelManager = new CoinsManager();
@@ -466,18 +466,18 @@ namespace Oblivion.HabboHotel
                 await _roomManager.LoadCompetitionManager();
             }
 
-            await StartGameLoop();
-            await _pixelManager.StartTimer();
+            StartGameLoop();
+            _pixelManager.StartTimer();
         }
 
         /// <summary>
         ///     Starts the game loop.
         /// </summary>
-        internal async Task StartGameLoop()
+        internal void StartGameLoop()
         {
             GameLoopActiveExt = true;
-            _gameLoop = await Task.Factory.StartNew(async () => { await MainGameLoop(); }, TaskCreationOptions.LongRunning);
-            //_gameLoop.Start();
+            _gameLoop = new Thread(MainGameLoop);
+            _gameLoop.Start();
         }
 
         /// <summary>
@@ -509,14 +509,14 @@ namespace Oblivion.HabboHotel
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                await _itemManager.LoadItems(queryReactor);
+                _itemManager.LoadItems(queryReactor);
             }
         }
 
         /// <summary>
         ///     Mains the game loop.
         /// </summary>
-        private async Task MainGameLoop()
+        private void MainGameLoop()
         {
             while (GameLoopActiveExt)
             {
@@ -524,7 +524,7 @@ namespace Oblivion.HabboHotel
                 try
                 {
                     RoomManagerCycleEnded = false;
-                    await _roomManager.OnCycle();
+                    _roomManager.OnCycle();
                 }
                 catch (Exception ex)
                 {
@@ -533,6 +533,7 @@ namespace Oblivion.HabboHotel
 
                 Thread.Sleep(GameLoopSleepTimeExt);
             }
+            
         }
     }
 }

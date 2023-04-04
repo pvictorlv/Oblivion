@@ -37,15 +37,15 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             {
                 case "info":
                     {
-                        if (pms.Length == 0)  await Session.SendWhisperAsync("Usage :developer info [items/user/users/cache]");
-                        else return GetInfo(session, pms);
+                        if (pms.Length == 0)  await session.SendWhisperAsync("Usage :developer info [items/user/users/cache]");
+                        else return await GetInfo(session, pms);
 
                         break;
                     }
                 case "set":
                     {
-                        if (pms.Length < 2)  await Session.SendWhisperAsync("Usage :developer set [item/baseItem] id");
-                        else return Set(session, pms);
+                        if (pms.Length < 2)  await session.SendWhisperAsync("Usage :developer set [item/baseItem] id");
+                        else return await Set(session, pms);
 
                         break;
                     }
@@ -55,15 +55,15 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     }
                 case "paste":
                     {
-                        return Paste(session);
+                        return await Paste(session);
                     }
                 case "delete":
                     {
-                        return Delete(session);
+                        return await Delete(session);
                     }
                 default:
                     {
-                         await Session.SendWhisperAsync("Usage :developer [info/set/copy/paste/delete]");
+                         await session.SendWhisperAsync("Usage :developer [info/set/copy/paste/delete]");
                         break;
                     }
             }
@@ -71,7 +71,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             return true;
         }
 
-        private static bool Delete(GameClient session)
+        private static async Task<bool> Delete(GameClient session)
         {
             var room = session.GetHabbo().CurrentRoom;
 
@@ -85,9 +85,9 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                         room.GetGameMap()
                             .GetAllRoomItemForSquare(user.LastSelectedX, user.LastSelectedY))
                 {
-                    queryReactor.RunNoLockFastQuery("DELETE FROM items_rooms WHERE id = '" + item.Id + "';");
+                    await queryReactor.RunNoLockFastQueryAsync("DELETE FROM items_rooms WHERE id = '" + item.Id + "';");
 
-                    room.GetRoomItemHandler().RemoveRoomItem(item, false);
+                    await room.GetRoomItemHandler().RemoveRoomItem(item, false);
                     item.Dispose(true);
                 }
             }
@@ -95,7 +95,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             return true;
         }
 
-        private static bool Paste(GameClient session)
+        private static async Task<bool> Paste(GameClient session)
         {
             var room = session.GetHabbo().CurrentRoom;
 
@@ -104,7 +104,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             if (user.CopyX == 0 || user.CopyY == 0)
             {
-                 await Session.SendWhisperAsync("First usage :developer copy");
+                 await session.SendWhisperAsync("First usage :developer copy");
                 return true;
             }
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -131,7 +131,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                         user.LastSelectedX, user.LastSelectedY, item.Z, item.Rot, session.GetHabbo().CurrentRoom,
                         user.UserId, item.GroupId, item.SongCode,
                         item.IsBuilder, item.LimitedNo, item.LimitedTot);
-                    room.GetRoomItemHandler().DeveloperSetFloorItem(session, roomItem);
+                    await room.GetRoomItemHandler().DeveloperSetFloorItem(session, roomItem);
                 }
             }
 
@@ -151,7 +151,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             return true;
         }
 
-        private static bool Set(GameClient session, IReadOnlyList<string> pms)
+        private static async Task<bool> Set(GameClient session, IReadOnlyList<string> pms)
         {
             var type = pms[0];
             var id = uint.Parse(pms[1]);
@@ -163,14 +163,14 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     {
                         if (pms.Count == 2)
                         {
-                             await Session.SendWhisperAsync("Usage :developer set item id [x/y/z] value");
+                             await session.SendWhisperAsync("Usage :developer set item id [x/y/z] value");
                             break;
                         }
 
                         var item = session.GetHabbo().CurrentRoom.GetRoomItemHandler().GetItem(itemId);
                         if (item == null)
                         {
-                             await Session.SendWhisperAsync("Item no encontrado");
+                             await session.SendWhisperAsync("Item no encontrado");
                             return false;
                         }
 
@@ -206,9 +206,9 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                             i += 2;
                         }
 
-                        if (item.IsWallItem) session.GetHabbo().CurrentRoom.GetRoomItemHandler().SetWallItem(session, item);
+                        if (item.IsWallItem) await session.GetHabbo().CurrentRoom.GetRoomItemHandler().SetWallItem(session, item);
                         else
-                            session.GetHabbo().CurrentRoom.GetRoomItemHandler().SetFloorItem(item, x, y, z, item.Rot, true);
+                            await session.GetHabbo().CurrentRoom.GetRoomItemHandler().SetFloorItem(item, x, y, z, item.Rot, true);
                         break;
                     }
 
@@ -216,14 +216,14 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     {
                         if (pms.Count == 2)
                         {
-                             await Session.SendWhisperAsync("Usage :developer set baseItem baseId [stack,trade,modes,height] value");
+                             await session.SendWhisperAsync("Usage :developer set baseItem baseId [stack,trade,modes,height] value");
                             break;
                         }
 
                         var item = Oblivion.GetGame().GetItemManager().GetItem(id);
                         if (item == null)
                         {
-                             await Session.SendWhisperAsync("Item no encontrado");
+                             await session.SendWhisperAsync("Item no encontrado");
                             return false;
                         }
 
@@ -280,7 +280,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             return true;
         }
 
-        private static bool GetInfo(GameClient session, IReadOnlyList<string> pms)
+        private static async Task<bool> GetInfo(GameClient session, IReadOnlyList<string> pms)
         {
             var type = pms[0];
 

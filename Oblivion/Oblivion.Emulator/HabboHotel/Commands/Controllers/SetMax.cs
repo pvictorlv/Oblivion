@@ -29,18 +29,18 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             if (!ushort.TryParse(pms[0], out var maxUsers) || maxUsers == 0 || maxUsers > (150 * Oblivion.Multipy))
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_setmax_error_number"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_setmax_error_number"));
                 return true;
             }
 
             if (maxUsers > 75 * Oblivion.Multipy && !(session.GetHabbo().Vip || session.GetHabbo().HasFuse("fuse_vip_commands")))
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_setmax_error_max"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_setmax_error_max"));
                 return true;
             }
             if (maxUsers < 10 && !(session.GetHabbo().Vip || session.GetHabbo().HasFuse("fuse_vip_commands")))
             {
-                 await Session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_setmax_error_min"));
+                 await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("command_setmax_error_min"));
                 return true;
             }
 
