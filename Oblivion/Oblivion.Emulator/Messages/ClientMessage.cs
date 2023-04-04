@@ -73,7 +73,7 @@ namespace Oblivion.Messages
                 this.Id = 0;
             }
         }
-        
+
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -104,12 +104,13 @@ namespace Oblivion.Messages
 
                 return body;
             }
+
             string stringValue = string.Empty;
 
             stringValue += Encoding.Default.GetString(_body);
 
             for (int i = 0; i < 13; i++)
-                stringValue = stringValue.Replace(char.ToString((char) (i)), $"[{i}]");
+                stringValue = stringValue.Replace(char.ToString((char)(i)), $"[{i}]");
 
             return stringValue;
         }
@@ -151,7 +152,7 @@ namespace Oblivion.Messages
 
                 return bytes;
             }
-            
+
             byte[] arrayBytes = new byte[len];
             int pos = _position;
 
@@ -230,7 +231,7 @@ namespace Oblivion.Messages
             {
                 return this.buffer.ReadBoolean();
             }
-            
+
             return (_body[_position++] == 1);
         }
 
@@ -242,7 +243,7 @@ namespace Oblivion.Messages
         {
             if (this.buffer != null)
                 return this.buffer.ReadShort();
-            
+
             return HabboEncoding.DecodeInt16(_body, ref _position);
         }
 
@@ -254,10 +255,10 @@ namespace Oblivion.Messages
         {
             try
             {
-                if (this.buffer != null)
+                if (this.buffer != null && buffer.ReadableBytes > 0)
                     return this.buffer.ReadInt();
 
-                return HabboEncoding.DecodeInt32(_body, ref _position);
+                return 0;
             }
             catch
             {
@@ -280,13 +281,13 @@ namespace Oblivion.Messages
         internal uint GetUInteger()
         {
             int value = GetInteger();
-            return (value < 0 ? 0 : (uint) value);
+            return (value < 0 ? 0 : (uint)value);
         }
 
         /// <summary>
         /// Gets the integer16.
         /// </summary>
         /// <returns>System.UInt16.</returns>
-        internal ushort GetUInteger16() => (ushort) GetInteger16();
+        internal ushort GetUInteger16() => (ushort)GetInteger16();
     }
 }

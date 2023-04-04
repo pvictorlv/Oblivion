@@ -99,9 +99,16 @@ namespace Oblivion
         /// <param name="args">The <see cref="UnhandledExceptionEventArgs"/> instance containing the event data.</param>
         private static void ExceptionHandler(object sender, UnhandledExceptionEventArgs args)
         {
-            Logging.DisablePrimaryWriting(true);
-            var ex = (Exception)args.ExceptionObject;
-            Logging.LogCriticalException($"SYSTEM CRITICAL EXCEPTION: {ex}");
+            try
+            {
+                Logging.DisablePrimaryWriting(true);
+                var ex = (Exception)args.ExceptionObject;
+                Logging.LogCriticalException($"SYSTEM CRITICAL EXCEPTION: {ex}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"UNSAVED SYSTEM CRITICAL EXCEPTION: {ex}");
+            }
         }
 
         [DllImport("user32.dll")]

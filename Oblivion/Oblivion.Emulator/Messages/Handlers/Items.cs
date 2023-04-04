@@ -2168,9 +2168,9 @@ namespace Oblivion.Messages.Handlers
             if (room == null || !room.CheckRights(Session, true))
                 return;
 
-            if (room.GetRoomUserManager().Bots.Count >= 10)
+            if (room.GetRoomUserManager().Bots.Count >= 12)
             {
-                await Session.SendWhisperAsync("Apenas 10 bots por sala!");
+                await Session.SendWhisperAsync("Apenas 12 bots por sala!");
                 return;
             }
 
@@ -2188,7 +2188,7 @@ namespace Oblivion.Messages.Handlers
                 return;
             }
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await queryReactor.RunFastQueryAsync(string.Concat("UPDATE bots SET room_id = '", room.RoomId,
                     "', x = '", x,

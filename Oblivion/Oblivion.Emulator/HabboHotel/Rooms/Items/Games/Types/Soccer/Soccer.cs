@@ -251,6 +251,9 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             if (!_room.GetGameMap().ItemCanBePlacedHere(newX, newY))
                 return false;
 
+            if (mover?.GetHabbo() == null)
+                return false;
+            
             var roomUser = _room.GetRoomUserManager().GetRoomUserByHabbo(mover.GetHabbo().Id);
 
             if (roomUser != null && roomUser.HandelingBallStatus == 1)

@@ -266,7 +266,7 @@ namespace Oblivion.HabboHotel.GameClients
             if (!Clients.TryRemove(clientId, out var client))
                 return;
 
-            client?.Dispose();
+            client.Dispose();
         }
 
         

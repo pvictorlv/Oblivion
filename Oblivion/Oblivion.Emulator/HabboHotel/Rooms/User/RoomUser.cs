@@ -1169,7 +1169,14 @@ namespace Oblivion.HabboHotel.Rooms.User
             message.AppendInteger(Y);
             message.AppendString(TextHandling.GetString(Z));
             message.AppendInteger(0);
-            message.AppendInteger(BotData.AiType == AiType.Generic ? 4 : 2);
+
+            if (BotData.AiType == AiType.Pet)
+                message.AppendInteger(2);
+            else if (BotData.AiType == AiType.Generic)
+                message.AppendInteger(4);
+            else
+                message.AppendInteger(3);
+
             if (BotData.AiType == AiType.Pet)
             {
                 message.AppendInteger(PetData.Type);
@@ -1190,9 +1197,9 @@ namespace Oblivion.HabboHotel.Rooms.User
             message.AppendInteger(5);
             message.AppendShort(1);
             message.AppendShort(2);
-            message.AppendShort(3);
             message.AppendShort(4);
             message.AppendShort(5);
+            message.AppendShort(3);
             return true;
         }
 

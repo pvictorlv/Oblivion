@@ -741,9 +741,6 @@ namespace Oblivion.HabboHotel.Users
         {
             try
             {
-                if (GetSubscriptionManager()?.GetSubscription() == null)
-                    return false;
-
                 return Oblivion.GetGame().GetRoleManager().RankHasRight(Rank, fuse) ||
                        (GetSubscriptionManager().HasSubscription &&
                         Oblivion.GetGame()
@@ -959,7 +956,6 @@ namespace Oblivion.HabboHotel.Users
                 navilogs = navilogs.Remove(navilogs.Length - 1);
             }
 
-            await Oblivion.GetGame().GetClientManager().UnregisterClient(Id, UserName);
 
             var getOnlineSeconds = DateTime.Now - TimeLoggedOn;
             var secondsToGive = getOnlineSeconds.Seconds;
@@ -967,7 +963,7 @@ namespace Oblivion.HabboHotel.Users
             if (!_habboinfoSaved)
             {
                 _habboinfoSaved = true;
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     queryReactor.SetQuery("UPDATE users SET activity_points = '" + ActivityPoints +
                                           "', disabled_alert = '" + Oblivion.BoolToEnum(DisableEventAlert) +
@@ -1000,6 +996,7 @@ namespace Oblivion.HabboHotel.Users
             if (CurrentRoom?.GetRoomUserManager() != null && _mClient != null)
                 CurrentRoom?.GetRoomUserManager()?.RemoveUserFromRoom(_mClient, false, false);
 
+            await Oblivion.GetGame().GetClientManager().UnregisterClient(Id, UserName);
 
             await Dispose();
         }

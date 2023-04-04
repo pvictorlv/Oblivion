@@ -78,8 +78,6 @@ namespace Oblivion.HabboHotel.Users.Inventory
             _inventoryBots = new ConcurrentDictionary<uint, RoomBot>();
             _mAddedItems = new HashSet<string>();
             _mRemovedItems = new HashSet<UserItem>();
-
-            
         }
 
         /// <summary>
@@ -744,7 +742,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
                     builder.Append(");");
 
-                    using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         await dbClient.RunFastQueryAsync(builder.ToString());
                     }
@@ -759,14 +757,15 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
                     try
                     {
-                        using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                         {
                             foreach (var item in removed)
                             {
                                 if (item.RoomId > 0)
                                 {
                                     var room = Oblivion.GetGame().GetRoomManager().GetRoom(item.RoomId);
-                                    room?.GetRoomItemHandler().SaveFurniture(queryReactor);
+                                    if (room != null)
+                                        await room.GetRoomItemHandler().SaveFurniture(queryReactor);
                                 }
                             }
                         }

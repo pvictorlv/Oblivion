@@ -1874,7 +1874,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
 
                 return;
             }
-            
+
 
             message.AppendString($"{VirtualId}{string.Empty}");
             message.AppendInteger(GetBaseItem().SpriteId);

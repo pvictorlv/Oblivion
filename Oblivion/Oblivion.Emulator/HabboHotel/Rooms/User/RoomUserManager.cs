@@ -208,8 +208,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 await serverMessage.AppendIntegerAsync(roomUser.VirtualId);
                 await serverMessage.AppendIntegerAsync(roomUser.BotData.DanceId);
                 await _room.SendMessage(serverMessage);
-                PetCount++;
-
+               
                 return roomUser;
             }
         }
@@ -379,7 +378,19 @@ namespace Oblivion.HabboHotel.Rooms.User
             {
                 var client = user?.GetClient();
                 var habbo = user?.GetClient()?.GetHabbo();
-                if (client == null || habbo == null) return;
+                if (client == null || habbo == null)
+                {
+                    await RemoveRoomUser(user);
+
+                    UsersByUserId.TryRemove(user.UserId, out _);
+                    var rUser = UsersByUserName.FirstOrDefault(s => s.Value.UserId == user.UserId);
+                    if (rUser.Value != null)
+                        UsersByUserName.TryRemove(rUser.Key, out _);
+                    
+                    user.Dispose();
+                    
+                    return;
+                }
                 habbo.CurrentRoom = null;
                 habbo.GetAvatarEffectsInventoryComponent()?.OnRoomExit();
                 var room = _room;
@@ -1521,11 +1532,18 @@ namespace Oblivion.HabboHotel.Rooms.User
                     {
                         var msg = new ServerMessage(
                             LibraryParser.OutgoingRequest("RoomRightsLevelMessageComposer"));
-                        await msg.AppendIntegerAsync(4);
+                        await msg.AppendIntegerAsync(session.GetHabbo().Rank >= 5 ? 5 : 4);
                         await session.SendMessage(msg);
                         msg = new ServerMessage(LibraryParser.OutgoingRequest("HasOwnerRightsMessageComposer"));
                         await session.SendMessage(msg);
-                        user.AddStatus("flatctrl 4", string.Empty);
+                        if (session.GetHabbo().Rank >= 5)
+                        {
+                            user.AddStatus("flatctrl 5", string.Empty);
+                        }
+                        else
+                        {
+                            user.AddStatus("flatctrl 4", string.Empty);
+                        }
                     }
                     else if (_room.CheckRights(session, false, true))
                     {

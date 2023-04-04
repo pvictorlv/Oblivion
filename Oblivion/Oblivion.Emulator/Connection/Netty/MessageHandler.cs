@@ -4,6 +4,7 @@ using Oblivion.Encryption.Encryption.Hurlant.Crypto.Prng;
 using System.Net;
 using System;
 using System.Threading.Tasks;
+using Oblivion.Configuration;
 using Oblivion.Messages;
 
 namespace Oblivion.Connection.Netty;
@@ -11,9 +12,7 @@ namespace Oblivion.Connection.Netty;
 public class MessageHandler<T> : ChannelHandlerAdapter, ISession<T>
 {
     #region Fields
-
-    private static readonly log4net.ILog Logger = log4net.LogManager.GetLogger
-        (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+    
 
     public IChannel Channel { get; set; }
     private ConnectionClosed<T> OnConnectionClosed;
@@ -84,30 +83,63 @@ public class MessageHandler<T> : ChannelHandlerAdapter, ISession<T>
 
     public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
     {
-        Logger.Warn("A networking error occured", exception);
-        context.CloseAsync();
+        Logging.HandleException(exception, context.Name);
+    //    context.CloseAsync();
     }
 
     public Task Send(ServerMessage data)
     {
-        return this.Channel.WriteAndFlushAsync(data);
+        try
+        {
+            return this.Channel.WriteAndFlushAsync(data);
+        }
+        catch (Exception ex)
+        {
+            Logging.HandleException(ex, "MessageHandler");
+        }
+
+        return Task.CompletedTask;
     }
 
     public Task Send(IByteBuffer data)
     {
-        return this.Channel.WriteAndFlushAsync(data);
+        try
+        {
+            return this.Channel.WriteAndFlushAsync(data);
+        }
+        catch (Exception ex)
+        {
+            Logging.HandleException(ex, "MessageHandler");
+        }
+
+        return Task.CompletedTask;
     }
 
     public async Task Send(byte[] data)
     {
-        await this.Channel.WriteAndFlushAsync(data);
+        try
+        {
+            await this.Channel.WriteAndFlushAsync(data);
+        }
+        catch (Exception ex)
+        {
+            Logging.HandleException(ex, "MessageHandler");
+        }
+
     }
 
     public async Task Send(ArraySegment<byte> data)
     {
-        byte[] buffer = new byte[data.Count];
-        Array.Copy(data.Array, data.Offset, buffer, 0, data.Count);
-        await Send(buffer);
+        try
+        {
+            byte[] buffer = new byte[data.Count];
+            Array.Copy(data.Array, data.Offset, buffer, 0, data.Count);
+            await Send(buffer);
+        }
+        catch (Exception ex)
+        {
+            Logging.HandleException(ex, "MessageHandler");
+        }
     }
 
     #endregion Methods

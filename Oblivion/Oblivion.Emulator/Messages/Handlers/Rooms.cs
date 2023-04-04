@@ -1154,7 +1154,7 @@ namespace Oblivion.Messages.Handlers
             var roomId = Request.GetUInteger();
             var data = await Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId);
 
-            if (roomId != 0 && data == null)
+            if (roomId != 0 && data != null)
             {
                 Session.GetHabbo().HomeRoom = roomId
                     ;
@@ -1942,9 +1942,9 @@ namespace Oblivion.Messages.Handlers
             if (room == null || !room.RoomData.AllowPets && !room.CheckRights(Session, true) ||
                 !room.CheckRights(Session, true))
                 return;
-            if (room.GetRoomUserManager().GetPets().Count >= 10)
+            if (room.GetRoomUserManager().GetPets().Count >= 12)
             {
-                 await Session.SendWhisperAsync("Apenas 10 pets por sala!");
+                 await Session.SendWhisperAsync("Apenas 12 pets por sala!");
                 return;
             }
 

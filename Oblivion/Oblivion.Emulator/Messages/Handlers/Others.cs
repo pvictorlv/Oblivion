@@ -110,7 +110,7 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal Task DisconnectEvent()
         {
-            Session.Dispose();
+            //Session.Dispose();
             return Task.CompletedTask;
         }
 

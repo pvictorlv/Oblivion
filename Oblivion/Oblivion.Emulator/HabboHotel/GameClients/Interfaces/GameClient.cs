@@ -144,11 +144,14 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 var ip = GetConnection()?.Channel.RemoteAddress.ToString();
                 if (ip == null)
                     return false;
-                var data =await UserDataFactory.GetUserData(authTicket);
+                var data = await UserDataFactory.GetUserData(authTicket);
+                
+                if (data == null)
+                    return false;
 
                 var errorCode = data.ErrorCode;
                 var userData = data.Data;
-                
+
                 if (errorCode == 1 || errorCode == 2 || userData?.User == null)
                     return false;
 
@@ -553,7 +556,6 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <param name="picture">The picture.</param>
         internal async Task SendNotifyAsync(string message, string title = "Aviso", string picture = "")
         {
-
             using (var serverMessage =
                    new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer")))
             {
@@ -617,9 +619,10 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <summary>
         ///     Stops this instance.
         /// </summary>
-        public void Dispose()
+        public async void Dispose()
         {
-            _habbo?.OnDisconnect("disconnect");
+            if (_habbo != null)
+                await _habbo.OnDisconnect("disconnect");
 
             if (GetMessageHandler() != null)
                 GetMessageHandler().Destroy();
@@ -648,7 +651,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             {
                 var habbo = _habbo;
                 if (habbo != null)
-                    await _habbo.OnDisconnect(reason);
+                    await habbo.OnDisconnect(reason);
 
                 if (_disconnected)
                     return;
@@ -656,6 +659,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 _connection?.Dispose();
                 _connection = null;
                 _disconnected = true;
+                Dispose();
             }
             catch (Exception e)
             {
@@ -670,26 +674,42 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// <param name="message">The message.</param>
         internal async Task SendMessage(ServerMessage message)
         {
-            if (message == null)
-                return;
+            try
+            {
+                if (message == null)
+                    return;
 
-            if (_connection == null || !_connection.Channel.Active)
-                return;
+                if (_connection == null || !_connection.Channel.Active)
+                    return;
 
-            await _connection.Send(message);
+                await _connection.Send(message);
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "SendMessage");
+            }
         }
 
         internal Task SendMessageAsync(ServerMessage message)
         {
-            if (message == null)
-                return Task.CompletedTask;
+            try
+            {
+                if (message == null)
+                    return Task.CompletedTask;
 
-            if (_connection == null || !_connection.Channel.Active)
-                return Task.CompletedTask;
+                if (_connection == null || !_connection.Channel.Active)
+                    return Task.CompletedTask;
 
-            // var bytes = message.GetReversedBytes();
+                // var bytes = message.GetReversedBytes();
 
-            return _connection.Send(message);
+                return _connection.Send(message);
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "SendMessageAsync");
+            }
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
