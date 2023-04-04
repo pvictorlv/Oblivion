@@ -104,7 +104,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <summary>
         ///     Clears the requests.
         /// </summary>
-        internal async Task ClearRequests()
+        internal void ClearRequests()
         {
             Requests.Clear();
         }
@@ -120,7 +120,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <summary>
         ///     Destroys this instance.
         /// </summary>
-        internal async Task Destroy()
+        internal Task Destroy()
         {
             foreach (var current in Friends.Values.ToList())
             {
@@ -140,6 +140,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             Requests?.Clear();
             Friends = null;
             Requests = null;
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -191,12 +192,12 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         internal async Task HandleAllRequests()
         {
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync("DELETE FROM messenger_requests WHERE from_id = " + _userId +
                                                      " OR to_id = " +
                                                      _userId);
 
-            await ClearRequests();
+            ClearRequests();
         }
 
         /// <summary>
@@ -493,10 +494,11 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// </summary>
         /// <param name="friendId">The friend identifier.</param>
         /// <param name="friendRequest"></param>
-        internal async Task OnNewRequest(uint friendId, MessengerRequest friendRequest)
+        internal Task OnNewRequest(uint friendId, MessengerRequest friendRequest)
         {
             if (!Requests.ContainsKey(friendId))
                 Requests.Add(friendId, friendRequest);
+            return Task.CompletedTask;
         }
 
         /// <summary>

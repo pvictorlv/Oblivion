@@ -26,6 +26,11 @@ namespace Oblivion.Database
             if (_mysqlConnection.State == ConnectionState.Closed)
                 _mysqlConnection.Open();
         }
+        public async Task OpenAsync()
+        {
+            if (_mysqlConnection.State == ConnectionState.Closed)
+                await _mysqlConnection.OpenAsync();
+        }
 
         public void Close()
         {
@@ -54,10 +59,9 @@ namespace Oblivion.Database
             Open();
         }
 
-        public Task ConnectAsync()
+        public async Task ConnectAsync()
         {
-            Open();
-            return Task.CompletedTask;
+            await OpenAsync();
         }
 
         public void Disconnect()

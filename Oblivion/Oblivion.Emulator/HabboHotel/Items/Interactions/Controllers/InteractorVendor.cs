@@ -53,7 +53,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             if (!Gamemap.TilesTouching(roomUserByHabbo.X, roomUserByHabbo.Y, item.X, item.Y))
             {
-                roomUserByHabbo.MoveTo(item.SquareInFront);
+                await roomUserByHabbo.MoveTo(item.SquareInFront);
                 return;
             }
 

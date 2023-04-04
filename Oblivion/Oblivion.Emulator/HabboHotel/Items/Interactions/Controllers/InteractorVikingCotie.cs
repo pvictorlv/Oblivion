@@ -36,7 +36,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 if (clientByUsername != null)
                 {
                     if (clientByUsername.GetHabbo().UserName != item.GetRoom().RoomData.Owner)
-                        clientByUsername.SendNotif(string.Format(Oblivion.GetLanguage().GetVar("viking_burn_started"),
+                        await clientByUsername.SendNotif(string.Format(Oblivion.GetLanguage().GetVar("viking_burn_started"),
                             user.GetUserName()));
                 }
 
@@ -50,7 +50,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 await session.SendNotif(Oblivion.GetLanguage().GetVar("user_viking_error"));
         }
 
-        private void OnElapse(object sender, ElapsedEventArgs e)
+        private async void OnElapse(object sender, ElapsedEventArgs e)
         {
             if (_mItem == null)
                 return;
@@ -59,23 +59,23 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             {
                 case "1":
                     _mItem.ExtraData = "2";
-                    _mItem.UpdateState();
+                    await _mItem.UpdateState();
                     return;
 
                 case "2":
                     _mItem.ExtraData = "3";
-                    _mItem.UpdateState();
+                    await _mItem.UpdateState();
                     return;
 
                 case "3":
                     _mItem.ExtraData = "4";
-                    _mItem.UpdateState();
+                    await _mItem.UpdateState();
                     return;
 
                 case "4":
                     ((Timer)sender).Stop();
                     _mItem.ExtraData = "5";
-                    _mItem.UpdateState();
+                    await _mItem.UpdateState();
                     return;
             }
         }

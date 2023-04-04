@@ -80,7 +80,7 @@ namespace Oblivion.Security
                     {
                         session.GetHabbo().BobbaFiltered = 0;
 
-                        Oblivion.GetGame().GetBanManager()
+                        await Oblivion.GetGame().GetBanManager()
                             .BanUser(session, "Auto-system-ban", 3600, "ban.", false, false);
                     }
                 }

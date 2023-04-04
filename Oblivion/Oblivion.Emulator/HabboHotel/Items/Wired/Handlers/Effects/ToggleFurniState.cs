@@ -98,13 +98,13 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         }
 
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             if (Item == null || Items.Count <= 0)
-                return false;
+                return Task.FromResult(false);
             Requested = true;
             
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

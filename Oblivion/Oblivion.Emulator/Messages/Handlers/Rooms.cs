@@ -2094,8 +2094,7 @@ namespace Oblivion.Messages.Handlers
                         }
 
                         var randomSpeech = speechs.Split(';').ToList();
-
-                        await room.GetRoomUserManager()
+                        room.GetRoomUserManager()
                             .UpdateBot(bot.VirtualId, bot, bot.BotData.Name, bot.BotData.Motto, bot.BotData.Look,
                                 bot.BotData.Gender, randomSpeech, null, speak, speechDelay, mix);
                         flag = true;
@@ -2387,7 +2386,7 @@ namespace Oblivion.Messages.Handlers
             await serverMessage.AppendStringAsync(campaingName);
 
 
-            Session.SendMessage(serverMessage);
+            await Session.SendMessage(serverMessage);
         }
 
         internal async Task RefreshPromoEvent()
@@ -2421,7 +2420,7 @@ namespace Oblivion.Messages.Handlers
             var message =
                 hotelView.SmallPromoComposer(
                     new ServerMessage(LibraryParser.OutgoingRequest("LandingPromosMessageComposer")));
-            Session.SendMessage(message);
+            await Session.SendMessage(message);
         }
 
         internal Task RefreshCompetition()

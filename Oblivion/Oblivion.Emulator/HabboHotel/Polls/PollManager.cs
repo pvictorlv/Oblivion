@@ -36,7 +36,7 @@ namespace Oblivion.HabboHotel.Polls
         ///     Initializes the specified database client.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal async Task Init(IQueryAdapter dbClient)
+        internal Task Init(IQueryAdapter dbClient)
         {
             Polls.Clear();
 
@@ -45,7 +45,7 @@ namespace Oblivion.HabboHotel.Polls
             var table = dbClient.GetTable();
 
             if (table == null)
-                return;
+                return Task.CompletedTask;
 
             /* TODO CHECK */ foreach (DataRow dataRow in table.Rows)
             {
@@ -61,6 +61,8 @@ namespace Oblivion.HabboHotel.Polls
 
                 Polls.Add(num, value);
             }
+
+            return Task.CompletedTask;
         }
 
         /// <summary>

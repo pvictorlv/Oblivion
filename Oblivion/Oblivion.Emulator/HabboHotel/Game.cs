@@ -203,7 +203,7 @@ namespace Oblivion.HabboHotel
 
                 Progress(bar, wait, end, "Loading Clothing...");
                 _clothingManager = new ClothingManager();
-                await _clothingManager.Initialize(queryReactor);
+                _clothingManager.Initialize(queryReactor);
 
                 Progress(bar, wait, end, "Loading Rooms...");
                 _roomManager = new RoomManager();
@@ -505,12 +505,14 @@ namespace Oblivion.HabboHotel
         /// <summary>
         ///     Reloaditemses this instance.
         /// </summary>
-        internal async Task ReloadItems()
+        internal Task ReloadItems()
         {
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 _itemManager.LoadItems(queryReactor);
             }
+
+            return Task.CompletedTask;
         }
 
         /// <summary>

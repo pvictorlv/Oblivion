@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Achievements.Interfaces;
 using Oblivion.HabboHotel.Groups.Interfaces;
@@ -23,10 +24,10 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         /// <param name="errorCode">The error code.</param>
         /// <returns>UserData.</returns>
         /// <exception cref="UserDataNotFoundException"></exception>
-        internal static UserData GetUserData(string sessionTicket, out uint errorCode)
+        internal static async Task<GetUserDataResponse> GetUserData(string sessionTicket)
         {
             const uint miniMailCount = 0;
-            errorCode = 1;
+            var errorCode = 1;
 
             DataTable groupsTable;
             DataRow dataRow;
@@ -64,7 +65,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
 
                 if (Oblivion.GetGame().GetClientManager().GetClientByUserId(userId) != null)
-                    Oblivion.GetGame()
+                    await Oblivion.GetGame()
                         .GetClientManager()
                         .GetClientByUserId(userId)
                         .Disconnect("User connected in other place");
@@ -229,7 +230,11 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             data.LoadedRelations = true;
 
-            return data;
+            return new GetUserDataResponse
+            {
+                ErrorCode = errorCode,
+                Data = data
+            };
         }
 
         /// <summary>
@@ -284,5 +289,11 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             return new UserData(num, achievements, talents, favouritedRooms, ignores, tags, null, rooms, quests, user, new Dictionary<uint, Relationship>(), pollData, 0, new List<string>(), new List<int>());
         }
+    }
+
+    internal class GetUserDataResponse
+    {
+        public UserData Data { get; set; }
+        public int ErrorCode { get; set; }
     }
 }

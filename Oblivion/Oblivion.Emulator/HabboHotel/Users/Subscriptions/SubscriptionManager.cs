@@ -87,7 +87,7 @@ namespace Oblivion.HabboHotel.Users.Subscriptions
         /// </summary>
         internal async Task ReloadSubscription()
         {
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery(
                     "SELECT * FROM users_subscriptions WHERE user_id=@id AND timestamp_expire > UNIX_TIMESTAMP() ORDER BY subscription_id DESC LIMIT 1");
@@ -99,6 +99,7 @@ namespace Oblivion.HabboHotel.Users.Subscriptions
                     ? null
                     : new Subscription((int) row[1], (int) row[2], (int) row[3], (int) row[4]);
             }
+            
         }
 
 

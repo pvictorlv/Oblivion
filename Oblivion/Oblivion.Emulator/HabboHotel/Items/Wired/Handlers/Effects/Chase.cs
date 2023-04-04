@@ -253,16 +253,16 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             return newPoint;
         }
 
-        public async Task<bool> Execute(params object[] Params)
+        public Task<bool> Execute(params object[] Params)
         {
             if (Item == null || Items.Count == 0)
-                return false;
+                return Task.FromResult(false);
 
 
             Requested = true;
 
 
-            return true;
+            return Task.FromResult(true);
         }
 
         public void Dispose()

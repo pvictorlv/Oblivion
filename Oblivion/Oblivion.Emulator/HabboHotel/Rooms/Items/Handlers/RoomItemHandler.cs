@@ -402,7 +402,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         ///     Sets the speed.
         /// </summary>
         /// <param name="p">The p.</param>
-        internal async Task SetSpeed(double p) => _rollerSpeed = p;
+        internal Task SetSpeed(double p) => Task.FromResult(_rollerSpeed = p);
 
         /// <summary>
         ///     Loads the furniture.
@@ -559,7 +559,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             if (item == null)
                 return;
             if (item.GetBaseItem().InteractionType == Interaction.FootballGate)
-                await _room.GetSoccer().UnRegisterGate(item);
+                _room.GetSoccer().UnRegisterGate(item);
             if (item.GetBaseItem().InteractionType != Interaction.Gift)
                 await item.Interactor.OnRemove(session, item);
 

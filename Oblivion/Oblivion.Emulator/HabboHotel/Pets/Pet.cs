@@ -490,8 +490,9 @@ namespace Oblivion.HabboHotel.Pets
         /// <summary>
         ///     Manages the gestures.
         /// </summary>
-        internal async Task ManageGestures()
+        internal Task ManageGestures()
         {
+            return Task.CompletedTask;
         }
 
         /// <summary>

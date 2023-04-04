@@ -30,7 +30,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var message = new ServerMessage(LibraryParser.OutgoingRequest("BroadcastNotifMessageComposer"));
             await message.AppendStringAsync($"{str}\r\n- {session.GetHabbo().UserName}");
      
-           Oblivion.GetGame().GetClientManager().SendMessageAsync(message);
+           await Oblivion.GetGame().GetClientManager().SendMessageAsync(message);
             
 
              await session.SendWhisperAsync("Enviado!");

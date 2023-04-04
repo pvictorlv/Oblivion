@@ -1073,7 +1073,7 @@ namespace Oblivion.Messages.Handlers
 
                     /* TODO CHECK */
                     foreach (Guild theGroup in groupList)
-                        theGroup.SerializeForumRoot(message);
+                        await theGroup.SerializeForumRoot(message);
 
                     await Session.SendMessageAsync(message);
                     break;

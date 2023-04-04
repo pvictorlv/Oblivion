@@ -718,9 +718,10 @@ namespace Oblivion.HabboHotel.Users
         ///     Loads the data.
         /// </summary>
         /// <param name="data">The data.</param>
-        internal async Task LoadData(UserData data)
+        internal Task LoadData(UserData data)
         {
             Data = data;
+            return Task.CompletedTask;
         }
 
 
@@ -856,7 +857,7 @@ namespace Oblivion.HabboHotel.Users
                 if (_inventoryComponent != null)
                 {
                     await _inventoryComponent.RunDbUpdate();
-                    await _inventoryComponent.Dispose();
+                    _inventoryComponent.Dispose();
                     _inventoryComponent = null;
                 }
             }

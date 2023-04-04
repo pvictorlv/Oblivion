@@ -1254,7 +1254,7 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal async Task CompleteSafetyQuiz()
         {
-            Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_SafetyQuizGraduate", 1);
+            await Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_SafetyQuizGraduate", 1);
             await Session.SendMessageAsync(new ServerMessage(2873));
         }
 

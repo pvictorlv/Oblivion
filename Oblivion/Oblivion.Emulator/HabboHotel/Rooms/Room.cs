@@ -355,11 +355,11 @@ namespace Oblivion.HabboHotel.Rooms
         /// <summary>
         /// Starts the room processing.
         /// </summary>
-        internal async Task StartRoomProcessing()
+        internal Task StartRoomProcessing()
         {
             if (_mainProcessSource == null)
             {
-                return;
+                return Task.CompletedTask;
             }
 
             try
@@ -391,6 +391,8 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 Logging.HandleException(e, "StartRoomProcess");
             }
+
+            return Task.CompletedTask;
         }
 
         private bool _processingWireds;
@@ -441,9 +443,9 @@ namespace Oblivion.HabboHotel.Rooms
             _wiredHandler = null;
         }
 
-        internal async Task StartBallProcess()
+        internal Task StartBallProcess()
         {
-            if (_processingBall || _mainProcessSource == null) return;
+            if (_processingBall || _mainProcessSource == null) return Task.CompletedTask;
 
             _processingBall = true;
 
@@ -453,14 +455,12 @@ namespace Oblivion.HabboHotel.Rooms
                 {
                     while ((GotSoccer() && !Disposed) && _mainProcessSource is { IsCancellationRequested: false })
                     {
-                        var start = Oblivion.GetUnixTimeStamp();
                         try
                         {
                             if (!await GetSoccer().OnCycle())
                             {
                                 ;
                                 await Task.Delay(250);
-                                continue;
                             }
                         }
                         catch (Exception e)
@@ -474,6 +474,8 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 Logging.HandleException(e, "Start ball");
             }
+
+            return Task.CompletedTask;
         }
 
 
@@ -618,7 +620,7 @@ namespace Oblivion.HabboHotel.Rooms
         {
             DataTable table;
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery(
                     $"SELECT items_songs.songid,items_rooms.id,items_rooms.base_item FROM items_songs LEFT JOIN items_rooms ON items_rooms.id = items_songs.itemid WHERE items_songs.roomid = {RoomId}");
@@ -646,7 +648,7 @@ namespace Oblivion.HabboHotel.Rooms
                 var songCode = string.Empty;
                 var extraData = string.Empty;
 
-                using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryreactor2 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     queryreactor2.SetQuery($"SELECT extra_data,songcode FROM items_rooms WHERE id = '{num}'");
                     var row = queryreactor2.GetRow();
@@ -664,6 +666,8 @@ namespace Oblivion.HabboHotel.Rooms
 
                 GetRoomMusicController().AddDisk(diskItem);
             }
+
+            return;
         }
 
         /// <summary>
@@ -674,21 +678,23 @@ namespace Oblivion.HabboHotel.Rooms
             UsersWithRights = new List<uint>();
             DataTable dataTable;
             if (RoomData.Group != null)
-                return;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                return ;
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery($"SELECT rooms_rights.user_id FROM rooms_rights WHERE room_id = {RoomId}");
                 dataTable = queryReactor.GetTable();
             }
 
             if (dataTable == null)
-                return;
+                return ;
             /* TODO CHECK */
             foreach (DataRow dataRow in dataTable.Rows)
             {
                 var userId = Convert.ToUInt32(dataRow["user_id"]);
                 UsersWithRights.Add(userId);
             }
+
+            return ;
         }
 
         /// <summary>
@@ -698,7 +704,7 @@ namespace Oblivion.HabboHotel.Rooms
         {
             Bans = new Dictionary<long, double>();
             DataTable table;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery($"SELECT user_id, expire FROM rooms_bans WHERE room_id = {RoomId}");
                 table = queryReactor.GetTable();
@@ -709,6 +715,7 @@ namespace Oblivion.HabboHotel.Rooms
             /* TODO CHECK */
             foreach (DataRow dataRow in table.Rows)
                 Bans.Add((uint)dataRow[0], Convert.ToDouble(dataRow[1]));
+            return;
         }
 
         /// <summary>
@@ -880,19 +887,7 @@ namespace Oblivion.HabboHotel.Rooms
             }
         }
 
-
-        internal async Task SendWebSocketMessage(string message)
-        {
-            foreach (var user in _roomUserManager.UserList.Values)
-            {
-                var connId = user?.GetClient()?.GetHabbo()?.WebSocketConnId;
-                if (connId != null && connId != Guid.Empty)
-                {
-                    Oblivion.GetWebSocket().SendMessage((Guid)connId, message);
-                }
-            }
-        }
-
+        
         /// <summary>
         ///     Sends the message.
         /// </summary>
@@ -1117,9 +1112,10 @@ namespace Oblivion.HabboHotel.Rooms
         ///     Removes the ban.
         /// </summary>
         /// <param name="pId">The p identifier.</param>
-        internal async Task RemoveBan(uint pId)
+        internal Task RemoveBan(uint pId)
         {
             Bans.Remove(pId);
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -1303,6 +1299,7 @@ namespace Oblivion.HabboHotel.Rooms
             RoomData.WallThickness = wallThick;
             RoomData.FloorThickness = floorThick;
             _gameMap = new Gamemap(this);
+            await _gameMap.Init();
         }
 
         /// <summary>
@@ -1340,6 +1337,8 @@ namespace Oblivion.HabboHotel.Rooms
             _idleTime = 0;
             RoomMuted = false;
             _gameMap = new Gamemap(this);
+            await _gameMap.Init();
+            
             _roomItemHandler = new RoomItemHandler(this);
             _roomUserManager = new RoomUserManager(this);
 

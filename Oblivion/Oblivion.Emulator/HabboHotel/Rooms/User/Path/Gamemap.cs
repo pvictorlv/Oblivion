@@ -64,18 +64,26 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         {
             _room = room;
             DiagonalEnabled = true;
-            StaticModel = Oblivion.GetGame().GetRoomManager().GetModel(room.RoomData.ModelName, room.RoomId);
+        
+            CoordinatedItems = new ConcurrentDictionary<Point, ConcurrentList<RoomItem>>();
+         
+            _userMap = new ConcurrentDictionary<int, ConcurrentList<RoomUser>>();
+            GuildGates = new Dictionary<Point, RoomItem>();
+        }
+
+        public async Task Init()
+        {
+            var room = _room;
+            StaticModel = await Oblivion.GetGame().GetRoomManager().GetModel(room.RoomData.ModelName, room.RoomId);
 
             if (StaticModel == null)
                 throw new ArgumentNullException($"No modeldata found for roomID {room.RoomId}");
 
             Model = new DynamicRoomModel(StaticModel, room);
-            CoordinatedItems = new ConcurrentDictionary<Point, ConcurrentList<RoomItem>>();
             GameMap = new byte[Model.MapSizeX, Model.MapSizeY];
             ItemHeightMap = new double[Model.MapSizeX, Model.MapSizeY];
-            _userMap = new ConcurrentDictionary<int, ConcurrentList<RoomUser>>();
+
             WalkableList = GetWalkablePoints();
-            GuildGates = new Dictionary<Point, RoomItem>();
         }
 
         /// <summary>

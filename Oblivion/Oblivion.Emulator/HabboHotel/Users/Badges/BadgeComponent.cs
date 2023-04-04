@@ -136,11 +136,12 @@ namespace Oblivion.HabboHotel.Users.Badges
         /// <summary>
         ///     Resets the slots.
         /// </summary>
-        internal async Task ResetSlots()
+        internal Task ResetSlots()
         {
             /* TODO CHECK */
             foreach (Badge badge in BadgeList.Values)
                 badge.Slot = 0;
+            return Task.CompletedTask;
         }
 
         /// <summary>

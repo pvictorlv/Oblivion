@@ -40,27 +40,24 @@ namespace Oblivion.Messages.Handlers
                 return;
             }
 
-            var onGuideSessionAttached = new ServerMessage(LibraryParser.OutgoingRequest("OnGuideSessionAttachedMessageComposer"));
+            var onGuideSessionAttached =
+                new ServerMessage(LibraryParser.OutgoingRequest("OnGuideSessionAttachedMessageComposer"));
             onGuideSessionAttached.AppendBool(false);
             await onGuideSessionAttached.AppendIntegerAsync(userId);
             await onGuideSessionAttached.AppendStringAsync(message);
             await onGuideSessionAttached.AppendIntegerAsync(30);
             await Session.SendMessageAsync(onGuideSessionAttached);
 
-            lock (guide)
-            {
 
-
-                var onGuideSessionAttached2 =
-                    new ServerMessage(LibraryParser.OutgoingRequest("OnGuideSessionAttachedMessageComposer"));
-                onGuideSessionAttached2.AppendBool(true);
-                onGuideSessionAttached2.AppendInteger(userId);
-                onGuideSessionAttached2.AppendString(message);
-                onGuideSessionAttached2.AppendInteger(15);
-                guide.SendMessage(onGuideSessionAttached2);
-                guide.GetHabbo().GuideOtherUser = Session;
-                Session.GetHabbo().GuideOtherUser = guide;
-            }
+            var onGuideSessionAttached2 =
+                new ServerMessage(LibraryParser.OutgoingRequest("OnGuideSessionAttachedMessageComposer"));
+            onGuideSessionAttached2.AppendBool(true);
+            onGuideSessionAttached2.AppendInteger(userId);
+            onGuideSessionAttached2.AppendString(message);
+            onGuideSessionAttached2.AppendInteger(15);
+            await guide.SendMessage(onGuideSessionAttached2);
+            guide.GetHabbo().GuideOtherUser = Session;
+            Session.GetHabbo().GuideOtherUser = guide;
         }
 
         /// <summary>
@@ -121,7 +118,8 @@ namespace Oblivion.Messages.Handlers
 
             var room = Session.GetHabbo().CurrentRoom;
 
-            var message = new ServerMessage(LibraryParser.OutgoingRequest("OnGuideSessionInvitedToGuideRoomMessageComposer"));
+            var message =
+                new ServerMessage(LibraryParser.OutgoingRequest("OnGuideSessionInvitedToGuideRoomMessageComposer"));
 
             if (room == null)
             {
@@ -134,7 +132,7 @@ namespace Oblivion.Messages.Handlers
                 await message.AppendStringAsync(room.RoomData.Name);
             }
 
-            requester.SendMessage(message);
+            await requester.SendMessage(message);
             await Session.SendMessageAsync(message);
         }
 
@@ -217,7 +215,6 @@ namespace Oblivion.Messages.Handlers
             var message = new ServerMessage(LibraryParser.OutgoingRequest("OnGuideSessionDetachedMessageComposer"));
             await message.AppendIntegerAsync(2);
             await Session.SendMessageAsync(message);
-
         }
 
         /// <summary>
@@ -229,7 +226,8 @@ namespace Oblivion.Messages.Handlers
 
             await Session.SendMessageAsync(message);
 
-            await Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_GuideFeedbackGiver", 1);
+            await Oblivion.GetGame().GetAchievementManager()
+                .ProgressUserAchievement(Session, "ACH_GuideFeedbackGiver", 1);
         }
 
         /// <summary>
@@ -244,7 +242,8 @@ namespace Oblivion.Messages.Handlers
 
             GameClient user = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
 
-            user?.SendNotif("${notification.ambassador.alert.warning.message}", "${notification.ambassador.alert.warning.title}");
+            user?.SendNotif("${notification.ambassador.alert.warning.message}",
+                "${notification.ambassador.alert.warning.title}");
             return Task.CompletedTask;
         }
     }

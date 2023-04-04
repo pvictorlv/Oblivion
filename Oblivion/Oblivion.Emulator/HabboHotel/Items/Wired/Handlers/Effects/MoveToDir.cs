@@ -82,12 +82,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public int Delay { get; set; }
 
-        public Task<bool> Execute(params object[] stuff)
+        public async Task<bool> Execute(params object[] stuff)
         {
             
 
             if (Items == null || Items.Count <= 0)
-                return Task.FromResult(true);
+                return (true);
 
            foreach (var item in Items)
             {
@@ -97,17 +97,17 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                     continue;
                 }
 
-                HandleMovement(item);
+                await HandleMovement(item);
             }
 
             while (_toRemove.TryDequeue(out var rI))
                 if (Items.Contains(rI))
                     Items.Remove(rI);
 
-            return Task.FromResult(true);
+            return (true);
         }
         //todo: recode it.
-        private void HandleMovement(RoomItem item)
+        private async Task HandleMovement(RoomItem item)
         {
             if (item.MoveToDirMovement == MovementDirection.None || _needChange)
             {
@@ -122,7 +122,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             if (Room.GetGameMap().SquareIsOpen(newPoint.X, newPoint.Y, false))
             {
-                Room.GetRoomItemHandler().SetFloorItem(null, item, newPoint.X, newPoint.Y, item.Rot, false, false, true,
+                await Room.GetRoomItemHandler().SetFloorItem(null, item, newPoint.X, newPoint.Y, item.Rot, false, false, true,
                     false, true);
             }
             else
@@ -706,7 +706,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 }
 
                 newPoint = Movement.HandleMovementDir(item.Coordinate, item.MoveToDirMovement, item.Rot);
-                Room.GetRoomItemHandler().SetFloorItem(null, item, newPoint.X, newPoint.Y, item.Rot, false, false, true,
+                await Room.GetRoomItemHandler().SetFloorItem(null, item, newPoint.X, newPoint.Y, item.Rot, false, false, true,
                     false, true);
             }
         }

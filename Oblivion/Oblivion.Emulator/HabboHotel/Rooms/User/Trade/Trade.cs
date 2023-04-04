@@ -117,20 +117,22 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <param name="item">The item.</param>
-        internal async Task OfferItem(uint userId, UserItem item)
+        internal Task OfferItem(uint userId, UserItem item)
         {
             var tradeUser = GetTradeUser(userId);
             if (tradeUser == null || item == null || !item.BaseItem.AllowTrade || tradeUser.HasAccepted ||
                 _tradeStage != 1)
             {
-                return;
+                return Task.CompletedTask;
             }
             ClearAccepted();
             if (!tradeUser.OfferedItems.Contains(item))
             {
                 tradeUser.OfferedItems.Add(item);
             }
-//            UpdateTradeWindow();
+
+            return Task.CompletedTask;
+            //            UpdateTradeWindow();
         }
 
         /// <summary>

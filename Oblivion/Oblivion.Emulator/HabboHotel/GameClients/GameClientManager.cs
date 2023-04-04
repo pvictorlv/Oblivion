@@ -221,7 +221,7 @@ namespace Oblivion.HabboHotel.GameClients
         /// </summary>
         /// <param name="clientId">The client identifier.</param>
         /// <param name="connection">The connection.</param>
-        internal async Task CreateAndStartClient(ISession<GameClient> connection)
+        internal Task CreateAndStartClient(ISession<GameClient> connection)
         {
             var gameClient = new GameClient(connection.Channel.Id, connection);
             gameClient.PacketParser = new GamePacketParser();
@@ -229,6 +229,7 @@ namespace Oblivion.HabboHotel.GameClients
             connection.UserData = gameClient;
             Clients.AddOrUpdate(connection.Channel.Id, gameClient, (key, value) => gameClient);
             gameClient.StartConnection();
+            return Task.CompletedTask;
         }
 
 

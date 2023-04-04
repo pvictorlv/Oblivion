@@ -20,13 +20,13 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 0;
         }
 
-        public override Task<bool> Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             Oblivion.GetGame().GetHallOfFame().RefreshHallOfFame();
-            Oblivion.GetGame().GetRoomManager().GetCompetitionManager().RefreshCompetitions();
+            await Oblivion.GetGame().GetRoomManager().GetCompetitionManager().RefreshCompetitions();
             Oblivion.GetGame().GetTargetedOfferManager().LoadOffer();
             Oblivion.GetGame().GetRandomRewardFurniHandler().Init();
-            return Task.FromResult(true);
+            return true;
         }
     }
 }

@@ -54,40 +54,40 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             switch (user.RotBody)
             {
                 case 0:
-                    user2.MoveTo(user.X, user.Y - 1);
+                    await user2.MoveTo(user.X, user.Y - 1);
                     break;
                 case 1:
-                    user2.MoveTo(user2.X - 1, user2.Y + 1);
+                    await user2.MoveTo(user2.X - 1, user2.Y + 1);
                     break;
 
                 case 2:
-                    user2.MoveTo(user.X + 1, user.Y);
+                    await user2.MoveTo(user.X + 1, user.Y);
                     break;
 
 
                 case 3:
-                    user2.MoveTo(user2.X - 1, user2.Y - 1);
+                    await user2.MoveTo(user2.X - 1, user2.Y - 1);
                     break;
 
                 case 4:
-                    user2.MoveTo(user.X, user.Y + 1);
+                    await user2.MoveTo(user.X, user.Y + 1);
                     break;
                     
 
                 case 5:
-                    user2.MoveTo(user2.X + 1, user2.Y - 1);
+                    await user2.MoveTo(user2.X + 1, user2.Y - 1);
                     break;
                     
 
                 case 6:
-                    user2.MoveTo(user.X - 1, user.Y);
+                    await user2.MoveTo(user.X - 1, user.Y);
                     break;
 
                 case 7:
-                    user2.MoveTo(user2.X + 1, user2.Y + 1);
+                    await user2.MoveTo(user2.X + 1, user2.Y + 1);
                     break;
             }
-            user.Chat(session, $"Eu puxei {user2.GetUserName()}!", true, -1, 0, true);
+            await user.Chat(session, $"Eu puxei {user2.GetUserName()}!", true, -1, 0, true);
 
             return true;
         }

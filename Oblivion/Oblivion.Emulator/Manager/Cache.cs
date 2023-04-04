@@ -26,15 +26,12 @@ namespace Oblivion.Manager
         {
             try
             {
-                while (Working)
-                {
-                    ClearUserCache();
-                    ClearRoomsCache();
+                ClearUserCache();
+                ClearRoomsCache();
 
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
-                    //todo remove this long task.
-                }
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                //todo remove this long task.
             }
             catch (Exception e)
             {

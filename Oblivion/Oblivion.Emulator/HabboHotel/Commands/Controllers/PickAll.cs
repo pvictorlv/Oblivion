@@ -22,10 +22,10 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override Task<bool> Execute(GameClient session, string[] pms)
         {
-            Task.Factory.StartNew(() =>
+            Task.Factory.StartNew(async () =>
             {
                 var room = session.GetHabbo().CurrentRoom;
-                room.GetRoomItemHandler().RemoveAllFurniture(session);
+                await room.GetRoomItemHandler().RemoveAllFurniture(session);
                
 //                room.GetRoomItemHandler().RemoveItemsByOwner(ref roomItemList, ref session);
                 return true;

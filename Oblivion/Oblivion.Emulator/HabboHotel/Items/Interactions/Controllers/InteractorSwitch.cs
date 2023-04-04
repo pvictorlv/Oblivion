@@ -40,7 +40,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 item.ExtraData = num3.ToString();
                 await  item.UpdateState();
                 if (item.GetRoom().GotWireds())
-                    item.GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerStateChanged, roomUser, item);
+                    await item.GetRoom().GetWiredHandler().ExecuteWired(Interaction.TriggerStateChanged, roomUser, item);
 
                 return;
             }

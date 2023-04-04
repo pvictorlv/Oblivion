@@ -20,9 +20,9 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 1;
         }
 
-        public override Task<bool> Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
-            if (pms[0].Length < 2) return Task.FromResult(true);
+            if (pms[0].Length < 2) return (true);
             var room = session.GetHabbo().CurrentRoom;
             /* TODO CHECK */ foreach (var current in room.GetRoomUserManager().UserList.Values)
             {
@@ -31,7 +31,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     if (!current.IsBot && current.GetClient() != null &&
                         current.GetClient().GetHabbo() != null)
                     {
-                        current.GetClient()
+                        await current.GetClient()
                             .GetHabbo()
                             .GetBadgeComponent()
                             .GiveBadge(pms[0], true, current.GetClient());
@@ -41,11 +41,11 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 {
                 }
             }
-            Oblivion.GetGame().GetModerationTool()
+            await Oblivion.GetGame().GetModerationTool()
                 .LogStaffEntry(session.GetHabbo().UserName,
                     string.Empty, "Badge",
                     string.Concat("Roombadge in room [", room.RoomId, "] with badge [", pms[0], "]"));
-            return Task.FromResult(true);
+            return (true);
         }
     }
 }

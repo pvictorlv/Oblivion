@@ -838,7 +838,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             }
         }
 
-        internal async Task Dispose()
+        internal void Dispose()
         {
             _mClient = null;
             _inventoryBots?.Clear();

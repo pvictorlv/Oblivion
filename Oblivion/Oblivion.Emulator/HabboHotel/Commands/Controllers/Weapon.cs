@@ -34,22 +34,22 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             switch (id)
             {
                 case "uzi":
-                    user.ApplyEffect(580);
+                    await user.ApplyEffect(580);
                     break;
                 case "shotgun":
-                    user.ApplyEffect(581);
+                    await user.ApplyEffect(581);
                     break;
                 case "rifle":
-                    user.ApplyEffect(582);
+                    await user.ApplyEffect(582);
                     break;
                 case "ak47":
-                    user.ApplyEffect(583);
+                    await user.ApplyEffect(583);
                     break;
                 case "g36":
-                    user.ApplyEffect(584);
+                    await user.ApplyEffect(584);
                     break;
                 case "glock":
-                    user.ApplyEffect(585);
+                    await user.ApplyEffect(585);
                     break;
                 default:
                     StringBuilder stringBuilder = new StringBuilder();
@@ -67,7 +67,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     return true;
             }
 
-            user.Chat(client, "Saquei a minha arma, corram!", true, 0);
+            await user.Chat(client, "Saquei a minha arma, corram!", true, 0);
 
             return true;
         }

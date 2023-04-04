@@ -15,16 +15,18 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Initializes the messenger.
         /// </summary>
-        internal async Task InitMessenger()
+        internal Task InitMessenger()
         {
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Friendses the list update.
         /// </summary>
-        internal async Task FriendsListUpdate()
+        internal Task FriendsListUpdate()
         {
             Session.GetHabbo().GetMessenger();
+            return Task.CompletedTask;
         }
 
         /// <summary>

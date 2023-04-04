@@ -67,12 +67,13 @@ namespace Oblivion.HabboHotel.Events.Interfaces
         /// <summary>
         ///     Called when [cycle].
         /// </summary>
-        internal async Task OnCycle()
+        internal Task OnCycle()
         {
             WorkRemoveQueue();
             WorkAddQueue();
             WorkUpdate();
             SortCollection();
+            return Task.CompletedTask;
         }
 
         /// <summary>

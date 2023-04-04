@@ -229,7 +229,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="speak">if set to <c>true</c> [speak].</param>
         /// <param name="speechDelay">The speech delay.</param>
         /// <param name="mix">if set to <c>true</c> [mix].</param>
-        internal async Task UpdateBot(int virtualId, RoomUser roomUser, string name, string motto, string look,
+        internal void UpdateBot(int virtualId, RoomUser roomUser, string name, string motto, string look,
             string gender,
             List<string> speech, List<string> responses, bool speak, int speechDelay, bool mix)
         {

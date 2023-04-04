@@ -229,22 +229,21 @@ namespace Oblivion.HabboHotel.Rooms.Data
         ///     Gets the model.
         /// </summary>
         /// <value>The model.</value>
-        internal RoomModel Model => _model ?? (_model = Oblivion.GetGame().GetRoomManager().GetModel(ModelName, Id));
+        internal RoomModel Model => _model;
 
         /// <summary>
         ///     Resets the model.
         /// </summary>
-        internal Task ResetModel()
+        internal async Task ResetModel()
         {
-            _model = Oblivion.GetGame().GetRoomManager().GetModel(ModelName, Id);
-            return Task.CompletedTask;
+            _model = await Oblivion.GetGame().GetRoomManager().GetModel(ModelName, Id);
         }
 
         /// <summary>
         ///     Fills the null.
         /// </summary>
         /// <param name="id">The identifier.</param>
-        internal Task FillNull(uint id)
+        internal async Task FillNull(uint id)
         {
             Id = id;
             Name = "Unknown Room";
@@ -279,16 +278,15 @@ namespace Oblivion.HabboHotel.Rooms.Data
             RoomChat = new List<Chatlog>();
             WordFilter = new List<string>();
             WallHeight = -1;
-            _model = Oblivion.GetGame().GetRoomManager().GetModel(ModelName, Id);
+            _model = await Oblivion.GetGame().GetRoomManager().GetModel(ModelName, Id);
             CompetitionStatus = 0;
-            return Task.CompletedTask;
         }
 
         /// <summary>
         ///     Fills the specified row.
         /// </summary>
         /// <param name="row">The row.</param>
-        internal Task Fill(DataRow row, uint user = 0u)
+        internal async Task Fill(DataRow row, uint user = 0u)
         {
             try
             {
@@ -303,7 +301,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 WordFilter = new List<string>();
                 BlockedCommands = new List<string>();
 
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     uint integer;
                     var client = Oblivion.GetGame().GetClientManager().GetClientByUserName(Owner);
@@ -369,7 +367,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                     Group = Oblivion.GetGame().GetGroupManager().GetGroup(GroupId);
                 if (Id > 0)
                     Event = Oblivion.GetGame().GetRoomEvents().GetEvent(Id);
-                _model = Oblivion.GetGame().GetRoomManager().GetModel(ModelName, Id);
+                _model = await Oblivion.GetGame().GetRoomManager().GetModel(ModelName, Id);
 
                 CompetitionStatus = 0;
 
@@ -377,7 +375,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 Tags = new List<string>();
 
                 if (row.IsNull("tags") || string.IsNullOrEmpty(row["tags"].ToString()))
-                    return Task.CompletedTask;
+                    return ;
 
                 Tags = row["tags"].ToString().Split(',').ToList();
             }
@@ -387,7 +385,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 Logging.HandleException(ex, "Oblivion.HabboHotel.Rooms.RoomData");
             }
 
-            return Task.CompletedTask;
+            return;
         }
 
         /// <summary>

@@ -20,10 +20,10 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 0;
         }
 
-        public override Task<bool> Execute(GameClient session, string[] pms)
+        public override async Task<bool> Execute(GameClient session, string[] pms)
         {
-            session.GetMessageHandler().Sit();
-            return Task.FromResult(true);
+            await session.GetMessageHandler().Sit();
+            return true;
         }
     }
 }

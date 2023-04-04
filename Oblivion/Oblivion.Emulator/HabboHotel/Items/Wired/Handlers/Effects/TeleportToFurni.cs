@@ -92,33 +92,33 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool Requested;
 
-        public async Task<bool> Execute(params object[] Params)
+        public Task<bool> Execute(params object[] Params)
         {
             if (Item == null || Items.Count == 0)
-                return false;
+                return Task.FromResult(false);
 
 
             var roomUser = (RoomUser) Params[0];
-            if (roomUser?.GetClient()?.GetHabbo() == null) return false;
+            if (roomUser?.GetClient()?.GetHabbo() == null) return Task.FromResult(false);
             var item = (Interaction) Params[1];
 
             if (_mBanned.Contains(item))
-                return false;
+                return Task.FromResult(false);
 
             Requested = true;
 
 
             if (_queue == null)
-                return false;
+                return Task.FromResult(false);
 
             if (_queue.Contains(roomUser))
             {
-                return false;
+                return Task.FromResult(false);
             }
 
             _queue.Enqueue(roomUser);
 
-            return true;
+            return Task.FromResult(true);
         }
 
         public async Task<bool> OnCycle()

@@ -4,6 +4,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Oblivion.Configuration;
 
 namespace Oblivion.Messages
 {
@@ -35,7 +36,7 @@ namespace Oblivion.Messages
 
         public int Length => _length;
 
-        public bool BytesAvailable => Length > (_position - 4);
+        public bool BytesAvailable => buffer != null && buffer.ReadableBytes > 0;
 
         public void ReplaceId(int id)
         {
@@ -148,7 +149,6 @@ namespace Oblivion.Messages
                     bytes[i] = this.buffer.ReadByte();
                 }
 
-                //        byte[] data = this.content().readBytes((length)).array();
                 return bytes;
             }
             
@@ -180,20 +180,29 @@ namespace Oblivion.Messages
         /// <returns>System.String.</returns>
         internal string GetString(Encoding encoding)
         {
-            if (this.buffer != null)
+            try
             {
-                int length = buffer.ReadShort();
-                var bytes = GetBytes(length);
-                return encoding.GetString(bytes);
-            }
-            
-            int stringLength = GetInteger16();
-            if (stringLength == 0 || _position + stringLength > _body.Length)
-                return string.Empty;
+                if (this.buffer != null)
+                {
+                    int length = buffer.ReadShort();
+                    var bytes = GetBytes(length);
+                    return encoding.GetString(bytes);
+                }
 
-            string value = encoding.GetString(_body, _position, stringLength);
-            _position += stringLength;
-            return value;
+                int stringLength = GetInteger16();
+                if (stringLength == 0 || _position + stringLength > _body.Length)
+                    return string.Empty;
+
+                string value = encoding.GetString(_body, _position, stringLength);
+                _position += stringLength;
+                return value;
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "ClientMessage.cs");
+            }
+
+            return "";
         }
 
         /// <summary>

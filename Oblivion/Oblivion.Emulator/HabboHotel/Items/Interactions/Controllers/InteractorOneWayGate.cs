@@ -47,24 +47,24 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             return Task.CompletedTask;
         }
 
-        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             if (session == null)
-                return Task.CompletedTask;
+                return ;
 
             var user = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
 
             if (user == null)
-                return Task.CompletedTask;
+                return ;
 
             if (user.Coordinate != item.SquareInFront && user.CanWalk)
             {
-                user.MoveTo(item.SquareInFront);
-                return Task.CompletedTask;
+                await user.MoveTo(item.SquareInFront);
+                return ;
             }
 
             if (!item.GetRoom().GetGameMap().CanWalk(item.SquareBehind.X, item.SquareBehind.Y, user.AllowOverride))
-                return Task.CompletedTask;
+                return ;
 
             if (item.InteractingUser == 0)
             {
@@ -76,12 +76,12 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     user.ClearMovement();
 
                 user.AllowOverride = true;
-                user.MoveTo(item.Coordinate);
+                await user.MoveTo(item.Coordinate);
 
                 item.ReqUpdate(4, true);
             }
 
-            return Task.CompletedTask;
+            return ;
         }
     }
 }

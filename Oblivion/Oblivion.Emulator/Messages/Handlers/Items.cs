@@ -23,26 +23,26 @@ namespace Oblivion.Messages.Handlers
 {
     internal partial class GameClientMessageHandler
     {
-        internal Task PetBreedCancel()
+        internal async Task PetBreedCancel()
         {
             if (Session?.GetHabbo() == null)
-                return Task.CompletedTask;
+                return;
 
             var room = Session.GetHabbo().CurrentRoom;
 
             if (room == null || !room.CheckRights(Session, true))
-                return Task.CompletedTask;
+                return;
 
             var itemId = Oblivion.GetGame().GetItemManager().GetRealId(Request.GetUInteger());
 
             var item = room.GetRoomItemHandler().GetItem(itemId);
 
             if (item == null)
-                return Task.CompletedTask;
+                return;
 
             if (item.GetBaseItem().InteractionType != Interaction.BreedingTerrier &&
                 item.GetBaseItem().InteractionType != Interaction.BreedingBear)
-                return Task.CompletedTask;
+                return;
 
             /* TODO CHECK */
             foreach (var pet in item.PetsList)
@@ -55,11 +55,11 @@ namespace Oblivion.Messages.Handlers
                 room.GetGameMap().AddUserToMap(user, user.Coordinate);
 
                 var nextCoord = room.GetGameMap().GetRandomValidWalkableSquare();
-                user.MoveTo(nextCoord.X, nextCoord.Y);
+                await user.MoveTo(nextCoord.X, nextCoord.Y);
             }
 
             item.PetsList.Clear();
-            return Task.CompletedTask;
+            return;
         }
 
         internal async Task PetBreedResult()
@@ -88,7 +88,7 @@ namespace Oblivion.Messages.Handlers
             // petid2
 
             item.ExtraData = "1";
-            await  item.UpdateState();
+            await item.UpdateState();
 
             var randomNmb = new Random().Next(101);
             var petType = 0;
@@ -164,7 +164,7 @@ namespace Oblivion.Messages.Handlers
                 return;
 
             item.ExtraData = "2";
-            await  item.UpdateState();
+            await item.UpdateState();
 
             await room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
 
@@ -180,7 +180,8 @@ namespace Oblivion.Messages.Handlers
                 case Interaction.BreedingBear:
                     if (room.GetRoomItemHandler().BreedingBear.ContainsKey(item.VirtualId))
                         room.GetRoomItemHandler().BreedingBear.Remove(item.VirtualId);
-                    await Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_BearBreeder", 1);
+                    await Oblivion.GetGame().GetAchievementManager()
+                        .ProgressUserAchievement(Session, "ACH_BearBreeder", 1);
                     break;
             }
 
@@ -570,7 +571,8 @@ namespace Oblivion.Messages.Handlers
                 {
                     using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        await adapter.RunFastQueryAsync($"UPDATE items_rooms SET room_id = NULL WHERE id = '{item.Id}'");
+                        await adapter.RunFastQueryAsync(
+                            $"UPDATE items_rooms SET room_id = NULL WHERE id = '{item.Id}'");
                         await room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
                     }
                 }
@@ -723,7 +725,7 @@ namespace Oblivion.Messages.Handlers
                     var message = new ServerMessage(LibraryParser.OutgoingRequest("UpdateRoomItemMessageComposer"));
                     item.Serialize(message);
                     await room.SendMessageAsync(message);
-                    await  item.UpdateState();
+                    await item.UpdateState();
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
                         await queryReactor.RunFastQueryAsync(
@@ -760,22 +762,22 @@ namespace Oblivion.Messages.Handlers
             //await Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.ExploreFindItem, item.GetBaseItem().itemId);
             if (!item.GetBaseItem().StackMultipler || !hasRightsOne) return;
             foreach (var current in room.GetGameMap().GetRoomUsers(new Point(item.X, item.Y)))
-                await  room.GetRoomUserManager().UpdateUserStatus(current, true);
+                await room.GetRoomUserManager().UpdateUserStatus(current, true);
         }
 
-        internal Task TriggerItemDiceSpecial()
+        internal async Task TriggerItemDiceSpecial()
         {
             if (Session?.GetHabbo() == null)
-                return Task.CompletedTask;
+                return;
             var room =
                 Session.GetHabbo().CurrentRoom;
             var item = room?.GetRoomItemHandler()
                 .GetItem(Oblivion.GetGame().GetItemManager().GetRealId(Request.GetUInteger()));
             if (item == null)
-                return Task.CompletedTask;
+                return;
             var hasRights = room.CheckRights(Session);
-            item.Interactor.OnTrigger(Session, item, -1, hasRights);
-            return Task.CompletedTask;
+            await item.Interactor.OnTrigger(Session, item, -1, hasRights);
+            return;
         }
 
         internal async Task OpenPostit()
@@ -1003,7 +1005,7 @@ namespace Oblivion.Messages.Handlers
             room.MoodlightData.CurrentPreset = num;
             await room.MoodlightData.UpdatePreset(num, color, intensity, bgOnly);
             item.ExtraData = room.MoodlightData.GenerateExtraData();
-            await  item.UpdateState();
+            await item.UpdateState();
         }
 
         internal async Task SwitchMoodlightStatus()
@@ -1022,7 +1024,7 @@ namespace Oblivion.Messages.Handlers
             else
                 await room.MoodlightData.Enable();
             item.ExtraData = room.MoodlightData.GenerateExtraData();
-            await  item.UpdateState();
+            await item.UpdateState();
         }
 
         internal async Task SaveRoomBg()
@@ -1059,7 +1061,7 @@ namespace Oblivion.Messages.Handlers
             item.Serialize(message);
             await room.SendMessage(message);
 
-            await  item.UpdateState();
+            await item.UpdateState();
         }
 
         internal async Task InitTrade()
@@ -1235,20 +1237,21 @@ namespace Oblivion.Messages.Handlers
                 await userTrade.Unaccept(Session.GetHabbo().Id);
         }
 
-        internal Task CompleteTrade()
+        internal async Task CompleteTrade()
         {
             if (Session?.GetHabbo() == null)
-                return Task.CompletedTask;
+                return;
             var room =
                 Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CanTradeInRoom)
             {
-                return Task.CompletedTask;
+                return;
             }
 
             var userTrade = room.GetUserTrade(Session.GetHabbo().Id);
-            userTrade?.CompleteTrade(Session.GetHabbo().Id);
-            return Task.CompletedTask;
+            if (userTrade != null)
+                await userTrade.CompleteTrade(Session.GetHabbo().Id);
+            return;
         }
 
         internal async Task RecycleItems()
@@ -1703,7 +1706,8 @@ namespace Oblivion.Messages.Handlers
                     using (
                         var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        await queryReactor.RunFastQueryAsync(string.Concat("UPDATE pets_data SET hairdye = '", pet.PetData.HairDye,
+                        await queryReactor.RunFastQueryAsync(string.Concat("UPDATE pets_data SET hairdye = '",
+                            pet.PetData.HairDye,
                             "' WHERE id = ", pet.PetData.PetId));
                         goto IL_40C;
                     }
@@ -1737,7 +1741,8 @@ namespace Oblivion.Messages.Handlers
                     using (
                         var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
-                        await queryReactor.RunFastQueryAsync("UPDATE pets_data SET race = '" + pet.PetData.Race + "' WHERE id = " +
+                        await queryReactor.RunFastQueryAsync("UPDATE pets_data SET race = '" + pet.PetData.Race +
+                                                             "' WHERE id = " +
                                                              pet.PetData.PetId);
                         await queryReactor.RunFastQueryAsync(
                             $"DELETE FROM items_rooms WHERE id='{item.Id}' LIMIT 1");
@@ -1855,7 +1860,8 @@ namespace Oblivion.Messages.Handlers
                 var guidId = Guid.NewGuid();
                 ShortGuid id = guidId;
 
-                await queryReactor.RunFastQueryAsync($"UPDATE pets_data SET have_saddle = 0 WHERE id = {pet.PetData.PetId}");
+                await queryReactor.RunFastQueryAsync(
+                    $"UPDATE pets_data SET have_saddle = 0 WHERE id = {pet.PetData.PetId}");
                 await queryReactor.RunNoLockFastQueryAsync(
                     $"INSERT INTO items_rooms (id, user_id, base_item) VALUES ('{id}', {Session.GetHabbo().Id}, 4221);");
             }
@@ -2115,7 +2121,7 @@ namespace Oblivion.Messages.Handlers
             if (item.GetBaseItem().InteractionType != Interaction.YoutubeTv)
                 return;
             item.ExtraData = video;
-            await  item.UpdateState();
+            await item.UpdateState();
             var serverMessage = new ServerMessage();
             await serverMessage.InitAsync(LibraryParser.OutgoingRequest("YouTubeLoadVideoMessageComposer"));
             await serverMessage.AppendIntegerAsync(num);
@@ -2184,7 +2190,8 @@ namespace Oblivion.Messages.Handlers
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                await queryReactor.RunFastQueryAsync(string.Concat("UPDATE bots SET room_id = '", room.RoomId, "', x = '", x,
+                await queryReactor.RunFastQueryAsync(string.Concat("UPDATE bots SET room_id = '", room.RoomId,
+                    "', x = '", x,
                     "', y = '", y, "' WHERE id = '", num, "'"));
             }
 
@@ -2193,7 +2200,7 @@ namespace Oblivion.Messages.Handlers
             bot.X = x;
             bot.Y = y;
 
-            room.GetRoomUserManager().DeployBot(bot, null);
+            await room.GetRoomUserManager().DeployBot(bot, null);
             bot.WasPicked = false;
             Session.GetHabbo().GetInventoryComponent().MoveBotToRoom(num);
             await Session.SendMessage(await Session.GetHabbo().GetInventoryComponent().SerializeBotInventory());
@@ -2570,7 +2577,8 @@ namespace Oblivion.Messages.Handlers
             await room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                await queryReactor.RunFastQueryAsync($"UPDATE items_rooms SET room_id = NULL WHERE id='{item.Id}' LIMIT 1");
+                await queryReactor.RunFastQueryAsync(
+                    $"UPDATE items_rooms SET room_id = NULL WHERE id='{item.Id}' LIMIT 1");
             }
         }
 

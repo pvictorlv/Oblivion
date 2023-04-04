@@ -62,7 +62,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         /// </summary>
         /// <param name="item">The item.</param>
         /// <param name="itemId">The item identifier.</param>
-        internal async Task AddPyramid(RoomItem item, string itemId)
+        internal void AddPyramid(RoomItem item, string itemId)
         {
             _banzaiPyramids[itemId] = item;
         }
@@ -136,13 +136,14 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Handlers
         /// <summary>
         ///     Destroys this instance.
         /// </summary>
-        internal async Task Destroy()
+        internal Task Destroy()
         {
             _banzaiTeleports?.Destroy();
             _banzaiPyramids?.Clear();
             _banzaiPyramids = null;
             _banzaiTeleports = null;
             _room = null;
+            return Task.CompletedTask;
         }
 
         /// <summary>

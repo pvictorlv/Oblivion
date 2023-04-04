@@ -37,11 +37,11 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var roomId = session.GetHabbo().CurrentRoom.RoomId;
             var users = new List<RoomUser>(session.GetHabbo().CurrentRoom.GetRoomUserManager().UserList.Values);
 
-            Oblivion.GetGame().GetRoomManager().UnloadRoom(session.GetHabbo().CurrentRoom, "");
+            await Oblivion.GetGame().GetRoomManager().UnloadRoom(session.GetHabbo().CurrentRoom, "");
 
             if (!_reEnter)
                 return true;
-            Oblivion.GetGame().GetRoomManager().LoadRoom(roomId);
+            await Oblivion.GetGame().GetRoomManager().LoadRoom(roomId);
 
             var roomFwd = new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
             await roomFwd.AppendIntegerAsync(roomId);

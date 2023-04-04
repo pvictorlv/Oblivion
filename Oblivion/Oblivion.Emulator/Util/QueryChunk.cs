@@ -57,7 +57,7 @@ namespace Oblivion.Util
         /// Adds the query.
         /// </summary>
         /// <param name="query">The query.</param>
-        internal async Task AddQuery(string query)
+        internal Task AddQuery(string query)
         {
             {
                 _queryCount++;
@@ -67,14 +67,14 @@ namespace Oblivion.Util
                 {
                     case EndingType.Sequential:
                         _queries.Append(";");
-                        return;
+                        return Task.CompletedTask;
 
                     case EndingType.Continuous:
                         _queries.Append(",");
-                        return;
+                        return Task.CompletedTask;
 
                     default:
-                        return;
+                        return Task.CompletedTask;
                 }
             }
         }
@@ -84,9 +84,10 @@ namespace Oblivion.Util
         /// </summary>
         /// <param name="parameterName">Name of the parameter.</param>
         /// <param name="value">The value.</param>
-        internal async Task AddParameter(string parameterName, object value)
+        internal Task AddParameter(string parameterName, object value)
         {
             _parameters.Add(parameterName, value);
+            return Task.CompletedTask;
         }
 
         /// <summary>

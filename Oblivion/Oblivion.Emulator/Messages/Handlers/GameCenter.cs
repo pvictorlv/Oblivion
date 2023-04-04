@@ -144,9 +144,9 @@ namespace Oblivion.Messages.Handlers
 
         }
 
-        internal async Task InitializeGameCenter()
+        internal Task InitializeGameCenter()
         {
-            
+            return Task.CompletedTask;
         }
         internal async Task GetGameListing()
         {

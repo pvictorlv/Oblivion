@@ -127,10 +127,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             return true;
         }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             Requested = true;
-            return true;
+            return Task.FromResult(true);
         }
 
         public void Dispose()

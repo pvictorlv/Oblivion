@@ -170,9 +170,10 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <summary>
         ///     Called when [room exit].
         /// </summary>
-        internal async Task OnRoomExit()
+        internal Task OnRoomExit()
         {
             CurrentEffect = 0;
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -231,11 +232,12 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <summary>
         ///     Disposes this instance.
         /// </summary>
-        internal async Task Dispose()
+        internal Task Dispose()
         {
             _effects.Clear();
             _effects = null;
             _session = null;
+            return Task.CompletedTask;
         }
 
         /// <summary>

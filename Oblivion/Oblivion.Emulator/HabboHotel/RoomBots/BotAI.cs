@@ -119,14 +119,14 @@ namespace Oblivion.HabboHotel.RoomBots
         /// </summary>
         /// <param name="user">The user.</param>
         /// <param name="message">The message.</param>
-        internal abstract void OnUserShout(RoomUser user, string message);
+        internal abstract Task OnUserShout(RoomUser user, string message);
 
         /// <summary>
         ///     Called when [timer tick].
         /// </summary>
         internal abstract Task OnTimerTick();
 
-        internal abstract void OnChatTick();
+        internal abstract Task OnChatTick();
 
         /// <summary>
         ///     Modifieds this instance.

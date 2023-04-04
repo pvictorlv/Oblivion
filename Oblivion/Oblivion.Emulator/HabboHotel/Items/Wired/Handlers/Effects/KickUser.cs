@@ -120,28 +120,28 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             set { }
         }
 
-        public async Task<bool> Execute(params object[] Params)
+        public Task<bool> Execute(params object[] Params)
         {
             
             var roomUser = (RoomUser)Params[0];
-            if (roomUser?.GetClient()?.GetHabbo() == null) return false;
+            if (roomUser?.GetClient()?.GetHabbo() == null) return Task.FromResult(false);
             var item = (Interaction)Params[1];
             
             if (_mBanned.Contains(item))
-                return false;
+                return Task.FromResult(false);
 
-            if (Room == null) return false;
+            if (Room == null) return Task.FromResult(false);
 
-            if (Room.CheckRights(roomUser.GetClient(), true)) return false;
+            if (Room.CheckRights(roomUser.GetClient(), true)) return Task.FromResult(false);
 
             Requested = true;
 
-            if (_queue == null || _queue.Contains(roomUser)) return false;
+            if (_queue == null || _queue.Contains(roomUser)) return Task.FromResult(false);
             _queue.Enqueue(roomUser);
 
 
 
-            return true;
+            return Task.FromResult(true);
         }
 
 

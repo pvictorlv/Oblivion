@@ -646,17 +646,17 @@ namespace Oblivion
         /// <summary>
         ///     Perform's the Emulator Shutdown
         /// </summary>
-        internal static void PerformShutDown()
+        internal static async void PerformShutDown()
         {
-            PerformShutDown(false);
+            await PerformShutDown(false);
         }
 
         /// <summary>
         ///     Performs the restart.
         /// </summary>
-        internal static void PerformRestart()
+        internal static async void PerformRestart()
         {
-            PerformShutDown(true);
+            await PerformShutDown(true);
         }
 
         /// <summary>

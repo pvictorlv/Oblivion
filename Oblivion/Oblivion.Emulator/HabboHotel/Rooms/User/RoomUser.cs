@@ -810,13 +810,14 @@ namespace Oblivion.HabboHotel.Rooms.User
             var colorBubble = session.GetHabbo().Prefixes[2];
             var name = session.GetHabbo().UserName;
 
+            /*
             if (colorPrefix != "#000000" || !string.IsNullOrWhiteSpace(prefix) || colorBubble != "#000000")
             {
                 name = $"<font color='#{colorPrefix}'>{prefix}</font> <font color='#{colorBubble}'>{name}</font>";
                 await ChangeName(name);
                 needReChange = true;
             }
-
+            */
             using (var chatMsg = new ServerMessage())
             {
                 await chatMsg.InitAsync(shout

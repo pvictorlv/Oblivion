@@ -101,7 +101,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="model">The model.</param>
         /// <param name="roomId">The room identifier.</param>
         /// <returns>RoomModel.</returns>
-        internal RoomModel GetModel(string model, uint roomId) => LoadModel(model, roomId);
+        internal async Task<RoomModel> GetModel(string model, uint roomId) => await LoadModel(model, roomId);
 
         /// <summary>
         ///     Generates the nullable room data.
@@ -258,7 +258,7 @@ namespace Oblivion.HabboHotel.Rooms
 
         private Dictionary<string, RoomModel> _cachedDefaultModels;
 
-        internal RoomModel LoadModel(string model, uint roomid)
+        internal async Task<RoomModel> LoadModel(string model, uint roomid)
         {
             try
             {
@@ -268,7 +268,7 @@ namespace Oblivion.HabboHotel.Rooms
                         return modelData;
                 }
 
-                using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     if (model == "custom")
                     {

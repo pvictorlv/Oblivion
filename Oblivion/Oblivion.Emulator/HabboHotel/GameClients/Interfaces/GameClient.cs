@@ -144,8 +144,11 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 var ip = GetConnection()?.Channel.RemoteAddress.ToString();
                 if (ip == null)
                     return false;
-                var userData = UserDataFactory.GetUserData(authTicket, out var errorCode);
+                var data =await UserDataFactory.GetUserData(authTicket);
 
+                var errorCode = data.ErrorCode;
+                var userData = data.Data;
+                
                 if (errorCode == 1 || errorCode == 2 || userData?.User == null)
                     return false;
 

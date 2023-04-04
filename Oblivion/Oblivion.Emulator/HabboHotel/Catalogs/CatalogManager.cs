@@ -242,7 +242,7 @@ namespace Oblivion.HabboHotel.Catalogs
         ///     Initializes the specified database client.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal async Task<int> Initialize(IQueryAdapter dbClient)
+        internal Task<int> Initialize(IQueryAdapter dbClient)
         {
             try
             {
@@ -381,7 +381,7 @@ namespace Oblivion.HabboHotel.Catalogs
                 Console.WriteLine(e);
             }
 
-            return Categories.Count;
+            return Task.FromResult(Categories.Count);
         }
 
         /// <summary>

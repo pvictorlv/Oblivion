@@ -652,7 +652,7 @@ namespace Oblivion.HabboHotel.Support
         ///     Loads the message presets.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal async Task LoadMessagePresets(IQueryAdapter dbClient)
+        internal Task LoadMessagePresets(IQueryAdapter dbClient)
         {
             UserMessagePresets.Clear();
             RoomMessagePresets.Clear();
@@ -666,7 +666,7 @@ namespace Oblivion.HabboHotel.Support
             var table3 = dbClient.GetTable();
 
             if (table == null || table2 == null)
-                return;
+                return Task.CompletedTask;
 
             foreach (DataRow dataRow in table.Rows)
             {
@@ -697,6 +697,7 @@ namespace Oblivion.HabboHotel.Support
                         dataRow3["ban_message"].ToString(), short.Parse(dataRow3["ban_hours"].ToString()),
                         dataRow3["avatar_ban"].ToString() == "1", dataRow3["mute"].ToString() == "1",
                         dataRow3["trade_lock"].ToString() == "1"));
+            return Task.CompletedTask;
         }
 
 

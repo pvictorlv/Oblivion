@@ -107,14 +107,14 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             Requested = false;
             return true;
         }
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             var item = (Interaction) stuff[1];
 
             if (item == Interaction.TriggerRepeater || item == Interaction.TriggerLongRepeater)
-                return false;
+                return Task.FromResult(false);
 
-            if (string.IsNullOrEmpty(OtherString)) return false;
+            if (string.IsNullOrEmpty(OtherString)) return Task.FromResult(false);
 
 
             if (_bot?.BotData == null || _bot.BotData.Name != OtherString)
@@ -125,7 +125,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             Requested = true;
 
 
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

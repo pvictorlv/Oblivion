@@ -429,28 +429,28 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
             _gates[3] = item;
         }
 
-        internal async Task UnRegisterGate(RoomItem item)
+        internal void UnRegisterGate(RoomItem item)
         {
             switch (item.Team)
             {
                 case Team.Red:
                     _gates[1] = null;
-                    return;
+                    return ;
 
                 case Team.Green:
                     _gates[2] = null;
-                    return;
+                    return ;
 
                 case Team.Blue:
                     _gates[0] = null;
-                    return;
+                    return ;
 
                 case Team.Yellow:
                     _gates[3] = null;
-                    return;
+                    return ;
 
                 default:
-                    return;
+                    return ;
             }
         }
 

@@ -48,7 +48,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Freeze
                 {
                     user.Freezed = false;
                     user.FreezeCounter = 0;
-                    ActivateShield(user);
+                    await ActivateShield(user);
                 }
             }
             if (!user.ShieldActive) return;

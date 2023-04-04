@@ -136,14 +136,14 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
                     if (roomItem.Type == 'e') // is effect
                     {
-                        user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent()
+                        await user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent()
                             .AddNewEffect(roomItem.SpriteId, 3600, 1);
                     }
                     else
                     {
-                        user.GetClient().GetHabbo().GetInventoryComponent()
+                        await user.GetClient().GetHabbo().GetInventoryComponent()
                             .AddNewItem("0u", roomItem.ItemId, "0", 0u, true, false, 0, 0);
-                        user.GetClient()
+                        await user.GetClient()
                             .SendMessage(new ServerMessage(
                                 LibraryParser.OutgoingRequest("UpdateInventoryMessageComposer")));
                     }

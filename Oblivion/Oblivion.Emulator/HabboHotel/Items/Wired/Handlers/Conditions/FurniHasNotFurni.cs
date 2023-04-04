@@ -60,8 +60,27 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
                 return Task.FromResult(true);
 
             if (!OtherBool)
-                return Task.FromResult(!Items.All(item => item.GetRoom().GetGameMap().HasHeightestItem(item.Coordinate, item.Z)));
-            return Task.FromResult(!Items.Any(item => item.GetRoom().GetGameMap().HasHeightestItem(item.Coordinate, item.Z)));
+            {
+                bool all = true;
+                foreach (var item in Items)
+                {
+                    if (item.GetRoom().GetGameMap().HasHeightestItem(item.Coordinate, item.Z)) continue;
+                    all = false;
+                    break;
+                }
+
+                return Task.FromResult(!all);
+            }
+
+            bool any = false;
+            foreach (var item in Items)
+            {
+                if (!item.GetRoom().GetGameMap().HasHeightestItem(item.Coordinate, item.Z)) continue;
+                any = true;
+                break;
+            }
+
+            return Task.FromResult(!any);
         }
 
         public void Dispose()

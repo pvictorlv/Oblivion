@@ -29,7 +29,7 @@ namespace Oblivion.HabboHotel.Camera
 
         internal Item PhotoPoster => _photoPoster;
 
-        internal async Task Init(ItemManager itemDataManager)
+        internal Task Init(ItemManager itemDataManager)
         {
             ConfigurationData.Data.TryGetValue("camera.path.preview", out _previewPath);
             ConfigurationData.Data.TryGetValue("camera.path.purchased", out _purchasedPath);
@@ -54,6 +54,7 @@ namespace Oblivion.HabboHotel.Camera
                 Logging.LogException("Couldn't load photo poster item " + ItemId + ", no furniture record found.");
 
             Out.WriteLine("Loaded Camera Photo Manager", "Oblivion.Camera");
+            return Task.CompletedTask;
         }
 
         public CameraPhotoPreview GetPreview(int PhotoId) =>

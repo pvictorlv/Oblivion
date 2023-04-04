@@ -70,10 +70,10 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             return Task.CompletedTask;
         }
 
-        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             if (item?.GetRoom() == null || session?.GetHabbo() == null)
-                return Task.CompletedTask;
+                return ;
 
             var user = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
 
@@ -82,15 +82,15 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 if (user.Coordinate == item.Coordinate || user.Coordinate == item.SquareInFront)
                 {
                     if (item.InteractingUser != 0)
-                        return Task.CompletedTask;
+                        return ;
 
                     item.InteractingUser = user.GetClient().GetHabbo().Id;
                 }
                 else if (user.CanWalk)
-                    user.MoveTo(item.SquareInFront);
+                    await user.MoveTo(item.SquareInFront);
             }
 
-            return Task.CompletedTask;
+            return ;
         }
     }
 }

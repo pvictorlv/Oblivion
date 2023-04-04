@@ -12,20 +12,20 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorFxBox : FurniInteractorModel
     {
-        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             if (!hasRights)
-                return Task.CompletedTask;
+                return ;
 
             RoomUser user = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
 
             if (user == null)
-                return Task.CompletedTask;
+                return ;
 
             Room room = session.GetHabbo().CurrentRoom;
 
             if (room == null)
-                return Task.CompletedTask;
+                return ;
 
             int effectId = Convert.ToInt32(item.GetBaseItem().Name.Replace("fxbox_fx", ""));
 
@@ -34,15 +34,15 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 while (PathFinder.GetDistance(user.X, user.Y, item.X, item.Y) > 1)
                 {
                     if (user.RotBody == 0)
-                        user.MoveTo(item.X, item.Y + 1);
+                        await user.MoveTo(item.X, item.Y + 1);
                     else if (user.RotBody == 2)
-                        user.MoveTo(item.X - 1, item.Y);
+                        await user.MoveTo(item.X - 1, item.Y);
                     else if (user.RotBody == 4)
-                        user.MoveTo(item.X, item.Y - 1);
+                        await user.MoveTo(item.X, item.Y - 1);
                     else if(user.RotBody == 6)
-                        user.MoveTo(item.X + 1, item.Y);
+                        await user.MoveTo(item.X + 1, item.Y);
                     else
-                        user.MoveTo(item.X, item.Y + 1); // Diagonal user...
+                        await user.MoveTo(item.X, item.Y + 1); // Diagonal user...
                 }
             }
             catch (Exception)
@@ -52,19 +52,19 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             {
                 if (PathFinder.GetDistance(user.X, user.Y, item.X, item.Y) == 1)
                 {
-                    session.GetHabbo().GetAvatarEffectsInventoryComponent().AddNewEffect(effectId, -1, 0);
-                    session.GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(effectId);
+                    await session.GetHabbo().GetAvatarEffectsInventoryComponent().AddNewEffect(effectId, -1, 0);
+                    await session.GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(effectId);
 
-                    Thread.Sleep(500); //Wait 0.5 second until remove furniture. (Delay)
+                    await Task.Delay(500);
+                    
+                    await room.GetRoomItemHandler().RemoveFurniture(session, item.Id, false);
 
-                    room.GetRoomItemHandler().RemoveFurniture(session, item.Id, false);
-
-                    using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
-                        queryReactor.RunNoLockFastQuery("DELETE FROM items_rooms WHERE id = '" + item.Id + "';");
+                    using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
+                        await queryReactor.RunNoLockFastQueryAsync("DELETE FROM items_rooms WHERE id = '" + item.Id + "';");
                 }
             }
 
-            return Task.CompletedTask;
+            return ;
         }
     }
 }

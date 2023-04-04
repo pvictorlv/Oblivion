@@ -27,15 +27,17 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Enters the inquired room.
         /// </summary>
-        internal async Task EnterInquiredRoom()
+        internal Task EnterInquiredRoom()
         {
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Gets the pub.
         /// </summary>
-        internal async Task GetPub()
+        internal Task GetPub()
         {
+            return Task.CompletedTask;
             /* uint roomId = Request.GetUInteger();
              RoomData roomData = Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId);
              if (roomData == null)
@@ -130,7 +132,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// News the navigator resize.
         /// </summary>
-        internal async Task NewNavigatorResize()
+        internal Task NewNavigatorResize()
         {
             int x = Request.GetInteger();
             int y = Request.GetInteger();
@@ -140,6 +142,7 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().Preferences.NewnaviY = y;
             Session.GetHabbo().Preferences.NewnaviWidth = width;
             Session.GetHabbo().Preferences.NewnaviHeight = height;
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -223,17 +226,19 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// News the navigator collapse category.
         /// </summary>
-        internal async Task NewNavigatorCollapseCategory()
+        internal Task NewNavigatorCollapseCategory()
         {
             Request.GetString();
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// News the navigator uncollapse category.
         /// </summary>
-        internal async Task NewNavigatorUncollapseCategory()
+        internal Task NewNavigatorUncollapseCategory()
         {
             Request.GetString();
+            return Task.CompletedTask;
         }
 
         /// <summary>

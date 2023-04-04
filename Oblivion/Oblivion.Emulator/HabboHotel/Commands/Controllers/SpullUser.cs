@@ -49,19 +49,19 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             switch (user.RotBody)
             {
                 case 0:
-                    user2.MoveTo(user.X, user.Y - 1);
+                    await user2.MoveTo(user.X, user.Y - 1);
                     break;
 
                 case 2:
-                    user2.MoveTo(user.X + 1, user.Y);
+                    await user2.MoveTo(user.X + 1, user.Y);
                     break;
 
                 case 4:
-                    user2.MoveTo(user.X, user.Y + 1);
+                    await user2.MoveTo(user.X, user.Y + 1);
                     break;
 
                 case 6:
-                    user2.MoveTo(user.X - 1, user.Y);
+                    await user2.MoveTo(user.X - 1, user.Y);
                     break;
             }
             return true;

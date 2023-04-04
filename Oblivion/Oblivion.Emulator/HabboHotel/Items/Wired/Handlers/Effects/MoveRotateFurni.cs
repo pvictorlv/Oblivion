@@ -100,17 +100,17 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         }
         public bool Requested;
 
-        public async Task<bool> Execute(params object[] Params)
+        public Task<bool> Execute(params object[] Params)
         {
             if (Item == null || Items.Count == 0)
-                return false;
+                return Task.FromResult(false);
 
 
 
             Requested = true;
 
 
-            return true;
+            return Task.FromResult(true);
         }
 
         public async Task<bool> OnCycle()

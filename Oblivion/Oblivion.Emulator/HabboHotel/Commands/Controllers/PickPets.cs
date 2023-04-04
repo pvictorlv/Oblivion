@@ -24,14 +24,15 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             var room = session.GetHabbo().CurrentRoom;
-           foreach (
+            foreach (
                 var pet in
-                    room.GetRoomUserManager().GetPets().Where(pet => pet.OwnerId == session.GetHabbo().Id))
+                room.GetRoomUserManager().GetPets().Where(pet => pet.OwnerId == session.GetHabbo().Id))
             {
                 session.GetHabbo().GetInventoryComponent().AddPet(pet);
-                room.GetRoomUserManager().RemoveBot(pet.VirtualId, false);
+                await room.GetRoomUserManager().RemoveBot(pet.VirtualId, false);
             }
-            await session.SendMessage(session.GetHabbo().GetInventoryComponent().SerializePetInventory());
+
+            await session.SendMessage(await session.GetHabbo().GetInventoryComponent().SerializePetInventory());
             return true;
         }
     }

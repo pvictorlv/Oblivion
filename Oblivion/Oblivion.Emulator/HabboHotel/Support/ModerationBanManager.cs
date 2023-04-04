@@ -42,7 +42,7 @@ namespace Oblivion.HabboHotel.Support
         ///     Loads the bans.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal async Task LoadBans(IQueryAdapter dbClient)
+        internal Task LoadBans(IQueryAdapter dbClient)
         {
             _bannedUsernames.Clear();
             _bannedIPs.Clear();
@@ -94,6 +94,8 @@ namespace Oblivion.HabboHotel.Support
                         break;
                 }
             }
+
+            return Task.CompletedTask;
         }
 
         /// <summary>

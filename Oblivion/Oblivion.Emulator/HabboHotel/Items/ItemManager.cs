@@ -128,7 +128,7 @@ namespace Oblivion.HabboHotel.Items
                     var type = Convert.ToChar(dataRow["type"]);
                     var name = Convert.ToString(dataRow["item_name"]);
                     var flatId = Convert.ToInt32(dataRow["flat_id"]);
-                    var stackHeightStr = dataRow["stack_height"].ToString();
+                    var stackHeightStr = dataRow["stack_height"].ToString().Replace(",", ".");
                     var heightAdjustable = dataRow["height_adjustable"].ToString();
                     double stackHeight;
                     uint.TryParse(dataRow["interaction_modes_count"].ToString(), out var modes);

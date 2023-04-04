@@ -131,14 +131,14 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Triggers
             set { }
         }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 
             if (NextExec == 0L || NextExec < Oblivion.Now())
                 NextExec = Oblivion.Now() + Delay;
 
-            return false;
+            return Task.FromResult(false);
         }
     }
 }

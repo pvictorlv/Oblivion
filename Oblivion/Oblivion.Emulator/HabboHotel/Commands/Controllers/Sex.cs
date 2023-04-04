@@ -58,24 +58,24 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             if (!(Math.Abs(fuckerUser.X - fuckedUser.X) >= 2) || (Math.Abs(fuckerUser.Y - fuckedUser.Y) >= 2))
             {
-                Task.Run(async () =>
+                await Task.Run(async () =>
                 {
-                    fuckerUser.Chat(client, "*Virando " + fuckedUser.GetUserName() + " pra começar a fazer sexo*", false,0);
+                    await fuckerUser.Chat(client, "*Virando " + fuckedUser.GetUserName() + " pra começar a fazer sexo*", false,0);
                     await Task.Delay(1000);
-                    fuckedUser.Chat(client, "Gostei da ideia, vamos fazer um sexo gostoso!", false, 0);
+                    await fuckedUser.Chat(client, "Gostei da ideia, vamos fazer um sexo gostoso!", false, 0);
                     await Task.Delay(1000);
-                    fuckerUser.ApplyEffect(507);
-                    fuckedUser.ApplyEffect(104);
-                    fuckerUser.Chat(client, "*Agarra, beija e chupa " + fuckedUser.GetUserName() + " deliciosamente*", false, 0);
+                    await fuckerUser.ApplyEffect(507);
+                    await fuckedUser.ApplyEffect(104);
+                    await fuckerUser.Chat(client, "*Agarra, beija e chupa " + fuckedUser.GetUserName() + " deliciosamente*", false, 0);
                     await Task.Delay(2000);
-                    fuckedUser.Chat(client, "*Ai, ai, ai, to quase lá, vai com força, vaai*", false, 0);
+                    await fuckedUser.Chat(client, "*Ai, ai, ai, to quase lá, vai com força, vaai*", false, 0);
                     await Task.Delay(1500);
-                    fuckedUser.Chat(client, "Isso, mais forte, mais forte, AAAAAAAH *GOZEI*", false, 0);
+                    await fuckedUser.Chat(client, "Isso, mais forte, mais forte, AAAAAAAH *GOZEI*", false, 0);
                     await Task.Delay(1000);
-                    fuckerUser.Chat(client, "*Ai que dlç, gozei, vamos outra?!*", false, 0);
+                    await fuckerUser.Chat(client, "*Ai que dlç, gozei, vamos outra?!*", false, 0);
                 });
-                fuckerUser.ApplyEffect(0);
-                fuckedUser.ApplyEffect(0);
+                await fuckerUser.ApplyEffect(0);
+                await fuckedUser.ApplyEffect(0);
             }
             else
             {

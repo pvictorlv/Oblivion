@@ -258,14 +258,15 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             await  item.UpdateState(false, true);
         }
 
-        internal async Task StartGame()
+        internal Task StartGame()
         {
             GetRoom().GetWiredHandler().ResetExtraString(Interaction.ActionGiveScore);
+            return Task.CompletedTask;
         }
 
         internal Room GetRoom() => _room;
 
-        internal async Task Destroy()
+        internal Task Destroy()
         {
             Array.Clear(TeamPoints, 0, TeamPoints.Length);
             _redTeamItems.Destroy();
@@ -278,6 +279,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games
             _greenTeamItems = null;
             _yellowTeamItems = null;
             _room = null;
+            return Task.CompletedTask;
         }
 
         private static bool IsSoccerGoal(Interaction type) =>
