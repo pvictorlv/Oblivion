@@ -7,9 +7,10 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorGroupForumTerminal : FurniInteractorModel
     {
-        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             uint.Parse(item.ExtraData);
+            return Task.CompletedTask;
         }
     }
 }

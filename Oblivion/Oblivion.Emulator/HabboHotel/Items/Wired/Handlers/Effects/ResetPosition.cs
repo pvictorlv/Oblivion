@@ -149,15 +149,15 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                         await serverMessage.AppendStringAsync(fItem.Z.ToString(Oblivion.CultureInfo));
                         await serverMessage.AppendStringAsync(zToSet.ToString(Oblivion.CultureInfo));
                         await serverMessage.AppendIntegerAsync(0);
-                        Room.SendMessage(serverMessage);
+                        await Room.SendMessage(serverMessage);
 
-                        Room.GetRoomItemHandler().SetFloorItem(null, fItem, xToSet, yToSet, rotationToSet, false, false,
+                        await Room.GetRoomItemHandler().SetFloorItem(null, fItem, xToSet, yToSet, rotationToSet, false, false,
                             true,
                             false, true);
 
                         fItem.ExtraData = extraDataToSet;
-                        fItem.UpdateState();
-                        fItem.GetRoom().GetGameMap().UpdateMapForItem(fItem);
+                        await fItem.UpdateState();
+                        await fItem.GetRoom().GetGameMap().UpdateMapForItem(fItem);
 
                     }
 
@@ -175,11 +175,11 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             }
 
         }
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             _mNext = Oblivion.Now() + Delay;
             Requested = true;
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

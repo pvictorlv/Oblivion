@@ -7,7 +7,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorHopper : FurniInteractorModel
     {
-        public override async Task OnPlace(GameClient session, RoomItem item)
+        public override Task OnPlace(GameClient session, RoomItem item)
         {
             item.GetRoom().GetRoomItemHandler().HopperCount++;
 
@@ -20,7 +20,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
 
             if (item.InteractingUser == 0u)
-                return;
+                return Task.CompletedTask;
 
             var roomUserByHabbo = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(item.InteractingUser);
 
@@ -32,9 +32,10 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
 
             item.InteractingUser = 0u;
+            return Task.CompletedTask;
         }
 
-        public override async Task OnRemove(GameClient session, RoomItem item)
+        public override Task OnRemove(GameClient session, RoomItem item)
         {
             item.GetRoom().GetRoomItemHandler().HopperCount--;
 
@@ -47,37 +48,39 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             }
 
             if (item.InteractingUser == 0u)
-                return;
+                return Task.CompletedTask;
 
             var roomUserByHabbo = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(item.InteractingUser);
 
             roomUserByHabbo?.UnlockWalking();
 
             item.InteractingUser = 0u;
+            return Task.CompletedTask;
         }
 
-        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             if (item?.GetRoom() == null || session?.GetHabbo() == null)
-                return;
+                return Task.CompletedTask;
 
             var roomUserByHabbo = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
 
             if (roomUserByHabbo == null)
-                return;
+                return Task.CompletedTask;
 
             if (!(roomUserByHabbo.Coordinate == item.Coordinate) && !(roomUserByHabbo.Coordinate == item.SquareInFront))
             {
                 if (roomUserByHabbo.CanWalk)
                     roomUserByHabbo.MoveTo(item.SquareInFront);
-                return;
+                return Task.CompletedTask;
             }
 
             if (item.InteractingUser != 0u)
-                return;
+                return Task.CompletedTask;
 
             roomUserByHabbo.TeleDelay = 2;
             item.InteractingUser = roomUserByHabbo.GetClient().GetHabbo().Id;
+            return Task.CompletedTask;
         }
     }
 }

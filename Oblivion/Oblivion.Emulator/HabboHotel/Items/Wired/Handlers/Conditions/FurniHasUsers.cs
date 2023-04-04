@@ -60,20 +60,20 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             set { }
         }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 
             if (Items == null || Items.Count <= 0)
-                return false;
+                return Task.FromResult(false);
 
 
             foreach (var item in Items)
             {
-                if (item?.GetRoom().GetGameMap()?.GetRoomUsers(item.Coordinate)?.Count <= 0) return false;
+                if (item?.GetRoom().GetGameMap()?.GetRoomUsers(item.Coordinate)?.Count <= 0) return Task.FromResult(false);
             }
 
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

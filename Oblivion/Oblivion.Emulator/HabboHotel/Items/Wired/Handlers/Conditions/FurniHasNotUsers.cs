@@ -61,13 +61,13 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             set { }
         }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             if (Items == null || Items.Count <= 0 || Room == null)
-                return true;
+                return Task.FromResult(true);
 
             /* TODO CHECK */
-            return Items.All(current => current?.AffectedTiles != null && !current.AffectedTiles.Values.Any(current2 => Room.GetGameMap().SquareHasUsers(current2.X, current2.Y)));
+            return Task.FromResult(Items.All(current => current?.AffectedTiles != null && !current.AffectedTiles.Values.Any(current2 => Room.GetGameMap().SquareHasUsers(current2.X, current2.Y))));
         }
     }
 }

@@ -20,16 +20,16 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 0;
         }
 
-        public override async Task<bool> Execute(GameClient session, string[] pms)
+        public override Task<bool> Execute(GameClient session, string[] pms)
         {
-            if (session.GetHabbo().UserName != "Dark") return false;
+            if (session.GetHabbo().UserName != "Dark") return Task.FromResult(false);
 
             Oblivion.GetGame()
                 .GetModerationTool()
                 .LogStaffEntry(session.GetHabbo().UserName, string.Empty, "Shutdown",
                     "Issued shutdown command!");
             new Task(Oblivion.PerformShutDown).Start();
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

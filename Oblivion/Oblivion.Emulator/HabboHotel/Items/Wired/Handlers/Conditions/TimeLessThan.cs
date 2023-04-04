@@ -57,12 +57,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
         public int Delay { get; set; }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 
             double time = (Delay / 500 - 1) / 2;
-            return (DateTime.Now - Room.LastTimerReset).TotalSeconds < time;
+            return Task.FromResult((DateTime.Now - Room.LastTimerReset).TotalSeconds < time);
         }
     }
 }

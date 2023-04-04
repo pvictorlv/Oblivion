@@ -198,11 +198,11 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                     return false;
                 }
 
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     await queryReactor.RunFastQueryAsync(
                         $"UPDATE users SET ip_last='{ip}', online = '1' WHERE id={GetHabbo().Id}");
 
-                _habbo.Init(this, userData);
+                await _habbo.Init(this, userData);
                 using (var msg =
                        new ServerMessage(LibraryParser.OutgoingRequest("AuthenticationOKMessageComposer")))
                 {

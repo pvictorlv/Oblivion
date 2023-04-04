@@ -8,10 +8,10 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorFreezeTile : FurniInteractorModel
     {
-        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             if (session == null || session.GetHabbo() == null || item.InteractingUser > 0U)
-                return;
+                return Task.CompletedTask;
 
             var pName = session.GetHabbo().UserName;
             var roomUserByHabbo = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(pName);
@@ -23,6 +23,8 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 if (roomUserByHabbo.Team != Team.None)
                     roomUserByHabbo.ThrowBallAtGoal = true;
             }
+
+            return Task.CompletedTask;
         }
     }
 }

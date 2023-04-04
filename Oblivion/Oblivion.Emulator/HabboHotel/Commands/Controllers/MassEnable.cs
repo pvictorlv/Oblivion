@@ -21,15 +21,15 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 1;
         }
 
-        public override async Task<bool> Execute(GameClient session, string[] pms)
+        public override Task<bool> Execute(GameClient session, string[] pms)
         {
-            if (!ushort.TryParse(pms[0], out var effectId)) return true;
+            if (!ushort.TryParse(pms[0], out var effectId)) return Task.FromResult(true);
 
             var room = session.GetHabbo().CurrentRoom;
             room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
             /* TODO CHECK */ foreach (var user in room.GetRoomUserManager().GetRoomUsers().Where(user => !user.RidingHorse))
                 user.ApplyEffect(effectId);
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

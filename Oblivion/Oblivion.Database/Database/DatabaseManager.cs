@@ -1,6 +1,7 @@
 #region
 
 using System;
+using System.Threading.Tasks;
 using MySqlConnector;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 
@@ -39,6 +40,21 @@ namespace Oblivion.Database
             {
                 IDatabaseClient databaseClient = new DatabaseConnection(_connectionStr);
                 databaseClient.Connect();
+                return databaseClient.GetQueryReactor();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+
+        public async Task<IQueryAdapter> GetQueryReactorAsync()
+        {
+            try
+            {
+                IDatabaseClient databaseClient = new DatabaseConnection(_connectionStr);
+                await databaseClient.ConnectAsync();
                 return databaseClient.GetQueryReactor();
             }
             catch (Exception e)

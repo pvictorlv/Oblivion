@@ -52,24 +52,24 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         }
 
         public bool Disposed { get; set; }
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 
             if (stuff[0] == null)
-                return false;
+                return Task.FromResult(false);
 
             if ((Interaction) stuff[1] == Interaction.TriggerScoreAchieved)
-                return false;
+                return Task.FromResult(false);
 
 
             var roomUser = (RoomUser) stuff[0];
 
             if (roomUser == null)
-                return false;
+                return Task.FromResult(false);
 
             if (roomUser.Team == Team.None)
-                return false;
+                return Task.FromResult(false);
 
             int timesDone;
             int.TryParse(OtherExtraString, out timesDone);
@@ -85,13 +85,13 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             }
 
             if (timesDone >= maxTimes)
-                return false;
+                return Task.FromResult(false);
 
             Room.GetGameManager().AddPointToTeam(roomUser.Team, scoreToAchieve, roomUser);
             timesDone++;
 
             OtherExtraString = timesDone.ToString();
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

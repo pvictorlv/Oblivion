@@ -516,11 +516,11 @@ namespace Oblivion.HabboHotel
         /// <summary>
         ///     Mains the game loop.
         /// </summary>
-        private void MainGameLoop()
+        private async void MainGameLoop()
         {
             while (GameLoopActiveExt)
             {
-                LowPriorityWorker.Process();
+                await LowPriorityWorker.Process();
                 try
                 {
                     RoomManagerCycleEnded = false;

@@ -31,7 +31,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
             return t.Equals(Team.Green) && GreenTeam.Count < 5;
         }
 
-        public void AddUser(RoomUser user)
+        public async void AddUser(RoomUser user)
         {
             if (user?.GetClient() == null) return;
 
@@ -66,7 +66,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                         if (current.GetBaseItem().InteractionType.Equals(Interaction.BanzaiGateBlue))
                         {
                             current.ExtraData = BlueTeam.Count.ToString();
-                            current.UpdateState();
+                            await current.UpdateState();
                             if (BlueTeam.Count != 5) continue;
                             /* TODO CHECK */
                             foreach (
@@ -78,7 +78,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                         else if (current.GetBaseItem().InteractionType.Equals(Interaction.BanzaiGateRed))
                         {
                             current.ExtraData = RedTeam.Count.ToString();
-                            current.UpdateState();
+                            await current.UpdateState();
                             if (RedTeam.Count != 5) continue;
                             /* TODO CHECK */
                             foreach (
@@ -90,7 +90,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                         else if (current.GetBaseItem().InteractionType.Equals(Interaction.BanzaiGateGreen))
                         {
                             current.ExtraData = GreenTeam.Count.ToString();
-                            current.UpdateState();
+                            await current.UpdateState();
                             if (GreenTeam.Count != 5) continue;
                             /* TODO CHECK */
                             foreach (
@@ -102,7 +102,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                         else if (current.GetBaseItem().InteractionType.Equals(Interaction.BanzaiGateYellow))
                         {
                             current.ExtraData = YellowTeam.Count.ToString();
-                            current.UpdateState();
+                            await current.UpdateState();
                             if (YellowTeam.Count != 5) continue;
                             /* TODO CHECK */
                             foreach (
@@ -123,28 +123,28 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                     if (current6.GetBaseItem().InteractionType == Interaction.FreezeBlueGate)
                     {
                         current6.ExtraData = BlueTeam.Count.ToString();
-                        current6.UpdateState();
+                        await current6.UpdateState();
                     }
                     else if (current6.GetBaseItem().InteractionType == Interaction.FreezeRedGate)
                     {
                         current6.ExtraData = RedTeam.Count.ToString();
-                        current6.UpdateState();
+                        await current6.UpdateState();
                     }
                     else if (current6.GetBaseItem().InteractionType == Interaction.FreezeGreenGate)
                     {
                         current6.ExtraData = GreenTeam.Count.ToString();
-                        current6.UpdateState();
+                        await current6.UpdateState();
                     }
                     else if (current6.GetBaseItem().InteractionType == Interaction.FreezeYellowGate)
                     {
                         current6.ExtraData = YellowTeam.Count.ToString();
-                        current6.UpdateState();
+                        await current6.UpdateState();
                     }
                 }
             }
         }
 
-        public void OnUserLeave(RoomUser user)
+        public async void OnUserLeave(RoomUser user)
         {
             if (user == null) return;
 
@@ -183,7 +183,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                             if (current.GetBaseItem().InteractionType.Equals(Interaction.BanzaiGateBlue))
                             {
                                 current.ExtraData = BlueTeam.Count.ToString();
-                                current.UpdateState();
+                                await current.UpdateState();
                                 if (currentRoom.GetGameMap().GameMap[current.X, current.Y] != 0) continue;
                                 /* TODO CHECK */
                                 foreach (
@@ -195,7 +195,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                             else if (current.GetBaseItem().InteractionType.Equals(Interaction.BanzaiGateRed))
                             {
                                 current.ExtraData = RedTeam.Count.ToString();
-                                current.UpdateState();
+                                await current.UpdateState();
                                 if (currentRoom.GetGameMap().GameMap[current.X, current.Y] != 0) continue;
                                 /* TODO CHECK */
                                 foreach (
@@ -207,7 +207,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                             else if (current.GetBaseItem().InteractionType.Equals(Interaction.BanzaiGateGreen))
                             {
                                 current.ExtraData = GreenTeam.Count.ToString();
-                                current.UpdateState();
+                                await current.UpdateState();
                                 if (currentRoom.GetGameMap().GameMap[current.X, current.Y] != 0) continue;
                                 /* TODO CHECK */
                                 foreach (
@@ -219,7 +219,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                             else if (current.GetBaseItem().InteractionType.Equals(Interaction.BanzaiGateYellow))
                             {
                                 current.ExtraData = YellowTeam.Count.ToString();
-                                current.UpdateState();
+                                await current.UpdateState();
                                 if (currentRoom.GetGameMap().GameMap[current.X, current.Y] != 0) continue;
                                 /* TODO CHECK */
                                 foreach (
@@ -240,22 +240,22 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Teams
                         if (current6.GetBaseItem().InteractionType == Interaction.FreezeBlueGate)
                         {
                             current6.ExtraData = BlueTeam.Count.ToString();
-                            current6.UpdateState();
+                            await current6.UpdateState();
                         }
                         else if (current6.GetBaseItem().InteractionType == Interaction.FreezeRedGate)
                         {
                             current6.ExtraData = RedTeam.Count.ToString();
-                            current6.UpdateState();
+                            await current6.UpdateState();
                         }
                         else if (current6.GetBaseItem().InteractionType == Interaction.FreezeGreenGate)
                         {
                             current6.ExtraData = GreenTeam.Count.ToString();
-                            current6.UpdateState();
+                            await current6.UpdateState();
                         }
                         else if (current6.GetBaseItem().InteractionType == Interaction.FreezeYellowGate)
                         {
                             current6.ExtraData = YellowTeam.Count.ToString();
-                            current6.UpdateState();
+                            await current6.UpdateState();
                         }
                     }
 

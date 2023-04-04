@@ -20,18 +20,18 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 0;
         }
 
-        public override async Task<bool> Execute(GameClient session, string[] pms)
+        public override Task<bool> Execute(GameClient session, string[] pms)
         {
 
             var currentRoom = session.GetHabbo().CurrentRoom;
 
-            if (!currentRoom.CheckRights(session, false, true)) return false;
+            if (!currentRoom.CheckRights(session, false, true)) return Task.FromResult(false);
 
             var roomUserByHabbo = currentRoom.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
-            if (roomUserByHabbo == null) return true;
+            if (roomUserByHabbo == null) return Task.FromResult(true);
             roomUserByHabbo.AllowOverride = !roomUserByHabbo.AllowOverride;
 
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

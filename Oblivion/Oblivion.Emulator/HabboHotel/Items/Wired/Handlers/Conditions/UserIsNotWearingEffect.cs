@@ -59,25 +59,25 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             set { }
         }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 
 
             if (!(stuff?[0] is RoomUser))
-                return false;
+                return Task.FromResult(false);
 
             var roomUser = (RoomUser) stuff[0];
 
             int effect;
 
             if (!int.TryParse(OtherString, out effect))
-                return true;
+                return Task.FromResult(true);
 
             if (roomUser.IsBot || roomUser.GetClient() == null)
-                return false;
+                return Task.FromResult(false);
 
-            return roomUser.CurrentEffect != effect;
+            return Task.FromResult(roomUser.CurrentEffect != effect);
         }
     }
 }

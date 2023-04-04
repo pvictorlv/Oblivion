@@ -46,17 +46,17 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             var roomUser = (RoomUser) stuff[0];
-            if (roomUser?.GetClient()?.GetHabbo()?.CurrentRoom == null) return false;
+            if (roomUser?.GetClient()?.GetHabbo()?.CurrentRoom == null) return Task.FromResult(false);
             var furni = (Interaction) stuff[1];
 
-            if (furni == Interaction.TriggerRepeater || furni == Interaction.TriggerLongRepeater) return false;
+            if (furni == Interaction.TriggerRepeater || furni == Interaction.TriggerLongRepeater) return Task.FromResult(false);
 
             if (!int.TryParse(OtherString, out var team))
             {
-                return false;
+                return Task.FromResult(false);
             }
 
             var t = roomUser.GetClient().GetHabbo().CurrentRoom.GetTeamManagerForFreeze();
@@ -71,7 +71,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             t.AddUser(roomUser);
             roomUser.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(team + 39);
 
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

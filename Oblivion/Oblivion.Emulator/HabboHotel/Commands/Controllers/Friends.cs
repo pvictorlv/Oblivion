@@ -20,10 +20,10 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 0;
         }
 
-        public override async Task<bool> Execute(GameClient session, string[] pms)
+        public override Task<bool> Execute(GameClient session, string[] pms)
         {
             session.GetHabbo().HasFriendRequestsDisabled = !session.GetHabbo().HasFriendRequestsDisabled;
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

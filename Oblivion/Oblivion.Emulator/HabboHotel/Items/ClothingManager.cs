@@ -25,7 +25,7 @@ namespace Oblivion.HabboHotel.Items
         ///     Initializes the specified database client.
         /// </summary>
         /// <param name="dbClient">The database client.</param>
-        internal async Task Initialize(IQueryAdapter dbClient)
+        internal void Initialize(IQueryAdapter dbClient)
         {
             dbClient.SetQuery("SELECT * FROM catalog_clothing");
             ClothingItems = new Dictionary<string, ClothingItem>();

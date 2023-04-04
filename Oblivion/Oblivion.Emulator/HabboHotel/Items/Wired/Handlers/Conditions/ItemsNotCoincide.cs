@@ -54,12 +54,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
         }
 
         public bool Disposed { get; set; }
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 
             if (Items == null || Items.Count <= 0)
-                return true;
+                return Task.FromResult(true);
 
             bool useExtradata, useRot, usePos;
 
@@ -69,7 +69,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             {
                 if (string.IsNullOrWhiteSpace(OtherString) || !OtherString.Contains(",") ||
                     !OtherExtraString.Contains("|"))
-                    return false;
+                    return Task.FromResult(false);
 
                 var booleans = OtherString.ToLower().Split(',');
 
@@ -84,18 +84,18 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             {
                 Writer.Writer.LogException(e.ToString());
 
-                return false;
+                return Task.FromResult(false);
             }
 
             /* TODO CHECK */ foreach (var current in Items)
             {
                 if (current == null || !itemsOriginalData.TryGetValue(current.Id, out var originalData))
-                    return false;
+                    return Task.FromResult(false);
 
 
                 if (useRot)
                     if (current.Rot != int.Parse(originalData[1]))
-                        return true;
+                        return Task.FromResult(true);
 
                 if (useExtradata)
                 {
@@ -103,7 +103,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
                         current.ExtraData = "0";
 
                     if (current.ExtraData != (originalData[0] == string.Empty ? "0" : originalData[0]))
-                        return true;
+                        return Task.FromResult(true);
                 }
 
                 if (!usePos)
@@ -112,10 +112,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
                 var originalPos = originalData[2].Split(',');
 
                 if (current.X != int.Parse(originalPos[0]) && current.Y != int.Parse(originalPos[1]))
-                    return true;
+                    return Task.FromResult(true);
             }
 
-            return false;
+            return Task.FromResult(false);
         }
     }
 }

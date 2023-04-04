@@ -60,21 +60,21 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             set { }
         }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 
             if (!(stuff?[0] is RoomUser))
-                return false;
+                return Task.FromResult(false);
 
             var roomUser = (RoomUser) stuff[0];
 
             if (roomUser.IsBot || roomUser.GetClient() == null || roomUser.GetClient().GetHabbo() == null ||
                 roomUser.GetClient().GetHabbo().GetBadgeComponent() == null || string.IsNullOrWhiteSpace(OtherString))
-                return false;
+                return Task.FromResult(false);
 
-            return roomUser.GetClient().GetHabbo().GetBadgeComponent().BadgeList.Values.Cast<Badge>()
-                .Any(badge => badge.Slot > 0 && badge.Code.ToLower() == OtherString.ToLower());
+            return Task.FromResult(roomUser.GetClient().GetHabbo().GetBadgeComponent().BadgeList.Values.Cast<Badge>()
+                .Any(badge => badge.Slot > 0 && badge.Code.ToLower() == OtherString.ToLower()));
         }
     }
 }

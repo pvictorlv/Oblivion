@@ -28,7 +28,6 @@ namespace Oblivion
         /// Main Void of Oblivion.Emulator
         /// </summary>
         /// <param name="args">The arguments.</param>
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public static async Task Main(string[] args)
         {
             IntPtr hWnd = Process.GetCurrentProcess().MainWindowHandle;

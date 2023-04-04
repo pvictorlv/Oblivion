@@ -740,7 +740,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         await item.UserWalksOnFurni(user);
                     }
 
-                    item.Interactor.OnUserWalk(user.GetClient(), item, user);
+                    await item.Interactor.OnUserWalk(user.GetClient(), item, user);
                     user.LastItem = item.Id;
                 }
 
@@ -869,7 +869,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
         }
 
-        internal async Task UserSetPositionData(RoomUser roomUsers, Vector2D nextStep)
+        internal void UserSetPositionData(RoomUser roomUsers, Vector2D nextStep)
         {
             // Check if the User is in a Horse or Not..
             if ((roomUsers.RidingHorse) && (!roomUsers.IsPet))
@@ -907,7 +907,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             }
         }
 
-        internal async Task CheckUserSittableLayable(RoomUser roomUsers)
+        internal void CheckUserSittableLayable(RoomUser roomUsers)
         {
             if (roomUsers == null) return;
             // Check if User Is ina  Special Action..
@@ -1015,8 +1015,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                     if (roomUser.RidingHorse)
                     {
                         // Set User Position Data
-                        await UserSetPositionData(roomUser, nextStep);
-                        await CheckUserSittableLayable(roomUser);
+                        UserSetPositionData(roomUser, nextStep);
+                        CheckUserSittableLayable(roomUser);
 
                         // Add Status of Walking
                         roomUser.AddStatus("mv",
@@ -1058,8 +1058,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                     if (!roomUser.RidingHorse)
                     {
                         // Set User Position Data
-                        await UserSetPositionData(roomUser, nextStep);
-                        await CheckUserSittableLayable(roomUser);
+                        UserSetPositionData(roomUser, nextStep);
+                        CheckUserSittableLayable(roomUser);
 
                         // Add Status of Walking
                         roomUser.AddStatus("mv",
@@ -1071,7 +1071,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                     // Update Effect if is Ridding
                     if (roomUser.RidingHorse)
-                        UpdateUserStatus(roomUser, false);
+                        await UpdateUserStatus(roomUser, false);
 
 
                     // If user is in soccer proccess.
@@ -1156,9 +1156,9 @@ namespace Oblivion.HabboHotel.Rooms.User
                 if (!IsValid(roomUsers))
                 {
                     if (roomUsers.GetClient() != null)
-                        RemoveUserFromRoom(roomUsers, false, false);
+                        await RemoveUserFromRoom(roomUsers, false, false);
                     else
-                        RemoveRoomUser(roomUsers);
+                        await RemoveRoomUser(roomUsers);
                     return;
                 }
 
@@ -1183,7 +1183,7 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                     // If The Carry Timer is 0.. Remove CarryItem.
                     if (roomUsers.CarryTimer <= 0)
-                        roomUsers.CarryItem(0);
+                        await roomUsers.CarryItem(0);
                 }
 
 
@@ -1201,7 +1201,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 // Region Check User Got Freezed
                 if (_room.GotFreeze())
                 {
-                    _room.GetFreeze().CycleUser(roomUsers);
+                    await _room.GetFreeze().CycleUser(roomUsers);
                 }
 
                 // Region Variable Registering
@@ -1459,7 +1459,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <summary>
         ///     Updates the user effect.
         /// </summary>
-        private async Task UpdateUserEffect(RoomUser user, RoomItem roomItem)
+        private static async void UpdateUserEffect(RoomUser user, RoomItem roomItem)
         {
             var baseItem = roomItem?.GetBaseItem();
             if (baseItem == null) return;
@@ -1686,7 +1686,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         ///     Handles the <see cref="E:Remove" /> event.
         /// </summary>
         /// <param name="user"></param>
-        private void OnRemove(RoomUser user)
+        private async void OnRemove(RoomUser user)
         {
             try
             {
@@ -1705,7 +1705,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                         if (user.GetClient()?.GetHabbo()?.GetInventoryComponent() != null)
                         {
                             user.GetClient().GetHabbo().GetInventoryComponent().AddPet(bot.PetData);
-                            RemoveBot(bot.VirtualId, false);
+                            await RemoveBot(bot.VirtualId, false);
                         }
                     }
                 }

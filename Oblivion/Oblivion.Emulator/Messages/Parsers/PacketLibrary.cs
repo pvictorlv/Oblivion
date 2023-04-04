@@ -10,58 +10,58 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Delegate GetProperty
         /// </summary>
-        /// <param name="handler">The handler.</param>
+        /// <param name="handler">The await handler.</param>
         internal delegate void GetProperty(GameClientMessageHandler handler);
 
         /// <summary>
         /// Initializes the crypto.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void InitCrypto(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void InitCrypto(GameClientMessageHandler handler)
         {
-            handler.InitCrypto();
+            await handler.InitCrypto();
         }
 
         /// <summary>
         /// Secrets the key.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SecretKey(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SecretKey(GameClientMessageHandler handler)
         {
-            handler.SecretKey();
+            await handler.SecretKey();
         }
 
         /// <summary>
         /// InitConsole
         /// </summary>
         /// <param name="handler">Friends</param>
-        internal static void InitConsole(GameClientMessageHandler handler)
+        internal static async void InitConsole(GameClientMessageHandler handler)
         {
-            handler.InitConsole();
+            await handler.InitConsole();
         }
 
         /// <summary>
         /// Machines the identifier.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void MachineId(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void MachineId(GameClientMessageHandler handler)
         {
-            handler.MachineId();
+            await handler.MachineId();
         }
 
         /// <summary>
         /// Guides the message.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GuideMessage(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GuideMessage(GameClientMessageHandler handler)
         {
-            handler.CallGuide();
+            await handler.CallGuide();
         }
 
         /// <summary>
         /// Sets the chat preferrence.
         /// </summary>
-        /// <param name="handler">The handler.</param>
+        /// <param name="handler">The await handler.</param>
         internal static void SetChatPreferrence(GameClientMessageHandler handler)
         {
             handler.SetChatPreferrence();
@@ -70,848 +70,850 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the helper tool.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetHelperTool(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetHelperTool(GameClientMessageHandler handler)
         {
-            handler.OpenGuideTool();
+            await handler.OpenGuideTool();
         }
 
         /// <summary>
         /// Gets the guide detached.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetGuideDetached(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetGuideDetached(GameClientMessageHandler handler)
         {
-            handler.AnswerGuideRequest();
+            await handler.AnswerGuideRequest();
         }
 
         /// <summary>
         /// Logins the with ticket.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void LoginWithTicket(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void LoginWithTicket(GameClientMessageHandler handler)
         {
-            handler.LoginWithTicket();
+            await handler.LoginWithTicket();
         }
 
         /// <summary>
         /// Invites the guide.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void InviteGuide(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void InviteGuide(GameClientMessageHandler handler)
         {
-            handler.InviteToRoom();
+            await handler.InviteToRoom();
         }
 
         /// <summary>
         /// Visits the room guide.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void VisitRoomGuide(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void VisitRoomGuide(GameClientMessageHandler handler)
         {
-            handler.VisitRoom();
+            await handler.VisitRoom();
         }
 
         /// <summary>
         /// Guides the end session.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GuideEndSession(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GuideEndSession(GameClientMessageHandler handler)
         {
-            handler.CloseGuideRequest();
+            await handler.CloseGuideRequest();
         }
 
         /// <summary>
         /// Cancels the call guide.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void CancelCallGuide(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void CancelCallGuide(GameClientMessageHandler handler)
         {
-            handler.CancelCallGuide();
+            await handler.CancelCallGuide();
         }
 
         /// <summary>
         /// Informations the retrieve.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void InfoRetrieve(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void InfoRetrieve(GameClientMessageHandler handler)
         {
-            handler.InfoRetrieve();
+            await handler.InfoRetrieve();
         }
 
         /// <summary>
-        /// Chats the specified handler.
+        /// Chats the specified await handler.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void Chat(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void Chat(GameClientMessageHandler handler)
         {
-            handler.Chat();
+            await handler.Chat();
         }
 
         /// <summary>
-        /// Shouts the specified handler.
+        /// Shouts the specified await handler.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void Shout(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void Shout(GameClientMessageHandler handler)
         {
-            handler.Shout();
+            await handler.Shout();
         }
 
         /// <summary>
         /// Requests the floor plan used coords.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RequestFloorPlanUsedCoords(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RequestFloorPlanUsedCoords(GameClientMessageHandler handler)
         {
-            handler.GetFloorPlanUsedCoords();
+            await handler.GetFloorPlanUsedCoords();
         }
 
         /// <summary>
         /// Requests the floor plan door.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RequestFloorPlanDoor(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RequestFloorPlanDoor(GameClientMessageHandler handler)
         {
-            handler.GetFloorPlanDoor();
+            await handler.GetFloorPlanDoor();
         }
 
         /// <summary>
         /// Opens the bully reporting.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void OpenBullyReporting(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void OpenBullyReporting(GameClientMessageHandler handler)
         {
-            handler.OpenBullyReporting();
+            await handler.OpenBullyReporting();
         }
 
         /// <summary>
         /// Sends the bully report.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SendBullyReport(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SendBullyReport(GameClientMessageHandler handler)
         {
-            handler.SendBullyReport();
+            await handler.SendBullyReport();
         }
 
         /// <summary>
         /// Loads the club gifts.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void LoadClubGifts(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void LoadClubGifts(GameClientMessageHandler handler)
         {
-            handler.LoadClubGifts();
+            await handler.LoadClubGifts();
         }
 
         /// <summary>
         /// Saves the heightmap.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SaveHeightmap(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SaveHeightmap(GameClientMessageHandler handler)
         {
-            handler.SaveHeightmap();
+            await handler.SaveHeightmap();
         }
 
         /// <summary>
         /// Accepts the poll.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void AcceptPoll(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void AcceptPoll(GameClientMessageHandler handler)
         {
-            handler.AcceptPoll();
+            await handler.AcceptPoll();
         }
 
         /// <summary>
         /// Refuses the poll.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RefusePoll(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RefusePoll(GameClientMessageHandler handler)
         {
-            handler.RefusePoll();
+            await handler.RefusePoll();
         }
 
         /// <summary>
         /// Answers the poll question.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void AnswerPollQuestion(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void AnswerPollQuestion(GameClientMessageHandler handler)
         {
-            handler.AnswerPoll();
+            await handler.AnswerPoll();
         }
 
         /// <summary>
         /// Retrieves the song identifier.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RetrieveSongId(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RetrieveSongId(GameClientMessageHandler handler)
         {
-            handler.RetrieveSongId();
+            await handler.RetrieveSongId();
         }
 
         /// <summary>
         /// Tiles the height of the stack magic set.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void TileStackMagicSetHeight(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void TileStackMagicSetHeight(GameClientMessageHandler handler)
         {
-            handler.TileStackMagicSetHeight();
+            await handler.TileStackMagicSetHeight();
         }
 
         /// <summary>
         /// Enables the inventory effect.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void EnableInventoryEffect(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void EnableInventoryEffect(GameClientMessageHandler handler)
         {
-            handler.EnableEffect();
+            await handler.EnableEffect();
         }
 
         /// <summary>
         /// Promotes the room.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void PromoteRoom(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void PromoteRoom(GameClientMessageHandler handler)
         {
-            handler.PromoteRoom();
+            await handler.PromoteRoom();
         }
 
         /// <summary>
         /// Gets the promotionable rooms.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetPromotionableRooms(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetPromotionableRooms(GameClientMessageHandler handler)
         {
-            handler.GetPromotionableRooms();
+            await handler.GetPromotionableRooms();
         }
 
         /// <summary>
         /// Gets the room filter.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetRoomFilter(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetRoomFilter(GameClientMessageHandler handler)
         {
-            handler.GetRoomFilter();
+            await handler.GetRoomFilter();
         }
 
         /// <summary>
         /// Alters the room filter.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void AlterRoomFilter(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void AlterRoomFilter(GameClientMessageHandler handler)
         {
-            handler.AlterRoomFilter();
+            await handler.AlterRoomFilter();
         }
 
         /// <summary>
         /// Gets the tv player.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetTvPlayer(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetTvPlayer(GameClientMessageHandler handler)
         {
-            handler.GetTvPlayer();
+            await handler.GetTvPlayer();
         }
 
         /// <summary>
         /// Chooses the tv player video.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ChooseTvPlayerVideo(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ChooseTvPlayerVideo(GameClientMessageHandler handler)
         {
-            handler.ChooseTvPlayerVideo();
+            await handler.ChooseTvPlayerVideo();
         }
 
         /// <summary>
         /// Gets the tv playlist.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetTvPlaylist(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetTvPlaylist(GameClientMessageHandler handler)
         {
-            handler.ChooseTvPlaylist();
+            await handler.ChooseTvPlaylist();
         }
 
         /// <summary>
         /// Places the bot.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void PlaceBot(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void PlaceBot(GameClientMessageHandler handler)
         {
-            handler.PlaceBot();
+            await handler.PlaceBot();
         }
 
         /// <summary>
         /// Picks up bot.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void PickUpBot(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void PickUpBot(GameClientMessageHandler handler)
         {
-            handler.PickUpBot();
+            await handler.PickUpBot();
         }
 
         /// <summary>
         /// Gets the talents track.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetTalentsTrack(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetTalentsTrack(GameClientMessageHandler handler)
         {
-            handler.Talents();
+            await handler.Talents();
         }
 
         /// <summary>
         /// Prepares the campaing.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void PrepareCampaing(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void PrepareCampaing(GameClientMessageHandler handler)
         {
-            handler.PrepareCampaing();
+            await handler.PrepareCampaing();
         }
 
         /// <summary>
-        /// Pongs the specified handler.
+        /// Pongs the specified await handler.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void Pong(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void Pong(GameClientMessageHandler handler)
         {
-            handler.Pong();
+            await handler.Pong();
         }
 
         /// <summary>
         /// Disconnects the event.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void DisconnectEvent(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void DisconnectEvent(GameClientMessageHandler handler)
         {
-            handler.DisconnectEvent();
+            await handler.DisconnectEvent();
         }
 
         /// <summary>
         /// Latencies the test.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void LatencyTest(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void LatencyTest(GameClientMessageHandler handler)
         {
-            handler.LatencyTest();
+            await handler.LatencyTest();
         }
 
         /// <summary>
         /// Receptions the view.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ReceptionView(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ReceptionView(GameClientMessageHandler handler)
         {
-            handler.GoToHotelView();
+            await handler.GoToHotelView();
         }
 
         /// <summary>
         /// Called when [confirmation event].
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void OnlineConfirmationEvent(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void OnlineConfirmationEvent(GameClientMessageHandler handler)
         {
-            handler.OnlineConfirmationEvent();
+            await handler.OnlineConfirmationEvent();
         }
 
         /// <summary>
         /// Retrives the citizen ship status.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RetriveCitizenShipStatus(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RetriveCitizenShipStatus(GameClientMessageHandler handler)
         {
-            handler.RetrieveCitizenship();
+            await handler.RetrieveCitizenship();
         }
 
         /// <summary>
         /// Refreshes the promo event.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RefreshPromoEvent(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RefreshPromoEvent(GameClientMessageHandler handler)
         {
-            handler.RefreshPromoEvent();
-        }  internal static void RefreshCompetition(GameClientMessageHandler handler)
+            await handler.RefreshPromoEvent();
+        }
+
+        internal static async void RefreshCompetition(GameClientMessageHandler handler)
         {
-            handler.RefreshCompetition();
+            await handler.RefreshCompetition();
         }
 
         /// <summary>
         /// Widgets the container.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void WidgetContainer(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void WidgetContainer(GameClientMessageHandler handler)
         {
-            handler.WidgetContainers();
+            await handler.WidgetContainers();
         }
 
         /// <summary>
         /// Landings the community goal.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void LandingCommunityGoal(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void LandingCommunityGoal(GameClientMessageHandler handler)
         {
-            handler.LandingCommunityGoal();
+            await handler.LandingCommunityGoal();
         }
 
         /// <summary>
         /// Removes the handitem.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RemoveHanditem(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RemoveHanditem(GameClientMessageHandler handler)
         {
-            handler.RemoveHanditem();
+            await handler.RemoveHanditem();
         }
 
         /// <summary>
         /// Redeems the voucher.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RedeemVoucher(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RedeemVoucher(GameClientMessageHandler handler)
         {
-            handler.RedeemVoucher();
+            await handler.RedeemVoucher();
         }
 
         /// <summary>
         /// Gives the handitem.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GiveHanditem(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GiveHanditem(GameClientMessageHandler handler)
         {
-            handler.GiveHanditem();
+            await handler.GiveHanditem();
         }
 
         /// <summary>
         /// Initializes the help tool.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void InitHelpTool(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void InitHelpTool(GameClientMessageHandler handler)
         {
-            handler.InitHelpTool();
+            await handler.InitHelpTool();
         }
 
         /// <summary>
         /// Submits the help ticket.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SubmitHelpTicket(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SubmitHelpTicket(GameClientMessageHandler handler)
         {
-            handler.SubmitHelpTicket();
+            await handler.SubmitHelpTicket();
         }
 
         /// <summary>
         /// Deletes the pending CFH.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void DeletePendingCfh(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void DeletePendingCfh(GameClientMessageHandler handler)
         {
-            handler.DeletePendingCfh();
+            await handler.DeletePendingCfh();
         }
 
         /// <summary>
         /// Mods the get user information.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ModGetUserInfo(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ModGetUserInfo(GameClientMessageHandler handler)
         {
-            handler.ModGetUserInfo();
+            await handler.ModGetUserInfo();
         }
 
         /// <summary>
         /// Mods the get user chatlog.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ModGetUserChatlog(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ModGetUserChatlog(GameClientMessageHandler handler)
         {
-            handler.ModGetUserChatlog();
+            await handler.ModGetUserChatlog();
         }
 
         /// <summary>
         /// Messages from a guy.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void MessageFromAGuy(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void MessageFromAGuy(GameClientMessageHandler handler)
         {
-            handler.GuideSpeak();
+            await handler.GuideSpeak();
         }
 
         /// <summary>
         /// Mods the get room chatlog.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ModGetRoomChatlog(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ModGetRoomChatlog(GameClientMessageHandler handler)
         {
-            handler.ModGetRoomChatlog();
+            await handler.ModGetRoomChatlog();
         }
 
         /// <summary>
         /// Mods the get room tool.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ModGetRoomTool(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ModGetRoomTool(GameClientMessageHandler handler)
         {
-            handler.ModGetRoomTool();
+            await handler.ModGetRoomTool();
         }
 
         /// <summary>
         /// Mods the pick ticket.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ModPickTicket(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ModPickTicket(GameClientMessageHandler handler)
         {
-            handler.ModPickTicket();
+            await handler.ModPickTicket();
         }
 
         /// <summary>
         /// Mods the release ticket.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ModReleaseTicket(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ModReleaseTicket(GameClientMessageHandler handler)
         {
-            handler.ModReleaseTicket();
+            await handler.ModReleaseTicket();
         }
 
         /// <summary>
         /// Mods the close ticket.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ModCloseTicket(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ModCloseTicket(GameClientMessageHandler handler)
         {
-            handler.ModCloseTicket();
+            await handler.ModCloseTicket();
         }
 
         /// <summary>
         /// Mods the get ticket chatlog.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ModGetTicketChatlog(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ModGetTicketChatlog(GameClientMessageHandler handler)
         {
-            handler.ModGetTicketChatlog();
+            await handler.ModGetTicketChatlog();
         }
 
         /// <summary>
         /// Mods the get room visits.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ModGetRoomVisits(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ModGetRoomVisits(GameClientMessageHandler handler)
         {
-            handler.ModGetRoomVisits();
+            await handler.ModGetRoomVisits();
         }
 
         /// <summary>
         /// Mods the send room alert.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ModSendRoomAlert(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ModSendRoomAlert(GameClientMessageHandler handler)
         {
-            handler.ModSendRoomAlert();
+            await handler.ModSendRoomAlert();
         }
 
         /// <summary>
         /// Mods the perform room action.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ModPerformRoomAction(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ModPerformRoomAction(GameClientMessageHandler handler)
         {
-            handler.ModPerformRoomAction();
+            await handler.ModPerformRoomAction();
         }
 
         /// <summary>
         /// Mods the send user caution.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ModSendUserCaution(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ModSendUserCaution(GameClientMessageHandler handler)
         {
-            handler.ModSendUserCaution();
+            await handler.ModSendUserCaution();
         }
 
         /// <summary>
         /// Mods the send user message.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ModSendUserMessage(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ModSendUserMessage(GameClientMessageHandler handler)
         {
-            handler.ModSendUserMessage();
+            await handler.ModSendUserMessage();
         }
 
         /// <summary>
         /// Mods the kick user.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ModKickUser(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ModKickUser(GameClientMessageHandler handler)
         {
-            handler.ModKickUser();
+            await handler.ModKickUser();
         }
 
         /// <summary>
         /// Mods the mute user.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ModMuteUser(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ModMuteUser(GameClientMessageHandler handler)
         {
-            handler.ModMuteUser();
+            await handler.ModMuteUser();
         }
 
         /// <summary>
         /// Mods the lock trade.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ModLockTrade(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ModLockTrade(GameClientMessageHandler handler)
         {
-            handler.ModLockTrade();
+            await handler.ModLockTrade();
         }
 
         /// <summary>
         /// Mods the ban user.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ModBanUser(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ModBanUser(GameClientMessageHandler handler)
         {
-            handler.ModBanUser();
+            await handler.ModBanUser();
         }
 
         /// <summary>
         /// Initializes the messenger.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void InitMessenger(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void InitMessenger(GameClientMessageHandler handler)
         {
-            handler.InitMessenger();
+            await handler.InitMessenger();
         }
 
         /// <summary>
         /// Friendses the list update.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void FriendsListUpdate(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void FriendsListUpdate(GameClientMessageHandler handler)
         {
-            handler.FriendsListUpdate();
+            await handler.FriendsListUpdate();
         }
 
         /// <summary>
         /// Removes the buddy.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RemoveBuddy(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RemoveBuddy(GameClientMessageHandler handler)
         {
-            handler.RemoveBuddy();
+            await handler.RemoveBuddy();
         }
 
         /// <summary>
         /// Searches the habbo.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SearchHabbo(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SearchHabbo(GameClientMessageHandler handler)
         {
-            handler.SearchHabbo();
+            await handler.SearchHabbo();
         }
 
         /// <summary>
         /// Accepts the request.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void AcceptRequest(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void AcceptRequest(GameClientMessageHandler handler)
         {
-            handler.AcceptRequest();
+            await handler.AcceptRequest();
         }
 
         /// <summary>
         /// Declines the request.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void DeclineRequest(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void DeclineRequest(GameClientMessageHandler handler)
         {
-            handler.DeclineRequest();
+            await handler.DeclineRequest();
         }
 
         /// <summary>
         /// Requests the buddy.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RequestBuddy(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RequestBuddy(GameClientMessageHandler handler)
         {
-            handler.RequestBuddy();
+            await handler.RequestBuddy();
         }
 
         /// <summary>
         /// Sends the instant messenger.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SendInstantMessenger(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SendInstantMessenger(GameClientMessageHandler handler)
         {
-            handler.SendInstantMessenger();
+            await handler.SendInstantMessenger();
         }
 
         /// <summary>
         /// Follows the buddy.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void FollowBuddy(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void FollowBuddy(GameClientMessageHandler handler)
         {
-            handler.FollowBuddy();
+            await handler.FollowBuddy();
         }
 
         /// <summary>
         /// Sends the instant invite.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SendInstantInvite(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SendInstantInvite(GameClientMessageHandler handler)
         {
-            handler.SendInstantInvite();
+            await handler.SendInstantInvite();
         }
 
         /// <summary>
         /// Homes the room stuff.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void HomeRoomStuff(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void HomeRoomStuff(GameClientMessageHandler handler)
         {
-            handler.HomeRoom();
+            await handler.HomeRoom();
         }
 
         /// <summary>
         /// Adds the favorite.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void AddFavorite(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void AddFavorite(GameClientMessageHandler handler)
         {
-            handler.AddFavorite();
+            await handler.AddFavorite();
         }
 
         /// <summary>
         /// Removes the favorite.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RemoveFavorite(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RemoveFavorite(GameClientMessageHandler handler)
         {
-            handler.RemoveFavorite();
+            await handler.RemoveFavorite();
         }
 
         /// <summary>
         /// Gets the flat cats.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetFlatCats(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetFlatCats(GameClientMessageHandler handler)
         {
-            handler.GetFlatCats();
+            await handler.GetFlatCats();
         }
 
         /// <summary>
         /// Enters the inquired room.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void EnterInquiredRoom(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void EnterInquiredRoom(GameClientMessageHandler handler)
         {
-            handler.EnterInquiredRoom();
+            await handler.EnterInquiredRoom();
         }
 
         /// <summary>
         /// Gets the pubs.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetPubs(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetPubs(GameClientMessageHandler handler)
         {
-            handler.GetPubs();
+            await handler.GetPubs();
         }
 
         /// <summary>
         /// Saves the branding.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SaveBranding(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SaveBranding(GameClientMessageHandler handler)
         {
-            handler.SaveBranding();
+            await handler.SaveBranding();
         }
 
         /// <summary>
         /// Gets the room information.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetRoomInfo(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetRoomInfo(GameClientMessageHandler handler)
         {
-            handler.GetRoomInfo();
+            await handler.GetRoomInfo();
         }
-        
-        
+
+
         /// <summary>
         /// News the navigator flat cats.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void NewNavigatorFlatCats(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void NewNavigatorFlatCats(GameClientMessageHandler handler)
         {
-            handler.NewNavigatorFlatCats();
+            await handler.NewNavigatorFlatCats();
         }
 
         /// <summary>
         /// Gets the favorite rooms.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetFavoriteRooms(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetFavoriteRooms(GameClientMessageHandler handler)
         {
-            handler.GetFavoriteRooms();
+            await handler.GetFavoriteRooms();
         }
 
         /// <summary>
         /// Gets the recent rooms.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetRecentRooms(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetRecentRooms(GameClientMessageHandler handler)
         {
-            handler.GetRecentRooms();
+            await handler.GetRecentRooms();
         }
 
         /// <summary>
         /// Gets the popular tags.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetPopularTags(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetPopularTags(GameClientMessageHandler handler)
         {
-            handler.GetPopularTags();
+            await handler.GetPopularTags();
         }
 
         /// <summary>
         /// Performs the search.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void PerformSearch(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void PerformSearch(GameClientMessageHandler handler)
         {
-            handler.PerformSearch();
+            await handler.PerformSearch();
         }
 
         /// <summary>
         /// Searches the by tag.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SearchByTag(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SearchByTag(GameClientMessageHandler handler)
         {
-            handler.SearchByTag();
+            await handler.SearchByTag();
         }
 
         /// <summary>
         /// Performs the search2.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void PerformSearch2(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void PerformSearch2(GameClientMessageHandler handler)
         {
-            handler.PerformSearch2();
+            await handler.PerformSearch2();
         }
 
         /// <summary>
         /// Opens the flat.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void OpenFlat(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void OpenFlat(GameClientMessageHandler handler)
         {
-            handler.OpenFlat();
+            await handler.OpenFlat();
         }
 
         /// <summary>
         /// Gets the voume.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetVoume(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetVoume(GameClientMessageHandler handler)
         {
-            handler.LoadSettings();
+            await handler.LoadSettings();
         }
 
         /// <summary>
         /// Saves the volume.
         /// </summary>
-        /// <param name="handler">The handler.</param>
+        /// <param name="handler">The await handler.</param>
         internal static void SaveVolume(GameClientMessageHandler handler)
         {
             handler.SaveSettings();
@@ -920,1497 +922,1498 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the pub.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetPub(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetPub(GameClientMessageHandler handler)
         {
-            handler.GetPub();
+            await handler.GetPub();
         }
 
         /// <summary>
         /// Opens the pub.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void OpenPub(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void OpenPub(GameClientMessageHandler handler)
         {
-            handler.OpenPub();
+            await handler.OpenPub();
         }
 
         /// <summary>
         /// Gets the inventory.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetInventory(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetInventory(GameClientMessageHandler handler)
         {
-            handler.GetInventory();
+            await handler.GetInventory();
         }
 
         /// <summary>
         /// Gets the inventory.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void OpenInventory(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void OpenInventory(GameClientMessageHandler handler)
         {
-            handler.GetInventory();
+            await handler.GetInventory();
         }
 
         /// <summary>
         /// Get maketplace config.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void MarketPlaceConfiguration(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void MarketPlaceConfiguration(GameClientMessageHandler handler)
         {
-            handler.MarketPlaceConfiguration();
+            await handler.MarketPlaceConfiguration();
         }
 
         /// <summary>
         /// Check if user can make offer
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void CanMakeOffer(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void CanMakeOffer(GameClientMessageHandler handler)
         {
-            handler.CanMakeOffer();
+            await handler.CanMakeOffer();
         }
 
         /// <summary>
         /// Gets the room data1.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetRoomData1(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetRoomData1(GameClientMessageHandler handler)
         {
-            handler.GetRoomData1();
+            await handler.GetRoomData1();
         }
 
         /// <summary>
         /// Gets the room data2.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetRoomData2(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetRoomData2(GameClientMessageHandler handler)
         {
-            handler.GetRoomData2();
+            await handler.GetRoomData2();
         }
 
         /// <summary>
         /// Gets the room data3.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetRoomData3(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetRoomData3(GameClientMessageHandler handler)
         {
-            handler.GetRoomData3();
+            await handler.GetRoomData3();
         }
 
         /// <summary>
         /// Requests the floor items.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RequestFloorItems(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RequestFloorItems(GameClientMessageHandler handler)
         {
-            handler.RequestFloorItems();
+            await handler.RequestFloorItems();
         }
 
         /// <summary>
         /// Requests the wall items.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RequestWallItems(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RequestWallItems(GameClientMessageHandler handler)
         {
-            handler.RequestWallItems();
+            await handler.RequestWallItems();
         }
 
         /// <summary>
         /// Called when [room user add].
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void OnRoomUserAdd(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void OnRoomUserAdd(GameClientMessageHandler handler)
         {
-            handler.OnRoomUserAdd();
+            await handler.OnRoomUserAdd();
         }
 
         /// <summary>
         /// Reqs the load room for user.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ReqLoadRoomForUser(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ReqLoadRoomForUser(GameClientMessageHandler handler)
         {
-            handler.ReqLoadRoomForUser();
+            await handler.ReqLoadRoomForUser();
         }
 
         /// <summary>
         /// Enters the on room.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void EnterOnRoom(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void EnterOnRoom(GameClientMessageHandler handler)
         {
-            handler.EnterOnRoom();
+            await handler.EnterOnRoom();
         }
 
         /// <summary>
         /// Clears the room loading.
         /// </summary>
-        /// <param name="handler">The handler.</param>
+        /// <param name="handler">The await handler.</param>
         internal static void ClearRoomLoading(GameClientMessageHandler handler)
         {
             handler.ClearRoomLoading();
         }
 
         /// <summary>
-        /// Moves the specified handler.
+        /// Moves the specified await handler.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void Move(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void Move(GameClientMessageHandler handler)
         {
-            handler.Move();
+            await handler.Move();
         }
 
         /// <summary>
-        /// Determines whether this instance [can create room] the specified handler.
+        /// Determines whether this instance [can create room] the specified await handler.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void CanCreateRoom(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void CanCreateRoom(GameClientMessageHandler handler)
         {
-            handler.CanCreateRoom();
+            await handler.CanCreateRoom();
         }
 
         /// <summary>
         /// Creates the room.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void CreateRoom(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void CreateRoom(GameClientMessageHandler handler)
         {
-            handler.CreateRoom();
+            await handler.CreateRoom();
         }
 
         /// <summary>
         /// Gets the room information.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetRoomInformation(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetRoomInformation(GameClientMessageHandler handler)
         {
-            handler.ParseRoomDataInformation();
+            await handler.ParseRoomDataInformation();
         }
 
         /// <summary>
         /// Gets the room edit data.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetRoomEditData(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetRoomEditData(GameClientMessageHandler handler)
         {
-            handler.GetRoomEditData();
+            await handler.GetRoomEditData();
         }
 
         /// <summary>
         /// Saves the room data.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SaveRoomData(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SaveRoomData(GameClientMessageHandler handler)
         {
-            handler.SaveRoomData();
+            await handler.SaveRoomData();
         }
 
         /// <summary>
         /// Gives the rights.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GiveRights(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GiveRights(GameClientMessageHandler handler)
         {
-            handler.GiveRights();
+            await handler.GiveRights();
         }
 
         /// <summary>
         /// Takes the rights.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void TakeRights(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void TakeRights(GameClientMessageHandler handler)
         {
-            handler.TakeRights();
+            await handler.TakeRights();
         }
 
         /// <summary>
         /// Takes all rights.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void TakeAllRights(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void TakeAllRights(GameClientMessageHandler handler)
         {
-            handler.TakeAllRights();
+            await handler.TakeAllRights();
         }
 
         /// <summary>
         /// Habboes the camera.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void HabboCamera(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void HabboCamera(GameClientMessageHandler handler)
         {
-            handler.HabboCamera();
+            await handler.HabboCamera();
         }
+
         /// <summary>
         /// Open xmas calendar
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void OpenXmasCalendar(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void OpenXmasCalendar(GameClientMessageHandler handler)
         {
-            handler.OpenXmasCalendar();
+            await handler.OpenXmasCalendar();
         }
 
         /// <summary>
         /// Called when [click].
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void OnClick(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void OnClick(GameClientMessageHandler handler)
         {
-            handler.OnClick();
+            await handler.OnClick();
         }
 
         /// <summary>
         /// Kicks the user.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void KickUser(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void KickUser(GameClientMessageHandler handler)
         {
-            handler.KickUser();
+            await handler.KickUser();
         }
 
         /// <summary>
         /// Bans the user.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void BanUser(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void BanUser(GameClientMessageHandler handler)
         {
-            handler.BanUser();
+            await handler.BanUser();
         }
 
         /// <summary>
         /// Sets the home room.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SetHomeRoom(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SetHomeRoom(GameClientMessageHandler handler)
         {
-            handler.SetHomeRoom();
+            await handler.SetHomeRoom();
         }
 
         /// <summary>
         /// Deletes the room.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void DeleteRoom(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void DeleteRoom(GameClientMessageHandler handler)
         {
-            handler.DeleteRoom();
+            await handler.DeleteRoom();
         }
 
         /// <summary>
         /// Looks at.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void LookAt(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void LookAt(GameClientMessageHandler handler)
         {
-            handler.LookAt();
+            await handler.LookAt();
         }
 
-        internal static void AirClickUser(GameClientMessageHandler handler)
+        internal static async void AirClickUser(GameClientMessageHandler handler)
         {
-            handler.AirClickUser();
+            await handler.AirClickUser();
         }
 
         /// <summary>
         /// Starts the typing.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void StartTyping(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void StartTyping(GameClientMessageHandler handler)
         {
-            handler.StartTyping();
+            await handler.StartTyping();
         }
 
         /// <summary>
         /// Stops the typing.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void StopTyping(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void StopTyping(GameClientMessageHandler handler)
         {
-            handler.StopTyping();
+            await handler.StopTyping();
         }
 
         /// <summary>
         /// Ignores the user.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void IgnoreUser(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void IgnoreUser(GameClientMessageHandler handler)
         {
-            handler.IgnoreUser();
+            await handler.IgnoreUser();
         }
 
         /// <summary>
         /// Unignores the user.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void UnignoreUser(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void UnignoreUser(GameClientMessageHandler handler)
         {
-            handler.UnignoreUser();
+            await handler.UnignoreUser();
         }
 
         /// <summary>
-        /// Determines whether this instance [can create room event] the specified handler.
+        /// Determines whether this instance [can create room event] the specified await handler.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void CanCreateRoomEvent(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void CanCreateRoomEvent(GameClientMessageHandler handler)
         {
-            handler.CanCreateRoomEvent();
+            await handler.CanCreateRoomEvent();
         }
 
         /// <summary>
-        /// Signs the specified handler.
+        /// Signs the specified await handler.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void Sign(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void Sign(GameClientMessageHandler handler)
         {
-            handler.Sign();
+            await handler.Sign();
         }
 
         /// <summary>
         /// Gets the user tags.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetUserTags(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetUserTags(GameClientMessageHandler handler)
         {
-            handler.GetUserTags();
+            await handler.GetUserTags();
         }
 
         /// <summary>
         /// Gets the user badges.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetUserBadges(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetUserBadges(GameClientMessageHandler handler)
         {
-            handler.GetUserBadges();
+            await handler.GetUserBadges();
         }
 
         /// <summary>
         /// Rates the room.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RateRoom(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RateRoom(GameClientMessageHandler handler)
         {
-            handler.RateRoom();
+            await handler.RateRoom();
         }
 
         /// <summary>
-        /// Dances the specified handler.
+        /// Dances the specified await handler.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void Dance(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void Dance(GameClientMessageHandler handler)
         {
-            handler.Dance();
+            await handler.Dance();
         }
 
         /// <summary>
         /// Answers the doorbell.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void AnswerDoorbell(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void AnswerDoorbell(GameClientMessageHandler handler)
         {
-            handler.AnswerDoorbell();
+            await handler.AnswerDoorbell();
         }
 
         /// <summary>
         /// Applies the room effect.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ApplyRoomEffect(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ApplyRoomEffect(GameClientMessageHandler handler)
         {
-            handler.ApplyRoomEffect();
+            await handler.ApplyRoomEffect();
         }
 
         /// <summary>
         /// Places the post it.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void PlacePostIt(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void PlacePostIt(GameClientMessageHandler handler)
         {
-            handler.PlacePostIt();
+            await handler.PlacePostIt();
         }
 
         /// <summary>
         /// Places the item.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void PlaceItem(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void PlaceItem(GameClientMessageHandler handler)
         {
-            handler.PlaceItem();
+            await handler.PlaceItem();
         }
 
         /// <summary>
         /// Places the item.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void AirPlaceItem(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void AirPlaceItem(GameClientMessageHandler handler)
         {
-            handler.PlaceItem();
+            await handler.PlaceItem();
         }
 
         /// <summary>
         /// Takes the item.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void TakeItem(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void TakeItem(GameClientMessageHandler handler)
         {
-            handler.TakeItem();
+            await handler.TakeItem();
         }
 
         /// <summary>
         /// Moves the item.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void MoveItem(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void MoveItem(GameClientMessageHandler handler)
         {
-            handler.MoveItem();
+            await handler.MoveItem();
         }
 
         /// <summary>
         /// Moves the wall item.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void MoveWallItem(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void MoveWallItem(GameClientMessageHandler handler)
         {
-            handler.MoveWallItem();
+            await handler.MoveWallItem();
         }
 
         /// <summary>
         /// Triggers the item.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void TriggerItem(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void TriggerItem(GameClientMessageHandler handler)
         {
-            handler.TriggerItem();
+            await handler.TriggerItem();
         }
 
         /// <summary>
         /// Triggers the item dice special.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void TriggerItemDiceSpecial(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void TriggerItemDiceSpecial(GameClientMessageHandler handler)
         {
-            handler.TriggerItemDiceSpecial();
+            await handler.TriggerItemDiceSpecial();
         }
 
         /// <summary>
         /// Opens the postit.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void OpenPostit(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void OpenPostit(GameClientMessageHandler handler)
         {
-            handler.OpenPostit();
+            await handler.OpenPostit();
         }
 
         /// <summary>
         /// Saves the postit.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SavePostit(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SavePostit(GameClientMessageHandler handler)
         {
-            handler.SavePostit();
+            await handler.SavePostit();
         }
 
         /// <summary>
         /// Deletes the postit.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void DeletePostit(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void DeletePostit(GameClientMessageHandler handler)
         {
-            handler.DeletePostit();
+            await handler.DeletePostit();
         }
 
         /// <summary>
         /// Opens the present.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void OpenPresent(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void OpenPresent(GameClientMessageHandler handler)
         {
-            handler.OpenGift();
+            await handler.OpenGift();
         }
 
         /// <summary>
         /// Gets the moodlight.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetMoodlight(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetMoodlight(GameClientMessageHandler handler)
         {
-            handler.GetMoodlight();
+            await handler.GetMoodlight();
         }
 
         /// <summary>
         /// Updates the moodlight.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void UpdateMoodlight(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void UpdateMoodlight(GameClientMessageHandler handler)
         {
-            handler.UpdateMoodlight();
+            await handler.UpdateMoodlight();
         }
 
         /// <summary>
         /// Switches the moodlight status.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SwitchMoodlightStatus(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SwitchMoodlightStatus(GameClientMessageHandler handler)
         {
-            handler.SwitchMoodlightStatus();
+            await handler.SwitchMoodlightStatus();
         }
 
         /// <summary>
         /// Initializes the trade.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void InitTrade(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void InitTrade(GameClientMessageHandler handler)
         {
-            handler.InitTrade();
+            await handler.InitTrade();
         }
 
         /// <summary>
         /// Offers the trade item.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void OfferTradeItem(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void OfferTradeItem(GameClientMessageHandler handler)
         {
-            handler.OfferTradeItem();
+            await handler.OfferTradeItem();
         }
 
         /// <summary>
         /// Offers a specific amount of items.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void OfferTradeItems(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void OfferTradeItems(GameClientMessageHandler handler)
         {
-            handler.OfferTradeItems();
+            await handler.OfferTradeItems();
         }
 
         /// <summary>
         /// Takes the back trade item.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void TakeBackTradeItem(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void TakeBackTradeItem(GameClientMessageHandler handler)
         {
-            handler.TakeBackTradeItem();
+            await handler.TakeBackTradeItem();
         }
 
         /// <summary>
         /// Stops the trade.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void StopTrade(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void StopTrade(GameClientMessageHandler handler)
         {
-            handler.StopTrade();
+            await handler.StopTrade();
         }
 
         /// <summary>
         /// Accepts the trade.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void AcceptTrade(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void AcceptTrade(GameClientMessageHandler handler)
         {
-            handler.AcceptTrade();
+            await handler.AcceptTrade();
         }
 
         /// <summary>
         /// Unaccepts the trade.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void UnacceptTrade(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void UnacceptTrade(GameClientMessageHandler handler)
         {
-            handler.UnacceptTrade();
+            await handler.UnacceptTrade();
         }
 
         /// <summary>
         /// Completes the trade.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void CompleteTrade(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void CompleteTrade(GameClientMessageHandler handler)
         {
-            handler.CompleteTrade();
+            await handler.CompleteTrade();
         }
 
         /// <summary>
         /// Gives the respect.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GiveRespect(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GiveRespect(GameClientMessageHandler handler)
         {
-            handler.GiveRespect();
+            await handler.GiveRespect();
         }
 
         /// <summary>
         /// Applies the effect.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ApplyEffect(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ApplyEffect(GameClientMessageHandler handler)
         {
-            handler.ApplyEffect();
+            await handler.ApplyEffect();
         }
 
         /// <summary>
         /// Enables the effect.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void EnableEffect(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void EnableEffect(GameClientMessageHandler handler)
         {
-            handler.EnableEffect();
+            await handler.EnableEffect();
         }
 
         /// <summary>
         /// Recycles the items.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RecycleItems(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RecycleItems(GameClientMessageHandler handler)
         {
-            handler.RecycleItems();
+            await handler.RecycleItems();
         }
 
         /// <summary>
         /// Redeems the exchange furni.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RedeemExchangeFurni(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RedeemExchangeFurni(GameClientMessageHandler handler)
         {
-            handler.RedeemExchangeFurni();
+            await handler.RedeemExchangeFurni();
         }
 
         /// <summary>
         /// Kicks the bot.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void KickBot(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void KickBot(GameClientMessageHandler handler)
         {
-            handler.KickBot();
+            await handler.KickBot();
         }
 
         /// <summary>
         /// Places the pet.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void PlacePet(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void PlacePet(GameClientMessageHandler handler)
         {
-            handler.PlacePet();
+            await handler.PlacePet();
         }
 
         /// <summary>
         /// Gets the pet information.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetPetInfo(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetPetInfo(GameClientMessageHandler handler)
         {
-            handler.GetPetInfo();
+            await handler.GetPetInfo();
         }
 
         /// <summary>
         /// Picks up pet.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void PickUpPet(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void PickUpPet(GameClientMessageHandler handler)
         {
-            handler.PickUpPet();
+            await handler.PickUpPet();
         }
 
         /// <summary>
         /// Composts the monsterplant.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void CompostMonsterplant(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void CompostMonsterplant(GameClientMessageHandler handler)
         {
-            handler.CompostMonsterplant();
+            await handler.CompostMonsterplant();
         }
 
         /// <summary>
         /// Moves the pet.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void MovePet(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void MovePet(GameClientMessageHandler handler)
         {
-            handler.MovePet();
+            await handler.MovePet();
         }
 
         /// <summary>
         /// Respects the pet.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RespectPet(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RespectPet(GameClientMessageHandler handler)
         {
-            handler.RespectPet();
+            await handler.RespectPet();
         }
 
         /// <summary>
         /// Adds the saddle.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void AddSaddle(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void AddSaddle(GameClientMessageHandler handler)
         {
-            handler.AddSaddle();
+            await handler.AddSaddle();
         }
 
         /// <summary>
         /// Removes the saddle.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RemoveSaddle(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RemoveSaddle(GameClientMessageHandler handler)
         {
-            handler.RemoveSaddle();
+            await handler.RemoveSaddle();
         }
 
         /// <summary>
-        /// Rides the specified handler.
+        /// Rides the specified await handler.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void Ride(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void Ride(GameClientMessageHandler handler)
         {
-            handler.MountOnPet();
+            await handler.MountOnPet();
         }
 
         /// <summary>
-        /// Unrides the specified handler.
+        /// Unrides the specified await handler.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void Unride(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void Unride(GameClientMessageHandler handler)
         {
-            handler.CancelMountOnPet();
+            await handler.CancelMountOnPet();
         }
 
         /// <summary>
         /// Saves the wired.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SaveWired(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SaveWired(GameClientMessageHandler handler)
         {
-            handler.SaveWired();
+            await handler.SaveWired();
         }
 
         /// <summary>
         /// Saves the wired condition.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SaveWiredCondition(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SaveWiredCondition(GameClientMessageHandler handler)
         {
-            handler.SaveWiredConditions();
+            await handler.SaveWiredConditions();
         }
 
         /// <summary>
         /// Gets the music data.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetMusicData(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetMusicData(GameClientMessageHandler handler)
         {
-            handler.GetMusicData();
+            await handler.GetMusicData();
         }
 
         /// <summary>
         /// Adds the playlist item.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void AddPlaylistItem(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void AddPlaylistItem(GameClientMessageHandler handler)
         {
-            handler.AddPlaylistItem();
+            await handler.AddPlaylistItem();
         }
 
         /// <summary>
         /// Removes the playlist item.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RemovePlaylistItem(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RemovePlaylistItem(GameClientMessageHandler handler)
         {
-            handler.RemovePlaylistItem();
+            await handler.RemovePlaylistItem();
         }
 
         /// <summary>
         /// Gets the disks.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetDisks(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetDisks(GameClientMessageHandler handler)
         {
-            handler.GetDisks();
+            await handler.GetDisks();
         }
 
         /// <summary>
         /// Gets the playlists.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetPlaylists(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetPlaylists(GameClientMessageHandler handler)
         {
-            handler.GetPlaylists();
+            await handler.GetPlaylists();
         }
 
         /// <summary>
         /// Gets the user information.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetUserInfo(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetUserInfo(GameClientMessageHandler handler)
         {
-            handler.GetUserInfo();
+            await handler.GetUserInfo();
         }
 
         /// <summary>
         /// Loads the profile.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void LoadProfile(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void LoadProfile(GameClientMessageHandler handler)
         {
-            handler.LoadProfile();
+            await handler.LoadProfile();
         }
 
 
         /// <summary>
         /// Gets the balance.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetBalance(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetBalance(GameClientMessageHandler handler)
         {
-            handler.GetBalance();
+            await handler.GetBalance();
         }
 
         /// <summary>
         /// Gets the subscription data.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetSubscriptionData(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetSubscriptionData(GameClientMessageHandler handler)
         {
-            handler.GetSubscriptionData();
+            await handler.GetSubscriptionData();
         }
 
         /// <summary>
         /// Gets the badges.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetBadges(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetBadges(GameClientMessageHandler handler)
         {
-            handler.GetBadges();
+            await handler.GetBadges();
         }
 
         /// <summary>
         /// Updates the badges.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void UpdateBadges(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void UpdateBadges(GameClientMessageHandler handler)
         {
-            handler.UpdateBadges();
+            await handler.UpdateBadges();
         }
 
         /// <summary>
         /// Gets the achievements.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetAchievements(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetAchievements(GameClientMessageHandler handler)
         {
-            handler.GetAchievements();
+            await handler.GetAchievements();
         }
 
         /// <summary>
         /// Changes the look.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ChangeLook(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ChangeLook(GameClientMessageHandler handler)
         {
-            handler.ChangeLook();
+            await handler.ChangeLook();
         }
 
         /// <summary>
         /// Changes the motto.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ChangeMotto(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ChangeMotto(GameClientMessageHandler handler)
         {
-            handler.ChangeMotto();
+            await handler.ChangeMotto();
         }
 
         /// <summary>
         /// Gets the wardrobe.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetWardrobe(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetWardrobe(GameClientMessageHandler handler)
         {
-            handler.GetWardrobe();
+            await handler.GetWardrobe();
         }
 
         /// <summary>
         /// Allows all ride.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void AllowAllRide(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void AllowAllRide(GameClientMessageHandler handler)
         {
-            handler.AllowAllRide();
+            await handler.AllowAllRide();
         }
 
         /// <summary>
         /// Saves the wardrobe.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SaveWardrobe(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SaveWardrobe(GameClientMessageHandler handler)
         {
-            handler.SaveWardrobe();
+            await handler.SaveWardrobe();
         }
 
         /// <summary>
         /// Gets the pets inventory.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetPetsInventory(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetPetsInventory(GameClientMessageHandler handler)
         {
-            handler.GetPetsInventory();
+            await handler.GetPetsInventory();
         }
 
         /// <summary>
         /// Opens the quests.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void OpenQuests(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void OpenQuests(GameClientMessageHandler handler)
         {
-            handler.OpenQuests();
+            await handler.OpenQuests();
         }
 
         /// <summary>
         /// Starts the quest.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void StartQuest(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void StartQuest(GameClientMessageHandler handler)
         {
-            handler.StartQuest();
+            await handler.StartQuest();
         }
 
         /// <summary>
         /// Stops the quest.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void StopQuest(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void StopQuest(GameClientMessageHandler handler)
         {
-            handler.StopQuest();
+            await handler.StopQuest();
         }
 
         /// <summary>
         /// Gets the current quest.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetCurrentQuest(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetCurrentQuest(GameClientMessageHandler handler)
         {
-            handler.GetCurrentQuest();
+            await handler.GetCurrentQuest();
         }
 
         /// <summary>
         /// Gets the group badges.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetGroupBadges(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetGroupBadges(GameClientMessageHandler handler)
         {
-            handler.InitRoomGroupBadges();
+            await handler.InitRoomGroupBadges();
         }
 
         /// <summary>
         /// Gets the bot inv.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetBotInv(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetBotInv(GameClientMessageHandler handler)
         {
-            handler.GetBotsInventory();
+            await handler.GetBotsInventory();
         }
 
         /// <summary>
         /// Saves the room bg.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SaveRoomBg(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SaveRoomBg(GameClientMessageHandler handler)
         {
-            handler.SaveRoomBg();
+            await handler.SaveRoomBg();
         }
 
         /// <summary>
         /// Goes the room.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GoRoom(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GoRoom(GameClientMessageHandler handler)
         {
-            handler.GoRoom();
+            await handler.GoRoom();
         }
 
         /// <summary>
-        /// Sits the specified handler.
+        /// Sits the specified await handler.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void Sit(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void Sit(GameClientMessageHandler handler)
         {
-            handler.Sit();
+            await handler.Sit();
         }
 
         /// <summary>
         /// Gets the event rooms.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetEventRooms(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetEventRooms(GameClientMessageHandler handler)
         {
-            handler.GetEventRooms();
+            await handler.GetEventRooms();
         }
 
         /// <summary>
         /// Starts the seasonal quest.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void StartSeasonalQuest(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void StartSeasonalQuest(GameClientMessageHandler handler)
         {
-            handler.StartSeasonalQuest();
+            await handler.StartSeasonalQuest();
         }
 
         /// <summary>
         /// Saves the mannequin.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SaveMannequin(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SaveMannequin(GameClientMessageHandler handler)
         {
-            handler.SaveMannequin();
+            await handler.SaveMannequin();
         }
 
         /// <summary>
         /// Saves the mannequin2.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SaveMannequin2(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SaveMannequin2(GameClientMessageHandler handler)
         {
-            handler.SaveMannequin2();
+            await handler.SaveMannequin2();
         }
 
         /// <summary>
         /// Serializes the group purchase page.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SerializeGroupPurchasePage(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SerializeGroupPurchasePage(GameClientMessageHandler handler)
         {
-            handler.SerializeGroupPurchasePage();
+            await handler.SerializeGroupPurchasePage();
         }
 
         /// <summary>
         /// Serializes the group purchase parts.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SerializeGroupPurchaseParts(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SerializeGroupPurchaseParts(GameClientMessageHandler handler)
         {
-            handler.SerializeGroupPurchaseParts();
+            await handler.SerializeGroupPurchaseParts();
         }
 
         /// <summary>
         /// Purchases the group.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void PurchaseGroup(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void PurchaseGroup(GameClientMessageHandler handler)
         {
-            handler.PurchaseGroup();
+            await handler.PurchaseGroup();
         }
 
         /// <summary>
         /// Serializes the group information.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SerializeGroupInfo(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SerializeGroupInfo(GameClientMessageHandler handler)
         {
-            handler.SerializeGroupInfo();
+            await handler.SerializeGroupInfo();
         }
 
         /// <summary>
         /// Serializes the group members.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SerializeGroupMembers(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SerializeGroupMembers(GameClientMessageHandler handler)
         {
-            handler.SerializeGroupMembers();
+            await handler.SerializeGroupMembers();
         }
 
         /// <summary>
         /// Makes the group admin.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void MakeGroupAdmin(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void MakeGroupAdmin(GameClientMessageHandler handler)
         {
-            handler.MakeGroupAdmin();
+            await handler.MakeGroupAdmin();
         }
 
         /// <summary>
         /// Removes the group admin.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RemoveGroupAdmin(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RemoveGroupAdmin(GameClientMessageHandler handler)
         {
-            handler.RemoveGroupAdmin();
+            await handler.RemoveGroupAdmin();
         }
 
         /// <summary>
         /// Accepts the membership.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void AcceptMembership(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void AcceptMembership(GameClientMessageHandler handler)
         {
-            handler.AcceptMembership();
+            await handler.AcceptMembership();
         }
 
         /// <summary>
         /// Declines the membership.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void DeclineMembership(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void DeclineMembership(GameClientMessageHandler handler)
         {
-            handler.DeclineMembership();
+            await handler.DeclineMembership();
         }
 
         /// <summary>
         /// Removes the member.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RemoveMember(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RemoveMember(GameClientMessageHandler handler)
         {
-            handler.RemoveMember();
+            await handler.RemoveMember();
         }
 
         /// <summary>
         /// Joins the group.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void JoinGroup(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void JoinGroup(GameClientMessageHandler handler)
         {
-            handler.JoinGroup();
+            await handler.JoinGroup();
         }
 
         /// <summary>
         /// Makes the fav.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void MakeFav(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void MakeFav(GameClientMessageHandler handler)
         {
-            handler.MakeFav();
+            await handler.MakeFav();
         }
 
         /// <summary>
         /// Removes the fav.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RemoveFav(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RemoveFav(GameClientMessageHandler handler)
         {
-            handler.RemoveFav();
+            await handler.RemoveFav();
         }
 
         /// <summary>
         /// Receives the nux gifts.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ReceiveNuxGifts(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ReceiveNuxGifts(GameClientMessageHandler handler)
         {
-            handler.ReceiveNuxGifts();
+            await handler.ReceiveNuxGifts();
         }
 
         /// <summary>
         /// Accepts the nux gifts.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void AcceptNuxGifts(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void AcceptNuxGifts(GameClientMessageHandler handler)
         {
-            handler.AcceptNuxGifts();
+            await handler.AcceptNuxGifts();
         }
 
         /// <summary>
         /// Reads the forum thread.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ReadForumThread(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ReadForumThread(GameClientMessageHandler handler)
         {
-            handler.ReadForumThread();
+            await handler.ReadForumThread();
         }
 
         /// <summary>
         /// Publishes the forum thread.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void PublishForumThread(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void PublishForumThread(GameClientMessageHandler handler)
         {
-            handler.PublishForumThread();
+            await handler.PublishForumThread();
         }
 
         /// <summary>
         /// Updates the forum thread.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void UpdateForumThread(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void UpdateForumThread(GameClientMessageHandler handler)
         {
-            handler.UpdateThreadState();
+            await handler.UpdateThreadState();
         }
 
         /// <summary>
         /// Alters the state of the forum thread.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void AlterForumThreadState(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void AlterForumThreadState(GameClientMessageHandler handler)
         {
-            handler.AlterForumThreadState();
+            await handler.AlterForumThreadState();
         }
 
         /// <summary>
         /// Gets the forum thread root.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetForumThreadRoot(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetForumThreadRoot(GameClientMessageHandler handler)
         {
-            handler.GetGroupForumThreadRoot();
+            await handler.GetGroupForumThreadRoot();
         }
 
         /// <summary>
         /// Gets the group forum data.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetGroupForumData(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetGroupForumData(GameClientMessageHandler handler)
         {
-            handler.GetGroupForumData();
+            await handler.GetGroupForumData();
         }
 
         /// <summary>
         /// Gets the group forums.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetGroupForums(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetGroupForums(GameClientMessageHandler handler)
         {
-            handler.GetGroupForums();
+            await handler.GetGroupForums();
         }
 
         /// <summary>
         /// Manages the group.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ManageGroup(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ManageGroup(GameClientMessageHandler handler)
         {
-            handler.ManageGroup();
+            await handler.ManageGroup();
         }
 
         /// <summary>
         /// Updates the name of the group.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void UpdateGroupName(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void UpdateGroupName(GameClientMessageHandler handler)
         {
-            handler.UpdateGroupName();
+            await handler.UpdateGroupName();
         }
 
         /// <summary>
         /// Updates the group badge.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void UpdateGroupBadge(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void UpdateGroupBadge(GameClientMessageHandler handler)
         {
-            handler.UpdateGroupBadge();
+            await handler.UpdateGroupBadge();
         }
 
         /// <summary>
         /// Updates the group colours.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void UpdateGroupColours(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void UpdateGroupColours(GameClientMessageHandler handler)
         {
-            handler.UpdateGroupColours();
+            await handler.UpdateGroupColours();
         }
 
         /// <summary>
         /// Updates the group settings.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void UpdateGroupSettings(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void UpdateGroupSettings(GameClientMessageHandler handler)
         {
-            handler.UpdateGroupSettings();
+            await handler.UpdateGroupSettings();
         }
 
         /// <summary>
         /// Serializes the group furni page.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SerializeGroupFurniPage(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SerializeGroupFurniPage(GameClientMessageHandler handler)
         {
-            handler.SerializeGroupFurniPage();
+            await handler.SerializeGroupFurniPage();
         }
 
         /// <summary>
         /// Ejects the furni.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void EjectFurni(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void EjectFurni(GameClientMessageHandler handler)
         {
-            handler.EjectFurni();
+            await handler.EjectFurni();
         }
 
         /// <summary>
         /// Mutes the user.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void MuteUser(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void MuteUser(GameClientMessageHandler handler)
         {
-            handler.MuteUser();
+            await handler.MuteUser();
         }
 
         /// <summary>
         /// Checks the name.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void CheckName(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void CheckName(GameClientMessageHandler handler)
         {
-            handler.CheckName();
+            await handler.CheckName();
         }
 
         /// <summary>
         /// Changes the name.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ChangeName(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ChangeName(GameClientMessageHandler handler)
         {
-            handler.ChangeName();
+            await handler.ChangeName();
         }
 
         /// <summary>
         /// Gets the trainer panel.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetTrainerPanel(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetTrainerPanel(GameClientMessageHandler handler)
         {
-            handler.GetTrainerPanel();
+            await handler.GetTrainerPanel();
         }
 
         /// <summary>
         /// Updates the event information.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void UpdateEventInfo(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void UpdateEventInfo(GameClientMessageHandler handler)
         {
-            handler.UpdateEventInfo();
+            await handler.UpdateEventInfo();
         }
 
         /// <summary>
         /// Gets the room banned users.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetRoomBannedUsers(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetRoomBannedUsers(GameClientMessageHandler handler)
         {
-            handler.GetBannedUsers();
+            await handler.GetBannedUsers();
         }
 
         /// <summary>
         /// Userses the with rights.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void UsersWithRights(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void UsersWithRights(GameClientMessageHandler handler)
         {
-            handler.UsersWithRights();
+            await handler.UsersWithRights();
         }
 
         /// <summary>
         /// Unbans the user.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void UnbanUser(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void UnbanUser(GameClientMessageHandler handler)
         {
-            handler.UnbanUser();
+            await handler.UnbanUser();
         }
 
         /// <summary>
         /// Manages the bot actions.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ManageBotActions(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ManageBotActions(GameClientMessageHandler handler)
         {
-            handler.ManageBotActions();
+            await handler.ManageBotActions();
         }
 
         /// <summary>
         /// Handles the bot speech list.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void HandleBotSpeechList(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void HandleBotSpeechList(GameClientMessageHandler handler)
         {
-            handler.HandleBotSpeechList();
+            await handler.HandleBotSpeechList();
         }
 
         /// <summary>
         /// Gets the relationships.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetRelationships(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetRelationships(GameClientMessageHandler handler)
         {
-            handler.GetRelationships();
+            await handler.GetRelationships();
         }
 
         /// <summary>
         /// Sets the relationship.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SetRelationship(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SetRelationship(GameClientMessageHandler handler)
         {
-            handler.SetRelationship();
+            await handler.SetRelationship();
         }
 
         /// <summary>
         /// Automatics the room.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void AutoRoom(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void AutoRoom(GameClientMessageHandler handler)
         {
-            handler.RoomOnLoad();
+            await handler.RoomOnLoad();
         }
 
         /// <summary>
         /// Mutes all.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void MuteAll(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void MuteAll(GameClientMessageHandler handler)
         {
-            handler.MuteAll();
+            await handler.MuteAll();
         }
 
         /// <summary>
         /// Completes the saftey quiz.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void CompleteSafteyQuiz(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void CompleteSafteyQuiz(GameClientMessageHandler handler)
         {
-            handler.CompleteSafetyQuiz();
+            await handler.CompleteSafetyQuiz();
         }
 
         /// <summary>
         /// Removes the favourite room.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RemoveFavouriteRoom(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RemoveFavouriteRoom(GameClientMessageHandler handler)
         {
-            handler.RemoveFavouriteRoom();
+            await handler.RemoveFavouriteRoom();
         }
 
         /// <summary>
         /// Rooms the user action.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RoomUserAction(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RoomUserAction(GameClientMessageHandler handler)
         {
-            handler.RoomUserAction();
+            await handler.RoomUserAction();
         }
 
         /// <summary>
         /// Saves the football outfit.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SaveFootballOutfit(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SaveFootballOutfit(GameClientMessageHandler handler)
         {
-            handler.SaveFootballOutfit();
+            await handler.SaveFootballOutfit();
         }
 
         /// <summary>
         /// Confirms the love lock.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ConfirmLoveLock(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ConfirmLoveLock(GameClientMessageHandler handler)
         {
-            handler.ConfirmLoveLock();
+            await handler.ConfirmLoveLock();
         }
 
         /// <summary>
         /// Builderses the club update furni count.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void BuildersClubUpdateFurniCount(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void BuildersClubUpdateFurniCount(GameClientMessageHandler handler)
         {
-            handler.BuildersClubUpdateFurniCount();
+            await handler.BuildersClubUpdateFurniCount();
         }
 
         /// <summary>
         /// Gets the client version message event.
         /// </summary>
-        /// <param name="handler">The handler.</param>
+        /// <param name="handler">The await handler.</param>
         internal static void ReleaseVersion(GameClientMessageHandler handler)
         {
             handler.ReleaseVersion();
@@ -2419,423 +2422,425 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Places the builders furniture.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void PlaceBuildersFurniture(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void PlaceBuildersFurniture(GameClientMessageHandler handler)
         {
-            handler.PlaceBuildersFurniture();
+            await handler.PlaceBuildersFurniture();
         }
 
         /// <summary>
-        /// Whispers the specified handler.
+        /// Whispers the specified await handler.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void Whisper(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void Whisper(GameClientMessageHandler handler)
         {
-            handler.Whisper();
-        }
-
-        /// <summary>
-        /// Catalogues the index.
-        /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void CatalogueIndex(GameClientMessageHandler handler)
-        {
-            handler.CatalogueIndex();
+            await handler.Whisper();
         }
 
         /// <summary>
         /// Catalogues the index.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetCatalogMode(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void CatalogueIndex(GameClientMessageHandler handler)
         {
-            handler.CatalogueMode();
+            await handler.CatalogueIndex();
+        }
+
+        /// <summary>
+        /// Catalogues the index.
+        /// </summary>
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetCatalogMode(GameClientMessageHandler handler)
+        {
+            await handler.CatalogueMode();
         }
 
         /// <summary>
         /// Catalogues the page.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void CataloguePage(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void CataloguePage(GameClientMessageHandler handler)
         {
-            handler.CataloguePage();
+            await handler.CataloguePage();
         }
 
         /// <summary>
         /// Catalogues the club page.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void CatalogueClubPage(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void CatalogueClubPage(GameClientMessageHandler handler)
         {
-            handler.CatalogueClubPage();
+            await handler.CatalogueClubPage();
         }
 
         /// <summary>
         /// Catalogues the offers configuration.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void CatalogueOffersConfig(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void CatalogueOffersConfig(GameClientMessageHandler handler)
         {
-            handler.CatalogueOfferConfig();
+            await handler.CatalogueOfferConfig();
         }
 
-        internal static void PurchaseOffer(GameClientMessageHandler handler)
+        internal static async void PurchaseOffer(GameClientMessageHandler handler)
         {
-            handler.PurchaseOffer();
-        }
-        internal static void CancelOffer(GameClientMessageHandler handler)
-        {
-            handler.CancelOffer();
+            await handler.PurchaseOffer();
         }
 
-        internal static void GetItemStats(GameClientMessageHandler handler)
+        internal static async void CancelOffer(GameClientMessageHandler handler)
         {
-            handler.GetItemStats();
+            await handler.CancelOffer();
         }
 
-        internal static void GetMyOffers(GameClientMessageHandler handler)
+        internal static async void GetItemStats(GameClientMessageHandler handler)
         {
-            handler.GetMyOffers();
+            await handler.GetItemStats();
         }
 
-        internal static void MakeOffer(GameClientMessageHandler handler)
+        internal static async void GetMyOffers(GameClientMessageHandler handler)
         {
-            handler.MakeOffer();
+            await handler.GetMyOffers();
         }
-        internal static void ReedemCredits(GameClientMessageHandler handler)
+
+        internal static async void MakeOffer(GameClientMessageHandler handler)
         {
-            handler.ReedemCredits();
+            await handler.MakeOffer();
+        }
+
+        internal static async void ReedemCredits(GameClientMessageHandler handler)
+        {
+            await handler.ReedemCredits();
         }
 
         /// <summary>
         /// Catalogues the single offer.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void CatalogueSingleOffer(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void CatalogueSingleOffer(GameClientMessageHandler handler)
         {
-            handler.CatalogueOffer();
+            await handler.CatalogueOffer();
         }
 
         /// <summary>
         /// get marketplace offers
         /// </summary>
         /// <param name="handler"></param>
-        internal static void GetOffers(GameClientMessageHandler handler)
+        internal static async void GetOffers(GameClientMessageHandler handler)
         {
-            handler.GetOffers();
+            await handler.GetOffers();
         }
 
         /// <summary>
         /// Checks the name of the pet.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void CheckPetName(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void CheckPetName(GameClientMessageHandler handler)
         {
-            handler.CheckPetName();
+            await handler.CheckPetName();
         }
 
         /// <summary>
         /// Purchases the item.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void PurchaseItem(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void PurchaseItem(GameClientMessageHandler handler)
         {
-            handler.PurchaseItem();
+            await handler.PurchaseItem();
         }
 
         /// <summary>
         /// Purchases the gift.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void PurchaseGift(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void PurchaseGift(GameClientMessageHandler handler)
         {
-            handler.PurchaseGift();
+            await handler.PurchaseGift();
         }
 
         /// <summary>
         /// Gets the pet breeds.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetPetBreeds(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetPetBreeds(GameClientMessageHandler handler)
         {
-            handler.GetPetBreeds();
+            await handler.GetPetBreeds();
         }
 
         /// <summary>
         /// Reloads the ecotron.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ReloadEcotron(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ReloadEcotron(GameClientMessageHandler handler)
         {
-            handler.ReloadEcotron();
+            await handler.ReloadEcotron();
         }
 
         /// <summary>
         /// Gifts the wrapping configuration.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GiftWrappingConfig(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GiftWrappingConfig(GameClientMessageHandler handler)
         {
-            handler.GiftWrappingConfig();
+            await handler.GiftWrappingConfig();
         }
 
         /// <summary>
         /// Recyclers the rewards.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RecyclerRewards(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RecyclerRewards(GameClientMessageHandler handler)
         {
-            handler.GetRecyclerRewards();
+            await handler.GetRecyclerRewards();
         }
 
         /// <summary>
         /// Requests the leave group.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void RequestLeaveGroup(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void RequestLeaveGroup(GameClientMessageHandler handler)
         {
-            handler.RequestLeaveGroup();
+            await handler.RequestLeaveGroup();
         }
 
         /// <summary>
         /// Confirms the leave group.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ConfirmLeaveGroup(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ConfirmLeaveGroup(GameClientMessageHandler handler)
         {
-            handler.ConfirmLeaveGroup();
+            await handler.ConfirmLeaveGroup();
         }
 
         /// <summary>
         /// News the navigator.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void NewNavigator(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void NewNavigator(GameClientMessageHandler handler)
         {
-            handler.NewNavigator();
+            await handler.NewNavigator();
         }
 
         /// <summary>
         /// Searches the new navigator.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SearchNewNavigator(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SearchNewNavigator(GameClientMessageHandler handler)
         {
-            handler.SearchNewNavigator();
+            await handler.SearchNewNavigator();
         }
 
         /// <summary>
         /// News the navigator delete saved search.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void NewNavigatorDeleteSavedSearch(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void NewNavigatorDeleteSavedSearch(GameClientMessageHandler handler)
         {
-            handler.NewNavigatorDeleteSavedSearch();
+            await handler.NewNavigatorDeleteSavedSearch();
         }
 
         /// <summary>
         /// News the navigator resize.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void NewNavigatorResize(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void NewNavigatorResize(GameClientMessageHandler handler)
         {
-            handler.NewNavigatorResize();
+            await handler.NewNavigatorResize();
         }
 
-        internal static void HabboAirGetUserRooms(GameClientMessageHandler handler)
+        internal static async void HabboAirGetUserRooms(GameClientMessageHandler handler)
         {
-            handler.HabboAirGetUserRooms();
+            await handler.HabboAirGetUserRooms();
         }
 
-        internal static void HabboAirGetAllRooms(GameClientMessageHandler handler)
+        internal static async void HabboAirGetAllRooms(GameClientMessageHandler handler)
         {
-            handler.HabboAirGetAllRooms();
+            await handler.HabboAirGetAllRooms();
         }
 
         /// <summary>
         /// News the navigator add saved search.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void NewNavigatorAddSavedSearch(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void NewNavigatorAddSavedSearch(GameClientMessageHandler handler)
         {
-            handler.NewNavigatorAddSavedSearch();
+            await handler.NewNavigatorAddSavedSearch();
         }
 
         /// <summary>
         /// News the navigator collapse category.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void NewNavigatorCollapseCategory(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void NewNavigatorCollapseCategory(GameClientMessageHandler handler)
         {
-            handler.NewNavigatorCollapseCategory();
+            await handler.NewNavigatorCollapseCategory();
         }
 
         /// <summary>
         /// News the navigator uncollapse category.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void NewNavigatorUncollapseCategory(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void NewNavigatorUncollapseCategory(GameClientMessageHandler handler)
         {
-            handler.NewNavigatorUncollapseCategory();
+            await handler.NewNavigatorUncollapseCategory();
         }
 
         /// <summary>
         /// Pets the breed result.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void PetBreedResult(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void PetBreedResult(GameClientMessageHandler handler)
         {
-            handler.PetBreedResult();
+            await handler.PetBreedResult();
         }
 
         /// <summary>
         /// Pets the breed cancel.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void PetBreedCancel(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void PetBreedCancel(GameClientMessageHandler handler)
         {
-            handler.PetBreedCancel();
+            await handler.PetBreedCancel();
         }
 
         /// <summary>
         /// Games the center load game.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GameCenterLoadGame(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GameCenterLoadGame(GameClientMessageHandler handler)
         {
-            handler.GameCenterLoadGame();
+            await handler.GameCenterLoadGame();
         }
 
         /// <summary>
         /// Get game lists
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetGameListing(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetGameListing(GameClientMessageHandler handler)
         {
-            handler.GetGameListing();
+            await handler.GetGameListing();
         }
 
         /// <summary>
         /// Init the game center
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void InitializeGameCenter(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void InitializeGameCenter(GameClientMessageHandler handler)
         {
-            handler.InitializeGameCenter();
+            await handler.InitializeGameCenter();
         }
 
         /// <summary>
         /// Games the center join queue.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GameCenterJoinQueue(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GameCenterJoinQueue(GameClientMessageHandler handler)
         {
-            handler.GameCenterJoinQueue();
+            await handler.GameCenterJoinQueue();
         }
 
         /// <summary>
         /// Hotels the view countdown.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void HotelViewCountdown(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void HotelViewCountdown(GameClientMessageHandler handler)
         {
-            handler.HotelViewCountdown();
+            await handler.HotelViewCountdown();
         }
 
         /// <summary>
         /// Hotels the view dailyquest.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void HotelViewDailyquest(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void HotelViewDailyquest(GameClientMessageHandler handler)
         {
-            handler.HotelViewDailyquest();
+            await handler.HotelViewDailyquest();
         }
 
         /// <summary>
         /// Places the builders wall item.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void PlaceBuildersWallItem(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void PlaceBuildersWallItem(GameClientMessageHandler handler)
         {
-            handler.PlaceBuildersWallItem();
+            await handler.PlaceBuildersWallItem();
         }
 
         /// <summary>
         /// Targeteds the offer buy.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void PurchaseTargetedOffer(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void PurchaseTargetedOffer(GameClientMessageHandler handler)
         {
-            handler.PurchaseTargetedOffer();
+            await handler.PurchaseTargetedOffer();
         }
 
         /// <summary>
         /// Ambassadors the alert.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void AmbassadorAlert(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void AmbassadorAlert(GameClientMessageHandler handler)
         {
-            handler.AmbassadorAlert();
+            await handler.AmbassadorAlert();
         }
 
         /// <summary>
         /// Goes the name of to room by.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GoToRoomByName(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GoToRoomByName(GameClientMessageHandler handler)
         {
-            handler.GoToRoomByName();
+            await handler.GoToRoomByName();
         }
 
         /// <summary>
         /// Gets the uc panel.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetUcPanel(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetUcPanel(GameClientMessageHandler handler)
         {
-            handler.GetUcPanel();
+            await handler.GetUcPanel();
         }
 
         /// <summary>
         /// Gets the uc panel hotel.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetUcPanelHotel(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetUcPanelHotel(GameClientMessageHandler handler)
         {
-            handler.GetUcPanelHotel();
+            await handler.GetUcPanelHotel();
         }
 
         /// <summary>
         /// Saves the room thumbnail.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SaveRoomThumbnail(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SaveRoomThumbnail(GameClientMessageHandler handler)
         {
-            handler.SaveRoomThumbnail();
+            await handler.SaveRoomThumbnail();
         }
 
         /// <summary>
         /// Uses the purchasable clothing.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void UsePurchasableClothing(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void UsePurchasableClothing(GameClientMessageHandler handler)
         {
-            handler.UsePurchasableClothing();
+            await handler.UsePurchasableClothing();
         }
 
         /// <summary>
         /// Gets the user look.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetUserLook(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetUserLook(GameClientMessageHandler handler)
         {
-            handler.GetUserLook();
+            await handler.GetUserLook();
         }
 
         /// <summary>
         /// Sets the invitations preference.
         /// </summary>
-        /// <param name="handler">The handler.</param>
+        /// <param name="handler">The await handler.</param>
         internal static void SetInvitationsPreference(GameClientMessageHandler handler)
         {
             handler.SetInvitationsPreference();
@@ -2844,106 +2849,106 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Finds the more friends.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void FindMoreFriends(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void FindMoreFriends(GameClientMessageHandler handler)
         {
-            handler.FindMoreFriends();
+            await handler.FindMoreFriends();
         }
 
         /// <summary>
         /// Hotels the view request badge.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void HotelViewRequestBadge(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void HotelViewRequestBadge(GameClientMessageHandler handler)
         {
-            handler.HotelViewRequestBadge();
+            await handler.HotelViewRequestBadge();
         }
 
         /// <summary>
         /// Gets the camera price.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetCameraPrice(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetCameraPrice(GameClientMessageHandler handler)
         {
-            handler.GetCameraPrice();
+            await handler.GetCameraPrice();
         }
 
         /// <summary>
         /// Toggles the staff pick.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void ToggleStaffPick(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void ToggleStaffPick(GameClientMessageHandler handler)
         {
-            handler.ToggleStaffPick();
+            await handler.ToggleStaffPick();
         }
 
         /// <summary>
         /// Gets the hotel view hall of fame.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetHotelViewHallOfFame(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetHotelViewHallOfFame(GameClientMessageHandler handler)
         {
-            handler.GetHotelViewHallOfFame();
+            await handler.GetHotelViewHallOfFame();
         }
 
         /// <summary>
         /// Submits the room to competition.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void SubmitRoomToCompetition(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void SubmitRoomToCompetition(GameClientMessageHandler handler)
         {
-            handler.SubmitRoomToCompetition();
+            await handler.SubmitRoomToCompetition();
         }
 
         /// <summary>
         /// Enters the room queue.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void EnterRoomQueue(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void EnterRoomQueue(GameClientMessageHandler handler)
         {
-            handler.EnterRoomQueue();
+            await handler.EnterRoomQueue();
         }
 
         /// <summary>
         /// Gets the camera request.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void GetCameraRequest(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void GetCameraRequest(GameClientMessageHandler handler)
         {
-            handler.GetCameraRequest();
+            await handler.GetCameraRequest();
         }
 
         /// <summary>
         /// Votes for room.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void VoteForRoom(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void VoteForRoom(GameClientMessageHandler handler)
         {
-            handler.VoteForRoom();
+            await handler.VoteForRoom();
         }
 
         /// <summary>
         /// Updates the forum settings.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void UpdateForumSettings(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void UpdateForumSettings(GameClientMessageHandler handler)
         {
-            handler.UpdateForumSettings();
+            await handler.UpdateForumSettings();
         }
 
         /// <summary>
         /// Friends the request list load.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void FriendRequestListLoad(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void FriendRequestListLoad(GameClientMessageHandler handler)
         {
-            handler.FriendRequestListLoad();
+            await handler.FriendRequestListLoad();
         }
 
         /// <summary>
         /// Sets the room camera preferences.
         /// </summary>
-        /// <param name="handler">The handler.</param>
+        /// <param name="handler">The await handler.</param>
         internal static void SetRoomCameraPreferences(GameClientMessageHandler handler)
         {
             handler.SetRoomCameraPreferences();
@@ -2952,10 +2957,10 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Deletes the group.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        internal static void DeleteGroup(GameClientMessageHandler handler)
+        /// <param name="handler">The await handler.</param>
+        internal static async void DeleteGroup(GameClientMessageHandler handler)
         {
-            handler.DeleteGroup();
+            await handler.DeleteGroup();
         }
     }
 }

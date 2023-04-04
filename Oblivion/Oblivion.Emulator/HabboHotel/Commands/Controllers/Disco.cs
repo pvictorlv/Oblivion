@@ -20,14 +20,14 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 0;
         }
 
-        public override async Task<bool> Execute(GameClient session, string[] pms)
+        public override Task<bool> Execute(GameClient session, string[] pms)
         {
             var room = session.GetHabbo().CurrentRoom;
-            if (room == null || !room.CheckRights(session, true)) return true;
+            if (room == null || !room.CheckRights(session, true)) return Task.FromResult(true);
 
             room.DiscoMode = !room.DiscoMode;
 
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

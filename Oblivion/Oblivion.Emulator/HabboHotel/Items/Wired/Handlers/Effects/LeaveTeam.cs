@@ -48,12 +48,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 
             var roomUser = (RoomUser) stuff[0];
-            if (roomUser?.GetClient()?.GetHabbo() == null) return false;
+            if (roomUser?.GetClient()?.GetHabbo() == null) return Task.FromResult(false);
             var room = roomUser.GetRoom();
             var delay = Delay / 500;
             
@@ -75,7 +75,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             roomUser.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateEffect(0);
 
 
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

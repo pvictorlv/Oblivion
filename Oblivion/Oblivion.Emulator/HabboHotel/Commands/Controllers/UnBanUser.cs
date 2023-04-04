@@ -22,7 +22,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         }
 
-        public override async Task<bool> Execute(GameClient session, string[] pms)
+        public override Task<bool> Execute(GameClient session, string[] pms)
         {
 
             var user = pms[0];
@@ -39,7 +39,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 Oblivion.GetGame().GetBanManager().LoadBans(queryReactor);
             }
 
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

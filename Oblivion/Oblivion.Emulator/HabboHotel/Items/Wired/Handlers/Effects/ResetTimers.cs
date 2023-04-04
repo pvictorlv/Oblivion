@@ -75,7 +75,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             Room.LastTimerReset = DateTime.Now;
             
-            Room.GetWiredHandler().ExecuteWired(Interaction.TriggerTimer);
+            await Room.GetWiredHandler().ExecuteWired(Interaction.TriggerTimer);
 
             _mNext = Oblivion.Now() + Delay;
             Requested = false;
@@ -83,10 +83,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             Requested = true;
-            return true;
+            return Task.FromResult(true);
 
         }
     }

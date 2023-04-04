@@ -20,7 +20,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 0;
         }
 
-        public override async Task<bool> Execute(GameClient session, string[] pms)
+        public override Task<bool> Execute(GameClient session, string[] pms)
         {
             Task.Factory.StartNew(() =>
             {
@@ -31,7 +31,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 return true;
             });
 
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

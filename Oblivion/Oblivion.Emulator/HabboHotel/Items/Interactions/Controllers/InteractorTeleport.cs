@@ -8,7 +8,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorTeleport : FurniInteractorModel
     {
-        public override async Task OnPlace(GameClient session, RoomItem item)
+        public override Task OnPlace(GameClient session, RoomItem item)
         {
 
             item.ExtraData = "0";
@@ -41,11 +41,10 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 item.InteractingUser2 = 0;
             }
 
-            
-
+            return Task.CompletedTask;
         }
 
-        public override async Task OnRemove(GameClient session, RoomItem item)
+        public override Task OnRemove(GameClient session, RoomItem item)
         {
             item.TeleporterId = "0";
             item.ExtraData = "0";
@@ -67,12 +66,14 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
                 item.InteractingUser2 = 0;
             }
+
+            return Task.CompletedTask;
         }
 
-        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             if (item?.GetRoom() == null || session?.GetHabbo() == null)
-                return;
+                return Task.CompletedTask;
 
             var user = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
 
@@ -81,15 +82,15 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 if (user.Coordinate == item.Coordinate || user.Coordinate == item.SquareInFront)
                 {
                     if (item.InteractingUser != 0)
-                        return;
+                        return Task.CompletedTask;
 
                     item.InteractingUser = user.GetClient().GetHabbo().Id;
                 }
                 else if (user.CanWalk)
                     user.MoveTo(item.SquareInFront);
             }
-            
 
+            return Task.CompletedTask;
         }
     }
 }

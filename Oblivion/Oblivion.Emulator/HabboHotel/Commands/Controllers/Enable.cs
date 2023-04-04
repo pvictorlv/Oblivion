@@ -20,29 +20,29 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 1;
         }
 
-        public override async Task<bool> Execute(GameClient session, string[] pms)
+        public override Task<bool> Execute(GameClient session, string[] pms)
         {
-            if (session?.GetHabbo() == null) return true;
+            if (session?.GetHabbo() == null) return Task.FromResult(true);
             var user =
                 session.GetHabbo()
                     .CurrentRoom.GetRoomUserManager()
                     .GetRoomUserByVirtualId(session.CurrentRoomUserId);
 
-            if (user == null) return true;
-            if (user.RidingHorse) return true;
-            if (user.IsLyingDown) return true;
+            if (user == null) return Task.FromResult(true);
+            if (user.RidingHorse) return Task.FromResult(true);
+            if (user.IsLyingDown) return Task.FromResult(true);
 
-            if (!ushort.TryParse(pms[0], out var effect)) return true;
-            if (effect == 178 && session.GetHabbo().Rank < 4) return true;
-            if ((effect == 23 || effect == 24 || effect == 25 || effect == 26 || effect == 102) && !session.GetHabbo().HasFuse("fuse_mod")) return true;
+            if (!ushort.TryParse(pms[0], out var effect)) return Task.FromResult(true);
+            if (effect == 178 && session.GetHabbo().Rank < 4) return Task.FromResult(true);
+            if ((effect == 23 || effect == 24 || effect == 25 || effect == 26 || effect == 102) && !session.GetHabbo().HasFuse("fuse_mod")) return Task.FromResult(true);
             if (effect == 140 && !(session.GetHabbo().Vip || session.GetHabbo().HasFuse("fuse_vip_commands")))
-                return true;
+                return Task.FromResult(true);
 
             session.GetHabbo()
                 .GetAvatarEffectsInventoryComponent()
                 .ActivateCustomEffect(effect);
 
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

@@ -30,7 +30,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                  await session.SendWhisperAsync(Oblivion.GetLanguage().GetVar("user_not_found"));
                 return true;
             }
-            client.GetHabbo().GetInventoryComponent().ClearItems();
+            await client.GetHabbo().GetInventoryComponent().ClearItems();
             return true;
         }
     }

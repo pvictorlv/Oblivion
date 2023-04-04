@@ -58,7 +58,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             set { }
         }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 
@@ -66,7 +66,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
             if ((roomUser?.IsBot ?? true) || roomUser.GetClient() == null || roomUser.GetClient().GetHabbo() == null ||
                 roomUser.GetClient().GetHabbo().GetInventoryComponent() == null || string.IsNullOrEmpty(OtherString))
-                return false;
+                return Task.FromResult(false);
 
             var itemsIdsArray = OtherString.Split(';');
 
@@ -76,10 +76,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
                     continue;
 
                 if (roomUser.GetClient().GetHabbo().GetInventoryComponent().HasBaseItem(itemId))
-                    return true;
+                    return Task.FromResult(true);
             }
 
-            return false;
+            return Task.FromResult(false);
         }
     }
 }

@@ -694,12 +694,13 @@ namespace Oblivion.HabboHotel.Users
         /// </summary>
         /// <param name="client">The client.</param>
         /// <param name="data">The data.</param>
-        internal void Init(GameClient client, UserData data)
+        internal async Task Init(GameClient client, UserData data)
         {
             _mClient = client;
             _subscriptionManager = new SubscriptionManager(Id, data);
             _badgeComponent = new BadgeComponent(Id);
             _inventoryComponent = new InventoryComponent(Id, client);
+            await _inventoryComponent.LoadInventory();
             _avatarEffectsInventoryComponent = new AvatarEffectsInventoryComponent(Id, client);
             _messenger = new HabboMessenger(Id);
             _messenger.Init();

@@ -97,19 +97,21 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Pongs this instance.
         /// </summary>
-        internal async Task Pong()
+        internal Task Pong()
         {
-            if (Session == null) return;
+            if (Session == null) return Task.CompletedTask;
 
             Session.TimePingedReceived = DateTime.Now;
+            return Task.CompletedTask;
         }
 
         /// <summary>
         ///     Disconnects the event.
         /// </summary>
-        internal async Task DisconnectEvent()
+        internal Task DisconnectEvent()
         {
             Session.Dispose();
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -152,10 +154,11 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Secrets the key.
         /// </summary>
-        internal async Task SecretKey()
+        internal Task SecretKey()
         {
             var cipherKey = Request.GetString();
             var sharedKey = Handler.CalculateDiffieHellmanSharedKey(cipherKey);
+            return Task.CompletedTask;
             /*
             if (Session.IsAir)
             {
@@ -382,8 +385,8 @@ namespace Oblivion.Messages.Handlers
             }
 
 
-            Session.GetHabbo().GetInventoryComponent().AddNewItem("0", itemId, "", 0, true, false, 0, 0);
-            Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
+            await Session.GetHabbo().GetInventoryComponent().AddNewItem("0", itemId, "", 0, true, false, 0, 0);
+            await Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
 
             await Response.InitAsync(LibraryParser.OutgoingRequest("CampaignCalendarGiftMessageComposer"));
             Response.AppendBool(true);
@@ -415,13 +418,13 @@ namespace Oblivion.Messages.Handlers
             if (Oblivion.GetGame().GetCameraManager().PurchaseCoinsPrice > 0)
             {
                 Session.GetHabbo().Credits -= Oblivion.GetGame().GetCameraManager().PurchaseCoinsPrice;
-                Session.GetHabbo().UpdateCreditsBalance();
+                await Session.GetHabbo().UpdateCreditsBalance();
             }
 
             if (Oblivion.GetGame().GetCameraManager().PurchaseDucketsPrice > 0)
             {
                 Session.GetHabbo().ActivityPoints -= Oblivion.GetGame().GetCameraManager().PurchaseDucketsPrice;
-                Session.GetHabbo().UpdateActivityPointsBalance();
+                await Session.GetHabbo().UpdateActivityPointsBalance();
             }
 
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
@@ -454,8 +457,9 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Called when [click].
         /// </summary>
-        internal async Task OnClick()
+        internal Task OnClick()
         {
+            return Task.CompletedTask;
             //uselss only for debug reasons
         }
 
@@ -489,16 +493,20 @@ namespace Oblivion.Messages.Handlers
             if (Session.GetHabbo().Diamonds < offer.CostDiamonds * quantity) return;
             if (Session.GetHabbo().Diamonds < offer.CostDiamonds * quantity) return;
             /* TODO CHECK */
-            foreach (var item in offer.Products
-                .Select(product => Oblivion.GetGame().GetItemManager().GetItemByName(product))
-                .Where(item => item != null))
-                Oblivion.GetGame().GetCatalog().DeliverItems(Session, item, quantity, string.Empty, 0, 0, string.Empty);
+            foreach (var product in offer.Products)
+            {
+                var item = Oblivion.GetGame().GetItemManager().GetItemByName(product);
+                if (item != null)
+                    await Oblivion.GetGame().GetCatalog().DeliverItems(Session, item, quantity, string.Empty, 0, 0, string.Empty);
+            }
+
             Session.GetHabbo().Credits -= offer.CostCredits * quantity;
             Session.GetHabbo().ActivityPoints -= offer.CostDuckets * quantity;
             Session.GetHabbo().Diamonds -= offer.CostDiamonds * quantity;
-            Session.GetHabbo().UpdateCreditsBalance(true);
-            Session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
-            Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
+            await Session.GetHabbo().UpdateCreditsBalance(true);
+            await Session.GetHabbo().UpdateSeasonalCurrencyBalance(true);
+            await Session.GetHabbo().GetInventoryComponent().UpdateItems(false);
+            return;
         }
 
         /// <summary>
@@ -541,7 +549,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Gets the uc panel.
         /// </summary>
-        internal async Task GetUcPanel()
+        internal Task GetUcPanel()
         {
             var name = Request.GetString();
             switch (name)
@@ -550,14 +558,17 @@ namespace Oblivion.Messages.Handlers
 
                     break;
             }
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
         ///     Gets the uc panel hotel.
         /// </summary>
-        internal async Task GetUcPanelHotel()
+        internal Task GetUcPanelHotel()
         {
             var id = Request.GetInteger();
+            return Task.CompletedTask;
         }
 
         /// <summary>

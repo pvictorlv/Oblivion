@@ -52,16 +52,16 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             set { }
         }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 
             if (Items == null || Items.Count <= 0)
-                return true;
+                return Task.FromResult(true);
 
             if (!OtherBool)
-                return !Items.All(item => item.GetRoom().GetGameMap().HasHeightestItem(item.Coordinate, item.Z));
-            return !Items.Any(item => item.GetRoom().GetGameMap().HasHeightestItem(item.Coordinate, item.Z));
+                return Task.FromResult(!Items.All(item => item.GetRoom().GetGameMap().HasHeightestItem(item.Coordinate, item.Z)));
+            return Task.FromResult(!Items.Any(item => item.GetRoom().GetGameMap().HasHeightestItem(item.Coordinate, item.Z)));
         }
 
         public void Dispose()

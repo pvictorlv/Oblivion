@@ -26,17 +26,17 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         /// <param name="session">The session.</param>
         /// <param name="pms">The PMS.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public override async Task<bool> Execute(GameClient session, string[] pms)
+        public override Task<bool> Execute(GameClient session, string[] pms)
         {
             var room = session.GetHabbo().CurrentRoom;
             if (room == null)
-                return true;
+                return Task.FromResult(true);
             var str = string.Join(" ", pms);
             if (str == "")
-                return true;
+                return Task.FromResult(true);
             foreach (var user in room.GetRoomUserManager().GetRoomUsers())
                 user.Chat(user.GetClient(), str, false, 0);
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

@@ -79,8 +79,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             _mAddedItems = new HashSet<string>();
             _mRemovedItems = new HashSet<UserItem>();
 
-
-            LoadInventory();
+            
         }
 
         /// <summary>
@@ -234,7 +233,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             DataTable table;
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetNoLockQuery(
                     "SELECT id,base_item,extra_data,group_id,songcode,limited FROM items_rooms WHERE user_id=@userid AND (room_id IS NULL or room_id=0) LIMIT 4500;");
@@ -286,7 +285,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             _inventoryPets.Clear();
             _inventoryBots.Clear();
 
-            using (var queryReactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor2 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor2.SetQuery(
                     $"SELECT * FROM bots WHERE user_id = {UserId} AND (room_id IS NULL or room_id=0)");

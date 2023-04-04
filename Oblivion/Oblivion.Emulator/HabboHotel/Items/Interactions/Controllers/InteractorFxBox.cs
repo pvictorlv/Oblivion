@@ -12,20 +12,20 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorFxBox : FurniInteractorModel
     {
-        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             if (!hasRights)
-                return;
+                return Task.CompletedTask;
 
             RoomUser user = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
 
             if (user == null)
-                return;
+                return Task.CompletedTask;
 
             Room room = session.GetHabbo().CurrentRoom;
 
             if (room == null)
-                return;
+                return Task.CompletedTask;
 
             int effectId = Convert.ToInt32(item.GetBaseItem().Name.Replace("fxbox_fx", ""));
 
@@ -63,6 +63,8 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         queryReactor.RunNoLockFastQuery("DELETE FROM items_rooms WHERE id = '" + item.Id + "';");
                 }
             }
+
+            return Task.CompletedTask;
         }
     }
 }

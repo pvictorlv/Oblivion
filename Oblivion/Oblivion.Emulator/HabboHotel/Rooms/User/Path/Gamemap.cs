@@ -375,7 +375,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="item">The item.</param>
         internal async Task UpdateMapForItem(RoomItem item)
         {
-            RemoveFromMap(item, false);
+            await RemoveFromMap(item, false);
             AddToMap(item);
         }
 

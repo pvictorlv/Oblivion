@@ -82,12 +82,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public int Delay { get; set; }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 
             if (Items == null || Items.Count <= 0)
-                return true;
+                return Task.FromResult(true);
 
            foreach (var item in Items)
             {
@@ -104,7 +104,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
                 if (Items.Contains(rI))
                     Items.Remove(rI);
 
-            return true;
+            return Task.FromResult(true);
         }
         //todo: recode it.
         private void HandleMovement(RoomItem item)

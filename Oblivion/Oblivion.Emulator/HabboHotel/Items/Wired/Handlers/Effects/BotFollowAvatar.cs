@@ -99,17 +99,17 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             return true;
         }
 
-        public async Task<bool> Execute(params object[] Params)
+        public Task<bool> Execute(params object[] Params)
         {
-            if (Disposed) return false;
+            if (Disposed) return Task.FromResult(false);
 
             var user = (RoomUser) Params[0];
-            if (user == null || user.IsBot) return false;
+            if (user == null || user.IsBot) return Task.FromResult(false);
 
             _following = user;
 
 
-            return true;
+            return Task.FromResult(true);
         }
 
         private RoomUser _bot;

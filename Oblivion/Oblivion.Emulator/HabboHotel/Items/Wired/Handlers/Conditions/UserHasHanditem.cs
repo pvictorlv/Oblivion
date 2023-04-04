@@ -57,7 +57,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
         public int Delay { get; set; }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 
@@ -65,9 +65,9 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             var handitem = Delay / 500;
 
             if (handitem < 0)
-                return false;
+                return Task.FromResult(false);
 
-            return roomUser.CarryItemId == handitem;
+            return Task.FromResult(roomUser.CarryItemId == handitem);
         }
     }
 }

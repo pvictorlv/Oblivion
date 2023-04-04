@@ -15,24 +15,24 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = -1;
         }
 
-        public override async Task<bool> Execute(GameClient session, string[] pms)
+        public override Task<bool> Execute(GameClient session, string[] pms)
         {
             var room = session.GetHabbo().CurrentRoom;
 
             var user = room?.GetRoomUserManager().GetRoomUserByHabbo(pms[0]);
-            if (user == null) return true;
+            if (user == null) return Task.FromResult(true);
 
             var msg = string.Join(" ", pms.Skip(1));
 
-            if (string.IsNullOrEmpty(msg)) return true;
+            if (string.IsNullOrEmpty(msg)) return Task.FromResult(true);
 
             if (msg.StartsWith(":"))
             {
-                return true;
+                return Task.FromResult(true);
             }
 
             user.Chat(user.GetClient(), msg, false, 0);
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

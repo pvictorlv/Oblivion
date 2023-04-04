@@ -23,26 +23,26 @@ namespace Oblivion.Messages.Handlers
 {
     internal partial class GameClientMessageHandler
     {
-        internal async Task PetBreedCancel()
+        internal Task PetBreedCancel()
         {
             if (Session?.GetHabbo() == null)
-                return;
+                return Task.CompletedTask;
 
             var room = Session.GetHabbo().CurrentRoom;
 
             if (room == null || !room.CheckRights(Session, true))
-                return;
+                return Task.CompletedTask;
 
             var itemId = Oblivion.GetGame().GetItemManager().GetRealId(Request.GetUInteger());
 
             var item = room.GetRoomItemHandler().GetItem(itemId);
 
             if (item == null)
-                return;
+                return Task.CompletedTask;
 
             if (item.GetBaseItem().InteractionType != Interaction.BreedingTerrier &&
                 item.GetBaseItem().InteractionType != Interaction.BreedingBear)
-                return;
+                return Task.CompletedTask;
 
             /* TODO CHECK */
             foreach (var pet in item.PetsList)
@@ -59,6 +59,7 @@ namespace Oblivion.Messages.Handlers
             }
 
             item.PetsList.Clear();
+            return Task.CompletedTask;
         }
 
         internal async Task PetBreedResult()
@@ -165,7 +166,7 @@ namespace Oblivion.Messages.Handlers
             item.ExtraData = "2";
             await  item.UpdateState();
 
-            room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
+            await room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
 
             switch (item.GetBaseItem().InteractionType)
             {
@@ -179,7 +180,7 @@ namespace Oblivion.Messages.Handlers
                 case Interaction.BreedingBear:
                     if (room.GetRoomItemHandler().BreedingBear.ContainsKey(item.VirtualId))
                         room.GetRoomItemHandler().BreedingBear.Remove(item.VirtualId);
-                    Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_BearBreeder", 1);
+                    await Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_BearBreeder", 1);
                     break;
             }
 
@@ -214,7 +215,7 @@ namespace Oblivion.Messages.Handlers
                 room.GetGameMap().AddUserToMap(user, user.Coordinate);
 
                 var nextCoord = room.GetGameMap().GetRandomValidWalkableSquare();
-                user.MoveTo(nextCoord.X, nextCoord.Y);
+                await user.MoveTo(nextCoord.X, nextCoord.Y);
             }
 
             item.PetsList.Clear();
@@ -532,7 +533,7 @@ namespace Oblivion.Messages.Handlers
                         user.Freezed = false;
                         room.GetGameMap().AddUserToMap(user, user.Coordinate);
                         var nextCoord = room.GetGameMap().GetRandomValidWalkableSquare();
-                        user.MoveTo(nextCoord.X, nextCoord.Y);
+                        await user.MoveTo(nextCoord.X, nextCoord.Y);
                     }
 
                     item.PetsList.Clear();
@@ -570,7 +571,7 @@ namespace Oblivion.Messages.Handlers
                     using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
                         await adapter.RunFastQueryAsync($"UPDATE items_rooms SET room_id = NULL WHERE id = '{item.Id}'");
-                        room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
+                        await room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
                     }
                 }
             }
@@ -636,7 +637,7 @@ namespace Oblivion.Messages.Handlers
                     user.Freezed = false;
                     room.GetGameMap().AddUserToMap(user, user.Coordinate);
                     var nextCoord = room.GetGameMap().GetRandomValidWalkableSquare();
-                    user.MoveTo(nextCoord.X, nextCoord.Y);
+                    await user.MoveTo(nextCoord.X, nextCoord.Y);
                 }
 
                 item.PetsList.Clear();
@@ -646,7 +647,7 @@ namespace Oblivion.Messages.Handlers
                 await Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.FurniStack);
 
             var newcoords = item.GetCoords();
-            room.GetRoomItemHandler().OnHeightMapUpdate(oldCoords, newcoords);
+            await room.GetRoomItemHandler().OnHeightMapUpdate(oldCoords, newcoords);
 
 
             if (wired != null)
@@ -658,7 +659,7 @@ namespace Oblivion.Messages.Handlers
                 return;
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                room.GetRoomItemHandler().SaveFurniture(queryReactor);
+                await room.GetRoomItemHandler().SaveFurniture(queryReactor);
             }
         }
 
@@ -743,7 +744,7 @@ namespace Oblivion.Messages.Handlers
                 {
                     if (!hasRightsOne)
                         return;
-                    PlantMonsterplant(item, room);
+                    await PlantMonsterplant(item, room);
                     return;
                 }
                 case Interaction.LoveShuffler:
@@ -762,18 +763,19 @@ namespace Oblivion.Messages.Handlers
                 await  room.GetRoomUserManager().UpdateUserStatus(current, true);
         }
 
-        internal async Task TriggerItemDiceSpecial()
+        internal Task TriggerItemDiceSpecial()
         {
             if (Session?.GetHabbo() == null)
-                return;
+                return Task.CompletedTask;
             var room =
                 Session.GetHabbo().CurrentRoom;
             var item = room?.GetRoomItemHandler()
                 .GetItem(Oblivion.GetGame().GetItemManager().GetRealId(Request.GetUInteger()));
             if (item == null)
-                return;
+                return Task.CompletedTask;
             var hasRights = room.CheckRights(Session);
             item.Interactor.OnTrigger(Session, item, -1, hasRights);
+            return Task.CompletedTask;
         }
 
         internal async Task OpenPostit()
@@ -1233,19 +1235,20 @@ namespace Oblivion.Messages.Handlers
                 await userTrade.Unaccept(Session.GetHabbo().Id);
         }
 
-        internal async Task CompleteTrade()
+        internal Task CompleteTrade()
         {
             if (Session?.GetHabbo() == null)
-                return;
+                return Task.CompletedTask;
             var room =
                 Session.GetHabbo().CurrentRoom;
             if (room == null || !room.CanTradeInRoom)
             {
-                return;
+                return Task.CompletedTask;
             }
 
             var userTrade = room.GetUserTrade(Session.GetHabbo().Id);
             userTrade?.CompleteTrade(Session.GetHabbo().Id);
+            return Task.CompletedTask;
         }
 
         internal async Task RecycleItems()
@@ -1780,7 +1783,7 @@ namespace Oblivion.Messages.Handlers
                     isForHorse = false;
                     pet.PetData.MoplaBreed.GrowingStatus = 7;
                     pet.PetData.MoplaBreed.LiveState = MoplaState.Grown;
-                    pet.PetData.MoplaBreed.UpdateInDb();
+                    await pet.PetData.MoplaBreed.UpdateInDb();
                     using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                     {
                         await queryReactor.RunFastQueryAsync(
@@ -1789,7 +1792,7 @@ namespace Oblivion.Messages.Handlers
                 }
 
                 IL_40C:
-                room.GetRoomItemHandler().RemoveFurniture(Session, item.Id, false);
+                await room.GetRoomItemHandler().RemoveFurniture(Session, item.Id, false);
                 var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer"));
                 await serverMessage.AppendIntegerAsync(1);
                 pet.Serialize(serverMessage);
@@ -1857,7 +1860,7 @@ namespace Oblivion.Messages.Handlers
                     $"INSERT INTO items_rooms (id, user_id, base_item) VALUES ('{id}', {Session.GetHabbo().Id}, 4221);");
             }
 
-            Session.GetHabbo().GetInventoryComponent().UpdateItems(true);
+            await Session.GetHabbo().GetInventoryComponent().UpdateItems(true);
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SetRoomUserMessageComposer"));
             await serverMessage.AppendIntegerAsync(1);
             pet.Serialize(serverMessage);
@@ -1954,11 +1957,11 @@ namespace Oblivion.Messages.Handlers
                 }
 
                 Session.GetHabbo().Credits += (int)row["value"];
-                Session.GetHabbo().UpdateCreditsBalance();
-                Session.GetHabbo().NotifyNewPixels((int)row["extra_duckets"]);
+                await Session.GetHabbo().UpdateCreditsBalance();
+                await Session.GetHabbo().NotifyNewPixels((int)row["extra_duckets"]);
             }
 
-            Session.GetHabbo().NotifyVoucher(isValid, productName, productDescription);
+            await Session.GetHabbo().NotifyVoucher(isValid, productName, productDescription);
         }
 
         internal async Task RemoveHanditem()
@@ -1967,7 +1970,7 @@ namespace Oblivion.Messages.Handlers
                 Session.GetHabbo().CurrentRoom;
             var roomUserByHabbo = room?.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
             if (roomUserByHabbo?.CarryItemId > 0 && roomUserByHabbo.CarryTimer > 0)
-                roomUserByHabbo.CarryItem(0);
+                await roomUserByHabbo.CarryItem(0);
         }
 
         internal async Task MountOnPet()
@@ -2124,8 +2127,9 @@ namespace Oblivion.Messages.Handlers
             await SendResponse();
         }
 
-        internal async Task ChooseTvPlayerVideo()
+        internal Task ChooseTvPlayerVideo()
         {
+            return Task.CompletedTask;
         }
 
         internal async Task GetTvPlayer()
@@ -2231,7 +2235,7 @@ namespace Oblivion.Messages.Handlers
                 return;
             if (!actualRoom.CheckRights(Session, true)) return;
             Session.GetHabbo().BuildersItemsUsed++;
-            BuildersClubUpdateFurniCount();
+            await BuildersClubUpdateFurniCount();
             var z = actualRoom.GetGameMap().SqAbsoluteHeight(x, y);
             using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
@@ -2313,7 +2317,7 @@ namespace Oblivion.Messages.Handlers
             var message =
                 new ServerMessage(LibraryParser.OutgoingRequest("BuildersClubUpdateFurniCountMessageComposer"));
             await message.AppendIntegerAsync(Session.GetHabbo().BuildersItemsUsed);
-            Session.SendMessage(message);
+            await Session.SendMessage(message);
         }
 
         internal async Task ConfirmLoveLock()
@@ -2592,9 +2596,10 @@ namespace Oblivion.Messages.Handlers
             }
         }
 
-        internal async Task GetUserLook()
+        internal Task GetUserLook()
         {
             var oldLook = Request.GetString();
+            return Task.CompletedTask;
         }
     }
 }

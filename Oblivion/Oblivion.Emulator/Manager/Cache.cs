@@ -7,23 +7,18 @@ namespace Oblivion.Manager
 {
     public static class Cache
     {
-        private static Thread _thread;
+        private static Timer _thread;
         public static bool Working;
 
         public static void StartProcess()
         {
-            _thread = new Thread(Process)
-            {
-                Name = "Cache Thread",
-                IsBackground = true
-            };
-            _thread.Start();
+            _thread = new Timer(_ => Process(), null, 0, 900000);
             Working = true;
         }
 
         public static void StopProcess()
         {
-            _thread.Abort(); //todo: use timer
+            _thread.Dispose();
             Working = false;
         }
 
@@ -38,7 +33,6 @@ namespace Oblivion.Manager
 
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    Thread.Sleep(900000);
                     //todo remove this long task.
                 }
             }

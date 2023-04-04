@@ -49,29 +49,29 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 
-            if (string.IsNullOrEmpty(OtherString)) return false;
+            if (string.IsNullOrEmpty(OtherString)) return Task.FromResult(false);
 
             var roomUser = (RoomUser) stuff[0];
-            if (roomUser == null) return false;
+            if (roomUser == null) return Task.FromResult(false);
             var handitem = Delay / 500;
 
             if (handitem < 0)
-                return false;
+                return Task.FromResult(false);
 
 
             if (_bot?.BotData == null || _bot.BotData.Name != OtherString)
                 _bot = Room?.GetRoomUserManager()?.GetBotByName(OtherString);
 
-            if (_bot == null) return false;
+            if (_bot == null) return Task.FromResult(false);
 
             _bot.Chat(null, Oblivion.GetLanguage().GetVar("bot_give_handitem"), false, 0);
             roomUser.CarryItem(handitem);
 
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

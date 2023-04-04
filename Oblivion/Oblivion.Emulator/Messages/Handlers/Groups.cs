@@ -214,7 +214,7 @@ namespace Oblivion.Messages.Handlers
             if (group == null)
                 return;
 
-            Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session, newWindow);
+            await Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session, newWindow);
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace Oblivion.Messages.Handlers
 
             await Response.InitAsync(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
 
-            Oblivion.GetGame().GetGroupManager()
+            await Oblivion.GetGame().GetGroupManager()
                 .SerializeGroupMembers(Response, group, reqType, Session, searchVal, page);
 
             await SendResponse();
@@ -356,7 +356,7 @@ namespace Oblivion.Messages.Handlers
             group.Requests.Remove(userId);
             group.Admins.Add(userId, member);
 
-            Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
+            await Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
             await Response.InitAsync(LibraryParser.OutgoingRequest("GroupMembersMessageComposer"));
             await Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 0u, Session);
             await SendResponse();
@@ -402,7 +402,7 @@ namespace Oblivion.Messages.Handlers
                 roomUserByHabbo.UpdateNeeded = true;
             }
 
-            Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
+            await Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 await queryReactor.RunFastQueryAsync("DELETE FROM groups_requests WHERE group_id=" + groupId + " AND user_id=" +
@@ -456,7 +456,7 @@ namespace Oblivion.Messages.Handlers
                     }
                 }
 
-                Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
+                await Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
             }
         }
 
@@ -669,7 +669,7 @@ namespace Oblivion.Messages.Handlers
             group.ForumLastPosterId = Session.GetHabbo().Id;
             group.ForumLastPosterTimestamp = timestamp;
             group.ForumMessagesCount++;
-            group.UpdateForum();
+            await group.UpdateForum();
 
             if (threadId == 0)
             {
@@ -1051,7 +1051,7 @@ namespace Oblivion.Messages.Handlers
 
                         /* TODO CHECK */
                         foreach (Guild theGroup in groupList)
-                            theGroup.SerializeForumRoot(message);
+                            await theGroup.SerializeForumRoot(message);
 
                         await Session.SendMessageAsync(message);
                     }
@@ -1193,7 +1193,7 @@ namespace Oblivion.Messages.Handlers
             theGroup.Name = text;
             theGroup.Description = text2;
 
-            Oblivion.GetGame().GetGroupManager()
+            await Oblivion.GetGame().GetGroupManager()
                 .SerializeGroupInfo(theGroup, Response, Session, Session.GetHabbo().CurrentRoom);
         }
 
@@ -1263,9 +1263,9 @@ namespace Oblivion.Messages.Handlers
                             await Response.AppendStringAsync(current.Value);
                         }
 
-                        Session.GetHabbo().CurrentRoom.SendMessage(Response);
+                        await Session.GetHabbo().CurrentRoom.SendMessage(Response);
 
-                        Oblivion.GetGame().GetGroupManager()
+                        await Oblivion.GetGame().GetGroupManager()
                             .SerializeGroupInfo(guild, Response, Session, Session.GetHabbo().CurrentRoom);
                     }
                 }
@@ -1293,7 +1293,7 @@ namespace Oblivion.Messages.Handlers
             theGroup.Colour1 = num;
             theGroup.Colour2 = num2;
 
-            Oblivion.GetGame().GetGroupManager()
+            await Oblivion.GetGame().GetGroupManager()
                 .SerializeGroupInfo(theGroup, Response, Session, Session.GetHabbo().CurrentRoom);
         }
 
@@ -1498,16 +1498,16 @@ namespace Oblivion.Messages.Handlers
 
             await Session.SendMessageAsync(group.ForumDataMessage(Session.GetHabbo().Id));
 
-            Oblivion.GetGame()
+            await Oblivion.GetGame()
                 .GetAchievementManager()
                 .ProgressUserAchievement(Session, "ACH_SelfModForumCanReadSeen", 1);
-            Oblivion.GetGame()
+            await Oblivion.GetGame()
                 .GetAchievementManager()
                 .ProgressUserAchievement(Session, "ACH_SelfModForumCanPostSeen", 1);
-            Oblivion.GetGame()
+            await Oblivion.GetGame()
                 .GetAchievementManager()
                 .ProgressUserAchievement(Session, "ACH_SelfModForumCanPostThrdSeen", 1);
-            Oblivion.GetGame()
+            await Oblivion.GetGame()
                 .GetAchievementManager()
                 .ProgressUserAchievement(Session, "ACH_SelfModForumCanModerateSeen", 1);
         }
@@ -1547,18 +1547,18 @@ namespace Oblivion.Messages.Handlers
                 room.RoomData.Group = null;
                 room.RoomData.GroupId = 0;
 
-                Oblivion.GetGame().GetGroupManager().DeleteGroup(group.Id);
+                await Oblivion.GetGame().GetGroupManager().DeleteGroup(group.Id);
 
                 var deleteGroup = new ServerMessage(LibraryParser.OutgoingRequest("GroupDeletedMessageComposer"));
 
                 await deleteGroup.AppendIntegerAsync(groupId);
                 await room.SendMessage(deleteGroup);
 
-                room.GetRoomItemHandler().RemoveAllFurniture(Session);
+                await room.GetRoomItemHandler().RemoveAllFurniture(Session);
 
                 var roomId = room.RoomData.Id;
 
-                Oblivion.GetGame().GetRoomManager().UnloadRoom(room, "Delete room");
+                await Oblivion.GetGame().GetRoomManager().UnloadRoom(room, "Delete room");
 
                 using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {

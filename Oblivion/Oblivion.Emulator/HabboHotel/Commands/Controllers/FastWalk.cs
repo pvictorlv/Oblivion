@@ -20,7 +20,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 0;
         }
 
-        public override async Task<bool> Execute(GameClient session, string[] pms)
+        public override Task<bool> Execute(GameClient session, string[] pms)
         {
             var user =
                 Oblivion.GetGame()
@@ -29,7 +29,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     .GetRoomUserManager()
                     .GetRoomUserByHabbo(session.GetHabbo().Id);
             user.FastWalking = !user.FastWalking;
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

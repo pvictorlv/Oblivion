@@ -89,7 +89,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
             foreach (var current in Items.Where(
                 current => current != null && Room.GetRoomItemHandler().FloorItems.Values.Contains(current)))
-                current.Interactor.OnWiredTrigger(current);
+                await current.Interactor.OnWiredTrigger(current);
 
             _mNext = Oblivion.Now() + Delay;
 

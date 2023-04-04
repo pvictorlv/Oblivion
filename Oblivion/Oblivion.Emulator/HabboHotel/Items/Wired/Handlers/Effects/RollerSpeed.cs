@@ -40,14 +40,14 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 
             double Speed;
             if (double.TryParse(OtherString, out Speed))
                 Room.GetRoomItemHandler().SetSpeed(Speed);
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

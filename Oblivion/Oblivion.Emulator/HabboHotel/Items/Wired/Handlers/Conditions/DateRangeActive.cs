@@ -58,7 +58,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             set { }
         }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 
@@ -68,7 +68,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             var strArray = OtherString.Split(',');
 
             if (string.IsNullOrWhiteSpace(strArray[0]))
-                return false;
+                return Task.FromResult(false);
 
             int.TryParse(strArray[0], out date1);
 
@@ -76,11 +76,11 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
                 int.TryParse(strArray[1], out date2);
 
             if (date1 == 0)
-                return false;
+                return Task.FromResult(false);
 
             var currentTimestamp = Oblivion.GetUnixTimeStamp();
 
-            return date2 < 1 ? currentTimestamp >= date1 : currentTimestamp >= date1 && currentTimestamp <= date2;
+            return Task.FromResult(date2 < 1 ? currentTimestamp >= date1 : currentTimestamp >= date1 && currentTimestamp <= date2);
         }
     }
 }

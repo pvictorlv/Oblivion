@@ -53,18 +53,27 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             _users[1] = new TradeUser(userTwoId, roomId);
             _tradeStage = 1;
             _roomId = roomId;
+            /* TODO CHECK */ 
+        }
+
+        public async Task Start()
+        {
             var users = _users;
-            /* TODO CHECK */ foreach (var tradeUser in users.Where(tradeUser => !tradeUser.GetRoomUser().Statusses.ContainsKey("trd")))
+            foreach (var tradeUser in users)
             {
-                tradeUser.GetRoomUser().AddStatus("trd", "");
-                tradeUser.GetRoomUser().UpdateNeeded = true;
+                if (!tradeUser.GetRoomUser().Statusses.ContainsKey("trd"))
+                {
+                    tradeUser.GetRoomUser().AddStatus("trd", "");
+                    tradeUser.GetRoomUser().UpdateNeeded = true;
+                }
             }
+
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("TradeStartMessageComposer"));
-            serverMessage.AppendInteger(userOneId);
+            serverMessage.AppendInteger(_oneId);
             serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(userTwoId);
+            serverMessage.AppendInteger(_twoId);
             serverMessage.AppendInteger(1);
-            SendMessageToUsers(serverMessage);
+            await SendMessageToUsers(serverMessage);
         }
 
         /// <summary>

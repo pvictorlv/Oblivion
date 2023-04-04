@@ -51,26 +51,26 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
-            if (string.IsNullOrEmpty(OtherString)) return false;
+            if (string.IsNullOrEmpty(OtherString)) return Task.FromResult(false);
 
             if (_bot?.BotData == null || _bot.BotData.Name != OtherString)
                 _bot = Room?.GetRoomUserManager()?.GetBotByName(OtherString);
 
             if (_bot == null)
-                return false;
+                return Task.FromResult(false);
 
             var rnd = new Random();
             var goal = Items[rnd.Next(Items.Count)];
             if (goal == null)
             {
-                return false;
+                return Task.FromResult(false);
             }
 
             _bot.MoveTo(goal.X, goal.Y);
 
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

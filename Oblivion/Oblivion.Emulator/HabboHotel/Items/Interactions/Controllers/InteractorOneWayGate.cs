@@ -7,7 +7,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 {
     internal class InteractorOneWayGate : FurniInteractorModel
     {
-        public override async Task OnPlace(GameClient session, RoomItem item)
+        public override Task OnPlace(GameClient session, RoomItem item)
         {
             item.ExtraData = "0";
 
@@ -23,9 +23,11 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
                 item.InteractingUser = 0;
             }
+
+            return Task.CompletedTask;
         }
 
-        public override async Task OnRemove(GameClient session, RoomItem item)
+        public override Task OnRemove(GameClient session, RoomItem item)
         {
             item.ExtraData = "0";
 
@@ -41,26 +43,28 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
                 item.InteractingUser = 0;
             }
+
+            return Task.CompletedTask;
         }
 
-        public override async Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
+        public override Task OnTrigger(GameClient session, RoomItem item, int request, bool hasRights)
         {
             if (session == null)
-                return;
+                return Task.CompletedTask;
 
             var user = item.GetRoom().GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
 
             if (user == null)
-                return;
+                return Task.CompletedTask;
 
             if (user.Coordinate != item.SquareInFront && user.CanWalk)
             {
                 user.MoveTo(item.SquareInFront);
-                return;
+                return Task.CompletedTask;
             }
 
             if (!item.GetRoom().GetGameMap().CanWalk(item.SquareBehind.X, item.SquareBehind.Y, user.AllowOverride))
-                return;
+                return Task.CompletedTask;
 
             if (item.InteractingUser == 0)
             {
@@ -76,6 +80,8 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
                 item.ReqUpdate(4, true);
             }
+
+            return Task.CompletedTask;
         }
     }
 }

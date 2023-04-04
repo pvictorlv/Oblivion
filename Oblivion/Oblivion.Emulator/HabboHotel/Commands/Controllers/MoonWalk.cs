@@ -20,15 +20,15 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 0;
         }
 
-        public override async Task<bool> Execute(GameClient session, string[] pms)
+        public override Task<bool> Execute(GameClient session, string[] pms)
         {
             var room = session.GetHabbo().CurrentRoom;
 
             var user = room?.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
-            if (user == null) return true;
+            if (user == null) return Task.FromResult(true);
             user.IsMoonwalking = !user.IsMoonwalking;
 
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

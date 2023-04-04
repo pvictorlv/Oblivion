@@ -61,12 +61,12 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             set { }
         }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 
             if (Items == null || Items.Count <= 0)
-                return true;
+                return Task.FromResult(true);
 
             RoomItem lastitem = null;
 
@@ -86,25 +86,25 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
                     lastitem.GetBaseItem().InteractionType == Interaction.None)
                 {
                     if (current.GetBaseItem().SpriteId == lastitem.GetBaseItem().SpriteId)
-                        return false;
+                        return Task.FromResult(false);
                 }
                 else
                 {
                     if (current.GetBaseItem().InteractionType.ToString().StartsWith("banzai") && lastitem.GetBaseItem()
                             .InteractionType.ToString().StartsWith("banzai"))
-                        return false;
+                        return Task.FromResult(false);
                     if (current.GetBaseItem().InteractionType.ToString().StartsWith("football") && lastitem
                             .GetBaseItem().InteractionType.ToString().StartsWith("football"))
-                        return false;
+                        return Task.FromResult(false);
                     if (current.GetBaseItem().InteractionType.ToString().StartsWith("freeze") && lastitem.GetBaseItem()
                             .InteractionType.ToString().StartsWith("freeze"))
-                        return false;
+                        return Task.FromResult(false);
                     if (current.GetBaseItem().InteractionType == lastitem.GetBaseItem().InteractionType)
-                        return false;
+                        return Task.FromResult(false);
                 }
             }
 
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

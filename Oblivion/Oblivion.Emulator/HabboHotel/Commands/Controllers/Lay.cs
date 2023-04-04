@@ -20,22 +20,22 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             MinParams = 0;
         }
 
-        public override async Task<bool> Execute(GameClient session, string[] pms)
+        public override Task<bool> Execute(GameClient session, string[] pms)
         {
             var currentRoom = session.GetHabbo().CurrentRoom;
 
             var roomUserByHabbo = currentRoom.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
-            if (roomUserByHabbo == null) return true;
+            if (roomUserByHabbo == null) return Task.FromResult(true);
 
             if (roomUserByHabbo.IsSitting || roomUserByHabbo.RidingHorse || roomUserByHabbo.IsWalking ||
                 roomUserByHabbo.Statusses.ContainsKey("lay"))
-                return true;
+                return Task.FromResult(true);
 
             if (roomUserByHabbo.RotBody % 2 != 0) roomUserByHabbo.RotBody--;
             roomUserByHabbo.Statusses.TryAdd("lay", "0.55");
             roomUserByHabbo.IsLyingDown = true;
             roomUserByHabbo.UpdateNeeded = true;
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

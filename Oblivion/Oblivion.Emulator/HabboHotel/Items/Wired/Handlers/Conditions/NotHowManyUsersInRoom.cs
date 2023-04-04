@@ -57,7 +57,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             set { }
         }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 
@@ -76,7 +76,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             if (Room.RoomData.UsersNow >= minimum && Room.RoomData.UsersNow <= maximum)
                 approved = true;
 
-            return approved == false;
+            return Task.FromResult(approved == false);
         }
     }
 }

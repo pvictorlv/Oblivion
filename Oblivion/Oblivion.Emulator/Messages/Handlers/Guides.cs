@@ -82,7 +82,7 @@ namespace Oblivion.Messages.Handlers
             await message.AppendIntegerAsync(Session.GetHabbo().Id);
             await message.AppendStringAsync(Session.GetHabbo().UserName);
             await message.AppendStringAsync(Session.GetHabbo().Look);
-            requester.SendMessage(message);
+            await requester.SendMessage(message);
             await Session.SendMessageAsync(message);
         }
 
@@ -162,7 +162,7 @@ namespace Oblivion.Messages.Handlers
             var messageC = new ServerMessage(LibraryParser.OutgoingRequest("OnGuideSessionMsgMessageComposer"));
             await messageC.AppendStringAsync(message);
             await messageC.AppendIntegerAsync(Session.GetHabbo().Id);
-            requester.SendMessage(messageC);
+            await requester.SendMessage(messageC);
             await Session.SendMessageAsync(messageC);
         }
 
@@ -235,16 +235,17 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Ambassadors the alert.
         /// </summary>
-        internal async Task AmbassadorAlert()
+        internal Task AmbassadorAlert()
         {
             if (Session.GetHabbo().Rank < Convert.ToUInt32(Oblivion.GetDbConfig().DbData["ambassador.minrank"]))
-                return;
+                return Task.CompletedTask;
 
             uint userId = Request.GetUInteger();
 
             GameClient user = Oblivion.GetGame().GetClientManager().GetClientByUserId(userId);
 
             user?.SendNotif("${notification.ambassador.alert.warning.message}", "${notification.ambassador.alert.warning.title}");
+            return Task.CompletedTask;
         }
     }
 }

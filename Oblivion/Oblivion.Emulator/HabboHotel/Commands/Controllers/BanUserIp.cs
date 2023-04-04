@@ -39,7 +39,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             try
             {
-                Oblivion.GetGame()
+                await Oblivion.GetGame()
                     .GetBanManager()
                     .BanUser(user, session.GetHabbo().UserName, 788922000.0, string.Join(" ", pms.Skip(2)),
                         true, false);

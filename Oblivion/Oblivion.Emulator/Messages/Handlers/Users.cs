@@ -1033,7 +1033,7 @@ namespace Oblivion.Messages.Handlers
                 }
 
                 var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(num);
-                Session.GetHabbo().GetMessenger().UpdateFriend(num, clientByUserId, true);
+                await Session.GetHabbo().GetMessenger().UpdateFriend(num, clientByUserId, true);
             }
         }
 
@@ -1275,8 +1275,9 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Hotels the view dailyquest.
         /// </summary>
-        internal async Task HotelViewDailyquest()
+        internal Task HotelViewDailyquest()
         {
+            return Task.CompletedTask;
         }
 
         internal async Task FindMoreFriends()
@@ -1344,8 +1345,9 @@ namespace Oblivion.Messages.Handlers
             await SendResponse();
         }
 
-        internal async Task FriendRequestListLoad()
+        internal Task FriendRequestListLoad()
         {
+            return Task.CompletedTask;
         }
     }
 }

@@ -45,11 +45,11 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
 
         public bool OtherBool { get; set; }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 
-            if (string.IsNullOrEmpty(OtherString)) return false;
+            if (string.IsNullOrEmpty(OtherString)) return Task.FromResult(false);
 
             if (_bot?.BotData == null || _bot.BotData.Name != OtherString)
             {
@@ -57,10 +57,10 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
             }
 
             if (_bot == null)
-                return false;
+                return Task.FromResult(false);
 
             _bot.Chat(null, OtherExtraString, OtherBool, 0);
-            return true;
+            return Task.FromResult(true);
         }
 
         private RoomUser _bot;

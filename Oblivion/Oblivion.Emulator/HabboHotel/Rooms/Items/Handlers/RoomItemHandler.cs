@@ -656,7 +656,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             await serverMessage.AppendStringAsync(TextHandling.GetString(item.Z));
             await serverMessage.AppendStringAsync(TextHandling.GetString(nextZ));
             await serverMessage.AppendIntegerAsync(rolledId);
-            SetFloorItem(item, nextCoord.X, nextCoord.Y, nextZ);
+            await SetFloorItem(item, nextCoord.X, nextCoord.Y, nextZ);
             return serverMessage;
         }
 
@@ -673,8 +673,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             user.UpdateNeededCounter = 1;
 
             var serverMessage = new ServerMessage(0);
-            serverMessage.Init(LibraryParser.OutgoingRequest("ItemAnimationMessageComposer"));
-            serverMessage.AppendInteger(user.X);
+            await serverMessage.InitAsync(LibraryParser.OutgoingRequest("ItemAnimationMessageComposer"));
+            await serverMessage.AppendIntegerAsync(user.X);
             serverMessage.AppendInteger(user.Y);
             serverMessage.AppendInteger(nextCoord.X);
             serverMessage.AppendInteger(nextCoord.Y);
@@ -684,7 +684,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             serverMessage.AppendInteger(user.VirtualId);
             serverMessage.AppendString(TextHandling.GetString(user.Z));
             serverMessage.AppendString(TextHandling.GetString(nextZ));
-            await _room.GetGameMap()
+            _room.GetGameMap()
                 .UpdateUserMovement(new Point(user.X, user.Y), new Point(nextCoord.X, nextCoord.Y), user);
             _room.GetGameMap().GameMap[user.X, user.Y] = 1;
             user.X = nextCoord.X;
@@ -1158,7 +1158,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 return false;
             if (FloorItems.ContainsKey(item.Id))
                 return true;
-            item.Interactor.OnPlace(session, item);
+            await item.Interactor.OnPlace(session, item);
             if (item.GetBaseItem().InteractionType == Interaction.Dimmer && _room.MoodlightData == null)
             {
                 _room.MoodlightData = new MoodlightData(item.Id);

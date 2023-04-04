@@ -1219,7 +1219,9 @@ namespace Oblivion.HabboHotel.Rooms
             if (userOne == null || userTwo == null || userOne.IsBot || userTwo.IsBot || userOne.IsTrading ||
                 userTwo.IsTrading || HasActiveTrade(userOne) || HasActiveTrade(userTwo))
                 return;
-            ActiveTrades.Add(new Trade(userOne.GetClient().GetHabbo().Id, userTwo.GetClient().GetHabbo().Id, RoomId));
+            var trade = new Trade(userOne.GetClient().GetHabbo().Id, userTwo.GetClient().GetHabbo().Id, RoomId);
+            ActiveTrades.Add(trade);
+            await trade.Start();
         }
 
         /// <summary>

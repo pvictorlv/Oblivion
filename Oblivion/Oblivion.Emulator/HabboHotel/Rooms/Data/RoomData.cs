@@ -234,16 +234,17 @@ namespace Oblivion.HabboHotel.Rooms.Data
         /// <summary>
         ///     Resets the model.
         /// </summary>
-        internal async Task ResetModel()
+        internal Task ResetModel()
         {
             _model = Oblivion.GetGame().GetRoomManager().GetModel(ModelName, Id);
+            return Task.CompletedTask;
         }
 
         /// <summary>
         ///     Fills the null.
         /// </summary>
         /// <param name="id">The identifier.</param>
-        internal async Task FillNull(uint id)
+        internal Task FillNull(uint id)
         {
             Id = id;
             Name = "Unknown Room";
@@ -280,13 +281,14 @@ namespace Oblivion.HabboHotel.Rooms.Data
             WallHeight = -1;
             _model = Oblivion.GetGame().GetRoomManager().GetModel(ModelName, Id);
             CompetitionStatus = 0;
+            return Task.CompletedTask;
         }
 
         /// <summary>
         ///     Fills the specified row.
         /// </summary>
         /// <param name="row">The row.</param>
-        internal async Task Fill(DataRow row, uint user = 0u)
+        internal Task Fill(DataRow row, uint user = 0u)
         {
             try
             {
@@ -375,7 +377,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 Tags = new List<string>();
 
                 if (row.IsNull("tags") || string.IsNullOrEmpty(row["tags"].ToString()))
-                    return;
+                    return Task.CompletedTask;
 
                 Tags = row["tags"].ToString().Split(',').ToList();
             }
@@ -384,6 +386,8 @@ namespace Oblivion.HabboHotel.Rooms.Data
                 Logging.LogException("Exception on RoomData Loading (Fill Void): " + ex);
                 Logging.HandleException(ex, "Oblivion.HabboHotel.Rooms.RoomData");
             }
+
+            return Task.CompletedTask;
         }
 
         /// <summary>

@@ -58,17 +58,17 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             set { }
         }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             
 
             if (!(stuff?[0] is RoomUser roomUser))
-                return false;
+                return Task.FromResult(false);
             if (!int.TryParse(OtherString, out var team))
             {
-                return false;
+                return Task.FromResult(false);
             }
-            return (Team)team != roomUser.Team;
+            return Task.FromResult((Team)team != roomUser.Team);
 
         }
     }

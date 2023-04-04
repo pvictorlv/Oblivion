@@ -40,15 +40,15 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Addons
 
         public bool OtherBool { get; set; }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             var type = (Interaction) stuff[1];
 
-            if (type == Interaction.TriggerRepeater) return false;
+            if (type == Interaction.TriggerRepeater) return Task.FromResult(false);
 
             Room.GetGameMap().GenerateMaps();
 //            roomUser.GetClient().SendWhisper("O mapa foi restaurado!");
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

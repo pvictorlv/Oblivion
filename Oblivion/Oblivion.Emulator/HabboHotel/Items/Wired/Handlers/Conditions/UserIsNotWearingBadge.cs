@@ -61,7 +61,7 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
             set { }
         }
 
-        public async Task<bool> Execute(params object[] stuff)
+        public Task<bool> Execute(params object[] stuff)
         {
             var roomUser = stuff?[0] as RoomUser;
 
@@ -69,11 +69,11 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Conditions
 
             if ((roomUser?.IsBot ?? true) || roomUser.GetClient() == null || roomUser.GetClient().GetHabbo() == null ||
                 roomUser.GetClient().GetHabbo().GetBadgeComponent() == null || string.IsNullOrWhiteSpace(OtherString))
-                return false;
+                return Task.FromResult(false);
 
-            return roomUser.GetClient().GetHabbo().GetBadgeComponent().BadgeList.Values
+            return Task.FromResult(roomUser.GetClient().GetHabbo().GetBadgeComponent().BadgeList.Values
                 .All(badge => badge.Slot <= 0 ||
-                              !string.Equals(badge.Code, OtherString, StringComparison.CurrentCultureIgnoreCase));
+                              !string.Equals(badge.Code, OtherString, StringComparison.CurrentCultureIgnoreCase)));
         }
     }
 }
