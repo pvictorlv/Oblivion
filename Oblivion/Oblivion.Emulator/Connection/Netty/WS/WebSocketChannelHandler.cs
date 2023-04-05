@@ -5,6 +5,7 @@ using DotNetty.Transport.Channels;
 using System.Linq;
 using DotNetty.Common.Utilities;
 using DotNetty.Codecs.Http.WebSockets;
+using Oblivion.Configuration;
 using Oblivion.Connection.Connection;
 
 namespace Oblivion.Connection.Netty.WS;
@@ -20,27 +21,42 @@ public class WebSocketChannelHandler : ChannelHandlerAdapter
             {
                 return;
             }
-            Oblivion.GetGame().GetClientManager().CreateAndStartClient(ctx);
 
-            
-            ctx.Channel.Pipeline.Remove(this);
-            ctx.Channel.Pipeline.AddLast(new WebSocketMessageDecoder());
-            ctx.Channel.Pipeline.AddLast(new WebSocketMessageHandler());
-            HandleHandshake(ctx, httpRequest);
+            var conn = headers.Get(AsciiString.Of("Connection"), null);
+            var upgrade = headers.Get(AsciiString.Of("Upgrade"), null);
 
-            if (Debugger.IsAttached)
-                Console.WriteLine("WebSocketChannelHandler :: fez o handshake");
+            if (conn != null && conn.ContentEqualsIgnoreCase(new StringCharSequence("upgrade")) ||
+                (upgrade != null && upgrade.ContentEqualsIgnoreCase(new StringCharSequence("websocket"))))
+            {
+                Oblivion.GetGame().GetClientManager().CreateAndStartClient(ctx);
+
+
+                ctx.Channel.Pipeline.Remove(this);
+                ctx.Channel.Pipeline.AddLast(new WebSocketMessageDecoder());
+                ctx.Channel.Pipeline.AddLast(new WebSocketMessageHandler());
+                HandleHandshake(ctx, httpRequest);
+
+                if (Debugger.IsAttached)
+                    Console.WriteLine("WebSocketChannelHandler :: fez o handshake");
+            }
         }
     }
 
     public override void ChannelInactive(IChannelHandlerContext context)
     {
-        SocketConnectionCheck.FreeConnection(context.Channel.RemoteAddress.ToString());
-        Oblivion.GetGame().GetClientManager().DisposeConnection(context.Channel.Id);
-        base.ChannelInactive(context);
+        try
+        {
+            SocketConnectionCheck.FreeConnection(context.Channel.RemoteAddress.ToString());
+            Oblivion.GetGame().GetClientManager().DisposeConnection(context.Channel.Id);
+            base.ChannelInactive(context);
+        }
+        catch (Exception ex)
+        {
+            Logging.HandleException(ex, "ChannelInactive");
+        }
     }
-    
-    private void HandleHandshake(IChannelHandlerContext ctx, IFullHttpRequest req)
+
+    private static void HandleHandshake(IChannelHandlerContext ctx, IFullHttpRequest req)
     {
         try
         {
@@ -59,5 +75,6 @@ public class WebSocketChannelHandler : ChannelHandlerAdapter
         {
             Console.WriteLine(ex);
         }
+        
     }
 }
