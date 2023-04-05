@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using DotNetty.Transport.Channels;
+using Oblivion.Configuration;
 using Oblivion.Connection.Connection;
 using Oblivion.Messages;
 
@@ -23,19 +25,26 @@ public class WebSocketMessageHandler : SimpleChannelInboundHandler<ClientMessage
 
     protected override void ChannelRead0(IChannelHandlerContext ctx, ClientMessage clientMessage)
     {
-        var session = Oblivion.GetGame().GetClientManager().GetClient(ctx.Channel.Id);
-        if (session == null)
+        try
         {
-        }
-        else
-        {
-            if (session?.PacketParser == null) return;
-
-            //using (var clientMessage = new ClientMessage(msg))
+            var session = Oblivion.GetGame().GetClientManager().GetClient(ctx.Channel.Id);
+            if (session == null)
             {
-                session.PacketParser.SuperHandle(clientMessage, session.GetConnection());
             }
-            clientMessage.Dispose();
+            else
+            {
+                if (session?.PacketParser == null) return;
+
+                //using (var clientMessage = new ClientMessage(msg))
+                {
+                    session.PacketParser.SuperHandle(clientMessage, session.GetConnection());
+                }
+                clientMessage.Dispose();
+            }
+        }
+        catch (Exception ex)
+        {
+            Logging.HandleException(ex, nameof(WebSocketMessageHandler));
         }
     }
 }
