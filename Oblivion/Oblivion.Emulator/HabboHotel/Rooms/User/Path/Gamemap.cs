@@ -1054,10 +1054,17 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        internal bool ItemCanBePlacedHere(int x, int y) => (Model.MapSizeX - 1 >= x && Model.MapSizeY - 1 >= y) &&
-                                                           (x != Model.DoorX || y != Model.DoorY) &&
-                                                           (x <= GameMap.GetLength(0) && y <= GameMap.GetLength(1) &&
-                                                            GameMap[x, y] == 1);
+        internal bool ItemCanBePlacedHere(int x, int y)
+        {
+            if (Model.MapSizeX - 1 < x || Model.MapSizeY - 1 < y) return false;
+            
+            if (x == Model.DoorX && y == Model.DoorY) return false;
+            
+            if (x >= GameMap.GetLength(0)) return false;
+            
+            return y <= GameMap.GetLength(1) &&
+                   GameMap[x, y] == 1;
+        }
 
 
         /// <summary>
