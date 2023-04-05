@@ -126,15 +126,8 @@ namespace Oblivion.HabboHotel.PathFinding
 
                             if (!pathFinderSecondNodeCalculation.InClosed)
                             {
-                                var internalSpanTreeCost = 0;
-
-                                if (pathFinderStart.Position.X != pathFinderSecondNodeCalculation.Position.X)
-                                    internalSpanTreeCost++;
-
-                                if (pathFinderStart.Position.Y != pathFinderSecondNodeCalculation.Position.Y)
-                                    internalSpanTreeCost++;
-
-                                var loopTotalCost = pathFinderStart.Cost + internalSpanTreeCost +
+                                
+                                var loopTotalCost = pathFinderStart.Cost +
                                                     pathFinderSecondNodeCalculation.Position.GetDistanceSquared(endMap);
 
                                 if (loopTotalCost < pathFinderSecondNodeCalculation.Cost)

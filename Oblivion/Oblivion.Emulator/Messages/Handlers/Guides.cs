@@ -15,9 +15,9 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal async Task CallGuide()
         {
-            Request.GetBool();
+            //Request.GetBool();
 
-            var userId = Request.GetIntegerFromString();
+            var userId = Request.GetInteger();
             var message = Request.GetString();
 
             var guideManager = Oblivion.GetGame().GetGuideManager();

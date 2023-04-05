@@ -1478,11 +1478,14 @@ namespace Oblivion.HabboHotel.Rooms
 
             _gameMap = null;
 
+            if (RoomData != null)
+            {
+                RoomData.Tags?.Clear();
+                RoomData.Tags = null;
+                RoomData.BlockedCommands?.Clear();
+                RoomData.BlockedCommands = null;
+            }
 
-            RoomData?.Tags?.Clear();
-            RoomData.Tags = null;
-            RoomData?.BlockedCommands?.Clear();
-            RoomData.BlockedCommands = null;
             UsersWithRights.Clear();
 
             Bans.Clear();
