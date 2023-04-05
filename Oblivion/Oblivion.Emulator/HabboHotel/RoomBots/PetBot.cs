@@ -53,10 +53,17 @@ namespace Oblivion.HabboHotel.RoomBots
         /// </summary>
         internal override async void OnSelfEnterRoom()
         {
-            var randomWalkableSquare = GetRoom().GetGameMap().GetRandomWalkableSquare();
-            if (GetRoomUser() != null && GetRoomUser().PetData.Type != 16u)
+            try
             {
-                await GetRoomUser().MoveTo(randomWalkableSquare.X, randomWalkableSquare.Y);
+                var randomWalkableSquare = GetRoom().GetGameMap().GetRandomWalkableSquare();
+                if (GetRoomUser() != null && GetRoomUser().PetData.Type != 16u)
+                {
+                    await GetRoomUser().MoveTo(randomWalkableSquare.X, randomWalkableSquare.Y);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PetBot.OnSelfEnterRoom");
             }
         }
 

@@ -522,9 +522,9 @@ namespace Oblivion.HabboHotel
         {
             while (GameLoopActiveExt)
             {
-                await LowPriorityWorker.Process();
                 try
                 {
+                    await LowPriorityWorker.Process();
                     RoomManagerCycleEnded = false;
                     _roomManager.OnCycle();
                 }

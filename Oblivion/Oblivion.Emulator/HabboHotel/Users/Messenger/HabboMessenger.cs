@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Oblivion.Configuration;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Groups.Interfaces;
 using Oblivion.HabboHotel.Quests;
@@ -295,36 +296,43 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="friendId">The friend identifier.</param>
         internal async void OnNewFriendship(uint friendId)
         {
-            var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(friendId);
-            MessengerBuddy messengerBuddy;
-
-            if (clientByUserId?.GetHabbo() == null)
+            try
             {
-                DataRow row;
+                var clientByUserId = Oblivion.GetGame().GetClientManager().GetClientByUserId(friendId);
+                MessengerBuddy messengerBuddy;
 
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                if (clientByUserId?.GetHabbo() == null)
                 {
-                    queryReactor.SetQuery(
-                        $"SELECT id,username,motto,look,last_online,hide_inroom,hide_online FROM users WHERE id = {friendId}");
-                    row = queryReactor.GetRow();
+                    DataRow row;
+
+                    using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    {
+                        queryReactor.SetQuery(
+                            $"SELECT id,username,motto,look,last_online,hide_inroom,hide_online FROM users WHERE id = {friendId}");
+                        row = queryReactor.GetRow();
+                    }
+
+                    messengerBuddy = new MessengerBuddy(friendId, (string)row["Username"], (string)row["look"],
+                        (string)row["motto"], Oblivion.EnumToBool(row["hide_online"].ToString()),
+                        Oblivion.EnumToBool(row["hide_inroom"].ToString()));
+                }
+                else
+                {
+                    var habbo = clientByUserId.GetHabbo();
+
+                    messengerBuddy = new MessengerBuddy(friendId, habbo.UserName, habbo.Look, habbo.Motto,
+                        habbo.AppearOffline, habbo.HideInRoom);
+                    messengerBuddy.UpdateUser();
                 }
 
-                messengerBuddy = new MessengerBuddy(friendId, (string)row["Username"], (string)row["look"],
-                    (string)row["motto"], Oblivion.EnumToBool(row["hide_online"].ToString()),
-                    Oblivion.EnumToBool(row["hide_inroom"].ToString()));
+                Friends[friendId] = messengerBuddy;
+
+                await GetClient().SendMessageAsync(await SerializeUpdate(messengerBuddy));
             }
-            else
+            catch (Exception ex)
             {
-                var habbo = clientByUserId.GetHabbo();
-
-                messengerBuddy = new MessengerBuddy(friendId, habbo.UserName, habbo.Look, habbo.Motto,
-                    habbo.AppearOffline, habbo.HideInRoom);
-                messengerBuddy.UpdateUser();
+                Logging.HandleException(ex, "Messenger.OnNewFriendship");
             }
-
-            Friends[friendId] = messengerBuddy;
-
-            await GetClient().SendMessageAsync(await SerializeUpdate(messengerBuddy));
         }
 
 

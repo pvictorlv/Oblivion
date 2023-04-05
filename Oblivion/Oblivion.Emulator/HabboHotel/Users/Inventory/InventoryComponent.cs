@@ -456,24 +456,31 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
         public async void AddNewItem(UserItem userItem)
         {
-            var virtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(userItem.Id);
-            await SendNewItems(virtualId);
+            try
+            {
+                var virtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(userItem.Id);
+                await SendNewItems(virtualId);
 
-            var id = userItem.Id;
+                var id = userItem.Id;
 
-            if (UserHoldsItem(id))
-                await RemoveItem(id, false, 0);
+                if (UserHoldsItem(id))
+                    await RemoveItem(id, false, 0);
 
-            if (userItem.BaseItem == null) return;
+                if (userItem.BaseItem == null) return;
 
 
-            _items.TryAdd(userItem.Id, userItem);
+                _items.TryAdd(userItem.Id, userItem);
 
-            if (_mRemovedItems.Contains(userItem))
-                _mRemovedItems.Remove(userItem);
+                if (_mRemovedItems.Contains(userItem))
+                    _mRemovedItems.Remove(userItem);
 
-            if (!_mAddedItems.Contains(id))
-                _mAddedItems.Add(id);
+                if (!_mAddedItems.Contains(id))
+                    _mAddedItems.Add(id);
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "Inventory.AddNewItem(UserItem userItem)");
+            }
         }
 
         /// <summary>

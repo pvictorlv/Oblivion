@@ -127,41 +127,43 @@ namespace Oblivion.Messages.Parsers
             var filePaths = Directory.GetFiles($"{Environment.CurrentDirectory}\\Packets", "*.incoming");
 
             /* TODO CHECK */
-            foreach (var fileContents in filePaths.Select(currentFile => File.ReadAllLines(currentFile, Encoding.UTF8)))
+            foreach (var currentFile in filePaths)
             {
+                var fileContents = File.ReadAllLines(currentFile, Encoding.UTF8);
                 CountReleases++;
 
                 /* TODO CHECK */
-                foreach (var fields in fileContents.Where(line => !string.IsNullOrEmpty(line) && !line.StartsWith("[")).Select(line => line.Replace(" ", string.Empty).Split('=')))
+                foreach (var line in fileContents)
                 {
-                    var packetName = fields[0];
-
-                    if (fields[1].Contains('/'))
+                    if (!string.IsNullOrEmpty(line) && !line.StartsWith("["))
                     {
-                        string[] packets = fields[1].Split('/');
+                        var fields = line.Replace(" ", string.Empty).Split('=');
+                        var packetName = fields[0];
 
-                        if (Int16.TryParse(packets[0], out Int16 oldHeader) && Int16.TryParse(packets[1], out Int16 newHeader))
-                            IncomingAir.Add(newHeader, oldHeader);
+                        if (fields[1].Contains('/'))
+                        {
+                            string[] packets = fields[1].Split('/');
 
-                        fields[1] = packets[0];
+                            if (Int16.TryParse(packets[0], out Int16 oldHeader) && Int16.TryParse(packets[1], out Int16 newHeader)) IncomingAir.Add(newHeader, oldHeader);
+
+                            fields[1] = packets[0];
+                        }
+
+                        var packetId = fields[1].ToLower().Contains('x') ? Convert.ToInt32(fields[1], 16) : Convert.ToInt32(fields[1]);
+
+                        if (!Library.TryGetValue(packetName, out var libValue)) continue;
+
+                        var del = (PacketLibrary.GetProperty)Delegate.CreateDelegate(typeof(PacketLibrary.GetProperty), typeof(PacketLibrary), libValue);
+
+                        if (Incoming.ContainsKey(packetId))
+                        {
+                            if (packetId == -1) continue;
+
+                            Console.WriteLine("> A Incoming Packet with same Id was found: " + packetId);
+                        }
+                        else
+                            Incoming.Add(packetId, new StaticRequestHandler(del));
                     }
-
-                    var packetId = fields[1].ToLower().Contains('x') ? Convert.ToInt32(fields[1], 16) : Convert.ToInt32(fields[1]);
-                    
-                    if (!Library.TryGetValue(packetName, out var libValue))
-                        continue;
-
-                    var del = (PacketLibrary.GetProperty)Delegate.CreateDelegate(typeof(PacketLibrary.GetProperty), typeof(PacketLibrary), libValue);
-
-                    if (Incoming.ContainsKey(packetId))
-                    {
-                        if (packetId == -1)
-                            continue;
-
-                        Console.WriteLine("> A Incoming Packet with same Id was found: " + packetId);
-                    }
-                    else
-                        Incoming.Add(packetId, new StaticRequestHandler(del));
                 }
             }
         }

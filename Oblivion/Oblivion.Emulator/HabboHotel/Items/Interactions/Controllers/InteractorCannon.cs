@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
+using Oblivion.Configuration;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Models;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -145,40 +147,50 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
         private async void ExplodeAndKick(object source, ElapsedEventArgs e)
         {
-            var timer = (Timer)source;
-            timer.Stop();
-
-            var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
-            serverMessage.AppendString("room.kick.cannonball");
-            serverMessage.AppendInteger(2);
-            serverMessage.AppendString("link");
-            serverMessage.AppendString("event:");
-            serverMessage.AppendString("linkTitle");
-            serverMessage.AppendString("ok");
-
-            var room = _mItem.GetRoom();
-
-            var toRemove = new HashSet<RoomUser>();
-
-            /* TODO CHECK */
-            foreach (Point coord in _mCoords)
-            foreach (RoomUser user in room.GetGameMap()
-                         .GetRoomUsers(coord))
+            try
             {
-                if (user != null && !user.IsBot && !user.IsPet && user.GetUserName() != room.RoomData.Owner)
+                var timer = (Timer)source;
+                timer.Stop();
+
+                var serverMessage =
+                    new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
+                serverMessage.AppendString("room.kick.cannonball");
+                serverMessage.AppendInteger(2);
+                serverMessage.AppendString("link");
+                serverMessage.AppendString("event:");
+                serverMessage.AppendString("linkTitle");
+                serverMessage.AppendString("ok");
+
+                var room = _mItem.GetRoom();
+
+                var toRemove = new HashSet<RoomUser>();
+
+                /* TODO CHECK */
+                foreach (Point coord in _mCoords)
+                foreach (RoomUser user in room.GetGameMap()
+                             .GetRoomUsers(coord))
                 {
-                    await user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent().ActivateCustomEffect(4, false);
-                    toRemove.Add(user);
+                    if (user != null && !user.IsBot && !user.IsPet && user.GetUserName() != room.RoomData.Owner)
+                    {
+                        await user.GetClient().GetHabbo().GetAvatarEffectsInventoryComponent()
+                            .ActivateCustomEffect(4, false);
+                        toRemove.Add(user);
+                    }
                 }
-            }
 
-            /* TODO CHECK */ foreach (var user in toRemove)
+                /* TODO CHECK */
+                foreach (var user in toRemove)
+                {
+                    await room.GetRoomUserManager().RemoveUserFromRoom(user, true, false);
+                    await user.GetClient().SendMessageAsync(serverMessage);
+                }
+
+                _mItem.OnCannonActing = false;
+            }
+            catch (Exception ex)
             {
-                await room.GetRoomUserManager().RemoveUserFromRoom(user, true, false);
-                await user.GetClient().SendMessageAsync(serverMessage);
+                Logging.HandleException(ex, "InteractorCannon.ExplodeAndKick()");
             }
-
-            _mItem.OnCannonActing = false;
         }
     }
 }

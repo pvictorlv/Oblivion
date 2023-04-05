@@ -621,23 +621,30 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         /// </summary>
         public async void Dispose()
         {
-            if (_habbo != null)
-                await _habbo.OnDisconnect("disconnect");
+            try
+            {
+                if (_habbo != null)
+                    await _habbo.OnDisconnect("disconnect");
 
-            if (GetMessageHandler() != null)
-                GetMessageHandler().Destroy();
+                if (GetMessageHandler() != null)
+                    GetMessageHandler().Destroy();
 
-            CurrentRoomUserId = -1;
-            _messageHandler?.Dispose();
-            _messageHandler = null;
-            _habbo = null;
+                CurrentRoomUserId = -1;
+                _messageHandler?.Dispose();
+                _messageHandler = null;
+                _habbo = null;
 
-            _connection?.Dispose();
+                _connection?.Dispose();
 
-            _connection = null;
-            PacketParser?.Dispose();
-            PacketParser = null;
-            _disconnected = true;
+                _connection = null;
+                PacketParser?.Dispose();
+                PacketParser = null;
+                _disconnected = true;
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "user disconnect");
+            }
         }
 
 

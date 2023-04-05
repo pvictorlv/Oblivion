@@ -519,7 +519,14 @@ namespace Oblivion.HabboHotel.RoomBots
         /// <param name="o">The o.</param>
         private async void ChatTimerTick(object o)
         {
-            await OnChatTick();
+            try
+            {
+                await OnChatTick();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "ChatTimerTick");
+            }
         }
     }
 }

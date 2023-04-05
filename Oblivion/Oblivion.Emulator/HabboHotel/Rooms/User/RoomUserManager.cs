@@ -1472,32 +1472,39 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// </summary>
         private static async void UpdateUserEffect(RoomUser user, RoomItem roomItem)
         {
-            var baseItem = roomItem?.GetBaseItem();
-            if (baseItem == null) return;
-            var inv = user?.GetClient()?.GetHabbo()?.GetAvatarEffectsInventoryComponent();
-
-            if (inv == null) return;
-
-            var b = user.GetClient().GetHabbo().Gender == "m" ? baseItem.EffectM : baseItem.EffectF;
-            if (b > 0)
+            try
             {
-                if (inv.CurrentEffect == 0)
+                var baseItem = roomItem?.GetBaseItem();
+                if (baseItem == null) return;
+                var inv = user?.GetClient()?.GetHabbo()?.GetAvatarEffectsInventoryComponent();
+
+                if (inv == null) return;
+
+                var b = user.GetClient().GetHabbo().Gender == "m" ? baseItem.EffectM : baseItem.EffectF;
+                if (b > 0)
                 {
+                    if (inv.CurrentEffect == 0)
+                    {
+                        user.CurrentItemEffect = 0;
+                    }
+
+                    if (b == user.CurrentItemEffect)
+                        return;
+
+                    await inv.ActivateCustomEffect(b);
+                    user.CurrentItemEffect = b;
+                }
+                else
+                {
+                    if (user.CurrentItemEffect == 0 || b != 0)
+                        return;
+                    await inv.ActivateCustomEffect(-1);
                     user.CurrentItemEffect = 0;
                 }
-
-                if (b == user.CurrentItemEffect)
-                    return;
-
-                await inv.ActivateCustomEffect(b);
-                user.CurrentItemEffect = b;
             }
-            else
+            catch (Exception ex)
             {
-                if (user.CurrentItemEffect == 0 || b != 0)
-                    return;
-                await inv.ActivateCustomEffect(-1);
-                user.CurrentItemEffect = 0;
+                Logging.HandleException(ex, "RoomMgr.UpdateUserEffect()");
             }
         }
 

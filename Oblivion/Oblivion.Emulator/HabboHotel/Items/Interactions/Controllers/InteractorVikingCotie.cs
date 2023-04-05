@@ -1,5 +1,7 @@
+using System;
 using System.Threading.Tasks;
 using System.Timers;
+using Oblivion.Configuration;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Items.Interactions.Models;
 using Oblivion.HabboHotel.Items.Interfaces;
@@ -52,31 +54,38 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
         private async void OnElapse(object sender, ElapsedEventArgs e)
         {
-            if (_mItem == null)
-                return;
-
-            switch (_mItem.ExtraData)
+            try
             {
-                case "1":
-                    _mItem.ExtraData = "2";
-                    await _mItem.UpdateState();
+                if (_mItem == null)
                     return;
 
-                case "2":
-                    _mItem.ExtraData = "3";
-                    await _mItem.UpdateState();
-                    return;
+                switch (_mItem.ExtraData)
+                {
+                    case "1":
+                        _mItem.ExtraData = "2";
+                        await _mItem.UpdateState();
+                        return;
 
-                case "3":
-                    _mItem.ExtraData = "4";
-                    await _mItem.UpdateState();
-                    return;
+                    case "2":
+                        _mItem.ExtraData = "3";
+                        await _mItem.UpdateState();
+                        return;
 
-                case "4":
-                    ((Timer)sender).Stop();
-                    _mItem.ExtraData = "5";
-                    await _mItem.UpdateState();
-                    return;
+                    case "3":
+                        _mItem.ExtraData = "4";
+                        await _mItem.UpdateState();
+                        return;
+
+                    case "4":
+                        ((Timer)sender).Stop();
+                        _mItem.ExtraData = "5";
+                        await _mItem.UpdateState();
+                        return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "InteractorVikingCotie.OnElapse()");
             }
         }
     }

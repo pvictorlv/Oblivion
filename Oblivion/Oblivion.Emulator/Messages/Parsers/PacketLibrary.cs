@@ -1,3 +1,6 @@
+using System;
+using System.Threading.Tasks;
+using Oblivion.Configuration;
 using Oblivion.Messages.Handlers;
 
 namespace Oblivion.Messages.Parsers
@@ -10,25 +13,39 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Delegate GetProperty
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal delegate void GetProperty(GameClientMessageHandler handler);
 
         /// <summary>
         /// Initializes the crypto.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void InitCrypto(GameClientMessageHandler handler)
         {
-            await handler.InitCrypto();
+            try
+            {
+                await handler.InitCrypto();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Secrets the key.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SecretKey(GameClientMessageHandler handler)
         {
-            await handler.SecretKey();
+            try
+            {
+                await handler.SecretKey();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
@@ -37,2488 +54,4448 @@ namespace Oblivion.Messages.Parsers
         /// <param name="handler">Friends</param>
         internal static async void InitConsole(GameClientMessageHandler handler)
         {
-            await handler.InitConsole();
+            try
+            {
+                await handler.InitConsole();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Machines the identifier.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void MachineId(GameClientMessageHandler handler)
         {
-            await handler.MachineId();
+            try
+            {
+                await handler.MachineId();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Guides the message.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GuideMessage(GameClientMessageHandler handler)
         {
-            await handler.CallGuide();
+            try
+            {
+                await handler.CallGuide();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Sets the chat preferrence.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static void SetChatPreferrence(GameClientMessageHandler handler)
         {
-            handler.SetChatPreferrence();
+            try
+            {
+                handler.SetChatPreferrence();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the helper tool.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetHelperTool(GameClientMessageHandler handler)
         {
-            await handler.OpenGuideTool();
+            try
+            {
+                await handler.OpenGuideTool();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the guide detached.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetGuideDetached(GameClientMessageHandler handler)
         {
-            await handler.AnswerGuideRequest();
+            try
+            {
+                await handler.AnswerGuideRequest();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Logins the with ticket.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void LoginWithTicket(GameClientMessageHandler handler)
         {
-            await handler.LoginWithTicket();
+            try
+            {
+                await handler.LoginWithTicket();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Invites the guide.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void InviteGuide(GameClientMessageHandler handler)
         {
-            await handler.InviteToRoom();
+            try
+            {
+                await handler.InviteToRoom();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Visits the room guide.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void VisitRoomGuide(GameClientMessageHandler handler)
         {
-            await handler.VisitRoom();
+            try
+            {
+                await handler.VisitRoom();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Guides the end session.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GuideEndSession(GameClientMessageHandler handler)
         {
-            await handler.CloseGuideRequest();
+            try
+            {
+                await handler.CloseGuideRequest();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Cancels the call guide.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void CancelCallGuide(GameClientMessageHandler handler)
         {
-            await handler.CancelCallGuide();
+            try
+            {
+                await handler.CancelCallGuide();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Informations the retrieve.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void InfoRetrieve(GameClientMessageHandler handler)
         {
-            await handler.InfoRetrieve();
+            try
+            {
+                await handler.InfoRetrieve();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
-        /// Chats the specified await handler.
+        /// Chats the specified try { await handler.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void Chat(GameClientMessageHandler handler)
         {
-            await handler.Chat();
+            try
+            {
+                await handler.Chat();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
-        /// Shouts the specified await handler.
+        /// Shouts the specified try { await handler.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void Shout(GameClientMessageHandler handler)
         {
-            await handler.Shout();
+            try
+            {
+                await handler.Shout();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Requests the floor plan used coords.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RequestFloorPlanUsedCoords(GameClientMessageHandler handler)
         {
-            await handler.GetFloorPlanUsedCoords();
+            try
+            {
+                await handler.GetFloorPlanUsedCoords();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Requests the floor plan door.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RequestFloorPlanDoor(GameClientMessageHandler handler)
         {
-            await handler.GetFloorPlanDoor();
+            try
+            {
+                await handler.GetFloorPlanDoor();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Opens the bully reporting.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void OpenBullyReporting(GameClientMessageHandler handler)
         {
-            await handler.OpenBullyReporting();
+            try
+            {
+                await handler.OpenBullyReporting();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Sends the bully report.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SendBullyReport(GameClientMessageHandler handler)
         {
-            await handler.SendBullyReport();
+            try
+            {
+                await handler.SendBullyReport();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Loads the club gifts.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void LoadClubGifts(GameClientMessageHandler handler)
         {
-            await handler.LoadClubGifts();
+            try
+            {
+                await handler.LoadClubGifts();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Saves the heightmap.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SaveHeightmap(GameClientMessageHandler handler)
         {
-            await handler.SaveHeightmap();
+            try
+            {
+                await handler.SaveHeightmap();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Accepts the poll.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void AcceptPoll(GameClientMessageHandler handler)
         {
-            await handler.AcceptPoll();
+            try
+            {
+                await handler.AcceptPoll();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Refuses the poll.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RefusePoll(GameClientMessageHandler handler)
         {
-            await handler.RefusePoll();
+            try
+            {
+                await handler.RefusePoll();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Answers the poll question.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void AnswerPollQuestion(GameClientMessageHandler handler)
         {
-            await handler.AnswerPoll();
+            try
+            {
+                await handler.AnswerPoll();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Retrieves the song identifier.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RetrieveSongId(GameClientMessageHandler handler)
         {
-            await handler.RetrieveSongId();
+            try
+            {
+                await handler.RetrieveSongId();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Tiles the height of the stack magic set.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void TileStackMagicSetHeight(GameClientMessageHandler handler)
         {
-            await handler.TileStackMagicSetHeight();
+            try
+            {
+                await handler.TileStackMagicSetHeight();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Enables the inventory effect.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void EnableInventoryEffect(GameClientMessageHandler handler)
         {
-            await handler.EnableEffect();
+            try
+            {
+                await handler.EnableEffect();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Promotes the room.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void PromoteRoom(GameClientMessageHandler handler)
         {
-            await handler.PromoteRoom();
+            try
+            {
+                await handler.PromoteRoom();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the promotionable rooms.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetPromotionableRooms(GameClientMessageHandler handler)
         {
-            await handler.GetPromotionableRooms();
+            try
+            {
+                await handler.GetPromotionableRooms();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the room filter.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetRoomFilter(GameClientMessageHandler handler)
         {
-            await handler.GetRoomFilter();
+            try
+            {
+                await handler.GetRoomFilter();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Alters the room filter.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void AlterRoomFilter(GameClientMessageHandler handler)
         {
-            await handler.AlterRoomFilter();
+            try
+            {
+                await handler.AlterRoomFilter();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the tv player.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetTvPlayer(GameClientMessageHandler handler)
         {
-            await handler.GetTvPlayer();
+            try
+            {
+                await handler.GetTvPlayer();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Chooses the tv player video.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ChooseTvPlayerVideo(GameClientMessageHandler handler)
         {
-            await handler.ChooseTvPlayerVideo();
+            try
+            {
+                await handler.ChooseTvPlayerVideo();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the tv playlist.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetTvPlaylist(GameClientMessageHandler handler)
         {
-            await handler.ChooseTvPlaylist();
+            try
+            {
+                await handler.ChooseTvPlaylist();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Places the bot.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void PlaceBot(GameClientMessageHandler handler)
         {
-            await handler.PlaceBot();
+            try
+            {
+                await handler.PlaceBot();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Picks up bot.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void PickUpBot(GameClientMessageHandler handler)
         {
-            await handler.PickUpBot();
+            try
+            {
+                await handler.PickUpBot();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the talents track.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetTalentsTrack(GameClientMessageHandler handler)
         {
-            await handler.Talents();
+            try
+            {
+                await handler.Talents();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Prepares the campaing.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void PrepareCampaing(GameClientMessageHandler handler)
         {
-            await handler.PrepareCampaing();
+            try
+            {
+                await handler.PrepareCampaing();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
-        /// Pongs the specified await handler.
+        /// Pongs the specified try { await handler.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void Pong(GameClientMessageHandler handler)
         {
-            await handler.Pong();
+            try
+            {
+                await handler.Pong();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Disconnects the event.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void DisconnectEvent(GameClientMessageHandler handler)
         {
-            await handler.DisconnectEvent();
+            try
+            {
+                await handler.DisconnectEvent();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Latencies the test.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void LatencyTest(GameClientMessageHandler handler)
         {
-            await handler.LatencyTest();
+            try
+            {
+                await handler.LatencyTest();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Receptions the view.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ReceptionView(GameClientMessageHandler handler)
         {
-            await handler.GoToHotelView();
+            try
+            {
+                await handler.GoToHotelView();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Called when [confirmation event].
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void OnlineConfirmationEvent(GameClientMessageHandler handler)
         {
-            await handler.OnlineConfirmationEvent();
+            try
+            {
+                await handler.OnlineConfirmationEvent();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Retrives the citizen ship status.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RetriveCitizenShipStatus(GameClientMessageHandler handler)
         {
-            await handler.RetrieveCitizenship();
+            try
+            {
+                await handler.RetrieveCitizenship();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Refreshes the promo event.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RefreshPromoEvent(GameClientMessageHandler handler)
         {
-            await handler.RefreshPromoEvent();
+            try
+            {
+                await handler.RefreshPromoEvent();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         internal static async void RefreshCompetition(GameClientMessageHandler handler)
         {
-            await handler.RefreshCompetition();
+            try
+            {
+                await handler.RefreshCompetition();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Widgets the container.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void WidgetContainer(GameClientMessageHandler handler)
         {
-            await handler.WidgetContainers();
+            try
+            {
+                await handler.WidgetContainers();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Landings the community goal.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void LandingCommunityGoal(GameClientMessageHandler handler)
         {
-            await handler.LandingCommunityGoal();
+            try
+            {
+                await handler.LandingCommunityGoal();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Removes the handitem.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RemoveHanditem(GameClientMessageHandler handler)
         {
-            await handler.RemoveHanditem();
+            try
+            {
+                await handler.RemoveHanditem();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Redeems the voucher.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RedeemVoucher(GameClientMessageHandler handler)
         {
-            await handler.RedeemVoucher();
+            try
+            {
+                await handler.RedeemVoucher();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gives the handitem.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GiveHanditem(GameClientMessageHandler handler)
         {
-            await handler.GiveHanditem();
+            try
+            {
+                await handler.GiveHanditem();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Initializes the help tool.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void InitHelpTool(GameClientMessageHandler handler)
         {
-            await handler.InitHelpTool();
+            try
+            {
+                await handler.InitHelpTool();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Submits the help ticket.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SubmitHelpTicket(GameClientMessageHandler handler)
         {
-            await handler.SubmitHelpTicket();
+            try
+            {
+                await handler.SubmitHelpTicket();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Deletes the pending CFH.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void DeletePendingCfh(GameClientMessageHandler handler)
         {
-            await handler.DeletePendingCfh();
+            try
+            {
+                await handler.DeletePendingCfh();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Mods the get user information.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ModGetUserInfo(GameClientMessageHandler handler)
         {
-            await handler.ModGetUserInfo();
+            try
+            {
+                await handler.ModGetUserInfo();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Mods the get user chatlog.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ModGetUserChatlog(GameClientMessageHandler handler)
         {
-            await handler.ModGetUserChatlog();
+            try
+            {
+                await handler.ModGetUserChatlog();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Messages from a guy.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void MessageFromAGuy(GameClientMessageHandler handler)
         {
-            await handler.GuideSpeak();
+            try
+            {
+                await handler.GuideSpeak();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Mods the get room chatlog.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ModGetRoomChatlog(GameClientMessageHandler handler)
         {
-            await handler.ModGetRoomChatlog();
+            try
+            {
+                await handler.ModGetRoomChatlog();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Mods the get room tool.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ModGetRoomTool(GameClientMessageHandler handler)
         {
-            await handler.ModGetRoomTool();
+            try
+            {
+                await handler.ModGetRoomTool();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Mods the pick ticket.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ModPickTicket(GameClientMessageHandler handler)
         {
-            await handler.ModPickTicket();
+            try
+            {
+                await handler.ModPickTicket();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Mods the release ticket.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ModReleaseTicket(GameClientMessageHandler handler)
         {
-            await handler.ModReleaseTicket();
+            try
+            {
+                await handler.ModReleaseTicket();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Mods the close ticket.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ModCloseTicket(GameClientMessageHandler handler)
         {
-            await handler.ModCloseTicket();
+            try
+            {
+                await handler.ModCloseTicket();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Mods the get ticket chatlog.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ModGetTicketChatlog(GameClientMessageHandler handler)
         {
-            await handler.ModGetTicketChatlog();
+            try
+            {
+                await handler.ModGetTicketChatlog();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Mods the get room visits.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ModGetRoomVisits(GameClientMessageHandler handler)
         {
-            await handler.ModGetRoomVisits();
+            try
+            {
+                await handler.ModGetRoomVisits();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Mods the send room alert.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ModSendRoomAlert(GameClientMessageHandler handler)
         {
-            await handler.ModSendRoomAlert();
+            try
+            {
+                await handler.ModSendRoomAlert();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Mods the perform room action.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ModPerformRoomAction(GameClientMessageHandler handler)
         {
-            await handler.ModPerformRoomAction();
+            try
+            {
+                await handler.ModPerformRoomAction();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Mods the send user caution.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ModSendUserCaution(GameClientMessageHandler handler)
         {
-            await handler.ModSendUserCaution();
+            try
+            {
+                await handler.ModSendUserCaution();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Mods the send user message.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ModSendUserMessage(GameClientMessageHandler handler)
         {
-            await handler.ModSendUserMessage();
+            try
+            {
+                await handler.ModSendUserMessage();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Mods the kick user.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ModKickUser(GameClientMessageHandler handler)
         {
-            await handler.ModKickUser();
+            try
+            {
+                await handler.ModKickUser();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Mods the mute user.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ModMuteUser(GameClientMessageHandler handler)
         {
-            await handler.ModMuteUser();
+            try
+            {
+                await handler.ModMuteUser();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Mods the lock trade.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ModLockTrade(GameClientMessageHandler handler)
         {
-            await handler.ModLockTrade();
+            try
+            {
+                await handler.ModLockTrade();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Mods the ban user.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ModBanUser(GameClientMessageHandler handler)
         {
-            await handler.ModBanUser();
+            try
+            {
+                await handler.ModBanUser();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Initializes the messenger.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void InitMessenger(GameClientMessageHandler handler)
         {
-            await handler.InitMessenger();
+            try
+            {
+                await handler.InitMessenger();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Friendses the list update.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void FriendsListUpdate(GameClientMessageHandler handler)
         {
-            await handler.FriendsListUpdate();
+            try
+            {
+                await handler.FriendsListUpdate();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Removes the buddy.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RemoveBuddy(GameClientMessageHandler handler)
         {
-            await handler.RemoveBuddy();
+            try
+            {
+                await handler.RemoveBuddy();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Searches the habbo.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SearchHabbo(GameClientMessageHandler handler)
         {
-            await handler.SearchHabbo();
+            try
+            {
+                await handler.SearchHabbo();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Accepts the request.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void AcceptRequest(GameClientMessageHandler handler)
         {
-            await handler.AcceptRequest();
+            try
+            {
+                await handler.AcceptRequest();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Declines the request.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void DeclineRequest(GameClientMessageHandler handler)
         {
-            await handler.DeclineRequest();
+            try
+            {
+                await handler.DeclineRequest();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Requests the buddy.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RequestBuddy(GameClientMessageHandler handler)
         {
-            await handler.RequestBuddy();
+            try
+            {
+                await handler.RequestBuddy();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Sends the instant messenger.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SendInstantMessenger(GameClientMessageHandler handler)
         {
-            await handler.SendInstantMessenger();
+            try
+            {
+                await handler.SendInstantMessenger();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Follows the buddy.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void FollowBuddy(GameClientMessageHandler handler)
         {
-            await handler.FollowBuddy();
+            try
+            {
+                await handler.FollowBuddy();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Sends the instant invite.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SendInstantInvite(GameClientMessageHandler handler)
         {
-            await handler.SendInstantInvite();
+            try
+            {
+                await handler.SendInstantInvite();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Homes the room stuff.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void HomeRoomStuff(GameClientMessageHandler handler)
         {
-            await handler.HomeRoom();
+            try
+            {
+                await handler.HomeRoom();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Adds the favorite.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void AddFavorite(GameClientMessageHandler handler)
         {
-            await handler.AddFavorite();
+            try
+            {
+                await handler.AddFavorite();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Removes the favorite.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RemoveFavorite(GameClientMessageHandler handler)
         {
-            await handler.RemoveFavorite();
+            try
+            {
+                await handler.RemoveFavorite();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the flat cats.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetFlatCats(GameClientMessageHandler handler)
         {
-            await handler.GetFlatCats();
+            try
+            {
+                await handler.GetFlatCats();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Enters the inquired room.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void EnterInquiredRoom(GameClientMessageHandler handler)
         {
-            await handler.EnterInquiredRoom();
+            try
+            {
+                await handler.EnterInquiredRoom();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the pubs.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetPubs(GameClientMessageHandler handler)
         {
-            await handler.GetPubs();
+            try
+            {
+                await handler.GetPubs();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Saves the branding.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SaveBranding(GameClientMessageHandler handler)
         {
-            await handler.SaveBranding();
+            try
+            {
+                await handler.SaveBranding();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the room information.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetRoomInfo(GameClientMessageHandler handler)
         {
-            await handler.GetRoomInfo();
+            try
+            {
+                await handler.GetRoomInfo();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
 
         /// <summary>
         /// News the navigator flat cats.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void NewNavigatorFlatCats(GameClientMessageHandler handler)
         {
-            await handler.NewNavigatorFlatCats();
+            try
+            {
+                await handler.NewNavigatorFlatCats();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the favorite rooms.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetFavoriteRooms(GameClientMessageHandler handler)
         {
-            await handler.GetFavoriteRooms();
+            try
+            {
+                await handler.GetFavoriteRooms();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the recent rooms.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetRecentRooms(GameClientMessageHandler handler)
         {
-            await handler.GetRecentRooms();
+            try
+            {
+                await handler.GetRecentRooms();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the popular tags.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetPopularTags(GameClientMessageHandler handler)
         {
-            await handler.GetPopularTags();
+            try
+            {
+                await handler.GetPopularTags();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Performs the search.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void PerformSearch(GameClientMessageHandler handler)
         {
-            await handler.PerformSearch();
+            try
+            {
+                await handler.PerformSearch();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Searches the by tag.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SearchByTag(GameClientMessageHandler handler)
         {
-            await handler.SearchByTag();
+            try
+            {
+                await handler.SearchByTag();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Performs the search2.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void PerformSearch2(GameClientMessageHandler handler)
         {
-            await handler.PerformSearch2();
+            try
+            {
+                await handler.PerformSearch2();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Opens the flat.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void OpenFlat(GameClientMessageHandler handler)
         {
-            await handler.OpenFlat();
+            try
+            {
+                await handler.OpenFlat();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the voume.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetVoume(GameClientMessageHandler handler)
         {
-            await handler.LoadSettings();
+            try
+            {
+                await handler.LoadSettings();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Saves the volume.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static void SaveVolume(GameClientMessageHandler handler)
         {
-            handler.SaveSettings();
+            try
+            {
+                handler.SaveSettings();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the pub.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetPub(GameClientMessageHandler handler)
         {
-            await handler.GetPub();
+            try
+            {
+                await handler.GetPub();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Opens the pub.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void OpenPub(GameClientMessageHandler handler)
         {
-            await handler.OpenPub();
+            try
+            {
+                await handler.OpenPub();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the inventory.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetInventory(GameClientMessageHandler handler)
         {
-            await handler.GetInventory();
+            try
+            {
+                await handler.GetInventory();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the inventory.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void OpenInventory(GameClientMessageHandler handler)
         {
-            await handler.GetInventory();
+            try
+            {
+                await handler.GetInventory();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Get maketplace config.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void MarketPlaceConfiguration(GameClientMessageHandler handler)
         {
-            await handler.MarketPlaceConfiguration();
+            try
+            {
+                await handler.MarketPlaceConfiguration();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Check if user can make offer
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void CanMakeOffer(GameClientMessageHandler handler)
         {
-            await handler.CanMakeOffer();
+            try
+            {
+                await handler.CanMakeOffer();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the room data1.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetRoomData1(GameClientMessageHandler handler)
         {
-            await handler.GetRoomData1();
+            try
+            {
+                await handler.GetRoomData1();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the room data2.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetRoomData2(GameClientMessageHandler handler)
         {
-            await handler.GetRoomData2();
+            try
+            {
+                await handler.GetRoomData2();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the room data3.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetRoomData3(GameClientMessageHandler handler)
         {
-            await handler.GetRoomData3();
+            try
+            {
+                await handler.GetRoomData3();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Requests the floor items.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RequestFloorItems(GameClientMessageHandler handler)
         {
-            await handler.RequestFloorItems();
+            try
+            {
+                await handler.RequestFloorItems();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Requests the wall items.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RequestWallItems(GameClientMessageHandler handler)
         {
-            await handler.RequestWallItems();
+            try
+            {
+                await handler.RequestWallItems();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Called when [room user add].
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void OnRoomUserAdd(GameClientMessageHandler handler)
         {
-            await handler.OnRoomUserAdd();
+            try
+            {
+                await handler.OnRoomUserAdd();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Reqs the load room for user.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ReqLoadRoomForUser(GameClientMessageHandler handler)
         {
-            await handler.ReqLoadRoomForUser();
+            try
+            {
+                await handler.ReqLoadRoomForUser();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Enters the on room.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void EnterOnRoom(GameClientMessageHandler handler)
         {
-            await handler.EnterOnRoom();
+            try
+            {
+                await handler.EnterOnRoom();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Clears the room loading.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static void ClearRoomLoading(GameClientMessageHandler handler)
         {
-            handler.ClearRoomLoading();
+            try
+            {
+                handler.ClearRoomLoading();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
-        /// Moves the specified await handler.
+        /// Moves the specified try { await handler.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void Move(GameClientMessageHandler handler)
         {
-            await handler.Move();
+            try
+            {
+                await handler.Move();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
-        /// Determines whether this instance [can create room] the specified await handler.
+        /// Determines whether this instance [can create room] the specified try { await handler.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void CanCreateRoom(GameClientMessageHandler handler)
         {
-            await handler.CanCreateRoom();
+            try
+            {
+                await handler.CanCreateRoom();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Creates the room.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void CreateRoom(GameClientMessageHandler handler)
         {
-            await handler.CreateRoom();
+            try
+            {
+                await handler.CreateRoom();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the room information.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetRoomInformation(GameClientMessageHandler handler)
         {
-            await handler.ParseRoomDataInformation();
+            try
+            {
+                await handler.ParseRoomDataInformation();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the room edit data.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetRoomEditData(GameClientMessageHandler handler)
         {
-            await handler.GetRoomEditData();
+            try
+            {
+                await handler.GetRoomEditData();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Saves the room data.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SaveRoomData(GameClientMessageHandler handler)
         {
-            await handler.SaveRoomData();
+            try
+            {
+                await handler.SaveRoomData();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gives the rights.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GiveRights(GameClientMessageHandler handler)
         {
-            await handler.GiveRights();
+            try
+            {
+                await handler.GiveRights();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Takes the rights.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void TakeRights(GameClientMessageHandler handler)
         {
-            await handler.TakeRights();
+            try
+            {
+                await handler.TakeRights();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Takes all rights.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void TakeAllRights(GameClientMessageHandler handler)
         {
-            await handler.TakeAllRights();
+            try
+            {
+                await handler.TakeAllRights();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Habboes the camera.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void HabboCamera(GameClientMessageHandler handler)
         {
-            await handler.HabboCamera();
+            try
+            {
+                await handler.HabboCamera();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Open xmas calendar
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void OpenXmasCalendar(GameClientMessageHandler handler)
         {
-            await handler.OpenXmasCalendar();
+            try
+            {
+                await handler.OpenXmasCalendar();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Called when [click].
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void OnClick(GameClientMessageHandler handler)
         {
-            await handler.OnClick();
+            try
+            {
+                await handler.OnClick();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Kicks the user.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void KickUser(GameClientMessageHandler handler)
         {
-            await handler.KickUser();
+            try
+            {
+                await handler.KickUser();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Bans the user.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void BanUser(GameClientMessageHandler handler)
         {
-            await handler.BanUser();
+            try
+            {
+                await handler.BanUser();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Sets the home room.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SetHomeRoom(GameClientMessageHandler handler)
         {
-            await handler.SetHomeRoom();
+            try
+            {
+                await handler.SetHomeRoom();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Deletes the room.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void DeleteRoom(GameClientMessageHandler handler)
         {
-            await handler.DeleteRoom();
+            try
+            {
+                await handler.DeleteRoom();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Looks at.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void LookAt(GameClientMessageHandler handler)
         {
-            await handler.LookAt();
+            try
+            {
+                await handler.LookAt();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         internal static async void AirClickUser(GameClientMessageHandler handler)
         {
-            await handler.AirClickUser();
+            try
+            {
+                await handler.AirClickUser();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Starts the typing.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void StartTyping(GameClientMessageHandler handler)
         {
-            await handler.StartTyping();
+            try
+            {
+                await handler.StartTyping();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Stops the typing.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void StopTyping(GameClientMessageHandler handler)
         {
-            await handler.StopTyping();
+            try
+            {
+                await handler.StopTyping();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Ignores the user.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void IgnoreUser(GameClientMessageHandler handler)
         {
-            await handler.IgnoreUser();
+            try
+            {
+                await handler.IgnoreUser();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Unignores the user.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void UnignoreUser(GameClientMessageHandler handler)
         {
-            await handler.UnignoreUser();
+            try
+            {
+                await handler.UnignoreUser();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
-        /// Determines whether this instance [can create room event] the specified await handler.
+        /// Determines whether this instance [can create room event] the specified try { await handler.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void CanCreateRoomEvent(GameClientMessageHandler handler)
         {
-            await handler.CanCreateRoomEvent();
+            try
+            {
+                await handler.CanCreateRoomEvent();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
-        /// Signs the specified await handler.
+        /// Signs the specified try { await handler.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void Sign(GameClientMessageHandler handler)
         {
-            await handler.Sign();
+            try
+            {
+                await handler.Sign();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the user tags.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetUserTags(GameClientMessageHandler handler)
         {
-            await handler.GetUserTags();
+            try
+            {
+                await handler.GetUserTags();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the user badges.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetUserBadges(GameClientMessageHandler handler)
         {
-            await handler.GetUserBadges();
+            try
+            {
+                await handler.GetUserBadges();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Rates the room.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RateRoom(GameClientMessageHandler handler)
         {
-            await handler.RateRoom();
+            try
+            {
+                await handler.RateRoom();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
-        /// Dances the specified await handler.
+        /// Dances the specified try { await handler.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void Dance(GameClientMessageHandler handler)
         {
-            await handler.Dance();
+            try
+            {
+                await handler.Dance();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Answers the doorbell.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void AnswerDoorbell(GameClientMessageHandler handler)
         {
-            await handler.AnswerDoorbell();
+            try
+            {
+                await handler.AnswerDoorbell();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Applies the room effect.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ApplyRoomEffect(GameClientMessageHandler handler)
         {
-            await handler.ApplyRoomEffect();
+            try
+            {
+                await handler.ApplyRoomEffect();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Places the post it.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void PlacePostIt(GameClientMessageHandler handler)
         {
-            await handler.PlacePostIt();
+            try
+            {
+                await handler.PlacePostIt();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Places the item.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void PlaceItem(GameClientMessageHandler handler)
         {
-            await handler.PlaceItem();
+            try
+            {
+                await handler.PlaceItem();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Places the item.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void AirPlaceItem(GameClientMessageHandler handler)
         {
-            await handler.PlaceItem();
+            try
+            {
+                await handler.PlaceItem();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Takes the item.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void TakeItem(GameClientMessageHandler handler)
         {
-            await handler.TakeItem();
+            try
+            {
+                await handler.TakeItem();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Moves the item.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void MoveItem(GameClientMessageHandler handler)
         {
-            await handler.MoveItem();
+            try
+            {
+                await handler.MoveItem();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Moves the wall item.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void MoveWallItem(GameClientMessageHandler handler)
         {
-            await handler.MoveWallItem();
+            try
+            {
+                await handler.MoveWallItem();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Triggers the item.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void TriggerItem(GameClientMessageHandler handler)
         {
-            await handler.TriggerItem();
+            try
+            {
+                await handler.TriggerItem();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Triggers the item dice special.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void TriggerItemDiceSpecial(GameClientMessageHandler handler)
         {
-            await handler.TriggerItemDiceSpecial();
+            try
+            {
+                await handler.TriggerItemDiceSpecial();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Opens the postit.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void OpenPostit(GameClientMessageHandler handler)
         {
-            await handler.OpenPostit();
+            try
+            {
+                await handler.OpenPostit();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Saves the postit.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SavePostit(GameClientMessageHandler handler)
         {
-            await handler.SavePostit();
+            try
+            {
+                await handler.SavePostit();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Deletes the postit.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void DeletePostit(GameClientMessageHandler handler)
         {
-            await handler.DeletePostit();
+            try
+            {
+                await handler.DeletePostit();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Opens the present.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void OpenPresent(GameClientMessageHandler handler)
         {
-            await handler.OpenGift();
+            try
+            {
+                await handler.OpenGift();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the moodlight.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetMoodlight(GameClientMessageHandler handler)
         {
-            await handler.GetMoodlight();
+            try
+            {
+                await handler.GetMoodlight();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Updates the moodlight.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void UpdateMoodlight(GameClientMessageHandler handler)
         {
-            await handler.UpdateMoodlight();
+            try
+            {
+                await handler.UpdateMoodlight();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Switches the moodlight status.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SwitchMoodlightStatus(GameClientMessageHandler handler)
         {
-            await handler.SwitchMoodlightStatus();
+            try
+            {
+                await handler.SwitchMoodlightStatus();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Initializes the trade.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void InitTrade(GameClientMessageHandler handler)
         {
-            await handler.InitTrade();
+            try
+            {
+                await handler.InitTrade();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Offers the trade item.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void OfferTradeItem(GameClientMessageHandler handler)
         {
-            await handler.OfferTradeItem();
+            try
+            {
+                await handler.OfferTradeItem();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Offers a specific amount of items.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void OfferTradeItems(GameClientMessageHandler handler)
         {
-            await handler.OfferTradeItems();
+            try
+            {
+                await handler.OfferTradeItems();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Takes the back trade item.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void TakeBackTradeItem(GameClientMessageHandler handler)
         {
-            await handler.TakeBackTradeItem();
+            try
+            {
+                await handler.TakeBackTradeItem();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Stops the trade.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void StopTrade(GameClientMessageHandler handler)
         {
-            await handler.StopTrade();
+            try
+            {
+                await handler.StopTrade();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Accepts the trade.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void AcceptTrade(GameClientMessageHandler handler)
         {
-            await handler.AcceptTrade();
+            try
+            {
+                await handler.AcceptTrade();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Unaccepts the trade.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void UnacceptTrade(GameClientMessageHandler handler)
         {
-            await handler.UnacceptTrade();
+            try
+            {
+                await handler.UnacceptTrade();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Completes the trade.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void CompleteTrade(GameClientMessageHandler handler)
         {
-            await handler.CompleteTrade();
+            try
+            {
+                await handler.CompleteTrade();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gives the respect.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GiveRespect(GameClientMessageHandler handler)
         {
-            await handler.GiveRespect();
+            try
+            {
+                await handler.GiveRespect();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Applies the effect.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ApplyEffect(GameClientMessageHandler handler)
         {
-            await handler.ApplyEffect();
+            try
+            {
+                await handler.ApplyEffect();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Enables the effect.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void EnableEffect(GameClientMessageHandler handler)
         {
-            await handler.EnableEffect();
+            try
+            {
+                await handler.EnableEffect();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Recycles the items.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RecycleItems(GameClientMessageHandler handler)
         {
-            await handler.RecycleItems();
+            try
+            {
+                await handler.RecycleItems();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Redeems the exchange furni.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RedeemExchangeFurni(GameClientMessageHandler handler)
         {
-            await handler.RedeemExchangeFurni();
+            try
+            {
+                await handler.RedeemExchangeFurni();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Kicks the bot.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void KickBot(GameClientMessageHandler handler)
         {
-            await handler.KickBot();
+            try
+            {
+                await handler.KickBot();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Places the pet.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void PlacePet(GameClientMessageHandler handler)
         {
-            await handler.PlacePet();
+            try
+            {
+                await handler.PlacePet();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the pet information.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetPetInfo(GameClientMessageHandler handler)
         {
-            await handler.GetPetInfo();
+            try
+            {
+                await handler.GetPetInfo();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Picks up pet.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void PickUpPet(GameClientMessageHandler handler)
         {
-            await handler.PickUpPet();
+            try
+            {
+                await handler.PickUpPet();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Composts the monsterplant.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void CompostMonsterplant(GameClientMessageHandler handler)
         {
-            await handler.CompostMonsterplant();
+            try
+            {
+                await handler.CompostMonsterplant();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Moves the pet.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void MovePet(GameClientMessageHandler handler)
         {
-            await handler.MovePet();
+            try
+            {
+                await handler.MovePet();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Respects the pet.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RespectPet(GameClientMessageHandler handler)
         {
-            await handler.RespectPet();
+            try
+            {
+                await handler.RespectPet();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Adds the saddle.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void AddSaddle(GameClientMessageHandler handler)
         {
-            await handler.AddSaddle();
+            try
+            {
+                await handler.AddSaddle();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Removes the saddle.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RemoveSaddle(GameClientMessageHandler handler)
         {
-            await handler.RemoveSaddle();
+            try
+            {
+                await handler.RemoveSaddle();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
-        /// Rides the specified await handler.
+        /// Rides the specified try { await handler.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void Ride(GameClientMessageHandler handler)
         {
-            await handler.MountOnPet();
+            try
+            {
+                await handler.MountOnPet();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
-        /// Unrides the specified await handler.
+        /// Unrides the specified try { await handler.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void Unride(GameClientMessageHandler handler)
         {
-            await handler.CancelMountOnPet();
+            try
+            {
+                await handler.CancelMountOnPet();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Saves the wired.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SaveWired(GameClientMessageHandler handler)
         {
-            await handler.SaveWired();
+            try
+            {
+                await handler.SaveWired();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Saves the wired condition.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SaveWiredCondition(GameClientMessageHandler handler)
         {
-            await handler.SaveWiredConditions();
+            try
+            {
+                await handler.SaveWiredConditions();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the music data.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetMusicData(GameClientMessageHandler handler)
         {
-            await handler.GetMusicData();
+            try
+            {
+                await handler.GetMusicData();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Adds the playlist item.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void AddPlaylistItem(GameClientMessageHandler handler)
         {
-            await handler.AddPlaylistItem();
+            try
+            {
+                await handler.AddPlaylistItem();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Removes the playlist item.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RemovePlaylistItem(GameClientMessageHandler handler)
         {
-            await handler.RemovePlaylistItem();
+            try
+            {
+                await handler.RemovePlaylistItem();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the disks.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetDisks(GameClientMessageHandler handler)
         {
-            await handler.GetDisks();
+            try
+            {
+                await handler.GetDisks();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the playlists.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetPlaylists(GameClientMessageHandler handler)
         {
-            await handler.GetPlaylists();
+            try
+            {
+                await handler.GetPlaylists();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the user information.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetUserInfo(GameClientMessageHandler handler)
         {
-            await handler.GetUserInfo();
+            try
+            {
+                await handler.GetUserInfo();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Loads the profile.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void LoadProfile(GameClientMessageHandler handler)
         {
-            await handler.LoadProfile();
+            try
+            {
+                await handler.LoadProfile();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
 
         /// <summary>
         /// Gets the balance.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetBalance(GameClientMessageHandler handler)
         {
-            await handler.GetBalance();
+            try
+            {
+                await handler.GetBalance();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the subscription data.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetSubscriptionData(GameClientMessageHandler handler)
         {
-            await handler.GetSubscriptionData();
+            try
+            {
+                await handler.GetSubscriptionData();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the badges.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetBadges(GameClientMessageHandler handler)
         {
-            await handler.GetBadges();
+            try
+            {
+                await handler.GetBadges();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Updates the badges.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void UpdateBadges(GameClientMessageHandler handler)
         {
-            await handler.UpdateBadges();
+            try
+            {
+                await handler.UpdateBadges();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the achievements.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetAchievements(GameClientMessageHandler handler)
         {
-            await handler.GetAchievements();
+            try
+            {
+                await handler.GetAchievements();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Changes the look.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ChangeLook(GameClientMessageHandler handler)
         {
-            await handler.ChangeLook();
+            try
+            {
+                await handler.ChangeLook();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Changes the motto.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ChangeMotto(GameClientMessageHandler handler)
         {
-            await handler.ChangeMotto();
+            try
+            {
+                await handler.ChangeMotto();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the wardrobe.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetWardrobe(GameClientMessageHandler handler)
         {
-            await handler.GetWardrobe();
+            try
+            {
+                await handler.GetWardrobe();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Allows all ride.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void AllowAllRide(GameClientMessageHandler handler)
         {
-            await handler.AllowAllRide();
+            try
+            {
+                await handler.AllowAllRide();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Saves the wardrobe.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SaveWardrobe(GameClientMessageHandler handler)
         {
-            await handler.SaveWardrobe();
+            try
+            {
+                await handler.SaveWardrobe();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the pets inventory.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetPetsInventory(GameClientMessageHandler handler)
         {
-            await handler.GetPetsInventory();
+            try
+            {
+                await handler.GetPetsInventory();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Opens the quests.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void OpenQuests(GameClientMessageHandler handler)
         {
-            await handler.OpenQuests();
+            try
+            {
+                await handler.OpenQuests();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Starts the quest.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void StartQuest(GameClientMessageHandler handler)
         {
-            await handler.StartQuest();
+            try
+            {
+                await handler.StartQuest();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Stops the quest.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void StopQuest(GameClientMessageHandler handler)
         {
-            await handler.StopQuest();
+            try
+            {
+                await handler.StopQuest();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the current quest.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetCurrentQuest(GameClientMessageHandler handler)
         {
-            await handler.GetCurrentQuest();
+            try
+            {
+                await handler.GetCurrentQuest();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the group badges.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetGroupBadges(GameClientMessageHandler handler)
         {
-            await handler.InitRoomGroupBadges();
+            try
+            {
+                await handler.InitRoomGroupBadges();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the bot inv.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetBotInv(GameClientMessageHandler handler)
         {
-            await handler.GetBotsInventory();
+            try
+            {
+                await handler.GetBotsInventory();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Saves the room bg.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SaveRoomBg(GameClientMessageHandler handler)
         {
-            await handler.SaveRoomBg();
+            try
+            {
+                await handler.SaveRoomBg();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Goes the room.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GoRoom(GameClientMessageHandler handler)
         {
-            await handler.GoRoom();
+            try
+            {
+                await handler.GoRoom();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
-        /// Sits the specified await handler.
+        /// Sits the specified try { await handler.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void Sit(GameClientMessageHandler handler)
         {
-            await handler.Sit();
+            try
+            {
+                await handler.Sit();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the event rooms.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetEventRooms(GameClientMessageHandler handler)
         {
-            await handler.GetEventRooms();
+            try
+            {
+                await handler.GetEventRooms();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Starts the seasonal quest.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void StartSeasonalQuest(GameClientMessageHandler handler)
         {
-            await handler.StartSeasonalQuest();
+            try
+            {
+                await handler.StartSeasonalQuest();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Saves the mannequin.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SaveMannequin(GameClientMessageHandler handler)
         {
-            await handler.SaveMannequin();
+            try
+            {
+                await handler.SaveMannequin();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Saves the mannequin2.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SaveMannequin2(GameClientMessageHandler handler)
         {
-            await handler.SaveMannequin2();
+            try
+            {
+                await handler.SaveMannequin2();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Serializes the group purchase page.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SerializeGroupPurchasePage(GameClientMessageHandler handler)
         {
-            await handler.SerializeGroupPurchasePage();
+            try
+            {
+                await handler.SerializeGroupPurchasePage();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Serializes the group purchase parts.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SerializeGroupPurchaseParts(GameClientMessageHandler handler)
         {
-            await handler.SerializeGroupPurchaseParts();
+            try
+            {
+                await handler.SerializeGroupPurchaseParts();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Purchases the group.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void PurchaseGroup(GameClientMessageHandler handler)
         {
-            await handler.PurchaseGroup();
+            try
+            {
+                await handler.PurchaseGroup();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Serializes the group information.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SerializeGroupInfo(GameClientMessageHandler handler)
         {
-            await handler.SerializeGroupInfo();
+            try
+            {
+                await handler.SerializeGroupInfo();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Serializes the group members.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SerializeGroupMembers(GameClientMessageHandler handler)
         {
-            await handler.SerializeGroupMembers();
+            try
+            {
+                await handler.SerializeGroupMembers();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Makes the group admin.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void MakeGroupAdmin(GameClientMessageHandler handler)
         {
-            await handler.MakeGroupAdmin();
+            try
+            {
+                await handler.MakeGroupAdmin();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Removes the group admin.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RemoveGroupAdmin(GameClientMessageHandler handler)
         {
-            await handler.RemoveGroupAdmin();
+            try
+            {
+                await handler.RemoveGroupAdmin();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Accepts the membership.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void AcceptMembership(GameClientMessageHandler handler)
         {
-            await handler.AcceptMembership();
+            try
+            {
+                await handler.AcceptMembership();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Declines the membership.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void DeclineMembership(GameClientMessageHandler handler)
         {
-            await handler.DeclineMembership();
+            try
+            {
+                await handler.DeclineMembership();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Removes the member.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RemoveMember(GameClientMessageHandler handler)
         {
-            await handler.RemoveMember();
+            try
+            {
+                await handler.RemoveMember();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Joins the group.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void JoinGroup(GameClientMessageHandler handler)
         {
-            await handler.JoinGroup();
+            try
+            {
+                await handler.JoinGroup();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Makes the fav.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void MakeFav(GameClientMessageHandler handler)
         {
-            await handler.MakeFav();
+            try
+            {
+                await handler.MakeFav();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Removes the fav.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RemoveFav(GameClientMessageHandler handler)
         {
-            await handler.RemoveFav();
+            try
+            {
+                await handler.RemoveFav();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Receives the nux gifts.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ReceiveNuxGifts(GameClientMessageHandler handler)
         {
-            await handler.ReceiveNuxGifts();
+            try
+            {
+                await handler.ReceiveNuxGifts();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Accepts the nux gifts.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void AcceptNuxGifts(GameClientMessageHandler handler)
         {
-            await handler.AcceptNuxGifts();
+            try
+            {
+                await handler.AcceptNuxGifts();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Reads the forum thread.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ReadForumThread(GameClientMessageHandler handler)
         {
-            await handler.ReadForumThread();
+            try
+            {
+                await handler.ReadForumThread();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Publishes the forum thread.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void PublishForumThread(GameClientMessageHandler handler)
         {
-            await handler.PublishForumThread();
+            try
+            {
+                await handler.PublishForumThread();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Updates the forum thread.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void UpdateForumThread(GameClientMessageHandler handler)
         {
-            await handler.UpdateThreadState();
+            try
+            {
+                await handler.UpdateThreadState();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Alters the state of the forum thread.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void AlterForumThreadState(GameClientMessageHandler handler)
         {
-            await handler.AlterForumThreadState();
+            try
+            {
+                await handler.AlterForumThreadState();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the forum thread root.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetForumThreadRoot(GameClientMessageHandler handler)
         {
-            await handler.GetGroupForumThreadRoot();
+            try
+            {
+                await handler.GetGroupForumThreadRoot();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the group forum data.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetGroupForumData(GameClientMessageHandler handler)
         {
-            await handler.GetGroupForumData();
+            try
+            {
+                await handler.GetGroupForumData();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the group forums.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetGroupForums(GameClientMessageHandler handler)
         {
-            await handler.GetGroupForums();
+            try
+            {
+                await handler.GetGroupForums();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Manages the group.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ManageGroup(GameClientMessageHandler handler)
         {
-            await handler.ManageGroup();
+            try
+            {
+                await handler.ManageGroup();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Updates the name of the group.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void UpdateGroupName(GameClientMessageHandler handler)
         {
-            await handler.UpdateGroupName();
+            try
+            {
+                await handler.UpdateGroupName();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Updates the group badge.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void UpdateGroupBadge(GameClientMessageHandler handler)
         {
-            await handler.UpdateGroupBadge();
+            try
+            {
+                await handler.UpdateGroupBadge();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Updates the group colours.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void UpdateGroupColours(GameClientMessageHandler handler)
         {
-            await handler.UpdateGroupColours();
+            try
+            {
+                await handler.UpdateGroupColours();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Updates the group settings.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void UpdateGroupSettings(GameClientMessageHandler handler)
         {
-            await handler.UpdateGroupSettings();
+            try
+            {
+                await handler.UpdateGroupSettings();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Serializes the group furni page.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SerializeGroupFurniPage(GameClientMessageHandler handler)
         {
-            await handler.SerializeGroupFurniPage();
+            try
+            {
+                await handler.SerializeGroupFurniPage();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Ejects the furni.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void EjectFurni(GameClientMessageHandler handler)
         {
-            await handler.EjectFurni();
+            try
+            {
+                await handler.EjectFurni();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Mutes the user.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void MuteUser(GameClientMessageHandler handler)
         {
-            await handler.MuteUser();
+            try
+            {
+                await handler.MuteUser();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Checks the name.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void CheckName(GameClientMessageHandler handler)
         {
-            await handler.CheckName();
+            try
+            {
+                await handler.CheckName();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Changes the name.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ChangeName(GameClientMessageHandler handler)
         {
-            await handler.ChangeName();
+            try
+            {
+                await handler.ChangeName();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the trainer panel.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetTrainerPanel(GameClientMessageHandler handler)
         {
-            await handler.GetTrainerPanel();
+            try
+            {
+                await handler.GetTrainerPanel();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Updates the event information.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void UpdateEventInfo(GameClientMessageHandler handler)
         {
-            await handler.UpdateEventInfo();
+            try
+            {
+                await handler.UpdateEventInfo();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the room banned users.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetRoomBannedUsers(GameClientMessageHandler handler)
         {
-            await handler.GetBannedUsers();
+            try
+            {
+                await handler.GetBannedUsers();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Userses the with rights.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void UsersWithRights(GameClientMessageHandler handler)
         {
-            await handler.UsersWithRights();
+            try
+            {
+                await handler.UsersWithRights();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Unbans the user.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void UnbanUser(GameClientMessageHandler handler)
         {
-            await handler.UnbanUser();
+            try
+            {
+                await handler.UnbanUser();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Manages the bot actions.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ManageBotActions(GameClientMessageHandler handler)
         {
-            await handler.ManageBotActions();
+            try
+            {
+                await handler.ManageBotActions();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Handles the bot speech list.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void HandleBotSpeechList(GameClientMessageHandler handler)
         {
-            await handler.HandleBotSpeechList();
+            try
+            {
+                await handler.HandleBotSpeechList();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the relationships.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetRelationships(GameClientMessageHandler handler)
         {
-            await handler.GetRelationships();
+            try
+            {
+                await handler.GetRelationships();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Sets the relationship.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SetRelationship(GameClientMessageHandler handler)
         {
-            await handler.SetRelationship();
+            try
+            {
+                await handler.SetRelationship();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Automatics the room.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void AutoRoom(GameClientMessageHandler handler)
         {
-            await handler.RoomOnLoad();
+            try
+            {
+                await handler.RoomOnLoad();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Mutes all.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void MuteAll(GameClientMessageHandler handler)
         {
-            await handler.MuteAll();
+            try
+            {
+                await handler.MuteAll();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Completes the saftey quiz.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void CompleteSafteyQuiz(GameClientMessageHandler handler)
         {
-            await handler.CompleteSafetyQuiz();
+            try
+            {
+                await handler.CompleteSafetyQuiz();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Removes the favourite room.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RemoveFavouriteRoom(GameClientMessageHandler handler)
         {
-            await handler.RemoveFavouriteRoom();
+            try
+            {
+                await handler.RemoveFavouriteRoom();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Rooms the user action.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RoomUserAction(GameClientMessageHandler handler)
         {
-            await handler.RoomUserAction();
+            try
+            {
+                await handler.RoomUserAction();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Saves the football outfit.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SaveFootballOutfit(GameClientMessageHandler handler)
         {
-            await handler.SaveFootballOutfit();
+            try
+            {
+                await handler.SaveFootballOutfit();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Confirms the love lock.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ConfirmLoveLock(GameClientMessageHandler handler)
         {
-            await handler.ConfirmLoveLock();
+            try
+            {
+                await handler.ConfirmLoveLock();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Builderses the club update furni count.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void BuildersClubUpdateFurniCount(GameClientMessageHandler handler)
         {
-            await handler.BuildersClubUpdateFurniCount();
+            try
+            {
+                await handler.BuildersClubUpdateFurniCount();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the client version message event.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static void ReleaseVersion(GameClientMessageHandler handler)
         {
-            handler.ReleaseVersion();
+            try
+            {
+                handler.ReleaseVersion();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Places the builders furniture.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void PlaceBuildersFurniture(GameClientMessageHandler handler)
         {
-            await handler.PlaceBuildersFurniture();
+            try
+            {
+                await handler.PlaceBuildersFurniture();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
-        /// Whispers the specified await handler.
+        /// Whispers the specified try { await handler.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void Whisper(GameClientMessageHandler handler)
         {
-            await handler.Whisper();
+            try
+            {
+                await handler.Whisper();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Catalogues the index.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void CatalogueIndex(GameClientMessageHandler handler)
         {
-            await handler.CatalogueIndex();
+            try
+            {
+                await handler.CatalogueIndex();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Catalogues the index.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetCatalogMode(GameClientMessageHandler handler)
         {
-            await handler.CatalogueMode();
+            try
+            {
+                await handler.CatalogueMode();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Catalogues the page.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void CataloguePage(GameClientMessageHandler handler)
         {
-            await handler.CataloguePage();
+            try
+            {
+                await handler.CataloguePage();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Catalogues the club page.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void CatalogueClubPage(GameClientMessageHandler handler)
         {
-            await handler.CatalogueClubPage();
+            try
+            {
+                await handler.CatalogueClubPage();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Catalogues the offers configuration.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void CatalogueOffersConfig(GameClientMessageHandler handler)
         {
-            await handler.CatalogueOfferConfig();
+            try
+            {
+                await handler.CatalogueOfferConfig();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         internal static async void PurchaseOffer(GameClientMessageHandler handler)
         {
-            await handler.PurchaseOffer();
+            try
+            {
+                await handler.PurchaseOffer();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         internal static async void CancelOffer(GameClientMessageHandler handler)
         {
-            await handler.CancelOffer();
+            try
+            {
+                await handler.CancelOffer();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         internal static async void GetItemStats(GameClientMessageHandler handler)
         {
-            await handler.GetItemStats();
+            try
+            {
+                await handler.GetItemStats();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         internal static async void GetMyOffers(GameClientMessageHandler handler)
         {
-            await handler.GetMyOffers();
+            try
+            {
+                await handler.GetMyOffers();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         internal static async void MakeOffer(GameClientMessageHandler handler)
         {
-            await handler.MakeOffer();
+            try
+            {
+                await handler.MakeOffer();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         internal static async void ReedemCredits(GameClientMessageHandler handler)
         {
-            await handler.ReedemCredits();
+            try
+            {
+                await handler.ReedemCredits();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Catalogues the single offer.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void CatalogueSingleOffer(GameClientMessageHandler handler)
         {
-            await handler.CatalogueOffer();
+            try
+            {
+                await handler.CatalogueOffer();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
@@ -2527,440 +4504,790 @@ namespace Oblivion.Messages.Parsers
         /// <param name="handler"></param>
         internal static async void GetOffers(GameClientMessageHandler handler)
         {
-            await handler.GetOffers();
+            try
+            {
+                await handler.GetOffers();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Checks the name of the pet.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void CheckPetName(GameClientMessageHandler handler)
         {
-            await handler.CheckPetName();
+            try
+            {
+                await handler.CheckPetName();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Purchases the item.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void PurchaseItem(GameClientMessageHandler handler)
         {
-            await handler.PurchaseItem();
+            try
+            {
+                await handler.PurchaseItem();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Purchases the gift.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void PurchaseGift(GameClientMessageHandler handler)
         {
-            await handler.PurchaseGift();
+            try
+            {
+                await handler.PurchaseGift();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the pet breeds.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetPetBreeds(GameClientMessageHandler handler)
         {
-            await handler.GetPetBreeds();
+            try
+            {
+                await handler.GetPetBreeds();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Reloads the ecotron.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ReloadEcotron(GameClientMessageHandler handler)
         {
-            await handler.ReloadEcotron();
+            try
+            {
+                await handler.ReloadEcotron();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gifts the wrapping configuration.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GiftWrappingConfig(GameClientMessageHandler handler)
         {
-            await handler.GiftWrappingConfig();
+            try
+            {
+                await handler.GiftWrappingConfig();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Recyclers the rewards.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RecyclerRewards(GameClientMessageHandler handler)
         {
-            await handler.GetRecyclerRewards();
+            try
+            {
+                await handler.GetRecyclerRewards();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Requests the leave group.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void RequestLeaveGroup(GameClientMessageHandler handler)
         {
-            await handler.RequestLeaveGroup();
+            try
+            {
+                await handler.RequestLeaveGroup();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Confirms the leave group.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ConfirmLeaveGroup(GameClientMessageHandler handler)
         {
-            await handler.ConfirmLeaveGroup();
+            try
+            {
+                await handler.ConfirmLeaveGroup();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// News the navigator.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void NewNavigator(GameClientMessageHandler handler)
         {
-            await handler.NewNavigator();
+            try
+            {
+                await handler.NewNavigator();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Searches the new navigator.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SearchNewNavigator(GameClientMessageHandler handler)
         {
-            await handler.SearchNewNavigator();
+            try
+            {
+                await handler.SearchNewNavigator();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// News the navigator delete saved search.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void NewNavigatorDeleteSavedSearch(GameClientMessageHandler handler)
         {
-            await handler.NewNavigatorDeleteSavedSearch();
+            try
+            {
+                await handler.NewNavigatorDeleteSavedSearch();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// News the navigator resize.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void NewNavigatorResize(GameClientMessageHandler handler)
         {
-            await handler.NewNavigatorResize();
+            try
+            {
+                await handler.NewNavigatorResize();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         internal static async void HabboAirGetUserRooms(GameClientMessageHandler handler)
         {
-            await handler.HabboAirGetUserRooms();
+            try
+            {
+                await handler.HabboAirGetUserRooms();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         internal static async void HabboAirGetAllRooms(GameClientMessageHandler handler)
         {
-            await handler.HabboAirGetAllRooms();
+            try
+            {
+                await handler.HabboAirGetAllRooms();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// News the navigator add saved search.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void NewNavigatorAddSavedSearch(GameClientMessageHandler handler)
         {
-            await handler.NewNavigatorAddSavedSearch();
+            try
+            {
+                await handler.NewNavigatorAddSavedSearch();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// News the navigator collapse category.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void NewNavigatorCollapseCategory(GameClientMessageHandler handler)
         {
-            await handler.NewNavigatorCollapseCategory();
+            try
+            {
+                await handler.NewNavigatorCollapseCategory();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// News the navigator uncollapse category.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void NewNavigatorUncollapseCategory(GameClientMessageHandler handler)
         {
-            await handler.NewNavigatorUncollapseCategory();
+            try
+            {
+                await handler.NewNavigatorUncollapseCategory();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Pets the breed result.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void PetBreedResult(GameClientMessageHandler handler)
         {
-            await handler.PetBreedResult();
+            try
+            {
+                await handler.PetBreedResult();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Pets the breed cancel.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void PetBreedCancel(GameClientMessageHandler handler)
         {
-            await handler.PetBreedCancel();
+            try
+            {
+                await handler.PetBreedCancel();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Games the center load game.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GameCenterLoadGame(GameClientMessageHandler handler)
         {
-            await handler.GameCenterLoadGame();
+            try
+            {
+                await handler.GameCenterLoadGame();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Get game lists
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetGameListing(GameClientMessageHandler handler)
         {
-            await handler.GetGameListing();
+            try
+            {
+                await handler.GetGameListing();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Init the game center
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void InitializeGameCenter(GameClientMessageHandler handler)
         {
-            await handler.InitializeGameCenter();
+            try
+            {
+                await handler.InitializeGameCenter();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Games the center join queue.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GameCenterJoinQueue(GameClientMessageHandler handler)
         {
-            await handler.GameCenterJoinQueue();
+            try
+            {
+                await handler.GameCenterJoinQueue();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Hotels the view countdown.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void HotelViewCountdown(GameClientMessageHandler handler)
         {
-            await handler.HotelViewCountdown();
+            try
+            {
+                await handler.HotelViewCountdown();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Hotels the view dailyquest.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void HotelViewDailyquest(GameClientMessageHandler handler)
         {
-            await handler.HotelViewDailyquest();
+            try
+            {
+                await handler.HotelViewDailyquest();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Places the builders wall item.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void PlaceBuildersWallItem(GameClientMessageHandler handler)
         {
-            await handler.PlaceBuildersWallItem();
+            try
+            {
+                await handler.PlaceBuildersWallItem();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Targeteds the offer buy.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void PurchaseTargetedOffer(GameClientMessageHandler handler)
         {
-            await handler.PurchaseTargetedOffer();
+            try
+            {
+                await handler.PurchaseTargetedOffer();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Ambassadors the alert.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void AmbassadorAlert(GameClientMessageHandler handler)
         {
-            await handler.AmbassadorAlert();
+            try
+            {
+                await handler.AmbassadorAlert();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Goes the name of to room by.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GoToRoomByName(GameClientMessageHandler handler)
         {
-            await handler.GoToRoomByName();
+            try
+            {
+                await handler.GoToRoomByName();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the uc panel.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetUcPanel(GameClientMessageHandler handler)
         {
-            await handler.GetUcPanel();
+            try
+            {
+                await handler.GetUcPanel();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the uc panel hotel.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetUcPanelHotel(GameClientMessageHandler handler)
         {
-            await handler.GetUcPanelHotel();
+            try
+            {
+                await handler.GetUcPanelHotel();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Saves the room thumbnail.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SaveRoomThumbnail(GameClientMessageHandler handler)
         {
-            await handler.SaveRoomThumbnail();
+            try
+            {
+                await handler.SaveRoomThumbnail();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Uses the purchasable clothing.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void UsePurchasableClothing(GameClientMessageHandler handler)
         {
-            await handler.UsePurchasableClothing();
+            try
+            {
+                await handler.UsePurchasableClothing();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the user look.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetUserLook(GameClientMessageHandler handler)
         {
-            await handler.GetUserLook();
+            try
+            {
+                await handler.GetUserLook();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Sets the invitations preference.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static void SetInvitationsPreference(GameClientMessageHandler handler)
         {
-            handler.SetInvitationsPreference();
+            try
+            {
+                handler.SetInvitationsPreference();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Finds the more friends.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void FindMoreFriends(GameClientMessageHandler handler)
         {
-            await handler.FindMoreFriends();
+            try
+            {
+                await handler.FindMoreFriends();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Hotels the view request badge.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void HotelViewRequestBadge(GameClientMessageHandler handler)
         {
-            await handler.HotelViewRequestBadge();
+            try
+            {
+                await handler.HotelViewRequestBadge();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the camera price.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetCameraPrice(GameClientMessageHandler handler)
         {
-            await handler.GetCameraPrice();
+            try
+            {
+                await handler.GetCameraPrice();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Toggles the staff pick.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void ToggleStaffPick(GameClientMessageHandler handler)
         {
-            await handler.ToggleStaffPick();
+            try
+            {
+                await handler.ToggleStaffPick();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the hotel view hall of fame.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetHotelViewHallOfFame(GameClientMessageHandler handler)
         {
-            await handler.GetHotelViewHallOfFame();
+            try
+            {
+                await handler.GetHotelViewHallOfFame();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Submits the room to competition.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void SubmitRoomToCompetition(GameClientMessageHandler handler)
         {
-            await handler.SubmitRoomToCompetition();
+            try
+            {
+                await handler.SubmitRoomToCompetition();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Enters the room queue.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void EnterRoomQueue(GameClientMessageHandler handler)
         {
-            await handler.EnterRoomQueue();
+            try
+            {
+                await handler.EnterRoomQueue();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Gets the camera request.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void GetCameraRequest(GameClientMessageHandler handler)
         {
-            await handler.GetCameraRequest();
+            try
+            {
+                await handler.GetCameraRequest();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Votes for room.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void VoteForRoom(GameClientMessageHandler handler)
         {
-            await handler.VoteForRoom();
+            try
+            {
+                await handler.VoteForRoom();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Updates the forum settings.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void UpdateForumSettings(GameClientMessageHandler handler)
         {
-            await handler.UpdateForumSettings();
+            try
+            {
+                await handler.UpdateForumSettings();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Friends the request list load.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void FriendRequestListLoad(GameClientMessageHandler handler)
         {
-            await handler.FriendRequestListLoad();
+            try
+            {
+                await handler.FriendRequestListLoad();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Sets the room camera preferences.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static void SetRoomCameraPreferences(GameClientMessageHandler handler)
         {
-            handler.SetRoomCameraPreferences();
+            try
+            {
+                handler.SetRoomCameraPreferences();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
 
         /// <summary>
         /// Deletes the group.
         /// </summary>
-        /// <param name="handler">The await handler.</param>
+        /// <param name="handler">The try { await handler.</param>
         internal static async void DeleteGroup(GameClientMessageHandler handler)
         {
-            await handler.DeleteGroup();
+            try
+            {
+                await handler.DeleteGroup();
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "PacketLibrary.Parse");
+            }
         }
     }
 }
