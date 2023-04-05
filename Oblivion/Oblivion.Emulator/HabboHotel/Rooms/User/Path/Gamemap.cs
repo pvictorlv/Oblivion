@@ -1465,7 +1465,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             {
                 for (var j = 0; j < Model.MapSizeX; j++)
                 {
-                    if (Model.SqState[i][j] == SquareState.Blocked || GameMap[i, j] == 0)
+                    if (Model.SqState[j][i] == SquareState.Blocked)
                     {
                         serverMessage.AppendShort(-1);
                     }
