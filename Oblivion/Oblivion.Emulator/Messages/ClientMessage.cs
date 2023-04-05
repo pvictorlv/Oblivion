@@ -227,12 +227,21 @@ namespace Oblivion.Messages
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         internal bool GetBool()
         {
-            if (this.buffer != null)
+            try
             {
-                return this.buffer.ReadBoolean();
+                if (this.buffer != null && this.buffer.ReadableBytes > 0)
+                {
+                    return this.buffer.ReadBoolean();
+                }
+
+                return (_body[_position++] == 1);
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "GetBool()");
             }
 
-            return (_body[_position++] == 1);
+            return false;
         }
 
         /// <summary>
@@ -241,10 +250,19 @@ namespace Oblivion.Messages
         /// <returns>System.Int16.</returns>
         internal Int16 GetInteger16()
         {
-            if (this.buffer != null)
-                return this.buffer.ReadShort();
+            try
+            {
+                if (this.buffer != null && buffer.ReadableBytes > 0)
+                    return this.buffer.ReadShort();
 
-            return HabboEncoding.DecodeInt16(_body, ref _position);
+                return HabboEncoding.DecodeInt16(_body, ref _position);
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "GetInt16()");
+            }
+
+            return 0;
         }
 
         /// <summary>
@@ -260,18 +278,29 @@ namespace Oblivion.Messages
 
                 return 0;
             }
-            catch
+            catch (Exception ex)
             {
-                return 0;
+                Logging.HandleException(ex, "GetInteger()");
             }
+
+            return 0;
         }
 
         internal bool GetIntegerAsBool()
         {
-            if (this.buffer != null)
-                return this.buffer.ReadInt() == 1;
+            try
+            {
+                if (this.buffer != null)
+                    return this.buffer.ReadInt() == 1;
 
-            return HabboEncoding.DecodeInt32(_body, ref _position) == 1;
+                return HabboEncoding.DecodeInt32(_body, ref _position) == 1;
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "GetIntegerAsBool()");
+            }
+
+            return false;
         }
 
         /// <summary>

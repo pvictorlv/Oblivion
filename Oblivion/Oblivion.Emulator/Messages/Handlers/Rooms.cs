@@ -878,7 +878,6 @@ namespace Oblivion.Messages.Handlers
             room.RoomData.ChatFloodProtection = Request.GetUInteger(); //chat_flood_sensitivity
             if (room.RoomData.ChatFloodProtection > 2) room.RoomData.ChatFloodProtection = 2;
 
-            Request.GetBool(); //allow_dyncats_checkbox
             var flatCat = Oblivion.GetGame().GetNavigator().GetFlatCat(room.RoomData.Category);
             if (flatCat == null || flatCat.MinRank > Session.GetHabbo().Rank) room.RoomData.Category = 0;
 

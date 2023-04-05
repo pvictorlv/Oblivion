@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Threading.Tasks;
 using Oblivion.Configuration;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Oblivion
 {
@@ -86,8 +87,10 @@ namespace Oblivion
                 return;
 
             Console.CursorVisible = false;
-            var currentDomain = AppDomain.CurrentDomain;
-            currentDomain.UnhandledException += ExceptionHandler;
+
+            AppDomain.CurrentDomain.UnhandledException += ExceptionHandler;
+            
+
 
             await Oblivion.Initialize();
         }
