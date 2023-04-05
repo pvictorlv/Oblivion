@@ -16,7 +16,10 @@ public class WebSocketChannelHandler : ChannelHandlerAdapter
         if (msg is IFullHttpRequest httpRequest)
         {
             HttpHeaders headers = httpRequest.Headers;
-
+            if (headers.IsEmpty)
+            {
+                return;
+            }
             Oblivion.GetGame().GetClientManager().CreateAndStartClient(ctx);
 
             
