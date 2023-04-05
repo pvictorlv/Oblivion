@@ -12,7 +12,6 @@ namespace Oblivion.Connection.Netty;
 public class MessageHandler<T> : ChannelHandlerAdapter, ISession<T>
 {
     #region Fields
-    
 
     public IChannel Channel { get; set; }
     private ConnectionClosed<T> OnConnectionClosed;
@@ -53,27 +52,50 @@ public class MessageHandler<T> : ChannelHandlerAdapter, ISession<T>
 
     public override void ChannelActive(IChannelHandlerContext context)
     {
-        OnConnectionOpened(this);
-        base.ChannelActive(context);
+        try
+        {
+            OnConnectionOpened(this);
+            base.ChannelActive(context);
+        }
+        catch (Exception ex)
+        {
+            Logging.HandleException(ex, "ChannelActive");
+        }
     }
 
     public override void ChannelInactive(IChannelHandlerContext context)
     {
-        OnConnectionClosed(this);
-        base.ChannelInactive(context);
+        try
+        {
+            OnConnectionClosed(this);
+            base.ChannelInactive(context);
+        }
+        catch (Exception ex)
+        {
+            Logging.HandleException(ex, "ChannelInactive");
+        }
     }
 
     public override void ChannelRead(IChannelHandlerContext context, object message)
     {
-        IByteBuffer dataBuffer = message as IByteBuffer;
+        try
+        {
+            IByteBuffer dataBuffer = message as IByteBuffer;
+            if (dataBuffer == null)
+                return;
 
-        byte[] data = new byte[dataBuffer.ReadableBytes];
+            byte[] data = new byte[dataBuffer.ReadableBytes];
 
-        dataBuffer.ReadBytes(data);
+            dataBuffer.ReadBytes(data);
 
-        OnMessage(this, data);
+            OnMessage(this, data);
 
-        dataBuffer.Release();
+            dataBuffer.Release();
+        }
+        catch (Exception ex)
+        {
+            Logging.HandleException(ex, "ChannelRead");
+        }
     }
 
     public void Disconnect()
@@ -84,7 +106,7 @@ public class MessageHandler<T> : ChannelHandlerAdapter, ISession<T>
     public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
     {
         Logging.HandleException(exception, context.Name);
-    //    context.CloseAsync();
+        //    context.CloseAsync();
     }
 
     public Task Send(ServerMessage data)
@@ -125,7 +147,6 @@ public class MessageHandler<T> : ChannelHandlerAdapter, ISession<T>
         {
             Logging.HandleException(ex, "MessageHandler");
         }
-
     }
 
     public async Task Send(ArraySegment<byte> data)

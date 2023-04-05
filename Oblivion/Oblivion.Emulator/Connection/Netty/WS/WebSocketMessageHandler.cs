@@ -12,14 +12,27 @@ public class WebSocketMessageHandler : SimpleChannelInboundHandler<ClientMessage
 
     public override void ChannelReadComplete(IChannelHandlerContext context)
     {
-        context.Flush();
-        base.ChannelReadComplete(context);
+        try
+        {
+            context.Flush();
+        }
+        catch (Exception ex)
+        {
+            Logging.HandleException(ex, "ChannelReadComplete");
+        }
     }
     public override void ChannelInactive(IChannelHandlerContext context)
     {
-        SocketConnectionCheck.FreeConnection(context.Channel.RemoteAddress.ToString());
-        Oblivion.GetGame().GetClientManager().DisposeConnection(context.Channel.Id);
-        base.ChannelInactive(context);
+        try
+        {
+            SocketConnectionCheck.FreeConnection(context.Channel.RemoteAddress.ToString());
+            Oblivion.GetGame().GetClientManager().DisposeConnection(context.Channel.Id);
+            base.ChannelInactive(context);
+        }
+        catch (Exception ex)
+        {
+            Logging.HandleException(ex, "ChannelInactive");
+        }
     }
 
 
