@@ -397,8 +397,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             {
                 while (true)
                 {
-                   // if (Model == null)
-                   //     return;
+                    if (Model == null && _room == null)
+                        return;
 
                     var xMap = 0;
                     var yMap = 0;
@@ -416,7 +416,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                                 yMap = roomItems.Y;
                         }
                     }
-
+                    
                     if (yMap > Model.MapSizeY - 1 || xMap > Model.MapSizeX - 1)
                     {
                         if (xMap < Model.MapSizeX)
