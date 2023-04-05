@@ -117,15 +117,13 @@ namespace Oblivion.HabboHotel.Items.Wired.Handlers.Effects
         {
             if (!Requested) return false;
 
-            if (Items == null || Items.Count <= 0)
-                return true;
-
-            await Task.Yield();
-
             var now = Oblivion.Now();
             if (_next > now)
                 return false;
 
+
+            if (Items == null || Items.Count <= 0)
+                return true;
 
 
             foreach (var Item in Items)
