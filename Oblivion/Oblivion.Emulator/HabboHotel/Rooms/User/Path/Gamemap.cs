@@ -1465,7 +1465,14 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             {
                 for (var j = 0; j < Model.MapSizeX; j++)
                 {
-                    serverMessage.AppendShort((short) (SqAbsoluteHeight(j, i) * 256));
+                    if (Model.SqState[i][j] == SquareState.Blocked || GameMap[i, j] == 0)
+                    {
+                        serverMessage.AppendShort(-1);
+                    }
+                    else
+                    {
+                        serverMessage.AppendShort((short)(SqAbsoluteHeight(j, i) * 256));
+                    }
                 }
             }
 

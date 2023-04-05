@@ -208,15 +208,22 @@ namespace Oblivion.Connection.Net
 
         public void SuperHandle(ClientMessage message, ISession<GameClient> userSocket)
         {
-            var client = userSocket?.UserData;
-            if (client == null)
-                return;
-            if (client.GetMessageHandler() == null)
+            try
             {
-                client.StartConnection();
-            }
+                var client = userSocket?.UserData;
+                if (client == null)
+                    return;
+                if (client.GetMessageHandler() == null)
+                {
+                    client.StartConnection();
+                }
 
-            client.GetMessageHandler().HandleRequest(message);
+                client.GetMessageHandler().HandleRequest(message);
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, nameof(GamePacketParser));
+            }
         }
 
         /// <summary>
