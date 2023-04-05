@@ -397,6 +397,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             {
                 while (true)
                 {
+                   // if (Model == null)
+                   //     return;
+
                     var xMap = 0;
                     var yMap = 0;
 

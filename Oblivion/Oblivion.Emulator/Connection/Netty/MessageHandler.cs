@@ -91,7 +91,8 @@ public class MessageHandler<T> : ChannelHandlerAdapter, ISession<T>
     {
         try
         {
-            return this.Channel.WriteAndFlushAsync(data);
+            if (Channel != null && Channel.Active && Channel.Open)
+             return this.Channel.WriteAndFlushAsync(data);
         }
         catch (Exception ex)
         {
@@ -105,7 +106,9 @@ public class MessageHandler<T> : ChannelHandlerAdapter, ISession<T>
     {
         try
         {
-            return this.Channel.WriteAndFlushAsync(data);
+            if (Channel != null && Channel.Active && Channel.Open)
+
+                return this.Channel.WriteAndFlushAsync(data);
         }
         catch (Exception ex)
         {
@@ -119,7 +122,9 @@ public class MessageHandler<T> : ChannelHandlerAdapter, ISession<T>
     {
         try
         {
-            await this.Channel.WriteAndFlushAsync(data);
+            if (Channel != null && Channel.Active && Channel.Open)
+
+                await this.Channel.WriteAndFlushAsync(data);
         }
         catch (Exception ex)
         {

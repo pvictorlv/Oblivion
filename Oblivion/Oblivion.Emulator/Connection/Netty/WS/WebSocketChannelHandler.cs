@@ -42,16 +42,22 @@ public class WebSocketChannelHandler : ChannelHandlerAdapter
     
     private void HandleHandshake(IChannelHandlerContext ctx, IFullHttpRequest req)
     {
-        WebSocketServerHandshaker serverHandshake;
-        WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(null, null, true);
-        serverHandshake = wsFactory.NewHandshaker(req);
-        if (serverHandshake == null)
+        try
         {
-            WebSocketServerHandshakerFactory.SendUnsupportedVersionResponse(ctx.Channel);
-        }
-        else
+            WebSocketServerHandshaker serverHandshake;
+            WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(null, null, true);
+            serverHandshake = wsFactory.NewHandshaker(req);
+            if (serverHandshake == null)
+            {
+                WebSocketServerHandshakerFactory.SendUnsupportedVersionResponse(ctx.Channel);
+            }
+            else
+            {
+                serverHandshake.HandshakeAsync(ctx.Channel, req);
+            }
+        } catch (Exception ex)
         {
-            serverHandshake.HandshakeAsync(ctx.Channel, req);
+            Console.WriteLine(ex);
         }
     }
 }
