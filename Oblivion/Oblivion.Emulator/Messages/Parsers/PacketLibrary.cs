@@ -13,18 +13,18 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Delegate GetProperty
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal delegate void GetProperty(GameClientMessageHandler handler);
 
         /// <summary>
         /// Initializes the crypto.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void InitCrypto(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.InitCrypto();
+                 handler.InitCrypto().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -35,12 +35,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Secrets the key.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SecretKey(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SecretKey();
+                 handler.SecretKey().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -56,7 +56,7 @@ namespace Oblivion.Messages.Parsers
         {
             try
             {
-                await handler.InitConsole();
+                 handler.InitConsole().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -67,12 +67,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Machines the identifier.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void MachineId(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.MachineId();
+                 handler.MachineId().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -83,12 +83,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Guides the message.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GuideMessage(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.CallGuide();
+                 handler.CallGuide().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -99,12 +99,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Sets the chat preferrence.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static void SetChatPreferrence(GameClientMessageHandler handler)
         {
             try
             {
-                handler.SetChatPreferrence();
+                handler.SetChatPreferrence().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -115,12 +115,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the helper tool.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetHelperTool(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.OpenGuideTool();
+                 handler.OpenGuideTool().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -131,12 +131,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the guide detached.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetGuideDetached(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.AnswerGuideRequest();
+                 handler.AnswerGuideRequest().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -147,12 +147,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Logins the with ticket.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void LoginWithTicket(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.LoginWithTicket();
+                 handler.LoginWithTicket().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -163,12 +163,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Invites the guide.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void InviteGuide(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.InviteToRoom();
+                 handler.InviteToRoom().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -179,12 +179,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Visits the room guide.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void VisitRoomGuide(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.VisitRoom();
+                 handler.VisitRoom().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -195,12 +195,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Guides the end session.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GuideEndSession(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.CloseGuideRequest();
+                 handler.CloseGuideRequest().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -211,12 +211,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Cancels the call guide.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void CancelCallGuide(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.CancelCallGuide();
+                 handler.CancelCallGuide().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -227,12 +227,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Informations the retrieve.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void InfoRetrieve(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.InfoRetrieve();
+                 handler.InfoRetrieve().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -241,14 +241,14 @@ namespace Oblivion.Messages.Parsers
         }
 
         /// <summary>
-        /// Chats the specified try { await handler.
+        /// Chats the specified try {  handler.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void Chat(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.Chat();
+                 handler.Chat().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -257,14 +257,14 @@ namespace Oblivion.Messages.Parsers
         }
 
         /// <summary>
-        /// Shouts the specified try { await handler.
+        /// Shouts the specified try {  handler.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void Shout(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.Shout();
+                 handler.Shout().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -275,12 +275,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Requests the floor plan used coords.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RequestFloorPlanUsedCoords(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetFloorPlanUsedCoords();
+                 handler.GetFloorPlanUsedCoords().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -291,12 +291,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Requests the floor plan door.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RequestFloorPlanDoor(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetFloorPlanDoor();
+                 handler.GetFloorPlanDoor().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -307,12 +307,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Opens the bully reporting.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void OpenBullyReporting(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.OpenBullyReporting();
+                 handler.OpenBullyReporting().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -323,12 +323,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Sends the bully report.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SendBullyReport(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SendBullyReport();
+                 handler.SendBullyReport().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -339,12 +339,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Loads the club gifts.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void LoadClubGifts(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.LoadClubGifts();
+                 handler.LoadClubGifts().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -355,12 +355,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Saves the heightmap.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SaveHeightmap(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SaveHeightmap();
+                 handler.SaveHeightmap().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -371,12 +371,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Accepts the poll.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void AcceptPoll(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.AcceptPoll();
+                 handler.AcceptPoll().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -387,12 +387,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Refuses the poll.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RefusePoll(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RefusePoll();
+                 handler.RefusePoll().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -403,12 +403,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Answers the poll question.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void AnswerPollQuestion(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.AnswerPoll();
+                 handler.AnswerPoll().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -419,12 +419,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Retrieves the song identifier.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RetrieveSongId(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RetrieveSongId();
+                 handler.RetrieveSongId().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -435,12 +435,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Tiles the height of the stack magic set.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void TileStackMagicSetHeight(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.TileStackMagicSetHeight();
+                 handler.TileStackMagicSetHeight().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -451,12 +451,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Enables the inventory effect.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void EnableInventoryEffect(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.EnableEffect();
+                 handler.EnableEffect().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -467,12 +467,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Promotes the room.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void PromoteRoom(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.PromoteRoom();
+                 handler.PromoteRoom().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -483,12 +483,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the promotionable rooms.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetPromotionableRooms(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetPromotionableRooms();
+                 handler.GetPromotionableRooms().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -499,12 +499,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the room filter.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetRoomFilter(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetRoomFilter();
+                 handler.GetRoomFilter().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -515,12 +515,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Alters the room filter.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void AlterRoomFilter(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.AlterRoomFilter();
+                 handler.AlterRoomFilter().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -531,12 +531,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the tv player.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetTvPlayer(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetTvPlayer();
+                 handler.GetTvPlayer().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -547,12 +547,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Chooses the tv player video.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ChooseTvPlayerVideo(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ChooseTvPlayerVideo();
+                 handler.ChooseTvPlayerVideo().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -563,12 +563,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the tv playlist.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetTvPlaylist(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ChooseTvPlaylist();
+                 handler.ChooseTvPlaylist().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -579,12 +579,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Places the bot.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void PlaceBot(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.PlaceBot();
+                 handler.PlaceBot().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -595,12 +595,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Picks up bot.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void PickUpBot(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.PickUpBot();
+                 handler.PickUpBot().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -611,12 +611,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the talents track.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetTalentsTrack(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.Talents();
+                 handler.Talents().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -627,12 +627,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Prepares the campaing.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void PrepareCampaing(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.PrepareCampaing();
+                 handler.PrepareCampaing().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -641,14 +641,14 @@ namespace Oblivion.Messages.Parsers
         }
 
         /// <summary>
-        /// Pongs the specified try { await handler.
+        /// Pongs the specified try {  handler.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void Pong(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.Pong();
+                 handler.Pong().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -659,12 +659,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Disconnects the event.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void DisconnectEvent(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.DisconnectEvent();
+                 handler.DisconnectEvent().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -675,12 +675,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Latencies the test.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void LatencyTest(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.LatencyTest();
+                 handler.LatencyTest().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -691,12 +691,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Receptions the view.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ReceptionView(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GoToHotelView();
+                 handler.GoToHotelView().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -707,12 +707,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Called when [confirmation event].
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void OnlineConfirmationEvent(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.OnlineConfirmationEvent();
+                 handler.OnlineConfirmationEvent().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -723,12 +723,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Retrives the citizen ship status.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RetriveCitizenShipStatus(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RetrieveCitizenship();
+                 handler.RetrieveCitizenship().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -739,12 +739,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Refreshes the promo event.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RefreshPromoEvent(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RefreshPromoEvent();
+                 handler.RefreshPromoEvent().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -756,7 +756,7 @@ namespace Oblivion.Messages.Parsers
         {
             try
             {
-                await handler.RefreshCompetition();
+                 handler.RefreshCompetition().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -767,12 +767,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Widgets the container.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void WidgetContainer(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.WidgetContainers();
+                 handler.WidgetContainers().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -783,12 +783,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Landings the community goal.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void LandingCommunityGoal(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.LandingCommunityGoal();
+                 handler.LandingCommunityGoal().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -799,12 +799,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Removes the handitem.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RemoveHanditem(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RemoveHanditem();
+                 handler.RemoveHanditem().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -815,12 +815,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Redeems the voucher.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RedeemVoucher(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RedeemVoucher();
+                 handler.RedeemVoucher().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -831,12 +831,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gives the handitem.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GiveHanditem(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GiveHanditem();
+                 handler.GiveHanditem().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -847,12 +847,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Initializes the help tool.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void InitHelpTool(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.InitHelpTool();
+                 handler.InitHelpTool().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -863,12 +863,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Submits the help ticket.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SubmitHelpTicket(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SubmitHelpTicket();
+                 handler.SubmitHelpTicket().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -879,12 +879,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Deletes the pending CFH.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void DeletePendingCfh(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.DeletePendingCfh();
+                 handler.DeletePendingCfh().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -895,12 +895,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Mods the get user information.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ModGetUserInfo(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ModGetUserInfo();
+                 handler.ModGetUserInfo().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -911,12 +911,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Mods the get user chatlog.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ModGetUserChatlog(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ModGetUserChatlog();
+                 handler.ModGetUserChatlog().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -927,12 +927,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Messages from a guy.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void MessageFromAGuy(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GuideSpeak();
+                 handler.GuideSpeak().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -943,12 +943,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Mods the get room chatlog.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ModGetRoomChatlog(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ModGetRoomChatlog();
+                 handler.ModGetRoomChatlog().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -959,12 +959,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Mods the get room tool.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ModGetRoomTool(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ModGetRoomTool();
+                 handler.ModGetRoomTool().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -975,12 +975,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Mods the pick ticket.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ModPickTicket(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ModPickTicket();
+                 handler.ModPickTicket().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -991,12 +991,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Mods the release ticket.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ModReleaseTicket(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ModReleaseTicket();
+                 handler.ModReleaseTicket().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1007,12 +1007,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Mods the close ticket.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ModCloseTicket(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ModCloseTicket();
+                 handler.ModCloseTicket().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1023,12 +1023,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Mods the get ticket chatlog.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ModGetTicketChatlog(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ModGetTicketChatlog();
+                 handler.ModGetTicketChatlog().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1039,12 +1039,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Mods the get room visits.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ModGetRoomVisits(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ModGetRoomVisits();
+                 handler.ModGetRoomVisits().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1055,12 +1055,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Mods the send room alert.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ModSendRoomAlert(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ModSendRoomAlert();
+                 handler.ModSendRoomAlert().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1071,12 +1071,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Mods the perform room action.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ModPerformRoomAction(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ModPerformRoomAction();
+                 handler.ModPerformRoomAction().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1087,12 +1087,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Mods the send user caution.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ModSendUserCaution(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ModSendUserCaution();
+                 handler.ModSendUserCaution().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1103,12 +1103,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Mods the send user message.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ModSendUserMessage(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ModSendUserMessage();
+                 handler.ModSendUserMessage().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1119,12 +1119,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Mods the kick user.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ModKickUser(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ModKickUser();
+                 handler.ModKickUser().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1135,12 +1135,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Mods the mute user.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ModMuteUser(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ModMuteUser();
+                 handler.ModMuteUser().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1151,12 +1151,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Mods the lock trade.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ModLockTrade(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ModLockTrade();
+                 handler.ModLockTrade().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1167,12 +1167,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Mods the ban user.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ModBanUser(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ModBanUser();
+                 handler.ModBanUser().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1183,12 +1183,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Initializes the messenger.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void InitMessenger(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.InitMessenger();
+                 handler.InitMessenger().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1199,12 +1199,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Friendses the list update.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void FriendsListUpdate(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.FriendsListUpdate();
+                 handler.FriendsListUpdate().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1215,12 +1215,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Removes the buddy.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RemoveBuddy(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RemoveBuddy();
+                 handler.RemoveBuddy().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1231,12 +1231,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Searches the habbo.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SearchHabbo(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SearchHabbo();
+                 handler.SearchHabbo().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1247,12 +1247,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Accepts the request.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void AcceptRequest(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.AcceptRequest();
+                 handler.AcceptRequest().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1263,12 +1263,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Declines the request.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void DeclineRequest(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.DeclineRequest();
+                 handler.DeclineRequest().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1279,12 +1279,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Requests the buddy.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RequestBuddy(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RequestBuddy();
+                 handler.RequestBuddy().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1295,12 +1295,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Sends the instant messenger.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SendInstantMessenger(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SendInstantMessenger();
+                 handler.SendInstantMessenger().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1311,12 +1311,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Follows the buddy.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void FollowBuddy(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.FollowBuddy();
+                 handler.FollowBuddy().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1327,12 +1327,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Sends the instant invite.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SendInstantInvite(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SendInstantInvite();
+                 handler.SendInstantInvite().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1343,12 +1343,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Homes the room stuff.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void HomeRoomStuff(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.HomeRoom();
+                 handler.HomeRoom().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1359,12 +1359,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Adds the favorite.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void AddFavorite(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.AddFavorite();
+                 handler.AddFavorite().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1375,12 +1375,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Removes the favorite.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RemoveFavorite(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RemoveFavorite();
+                 handler.RemoveFavorite().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1391,12 +1391,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the flat cats.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetFlatCats(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetFlatCats();
+                 handler.GetFlatCats().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1407,12 +1407,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Enters the inquired room.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void EnterInquiredRoom(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.EnterInquiredRoom();
+                 handler.EnterInquiredRoom().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1423,12 +1423,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the pubs.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetPubs(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetPubs();
+                 handler.GetPubs().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1439,12 +1439,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Saves the branding.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SaveBranding(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SaveBranding();
+                 handler.SaveBranding().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1455,12 +1455,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the room information.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetRoomInfo(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetRoomInfo();
+                 handler.GetRoomInfo().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1472,12 +1472,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// News the navigator flat cats.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void NewNavigatorFlatCats(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.NewNavigatorFlatCats();
+                 handler.NewNavigatorFlatCats().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1488,12 +1488,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the favorite rooms.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetFavoriteRooms(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetFavoriteRooms();
+                 handler.GetFavoriteRooms().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1504,12 +1504,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the recent rooms.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetRecentRooms(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetRecentRooms();
+                 handler.GetRecentRooms().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1520,12 +1520,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the popular tags.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetPopularTags(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetPopularTags();
+                 handler.GetPopularTags().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1536,12 +1536,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Performs the search.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void PerformSearch(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.PerformSearch();
+                 handler.PerformSearch().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1552,12 +1552,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Searches the by tag.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SearchByTag(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SearchByTag();
+                 handler.SearchByTag().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1568,12 +1568,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Performs the search2.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void PerformSearch2(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.PerformSearch2();
+                 handler.PerformSearch2().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1584,12 +1584,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Opens the flat.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void OpenFlat(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.OpenFlat();
+                 handler.OpenFlat().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1600,12 +1600,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the voume.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetVoume(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.LoadSettings();
+                 handler.LoadSettings().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1616,7 +1616,7 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Saves the volume.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static void SaveVolume(GameClientMessageHandler handler)
         {
             try
@@ -1632,12 +1632,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the pub.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetPub(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetPub();
+                 handler.GetPub().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1648,12 +1648,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Opens the pub.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void OpenPub(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.OpenPub();
+                 handler.OpenPub().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1664,12 +1664,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the inventory.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetInventory(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetInventory();
+                 handler.GetInventory().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1680,12 +1680,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the inventory.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void OpenInventory(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetInventory();
+                 handler.GetInventory().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1696,12 +1696,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Get maketplace config.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void MarketPlaceConfiguration(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.MarketPlaceConfiguration();
+                 handler.MarketPlaceConfiguration().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1712,12 +1712,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Check if user can make offer
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void CanMakeOffer(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.CanMakeOffer();
+                 handler.CanMakeOffer().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1728,12 +1728,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the room data1.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetRoomData1(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetRoomData1();
+                 handler.GetRoomData1().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1744,12 +1744,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the room data2.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetRoomData2(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetRoomData2();
+                 handler.GetRoomData2().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1760,12 +1760,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the room data3.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetRoomData3(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetRoomData3();
+                 handler.GetRoomData3().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1776,12 +1776,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Requests the floor items.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RequestFloorItems(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RequestFloorItems();
+                 handler.RequestFloorItems().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1792,12 +1792,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Requests the wall items.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RequestWallItems(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RequestWallItems();
+                 handler.RequestWallItems().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1808,12 +1808,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Called when [room user add].
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void OnRoomUserAdd(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.OnRoomUserAdd();
+                 handler.OnRoomUserAdd().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1824,12 +1824,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Reqs the load room for user.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ReqLoadRoomForUser(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ReqLoadRoomForUser();
+                 handler.ReqLoadRoomForUser().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1840,12 +1840,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Enters the on room.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void EnterOnRoom(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.EnterOnRoom();
+                 handler.EnterOnRoom().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1856,7 +1856,7 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Clears the room loading.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static void ClearRoomLoading(GameClientMessageHandler handler)
         {
             try
@@ -1870,14 +1870,14 @@ namespace Oblivion.Messages.Parsers
         }
 
         /// <summary>
-        /// Moves the specified try { await handler.
+        /// Moves the specified try {  handler.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void Move(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.Move();
+                 handler.Move().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1886,14 +1886,14 @@ namespace Oblivion.Messages.Parsers
         }
 
         /// <summary>
-        /// Determines whether this instance [can create room] the specified try { await handler.
+        /// Determines whether this instance [can create room] the specified try {  handler.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void CanCreateRoom(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.CanCreateRoom();
+                 handler.CanCreateRoom().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1904,12 +1904,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Creates the room.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void CreateRoom(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.CreateRoom();
+                 handler.CreateRoom().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1920,12 +1920,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the room information.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetRoomInformation(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ParseRoomDataInformation();
+                 handler.ParseRoomDataInformation().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1936,12 +1936,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the room edit data.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetRoomEditData(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetRoomEditData();
+                 handler.GetRoomEditData().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1952,12 +1952,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Saves the room data.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SaveRoomData(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SaveRoomData();
+                 handler.SaveRoomData().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1968,12 +1968,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gives the rights.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GiveRights(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GiveRights();
+                 handler.GiveRights().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -1984,12 +1984,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Takes the rights.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void TakeRights(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.TakeRights();
+                 handler.TakeRights().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2000,12 +2000,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Takes all rights.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void TakeAllRights(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.TakeAllRights();
+                 handler.TakeAllRights().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2016,12 +2016,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Habboes the camera.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void HabboCamera(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.HabboCamera();
+                 handler.HabboCamera().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2032,12 +2032,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Open xmas calendar
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void OpenXmasCalendar(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.OpenXmasCalendar();
+                 handler.OpenXmasCalendar().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2048,12 +2048,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Called when [click].
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void OnClick(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.OnClick();
+                 handler.OnClick().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2064,12 +2064,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Kicks the user.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void KickUser(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.KickUser();
+                 handler.KickUser().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2080,12 +2080,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Bans the user.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void BanUser(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.BanUser();
+                 handler.BanUser().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2096,12 +2096,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Sets the home room.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SetHomeRoom(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SetHomeRoom();
+                 handler.SetHomeRoom().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2112,12 +2112,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Deletes the room.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void DeleteRoom(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.DeleteRoom();
+                 handler.DeleteRoom().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2128,12 +2128,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Looks at.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void LookAt(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.LookAt();
+                 handler.LookAt().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2145,7 +2145,7 @@ namespace Oblivion.Messages.Parsers
         {
             try
             {
-                await handler.AirClickUser();
+                 handler.AirClickUser().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2156,12 +2156,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Starts the typing.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void StartTyping(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.StartTyping();
+                 handler.StartTyping().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2172,12 +2172,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Stops the typing.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void StopTyping(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.StopTyping();
+                 handler.StopTyping().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2188,12 +2188,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Ignores the user.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void IgnoreUser(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.IgnoreUser();
+                 handler.IgnoreUser().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2204,12 +2204,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Unignores the user.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void UnignoreUser(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.UnignoreUser();
+                 handler.UnignoreUser().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2218,14 +2218,14 @@ namespace Oblivion.Messages.Parsers
         }
 
         /// <summary>
-        /// Determines whether this instance [can create room event] the specified try { await handler.
+        /// Determines whether this instance [can create room event] the specified try {  handler.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void CanCreateRoomEvent(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.CanCreateRoomEvent();
+                 handler.CanCreateRoomEvent().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2234,14 +2234,14 @@ namespace Oblivion.Messages.Parsers
         }
 
         /// <summary>
-        /// Signs the specified try { await handler.
+        /// Signs the specified try {  handler.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void Sign(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.Sign();
+                 handler.Sign().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2252,12 +2252,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the user tags.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetUserTags(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetUserTags();
+                 handler.GetUserTags().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2268,12 +2268,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the user badges.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetUserBadges(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetUserBadges();
+                 handler.GetUserBadges().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2284,12 +2284,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Rates the room.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RateRoom(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RateRoom();
+                 handler.RateRoom().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2298,14 +2298,14 @@ namespace Oblivion.Messages.Parsers
         }
 
         /// <summary>
-        /// Dances the specified try { await handler.
+        /// Dances the specified try {  handler.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void Dance(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.Dance();
+                 handler.Dance().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2316,12 +2316,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Answers the doorbell.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void AnswerDoorbell(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.AnswerDoorbell();
+                 handler.AnswerDoorbell().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2332,12 +2332,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Applies the room effect.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ApplyRoomEffect(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ApplyRoomEffect();
+                 handler.ApplyRoomEffect().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2348,12 +2348,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Places the post it.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void PlacePostIt(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.PlacePostIt();
+                 handler.PlacePostIt().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2364,12 +2364,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Places the item.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void PlaceItem(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.PlaceItem();
+                 handler.PlaceItem().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2380,12 +2380,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Places the item.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void AirPlaceItem(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.PlaceItem();
+                 handler.PlaceItem().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2396,12 +2396,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Takes the item.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void TakeItem(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.TakeItem();
+                 handler.TakeItem().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2412,12 +2412,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Moves the item.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void MoveItem(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.MoveItem();
+                 handler.MoveItem().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2428,12 +2428,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Moves the wall item.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void MoveWallItem(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.MoveWallItem();
+                 handler.MoveWallItem().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2444,12 +2444,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Triggers the item.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void TriggerItem(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.TriggerItem();
+                 handler.TriggerItem().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2460,12 +2460,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Triggers the item dice special.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void TriggerItemDiceSpecial(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.TriggerItemDiceSpecial();
+                 handler.TriggerItemDiceSpecial().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2476,12 +2476,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Opens the postit.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void OpenPostit(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.OpenPostit();
+                 handler.OpenPostit().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2492,12 +2492,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Saves the postit.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SavePostit(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SavePostit();
+                 handler.SavePostit().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2508,12 +2508,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Deletes the postit.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void DeletePostit(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.DeletePostit();
+                 handler.DeletePostit().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2524,12 +2524,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Opens the present.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void OpenPresent(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.OpenGift();
+                 handler.OpenGift().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2540,12 +2540,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the moodlight.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetMoodlight(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetMoodlight();
+                 handler.GetMoodlight().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2556,12 +2556,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Updates the moodlight.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void UpdateMoodlight(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.UpdateMoodlight();
+                 handler.UpdateMoodlight().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2572,12 +2572,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Switches the moodlight status.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SwitchMoodlightStatus(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SwitchMoodlightStatus();
+                 handler.SwitchMoodlightStatus().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2588,12 +2588,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Initializes the trade.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void InitTrade(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.InitTrade();
+                 handler.InitTrade().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2604,12 +2604,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Offers the trade item.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void OfferTradeItem(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.OfferTradeItem();
+                 handler.OfferTradeItem().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2620,12 +2620,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Offers a specific amount of items.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void OfferTradeItems(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.OfferTradeItems();
+                 handler.OfferTradeItems().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2636,12 +2636,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Takes the back trade item.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void TakeBackTradeItem(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.TakeBackTradeItem();
+                 handler.TakeBackTradeItem().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2652,12 +2652,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Stops the trade.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void StopTrade(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.StopTrade();
+                 handler.StopTrade().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2668,12 +2668,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Accepts the trade.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void AcceptTrade(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.AcceptTrade();
+                 handler.AcceptTrade().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2684,12 +2684,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Unaccepts the trade.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void UnacceptTrade(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.UnacceptTrade();
+                 handler.UnacceptTrade().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2700,12 +2700,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Completes the trade.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void CompleteTrade(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.CompleteTrade();
+                 handler.CompleteTrade().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2716,12 +2716,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gives the respect.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GiveRespect(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GiveRespect();
+                 handler.GiveRespect().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2732,12 +2732,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Applies the effect.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ApplyEffect(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ApplyEffect();
+                 handler.ApplyEffect().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2748,12 +2748,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Enables the effect.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void EnableEffect(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.EnableEffect();
+                 handler.EnableEffect().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2764,12 +2764,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Recycles the items.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RecycleItems(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RecycleItems();
+                 handler.RecycleItems().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2780,12 +2780,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Redeems the exchange furni.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RedeemExchangeFurni(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RedeemExchangeFurni();
+                 handler.RedeemExchangeFurni().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2796,12 +2796,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Kicks the bot.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void KickBot(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.KickBot();
+                 handler.KickBot().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2812,12 +2812,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Places the pet.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void PlacePet(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.PlacePet();
+                 handler.PlacePet().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2828,12 +2828,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the pet information.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetPetInfo(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetPetInfo();
+                 handler.GetPetInfo().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2844,12 +2844,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Picks up pet.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void PickUpPet(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.PickUpPet();
+                 handler.PickUpPet().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2860,12 +2860,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Composts the monsterplant.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void CompostMonsterplant(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.CompostMonsterplant();
+                 handler.CompostMonsterplant().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2876,12 +2876,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Moves the pet.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void MovePet(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.MovePet();
+                 handler.MovePet().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2892,12 +2892,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Respects the pet.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RespectPet(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RespectPet();
+                 handler.RespectPet().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2908,12 +2908,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Adds the saddle.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void AddSaddle(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.AddSaddle();
+                 handler.AddSaddle().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2924,12 +2924,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Removes the saddle.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RemoveSaddle(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RemoveSaddle();
+                 handler.RemoveSaddle().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2938,14 +2938,14 @@ namespace Oblivion.Messages.Parsers
         }
 
         /// <summary>
-        /// Rides the specified try { await handler.
+        /// Rides the specified try {  handler.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void Ride(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.MountOnPet();
+                 handler.MountOnPet().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2954,14 +2954,14 @@ namespace Oblivion.Messages.Parsers
         }
 
         /// <summary>
-        /// Unrides the specified try { await handler.
+        /// Unrides the specified try {  handler.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void Unride(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.CancelMountOnPet();
+                 handler.CancelMountOnPet().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2972,12 +2972,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Saves the wired.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SaveWired(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SaveWired();
+                 handler.SaveWired().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -2988,12 +2988,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Saves the wired condition.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SaveWiredCondition(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SaveWiredConditions();
+                 handler.SaveWiredConditions().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3004,12 +3004,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the music data.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetMusicData(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetMusicData();
+                 handler.GetMusicData().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3020,12 +3020,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Adds the playlist item.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void AddPlaylistItem(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.AddPlaylistItem();
+                 handler.AddPlaylistItem().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3036,12 +3036,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Removes the playlist item.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RemovePlaylistItem(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RemovePlaylistItem();
+                 handler.RemovePlaylistItem().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3052,12 +3052,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the disks.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetDisks(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetDisks();
+                 handler.GetDisks().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3068,12 +3068,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the playlists.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetPlaylists(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetPlaylists();
+                 handler.GetPlaylists().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3084,12 +3084,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the user information.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetUserInfo(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetUserInfo();
+                 handler.GetUserInfo().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3100,12 +3100,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Loads the profile.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void LoadProfile(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.LoadProfile();
+                 handler.LoadProfile().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3117,12 +3117,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the balance.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetBalance(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetBalance();
+                 handler.GetBalance().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3133,12 +3133,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the subscription data.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetSubscriptionData(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetSubscriptionData();
+                 handler.GetSubscriptionData().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3149,12 +3149,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the badges.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetBadges(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetBadges();
+                 handler.GetBadges().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3165,12 +3165,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Updates the badges.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void UpdateBadges(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.UpdateBadges();
+                 handler.UpdateBadges().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3181,12 +3181,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the achievements.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetAchievements(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetAchievements();
+                 handler.GetAchievements().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3197,12 +3197,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Changes the look.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ChangeLook(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ChangeLook();
+                 handler.ChangeLook().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3213,12 +3213,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Changes the motto.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ChangeMotto(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ChangeMotto();
+                 handler.ChangeMotto().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3229,12 +3229,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the wardrobe.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetWardrobe(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetWardrobe();
+                 handler.GetWardrobe().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3245,12 +3245,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Allows all ride.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void AllowAllRide(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.AllowAllRide();
+                 handler.AllowAllRide().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3261,12 +3261,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Saves the wardrobe.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SaveWardrobe(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SaveWardrobe();
+                 handler.SaveWardrobe().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3277,12 +3277,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the pets inventory.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetPetsInventory(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetPetsInventory();
+                 handler.GetPetsInventory().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3293,12 +3293,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Opens the quests.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void OpenQuests(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.OpenQuests();
+                 handler.OpenQuests().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3309,12 +3309,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Starts the quest.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void StartQuest(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.StartQuest();
+                 handler.StartQuest().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3325,12 +3325,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Stops the quest.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void StopQuest(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.StopQuest();
+                 handler.StopQuest().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3341,12 +3341,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the current quest.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetCurrentQuest(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetCurrentQuest();
+                 handler.GetCurrentQuest().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3357,12 +3357,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the group badges.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetGroupBadges(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.InitRoomGroupBadges();
+                 handler.InitRoomGroupBadges().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3373,12 +3373,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the bot inv.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetBotInv(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetBotsInventory();
+                 handler.GetBotsInventory().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3389,12 +3389,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Saves the room bg.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SaveRoomBg(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SaveRoomBg();
+                 handler.SaveRoomBg().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3405,12 +3405,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Goes the room.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GoRoom(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GoRoom();
+                 handler.GoRoom().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3419,14 +3419,14 @@ namespace Oblivion.Messages.Parsers
         }
 
         /// <summary>
-        /// Sits the specified try { await handler.
+        /// Sits the specified try {  handler.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void Sit(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.Sit();
+                 handler.Sit().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3437,12 +3437,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the event rooms.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetEventRooms(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetEventRooms();
+                 handler.GetEventRooms().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3453,12 +3453,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Starts the seasonal quest.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void StartSeasonalQuest(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.StartSeasonalQuest();
+                 handler.StartSeasonalQuest().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3469,12 +3469,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Saves the mannequin.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SaveMannequin(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SaveMannequin();
+                 handler.SaveMannequin().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3485,12 +3485,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Saves the mannequin2.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SaveMannequin2(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SaveMannequin2();
+                 handler.SaveMannequin2().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3501,12 +3501,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Serializes the group purchase page.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SerializeGroupPurchasePage(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SerializeGroupPurchasePage();
+                 handler.SerializeGroupPurchasePage().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3517,12 +3517,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Serializes the group purchase parts.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SerializeGroupPurchaseParts(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SerializeGroupPurchaseParts();
+                 handler.SerializeGroupPurchaseParts().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3533,12 +3533,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Purchases the group.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void PurchaseGroup(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.PurchaseGroup();
+                 handler.PurchaseGroup().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3549,12 +3549,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Serializes the group information.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SerializeGroupInfo(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SerializeGroupInfo();
+                 handler.SerializeGroupInfo().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3565,12 +3565,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Serializes the group members.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SerializeGroupMembers(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SerializeGroupMembers();
+                 handler.SerializeGroupMembers().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3581,12 +3581,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Makes the group admin.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void MakeGroupAdmin(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.MakeGroupAdmin();
+                 handler.MakeGroupAdmin().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3597,12 +3597,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Removes the group admin.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RemoveGroupAdmin(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RemoveGroupAdmin();
+                 handler.RemoveGroupAdmin().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3613,12 +3613,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Accepts the membership.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void AcceptMembership(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.AcceptMembership();
+                 handler.AcceptMembership().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3629,12 +3629,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Declines the membership.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void DeclineMembership(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.DeclineMembership();
+                 handler.DeclineMembership().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3645,12 +3645,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Removes the member.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RemoveMember(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RemoveMember();
+                 handler.RemoveMember().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3661,12 +3661,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Joins the group.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void JoinGroup(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.JoinGroup();
+                 handler.JoinGroup().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3677,12 +3677,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Makes the fav.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void MakeFav(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.MakeFav();
+                 handler.MakeFav().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3693,12 +3693,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Removes the fav.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RemoveFav(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RemoveFav();
+                 handler.RemoveFav().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3709,12 +3709,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Receives the nux gifts.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ReceiveNuxGifts(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ReceiveNuxGifts();
+                 handler.ReceiveNuxGifts().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3725,12 +3725,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Accepts the nux gifts.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void AcceptNuxGifts(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.AcceptNuxGifts();
+                 handler.AcceptNuxGifts().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3741,12 +3741,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Reads the forum thread.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ReadForumThread(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ReadForumThread();
+                 handler.ReadForumThread().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3757,12 +3757,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Publishes the forum thread.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void PublishForumThread(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.PublishForumThread();
+                 handler.PublishForumThread().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3773,12 +3773,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Updates the forum thread.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void UpdateForumThread(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.UpdateThreadState();
+                 handler.UpdateThreadState().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3789,12 +3789,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Alters the state of the forum thread.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void AlterForumThreadState(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.AlterForumThreadState();
+                 handler.AlterForumThreadState().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3805,12 +3805,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the forum thread root.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetForumThreadRoot(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetGroupForumThreadRoot();
+                 handler.GetGroupForumThreadRoot().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3821,12 +3821,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the group forum data.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetGroupForumData(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetGroupForumData();
+                 handler.GetGroupForumData().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3837,12 +3837,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the group forums.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetGroupForums(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetGroupForums();
+                 handler.GetGroupForums().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3853,12 +3853,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Manages the group.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ManageGroup(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ManageGroup();
+                 handler.ManageGroup().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3869,12 +3869,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Updates the name of the group.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void UpdateGroupName(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.UpdateGroupName();
+                 handler.UpdateGroupName().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3885,12 +3885,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Updates the group badge.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void UpdateGroupBadge(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.UpdateGroupBadge();
+                 handler.UpdateGroupBadge().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3901,12 +3901,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Updates the group colours.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void UpdateGroupColours(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.UpdateGroupColours();
+                 handler.UpdateGroupColours().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3917,12 +3917,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Updates the group settings.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void UpdateGroupSettings(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.UpdateGroupSettings();
+                 handler.UpdateGroupSettings().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3933,12 +3933,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Serializes the group furni page.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SerializeGroupFurniPage(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SerializeGroupFurniPage();
+                 handler.SerializeGroupFurniPage().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3949,12 +3949,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Ejects the furni.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void EjectFurni(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.EjectFurni();
+                 handler.EjectFurni().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3965,12 +3965,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Mutes the user.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void MuteUser(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.MuteUser();
+                 handler.MuteUser().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3981,12 +3981,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Checks the name.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void CheckName(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.CheckName();
+                 handler.CheckName().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -3997,12 +3997,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Changes the name.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ChangeName(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ChangeName();
+                 handler.ChangeName().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4013,12 +4013,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the trainer panel.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetTrainerPanel(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetTrainerPanel();
+                 handler.GetTrainerPanel().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4029,12 +4029,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Updates the event information.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void UpdateEventInfo(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.UpdateEventInfo();
+                 handler.UpdateEventInfo().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4045,12 +4045,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the room banned users.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetRoomBannedUsers(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetBannedUsers();
+                 handler.GetBannedUsers().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4061,12 +4061,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Userses the with rights.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void UsersWithRights(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.UsersWithRights();
+                 handler.UsersWithRights().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4077,12 +4077,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Unbans the user.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void UnbanUser(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.UnbanUser();
+                 handler.UnbanUser().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4093,12 +4093,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Manages the bot actions.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ManageBotActions(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ManageBotActions();
+                 handler.ManageBotActions().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4109,12 +4109,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Handles the bot speech list.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void HandleBotSpeechList(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.HandleBotSpeechList();
+                 handler.HandleBotSpeechList().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4125,12 +4125,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the relationships.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetRelationships(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetRelationships();
+                 handler.GetRelationships().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4141,12 +4141,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Sets the relationship.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SetRelationship(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SetRelationship();
+                 handler.SetRelationship().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4157,12 +4157,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Automatics the room.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void AutoRoom(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RoomOnLoad();
+                 handler.RoomOnLoad().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4173,12 +4173,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Mutes all.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void MuteAll(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.MuteAll();
+                 handler.MuteAll().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4189,12 +4189,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Completes the saftey quiz.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void CompleteSafteyQuiz(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.CompleteSafetyQuiz();
+                 handler.CompleteSafetyQuiz().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4205,12 +4205,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Removes the favourite room.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RemoveFavouriteRoom(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RemoveFavouriteRoom();
+                 handler.RemoveFavouriteRoom().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4221,12 +4221,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Rooms the user action.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RoomUserAction(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RoomUserAction();
+                 handler.RoomUserAction().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4237,12 +4237,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Saves the football outfit.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SaveFootballOutfit(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SaveFootballOutfit();
+                 handler.SaveFootballOutfit().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4253,12 +4253,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Confirms the love lock.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ConfirmLoveLock(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ConfirmLoveLock();
+                 handler.ConfirmLoveLock().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4269,12 +4269,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Builderses the club update furni count.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void BuildersClubUpdateFurniCount(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.BuildersClubUpdateFurniCount();
+                 handler.BuildersClubUpdateFurniCount().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4285,7 +4285,7 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the client version message event.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static void ReleaseVersion(GameClientMessageHandler handler)
         {
             try
@@ -4301,12 +4301,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Places the builders furniture.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void PlaceBuildersFurniture(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.PlaceBuildersFurniture();
+                 handler.PlaceBuildersFurniture().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4315,14 +4315,14 @@ namespace Oblivion.Messages.Parsers
         }
 
         /// <summary>
-        /// Whispers the specified try { await handler.
+        /// Whispers the specified try {  handler.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void Whisper(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.Whisper();
+                 handler.Whisper().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4333,12 +4333,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Catalogues the index.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void CatalogueIndex(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.CatalogueIndex();
+                 handler.CatalogueIndex().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4349,12 +4349,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Catalogues the index.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetCatalogMode(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.CatalogueMode();
+                 handler.CatalogueMode().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4365,12 +4365,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Catalogues the page.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void CataloguePage(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.CataloguePage();
+                 handler.CataloguePage().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4381,12 +4381,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Catalogues the club page.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void CatalogueClubPage(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.CatalogueClubPage();
+                 handler.CatalogueClubPage().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4397,12 +4397,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Catalogues the offers configuration.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void CatalogueOffersConfig(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.CatalogueOfferConfig();
+                 handler.CatalogueOfferConfig().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4414,7 +4414,7 @@ namespace Oblivion.Messages.Parsers
         {
             try
             {
-                await handler.PurchaseOffer();
+                 handler.PurchaseOffer().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4426,7 +4426,7 @@ namespace Oblivion.Messages.Parsers
         {
             try
             {
-                await handler.CancelOffer();
+                 handler.CancelOffer().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4438,7 +4438,7 @@ namespace Oblivion.Messages.Parsers
         {
             try
             {
-                await handler.GetItemStats();
+                 handler.GetItemStats().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4450,7 +4450,7 @@ namespace Oblivion.Messages.Parsers
         {
             try
             {
-                await handler.GetMyOffers();
+                 handler.GetMyOffers().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4462,7 +4462,7 @@ namespace Oblivion.Messages.Parsers
         {
             try
             {
-                await handler.MakeOffer();
+                 handler.MakeOffer().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4474,7 +4474,7 @@ namespace Oblivion.Messages.Parsers
         {
             try
             {
-                await handler.ReedemCredits();
+                 handler.ReedemCredits().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4485,12 +4485,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Catalogues the single offer.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void CatalogueSingleOffer(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.CatalogueOffer();
+                 handler.CatalogueOffer().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4506,7 +4506,7 @@ namespace Oblivion.Messages.Parsers
         {
             try
             {
-                await handler.GetOffers();
+                 handler.GetOffers().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4517,12 +4517,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Checks the name of the pet.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void CheckPetName(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.CheckPetName();
+                 handler.CheckPetName().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4533,12 +4533,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Purchases the item.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void PurchaseItem(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.PurchaseItem();
+                 handler.PurchaseItem().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4549,12 +4549,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Purchases the gift.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void PurchaseGift(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.PurchaseGift();
+                 handler.PurchaseGift().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4565,12 +4565,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the pet breeds.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetPetBreeds(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetPetBreeds();
+                 handler.GetPetBreeds().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4581,12 +4581,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Reloads the ecotron.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ReloadEcotron(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ReloadEcotron();
+                 handler.ReloadEcotron().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4597,12 +4597,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gifts the wrapping configuration.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GiftWrappingConfig(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GiftWrappingConfig();
+                 handler.GiftWrappingConfig().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4613,12 +4613,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Recyclers the rewards.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RecyclerRewards(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetRecyclerRewards();
+                 handler.GetRecyclerRewards().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4629,12 +4629,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Requests the leave group.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void RequestLeaveGroup(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.RequestLeaveGroup();
+                 handler.RequestLeaveGroup().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4645,12 +4645,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Confirms the leave group.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ConfirmLeaveGroup(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ConfirmLeaveGroup();
+                 handler.ConfirmLeaveGroup().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4661,12 +4661,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// News the navigator.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void NewNavigator(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.NewNavigator();
+                 handler.NewNavigator().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4677,12 +4677,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Searches the new navigator.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SearchNewNavigator(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SearchNewNavigator();
+                 handler.SearchNewNavigator().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4693,12 +4693,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// News the navigator delete saved search.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void NewNavigatorDeleteSavedSearch(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.NewNavigatorDeleteSavedSearch();
+                 handler.NewNavigatorDeleteSavedSearch().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4709,12 +4709,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// News the navigator resize.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void NewNavigatorResize(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.NewNavigatorResize();
+                 handler.NewNavigatorResize().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4726,7 +4726,7 @@ namespace Oblivion.Messages.Parsers
         {
             try
             {
-                await handler.HabboAirGetUserRooms();
+                 handler.HabboAirGetUserRooms().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4738,7 +4738,7 @@ namespace Oblivion.Messages.Parsers
         {
             try
             {
-                await handler.HabboAirGetAllRooms();
+                 handler.HabboAirGetAllRooms().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4749,12 +4749,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// News the navigator add saved search.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void NewNavigatorAddSavedSearch(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.NewNavigatorAddSavedSearch();
+                 handler.NewNavigatorAddSavedSearch().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4765,12 +4765,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// News the navigator collapse category.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void NewNavigatorCollapseCategory(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.NewNavigatorCollapseCategory();
+                 handler.NewNavigatorCollapseCategory().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4781,12 +4781,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// News the navigator uncollapse category.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void NewNavigatorUncollapseCategory(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.NewNavigatorUncollapseCategory();
+                 handler.NewNavigatorUncollapseCategory().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4797,12 +4797,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Pets the breed result.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void PetBreedResult(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.PetBreedResult();
+                 handler.PetBreedResult().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4813,12 +4813,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Pets the breed cancel.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void PetBreedCancel(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.PetBreedCancel();
+                 handler.PetBreedCancel().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4829,12 +4829,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Games the center load game.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GameCenterLoadGame(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GameCenterLoadGame();
+                 handler.GameCenterLoadGame().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4845,12 +4845,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Get game lists
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetGameListing(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetGameListing();
+                 handler.GetGameListing().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4861,12 +4861,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Init the game center
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void InitializeGameCenter(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.InitializeGameCenter();
+                 handler.InitializeGameCenter().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4877,12 +4877,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Games the center join queue.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GameCenterJoinQueue(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GameCenterJoinQueue();
+                 handler.GameCenterJoinQueue().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4893,12 +4893,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Hotels the view countdown.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void HotelViewCountdown(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.HotelViewCountdown();
+                 handler.HotelViewCountdown().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4909,12 +4909,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Hotels the view dailyquest.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void HotelViewDailyquest(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.HotelViewDailyquest();
+                 handler.HotelViewDailyquest().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4925,12 +4925,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Places the builders wall item.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void PlaceBuildersWallItem(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.PlaceBuildersWallItem();
+                 handler.PlaceBuildersWallItem().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4941,12 +4941,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Targeteds the offer buy.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void PurchaseTargetedOffer(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.PurchaseTargetedOffer();
+                 handler.PurchaseTargetedOffer().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4957,12 +4957,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Ambassadors the alert.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void AmbassadorAlert(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.AmbassadorAlert();
+                 handler.AmbassadorAlert().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4973,12 +4973,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Goes the name of to room by.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GoToRoomByName(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GoToRoomByName();
+                 handler.GoToRoomByName().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -4989,12 +4989,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the uc panel.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetUcPanel(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetUcPanel();
+                 handler.GetUcPanel().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -5005,12 +5005,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the uc panel hotel.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetUcPanelHotel(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetUcPanelHotel();
+                 handler.GetUcPanelHotel().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -5021,12 +5021,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Saves the room thumbnail.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SaveRoomThumbnail(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SaveRoomThumbnail();
+                 handler.SaveRoomThumbnail().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -5037,12 +5037,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Uses the purchasable clothing.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void UsePurchasableClothing(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.UsePurchasableClothing();
+                 handler.UsePurchasableClothing().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -5053,12 +5053,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the user look.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetUserLook(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetUserLook();
+                 handler.GetUserLook().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -5069,7 +5069,7 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Sets the invitations preference.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static void SetInvitationsPreference(GameClientMessageHandler handler)
         {
             try
@@ -5085,12 +5085,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Finds the more friends.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void FindMoreFriends(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.FindMoreFriends();
+                 handler.FindMoreFriends().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -5101,12 +5101,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Hotels the view request badge.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void HotelViewRequestBadge(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.HotelViewRequestBadge();
+                 handler.HotelViewRequestBadge().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -5117,12 +5117,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the camera price.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetCameraPrice(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetCameraPrice();
+                 handler.GetCameraPrice().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -5133,12 +5133,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Toggles the staff pick.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void ToggleStaffPick(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.ToggleStaffPick();
+                 handler.ToggleStaffPick().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -5149,12 +5149,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the hotel view hall of fame.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetHotelViewHallOfFame(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetHotelViewHallOfFame();
+                 handler.GetHotelViewHallOfFame().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -5165,12 +5165,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Submits the room to competition.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void SubmitRoomToCompetition(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.SubmitRoomToCompetition();
+                 handler.SubmitRoomToCompetition().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -5181,12 +5181,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Enters the room queue.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void EnterRoomQueue(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.EnterRoomQueue();
+                 handler.EnterRoomQueue().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -5197,12 +5197,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Gets the camera request.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void GetCameraRequest(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.GetCameraRequest();
+                 handler.GetCameraRequest().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -5213,12 +5213,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Votes for room.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void VoteForRoom(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.VoteForRoom();
+                 handler.VoteForRoom().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -5229,12 +5229,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Updates the forum settings.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void UpdateForumSettings(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.UpdateForumSettings();
+                 handler.UpdateForumSettings().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -5245,12 +5245,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Friends the request list load.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void FriendRequestListLoad(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.FriendRequestListLoad();
+                 handler.FriendRequestListLoad().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -5261,7 +5261,7 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Sets the room camera preferences.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static void SetRoomCameraPreferences(GameClientMessageHandler handler)
         {
             try
@@ -5277,12 +5277,12 @@ namespace Oblivion.Messages.Parsers
         /// <summary>
         /// Deletes the group.
         /// </summary>
-        /// <param name="handler">The try { await handler.</param>
+        /// <param name="handler">The try {  handler.</param>
         internal static async void DeleteGroup(GameClientMessageHandler handler)
         {
             try
             {
-                await handler.DeleteGroup();
+                 handler.DeleteGroup().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {

@@ -258,7 +258,7 @@ namespace Oblivion.Messages.Handlers
             await Response.AppendIntegerAsync(16); // Count
              await Response.AppendStringAsync("USE_GUIDE_TOOL");
              await Response.AppendStringAsync("");
-             Response.AppendBool(habbo.Rank >= 3);
+             Response.AppendBool(habbo.Rank >= 4);
 
              await Response.AppendStringAsync("GIVE_GUIDE_TOURS");
              await Response.AppendStringAsync("requirement.unfulfilled.helper_le");

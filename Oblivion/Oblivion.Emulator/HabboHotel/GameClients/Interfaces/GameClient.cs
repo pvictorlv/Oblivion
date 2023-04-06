@@ -417,6 +417,21 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                             LibraryParser.OutgoingRequest("NuxSuggestFreeGiftsMessageComposer"));
                         await SendMessage(serverMessage);
                     }
+
+
+                    if (GetHabbo().Rank >= 4)
+                    {
+                        var guideManager = Oblivion.GetGame().GetGuideManager();
+                        guideManager.AddGuide(this);
+
+                        await serverMessage.InitAsync(LibraryParser.OutgoingRequest("HelperToolConfigurationMessageComposer"));
+                        serverMessage.AppendBool(true);
+                        await serverMessage.AppendIntegerAsync(guideManager.GuidesCount);
+                        await serverMessage.AppendIntegerAsync(guideManager.HelpersCount);
+                        await serverMessage.AppendIntegerAsync(guideManager.GuardiansCount);
+                        await SendMessage(serverMessage);
+                    }
+
                 }
 
                 await SendMessage(GetHabbo().GetAvatarEffectsInventoryComponent().GetPacket());
@@ -429,12 +444,6 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 await Oblivion.GetGame().GetAchievementManager().TryProgressHabboClubAchievements(this);
                 await Oblivion.GetGame().GetAchievementManager().TryProgressRegistrationAchievements(this);
                 await Oblivion.GetGame().GetAchievementManager().TryProgressLoginAchievements(this);
-
-                if (GetHabbo().Rank >= 4)
-                {
-                    var guideManager = Oblivion.GetGame().GetGuideManager();
-                    guideManager.AddGuide(this);
-                }
 
                 return true;
             }
