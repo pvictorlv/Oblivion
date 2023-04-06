@@ -1115,6 +1115,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         {
             try
             {
+                var Model = this.Model;
+                if (Model == null)
+                    return 0.0;
                 double[] highestStack = {Model.SqFloorHeight[x][y]};
                 var deductable = 0.0;
 
@@ -1470,6 +1473,10 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
         /// <returns>ServerMessage.</returns>
         private ServerMessage NewHeightMap()
         {
+            var Model = this.Model;
+            if (Model == null)
+                return null;
+
             var serverMessage = new ServerMessage();
             serverMessage.Init(LibraryParser.OutgoingRequest("HeightMapMessageComposer"));
             serverMessage.AppendInteger(Model.MapSizeX);

@@ -208,7 +208,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                 await serverMessage.AppendIntegerAsync(roomUser.VirtualId);
                 await serverMessage.AppendIntegerAsync(roomUser.BotData.DanceId);
                 await _room.SendMessage(serverMessage);
-               
+
                 return roomUser;
             }
         }
@@ -386,11 +386,12 @@ namespace Oblivion.HabboHotel.Rooms.User
                     var rUser = UsersByUserName.FirstOrDefault(s => s.Value.UserId == user.UserId);
                     if (rUser.Value != null)
                         UsersByUserName.TryRemove(rUser.Key, out _);
-                    
+
                     user.Dispose();
-                    
+
                     return;
                 }
+
                 habbo.CurrentRoom = null;
                 habbo.GetAvatarEffectsInventoryComponent()?.OnRoomExit();
                 var room = _room;
@@ -485,21 +486,33 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <param name="user">The user.</param>
         internal async Task RemoveRoomUser(RoomUser user)
         {
-            if (user == null) return;
+            try
+            {
+                if (user == null) return;
 
-            UserList.TryRemove(user.InternalRoomId, out _);
+                UserList.TryRemove(user.InternalRoomId, out _);
 
-            user.InternalRoomId = -1;
-            _room.GetGameMap().GameMap[user.X, user.Y] = user.SqState;
-            _room.GetGameMap().RemoveUserFromMap(user, new Point(user.X, user.Y));
+                var _room = this._room;
+                if (_room == null)
+                    return;
+
+                user.InternalRoomId = -1;
+                
+            }
+            catch (Exception ex)
+            {
+                Logging.HandleException(ex, "RoomUserManager.RemoveRoomUser");
+            }
+
             using (var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("UserLeftRoomMessageComposer")))
             {
                 await serverMessage.AppendStringAsync(user.VirtualId.ToString());
                 await _room.SendMessage(serverMessage);
 
-                OnRemove(user);
             }
-        }
+            OnRemove(user);
+
+            }
 
         /// <summary>
         ///     Gets the pet.
@@ -613,7 +626,8 @@ namespace Oblivion.HabboHotel.Rooms.User
                         await queryChunk.AddParameter($"{current.PetId}name", current.Name);
                         await queryChunk2.AddParameter($"{current.PetId}race", current.Race);
                         await queryChunk2.AddParameter($"{current.PetId}color", current.Color);
-                        await queryChunk.AddQuery(string.Concat("(", current.PetId, ",", current.OwnerId, ",", current.RoomId,
+                        await queryChunk.AddQuery(string.Concat("(", current.PetId, ",", current.OwnerId, ",",
+                            current.RoomId,
                             ",@", current.PetId, "name,", current.X, ",", current.Y, ",", current.Z, ")"));
                         await queryChunk2.AddQuery(string.Concat("(", current.Type, ",@", current.PetId, "race,@",
                             current.PetId, "color,0,100,'", current.CreationStamp, "',0,0)"));
@@ -1517,8 +1531,8 @@ namespace Oblivion.HabboHotel.Rooms.User
             try
             {
                 var client = user?.GetClient();
-
-                if (client?.GetHabbo() == null || _room?.RoomData == null)
+                var habbo = client?.GetHabbo();
+                if (habbo == null || _room?.RoomData == null)
                     return;
                 if (client.IsAir)
                 {
@@ -1573,12 +1587,12 @@ namespace Oblivion.HabboHotel.Rooms.User
 
                     user.CurrentItemEffect = 0;
 
-                    if (!user.IsBot && client.GetHabbo().IsTeleporting)
+                    if (!user.IsBot && habbo.IsTeleporting)
                     {
-                        client.GetHabbo().IsTeleporting = false;
-                        client.GetHabbo().TeleportingRoomId = 0;
+                        habbo.IsTeleporting = false;
+                        habbo.TeleportingRoomId = 0;
 
-                        var item = _room.GetRoomItemHandler().GetItem(client.GetHabbo().TeleporterId);
+                        var item = _room.GetRoomItemHandler().GetItem(habbo.TeleporterId);
 
                         if (item != null)
                         {
@@ -1586,18 +1600,18 @@ namespace Oblivion.HabboHotel.Rooms.User
                             await item.UpdateState(false, true);
                             user.SetPos(item.X, item.Y, item.Z);
                             user.SetRot(item.Rot, false);
-                            item.InteractingUser2 = client.GetHabbo().Id;
+                            item.InteractingUser2 = habbo.Id;
                             item.ExtraData = "0";
                             await item.UpdateState(false, true);
                         }
                     }
 
-                    if (!user.IsBot && client.GetHabbo().IsHopping)
+                    if (!user.IsBot && habbo.IsHopping)
                     {
-                        client.GetHabbo().IsHopping = false;
-                        client.GetHabbo().HopperId = "0u";
+                        habbo.IsHopping = false;
+                        habbo.HopperId = "0u";
 
-                        var item2 = _room.GetRoomItemHandler().GetItem(client.GetHabbo().HopperId);
+                        var item2 = _room.GetRoomItemHandler().GetItem(habbo.HopperId);
 
                         if (item2 != null)
                         {
@@ -1606,7 +1620,7 @@ namespace Oblivion.HabboHotel.Rooms.User
                             user.SetPos(item2.X, item2.Y, item2.Z);
                             user.SetRot(item2.Rot, false);
                             user.AllowOverride = false;
-                            item2.InteractingUser2 = client.GetHabbo().Id;
+                            item2.InteractingUser2 = habbo.Id;
                             item2.ExtraData = "2";
                             await item2.UpdateState(false, true);
                         }
@@ -1630,15 +1644,15 @@ namespace Oblivion.HabboHotel.Rooms.User
                             await serverMessage2.InitAsync(
                                 LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
                             await serverMessage2.AppendIntegerAsync(user.VirtualId);
-                            await serverMessage2.AppendStringAsync(client.GetHabbo().Look);
-                            await serverMessage2.AppendStringAsync(client.GetHabbo().Gender.ToLower());
-                            await serverMessage2.AppendStringAsync(client.GetHabbo().Motto);
-                            await serverMessage2.AppendIntegerAsync(client.GetHabbo().AchievementPoints);
+                            await serverMessage2.AppendStringAsync(habbo.Look);
+                            await serverMessage2.AppendStringAsync(habbo.Gender.ToLower());
+                            await serverMessage2.AppendStringAsync(habbo.Motto);
+                            await serverMessage2.AppendIntegerAsync(habbo.AchievementPoints);
                             await _room.SendMessage(serverMessage2);
                         }
                     }
 
-                    if (_room.RoomData.Owner != client.GetHabbo().UserName)
+                    if (_room.RoomData.Owner != habbo.UserName)
                     {
                         await Oblivion.GetGame()
                             .GetQuestManager()
@@ -1649,14 +1663,14 @@ namespace Oblivion.HabboHotel.Rooms.User
                     }
                 }
 
-                if (client.GetHabbo().GetMessenger() != null)
-                    await client.GetHabbo().GetMessenger().OnStatusChanged(true);
+                if (habbo.GetMessenger() != null)
+                    await habbo.GetMessenger().OnStatusChanged(true);
                 client.GetMessageHandler()?.OnRoomUserAdd();
 
-                //                    if (client.GetHabbo().HasFuse("fuse_mod"))
-                //                        client.GetHabbo().GetAvatarEffectsInventoryComponent()?.ActivateCustomEffect(102);
-                if (client.GetHabbo().Rank == Convert.ToUInt32(Oblivion.GetDbConfig().DbData["ambassador.minrank"]))
-                    client.GetHabbo().GetAvatarEffectsInventoryComponent()?.ActivateCustomEffect(178);
+                //                    if (habbo.HasFuse("fuse_mod"))
+                //                        habbo.GetAvatarEffectsInventoryComponent()?.ActivateCustomEffect(102);
+                if (habbo.Rank == Convert.ToUInt32(Oblivion.GetDbConfig().DbData["ambassador.minrank"]))
+                    habbo.GetAvatarEffectsInventoryComponent()?.ActivateCustomEffect(178);
 
                 if (_room.GotMusicController())
                     await _room.GetRoomMusicController().OnNewUserEnter(user);
@@ -1715,7 +1729,14 @@ namespace Oblivion.HabboHotel.Rooms.User
         {
             try
             {
-                _room.GetGameMap().RemoveUserFromMap(user, new Point(user.X, user.Y));
+                var _room = this._room;
+
+                var gameMap = _room?.GetGameMap();
+
+                if (_room == null)
+                    return;
+
+                gameMap?.RemoveUserFromMap(user, new Point(user.X, user.Y));
 
                 if (user?.GetClient() == null) return;
                 var client = user.GetClient();

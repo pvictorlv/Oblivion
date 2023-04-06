@@ -850,7 +850,7 @@ namespace Oblivion.HabboHotel.Rooms
 
                     if (!_mCycleEnded)
                     {
-                        if ((_idleTime >= 25 && !JustLoaded) || (_idleTime >= 100 && JustLoaded))
+                        if ((_idleTime >= 100 && !JustLoaded) || (_idleTime >= 100 && JustLoaded))
                         {
                             await Oblivion.GetGame().GetRoomManager().UnloadRoom(this, "No users");
                             return;

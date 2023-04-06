@@ -2133,9 +2133,9 @@ namespace Oblivion.Messages.Handlers
             await SendResponse();
         }
 
-        internal Task ChooseTvPlayerVideo()
+        internal void ChooseTvPlayerVideo()
         {
-            return Task.CompletedTask;
+            return ;
         }
 
         internal async Task GetTvPlayer()
@@ -2604,10 +2604,10 @@ namespace Oblivion.Messages.Handlers
             }
         }
 
-        internal Task GetUserLook()
+        internal void GetUserLook()
         {
             var oldLook = Request.GetString();
-            return Task.CompletedTask;
+            return ;
         }
     }
 }

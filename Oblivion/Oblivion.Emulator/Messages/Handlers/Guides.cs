@@ -233,10 +233,10 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Ambassadors the alert.
         /// </summary>
-        internal Task AmbassadorAlert()
+        internal void AmbassadorAlert()
         {
             if (Session.GetHabbo().Rank < Convert.ToUInt32(Oblivion.GetDbConfig().DbData["ambassador.minrank"]))
-                return Task.CompletedTask;
+                return ;
 
             uint userId = Request.GetUInteger();
 
@@ -244,7 +244,7 @@ namespace Oblivion.Messages.Handlers
 
             user?.SendNotif("${notification.ambassador.alert.warning.message}",
                 "${notification.ambassador.alert.warning.title}");
-            return Task.CompletedTask;
+            return ;
         }
     }
 }

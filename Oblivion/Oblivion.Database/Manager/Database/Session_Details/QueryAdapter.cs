@@ -89,6 +89,24 @@ namespace Oblivion.Database.Manager.Database.Session_Details
             }
             return result;
         }
+        public async Task<int> GetIntegerAsync()
+        {
+            if (!DbEnabled)
+                return 0;
+
+            var result = 0;
+            try
+            {
+                var obj2 = await CommandMySql.ExecuteScalarAsync();
+                if (obj2 != null)
+                    int.TryParse(obj2.ToString(), out result);
+            }
+            catch (Exception exception)
+            {
+                Writer.Writer.LogQueryError(exception, CommandMySql?.CommandText);
+            }
+            return result;
+        }
 
         public DataRow GetRow()
         {

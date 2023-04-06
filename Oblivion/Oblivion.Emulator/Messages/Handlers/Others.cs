@@ -97,21 +97,21 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Pongs this instance.
         /// </summary>
-        internal Task Pong()
+        internal void Pong()
         {
-            if (Session == null) return Task.CompletedTask;
+            if (Session == null) return ;
 
             Session.TimePingedReceived = DateTime.Now;
-            return Task.CompletedTask;
+            return ;
         }
 
         /// <summary>
         ///     Disconnects the event.
         /// </summary>
-        internal Task DisconnectEvent()
+        internal void DisconnectEvent()
         {
             //Session.Dispose();
-            return Task.CompletedTask;
+            return ;
         }
 
         /// <summary>
@@ -154,11 +154,11 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Secrets the key.
         /// </summary>
-        internal Task SecretKey()
+        internal void SecretKey()
         {
             var cipherKey = Request.GetString();
             var sharedKey = Handler.CalculateDiffieHellmanSharedKey(cipherKey);
-            return Task.CompletedTask;
+            return ;
             /*
             if (Session.IsAir)
             {
@@ -457,9 +457,9 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Called when [click].
         /// </summary>
-        internal Task OnClick()
+        internal void OnClick()
         {
-            return Task.CompletedTask;
+            return ;
             //uselss only for debug reasons
         }
 
@@ -549,7 +549,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         ///     Gets the uc panel.
         /// </summary>
-        internal Task GetUcPanel()
+        internal void GetUcPanel()
         {
             var name = Request.GetString();
             switch (name)
@@ -559,16 +559,16 @@ namespace Oblivion.Messages.Handlers
                     break;
             }
 
-            return Task.CompletedTask;
+            return ;
         }
 
         /// <summary>
         ///     Gets the uc panel hotel.
         /// </summary>
-        internal Task GetUcPanelHotel()
+        internal void GetUcPanelHotel()
         {
             var id = Request.GetInteger();
-            return Task.CompletedTask;
+            return ;
         }
 
         /// <summary>

@@ -147,8 +147,8 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 if (table != null)
                 {
                     Relations = table.Rows.Cast<DataRow>()
-                        .ToDictionary(row => (uint) row[0],
-                            row => new Relationship((uint) row[0], (uint) row[2], Convert.ToInt32(row[3].ToString())));
+                        .ToDictionary(row => Convert.ToUInt32(row[0]),
+                            row => new Relationship(Convert.ToUInt32(row[0]), Convert.ToUInt32( row[2]), Convert.ToInt32(row[3].ToString())));
                 }
             }
             LoadedRelations = true;

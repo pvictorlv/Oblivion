@@ -27,17 +27,17 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// Enters the inquired room.
         /// </summary>
-        internal Task EnterInquiredRoom()
+        internal void EnterInquiredRoom()
         {
-            return Task.CompletedTask;
+            return ;
         }
 
         /// <summary>
         /// Gets the pub.
         /// </summary>
-        internal Task GetPub()
+        internal void GetPub()
         {
-            return Task.CompletedTask;
+            return ;
             /* uint roomId = Request.GetUInteger();
              RoomData roomData = Oblivion.GetGame().GetRoomManager().GenerateRoomData(roomId);
              if (roomData == null)
@@ -132,7 +132,7 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// News the navigator resize.
         /// </summary>
-        internal Task NewNavigatorResize()
+        internal void NewNavigatorResize()
         {
             int x = Request.GetInteger();
             int y = Request.GetInteger();
@@ -142,7 +142,7 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().Preferences.NewnaviY = y;
             Session.GetHabbo().Preferences.NewnaviWidth = width;
             Session.GetHabbo().Preferences.NewnaviHeight = height;
-            return Task.CompletedTask;
+            return ;
         }
 
         /// <summary>
@@ -226,19 +226,19 @@ namespace Oblivion.Messages.Handlers
         /// <summary>
         /// News the navigator collapse category.
         /// </summary>
-        internal Task NewNavigatorCollapseCategory()
+        internal void NewNavigatorCollapseCategory()
         {
             Request.GetString();
-            return Task.CompletedTask;
+            return ;
         }
 
         /// <summary>
         /// News the navigator uncollapse category.
         /// </summary>
-        internal Task NewNavigatorUncollapseCategory()
+        internal void NewNavigatorUncollapseCategory()
         {
             Request.GetString();
-            return Task.CompletedTask;
+            return ;
         }
 
         /// <summary>

@@ -15,6 +15,7 @@ namespace Oblivion.Database.Manager.Session_Details.Interfaces
         bool FindsResult();
 
         int GetInteger();
+        Task<int> GetIntegerAsync();
 
         DataRow GetRow();
 

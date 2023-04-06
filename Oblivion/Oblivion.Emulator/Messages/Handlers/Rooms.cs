@@ -103,9 +103,9 @@ namespace Oblivion.Messages.Handlers
             }
         }
 
-        internal Task OnlineConfirmationEvent()
+        internal void OnlineConfirmationEvent()
         {
-            return Task.CompletedTask;
+            return ;
             //            Out.WriteLine(
 //                "Is connected now with user: " + Request.GetString() + " and ip: " + Session.GetConnection().GetIp(),
 //                "Oblivion.Users",
@@ -174,14 +174,14 @@ namespace Oblivion.Messages.Handlers
             await Session.SendMessage(goalMeter);
         }
 
-        internal Task RequestFloorItems()
+        internal void RequestFloorItems()
         {
-            return Task.CompletedTask;
+            return ;
         }
 
-        internal Task RequestWallItems()
+        internal void RequestWallItems()
         {
-            return Task.CompletedTask;
+            return ;
         }
 
         internal async Task SaveBranding()
@@ -1419,11 +1419,11 @@ namespace Oblivion.Messages.Handlers
             roomUserByHabbo.SignTime = Oblivion.GetUnixTimeStamp() + 5;
         }
 
-        internal Task InitRoomGroupBadges()
+        internal void InitRoomGroupBadges()
         {
             //todo
             Oblivion.GetGame().GetRoomManager().GetRoom(Session.GetHabbo().LoadingRoom);
-            return Task.CompletedTask;
+            return ;
         }
 
         internal async Task RateRoom()
@@ -2253,9 +2253,9 @@ namespace Oblivion.Messages.Handlers
             await Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.SocialWave);
         }
 
-        internal Task GetRoomData1()
+        internal void GetRoomData1()
         {
-            return Task.CompletedTask;
+            return ;
             /*this.Response.Init(StaticClientMessageHandler.OutgoingRequest("297"));//Not in release
             this.Response.AppendInt32(0);
             thisSendResponse();*/
@@ -2268,12 +2268,21 @@ namespace Oblivion.Messages.Handlers
                 var session = Session;
                 if (session != null && session.GetConnection() != null)
                 {
+
+                    var CurrentLoadingRoom = this.CurrentLoadingRoom;
+
+
                     if (session?.GetHabbo()?.LoadingRoom <= 0u || CurrentLoadingRoom == null)
-                        return;
+                        return;;
+
                     var roomData = CurrentLoadingRoom.RoomData;
                     if (roomData == null)
                         return;
-                    if (roomData.Model == null || CurrentLoadingRoom.GetGameMap() == null)
+
+                    var gameMap = CurrentLoadingRoom.GetGameMap();
+
+
+                    if (roomData.Model == null || gameMap == null)
                     {
                         await session.SendMessage(
                             new ServerMessage(LibraryParser.OutgoingRequest("OutOfRoomMessageComposer")));
@@ -2281,8 +2290,8 @@ namespace Oblivion.Messages.Handlers
                     }
                     else
                     {
-                        await session.SendMessage(CurrentLoadingRoom.GetGameMap().GetNewHeightmap());
-                        await session.SendMessage(CurrentLoadingRoom.GetGameMap().Model.GetHeightmap());
+                        await session.SendMessage(gameMap.GetNewHeightmap());
+                        await session.SendMessage(gameMap.Model?.GetHeightmap());
                         await GetRoomData3();
                     }
                 }
@@ -2434,9 +2443,9 @@ namespace Oblivion.Messages.Handlers
             await Session.SendMessage(message);
         }
 
-        internal Task RefreshCompetition()
+        internal void RefreshCompetition()
         {
-            return Task.CompletedTask;
+            return ;
             //LandingRefreshCompetitionMessageComposer -> type, amount, goal
         }
 
@@ -2534,17 +2543,17 @@ namespace Oblivion.Messages.Handlers
         }
 
 
-        internal Task Sit()
+        internal void Sit()
         {
-            if (Session?.GetHabbo()?.CurrentRoom == null) return Task.CompletedTask;
+            if (Session?.GetHabbo()?.CurrentRoom == null) return ;
 
             var user = Session.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(Session.GetHabbo().Id);
 
             if (user == null)
-                return Task.CompletedTask;
+                return ;
 
             if (user.Statusses.ContainsKey("lay") || user.IsLyingDown || user.RidingHorse || user.IsWalking)
-                return Task.CompletedTask;
+                return ;
 
             if (user.RotBody % 2 != 0)
                 user.RotBody--;
@@ -2557,7 +2566,7 @@ namespace Oblivion.Messages.Handlers
             }
 
             user.IsSitting = true;
-            return Task.CompletedTask;
+            return ;
         }
 
         public async Task Whisper()
