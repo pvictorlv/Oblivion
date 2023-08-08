@@ -333,11 +333,13 @@ namespace Oblivion.Messages.Handlers
             await GetResponse().AppendIntegerAsync(Session.GetHabbo().AchievementPoints);
             await SendResponse();
             await GetResponse().InitAsync(LibraryParser.OutgoingRequest("FigureSetIdsMessageComposer"));
-//            Session.GetHabbo().ClothingManager.Serialize(GetResponse());
-//            await SendResponse();
+            await Session.GetHabbo().ClothingManager.Serialize(GetResponse());
+            await SendResponse();
+            
             /*Response.Init(LibraryParser.OutgoingRequest("NewbieStatusMessageComposer"));
             Response.AppendInteger(0);// 2 = new - 1 = nothing - 0 = not new
             await SendResponse();*/
+            
             if (Oblivion.GetGame().GetTargetedOfferManager().CurrentOffer != null)
             {
                 Oblivion.GetGame().GetTargetedOfferManager().GenerateMessage(GetResponse());
@@ -349,6 +351,8 @@ namespace Oblivion.Messages.Handlers
                 var quest = Oblivion.GetGame().GetQuestManager().GetQuest(Session.GetHabbo().CurrentQuestId);
                 await Session.SendMessageAsync(QuestStartedComposer.Compose(Session, quest));
             }
+
+            await LoadSettings();
         }
 
 

@@ -98,12 +98,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
         ///     The stack multipler
         /// </summary>
         internal bool StackMultipler;
-
-        /// <summary>
-        ///     The subscriber only
-        /// </summary>
-        internal bool SubscriberOnly;
-
+        
         /// <summary>
         ///     The toggle height
         /// </summary>
@@ -167,7 +162,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             double height, bool stackable, bool walkable, bool isSeat, bool allowRecycle, bool allowTrade,
             bool allowMarketplaceSell, bool allowGift, bool allowInventoryStack,
             Interaction interactionType,
-            uint modes, string vendingIds, bool sub, bool stackMultiple, double[] toggle,
+            uint modes, string vendingIds, bool stackMultiple, double[] toggle,
             int flatId, bool isRare, int effectF, int effectM)
         {
             IsRare = isRare;
@@ -190,7 +185,6 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             InteractionType = interactionType;
             Modes = modes;
             VendingIds = new List<int>();
-            SubscriberOnly = sub;
             EffectM = effectM;
             EffectF = effectF;
             StackMultipler = stackMultiple;

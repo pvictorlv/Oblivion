@@ -415,7 +415,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             {
                 if (!fromRoom)
                 {
-                    using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         var groupId = (thGroup) <= 0 ? "NULL" : $"'{thGroup}'";
 
@@ -458,8 +458,8 @@ namespace Oblivion.HabboHotel.Users.Inventory
         {
             try
             {
-                var virtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(userItem.Id);
-                await SendNewItems(virtualId);
+                //var virtualId = Oblivion.GetGame().GetItemManager().GetVirtualId(userItem.Id);
+                //await SendNewItems(virtualId);
 
                 var id = userItem.Id;
 

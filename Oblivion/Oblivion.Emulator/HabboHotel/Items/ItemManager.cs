@@ -133,14 +133,13 @@ namespace Oblivion.HabboHotel.Items
                     double stackHeight;
                     uint.TryParse(dataRow["interaction_modes_count"].ToString(), out var modes);
                     var vendingIds = (string) dataRow["vending_ids"];
-                    var sub = Oblivion.EnumToBool(dataRow["subscriber"].ToString());
                     var effectF = (int) dataRow["effectF"];
                     var effectM = (int) dataRow["effectM"];
-                    var stackable = Convert.ToInt32(dataRow["can_stack"]) == 1;
-                    var allowRecycle = Convert.ToInt32(dataRow["allow_recycle"]) == 1;
-                    var allowTrade = Convert.ToInt32(dataRow["allow_trade"]) == 1;
-                    var allowMarketplaceSell = Convert.ToInt32(dataRow["allow_marketplace_sell"]) == 1;
-                    var allowGift = Convert.ToInt32(dataRow["allow_gift"]) == 1;
+                    var stackable = dataRow["can_stack"].ToString() == "1";
+                    var allowRecycle = dataRow["allow_recycle"].ToString() == "1";
+                    var allowTrade = dataRow["allow_trade"] == "1";
+                    var allowMarketplaceSell = dataRow["allow_marketplace_sell"] == "1";
+                    var allowGift = dataRow["allow_gift"] == "1";
                     var allowInventoryStack = dataRow["allow_inventory_stack"].ToString() == "1";
                     var typeFromString = InteractionTypes.GetTypeFromString((string) dataRow["interaction_type"]);
 
@@ -181,7 +180,7 @@ namespace Oblivion.HabboHotel.Items
                     // Add Item
                     var value = new Item(id, sprite, publicName, name, type, x, y, stackHeight, stackable, canWalk,
                         canSit, allowRecycle, allowTrade, allowMarketplaceSell, allowGift, allowInventoryStack,
-                        typeFromString, modes, vendingIds, sub, stackMultiple,
+                        typeFromString, modes, vendingIds, stackMultiple,
                         heights?.ToArray(), flatId, isRare, effectF, effectM);
 
                     _items.Add(id, value);

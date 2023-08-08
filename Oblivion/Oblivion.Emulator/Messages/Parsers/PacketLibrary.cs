@@ -1664,6 +1664,7 @@ namespace Oblivion.Messages.Parsers
                 Logging.HandleException(ex, "PacketLibrary.Parse");
             }
         }
+        
 
         /// <summary>
         /// Enters the inquired room.
@@ -5177,7 +5178,7 @@ namespace Oblivion.Messages.Parsers
                 Logging.HandleException(ex, "PacketLibrary.Parse");
             }
         }
-
+        
         /// <summary>
         /// Catalogues the page.
         /// </summary>

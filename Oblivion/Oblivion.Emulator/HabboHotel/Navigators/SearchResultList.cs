@@ -145,7 +145,11 @@ namespace Oblivion.HabboHotel.Navigators
                 case "my":
                     {
                         var i = 0;
-						if (session?.GetHabbo()?.Data?.Rooms == null) return false;
+                        if (session?.GetHabbo()?.Data?.Rooms?.Count <= 0)
+                        {
+                            message.AppendInteger(0);
+                            break;
+                        }
                         message.StartArray();
                         /* TODO CHECK */
                         foreach (var data in session.GetHabbo().Data.Rooms)
@@ -164,10 +168,10 @@ namespace Oblivion.HabboHotel.Navigators
                     }
                 case "favorites":
                     {
-                        if (session.GetHabbo().Data.FavouritedRooms == null)
+                        if (session.GetHabbo().Data.FavouritedRooms?.Count <= 0)
                         {
                             message.AppendInteger(0);
-                            return false;
+                            break;
                         }
 
                         var i = 0;

@@ -183,20 +183,20 @@ namespace Oblivion.Messages
         {
             try
             {
-                if (this.buffer != null)
+                if (this.buffer != null && this.buffer.ReadableBytes > 0)
                 {
                     int length = buffer.ReadShort();
+                    
+                    if (buffer.ReadableBytes < length)
+                    {
+                        return string.Empty;
+                    }
+                    
                     var bytes = GetBytes(length);
                     return encoding.GetString(bytes);
                 }
 
-                int stringLength = GetInteger16();
-                if (stringLength == 0 || _position + stringLength > _body.Length)
-                    return string.Empty;
-
-                string value = encoding.GetString(_body, _position, stringLength);
-                _position += stringLength;
-                return value;
+                return string.Empty;
             }
             catch (Exception ex)
             {

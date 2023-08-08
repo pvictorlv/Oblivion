@@ -637,14 +637,18 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         {
             try
             {
-                if (GetHabbo().Rank >= 4)
-                {
-                    var guideManager = Oblivion.GetGame().GetGuideManager();
-                    guideManager.RemoveGuide(this);
-                }
+                var _habbo = this._habbo;
 
                 if (_habbo != null)
+                {
+                    if (_habbo.Rank >= 4)
+                    {
+                        var guideManager = Oblivion.GetGame().GetGuideManager();
+                        guideManager.RemoveGuide(this);
+                    }
+
                     await _habbo.OnDisconnect("disconnect");
+                }
 
                 if (GetMessageHandler() != null)
                     GetMessageHandler().Destroy();
@@ -652,7 +656,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                 CurrentRoomUserId = -1;
                 _messageHandler?.Dispose();
                 _messageHandler = null;
-                _habbo = null;
+                this._habbo = null;
 
                 _connection?.Dispose();
 

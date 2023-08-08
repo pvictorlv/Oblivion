@@ -2587,21 +2587,37 @@ namespace Oblivion.Messages.Handlers
             var furniId = Oblivion.GetGame().GetItemManager().GetRealId(Request.GetUInteger());
             var room = Session.GetHabbo().CurrentRoom;
             var item = room?.GetRoomItemHandler().GetItem(furniId);
-            if (item?.GetBaseItem().InteractionType != Interaction.Clothing) return;
+
             var clothes = Oblivion.GetGame().GetClothingManager().GetClothesInFurni(item.GetBaseItem().Name);
             if (clothes == null) return;
-            /* if (Session.GetHabbo().ClothingManager.Clothing.Contains(clothes.ItemName)) return;
-             Session.GetHabbo().ClothingManager.Add(clothes.ItemName);
-             GetResponse().Init(LibraryParser.OutgoingRequest("FigureSetIdsMessageComposer"));
-             Session.GetHabbo().ClothingManager.Serialize(GetResponse());
-             await SendResponse();*/
-            await room.GetRoomItemHandler().RemoveFurniture(Session, item.Id, false);
-            await Session.SendStaticMessage(StaticMessage.FiguresetRedeemed);
+            
+            if (Session.GetHabbo().ClothingManager.Clothing.Contains(clothes.ItemName)) return;
+             await Session.GetHabbo().ClothingManager.Add(clothes.ItemName);
+             await GetResponse().InitAsync(LibraryParser.OutgoingRequest("FigureSetIdsMessageComposer"));
+             await Session.GetHabbo().ClothingManager.Serialize(GetResponse());
+             await SendResponse();
+             
+             await room.GetRoomItemHandler().RemoveFurniture(Session, item.Id, false);
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                await queryReactor.RunNoLockFastQueryAsync("DELETE FROM items_rooms WHERE id = '" + item.Id + "'");
+                await queryReactor.RunNoLockFastQueryAsync("DELETE FROM items_rooms WHERE id = '" + item.Id + "';");
             }
+
+             using (var message = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer")))
+             {
+                 message.AppendString(string.Empty);
+                 message.AppendInteger(4);
+                 message.AppendString("title");
+                 message.AppendString("${notification.figureset.redeemed.success.title}");
+                 message.AppendString("message");
+                 message.AppendString("${notification.figureset.redeemed.success.message}");
+                 message.AppendString("linkUrl");
+                 message.AppendString("event:avatareditor/open");
+                 message.AppendString("linkTitle");
+                 message.AppendString("${notification.figureset.redeemed.success.linkTitle}");
+                 await Session.SendMessage(message);
+             }
         }
 
         internal void GetUserLook()

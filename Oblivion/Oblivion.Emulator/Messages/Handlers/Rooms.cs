@@ -1662,7 +1662,7 @@ namespace Oblivion.Messages.Handlers
             var item = Request.GetUInteger();
 
             var page2 = Oblivion.GetGame().GetCatalog().GetPage(pageId);
-            var catalogItem = page2?.GetItem(item);
+            var catalogItem = page2?.Items.Values.FirstOrDefault();
 
             if (catalogItem == null) return;
 

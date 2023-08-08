@@ -23,6 +23,7 @@ namespace Oblivion.Messages.Handlers
             }
             await Session.SendMessageAsync(Oblivion.GetGame().GetNavigator().SerializePromotionCategories());
         }
+        
 
         /// <summary>
         /// Enters the inquired room.

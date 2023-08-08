@@ -41,19 +41,22 @@ namespace Oblivion.HabboHotel.Users.Authenticator
                 achievementPoints = 0,
                 dailyCompetitionVotes = 3;
             uint currentQuestId = 0, favId = 0;
-            try
+            if (mRow != null)
             {
-                respect = (int) mRow["respect"];
-                dailyRespectPoints = (int) mRow["daily_respect_points"];
-                dailyPetRespectPoints = (int) mRow["daily_pet_respect_points"];
-                currentQuestId = Convert.ToUInt32(mRow["quest_id"]);
-                achievementPoints = (int) mRow["achievement_score"];
-                favId = uint.Parse(mRow["favourite_group"].ToString());
-                dailyCompetitionVotes = (int) mRow["daily_competition_votes"];
-                lastTotem = Convert.ToInt32(mRow["last_totem"]);
-            }
-            catch (Exception)
-            {
+                try
+                {
+                    respect = (int)mRow["respect"];
+                    dailyRespectPoints = (int)mRow["daily_respect_points"];
+                    dailyPetRespectPoints = (int)mRow["daily_pet_respect_points"];
+                    currentQuestId = Convert.ToUInt32(mRow["quest_id"]);
+                    achievementPoints = (int)mRow["achievement_score"];
+                    favId = uint.Parse(mRow["favourite_group"].ToString());
+                    dailyCompetitionVotes = (int)mRow["daily_competition_votes"];
+                    lastTotem = Convert.ToInt32(mRow["last_totem"]);
+                }
+                catch (Exception)
+                {
+                }
             }
 
             //AQUI

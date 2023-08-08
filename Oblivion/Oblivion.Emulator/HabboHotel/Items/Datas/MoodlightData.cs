@@ -178,10 +178,18 @@ namespace Oblivion.HabboHotel.Items.Datas
         /// <returns>MoodlightPreset.</returns>
         internal MoodlightPreset GetPreset(int i)
         {
+            i--;
+
+            if (Presets != null)
             {
-                i--;
-                return Presets[i] ?? new MoodlightPreset("#000000", 255, false);
+                var preset = Presets[i];
+                if (preset != null)
+                {
+                    return preset;
+                }
             }
+
+            return new MoodlightPreset("#000000", 255, false);
         }
 
         /// <summary>

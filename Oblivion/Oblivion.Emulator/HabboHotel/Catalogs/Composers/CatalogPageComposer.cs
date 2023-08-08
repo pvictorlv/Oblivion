@@ -144,7 +144,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
                 message.AppendString(str);
             }
 
-            if (!page.Layout.Contains("frontpage") && !page.Layout.Equals("recycler"))
+            if (!page.Layout.Contains("frontpage") && !page.Layout.Equals("recycler") && !page.Layout.Equals("roomads"))
             {
                 message.AppendInteger(page.Items.Count);
                 foreach (CatalogItem item in page.Items.Values)

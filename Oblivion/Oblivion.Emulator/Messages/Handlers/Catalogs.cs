@@ -31,6 +31,8 @@ namespace Oblivion.Messages.Handlers
             
         }
 
+        
+
         /// <summary>
         ///     Catalogues the index.
         /// </summary>
@@ -109,9 +111,9 @@ Request.GetString()
         {
             if (Session?.GetHabbo() == null)
                 return;
-            Response.Init(LibraryParser.OutgoingRequest("ReloadEcotronMessageComposer"));
-            Response.AppendInteger(1);
-            Response.AppendInteger(0);
+            await Response.InitAsync(LibraryParser.OutgoingRequest("ReloadEcotronMessageComposer"));
+            await Response.AppendIntegerAsync(1);
+            await Response.AppendIntegerAsync(0);
             await SendResponse();
         }
 

@@ -322,7 +322,7 @@ namespace Oblivion.HabboHotel.Support
                     serverMessage.AppendInteger(id);
                     serverMessage.AppendInteger(0);
 
-                    serverMessage.AppendString($"E-Mail:         {row["mail"]}");
+                    serverMessage.AppendString($"E-Mail:         {row["email"]}");
                     serverMessage.AppendString($"Rank ID:        {rank}");
                 }
             }

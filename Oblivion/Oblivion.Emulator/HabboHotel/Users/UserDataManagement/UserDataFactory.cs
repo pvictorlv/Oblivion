@@ -105,7 +105,10 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
                 queryReactor.SetQuery($"SELECT * FROM users_stats WHERE id = {userId}");
                 statsTable = queryReactor.GetRow();
-
+                if (statsTable == null)
+                {
+                    await queryReactor.RunFastQueryAsync($"INSERT INTO users_stats (id) VALUES ({userId})");
+                }
                
 
                 queryReactor.SetQuery("SELECT * FROM rooms_data WHERE owner = @name LIMIT 150");

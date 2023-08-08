@@ -31,7 +31,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
                 {
                     adapter.SetQuery(
-                        "SELECT username, rank, id, credits, activity_points, diamonds, mail FROM users WHERE username=@user LIMIT 1");
+                        "SELECT username, rank, id, credits, activity_points, diamonds, email FROM users WHERE username=@user LIMIT 1");
                     adapter.AddParameter("user", userName);
                     var row = adapter.GetRow();
 
@@ -41,14 +41,14 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                         return true;
                     }
                     await session.SendNotif(string.Format((Oblivion.GetLanguage().GetVar("user_info_all")), userName, row["id"],
-                        row["rank"], row["credits"], row["activity_points"], row["diamonds"], row["mail"]));
+                        row["rank"], row["credits"], row["activity_points"], row["diamonds"], row["email"]));
                 }
                 return true;
             }
             using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
                 adapter.SetQuery(
-                    "SELECT mail FROM users WHERE username=@user LIMIT 1");
+                    "SELECT email FROM users WHERE username=@user LIMIT 1");
                 adapter.AddParameter("user", userName);
                 var row = adapter.GetRow();
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using Oblivion.Collections;
 using Oblivion.HabboHotel.Achievements.Interfaces;
 using Oblivion.HabboHotel.Users.Relationships;
@@ -137,9 +138,9 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             OpenedGifts = openedGifts;
         }
 
-        public void LoadRelations()
+        public async Task LoadRelations()
         {
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor =  await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery("SELECT * FROM users_relationships WHERE user_id=@id");
                 queryReactor.AddParameter("id", UserId);

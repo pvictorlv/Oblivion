@@ -1071,7 +1071,7 @@ namespace Oblivion.Messages.Handlers
         public async Task StartSeasonalQuest()
         {
             RoomData roomData;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 var quest = Oblivion.GetGame().GetQuestManager().GetQuest(Request.GetUInteger());
                 if (quest == null)

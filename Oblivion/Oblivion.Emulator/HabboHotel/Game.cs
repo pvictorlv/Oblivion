@@ -274,8 +274,8 @@ namespace Oblivion.HabboHotel
 
                 Cache.StartProcess();
 
-                //Progress(bar, wait, end, "Loading AntiMutant...");
-                //this.AntiMutant = new AntiMutant();
+                Progress(bar, wait, end, "Loading AntiMutant...");
+                this.AntiMutant = new AntiMutant();
 
                 Console.Write("\r".PadLeft(Console.WindowWidth - Console.CursorLeft - 1));
             }
@@ -332,10 +332,12 @@ namespace Oblivion.HabboHotel
                 Oblivion.GetUnixTimeStamp() + "' LIMIT 1;");
         }
 
-        /*internal AntiMutant GetAntiMutant()
+        internal AntiMutant GetAntiMutant()
         {
-        //return this.AntiMutant;
-        }*/
+            return this.AntiMutant;
+        }
+
+        public AntiMutant AntiMutant { get; set; }
 
         /// <summary>
         ///     Gets the client manager.
@@ -535,7 +537,6 @@ namespace Oblivion.HabboHotel
 
                 Thread.Sleep(GameLoopSleepTimeExt);
             }
-            
         }
     }
 }
