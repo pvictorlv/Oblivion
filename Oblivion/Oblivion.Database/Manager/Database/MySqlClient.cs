@@ -70,6 +70,11 @@ namespace Oblivion.Database.Manager.Database
             return _info;
         }
 
+        public MySqlConnection GetConnection()
+        {
+            return _mySqlConnection;
+        }
+
         public MySqlTransaction GetTransactionMySql()
         {
             return _mySqlConnection.BeginTransaction();

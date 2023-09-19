@@ -21,6 +21,12 @@ namespace Oblivion.Database
             _adapter = new NormalQueryReactor(this);
         }
 
+
+        public MySqlConnection GetConnection()
+        {
+            return _mysqlConnection;
+        }
+
         public void Open()
         {
             if (_mysqlConnection.State == ConnectionState.Closed)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using Dapper;
 
 namespace Oblivion.Configuration
 {
@@ -22,11 +23,13 @@ namespace Oblivion.Configuration
         {
             Texts = new Dictionary<string, string>();
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = Oblivion.GetDatabaseManager().GetConnection())
             {
-                queryReactor.SetQuery($"SELECT * FROM server_langs WHERE lang = '{language}' ORDER BY id DESC");
-
-                var table = queryReactor.GetTable();
+                var reader =
+                    queryReactor.ExecuteReader(
+                        $"SELECT * FROM server_langs WHERE lang = '{language}' ORDER BY id DESC");
+                
+                var table = reader.GetSchemaTable();
 
                 if (table == null)
                     return;

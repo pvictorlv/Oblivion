@@ -18,6 +18,7 @@ namespace Oblivion.Database.Manager.Database.Session_Details.Interfaces
         IQueryAdapter GetQueryReactor();
 
         MySqlCommand CreateNewCommandMySql();
+        MySqlConnection GetConnection();
         
 
         MySqlTransaction GetTransactionMySql();

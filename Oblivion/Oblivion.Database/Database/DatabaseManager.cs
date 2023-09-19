@@ -40,6 +40,7 @@ namespace Oblivion.Database
             {
                 IDatabaseClient databaseClient = new DatabaseConnection(_connectionStr);
                 databaseClient.Connect();
+                
                 return databaseClient.GetQueryReactor();
             }
             catch (Exception e)
@@ -47,6 +48,11 @@ namespace Oblivion.Database
                 Console.WriteLine(e);
                 return null;
             }
+        }
+
+        public MySqlConnection GetConnection()
+        {
+            return new MySqlConnection(_connectionStr);
         }
 
         public async Task<IQueryAdapter> GetQueryReactorAsync()
