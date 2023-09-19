@@ -227,14 +227,14 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         private int _sleepingTime = 0;
 
-        public void OnCycle()
+        public async void OnCycle()
         {
             try
             {
                 if (_room == null)
                     return;
 
-                if (_wiredItems == null || _wiredItems.Count <= 0)
+                if (_wiredItems is not { Count: > 0 })
                 {
                     _sleepingTime++;
                     if (_sleepingTime >= 600)
@@ -260,7 +260,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                         if (cycle.TickCount <= 0)
                         {
                             cycle.TickCount = item.Delay / 1000;
-                            cycle.OnCycle();
+                            await cycle.OnCycle();
                         }
                         else
                             cycle.TickCount--;
