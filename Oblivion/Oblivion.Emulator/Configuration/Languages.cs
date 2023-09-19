@@ -27,7 +27,7 @@ namespace Oblivion.Configuration
             {
                 var table =
                     queryReactor.Query(
-                        $"SELECT * FROM server_langs WHERE lang = '{language}' ORDER BY id DESC");
+                        "SELECT * FROM server_langs WHERE lang = @language ORDER BY id DESC", new { language });
                 
 
                 if (table == null)

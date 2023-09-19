@@ -40,6 +40,11 @@ namespace Oblivion.Connection.WebSocket
                     {
                         case 1:
                         {
+                            //todo: LOGIN with USER and PASSWORD
+                            break;
+                        }
+                        case 2:
+                        {
                             uint userId;
                             if (msg.Length < 2) return;
 
