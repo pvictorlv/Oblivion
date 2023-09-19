@@ -25,19 +25,18 @@ namespace Oblivion.Configuration
 
             using (var queryReactor = Oblivion.GetDatabaseManager().GetConnection())
             {
-                var reader =
-                    queryReactor.ExecuteReader(
+                var table =
+                    queryReactor.Query(
                         $"SELECT * FROM server_langs WHERE lang = '{language}' ORDER BY id DESC");
                 
-                var table = reader.GetSchemaTable();
 
                 if (table == null)
                     return;
 
-                foreach (DataRow dataRow in table.Rows)
+                foreach (var dataRow in table)
                 {
-                    var name = dataRow["name"].ToString();
-                    var text = dataRow["text"].ToString();
+                    var name = dataRow.name.ToString();
+                    var text = dataRow.text.ToString();
                     Texts.Add(name, text);
                 }
             }
