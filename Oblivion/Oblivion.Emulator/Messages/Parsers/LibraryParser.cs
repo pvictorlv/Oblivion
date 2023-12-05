@@ -123,8 +123,8 @@ namespace Oblivion.Messages.Parsers
         internal static void RegisterIncoming()
         {
             CountReleases = 0;
-
-            var filePaths = Directory.GetFiles($"{Environment.CurrentDirectory}\\Packets", "*.incoming");
+            
+            var filePaths = Directory.GetFiles(Path.Combine(Environment.CurrentDirectory, "Packets"), "*.incoming");
 
             /* TODO CHECK */
             foreach (var currentFile in filePaths)
@@ -170,8 +170,8 @@ namespace Oblivion.Messages.Parsers
 
         internal static void RegisterConfig()
         {
-            var filePaths = Directory.GetFiles($"{Environment.CurrentDirectory}\\Packets", "*.inf");
-            /* TODO CHECK */ foreach (var fields in filePaths.Select(File.ReadAllLines).SelectMany(fileContents => fileContents.Where(line => !string.IsNullOrEmpty(line) && !line.StartsWith("[")).Select(line => line.Split('='))))
+            var filePaths = Directory.GetFiles(Path.Combine(Environment.CurrentDirectory, "Packets"), "*.inf");
+            foreach (var fields in filePaths.Select(File.ReadAllLines).SelectMany(fileContents => fileContents.Where(line => !string.IsNullOrEmpty(line) && !line.StartsWith("[")).Select(line => line.Split('='))))
             {
                 if (fields[1].Contains('/'))
                     fields[1] = fields[1].Split('/')[0];
@@ -198,8 +198,8 @@ namespace Oblivion.Messages.Parsers
             }
 
             _registeredOutoings = new List<uint>();
-
-            var filePaths = Directory.GetFiles($"{Environment.CurrentDirectory}\\Packets", "*.outgoing");
+            
+            var filePaths = Directory.GetFiles(Path.Combine(Environment.CurrentDirectory, "Packets"), "*.outgoing");
             /* TODO CHECK */ foreach (var fields in filePaths.Select(File.ReadAllLines).SelectMany(fileContents => fileContents.Where(line => !string.IsNullOrEmpty(line) && !line.StartsWith("[")).Select(line => line.Replace(" ", string.Empty).Split('='))))
             {
                 if (fields[1].Contains('/'))
@@ -239,8 +239,8 @@ namespace Oblivion.Messages.Parsers
 
         internal static void RegisterLibrary()
         {
-            var filePaths = Directory.GetFiles($"{Environment.CurrentDirectory}\\Packets", "*.library");
-            /* TODO CHECK */ foreach (var fields in filePaths.Select(File.ReadAllLines).SelectMany(fileContents => fileContents.Select(line => line.Split('='))))
+            var filePaths = Directory.GetFiles(Path.Combine(Environment.CurrentDirectory, "Packets"), "*.library");
+            foreach (var fields in filePaths.Select(File.ReadAllLines).SelectMany(fileContents => fileContents.Select(line => line.Split('='))))
             {
                 if (fields[1].Contains('/'))
                     fields[1] = fields[1].Split('/')[0];
