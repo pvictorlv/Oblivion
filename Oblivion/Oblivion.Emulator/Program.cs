@@ -31,11 +31,15 @@ namespace Oblivion
         /// <param name="args">The arguments.</param>
         public static async Task Main(string[] args)
         {
-            IntPtr hWnd = Process.GetCurrentProcess().MainWindowHandle;
-            SetWindowPos(hWnd,
-                new IntPtr(HWND_TOPMOST),
-                0, 0, 0, 0,
-                SWP_NOMOVE | SWP_NOSIZE);
+            // if WINDOWS
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                IntPtr hWnd = Process.GetCurrentProcess().MainWindowHandle;
+                SetWindowPos(hWnd,
+                    new IntPtr(HWND_TOPMOST),
+                    0, 0, 0, 0,
+                    SWP_NOMOVE | SWP_NOSIZE);
+            }
             
             await StartEverything();
 
@@ -51,7 +55,11 @@ namespace Oblivion
         private static async Task StartEverything()
         {
             StartConsoleWindow();
-            DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), ScClose, 0);
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), ScClose, 0);
+            }
+
             await InitEnvironment();
         }
 

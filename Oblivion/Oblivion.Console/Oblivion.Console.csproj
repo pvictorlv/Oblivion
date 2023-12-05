@@ -53,7 +53,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>if not exist "$(SolutionDir)\Oblivion\bin\$(ConfigurationName)\$(PlatformName)\Packets\" xcopy "$(SolutionDir)\Oblivion\Oblivion.Emulator\Building\*.*" "$(SolutionDir)\Oblivion\bin\$(ConfigurationName)\$(PlatformName)\" /E /Y /C</PreBuildEvent>
+    <PreBuildEvent Condition="'$(OS)' == 'Windows_NT'">if not exist "$(SolutionDir)\Oblivion\bin\$(ConfigurationName)\$(PlatformName)\Packets\" xcopy "$(SolutionDir)\Oblivion\Oblivion.Emulator\Building\*.*" "$(SolutionDir)\Oblivion\bin\$(ConfigurationName)\$(PlatformName)\" /E /Y /C</PreBuildEvent>
+    <PreBuildEvent Condition="'$(OSTYPE)' == 'darwin'">mkdir -p "$(SolutionDir)/Oblivion/bin/$(ConfigurationName)/$(PlatformName)/Packets/"; cp -R "$(SolutionDir)/Oblivion/Oblivion.Emulator/Building/." "$(SolutionDir)/Oblivion/bin/$(ConfigurationName)/$(PlatformName)/"</PreBuildEvent>
+    <PreBuildEvent Condition="'$(OSTYPE)' == 'linux-gnu'">mkdir -p "$(SolutionDir)/Oblivion/bin/$(ConfigurationName)/$(PlatformName)/Packets/"; cp -R "$(SolutionDir)/Oblivion/Oblivion.Emulator/Building/." "$(SolutionDir)/Oblivion/bin/$(ConfigurationName)/$(PlatformName)/"</PreBuildEvent>
   </PropertyGroup>
 	<PropertyGroup>
 		<PostBuildEvent></PostBuildEvent>
