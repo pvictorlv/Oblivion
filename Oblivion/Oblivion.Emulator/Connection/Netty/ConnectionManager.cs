@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
@@ -92,8 +93,8 @@ public class ConnectionManager<T> : IServer<T>
                      */
                     MessageHandler<T> messageHandler = new MessageHandler<T>(channel, OnMessageReceived,
                         OnConnectionClosed, OnConnectionOpened);
-                    channel.Pipeline.AddFirst(flashHandler);
-                    channel.Pipeline.AddLast(headerDecoder, messageHandler);
+                    channel.Pipeline.AddFirst(new FlashPolicyHandler(FlashPolicy));
+                    channel.Pipeline.AddLast(new HeaderDecoder(), messageHandler);
                 }));
 
             ServerChannel = await server.BindAsync(new IPEndPoint(IPAddress.Any, Settings.Port));

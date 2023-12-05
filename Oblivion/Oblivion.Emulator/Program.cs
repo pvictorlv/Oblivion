@@ -66,7 +66,6 @@ namespace Oblivion
         public static void StartConsoleWindow()
         {
 //            BringWindowToTop();
-            Console.BackgroundColor = ConsoleColor.Black;
             Console.Clear();
 //            Console.SetWindowSize(150, 50);
             Console.SetCursorPosition(0, 0);
