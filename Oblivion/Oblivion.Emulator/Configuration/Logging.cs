@@ -14,8 +14,8 @@ namespace Oblivion.Configuration
         /// <value><c>true</c> if [disabled state]; otherwise, <c>false</c>.</value>
         internal static bool DisabledState
         {
-            get { return Writer.Writer.DisabledState; }
-            set { Writer.Writer.DisabledState = value; }
+            get { return Writer.Writer.DisableWriter; }
+            set { Writer.Writer.DisableWriter = value; }
         }
 
         /// <summary>
