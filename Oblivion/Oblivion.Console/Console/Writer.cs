@@ -1,150 +1,153 @@
-﻿#region
-
-using System;
+﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
-
-#endregion
+using System.Threading;
+using Spectre.Console;
+using Color = Spectre.Console.Color;
 
 namespace Oblivion.Writer
 {
-    public class Writer
+    public static class Writer
     {
-        public static bool DisabledState { get; set; }
+        public static bool DisableWriter { get; set; }
 
-        public static void WriteLine(string line, ConsoleColor colour = ConsoleColor.Yellow)
+        private static void WriteLine(string line, Color color = default, [CallerFilePath] string filePath = "", [CallerMemberName] string callerMemberName = "", bool error = false)
         {
-            if (DisabledState)
+            if (color == default) color = Color.DarkCyan;
+            if (DisableWriter)
                 return;
+// Initialize StringBuilder
+            var builder = new StringBuilder();
 
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.Write("[" + DateTime.Now + "] ");
-            Console.Write("[");
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
-            Console.Write("Oblivion Errors Manager");
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.Write("] ");
+            // Append initial part with clock emoji
+            builder.Append($"[blue]{DateTime.Now:HH:m:s.zzz}[/] [{(error ? "red" : "cyan")} dim]{(error ? "Error" : "Info")} [/]");
 
-            Console.Write(">> ");
-            Console.ForegroundColor = colour;
-            Console.WriteLine(line);
-            Console.ForegroundColor = ConsoleColor.DarkGray;
+            // Append final part with information emoji
+            
+            if (color == default) color = Color.DarkCyan;
+            
+            builder.Append($"[cyan dim] - [/][{color.ToMarkup()}]{line.EscapeMarkup()}[/]");
+            
+            AnsiConsole.MarkupLine(builder.ToString());
         }
 
-        public static void LogException(string logText)
+        [Obsolete("Use HandleException(Exception, string?) instead.")]
+        public static void LogException(string logText, Exception? exception = null, [CallerFilePath] string filePath = "", [CallerMemberName] string callerMemberName = "")
         {
-            WriteToFile("Logs\\ExceptionsLog.txt", logText + "\r\n\r\n");
-            WriteLine("An exception was registered.", ConsoleColor.Red);
+            WriteToFile(@"Logs\ExceptionsLog.txt", logText);
+            WriteLine($"An exception was registered: {logText.EscapeMarkup()}", Color.Red, filePath, callerMemberName, true);
+            if (exception is {} ex) HandleException(ex, filePath, callerMemberName);
         }
 
-        public static void LogCriticalException(string logText)
+        /// <summary>
+        /// Handles an exception by logging it to a file and displaying its details in a table in the console.
+        /// </summary>
+        /// <param name="exception">The exception to handle.</param>
+        /// <param name="location">The location where the exception occurred. If null, "unknown location" is used.</param>
+        public static void HandleException(Exception exception, [CallerFilePath] string filePath = "", [CallerMemberName] string memberName = "")
         {
-            WriteToFile("Logs\\CriticalExceptionsLog.txt", logText + "\r\n\r\n");
-            WriteLine("A critical exception was registered.", ConsoleColor.Red);
+            // Create a StringBuilder to build the log message
+            var stringBuilder = new StringBuilder();
+
+            var location = $"{filePath.Split(Path.PathSeparator).Last().Replace(".cs", "")} on {memberName}";
+            // Append the log message to the StringBuilder
+            stringBuilder.AppendLine(
+                $"Exception logged {DateTime.Now} in {location ?? "unknown location"}: {exception}");
+
+            // Write the log message to the ExceptionsLog.txt file
+            WriteToFile(@"Logs\ExceptionsLog.txt", stringBuilder.ToString());
+            
+            // write upmost inner exception to exception with AnsiConsole
+            AnsiConsole.WriteException(exception, ExceptionFormats.ShortenEverything);
         }
 
-        public static void LogCacheError(string logText)
+
+        public static void LogCriticalException(string logText, Exception? exception = null, [CallerFilePath] string filePath = "", [CallerMemberName] string callerMemberName = "")
         {
-            WriteToFile("Logs\\ErrorLog.txt", logText + "\r\n\r\n");
-            WriteLine("A caching error was registered.", ConsoleColor.Red);
+            WriteToFile(@"Logs\CriticalExceptionsLog.txt", logText);
+            WriteLine($"A critical exception was registered: {logText.EscapeMarkup()}", default, filePath, callerMemberName, true);
+            if (exception is {} ex) HandleException(ex, filePath, callerMemberName);
+        }
+
+        public static void LogCacheError(string logText, Exception? exception = null, [CallerFilePath] string filePath = "", [CallerMemberName] string callerMemberName = "")
+        {
+            WriteToFile(@"Logs\CacheErrorsLog.txt", logText);
+            WriteLine($"A caching error was registered: {logText.EscapeMarkup()}", default, filePath, callerMemberName, true);
+            if (exception is {} ex) HandleException(ex, filePath, callerMemberName);
         }
 
         public static void LogMessage(string logText, bool output = true)
         {
-            WriteToFile("Logs\\CommonLog.txt", logText + "\r\n\r\n");
+            WriteToFile(@"Logs\CommonLog.txt", logText);
 
             if (output)
-                Console.WriteLine(logText);
+                AnsiConsole.MarkupLine(logText.EscapeMarkup());
         }
 
-        public static void LogDDOS(string logText)
+        public static void LogThreadException(Exception exceptionText, string threadName, [CallerFilePath] string filePath = "", [CallerMemberName] string callerMemberName = "")
+            => LogThreadException(exceptionText.ToString(), threadName, exceptionText, filePath, callerMemberName);
+        public static void LogThreadException(string exceptionText, string threadName,Exception? exception = null, [CallerFilePath] string filePath = "", [CallerMemberName] string callerMemberName = "")
         {
-            WriteToFile("Logs\\DDosLog.txt", logText + "\r\n\r\n");
-            WriteLine(logText, ConsoleColor.Red);
+            WriteToFile(@"Logs\ThreadErrorsLog.txt", $"Error en thread {threadName}: \r\n{exceptionText}");
+            WriteLine($"An thread error was registered, in thread: {threadName.EscapeMarkup()}", Color.Red, filePath, callerMemberName, true);
+            if (exception is {} ex) HandleException(ex, filePath, callerMemberName);
         }
 
-        public static void LogThreadException(string exception, string threadName)
+        public static void LogQueryError(Exception exceptionText, string query, [CallerFilePath] string filePath = "", [CallerMemberName] string callerMemberName = "")
+            => LogQueryError(exceptionText.ToString(), query, exceptionText, filePath, callerMemberName);
+        public static void LogQueryError(string exceptionText, string query, Exception? exception = null, [CallerFilePath] string filePath = "", [CallerMemberName] string callerMemberName = "")
         {
-            WriteToFile("Logs\\ErrorLog.txt",
-                string.Concat("Error en thread ", threadName, ": \r\n", exception, "\r\n\r\n"));
-            WriteLine("An thread error was registered, in thread: " + threadName, ConsoleColor.Red);
+            WriteToFile(@"Logs\MySQLErrors.txt", $"The query error was in: \r\n{query}\r\n{exceptionText}");
+            WriteLine("A MySQL exception was registered.", Color.Red, filePath, callerMemberName, true);
+            if (exception is {} ex) HandleException(ex, filePath, callerMemberName);
         }
 
-        public static void LogQueryError(Exception exception, string query)
+        public static void LogPacketException(string packet, Exception exceptionText, [CallerFilePath] string filePath = "", [CallerMemberName] string callerMemberName = "")
+            => LogPacketException(packet, exceptionText.ToString(), exceptionText, filePath, callerMemberName);
+        public static void LogPacketException(string packet, string exceptionText, Exception? exception = null, [CallerFilePath] string filePath = "", [CallerMemberName] string callerMemberName = "")
         {
-            WriteToFile("Logs\\MySQLErrors.txt",
-                string.Concat("The query error was in: \r\n", query, "\r\n", exception, "\r\n\r\n"));
-            WriteLine("A MySQL exception was registered.", ConsoleColor.Red);
-        }
-
-        public static void LogPacketException(string packet, string exception)
-        {
-            WriteToFile("Logs\\PacketLogError.txt", "Error in packet " + packet + ": \r\n" + exception + "\r\n\r\n");
-            WriteLine("A packet exception was registered.", ConsoleColor.Red);
-        }
-
-        public static void HandleException(Exception pException, string pLocation)
-        {
-            var stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine(
-                string.Concat("Exception logged ", DateTime.Now.ToString(), " in ", pLocation, ":"));
-            stringBuilder.AppendLine(pException.ToString());
-            if (pException.InnerException != null)
-            {
-                stringBuilder.AppendLine("Inner exception:");
-                stringBuilder.AppendLine(pException.InnerException.ToString());
-            }
-            if (pException.HelpLink != null)
-            {
-                stringBuilder.AppendLine("Help link:");
-                stringBuilder.AppendLine(pException.HelpLink);
-            }
-            if (pException.Source != null)
-            {
-                stringBuilder.AppendLine("Source:");
-                stringBuilder.AppendLine(pException.Source);
-            }
-            stringBuilder.AppendLine("Data:");
-            foreach (DictionaryEntry dictionaryEntry in pException.Data)
-                stringBuilder.AppendLine(
-                    string.Concat("  Key: ", dictionaryEntry.Key, "Value: ", dictionaryEntry.Value));
-            stringBuilder.AppendLine("Message:");
-            stringBuilder.AppendLine(pException.Message);
-            if (pException.StackTrace != null)
-            {
-                stringBuilder.AppendLine("Stack trace:");
-                stringBuilder.AppendLine(pException.StackTrace);
-            }
-            stringBuilder.AppendLine();
-            stringBuilder.AppendLine();
-            LogException(stringBuilder.ToString());
+            WriteToFile(@"Logs\PacketLogError.txt", $"Error in packet {packet}: \r\n{exceptionText}");
+            WriteLine("A packet exception was registered.", Color.Red, filePath, callerMemberName, true);
+            if (exception is {} ex) HandleException(ex, filePath, callerMemberName);
         }
 
         public static void DisablePrimaryWriting(bool clearConsole)
         {
-            DisabledState = true;
-            /*
+            DisableWriter = true;
             if (clearConsole)
-                Console.Clear();
-            */
+                AnsiConsole.Clear();
         }
 
         public static void LogShutdown(StringBuilder builder)
         {
-            WriteToFile("Logs\\shutdownlog.txt", builder.ToString());
+            WriteToFile(@"Logs\shutdownlog.txt", builder.ToString());
         }
 
+        private static readonly Dictionary<string, SemaphoreSlim> FileLocks = new();
         private static void WriteToFile(string path, string content)
         {
             try
             {
-                if (DisabledState)
-                    return;
-                File.AppendAllText(path, Environment.NewLine + content, Encoding.ASCII);
+                if (DisableWriter) return;
+                if (!FileLocks.ContainsKey(path))
+                    FileLocks.Add(path, new SemaphoreSlim(1,1));
+                FileLocks[path].Wait();
+                
+                using var writer = new StreamWriter(path, true, Encoding.ASCII);
+                writer.WriteLine(content);
+                writer.Flush();
+                writer.Close();
+                FileLocks[path].Release();
             }
-            catch
+            catch (Exception ex)
             {
+                HandleException(ex);
             }
         }
     }

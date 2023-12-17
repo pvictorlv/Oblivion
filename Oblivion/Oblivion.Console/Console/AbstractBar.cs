@@ -15,7 +15,9 @@ namespace Oblivion
         public void PrintMessage(string msg)
         {
             Console.Write("  {0}", msg);
-            Console.Write("\r".PadLeft(Console.WindowWidth - Console.CursorLeft - 1));
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                Console.Write("\r".PadLeft(Console.WindowWidth - Console.CursorLeft - 1));
+            else Console.WriteLine();
         }
 
         public abstract void Step();

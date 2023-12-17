@@ -32,7 +32,7 @@ namespace Oblivion.HabboHotel.Misc
         /// </summary>
         /// <param name="source">The source.</param>
         /// <param name="e">The <see cref="ElapsedEventArgs" /> instance containing the event data.</param>
-        internal async void GiveCoins(object source, ElapsedEventArgs e)
+        private async void GiveCoins(object source, ElapsedEventArgs e)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace Oblivion.HabboHotel.Misc
             }
             catch (Exception ex)
             {
-                Writer.Writer.LogException(ex.ToString());
+                Writer.Writer.HandleException(ex);
             }
         }
 

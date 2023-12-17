@@ -188,7 +188,7 @@ namespace Oblivion.HabboHotel.Items
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);
-                    Out.WriteLine(
+                    Out.WriteLineSimple(
                         $"Could not load item #{Convert.ToUInt32(dataRow[0])}, please verify the data is okay.",
                         "Oblivion.Items", ConsoleColor.DarkRed);
                 }

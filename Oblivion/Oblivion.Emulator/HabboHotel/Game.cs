@@ -27,6 +27,7 @@ using Oblivion.Manager;
 using Oblivion.Messages.Enums;
 using Oblivion.Security;
 using Oblivion.Util;
+using Spectre.Console;
 
 namespace Oblivion.HabboHotel
 {
@@ -172,116 +173,46 @@ namespace Oblivion.HabboHotel
 
         internal async Task Init()
         {
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync();
+            var status = AnsiConsole.Status(); // Changed from Progress to Status
+            status.Spinner(Spinner.Known.CircleQuarters);
+            // Define all tasks
+            var tasks = new (string Description, Func<Task> Action)[]
             {
-                AbstractBar bar = new AnimatedBar();
-                const int wait = 15, end = 5;
+                ("Cleaning dirty in database...", () => { DatabaseCleanup(queryReactor); return Task.CompletedTask; }),
+                ("Loading Bans...", async () => { _banManager = new ModerationBanManager(); await _banManager.LoadBans(queryReactor); }),
+                ("Loading Roles...", () => { _roleManager = new RoleManager(); _roleManager.LoadRights(queryReactor); return Task.CompletedTask; }),
+                ("Loading Items...", async () => { _itemManager = new ItemManager(); await _itemManager.LoadItems(queryReactor, 0); }),
+                ("Loading Catalog...", () => { _catalog = new CatalogManager(); return Task.CompletedTask; }),
+                ("Loading Targeted Offers...", () => { _targetedOfferManager = new TargetedOfferManager(); return Task.CompletedTask; }),
+                ("Loading Clothing...", () => { _clothingManager = new ClothingManager(); _clothingManager.Initialize(queryReactor); return Task.CompletedTask; }),
+                ("Loading Rooms...", () => { _roomManager = new RoomManager(); return Task.CompletedTask; }),
+                ("Loading NavigatorManager...", () => { _navigatorManager = new NavigatorManager(); _navigatorManager.Initialize(queryReactor, out _); return Task.CompletedTask; }),
+                ("Loading Groups...", () => { _groupManager = new GroupManager(); _groupManager.InitGroups(); return Task.CompletedTask; }),
+                ("Loading PixelManager...", () => { _pixelManager = new CoinsManager(); return Task.CompletedTask; }),
+                ("Loading HotelView...", () => { _hotelView = new HotelView(); return Task.CompletedTask; }),
+                ("Loading Hall Of Fame...", () => { _hallOfFame = new HallOfFame(); return Task.CompletedTask; }),
+                ("Loading ModerationTool...", async () => { _moderationTool = new ModerationTool(); await _moderationTool.LoadMessagePresets(queryReactor); }),
+                ("Loading Quests...", () => { _questManager = new QuestManager(); _questManager.Initialize(queryReactor); return Task.CompletedTask; }),
+                ("Loading Events...", () => { _events = new RoomEvents(); return Task.CompletedTask; }),
+                ("Loading Talents...", () => { _talentManager = new TalentManager(); _talentManager.Initialize(queryReactor); return Task.CompletedTask; }),
+                ("Loading Pinata...", async () => { _pinataHandler = new PinataHandler(); await _pinataHandler.Initialize(queryReactor); }),
+                ("Loading Random Rewards...", () => { _randomRewardHandler = new RandomRewardFurniHandler(); return Task.CompletedTask; }),
+                ("Loading Polls...", async () => { _pollManager = new PollManager(); await _pollManager.Init(queryReactor, 0); }),
+                ("Loading Achievements...", async () => { _achievementManager = new AchievementManager(); await _achievementManager.LoadAchievements(queryReactor); }),
+                ("Loading StaticMessages ...", () => { StaticMessagesManager.Load(); return Task.CompletedTask; }),
+                ("Loading Guides ...", () => { _guideManager = new GuideManager(); return Task.CompletedTask; }),
+                ("Loading and Registering Commands...", () => { CommandsManager.Register(); return Task.CompletedTask; }),
+                ("Loading AntiMutant...", () => { this.AntiMutant = new AntiMutant(); return Task.CompletedTask; })
+            };
 
-                Progress(bar, wait, end, "Cleaning dirty in database...");
-                DatabaseCleanup(queryReactor);
-
-                Progress(bar, wait, end, "Loading Bans...");
-                _banManager = new ModerationBanManager();
-                await _banManager.LoadBans(queryReactor);
-
-                Progress(bar, wait, end, "Loading Roles...");
-                _roleManager = new RoleManager();
-                _roleManager.LoadRights(queryReactor);
-
-                Progress(bar, wait, end, "Loading Items...");
-                _itemManager = new ItemManager();
-                await _itemManager.LoadItems(queryReactor, 0);
-
-                _cameraManager = new CameraPhotoManager();
-                await _cameraManager.Init(_itemManager);
-
-                Progress(bar, wait, end, "Loading Catalog...");
-                _catalog = new CatalogManager();
-
-                Progress(bar, wait, end, "Loading Targeted Offers...");
-                _targetedOfferManager = new TargetedOfferManager();
-
-                Progress(bar, wait, end, "Loading Clothing...");
-                _clothingManager = new ClothingManager();
-                _clothingManager.Initialize(queryReactor);
-
-                Progress(bar, wait, end, "Loading Rooms...");
-                _roomManager = new RoomManager();
-
-                Progress(bar, wait, end, "Loading NavigatorManager...");
-                _navigatorManager = new NavigatorManager();
-                _navigatorManager.Initialize(queryReactor, out _);
-
-                Progress(bar, wait, end, "Loading Groups...");
-                _groupManager = new GroupManager();
-                _groupManager.InitGroups();
-
-                Progress(bar, wait, end, "Loading PixelManager...");
-                _pixelManager = new CoinsManager();
-
-                Progress(bar, wait, end, "Loading HotelView...");
-                _hotelView = new HotelView();
-
-                Progress(bar, wait, end, "Loading Hall Of Fame...");
-                _hallOfFame = new HallOfFame();
-
-                Progress(bar, wait, end, "Loading ModerationTool...");
-                _moderationTool = new ModerationTool();
-                await _moderationTool.LoadMessagePresets(queryReactor);
-
-
-                Progress(bar, wait, end, "Loading Quests...");
-                _questManager = new QuestManager();
-                _questManager.Initialize(queryReactor);
-
-                Progress(bar, wait, end, "Loading Events...");
-                _events = new RoomEvents();
-
-                Progress(bar, wait, end, "Loading Talents...");
-                _talentManager = new TalentManager();
-                _talentManager.Initialize(queryReactor);
-
-                //this.SnowStormManager = new SnowStormManager();
-
-                Progress(bar, wait, end, "Loading Pinata...");
-                _pinataHandler = new PinataHandler();
-                await _pinataHandler.Initialize(queryReactor);
-
-                //                Progress(bar, wait, end, "Loading Crackable Eggs...");
-                //                _crackableEggHandler = new CrackableEggHandler();
-                //                _crackableEggHandler.Initialize(queryReactor);
-
-                Progress(bar, wait, end, "Loading Random Rewards...");
-                _randomRewardHandler = new RandomRewardFurniHandler();
-
-                Progress(bar, wait, end, "Loading Polls...");
-                _pollManager = new PollManager();
-                await _pollManager.Init(queryReactor, 0);
-
-                Progress(bar, wait, end, "Loading Achievements...");
-                _achievementManager = new AchievementManager();
-                await _achievementManager.LoadAchievements(queryReactor);
-
-                await _achievementManager.LoadAchievements(queryReactor);
-                Progress(bar, wait, end, "Loading StaticMessages ...");
-                StaticMessagesManager.Load();
-
-                Progress(bar, wait, end, "Loading Guides ...");
-                _guideManager = new GuideManager();
-
-                Progress(bar, wait, end, "Loading and Registering Commands...");
-                CommandsManager.Register();
-
-                Cache.StartProcess();
-
-                Progress(bar, wait, end, "Loading AntiMutant...");
-                this.AntiMutant = new AntiMutant();
-
-                Console.Write("\r".PadLeft(Console.WindowWidth - Console.CursorLeft - 1));
+            foreach (var (description, action) in tasks)
+            {
+                await status.StartAsync(description, ctx => action());
             }
+            
         }
-
-        /// <summary>
+/// <summary>
         ///     Gets a value indicating whether [game loop enabled ext].
         /// </summary>
         /// <value><c>true</c> if [game loop enabled ext]; otherwise, <c>false</c>.</value>
@@ -501,7 +432,7 @@ namespace Oblivion.HabboHotel
             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
                 DatabaseCleanup(queryReactor);
             GetClientManager();
-            Out.WriteLine("Client Manager destroyed", "Oblivion.Game", ConsoleColor.DarkYellow);
+            Out.WriteLineSimple("Client Manager destroyed", "Oblivion.Game", ConsoleColor.DarkYellow);
         }
 
         /// <summary>

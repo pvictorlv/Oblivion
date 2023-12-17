@@ -36,7 +36,7 @@ namespace Oblivion.Connection.Connection
 
             if ((GetConnectionAmount(iP) > maxIpConnectionCount))
             {
-                Out.WriteLine(iP + " was banned by Anti-DDoS system.", "Azure.TcpAntiDDoS", ConsoleColor.Blue);
+                Out.WriteLineSimple(iP + " was banned by Anti-DDoS system.", "Azure.TcpAntiDDoS", ConsoleColor.Blue);
 
                 _mLastIpBlocked = iP;
 

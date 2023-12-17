@@ -23,7 +23,8 @@ namespace Oblivion
         /// </summary>
         public override void Step()
         {
-            Console.Write("{0}\b", _animation[_counter]);
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                Console.Write("{0}\b", _animation[_counter]);
             _counter++;
             if (_counter == _animation.Count)
                 _counter = 0;

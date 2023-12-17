@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
@@ -10,9 +11,9 @@ namespace Oblivion.Configuration
     internal static class ConfigurationData
     {
         /// <summary>
-        /// The data
+        /// A dictionary that holds the configuration data as key-value pairs.
         /// </summary>
-        internal static Dictionary<string, string> Data = new Dictionary<string, string>();
+        internal static readonly Dictionary<string, string> Data = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigurationData"/> class.
@@ -23,42 +24,42 @@ namespace Oblivion.Configuration
         /// </exception>
         internal static void Load(string filePath, bool mayNotExist = false)
         {
-            if (!File.Exists(filePath))
+            if (!File.Exists(filePath) && !mayNotExist)
             {
-                if (!mayNotExist)
-                    throw new ArgumentException($"Configuration file not found in '{filePath}'.");
+                throw new ArgumentException($"Configuration file not found in '{filePath}'.");
             }
-            else
+
+            try
             {
-                try
+                using var streamReader = new StreamReader(filePath ?? throw new ArgumentNullException(nameof(filePath)));
+                while (streamReader.ReadLine() is { } text)
                 {
-                    using (var streamReader = new StreamReader(filePath))
-                    {
-                        string text;
+                    if (string.IsNullOrWhiteSpace(text) || text.StartsWith("#"))
+                        continue;
 
-                        while ((text = streamReader.ReadLine()) != null)
-                        {
-                            if (text.Length < 1 || text.StartsWith("#"))
-                                continue;
+                    var num = text.IndexOf('=');
 
-                            var num = text.IndexOf('=');
+                    if (num == -1)
+                        continue;
 
-                            if (num == -1)
-                                continue;
+                    var key = text[..num];
+                    var value = text[(num + 1)..];
 
-                            var key = text.Substring(0, num);
-                            var value = text.Substring((num + 1));
-
-                            Data.Add(key, value);
-                        }
-
-                        streamReader.Close();
-                    }
+                    Data[key] = value;
                 }
-                catch (Exception ex)
+                
+                foreach (DictionaryEntry envVar in Environment.GetEnvironmentVariables())
                 {
-                    throw new ArgumentException($"Could not process configuration file: {ex.Message}");
+                    if (envVar.Key is not string key || envVar.Value is not string value)
+                        continue;
+
+                    var newKey = key.ToLower().Replace("_", ".");
+                    Data[newKey] = value;
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException($"Could not process configuration file: {ex.Message}", ex);
             }
         }
     }

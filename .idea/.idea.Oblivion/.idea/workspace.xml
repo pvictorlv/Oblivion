@@ -8,11 +8,28 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cdac920a-7602-4207-8fbf-feca8d8f9af2" name="Changes" comment="Directory fix for folder Packets (multi-platform)">
+    <list default="true" id="cdac920a-7602-4207-8fbf-feca8d8f9af2" name="Changes" comment="Fixed connection manager bug, removed backgroundcolor black.">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Oblivion/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Oblivion/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/AbstractBar.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/AbstractBar.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/AnimatedBar.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/AnimatedBar.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/Writer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/Writer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Oblivion.Console.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Oblivion.Console.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Configuration/ConfigurationData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Configuration/ConfigurationData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Configuration/ConsoleCommandHandling.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Configuration/ConsoleCommandHandling.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Configuration/Logging.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Configuration/Logging.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Connection/Connection/SocketConnectionCheck.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Connection/Connection/SocketConnectionCheck.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Connection/Netty/ConnectionManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Connection/Netty/ConnectionManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Achievements/Factorys/AchievementLevelFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Achievements/Factorys/AchievementLevelFactory.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/CommandsManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/CommandsManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Game.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Game.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/GameClients/GameClientManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/GameClients/GameClientManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/ItemManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/ItemManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Misc/CoinsManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Misc/CoinsManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/RoomManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/RoomManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Messages/Handlers/Others.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Messages/Handlers/Others.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Oblivion.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Oblivion.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Encryption/Oblivion.Encryption.csproj.old" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Encryption/Oblivion.Encryption.csproj.old" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Util/Out.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Util/Out.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,11 +41,13 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/e9621bfb2a3f4a2387f736f9e1d5403b2dda8/85/eee7b171/DefaultChannelPipeline.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bf9021a960b74107a7e141aa06bc9d8a0a53c929178c2fb95b1597be8af8dc/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/AbstractBar.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/ConsoleFlashMode.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/Coord.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/LogMessage.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/Matrix.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///Users/lucca/Oblivion/Oblivion/Oblivion.Console/Console/Writer.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/Writer.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Messages/Handlers/Inventory.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -52,7 +71,7 @@
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "settings.editor.selected.configurable": "settings.codegpt.configuration",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -63,7 +82,11 @@
     ]
   }
 }]]></component>
-  <component name="RunManager" selected=".NET Project.Oblivion.Emulator">
+  <component name="RunManager" selected="Publish to folder.Publish Oblivion.Emulator linux-x64 Self-Contained">
+    <configuration name="Publish Oblivion.Emulator linux-x64 Self-Contained" type="DotNetFolderPublish" factoryName="Publish to folder">
+      <riderPublish configuration="Release" platform="Any CPU" produce_single_file="true" runtime="linux-x64" self_contained="true" target_folder="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/bin/Release/net7.0/linux-x64/publish" target_framework="net7.0" uuid_high="5709274872951357641" uuid_low="-5486073174071861275" />
+      <method v="2" />
+    </configuration>
     <configuration name="Oblivion.Emulator: FolderProfile" type="DotNetMsBuildPublish" factoryName="Publish to IIS">
       <riderPublish publish_profile="FolderProfile.pubxml" pubxml_path="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Properties/PublishProfiles/FolderProfile.pubxml" uuid_high="5709274872951357641" uuid_low="-5486073174071861275" />
       <method v="2" />
@@ -88,19 +111,19 @@
       </method>
     </configuration>
     <configuration name="Oblivion.Emulator" type="DotNetProject" factoryName=".NET Project">
-      <option name="EXE_PATH" value="" />
+      <option name="EXE_PATH" value="$PROJECT_DIR$/Oblivion/bin/Debug/AnyCPU/net7.0/Oblivion.Emulator" />
       <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Oblivion/bin/Debug/AnyCPU/net7.0" />
       <option name="PASS_PARENT_ENVS" value="1" />
-      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="USE_EXTERNAL_CONSOLE" value="1" />
       <option name="USE_MONO" value="0" />
       <option name="RUNTIME_ARGUMENTS" value="" />
       <option name="PROJECT_PATH" value="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Oblivion.Emulator.csproj" />
       <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
       <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
       <option name="PROJECT_WORKING_DIRECTORY_TRACKING" value="1" />
-      <option name="PROJECT_KIND" value="Console" />
-      <option name="PROJECT_TFM" value="" />
+      <option name="PROJECT_KIND" value="DotNetCore" />
+      <option name="PROJECT_TFM" value="net7.0" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -118,7 +141,8 @@
       <workItem from="1667583667158" duration="6606000" />
       <workItem from="1667774257710" duration="1179000" />
       <workItem from="1680541998141" duration="823000" />
-      <workItem from="1701734949619" duration="6510000" />
+      <workItem from="1701734949619" duration="11418000" />
+      <workItem from="1702681012152" duration="17485000" />
     </task>
     <task id="LOCAL-00001" summary="Multi-platform compatibility (compilation and runtime).&#10;Changed Postbuild for cross platform compilation;&#10;Ignored DllImports for non-windows compilation.">
       <created>1701736517980</created>
@@ -134,7 +158,14 @@
       <option name="project" value="LOCAL" />
       <updated>1701741638411</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Fixed connection manager bug, removed backgroundcolor black.">
+      <created>1701768256167</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1701768256170</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -157,6 +188,11 @@
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Multi-platform compatibility (compilation and runtime).&#10;Changed Postbuild for cross platform compilation;&#10;Ignored DllImports for non-windows compilation." />
     <MESSAGE value="Directory fix for folder Packets (multi-platform)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Directory fix for folder Packets (multi-platform)" />
+    <MESSAGE value="Fixed connection manager bug, removed backgroundcolor black." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed connection manager bug, removed backgroundcolor black." />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
