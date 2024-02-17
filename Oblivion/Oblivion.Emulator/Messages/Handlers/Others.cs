@@ -439,11 +439,11 @@ namespace Oblivion.Messages.Handlers
             }
 
             var data = "{\"w\":\"" +
-                       Oblivion.EscapeJSONString(
+                       Oblivion.EscapeJsonString(
                            Oblivion.GetGame()
                                .GetCameraManager()
                                .GetPath(CameraPhotoType.PURCHASED, preview.Id, preview.CreatorId)) + "\", \"n\":\"" +
-                       Oblivion.EscapeJSONString(Session.GetHabbo().UserName) + "\", \"s\":\"" +
+                       Oblivion.EscapeJsonString(Session.GetHabbo().UserName) + "\", \"s\":\"" +
                        Session.GetHabbo().Id + "\", \"u\":\"" + preview.Id + "\", \"t\":\"" + preview.CreatedAt + "\"}";
 
             var item = await Session.GetHabbo()
@@ -616,12 +616,12 @@ namespace Oblivion.Messages.Handlers
                 }
 
                 var data = "{\"w\":\"" +
-                           Oblivion.EscapeJSONString(
+                           Oblivion.EscapeJsonString(
                                Oblivion.GetGame()
                                    .GetCameraManager()
                                    .GetPath(CameraPhotoType.PURCHASED, preview.Id, preview.CreatorId)) +
                            "\", \"n\":\"" +
-                           Oblivion.EscapeJSONString(Session.GetHabbo().UserName) + "\", \"s\":\"" +
+                           Oblivion.EscapeJsonString(Session.GetHabbo().UserName) + "\", \"s\":\"" +
                            Session.GetHabbo().Id + "\", \"u\":\"" + preview.Id + "\", \"t\":\"" + preview.CreatedAt +
                            "\"}";
 

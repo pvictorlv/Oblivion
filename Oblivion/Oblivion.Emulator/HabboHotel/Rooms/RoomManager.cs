@@ -388,7 +388,7 @@ namespace Oblivion.HabboHotel.Rooms
                 }
             }
 
-            Out.WriteLine("RoomManager Destroyed", "Oblivion.RoomManager", ConsoleColor.DarkYellow);
+            Out.WriteLineSimple("RoomManager Destroyed", "Oblivion.RoomManager", ConsoleColor.DarkYellow);
         }
 
         /// <summary>

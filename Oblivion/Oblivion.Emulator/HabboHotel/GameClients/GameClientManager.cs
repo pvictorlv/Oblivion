@@ -327,7 +327,7 @@ namespace Oblivion.HabboHotel.GameClients
             var stringBuilder = new StringBuilder();
             var flag = false;
 
-            Out.WriteLine("Saving Inventary Content....", "Oblivion.Boot", ConsoleColor.DarkCyan);
+            Out.WriteLineSimple("Saving Inventary Content....", "Oblivion.Boot", ConsoleColor.DarkCyan);
 
             foreach (var current2 in Clients.Values.Where(current2 => current2?.GetHabbo() != null))
             {
@@ -346,7 +346,7 @@ namespace Oblivion.HabboHotel.GameClients
                 }
             }
 
-            Out.WriteLine("Inventary Content Saved!", "Oblivion.Boot", ConsoleColor.DarkCyan);
+            Out.WriteLineSimple("Inventary Content Saved!", "Oblivion.Boot", ConsoleColor.DarkCyan);
 
             if (flag)
             {
@@ -359,7 +359,7 @@ namespace Oblivion.HabboHotel.GameClients
 
             try
             {
-                Out.WriteLine("Closing Connection Manager...", "Oblivion.Boot", ConsoleColor.DarkMagenta);
+                Out.WriteLineSimple("Closing Connection Manager...", "Oblivion.Boot", ConsoleColor.DarkMagenta);
 
                 foreach (var current3 in Clients.Values.Where(current3 => current3.GetConnection() != null))
                 {
@@ -369,7 +369,7 @@ namespace Oblivion.HabboHotel.GameClients
 
                         Console.ForegroundColor = ConsoleColor.DarkMagenta;
 
-                        Out.WriteLine("Connection Manager Closed!", "Oblivion.Boot", ConsoleColor.DarkMagenta);
+                        Out.WriteLineSimple("Connection Manager Closed!", "Oblivion.Boot", ConsoleColor.DarkMagenta);
                     }
                     catch
                     {
@@ -383,7 +383,7 @@ namespace Oblivion.HabboHotel.GameClients
             }
 
             Clients.Clear();
-            Out.WriteLine("Connections closed", "Oblivion.Conn", ConsoleColor.DarkYellow);
+            Out.WriteLineSimple("Connections closed", "Oblivion.Conn", ConsoleColor.DarkYellow);
         }
 
         /// <summary>

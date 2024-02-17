@@ -4,82 +4,32 @@
     <projectFile>Oblivion.Api/Oblivion.Api.csproj</projectFile>
     <projectFile pubXmlPath="Oblivion/Oblivion.Emulator/Properties/PublishProfiles/FolderProfile.pubxml">Oblivion/Oblivion.Emulator/Oblivion.Emulator.csproj</projectFile>
   </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="cdac920a-7602-4207-8fbf-feca8d8f9af2" name="Changes" comment="">
+    <list default="true" id="cdac920a-7602-4207-8fbf-feca8d8f9af2" name="Changes" comment="Fixed connection manager bug, removed backgroundcolor black.">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Oblivion/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Oblivion/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Connection/Net/MusConnection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Connection/Net/MusConnection.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Catalogs/CatalogManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Catalogs/CatalogManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/AbstractBar.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/AbstractBar.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/AnimatedBar.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/AnimatedBar.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/Writer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/Writer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Oblivion.Console.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Oblivion.Console.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Configuration/ConfigurationData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Configuration/ConfigurationData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Configuration/ConsoleCommandHandling.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Configuration/ConsoleCommandHandling.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Configuration/Logging.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Configuration/Logging.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Connection/Connection/SocketConnectionCheck.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Connection/Connection/SocketConnectionCheck.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Connection/Netty/ConnectionManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Connection/Netty/ConnectionManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Achievements/Factorys/AchievementLevelFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Achievements/Factorys/AchievementLevelFactory.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/CommandsManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/CommandsManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/AddBlackWord.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/AddBlackWord.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/Alert.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/Alert.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/BanUser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/BanUser.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/BanUserIp.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/BanUserIp.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/BlockCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/BlockCommand.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/CommandList.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/CommandList.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/CopyLook.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/CopyLook.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/Dance.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/Dance.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/DeleteBlackWord.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/DeleteBlackWord.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/Developer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/Developer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/DisableEvent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/DisableEvent.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/DisconnectUser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/DisconnectUser.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/EmptyUser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/EmptyUser.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/FloodUser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/FloodUser.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/FollowUser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/FollowUser.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/Freeze.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/Freeze.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/GiveCredits.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/GiveCredits.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/GiveDiamonds.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/GiveDiamonds.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/GiveGraffiti.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/GiveGraffiti.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/GiveRank.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/GiveRank.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/HandItem.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/HandItem.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/HotelAlert.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/HotelAlert.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/Kick.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/Kick.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/Kill.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/Kill.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/MassDance.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/MassDance.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/Mute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/Mute.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/PullUser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/PullUser.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/PushUser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/PushUser.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/RefreshVirtual.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/RefreshVirtual.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/RoomMute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/RoomMute.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/RoomUnMute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/RoomUnMute.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/SetMax.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/SetMax.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/SetSpeed.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/SetSpeed.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/SpullUser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/SpullUser.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/TelePort.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/TelePort.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/UnMute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/UnMute.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/UserInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/UserInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/Controllers/roomvideo.cs" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Game.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Game.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/Datas/HighscoreData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/Datas/HighscoreData.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/Datas/MoodlightData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/Datas/MoodlightData.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/Interactions/Controllers/InteractorGenericSwitch.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/Interactions/Controllers/InteractorGenericSwitch.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/Interactions/Controllers/InteractorNearSwitch.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/Interactions/Controllers/InteractorNearSwitch.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/Interactions/Controllers/InteractorTotem.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/Interactions/Controllers/InteractorTotem.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/Interfaces/RoomItem.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/Interfaces/RoomItem.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/Wired/Handlers/Effects/KickUser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/Wired/Handlers/Effects/KickUser.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/Wired/WiredHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/Wired/WiredHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/RoomBots/BotAI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/RoomBots/BotAI.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/Items/Games/GameManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/Items/Games/GameManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/Items/Games/Types/Banzai/BattleBanzai.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/Items/Games/Types/Banzai/BattleBanzai.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/Items/Games/Types/Freeze/Freeze.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/Items/Games/Types/Freeze/Freeze.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/Items/Games/Types/Soccer/Soccer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/Items/Games/Types/Soccer/Soccer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/Items/Handlers/RoomItemHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/Items/Handlers/RoomItemHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/GameClients/GameClientManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/GameClients/GameClientManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/ItemManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/ItemManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Misc/CoinsManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Misc/CoinsManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/RoomManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/RoomManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/User/Path/Gamemap.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/User/Path/Gamemap.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/User/RoomUser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/User/RoomUser.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/User/RoomUserManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/User/RoomUserManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/User/Trade/Trade.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/User/Trade/Trade.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Support/ModerationTool.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Support/ModerationTool.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Users/Habbo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Users/Habbo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Users/Inventory/AvatarEffectsInventoryComponent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Users/Inventory/AvatarEffectsInventoryComponent.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Users/Inventory/InventoryComponent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Users/Inventory/InventoryComponent.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Users/Messenger/HabboMessenger.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Users/Messenger/HabboMessenger.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Messages/Handlers/Help.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Messages/Handlers/Help.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Messages/Handlers/Items.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Messages/Handlers/Items.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Messages/Handlers/Messenger.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Messages/Handlers/Messenger.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Messages/Handlers/Others.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Messages/Handlers/Others.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Messages/Handlers/Rooms.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Messages/Handlers/Rooms.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Messages/Handlers/Users.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Messages/Handlers/Users.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Oblivion.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Oblivion.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Util/Out.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Util/Out.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,30 +40,53 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0dfbe98824db4480a6b2828902ba09201c200/3d/55bc8ab1/ISocketSession.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0dfbe98824db4480a6b2828902ba09201c200/5b/ee812e9c/AppSession`2.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/578d960b41204f0aa9038fac387556e95227a0/62/333da8ca/Array.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/e9621bfb2a3f4a2387f736f9e1d5403b2dda8/85/eee7b171/DefaultChannelPipeline.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bf9021a960b74107a7e141aa06bc9d8a0a53c929178c2fb95b1597be8af8dc/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/AbstractBar.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/ConsoleFlashMode.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/Coord.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/LogMessage.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/Matrix.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///Users/lucca/Oblivion/Oblivion/Oblivion.Console/Console/Writer.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/Writer.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Messages/Handlers/Inventory.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectId" id="2H5dvWItLPXSktrKXCvLTFIwstC" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "master",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "settings.editor.selected.configurable": "settings.codegpt.configuration",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "rider.external.source.directories": [
+      "/Users/lucca/Library/Application Support/JetBrains/Rider2023.1/resharper-host/DecompilerCache",
+      "/Users/lucca/Library/Application Support/JetBrains/Rider2023.1/resharper-host/SourcesCache",
+      "/Users/lucca/.local/share/Symbols/src"
+    ]
   }
-}</component>
-  <component name="RunManager" selected=".NET Project.Oblivion.Api">
+}]]></component>
+  <component name="RunManager" selected="Publish to folder.Publish Oblivion.Emulator linux-x64 Self-Contained">
+    <configuration name="Publish Oblivion.Emulator linux-x64 Self-Contained" type="DotNetFolderPublish" factoryName="Publish to folder">
+      <riderPublish configuration="Release" platform="Any CPU" produce_single_file="true" runtime="linux-x64" self_contained="true" target_folder="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/bin/Release/net7.0/linux-x64/publish" target_framework="net7.0" uuid_high="5709274872951357641" uuid_low="-5486073174071861275" />
+      <method v="2" />
+    </configuration>
     <configuration name="Oblivion.Emulator: FolderProfile" type="DotNetMsBuildPublish" factoryName="Publish to IIS">
       <riderPublish publish_profile="FolderProfile.pubxml" pubxml_path="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Properties/PublishProfiles/FolderProfile.pubxml" uuid_high="5709274872951357641" uuid_low="-5486073174071861275" />
       <method v="2" />
@@ -138,19 +111,19 @@
       </method>
     </configuration>
     <configuration name="Oblivion.Emulator" type="DotNetProject" factoryName=".NET Project">
-      <option name="EXE_PATH" value="" />
+      <option name="EXE_PATH" value="$PROJECT_DIR$/Oblivion/bin/Debug/AnyCPU/net7.0/Oblivion.Emulator" />
       <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Oblivion/bin/Debug/AnyCPU/net7.0" />
       <option name="PASS_PARENT_ENVS" value="1" />
-      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="USE_EXTERNAL_CONSOLE" value="1" />
       <option name="USE_MONO" value="0" />
       <option name="RUNTIME_ARGUMENTS" value="" />
       <option name="PROJECT_PATH" value="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Oblivion.Emulator.csproj" />
       <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
       <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
       <option name="PROJECT_WORKING_DIRECTORY_TRACKING" value="1" />
-      <option name="PROJECT_KIND" value="Console" />
-      <option name="PROJECT_TFM" value="" />
+      <option name="PROJECT_KIND" value="DotNetCore" />
+      <option name="PROJECT_TFM" value="net7.0" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -168,7 +141,31 @@
       <workItem from="1667583667158" duration="6606000" />
       <workItem from="1667774257710" duration="1179000" />
       <workItem from="1680541998141" duration="823000" />
+      <workItem from="1701734949619" duration="11418000" />
+      <workItem from="1702681012152" duration="17485000" />
     </task>
+    <task id="LOCAL-00001" summary="Multi-platform compatibility (compilation and runtime).&#10;Changed Postbuild for cross platform compilation;&#10;Ignored DllImports for non-windows compilation.">
+      <created>1701736517980</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1701736517980</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Directory fix for folder Packets (multi-platform)">
+      <created>1701741638411</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1701741638411</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Fixed connection manager bug, removed backgroundcolor black.">
+      <created>1701768256167</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1701768256170</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -189,5 +186,13 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="Multi-platform compatibility (compilation and runtime).&#10;Changed Postbuild for cross platform compilation;&#10;Ignored DllImports for non-windows compilation." />
+    <MESSAGE value="Directory fix for folder Packets (multi-platform)" />
+    <MESSAGE value="Fixed connection manager bug, removed backgroundcolor black." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed connection manager bug, removed backgroundcolor black." />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

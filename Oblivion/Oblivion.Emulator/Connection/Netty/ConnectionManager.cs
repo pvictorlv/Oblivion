@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace Oblivion.Connection.Netty;
 
 public class ConnectionManager<T> : IServer<T>
 {
+    private static readonly ushort Port = ushort.TryParse(Environment.GetEnvironmentVariable("WS_PORT"), out var p) ? p : (ushort) 2087;
     public event MessageReceived<T> OnMessageReceived;
 
     public event ConnectionOpened<T> OnConnectionOpened;
@@ -92,18 +94,26 @@ public class ConnectionManager<T> : IServer<T>
                      */
                     MessageHandler<T> messageHandler = new MessageHandler<T>(channel, OnMessageReceived,
                         OnConnectionClosed, OnConnectionOpened);
-                    channel.Pipeline.AddFirst(flashHandler);
-                    channel.Pipeline.AddLast(headerDecoder, messageHandler);
+                    channel.Pipeline.AddFirst(new FlashPolicyHandler(FlashPolicy));
+                    channel.Pipeline.AddLast(new HeaderDecoder(), messageHandler);
                 }));
 
             ServerChannel = await server.BindAsync(new IPEndPoint(IPAddress.Any, Settings.Port));
 
             X509Certificate2 tlsCertificate = null;
 
-            if (!Debugger.IsAttached)
+            var disableTls = Environment.GetEnvironmentVariable("DISABLE_WS_TLS")
+                ?.Equals("true", StringComparison.InvariantCultureIgnoreCase) ?? false;
+
+            switch (disableTls)
             {
-                tlsCertificate = BuildSelfSignedServerCertificate();
-                Out.WriteLine("Setting up Websocket SSL Certificate", "Server.AsyncSocketListener");
+                case true:
+                    Out.WriteLineSimple("Websocket TLS is disabled via `DISABLE_WS_TLS`", "Server.AsyncSocketListener", ConsoleColor.DarkBlue);
+                    break;
+                case false when !Debugger.IsAttached:
+                    tlsCertificate = BuildSelfSignedServerCertificate();
+                    Out.WriteLine("Setting up Websocket SSL Certificate", "Server.AsyncSocketListener");
+                    break;
             }
 
 
@@ -136,16 +146,17 @@ public class ConnectionManager<T> : IServer<T>
                     //channel.Pipeline.AddLast(headerDecoder, messageHandler);
                 }));
 
-            WSServerChannel = await bootstrapWebSocket.BindAsync(new IPEndPoint(IPAddress.Any, 2087));
+            WSServerChannel = await bootstrapWebSocket.BindAsync(new IPEndPoint(IPAddress.Any, Port));
 
-            Out.WriteLine("Websocket listening on port " + 2087, "Server.AsyncSocketListener");
+            Out.WriteLine("Websocket listening on port " + Port, "Server.AsyncSocketListener");
 
 
             return true;
         }
         catch (Exception ex)
         {
-            throw ex;
+            Out.WriteLineSimple($"Error starting server on port {Port}: {ex.Message}", "Server.AsyncSocketListener", ConsoleColor.Red);
+            throw;
             return false;
         }
     }
@@ -156,35 +167,44 @@ public class ConnectionManager<T> : IServer<T>
         sanBuilder.AddIpAddress(IPAddress.Loopback);
         sanBuilder.AddIpAddress(IPAddress.IPv6Loopback);
         sanBuilder.AddDnsName("localhost");
-        sanBuilder.AddDnsName("hretro.net");
+        sanBuilder.AddDnsName("192.168.0.19");
+        var domain = Environment.MachineName;
+        if (Environment.GetEnvironmentVariable("DOMAIN") != null)
+            domain = Environment.GetEnvironmentVariable("DOMAIN")!;
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("Warning: No domain set in environment variables (`DOMAIN`).");
+            Console.ResetColor();
+        }
+        sanBuilder.AddDnsName(domain);
         sanBuilder.AddDnsName(Environment.MachineName);
 
-        X500DistinguishedName distinguishedName = new X500DistinguishedName($"CN=hretro.net");
+        X500DistinguishedName distinguishedName = new X500DistinguishedName($"CN={domain}");
 
-        using (RSA rsa = RSA.Create(2048))
-        {
-            var request = new CertificateRequest(distinguishedName, rsa, HashAlgorithmName.SHA256,
-                RSASignaturePadding.Pkcs1);
+        using RSA rsa = RSA.Create(2048);
+        var request = new CertificateRequest(distinguishedName, rsa, HashAlgorithmName.SHA256,
+            RSASignaturePadding.Pkcs1);
 
-            request.CertificateExtensions.Add(
-                new X509KeyUsageExtension(
-                    X509KeyUsageFlags.DataEncipherment | X509KeyUsageFlags.KeyEncipherment |
-                    X509KeyUsageFlags.DigitalSignature, false));
+        request.CertificateExtensions.Add(
+            new X509KeyUsageExtension(
+                X509KeyUsageFlags.DataEncipherment | X509KeyUsageFlags.KeyEncipherment |
+                X509KeyUsageFlags.DigitalSignature, false));
 
 
-            request.CertificateExtensions.Add(
-                new X509EnhancedKeyUsageExtension(
-                    new OidCollection { new Oid("1.3.6.1.5.5.7.3.1") }, false));
+        request.CertificateExtensions.Add(
+            new X509EnhancedKeyUsageExtension(
+                new OidCollection { new Oid("1.3.6.1.5.5.7.3.1") }, false));
 
-            request.CertificateExtensions.Add(sanBuilder.Build());
+        request.CertificateExtensions.Add(sanBuilder.Build());
 
-            var certificate = request.CreateSelfSigned(new DateTimeOffset(DateTime.UtcNow.AddDays(-1)),
-                new DateTimeOffset(DateTime.UtcNow.AddDays(3650)));
-            certificate.FriendlyName = "hretro.net";
+        var certificate = request.CreateSelfSigned(new DateTimeOffset(DateTime.UtcNow.AddDays(-1)),
+            new DateTimeOffset(DateTime.UtcNow.AddDays(3650)));
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            certificate.FriendlyName = domain;
 
-            return new X509Certificate2(certificate.Export(X509ContentType.Pfx, "WeNeedASaf3rPassword"),
-                "WeNeedASaf3rPassword", X509KeyStorageFlags.MachineKeySet);
-        }
+        return new X509Certificate2(certificate.Export(X509ContentType.Pfx, "WeNeedASaf3rPassword"),
+            "WeNeedASaf3rPassword", X509KeyStorageFlags.MachineKeySet);
     }
 
     public void Stop()

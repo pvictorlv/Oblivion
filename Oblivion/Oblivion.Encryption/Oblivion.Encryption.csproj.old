@@ -72,8 +72,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>full</DebugType>    <PlatformTarget>AnyCPU</PlatformTarget>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <LangVersion>default</LangVersion>
     <ErrorReport>prompt</ErrorReport>
@@ -113,9 +112,11 @@
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
-  <PropertyGroup>
-    <PostBuildEvent>xcopy "$(TargetPath)" "$(SolutionDir)Oblivion\bin\$(ConfigurationName)\$(PlatformName)\" /R  /Y /M</PostBuildEvent>
-  </PropertyGroup>
+    <PropertyGroup>
+      <PostBuildEvent Condition="'$(OS)' == 'Windows_NT'">xcopy "$(TargetPath)" "$(SolutionDir)Oblivion\bin\$(ConfigurationName)\$(PlatformName)\" /R /Y /M</PostBuildEvent>
+      <PostBuildEvent Condition="'$(OSTYPE)' == 'darwin'">cp -R "$(TargetPath)" "$(SolutionDir)Oblivion/bin/$(ConfigurationName)/$(PlatformName)/"</PostBuildEvent>
+      <PostBuildEvent Condition="'$(OSTYPE)' == 'linux-gnu'">cp -R "$(TargetPath)" "$(SolutionDir)Oblivion/bin/$(ConfigurationName)/$(PlatformName)/"</PostBuildEvent>
+    </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

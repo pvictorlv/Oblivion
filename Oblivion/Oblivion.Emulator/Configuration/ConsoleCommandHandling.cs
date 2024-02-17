@@ -73,7 +73,7 @@ namespace Oblivion.Configuration
                     case "shutdown":
                     case "close":
                         Logging.DisablePrimaryWriting(true);
-                        Out.WriteLine("Shutdown Initalized", "Oblivion.Life", ConsoleColor.DarkYellow);
+                        Out.WriteLineSimple("Shutdown Initalized", "Oblivion.Life", ConsoleColor.DarkYellow);
                         await Oblivion.PerformShutDown(false);
                         Console.WriteLine();
                         break;
@@ -81,7 +81,7 @@ namespace Oblivion.Configuration
                     case "restart":
                         Logging.LogMessage($"Server Restarting at {DateTime.Now}");
                         Logging.DisablePrimaryWriting(true);
-                        Out.WriteLine("Restart Initialized", "Oblivion.Life", ConsoleColor.DarkYellow);
+                        Out.WriteLineSimple("Restart Initialized", "Oblivion.Life", ConsoleColor.DarkYellow);
                         await Oblivion.PerformShutDown(true);
                         Console.WriteLine();
                         break;

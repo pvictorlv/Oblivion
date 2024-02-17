@@ -29,6 +29,7 @@ using Oblivion.Connection.Net;
 using Oblivion.Connection.WebSocket;
 using Timer = System.Timers.Timer;
 using Oblivion.Encryption.Encryption;
+using Spectre.Console;
 
 namespace Oblivion
 {
@@ -52,17 +53,23 @@ namespace Oblivion
         ///     Oblivion Environment: Main Thread of Oblivion Emulator, SetUp's the Emulator
         ///     Contains Initialize: Responsible of the Emulator Loadings
         /// </summary>
-        internal static string DatabaseConnectionType = "MySQL", ServerLanguage = "english";
+        internal static string DatabaseConnectionType = "MySQL";
+
+        /// <summary>
+        ///     Oblivion Environment: Main Thread of Oblivion Emulator, SetUp's the Emulator
+        ///     Contains Initialize: Responsible of the Emulator Loadings
+        /// </summary>
+        private static string _serverLanguage = "english";
 
         /// <summary>
         ///     The build of the server
         /// </summary>
-        internal static readonly string Build = "100", Version = "2.0";
+        internal static readonly string Version = "2.3", Build = "100";
 
         /// <summary>
         ///     The live currency type
         /// </summary>
-        internal static int ConsoleTimer = 2000;
+        private static int _consoleTimer = 2000;
 
         /// <summary>
         ///     The is live
@@ -119,12 +126,12 @@ namespace Oblivion
         /// <summary>
         ///     The _plugins
         /// </summary>
-        public static Dictionary<string, IPlugin> Plugins;
+        private static Dictionary<string, IPlugin> _plugins;
 
         /// <summary>
         ///     The users cached
         /// </summary>
-        public static readonly ConcurrentDictionary<uint, Habbo> UsersCached = new ConcurrentDictionary<uint, Habbo>();
+        public static readonly ConcurrentDictionary<uint, Habbo> UsersCached = new();
 
         /// <summary>
         ///     The _connection manager
@@ -149,7 +156,7 @@ namespace Oblivion
         /// <summary>
         ///     The allowed special chars
         /// </summary>
-        private static readonly HashSet<char> AllowedSpecialChars = new HashSet<char>(new[]
+        private static readonly HashSet<char> AllowedSpecialChars = new(new[]
         {
             '-', '.', ' ', 'Ã', '©', '¡', '­', 'º', '³', 'Ã', '‰', '_'
         });
@@ -168,33 +175,45 @@ namespace Oblivion
         /// <returns>ICollection&lt;IPlugin&gt;.</returns>
         public static ICollection<IPlugin> LoadPlugins()
         {
+            // Get the path to the Plugins directory in the application's base directory
             var path = AppDomain.CurrentDomain.BaseDirectory + "Plugins";
 
+// If the Plugins directory does not exist, return null
             if (!Directory.Exists(path))
                 return null;
 
+// Get all DLL files in the Plugins directory and its subdirectories
             var files = Directory.GetFiles(path, "*.dll", SearchOption.AllDirectories);
 
+// If there are no DLL files, return null
             if (files.Length == 0)
                 return null;
 
+// Load each DLL file as an assembly
             var assemblies =
                 files.Select(AssemblyName.GetAssemblyName)
                     .Select(Assembly.Load)
                     .Where(assembly => assembly != null)
                     .ToList();
 
+// Get the type of the IPlugin interface
             var pluginType = typeof(IPlugin);
             var pluginTypes = new List<Type>();
 
-            /* TODO CHECK */
+// Iterate over each assembly
             foreach (var types in from assembly in assemblies where assembly != null select assembly.GetTypes())
+            {
+                // For each type in the assembly, if it is not an interface or abstract,
+                // and it implements the IPlugin interface, add it to the list of plugin types
                 pluginTypes.AddRange(types.Where(type => type != null && !type.IsInterface && !type.IsAbstract)
-                    .Where(type => type.GetInterface(pluginType.FullName) != null));
+                    .Where(type => pluginType.FullName != null && type.GetInterface(pluginType.FullName) != null));
+            }
 
+// Create a list to hold the plugin instances
             var plugins = new List<IPlugin>(pluginTypes.Count);
 
-            plugins.AddRange(pluginTypes.Select(type => (IPlugin)Activator.CreateInstance(type)));
+// For each plugin type, create an instance and add it to the list of plugins
+            plugins.AddRange(pluginTypes.Select(type => (IPlugin) Activator.CreateInstance(type)));
 
             return plugins;
         }
@@ -239,7 +258,7 @@ namespace Oblivion
             }
             catch (Exception e)
             {
-                Writer.Writer.LogException("Habbo GetHabboForId: " + e);
+                Writer.Writer.HandleException(e);
             }
 
             return null;
@@ -255,7 +274,33 @@ namespace Oblivion
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
-        public static string EscapeJSONString(string str) => str.Replace("\"", "\\\"");
+        public static string EscapeJsonString(string str)
+        {
+            // Create a StringBuilder to build the escaped string
+            var stringBuilder = new StringBuilder(str.Length);
+
+            // Iterate over each character in the string
+            foreach (char c in str)
+            {
+                // Switch on the current character
+                stringBuilder.Append(c switch
+                {
+                    // If the character is a quote or a backslash, prepend it with a backslash
+                    '"' or '\\' => "\\" + c,
+                    // If the character is a control character, append its escaped form
+                    '\b' => "\b",
+                    '\f' => "\f",
+                    '\n' => "\n",
+                    '\r' => "\r",
+                    '\t' => "\t",
+                    // Otherwise, append the character as is
+                    _ => c.ToString()
+                });
+            }
+
+            // Return the built string
+            return stringBuilder.ToString();
+        }
 
 
         /// <summary>
@@ -263,17 +308,14 @@ namespace Oblivion
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="ElapsedEventArgs" /> instance containing the event data.</param>
-        internal static void TimerElapsed(object sender, ElapsedEventArgs e)
+        private static void TimerElapsed(object sender, ElapsedEventArgs e)
         {
-            Console.Clear();
+            AnsiConsole.Clear();
             Console.WriteLine();
-
-            Out.WriteLine($"Console Cleared in: {DateTime.Now} Next Time on: {ConsoleTimer} MS ", "Oblivion.Boot",
+            Out.WriteLineSimple($"Console Cleared in: {DateTime.Now} Next Time on: {_consoleTimer} ms", "Oblivion.Boot",
                 ConsoleColor.DarkGreen);
-
             Console.WriteLine();
             GC.Collect();
-
             Timer.Start();
         }
 
@@ -296,8 +338,7 @@ namespace Oblivion
                     Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings/Welcome/settings.ini"), true);
 
                 DatabaseConnectionType = ConfigurationData.Data["db.type"];
-
-
+                
                 Handler.Initialize(CryptoKeys.N, CryptoKeys.D, CryptoKeys.E);
 
                 Manager = new DatabaseManager(ConfigurationData.Data["db.hostname"],
@@ -314,22 +355,22 @@ namespace Oblivion
                     OfflineMessage.InitOfflineMessages(queryReactor);
                 }
 
-                ConsoleTimer = int.Parse(ConfigurationData.Data["console.clear.time"]);
+                _consoleTimer = int.Parse(ConfigurationData.Data["console.clear.time"]);
                 ConsoleTimerOn = bool.Parse(ConfigurationData.Data["console.clear.enabled"]);
                 FriendRequestLimit = (uint)int.Parse(ConfigurationData.Data["client.maxrequests"]);
 
                 LibraryParser.RegisterAll();
 
-                Plugins = new Dictionary<string, IPlugin>();
+                _plugins = new Dictionary<string, IPlugin>();
 
                 var plugins = LoadPlugins();
 
                 if (plugins != null)
                     foreach (var item in plugins.Where(item => item != null))
                     {
-                        Plugins.Add(item.PluginName, item);
+                        _plugins.Add(item.PluginName, item);
 
-                        Out.WriteLine("Loaded Plugin: " + item.PluginName + " Version: " + item.PluginVersion,
+                        Out.WriteLineSimple("Loaded Plugin: " + item.PluginName + " Version: " + item.PluginVersion,
                             "Oblivion.Plugins", ConsoleColor.DarkBlue);
                     }
 
@@ -342,8 +383,8 @@ namespace Oblivion
                 await _game.GetNavigator().LoadNewPublicRooms();
                 await _game.ContinueLoading();
 
-                ServerLanguage = Convert.ToString(ConfigurationData.Data["system.lang"]);
-                _languages = new Languages(ServerLanguage);
+                _serverLanguage = Convert.ToString(ConfigurationData.Data["system.lang"]);
+                _languages = new Languages(_serverLanguage);
                 Out.WriteLine("Loaded " + _languages.Count() + " Languages Vars", "Oblivion.Lang");
 
                 if (plugins != null)
@@ -351,14 +392,13 @@ namespace Oblivion
                         itemTwo?.message_void();
 
                 if (ConsoleTimerOn)
-                    Out.WriteLine("Console Clear Timer is Enabled, with " + ConsoleTimer + " Seconds.",
+                    Out.WriteLine("Console Clear Timer is Enabled, with " + _consoleTimer + " Seconds.",
                         "Oblivion.Boot");
 
                 ClientMessageFactory.Init();
 
                 Out.WriteLine(
-                    "Starting up asynchronous sockets server for game connections for port " +
-                    int.Parse(ConfigurationData.Data["game.tcp.port"]), "Server.AsyncSocketListener");
+                    $"Starting up asynchronous sockets server for game connections for port {int.Parse(ConfigurationData.Data["game.tcp.port"])}", "Server.AsyncSocketListener");
 
                 _connectionManager = new ConnectionHandling(int.Parse(ConfigurationData.Data["game.tcp.port"]),
                     int.Parse(ConfigurationData.Data["game.tcp.conlimit"]),
@@ -371,12 +411,11 @@ namespace Oblivion
                 Console.WriteLine();
 
                 Out.WriteLine(
-                    "Asynchronous sockets server for game connections running on port " +
-                    int.Parse(ConfigurationData.Data["game.tcp.port"]) + Environment.NewLine,
+                    $"Asynchronous sockets server for game connections running on port {int.Parse(ConfigurationData.Data["game.tcp.port"])}{Environment.NewLine}",
                     "Server.AsyncSocketListener");
 
 
-                new MusSocket(int.Parse(ConfigurationData.Data["mus.tcp.port"]),
+                _ = new MusSocket(int.Parse(ConfigurationData.Data["mus.tcp.port"]),
                     ConfigurationData.Data["mus.tcp.allowedaddr"]);
 
                 if (ExtraSettings.WebSocketAddr.Length >= 10)
@@ -387,37 +426,45 @@ namespace Oblivion
 
                 if (ConsoleTimerOn)
                 {
-                    Timer = new Timer { Interval = ConsoleTimer };
+                    Timer = new Timer { Interval = _consoleTimer };
                     Timer.Elapsed += TimerElapsed;
                     Timer.Start();
                 }
 
-                if (ConfigurationData.Data.ContainsKey("StaffAlert.MinRank"))
-                    StaffAlertMinRank = uint.Parse(ConfigurationData.Data["StaffAlert.MinRank"]);
+                if (ConfigurationData.Data.TryGetValue("StaffAlert.MinRank", out var value))
+                    StaffAlertMinRank = uint.Parse(value);
 
 
-                if (ConfigurationData.Data.ContainsKey("Debug"))
-                    if (ConfigurationData.Data["Debug"] == "true")
+                if (ConfigurationData.Data.TryGetValue("Debug", out var isDebug))
+                    if (isDebug == "true")
                         DebugMode = true;
 
                 Out.WriteLine("Oblivion Emulator ready. Status: idle", "Oblivion.Boot");
-                Console.Beep();
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                    Console.Beep();
                 IsLive = true;
             }
             catch (Exception e)
             {
-                Out.WriteLine(
+                Out.WriteLineSimple(
                     "Error loading config.ini: Configuration file is invalid" + Environment.NewLine + e.Message,
                     "Oblivion.Boot", ConsoleColor.Red);
-                Out.WriteLine("Please press Y to get more details or press other Key to Exit", "Oblivion.Boot",
+                
+                Out.WriteLineSimple(e.StackTrace.ToString(), "Oblivion.Boot", ConsoleColor.DarkRed);
+                Out.WriteLineSimple("Please press Y to get more details or press other Key to Exit", "Oblivion.Boot",
                     ConsoleColor.Red);
+                    
+                if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+                {
+                    Environment.Exit(1);
+                }
                 var key = Console.ReadKey();
 
                 if (key.Key == ConsoleKey.Y)
                 {
                     Console.WriteLine();
                     Out.WriteLine(e.ToString());
-                    Out.WriteLine(
+                    Out.WriteLineSimple(
                         Environment.NewLine + "[Message] Error Details: " + Environment.NewLine + e.StackTrace +
                         Environment.NewLine + e.InnerException + Environment.NewLine + e.TargetSite +
                         Environment.NewLine + "[Message]Press Any Key To Exit", "Oblivion.Boot", ConsoleColor.Red);
@@ -432,7 +479,7 @@ namespace Oblivion
         }
 
 
-        public static string GetLocalIPAddress()
+        public static string GetLocalIpAddress()
         {
             var host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (var ip in host.AddressList)
@@ -710,7 +757,7 @@ namespace Oblivion
                 try
                 {
                     Manager.Destroy();
-                    Out.WriteLine("Game Manager destroyed", "Oblivion.GameManager", ConsoleColor.DarkYellow);
+                    Out.WriteLineSimple("Game Manager destroyed", "Oblivion.GameManager", ConsoleColor.DarkYellow);
                 }
                 catch (Exception e)
                 {
@@ -719,11 +766,11 @@ namespace Oblivion
 
                 var span = DateTime.Now - now;
 
-                Out.WriteLine("Elapsed " + TimeSpanToString(span) + "ms on Shutdown Proccess", "Oblivion.Life",
+                Out.WriteLineSimple("Elapsed " + TimeSpanToString(span) + "ms on Shutdown Proccess", "Oblivion.Life",
                     ConsoleColor.DarkYellow);
 
                 if (!restart)
-                    Out.WriteLine("Shutdown Completed. Press Any Key to Continue...", string.Empty,
+                    Out.WriteLineSimple("Shutdown Completed. Press Any Key to Continue...", string.Empty,
                         ConsoleColor.DarkRed);
 
                 if (!restart)

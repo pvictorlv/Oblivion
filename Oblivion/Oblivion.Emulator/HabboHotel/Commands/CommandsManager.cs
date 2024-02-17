@@ -221,13 +221,13 @@ namespace Oblivion.HabboHotel.Commands
                         {
                             if (AliasDictionary.ContainsKey(alias))
                             {
-                                Out.WriteLine("Duplicate alias key: " + alias, "Oblivion.HabboHotel.CommandsManager",
+                                Out.WriteLineSimple("Duplicate alias key: " + alias, "Oblivion.HabboHotel.CommandsManager",
                                     ConsoleColor.DarkRed);
                                 continue;
                             }
                             if (CommandsDictionary.ContainsKey(alias))
                             {
-                                Out.WriteLine("An alias cannot have same name as a normal command",
+                                Out.WriteLineSimple("An alias cannot have same name as a normal command",
                                     "Oblivion.HabboHotel.CommandsManager", ConsoleColor.DarkRed);
                                 continue;
                             }
