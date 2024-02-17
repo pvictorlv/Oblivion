@@ -26,7 +26,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
             {
-                dbClient.SetQuery($"SELECT username,email,online,{col},rank FROM users WHERE ip_last = @ip");
+                dbClient.SetQuery($"SELECT username,mail,online,{col},rank FROM users WHERE ip_last = @ip");
                 dbClient.AddParameter("ip", user.GetConnection().Channel.RemoteAddress.ToString());
                 data = dbClient.GetTable();
             }
@@ -36,7 +36,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             foreach (DataRow row in data.Rows)
             {
                 builder.Append("Name: " + row["username"] + "\r");
-                builder.Append("Mail: " + row["email"] + "\r");
+                builder.Append("Mail: " + row["mail"] + "\r");
                 builder.Append("Diamonds: " + row[col] + "\r");
                 builder.Append("Rank: " + row["rank"] + "\r");
                 builder.Append("Online: " + Oblivion.EnumToBool(row["online"].ToString() == "1" ? "Yes" : "No") + "\r\r");
