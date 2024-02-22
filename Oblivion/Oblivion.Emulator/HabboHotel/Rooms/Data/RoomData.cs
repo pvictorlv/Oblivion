@@ -309,7 +309,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                     {
                         queryReactor.SetQuery("SELECT id FROM users WHERE username = @name");
                         queryReactor.AddParameter("name", Owner);
-                        integer = Convert.ToUInt32(queryReactor.GetInteger());
+                        integer = Convert.ToUInt32(await queryReactor.GetIntegerAsync());
                     }
                     else
                     {

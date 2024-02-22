@@ -29,7 +29,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
 
         public async Task InitAsync()
         {
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery("SELECT * FROM rooms_competitions_entries WHERE competition_id = " + Id);
                 var table = queryReactor.GetTable();
@@ -125,7 +125,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         public async Task RefreshCompetitions()
         {
             Competition = null;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery("SELECT * FROM rooms_competitions WHERE enabled = '1' LIMIT 1");
                 var row = queryReactor.GetRow();

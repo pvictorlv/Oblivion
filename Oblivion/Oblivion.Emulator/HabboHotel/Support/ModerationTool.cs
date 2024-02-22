@@ -95,7 +95,7 @@ namespace Oblivion.HabboHotel.Support
             {
                 room.RoomData.State = 1;
 
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     await queryReactor.RunFastQueryAsync($"UPDATE rooms_data SET state = 'locked' WHERE id = {room.RoomId}");
             }
 
@@ -198,7 +198,7 @@ namespace Oblivion.HabboHotel.Support
             if (soft)
                 return;
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync($"UPDATE users_info SET cautions = cautions + 1 WHERE user_id = {userId}");
         }
 
@@ -237,7 +237,7 @@ namespace Oblivion.HabboHotel.Support
             clientByUserId.GetHabbo().TradeLockExpire = Oblivion.GetUnixTimeStamp() + length;
             await clientByUserId.SendNotifyAsync(message).ConfigureAwait(false);
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync(
                     $"UPDATE users SET trade_lock_expire = '{clientByUserId.GetHabbo().TradeLockExpire}' WHERE id = '{clientByUserId.GetHabbo().Id}'");
         }
@@ -383,7 +383,7 @@ namespace Oblivion.HabboHotel.Support
         {
             ServerMessage result;
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery(
                     $"SELECT DISTINCT room_id FROM users_chatlogs WHERE user_id = '{userId}' ORDER BY timestamp DESC LIMIT 4");
@@ -559,7 +559,7 @@ namespace Oblivion.HabboHotel.Support
                 DataTable table = null;
                 if (i < 150)
                 {
-                    using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         dbClient.RunQuery(
                             $"SELECT user_id,timestamp,message FROM users_chatlogs WHERE room_id = '{room.RoomId}' LIMIT 50");
@@ -717,7 +717,7 @@ namespace Oblivion.HabboHotel.Support
 
             if (session.GetHabbo().CurrentRoomId <= 0)
             {
-                using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     dbClient.SetQuery(
                         string.Concat(
@@ -741,7 +741,7 @@ namespace Oblivion.HabboHotel.Support
                 var data = await Oblivion.GetGame().GetRoomManager()
                     .GenerateNullableRoomData(session.GetHabbo().CurrentRoomId);
 
-                using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     dbClient.SetQuery(
                         string.Concat(
@@ -847,7 +847,7 @@ namespace Oblivion.HabboHotel.Support
 
             if (statusCode == 2)
             {
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     AbusiveCooldown.Add(ticket.SenderId, Oblivion.GetUnixTimeStamp() + 600);
                     await queryReactor.RunFastQueryAsync(
@@ -905,7 +905,7 @@ namespace Oblivion.HabboHotel.Support
                 }
             }
 
-            using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryreactor2 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryreactor2.RunFastQueryAsync(
                     $"UPDATE users_stats SET tickets_answered = tickets_answered+1 WHERE id={session.GetHabbo().Id} LIMIT 1");
         }
@@ -969,7 +969,7 @@ namespace Oblivion.HabboHotel.Support
         /// <param name="description">The description.</param>
         internal async Task LogStaffEntry(string modName, string target, string type, string description)
         {
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery(
                     "INSERT INTO server_stafflogs (staffuser,target,action_type,description) VALUES (@Username,@target,@type,@desc)");

@@ -328,7 +328,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     await _room.SendMessage(serverMessage);
                     if (item.IsBuilder)
                     {
-                        using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                         {
                             await queryReactor.RunFastQueryAsync($"DELETE FROM items_rooms WHERE id='{item.Id}'");
                         }
@@ -361,7 +361,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                     await _room.SendMessage(serverMessage);
                     if (item.IsBuilder)
                     {
-                        using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                         {
                             await queryReactor.RunFastQueryAsync($"DELETE FROM items_rooms WHERE id='{item.Id}'");
                         }
@@ -379,7 +379,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
                 }
             }
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await SaveFurniture(queryReactor);
             }
@@ -415,7 +415,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             if (WallItems == null) WallItems = new ConcurrentDictionary<string, RoomItem>();
             else WallItems.Clear();
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await queryReactor.RunFastQueryAsync(
                     "SELECT i.id, i.x, i.y, i.z, i.rot, i.user_id, i.base_item,i.wall_pos,i.extra_data,i.songcode,i.builders,i.group_id,i.limited FROM items_rooms AS i WHERE i.room_id = " +
@@ -573,7 +573,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
         internal async Task DeleteRoomItem(RoomItem item)
         {
             if (item == null) return;
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await dbClient.RunFastQueryAsync($"DELETE FROM items_rooms WHERE id = '{item.Id}'");
             }
@@ -675,15 +675,15 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
             var serverMessage = new ServerMessage(0);
             await serverMessage.InitAsync(LibraryParser.OutgoingRequest("ItemAnimationMessageComposer"));
             await serverMessage.AppendIntegerAsync(user.X);
-            serverMessage.AppendInteger(user.Y);
-            serverMessage.AppendInteger(nextCoord.X);
-            serverMessage.AppendInteger(nextCoord.Y);
-            serverMessage.AppendInteger(0);
-            serverMessage.AppendInteger(rollerId);
-            serverMessage.AppendInteger(2);
-            serverMessage.AppendInteger(user.VirtualId);
-            serverMessage.AppendString(TextHandling.GetString(user.Z));
-            serverMessage.AppendString(TextHandling.GetString(nextZ));
+            await serverMessage.AppendIntegerAsync(user.Y);
+            await serverMessage.AppendIntegerAsync(nextCoord.X);
+            await serverMessage.AppendIntegerAsync(nextCoord.Y);
+            await serverMessage.AppendIntegerAsync(0);
+            await serverMessage.AppendIntegerAsync(rollerId);
+            await serverMessage.AppendIntegerAsync(2);
+            await serverMessage.AppendIntegerAsync(user.VirtualId);
+            await serverMessage.AppendStringAsync(TextHandling.GetString(user.Z));
+            await serverMessage.AppendStringAsync(TextHandling.GetString(nextZ));
             _room.GetGameMap()
                 .UpdateUserMovement(new Point(user.X, user.Y), new Point(nextCoord.X, nextCoord.Y), user);
             _room.GetGameMap().GameMap[user.X, user.Y] = 1;

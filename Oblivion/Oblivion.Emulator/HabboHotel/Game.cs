@@ -389,7 +389,7 @@ namespace Oblivion.HabboHotel
         /// </summary>
         internal async Task ContinueLoading()
         {
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 PetRace.Init(queryReactor);
                 await _catalog.Initialize(queryReactor);

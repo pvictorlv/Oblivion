@@ -40,7 +40,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
 
             gp.HasChat = !gp.HasChat;
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await dbClient.RunFastQueryAsync(
                     $"UPDATE groups_data SET has_chat = '{Oblivion.BoolToEnum(gp.HasChat)}' WHERE id = '{gp.Id}'");

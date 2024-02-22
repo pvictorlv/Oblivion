@@ -50,7 +50,7 @@ namespace Oblivion.HabboHotel.Misc
                         int.Parse(dateTime.ToString("dd")) - 1 + dateTime.ToString(":HH:mm:ss"), " | ONLINE COUNT: ",
                         clientCount, " | ROOM COUNT: ", loadedRoomsCount);
                     
-                    using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         _userPeak = clientCount;
                         await queryReactor.RunFastQueryAsync(string.Concat("UPDATE server_status SET stamp = '",

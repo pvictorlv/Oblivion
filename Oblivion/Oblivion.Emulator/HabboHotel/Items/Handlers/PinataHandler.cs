@@ -66,7 +66,7 @@ namespace Oblivion.HabboHotel.Items.Handlers
             item.ExtraData = string.Empty;
            await room.GetRoomItemHandler().RemoveFurniture(user.GetClient(), item.Id, false);
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await queryReactor.RunFastQueryAsync(
                     $"UPDATE items_rooms SET base_item='{item.BaseItem}', extra_data='' WHERE id='{item.Id}'");

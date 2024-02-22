@@ -24,7 +24,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             if (user?.GetConnection() == null) return false;
             var col = Oblivion.GetDbConfig().DbData["emerald.column"];
 
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 dbClient.SetQuery($"SELECT username,mail,online,{col},rank FROM users WHERE ip_last = @ip");
                 dbClient.AddParameter("ip", user.GetConnection().Channel.RemoteAddress.ToString());

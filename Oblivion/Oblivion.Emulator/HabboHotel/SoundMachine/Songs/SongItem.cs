@@ -72,7 +72,7 @@ namespace Oblivion.HabboHotel.SoundMachine.Songs
         /// <param name="roomId">The room identifier.</param>
         internal async Task SaveToDatabase(uint roomId)
         {
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 var id = Oblivion.GetGame().GetItemManager().GetRealId(ItemId);
                 await queryReactor.RunFastQueryAsync($"REPLACE INTO items_songs VALUES ('{id}', '{roomId}', '{SongId}')");
@@ -84,7 +84,7 @@ namespace Oblivion.HabboHotel.SoundMachine.Songs
         /// </summary>
         internal async Task RemoveFromDatabase()
         {
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 var id = Oblivion.GetGame().GetItemManager().GetRealId(ItemId);
 

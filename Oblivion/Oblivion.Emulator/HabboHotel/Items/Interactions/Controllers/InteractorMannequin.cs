@@ -46,7 +46,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             session.GetHabbo().Look = text3.TrimEnd('.');
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery(
                     $"UPDATE users SET look = @look, gender = @gender WHERE id = {session.GetHabbo().Id}");

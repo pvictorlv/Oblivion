@@ -41,7 +41,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             var userName = pms[0];
             var rank = pms[1];
-            using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var adapter = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 adapter.SetQuery("UPDATE users SET rank=@rank WHERE username=@user LIMIT 1");
                 adapter.AddParameter("user", userName);

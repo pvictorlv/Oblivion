@@ -504,8 +504,8 @@ namespace Oblivion.HabboHotel.Rooms.Items.Games.Types.Soccer
                         break;
                     }
 
-                serverMessage.AppendInteger(user.VirtualId);
-                serverMessage.AppendInteger(0);
+                await serverMessage.AppendIntegerAsync(user.VirtualId);
+                await serverMessage.AppendIntegerAsync(0);
                 await user.GetClient().GetHabbo().CurrentRoom.SendMessage(serverMessage);
             }
         }

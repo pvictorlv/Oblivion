@@ -22,7 +22,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override async Task<bool> Execute(GameClient session, string[] pms)
         {
-            Oblivion.GetGame().GetQuestManager().Initialize(Oblivion.GetDatabaseManager().GetQueryReactor());
+            Oblivion.GetGame().GetQuestManager().Initialize(await Oblivion.GetDatabaseManager().GetQueryReactorAsync());
             await session.SendNotif(Oblivion.GetLanguage().GetVar("command_refresh_quests"));
             return true;
         }

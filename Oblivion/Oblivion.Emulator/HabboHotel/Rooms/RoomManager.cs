@@ -137,7 +137,7 @@ namespace Oblivion.HabboHotel.Rooms
                 return data;
 
             var roomData = new RoomData();
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery($"SELECT * FROM rooms_data WHERE id = {roomId} LIMIT 1");
 
@@ -236,7 +236,7 @@ namespace Oblivion.HabboHotel.Rooms
             int maxVisitors, int tradeState)
         {
             uint roomId;
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 dbClient.SetQuery(
                     "INSERT INTO rooms_data (roomtype,caption,description,owner,model_name,category,users_max,trade_state) VALUES ('private',@caption,@desc,@Username,@model,@cat,@usmax,@tstate)");
@@ -426,7 +426,7 @@ namespace Oblivion.HabboHotel.Rooms
                     room.RoomData.Tags = new List<string>();
                 }
 
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     queryReactor.SetQuery(
                         "UPDATE rooms_data SET caption = @caption, description = @description, password = @password, category = " +
@@ -463,7 +463,7 @@ namespace Oblivion.HabboHotel.Rooms
 
             if (room.GetRoomUserManager() != null && room.GetRoomUserManager().UserList != null)
             {
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     foreach (var current in room.GetRoomUserManager().UserList.Values.Where(current => current != null))
                     {

@@ -68,17 +68,17 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
                 var serverMessage = new ServerMessage();
 
-                serverMessage.Init(LibraryParser.OutgoingRequest("ItemAnimationMessageComposer"));
+                await serverMessage.InitAsync(LibraryParser.OutgoingRequest("ItemAnimationMessageComposer"));
 
-                serverMessage.AppendInteger(item.X);
-                serverMessage.AppendInteger(item.Y);
-                serverMessage.AppendInteger(point.X);
-                serverMessage.AppendInteger(point.Y);
-                serverMessage.AppendInteger(1);
-                serverMessage.AppendInteger(item.VirtualId);
-                serverMessage.AppendString(item.Z.ToString(Oblivion.CultureInfo));
-                serverMessage.AppendString(num.ToString(Oblivion.CultureInfo));
-                serverMessage.AppendInteger(0);
+                await serverMessage.AppendIntegerAsync(item.X);
+                await serverMessage.AppendIntegerAsync(item.Y);
+                await serverMessage.AppendIntegerAsync(point.X);
+                await serverMessage.AppendIntegerAsync(point.Y);
+                await serverMessage.AppendIntegerAsync(1);
+                await serverMessage.AppendIntegerAsync(item.VirtualId);
+                await serverMessage.AppendStringAsync(item.Z.ToString(Oblivion.CultureInfo));
+                await serverMessage.AppendStringAsync(num.ToString(Oblivion.CultureInfo));
+                await serverMessage.AppendIntegerAsync(0);
 
                 await room.SendMessage(serverMessage);
 

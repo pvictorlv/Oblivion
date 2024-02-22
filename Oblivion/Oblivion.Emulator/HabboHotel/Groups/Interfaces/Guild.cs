@@ -297,7 +297,7 @@ namespace Oblivion.HabboHotel.Groups.Interfaces
             if (!HasForum)
                 return;
 
-            using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var adapter = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 adapter.SetQuery($"UPDATE groups_data SET has_forum = '1', forum_name = @name , forum_description = @desc , forum_messages_count = @msgcount , forum_score = @score , forum_lastposter_id = @lastposterid , forum_lastposter_name = @lastpostername , forum_lastposter_timestamp = @lasttimestamp WHERE id ={Id}");
                 adapter.AddParameter("name", ForumName);

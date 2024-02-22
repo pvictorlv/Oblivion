@@ -50,7 +50,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
             string userName;
             string look;
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 
                 queryReactor.SetQuery($"SELECT id,username,look,rank,builders_expire,navilogs,disabled_alert,DutyLevel,OnDuty,builders_items_max,builders_items_used,motto,gender,last_online,credits,activity_points,is_muted,home_room,hide_online,hide_inroom,block_newfriends,vip,account_created,talent_status,diamonds,last_name_change,trade_lock_expire,{Oblivion.GetDbConfig().DbData["emerald.column"]},badStaff,prefixes FROM users WHERE auth_ticket = @ticket");
@@ -81,7 +81,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 queryReactor.SetQuery($"SELECT COUNT(id) FROM users_stats WHERE id = {userId}");
 
                 if (int.Parse(queryReactor.GetString()) == 0)
-                    queryReactor.RunFastQuery($"INSERT INTO users_stats (id) VALUES ({userId})");
+                    await queryReactor.RunFastQueryAsync($"INSERT INTO users_stats (id) VALUES ({userId})");
 
                 queryReactor.SetQuery($"SELECT room_id FROM users_favorites WHERE user_id = {userId}");
                 favoritesTable = queryReactor.GetTable();
@@ -130,7 +130,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                     "REPLACE INTO users_info(user_id, login_timestamp) VALUES(@userId, @login_timestamp)");
                 queryReactor.AddParameter("userId", userId);
                 queryReactor.AddParameter("login_timestamp", Oblivion.GetUnixTimeStamp());
-                queryReactor.RunQuery();
+                await queryReactor.RunQueryAsync();
 
                 queryReactor.SetQuery($"SELECT * FROM users_relationships WHERE user_id = {userId}");
                 relationShipsTable = queryReactor.GetTable();

@@ -80,7 +80,7 @@ namespace Oblivion.HabboHotel.Achievements
 
             session.GetHabbo().Data.Talents.Add(talent.Id, new UserTalent(talent.Id, 1));
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync($"REPLACE INTO users_talents VALUES ('{session.GetHabbo().Id}', '{talent.Id}', '1');");
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("TalentLevelUpMessageComposer"));
@@ -112,7 +112,7 @@ namespace Oblivion.HabboHotel.Achievements
             {
                 await session.GetHabbo().GetSubscriptionManager().AddSubscription(7);
 
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     await queryReactor.RunFastQueryAsync($"UPDATE users SET talent_status = 'helper' WHERE id = '{session.GetHabbo().Id}'");
             }
         }

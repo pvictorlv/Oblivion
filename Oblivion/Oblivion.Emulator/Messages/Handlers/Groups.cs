@@ -278,7 +278,7 @@ namespace Oblivion.Messages.Handlers
                 roomUserByHabbo.UpdateNeeded = true;
             }
 
-            using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (IQueryAdapter queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync(string.Concat("UPDATE groups_members SET rank='1' WHERE group_id=", num,
                     " AND user_id=", num2, " LIMIT 1;"));
         }
@@ -319,7 +319,7 @@ namespace Oblivion.Messages.Handlers
                 roomUserByHabbo.UpdateNeeded = true;
             }
 
-            using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (IQueryAdapter queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync(string.Concat("UPDATE groups_members SET rank='0' WHERE group_id=", num,
                     " AND user_id=", num2, " LIMIT 1;"));
         }
@@ -344,7 +344,7 @@ namespace Oblivion.Messages.Handlers
             {
                 group.Requests.Remove(userId);
 
-                using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (IQueryAdapter queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     await queryReactor.RunFastQueryAsync(
                         $"DELETE FROM groups_requests WHERE group_id = '{groupId}' AND user_id = '{userId}' LIMIT 1");
                 return;
@@ -361,11 +361,11 @@ namespace Oblivion.Messages.Handlers
             await Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 0u, Session);
             await SendResponse();
 
-            using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (IQueryAdapter queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync(
                     $"DELETE FROM groups_requests WHERE group_id = '{groupId}' AND user_id = '{userId}' LIMIT 1");
 
-            using (IQueryAdapter queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (IQueryAdapter queryreactor2 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryreactor2.RunFastQueryAsync(
                     $"INSERT INTO groups_members (group_id, user_id, rank, date_join) VALUES ('{groupId}','{userId}','0','{Oblivion.GetUnixTimeStamp()}')");
         }
@@ -404,7 +404,7 @@ namespace Oblivion.Messages.Handlers
 
             await Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(group, Response, Session);
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync("DELETE FROM groups_requests WHERE group_id=" + groupId + " AND user_id=" +
                                                      userId);
         }
@@ -424,7 +424,7 @@ namespace Oblivion.Messages.Handlers
             {
                 if (group.State == 0)
                 {
-                    using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (IQueryAdapter queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         await queryReactor.RunFastQueryAsync(
                             string.Concat("INSERT INTO groups_members (user_id, group_id, date_join) VALUES (", user.Id,
@@ -444,7 +444,7 @@ namespace Oblivion.Messages.Handlers
                 {
                     if (!group.Requests.ContainsKey(user.Id))
                     {
-                        using (IQueryAdapter queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        using (IQueryAdapter queryreactor2 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                             await queryreactor2.RunFastQueryAsync(
                                 string.Concat("INSERT INTO groups_requests (user_id, group_id) VALUES (",
                                     Session.GetHabbo().Id, ",", groupId, ")"));
@@ -478,7 +478,7 @@ namespace Oblivion.Messages.Handlers
                 if (group.Admins.ContainsKey(num2))
                     group.Admins.Remove(num2);
 
-                using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (IQueryAdapter queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     await queryReactor.RunFastQueryAsync(string.Concat("DELETE FROM groups_members WHERE user_id=", num2,
                         " AND group_id=", num, " LIMIT 1"));
 
@@ -488,7 +488,7 @@ namespace Oblivion.Messages.Handlers
                 {
                     Session.GetHabbo().FavouriteGroup = 0u;
 
-                    using (IQueryAdapter queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (IQueryAdapter queryreactor2 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                         await queryreactor2.RunFastQueryAsync($"UPDATE users_stats SET favourite_group=0 WHERE id={num2} LIMIT 1");
 
                     await Response.InitAsync(LibraryParser.OutgoingRequest("FavouriteGroupMessageComposer"));
@@ -534,7 +534,7 @@ namespace Oblivion.Messages.Handlers
             await Oblivion.GetGame().GetGroupManager().SerializeGroupMembers(Response, group, 0u, Session);
             await SendResponse();
 
-            using (IQueryAdapter queryreactor3 = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (IQueryAdapter queryreactor3 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryreactor3.RunFastQueryAsync(string.Concat("DELETE FROM groups_members WHERE group_id=", num,
                     " AND user_id=", num2, " LIMIT 1;"));
         }
@@ -557,7 +557,7 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().FavouriteGroup = theGroup.Id;
             await Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(theGroup, Response, Session);
 
-            using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (IQueryAdapter queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync(string.Concat("UPDATE users_stats SET favourite_group =", theGroup.Id,
                     " WHERE id=", Session.GetHabbo().Id, " LIMIT 1;"));
 
@@ -601,7 +601,7 @@ namespace Oblivion.Messages.Handlers
             Request.GetUInteger();
             Session.GetHabbo().FavouriteGroup = 0u;
 
-            using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (IQueryAdapter queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync(
                     $"UPDATE users_stats SET favourite_group=0 WHERE id={Session.GetHabbo().Id} LIMIT 1;");
 
@@ -637,7 +637,7 @@ namespace Oblivion.Messages.Handlers
 
             int timestamp = Oblivion.GetUnixTimeStamp();
 
-            using (IQueryAdapter dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (IQueryAdapter dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 if (threadId != 0)
                 {
@@ -661,7 +661,7 @@ namespace Oblivion.Messages.Handlers
                 dbClient.AddParameter("subjc", subject);
                 dbClient.AddParameter("content", content);
 
-                threadId = (uint) dbClient.GetInteger();
+                threadId = (uint) await dbClient.GetIntegerAsync();
             }
 
             group.ForumScore += 0.25;
@@ -724,7 +724,7 @@ namespace Oblivion.Messages.Handlers
             bool pin = Request.GetBool();
             bool Lock = Request.GetBool();
 
-            using (IQueryAdapter dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (IQueryAdapter dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 dbClient.SetQuery(
                     $"SELECT * FROM groups_forums_posts WHERE group_id = '{groupId}' AND id = '{threadId}' LIMIT 1;");
@@ -801,7 +801,7 @@ namespace Oblivion.Messages.Handlers
             uint threadId = Request.GetUInteger();
             int stateToSet = Request.GetInteger();
 
-            using (IQueryAdapter dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (IQueryAdapter dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 dbClient.SetQuery(
                     $"SELECT * FROM groups_forums_posts WHERE group_id = '{groupId}' AND id = '{threadId}' LIMIT 1;");
@@ -870,7 +870,7 @@ namespace Oblivion.Messages.Handlers
             if (theGroup == null || !theGroup.HasForum)
                 return;
 
-            using (IQueryAdapter dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (IQueryAdapter dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 dbClient.SetQuery(
                     $"SELECT * FROM groups_forums_posts WHERE group_id = '{groupId}' AND parent_id = '{threadId}' OR id = '{threadId}' ORDER BY timestamp ASC;");
@@ -946,12 +946,12 @@ namespace Oblivion.Messages.Handlers
             uint groupId = Request.GetUInteger();
             int startIndex = Request.GetInteger();
 
-            using (IQueryAdapter dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (IQueryAdapter dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 dbClient.SetQuery(
                     $"SELECT count(id) FROM groups_forums_posts WHERE group_id = '{groupId}' AND parent_id = 0");
 
-                dbClient.GetInteger();
+                await dbClient.GetIntegerAsync();
 
                 dbClient.SetQuery(
                     $"SELECT * FROM groups_forums_posts WHERE group_id = '{groupId}' AND parent_id = 0 ORDER BY timestamp DESC, pinned DESC LIMIT @startIndex, @totalPerPage;");
@@ -1024,12 +1024,12 @@ namespace Oblivion.Messages.Handlers
             {
                 case 0:
                 case 1:
-                    using (IQueryAdapter dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (IQueryAdapter dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         dbClient.SetQuery(
                             "SELECT count(id) FROM groups_data WHERE has_forum = '1' AND forum_Messages_count > 0");
 
-                        int qtdForums = dbClient.GetInteger();
+                        int qtdForums = await dbClient.GetIntegerAsync();
 
                         dbClient.SetQuery(
                             "SELECT id FROM groups_data WHERE has_forum = '1' AND forum_Messages_count > 0 ORDER BY forum_Messages_count DESC LIMIT @startIndex, @totalPerPage;");
@@ -1181,7 +1181,7 @@ namespace Oblivion.Messages.Handlers
             if (theGroup?.CreatorId != Session.GetHabbo().Id)
                 return;
 
-            using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (IQueryAdapter queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery($"UPDATE groups_data SET `name`=@name, `desc`=@desc WHERE id={num} LIMIT 1");
                 queryReactor.AddParameter("name", text);
@@ -1242,7 +1242,7 @@ namespace Oblivion.Messages.Handlers
 
                     Oblivion.GetGame().GetGroupManager().SerializeGroupInfo(guild, Response, Session, room);
 
-                    using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (IQueryAdapter queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         queryReactor.SetQuery($"UPDATE groups_data SET badge = @badgi WHERE id = {guildId}");
                         queryReactor.AddParameter("badgi", badge);
@@ -1286,7 +1286,7 @@ namespace Oblivion.Messages.Handlers
             if (theGroup?.CreatorId != Session.GetHabbo().Id)
                 return;
 
-            using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (IQueryAdapter queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync(string.Concat("UPDATE groups_data SET colour1= ", num, ", colour2=", num2,
                     " WHERE id=", theGroup.Id, " LIMIT 1"));
 
@@ -1311,7 +1311,7 @@ namespace Oblivion.Messages.Handlers
             if (theGroup?.CreatorId != Session.GetHabbo().Id)
                 return;
 
-            using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (IQueryAdapter queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync(string.Concat("UPDATE groups_data SET state='", num, "', admindeco='", num2,
                     "' WHERE id=", theGroup.Id, " LIMIT 1"));
 
@@ -1412,7 +1412,7 @@ namespace Oblivion.Messages.Handlers
                 else
                     return;
 
-                using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (IQueryAdapter queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     await queryReactor.RunFastQueryAsync(string.Concat("DELETE FROM groups_members WHERE user_id=", userId,
                         " AND group_id=", guild, " LIMIT 1"));
 
@@ -1435,7 +1435,7 @@ namespace Oblivion.Messages.Handlers
                 {
                     byeUser.FavouriteGroup = 0;
 
-                    using (IQueryAdapter queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (IQueryAdapter queryreactor2 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                         await queryreactor2.RunFastQueryAsync(
                             $"UPDATE users_stats SET favourite_group=0 WHERE id={userId} LIMIT 1");
 
@@ -1484,7 +1484,7 @@ namespace Oblivion.Messages.Handlers
             group.WhoCanThread = whoCanThread;
             group.WhoCanMod = whoCanMod;
 
-            using (IQueryAdapter queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (IQueryAdapter queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery(
                     "UPDATE groups_data SET who_can_read = @who_can_read, who_can_post = @who_can_post, who_can_thread = @who_can_thread, who_can_mod = @who_can_mod WHERE id = @group_id");
@@ -1560,7 +1560,7 @@ namespace Oblivion.Messages.Handlers
 
                 await Oblivion.GetGame().GetRoomManager().UnloadRoom(room, "Delete room");
 
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     await queryReactor.RunFastQueryAsync($"DELETE FROM users_favorites WHERE room_id = {roomId}");
                     await queryReactor.RunFastQueryAsync($"DELETE FROM items_rooms WHERE room_id = {roomId}");

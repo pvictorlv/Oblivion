@@ -37,7 +37,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var look = user.GetClient().GetHabbo().Look;
             session.GetHabbo().Gender = gender;
             session.GetHabbo().Look = look;
-            using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var adapter = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 adapter.SetQuery(
                     "UPDATE users SET gender = @gender, look = @look WHERE id = " + session.GetHabbo().Id);

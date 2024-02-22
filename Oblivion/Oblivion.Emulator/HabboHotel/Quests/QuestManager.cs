@@ -140,7 +140,7 @@ namespace Oblivion.HabboHotel.Quests
                 num = (int) quest.GoalData;
                 flag = true;
                 IL_DC:
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     await queryReactor.RunFastQueryAsync(string.Concat("UPDATE users_quests_data SET progress = ", num,
                         " WHERE user_id = ", session.GetHabbo().Id, " AND quest_id =  ", quest.Id));
@@ -206,7 +206,7 @@ namespace Oblivion.HabboHotel.Quests
             var quest = GetQuest(message.GetUInteger());
             if (quest == null)
                 return;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await queryReactor.RunFastQueryAsync(string.Concat("REPLACE INTO users_quests_data(user_id,quest_id) VALUES (",
                     session.GetHabbo().Id, ", ", quest.Id, ")"));
@@ -232,7 +232,7 @@ namespace Oblivion.HabboHotel.Quests
 
             if (nextQuestInSeries == null)
                 return;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await queryReactor.RunFastQueryAsync(string.Concat("REPLACE INTO users_quests_data(user_id,quest_id) VALUES (",
                     session.GetHabbo().Id, ", ", nextQuestInSeries.Id, ")"));
@@ -254,7 +254,7 @@ namespace Oblivion.HabboHotel.Quests
             var quest = GetQuest(session.GetHabbo().CurrentQuestId);
             if (quest == null)
                 return;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync(string.Concat("DELETE FROM users_quests_data WHERE user_id = ",
                     session.GetHabbo().Id, " AND quest_id = ", quest.Id, ";UPDATE users_stats SET quest_id=0 WHERE id=",
                     session.GetHabbo().Id));

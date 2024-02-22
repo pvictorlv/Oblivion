@@ -484,7 +484,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// </summary>
         internal async Task InitUserBots()
         {
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery($"SELECT * FROM bots WHERE room_id = {RoomId} LIMIT 20");
                 var table = queryReactor.GetTable();
@@ -1060,7 +1060,7 @@ namespace Oblivion.HabboHotel.Rooms
             }
 
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await GetRoomItemHandler().SaveFurniture(queryReactor);
             }
@@ -1071,7 +1071,7 @@ namespace Oblivion.HabboHotel.Rooms
 
                 var builder = new StringBuilder();
                 var limit = RoomData.RoomChat.Count;
-                using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     builder.Append("INSERT INTO users_chatlogs (user_id, room_id, timestamp, message) VALUES ");
                     foreach (var chat in RoomData.RoomChat)
@@ -1128,7 +1128,7 @@ namespace Oblivion.HabboHotel.Rooms
             if (!Bans.ContainsKey(Convert.ToInt32(userId)))
                 Bans.Add(userId, ((Oblivion.GetUnixTimeStamp()) + time));
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync("REPLACE INTO rooms_bans VALUES (" + userId + ", " + RoomId +
                                                      ", '" +
                                                      (Oblivion.GetUnixTimeStamp() + time) + "')");
@@ -1170,7 +1170,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="userId">The user identifier.</param>
         internal async Task Unban(uint userId)
         {
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync("DELETE FROM rooms_bans WHERE user_id=" + userId +
                                                      " AND room_id=" + RoomId +
                                                      " LIMIT 1");
@@ -1240,7 +1240,7 @@ namespace Oblivion.HabboHotel.Rooms
         internal async Task SetMaxUsers(uint maxUsers)
         {
             RoomData.UsersMax = maxUsers;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync("UPDATE rooms_data SET users_max = " + maxUsers + " WHERE id = " +
                                                      RoomId);
         }
@@ -1345,7 +1345,7 @@ namespace Oblivion.HabboHotel.Rooms
             await LoadRights();
             await LoadBans();
             await InitUserBots();
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 if (roomData.WordFilter != null)
                 {

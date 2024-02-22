@@ -116,7 +116,7 @@ namespace Oblivion.HabboHotel.Items.Datas
         internal async Task Enable()
         {
             Enabled = true;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync($"UPDATE items_moodlight SET enabled = '1' WHERE item_id = '{ItemId}'");
         }
 
@@ -126,7 +126,7 @@ namespace Oblivion.HabboHotel.Items.Datas
         internal async Task Disable()
         {
             Enabled = false;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync($"UPDATE items_moodlight SET enabled = '0' WHERE item_id = '{ItemId}'");
         }
 
@@ -159,7 +159,7 @@ namespace Oblivion.HabboHotel.Items.Datas
                     break;
             }
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery(
                     $"UPDATE items_moodlight SET preset_{text}='{color},{intensity},{Oblivion.BoolToEnum(bgOnly)}' WHERE item_id='{ItemId}'");

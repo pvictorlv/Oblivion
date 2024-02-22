@@ -173,7 +173,7 @@ namespace Oblivion.Messages.Handlers
 
             var habboId = Session.GetHabbo().Id;
             string ssoTicket;
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 dbClient.SetQuery("SELECT user_id FROM user_auth_food WHERE user_id = '" + habboId + "' LIMIT 1");
                 var data = dbClient.GetRow();

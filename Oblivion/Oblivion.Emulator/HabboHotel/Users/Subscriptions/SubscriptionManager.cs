@@ -74,7 +74,7 @@ namespace Oblivion.HabboHotel.Users.Subscriptions
             var num4 = Oblivion.DateTimeToUnix(target);
             _subscription = new Subscription(2, num2, num4, num3);
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync(string.Concat("REPLACE INTO users_subscriptions VALUES (", _userId, ", 2, ",
                     num2, ", ", num4, ", ", num3, ");"));
 

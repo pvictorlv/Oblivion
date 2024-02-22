@@ -650,7 +650,7 @@ namespace Oblivion.HabboHotel.Pets
 
         internal async Task UpdateInDb()
         {
-            using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var adapter = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 adapter.SetQuery(
                     "REPLACE INTO pets_plants (pet_id, rarity, plant_name, plant_data, plant_state, growing_status) VALUES (@petid , @rarity , @plantname , @plantdata , @plantstate , @growing)");

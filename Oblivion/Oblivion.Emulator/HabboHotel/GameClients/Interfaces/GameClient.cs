@@ -181,7 +181,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
                     var banReason = Oblivion.GetGame().GetBanManager()
                         .GetBanReason(_habbo.UserName, ip, MachineId);
                     await SendNotifWithScroll(banReason);
-                    using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         queryReactor.SetQuery($"SELECT ip_last FROM users WHERE id={_habbo.Id} LIMIT 1");
 
@@ -189,7 +189,7 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
 
                         queryReactor.SetQuery(
                             $"SELECT COUNT(user_id) FROM users_bans_access WHERE user_id={_habbo.Id} LIMIT 1");
-                        var integer = queryReactor.GetInteger();
+                        var integer = await queryReactor.GetIntegerAsync();
 
                         if (integer > 0)
                             await queryReactor.RunFastQueryAsync(
@@ -548,16 +548,16 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             using (var serverMessage =
                    new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer")))
             {
-                serverMessage.AppendString(picture);
-                serverMessage.AppendInteger(4);
-                serverMessage.AppendString("title");
-                serverMessage.AppendString(title);
-                serverMessage.AppendString("message");
-                serverMessage.AppendString(message);
-                serverMessage.AppendString("linkUrl");
-                serverMessage.AppendString("event:");
-                serverMessage.AppendString("linkTitle");
-                serverMessage.AppendString("ok");
+                await serverMessage.AppendStringAsync(picture);
+                await serverMessage.AppendIntegerAsync(4);
+                await serverMessage.AppendStringAsync("title");
+                await serverMessage.AppendStringAsync(title);
+                await serverMessage.AppendStringAsync("message");
+                await serverMessage.AppendStringAsync(message);
+                await serverMessage.AppendStringAsync("linkUrl");
+                await serverMessage.AppendStringAsync("event:");
+                await serverMessage.AppendStringAsync("linkTitle");
+                await serverMessage.AppendStringAsync("ok");
                 await SendMessage(serverMessage);
             }
         }
@@ -573,16 +573,16 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
             using (var serverMessage =
                    new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer")))
             {
-                serverMessage.AppendString(picture);
-                serverMessage.AppendInteger(4);
-                serverMessage.AppendString("title");
-                serverMessage.AppendString(title);
-                serverMessage.AppendString("message");
-                serverMessage.AppendString(message);
-                serverMessage.AppendString("linkUrl");
-                serverMessage.AppendString("event:");
-                serverMessage.AppendString("linkTitle");
-                serverMessage.AppendString("ok");
+                await serverMessage.AppendStringAsync(picture);
+                await serverMessage.AppendIntegerAsync(4);
+                await serverMessage.AppendStringAsync("title");
+                await serverMessage.AppendStringAsync(title);
+                await serverMessage.AppendStringAsync("message");
+                await serverMessage.AppendStringAsync(message);
+                await serverMessage.AppendStringAsync("linkUrl");
+                await serverMessage.AppendStringAsync("event:");
+                await serverMessage.AppendStringAsync("linkTitle");
+                await serverMessage.AppendStringAsync("ok");
                 await SendMessage(serverMessage);
             }
         }

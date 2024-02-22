@@ -76,9 +76,9 @@ namespace Oblivion.Messages.Handlers
             await SendResponse();
 
             Session.GetHabbo().Data.FavouritedRooms.Add(roomId);
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
-                await queryReactor.RunFastQueryAsync("INSERT INTO users_favorites (user_id,room_id) VALUES (" +
+                await queryReactor.RunFastQueryAsync("REPLACE INTO users_favorites (user_id,room_id) VALUES (" +
                                                      Session.GetHabbo().Id + "," + roomId + ")");
             }
         }
@@ -95,7 +95,7 @@ namespace Oblivion.Messages.Handlers
             GetResponse().AppendBool(false);
             await SendResponse();
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await queryReactor.RunFastQueryAsync("DELETE FROM users_favorites WHERE user_id = " +
                                                      Session.GetHabbo().Id +
@@ -142,7 +142,7 @@ namespace Oblivion.Messages.Handlers
             var hotelView = Oblivion.GetGame().GetHotelView();
             if (hotelView.FurniRewardName != null)
             {
-                var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("LandingRewardMessageComposer"));
+                using var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("LandingRewardMessageComposer"));
                 await serverMessage.AppendStringAsync(hotelView.FurniRewardName);
                 await serverMessage.AppendIntegerAsync(hotelView.FurniRewardId);
                 await serverMessage.AppendIntegerAsync(120);
@@ -156,7 +156,7 @@ namespace Oblivion.Messages.Handlers
         internal async Task LandingCommunityGoal()
         {
             var onlineFriends = Session.GetHabbo().GetMessenger().Friends.Count(x => x.Value.IsOnline);
-            var goalMeter =
+            using var goalMeter =
                 new ServerMessage(LibraryParser.OutgoingRequest("LandingCommunityChallengeMessageComposer"));
             goalMeter.AppendBool(true); //
             await goalMeter.AppendIntegerAsync(0); //points
@@ -312,7 +312,7 @@ namespace Oblivion.Messages.Handlers
 
                     if (current4.IsAsleep)
                     {
-                        var sleepMsg = new ServerMessage(LibraryParser.OutgoingRequest("RoomUserIdleMessageComposer"));
+                        using var sleepMsg = new ServerMessage(LibraryParser.OutgoingRequest("RoomUserIdleMessageComposer"));
                         await sleepMsg.AppendIntegerAsync(current4.VirtualId);
                         sleepMsg.AppendBool(true);
                         await Session.SendMessage(sleepMsg);
@@ -997,7 +997,7 @@ namespace Oblivion.Messages.Handlers
             if (num == 0)
                 return;
             room.UsersWithRights.Add(num);
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await queryReactor.RunFastQueryAsync(string.Concat(
                     "INSERT INTO rooms_rights (room_id,user_id) VALUES (",
@@ -1061,7 +1061,7 @@ namespace Oblivion.Messages.Handlers
                 }
 
                 await UsersWithRights();
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     await queryReactor.RunFastQueryAsync($"DELETE FROM rooms_rights WHERE {stringBuilder}");
                 }
@@ -1093,7 +1093,7 @@ namespace Oblivion.Messages.Handlers
                 roomUserByHabbo.UpdateNeeded = true;
             }
 
-            using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryreactor2 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await queryreactor2.RunFastQueryAsync($"DELETE FROM rooms_rights WHERE room_id = {room.RoomId}");
             }
@@ -1161,7 +1161,7 @@ namespace Oblivion.Messages.Handlers
             {
                 Session.GetHabbo().HomeRoom = roomId
                     ;
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     await queryReactor.RunFastQueryAsync(string.Concat("UPDATE users SET home_room = ", roomId,
                         " WHERE id = ",
@@ -1196,7 +1196,7 @@ namespace Oblivion.Messages.Handlers
 
             if (roomData == null || Session == null)
                 return;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await queryReactor.RunFastQueryAsync($"DELETE FROM rooms_data WHERE id = {roomId}");
                 await queryReactor.RunFastQueryAsync($"DELETE FROM users_favorites WHERE room_id = {roomId}");
@@ -1453,7 +1453,7 @@ namespace Oblivion.Messages.Handlers
                         return;
                 }
 
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     await queryReactor.RunFastQueryAsync(string.Concat("UPDATE rooms_data SET score = ",
                         room.RoomData.Score,
@@ -1538,7 +1538,7 @@ namespace Oblivion.Messages.Handlers
                 if (!room.RoomData.WordFilter.Contains(text))
                     return;
                 room.RoomData.WordFilter.Remove(text);
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     queryReactor.SetQuery("DELETE FROM rooms_wordfilter WHERE room_id = @id AND word = @word");
                     queryReactor.AddParameter("id", num);
@@ -1557,7 +1557,7 @@ namespace Oblivion.Messages.Handlers
             }
 
             room.RoomData.WordFilter.Add(text);
-            using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryreactor2 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryreactor2.SetQuery("INSERT INTO rooms_wordfilter (room_id, word) VALUES (@id, @word);");
                 queryreactor2.AddParameter("id", num);
@@ -1640,7 +1640,7 @@ namespace Oblivion.Messages.Handlers
                     break;
             }
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery(string.Concat("UPDATE rooms_data SET ", type, " = @extradata WHERE id = ",
                     room.RoomId));
@@ -1831,7 +1831,7 @@ namespace Oblivion.Messages.Handlers
                 for (var i = 1; i < lines.Length; i++)
                     if (lines[i].Length != lineWidth)
                     {
-                        var message =
+                        using var message =
                             new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
                         await message.AppendStringAsync("floorplan_editor.error");
                         await message.AppendIntegerAsync(1);
@@ -1849,7 +1849,7 @@ namespace Oblivion.Messages.Handlers
                     doorZ = charDoor - 87;
                 else
                     double.TryParse(charDoor.ToString(), out doorZ);
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     queryReactor.SetQuery(
                         "REPLACE INTO rooms_models_customs (roomid,door_x,door_y,door_z,door_dir,heightmap) VALUES ('" +
@@ -1908,7 +1908,7 @@ namespace Oblivion.Messages.Handlers
             await Response.InitAsync(LibraryParser.OutgoingRequest("SendMonsterplantIdMessageComposer"));
             await Response.AppendIntegerAsync(pet.PetId);
             await SendResponse();
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 var roomId = (room.RoomId <= 0) ? "NULL" : $"'{room.RoomId}'";
 
@@ -1926,7 +1926,7 @@ namespace Oblivion.Messages.Handlers
             if (pet.DbState != DatabaseUpdateState.NeedsInsert)
                 pet.DbState = DatabaseUpdateState.NeedsUpdate;
 
-            using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryreactor2 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await queryreactor2.RunNoLockFastQueryAsync($"DELETE FROM items_rooms WHERE id = '{mopla.Id}';");
                 await room.GetRoomUserManager().SavePets(queryreactor2);
@@ -1970,7 +1970,7 @@ namespace Oblivion.Messages.Handlers
             if (!room.GetGameMap().CanWalk(x, y, false))
                 return;
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 var roomId = (room.RoomId <= 0) ? "NULL" : $"'{room.RoomId}'";
 
@@ -1989,7 +1989,7 @@ namespace Oblivion.Messages.Handlers
             await Session.GetHabbo().GetInventoryComponent().MovePetToRoom(pet.PetId);
             if (pet.DbState != DatabaseUpdateState.NeedsInsert)
                 pet.DbState = DatabaseUpdateState.NeedsUpdate;
-            using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryreactor2 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await room.GetRoomUserManager().SavePets(queryreactor2);
             }
@@ -2091,7 +2091,7 @@ namespace Oblivion.Messages.Handlers
                                     (current, speech) =>
                                         current + TextHandling.FilterHtml(speech, Session.GetHabbo().GotCommand("ha")) +
                                         ";");
-                        using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                         {
                             queryReactor.SetQuery(
                                 "UPDATE bots SET automatic_chat = @autochat, speaking_interval = @interval, mix_phrases = @mix_phrases, speech = @speech WHERE id = @botid");
@@ -2118,7 +2118,7 @@ namespace Oblivion.Messages.Handlers
                     }
                 case 3:
                     bot.BotData.WalkingMode = bot.BotData.WalkingMode == "freeroam" ? "stand" : "freeroam";
-                    using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         queryReactor.SetQuery("UPDATE bots SET walk_mode = @walkmode WHERE id = @botid");
                         queryReactor.AddParameter("walkmode", bot.BotData.WalkingMode);
@@ -2219,7 +2219,7 @@ namespace Oblivion.Messages.Handlers
             Response.AppendBool(false);
             await SendResponse();
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await queryReactor.RunFastQueryAsync(string.Concat("DELETE FROM users_favorites WHERE user_id = ",
                     Session.GetHabbo().Id, " AND room_id = ", num));
@@ -2437,7 +2437,7 @@ namespace Oblivion.Messages.Handlers
             if (hotelView.HotelViewPromosIndexers.Count <= 0)
                 return;
 
-            var message =
+            using var message =
                 hotelView.SmallPromoComposer(
                     new ServerMessage(LibraryParser.OutgoingRequest("LandingPromosMessageComposer")));
             await Session.SendMessage(message);
@@ -2480,7 +2480,7 @@ namespace Oblivion.Messages.Handlers
 
             Session.GetHabbo().Data.SuggestedPolls.Add(num);
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery("INSERT INTO users_polls VALUES (@userid , @pollid , 0 , '0' , '')");
                 queryReactor.AddParameter("userid", Session.GetHabbo().Id);
@@ -2529,7 +2529,7 @@ namespace Oblivion.Messages.Handlers
 
             Session.GetHabbo().Data.SuggestedPolls.Add(pollId);
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery(
                     "INSERT INTO users_polls VALUES (@userid , @pollid , @questionid , '1' , @answer)");
@@ -2753,7 +2753,7 @@ namespace Oblivion.Messages.Handlers
 
             Session.GetHabbo().SpectatorMode = true;
 
-            var forwardToRoom = new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
+            using var forwardToRoom = new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
             await forwardToRoom.AppendIntegerAsync(1);
 
             await Session.SendMessage(forwardToRoom);
@@ -2782,7 +2782,7 @@ namespace Oblivion.Messages.Handlers
 
             user.LastPhotoPreview = preview;
 
-            var messageBuffer = new ServerMessage(LibraryParser.OutgoingRequest("CameraStorageUrlMessageComposer"));
+            using var messageBuffer = new ServerMessage(LibraryParser.OutgoingRequest("CameraStorageUrlMessageComposer"));
 
             await messageBuffer.AppendStringAsync(Oblivion.GetGame()
                 .GetCameraManager()
@@ -2807,7 +2807,7 @@ namespace Oblivion.Messages.Handlers
             if (competition == null)
                 return;
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 if (code == 2)
                 {
@@ -2823,7 +2823,7 @@ namespace Oblivion.Messages.Handlers
                     await queryReactor.RunQueryAsync();
                     competition.Entries.Add(room.RoomId, roomData);
 
-                    var message = new ServerMessage();
+                    using var message = new ServerMessage();
 
                     roomData.CompetitionStatus = 2;
                     competition.AppendEntrySubmitMessage(message, 3, room);
@@ -2849,12 +2849,10 @@ namespace Oblivion.Messages.Handlers
                     roomData.CompetitionStatus = 3;
 
 
-                    using (var message = new ServerMessage())
-                    {
-                        competition.AppendEntrySubmitMessage(message, 0);
+                    using var message = new ServerMessage();
+                    competition.AppendEntrySubmitMessage(message, 0);
 
-                        await Session.SendMessage(message);
-                    }
+                    await Session.SendMessage(message);
                 }
             }
         }
@@ -2885,7 +2883,7 @@ namespace Oblivion.Messages.Handlers
             entry.CompetitionVotes++;
             Session.GetHabbo().DailyCompetitionVotes--;
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery(
                     "UPDATE rooms_competitions_entries SET votes = @votes WHERE competition_id = @competition_id AND room_id = @roomid");
@@ -2899,7 +2897,7 @@ namespace Oblivion.Messages.Handlers
                                                      Session.GetHabbo().Id);
             }
 
-            var message = new ServerMessage();
+            using var message = new ServerMessage();
             competition.AppendVoteMessage(message, Session.GetHabbo());
 
             await Session.SendMessage(message);

@@ -52,9 +52,9 @@ namespace Oblivion.Messages.Handlers
             var onGuideSessionAttached2 =
                 new ServerMessage(LibraryParser.OutgoingRequest("OnGuideSessionAttachedMessageComposer"));
             onGuideSessionAttached2.AppendBool(true);
-            onGuideSessionAttached2.AppendInteger(userId);
-            onGuideSessionAttached2.AppendString(message);
-            onGuideSessionAttached2.AppendInteger(15);
+            await onGuideSessionAttached2.AppendIntegerAsync(userId);
+            await onGuideSessionAttached2.AppendStringAsync(message);
+            await onGuideSessionAttached2.AppendIntegerAsync(15);
             await guide.SendMessage(onGuideSessionAttached2);
             guide.GetHabbo().GuideOtherUser = Session;
             Session.GetHabbo().GuideOtherUser = guide;

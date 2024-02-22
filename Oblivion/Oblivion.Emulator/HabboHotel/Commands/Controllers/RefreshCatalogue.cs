@@ -24,7 +24,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override async Task<bool> Execute(GameClient session, string[] pms)
         {
-            using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var adapter = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 Oblivion.GetGame().GetItemManager().LoadItems(adapter);
                 Oblivion.GetGame().GetCatalog().Initialize(adapter);

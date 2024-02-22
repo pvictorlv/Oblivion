@@ -22,7 +22,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
         public override async Task<bool> Execute(GameClient session, string[] pms)
         {
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 Oblivion.GetGame().GetAchievementManager().LoadAchievements(dbClient);
             }

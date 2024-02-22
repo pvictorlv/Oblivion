@@ -51,7 +51,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var type = currentRoom.RoomData.RoomSaleType;
             if ((type == "d" && cost <= user.Diamonds) || type == "c" && cost <= user.Credits)
             {
-                using (var Adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var Adapter = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     Adapter.SetQuery("UPDATE rooms_data SET owner = @newowner WHERE id = @roomid");
                     Adapter.AddParameter("newowner", user.UserName);
@@ -106,7 +106,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 currentRoom.RoomData.RoomForSale = false;
                 currentRoom.RoomData.RoomSaleCost = 0;
                 currentRoom.RoomData.RoomSaleType = "";
-                using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     await currentRoom.GetRoomItemHandler().SaveFurniture(dbClient);
 

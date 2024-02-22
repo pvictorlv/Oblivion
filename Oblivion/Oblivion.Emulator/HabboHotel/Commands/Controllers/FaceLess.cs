@@ -37,7 +37,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             }
             session.GetHabbo().Look += ".hd-99999-" + color;
 
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 dbClient.SetQuery(
                     "UPDATE users SET look = @look WHERE id = " + session.GetHabbo().Id);

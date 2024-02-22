@@ -42,18 +42,18 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage2 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredTriggerMessageComposer"));
                         serverMessage2.AppendBool(false);
-                        serverMessage2.AppendInteger(0);
-                        serverMessage2.AppendInteger(list.Count);
-                        foreach (var current2 in list) serverMessage2.AppendInteger(current2.VirtualId);
-                        serverMessage2.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage2.AppendInteger(item.VirtualId);
-                        serverMessage2.AppendString(extraInfo);
-                        serverMessage2.AppendInteger(0);
-                        serverMessage2.AppendInteger(0);
-                        serverMessage2.AppendInteger(7);
-                        serverMessage2.AppendInteger(0);
-                        serverMessage2.AppendInteger(0);
-                        serverMessage2.AppendInteger(0);
+                        await serverMessage2.AppendIntegerAsync(0);
+                        await serverMessage2.AppendIntegerAsync(list.Count);
+                        foreach (var current2 in list) await serverMessage2.AppendIntegerAsync(current2.VirtualId);
+                        await serverMessage2.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage2.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage2.AppendStringAsync(extraInfo);
+                        await serverMessage2.AppendIntegerAsync(0);
+                        await serverMessage2.AppendIntegerAsync(0);
+                        await serverMessage2.AppendIntegerAsync(7);
+                        await serverMessage2.AppendIntegerAsync(0);
+                        await serverMessage2.AppendIntegerAsync(0);
+                        await serverMessage2.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage2);
                         return;
                     }
@@ -62,18 +62,18 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage3 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredTriggerMessageComposer"));
                         serverMessage3.AppendBool(false);
-                        serverMessage3.AppendInteger(0);
-                        serverMessage3.AppendInteger(list.Count);
-                        foreach (var current3 in list) serverMessage3.AppendInteger(current3.VirtualId);
-                        serverMessage3.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage3.AppendInteger(item.VirtualId);
-                        serverMessage3.AppendString(extraInfo);
-                        serverMessage3.AppendInteger(0);
-                        serverMessage3.AppendInteger(0);
-                        serverMessage3.AppendInteger(8);
-                        serverMessage3.AppendInteger(0);
-                        serverMessage3.AppendInteger(0);
-                        serverMessage3.AppendInteger(0);
+                        await serverMessage3.AppendIntegerAsync(0);
+                        await serverMessage3.AppendIntegerAsync(list.Count);
+                        foreach (var current3 in list) await serverMessage3.AppendIntegerAsync(current3.VirtualId);
+                        await serverMessage3.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage3.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage3.AppendStringAsync(extraInfo);
+                        await serverMessage3.AppendIntegerAsync(0);
+                        await serverMessage3.AppendIntegerAsync(0);
+                        await serverMessage3.AppendIntegerAsync(8);
+                        await serverMessage3.AppendIntegerAsync(0);
+                        await serverMessage3.AppendIntegerAsync(0);
+                        await serverMessage3.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage3);
                         return;
                     }
@@ -82,18 +82,18 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage4 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredTriggerMessageComposer"));
                         serverMessage4.AppendBool(false);
-                        serverMessage4.AppendInteger(0);
-                        serverMessage4.AppendInteger(list.Count);
-                        foreach (var current4 in list) serverMessage4.AppendInteger(current4.VirtualId);
-                        serverMessage4.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage4.AppendInteger(item.VirtualId);
-                        serverMessage4.AppendString(extraInfo);
-                        serverMessage4.AppendInteger(0);
-                        serverMessage4.AppendInteger(0);
-                        serverMessage4.AppendInteger(8);
-                        serverMessage4.AppendInteger(0);
-                        serverMessage4.AppendInteger(0);
-                        serverMessage4.AppendInteger(0);
+                        await serverMessage4.AppendIntegerAsync(0);
+                        await serverMessage4.AppendIntegerAsync(list.Count);
+                        foreach (var current4 in list) await serverMessage4.AppendIntegerAsync(current4.VirtualId);
+                        await serverMessage4.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage4.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage4.AppendStringAsync(extraInfo);
+                        await serverMessage4.AppendIntegerAsync(0);
+                        await serverMessage4.AppendIntegerAsync(0);
+                        await serverMessage4.AppendIntegerAsync(8);
+                        await serverMessage4.AppendIntegerAsync(0);
+                        await serverMessage4.AppendIntegerAsync(0);
+                        await serverMessage4.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage4);
                         return;
                     }
@@ -101,16 +101,16 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     {
                         var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("WiredTriggerMessageComposer"));
                         serverMessage.AppendBool(false);
-                        serverMessage.AppendInteger(15);
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage.AppendInteger(item.VirtualId);
-                        serverMessage.AppendString("");
-                        serverMessage.AppendInteger(1);
-                        serverMessage.AppendInteger(delay / 10); //fix
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendInteger(12);
-                        serverMessage.AppendInteger(0);
+                        await serverMessage.AppendIntegerAsync(15);
+                        await serverMessage.AppendIntegerAsync(0);
+                        await serverMessage.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage.AppendStringAsync("");
+                        await serverMessage.AppendIntegerAsync(1);
+                        await serverMessage.AppendIntegerAsync(delay / 10); //fix
+                        await serverMessage.AppendIntegerAsync(0);
+                        await serverMessage.AppendIntegerAsync(12);
+                        await serverMessage.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage);
                         return;
             }
@@ -121,18 +121,18 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage5 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredTriggerMessageComposer"));
                         serverMessage5.AppendBool(false);
-                        serverMessage5.AppendInteger(15);
-                        serverMessage5.AppendInteger(list.Count);
-                        foreach (var current5 in list) serverMessage5.AppendInteger(current5.VirtualId);
-                        serverMessage5.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage5.AppendInteger(item.VirtualId);
-                        serverMessage5.AppendString(extraInfo);
-                        serverMessage5.AppendInteger(1);
-                        serverMessage5.AppendInteger(delay);
-                        serverMessage5.AppendInteger(0);
-                        serverMessage5.AppendInteger(6);
-                        serverMessage5.AppendInteger(0);
-                        serverMessage5.AppendInteger(0);
+                        await serverMessage5.AppendIntegerAsync(15);
+                        await serverMessage5.AppendIntegerAsync(list.Count);
+                        foreach (var current5 in list) await serverMessage5.AppendIntegerAsync(current5.VirtualId);
+                        await serverMessage5.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage5.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage5.AppendStringAsync(extraInfo);
+                        await serverMessage5.AppendIntegerAsync(1);
+                        await serverMessage5.AppendIntegerAsync(delay);
+                        await serverMessage5.AppendIntegerAsync(0);
+                        await serverMessage5.AppendIntegerAsync(6);
+                        await serverMessage5.AppendIntegerAsync(0);
+                        await serverMessage5.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage5);
                         return;
                     }
@@ -162,19 +162,19 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         await session.SendMessage(serverMessage5);
                         return;*/
                         message.AppendBool(false);
-                        message.AppendInteger(5);
-                        message.AppendInteger(0);
-                        message.AppendInteger(item.GetBaseItem().SpriteId);
-                        message.AppendInteger(item.VirtualId);
-                        message.AppendString("");
-                        message.AppendInteger(1);
+                        await message.AppendIntegerAsync(5);
+                        await message.AppendIntegerAsync(0);
+                        await message.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await message.AppendIntegerAsync(item.VirtualId);
+                        await message.AppendStringAsync("");
+                        await message.AppendIntegerAsync(1);
 
-                        message.AppendInteger(team);
+                        await message.AppendIntegerAsync(team);
 
-                        message.AppendInteger(0);
-                        message.AppendInteger(9);
-                        message.AppendInteger(0);
-                        message.AppendInteger(0);
+                        await message.AppendIntegerAsync(0);
+                        await message.AppendIntegerAsync(9);
+                        await message.AppendIntegerAsync(0);
+                        await message.AppendIntegerAsync(0);
                         //                    foreach (var SpriteEx in WiredException)
                         //                        message.AppendInt32(SpriteEx);
                         await session.SendMessage(message);
@@ -190,15 +190,15 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage5 =
                         new ServerMessage(LibraryParser.OutgoingRequest("WiredConditionMessageComposer"));
                         serverMessage5.AppendBool(false);
-                        serverMessage5.AppendInteger(5);
-                        serverMessage5.AppendInteger(0);
-                        serverMessage5.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage5.AppendInteger(item.VirtualId);
-                        serverMessage5.AppendString("");
-                        serverMessage5.AppendInteger(1); //delay type
-                        serverMessage5.AppendInteger(team);
-                        serverMessage5.AppendInteger(0);
-                        serverMessage5.AppendInteger(6);
+                        await serverMessage5.AppendIntegerAsync(5);
+                        await serverMessage5.AppendIntegerAsync(0);
+                        await serverMessage5.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage5.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage5.AppendStringAsync("");
+                        await serverMessage5.AppendIntegerAsync(1); //delay type
+                        await serverMessage5.AppendIntegerAsync(team);
+                        await serverMessage5.AppendIntegerAsync(0);
+                        await serverMessage5.AppendIntegerAsync(6);
                         await session.SendMessage(serverMessage5);
                         return;
                     }
@@ -211,15 +211,15 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage5 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredConditionMessageComposer"));
                         serverMessage5.AppendBool(false);
-                        serverMessage5.AppendInteger(5);
-                        serverMessage5.AppendInteger(0);
-                        serverMessage5.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage5.AppendInteger(item.VirtualId);
-                        serverMessage5.AppendString("");
-                        serverMessage5.AppendInteger(1); //delay type
-                        serverMessage5.AppendInteger(team); //delay type
-                        serverMessage5.AppendInteger(0);
-                        serverMessage5.AppendInteger(17);
+                        await serverMessage5.AppendIntegerAsync(5);
+                        await serverMessage5.AppendIntegerAsync(0);
+                        await serverMessage5.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage5.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage5.AppendStringAsync("");
+                        await serverMessage5.AppendIntegerAsync(1); //delay type
+                        await serverMessage5.AppendIntegerAsync(team); //delay type
+                        await serverMessage5.AppendIntegerAsync(0);
+                        await serverMessage5.AppendIntegerAsync(17);
                         await session.SendMessage(serverMessage5);
                         return;
                     }
@@ -245,18 +245,18 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage6 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredTriggerMessageComposer"));
                         serverMessage6.AppendBool(false);
-                        serverMessage6.AppendInteger(0);
-                        serverMessage6.AppendInteger(list.Count);
-                        foreach (var current6 in list) serverMessage6.AppendInteger(current6.VirtualId);
-                        serverMessage6.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage6.AppendInteger(item.VirtualId);
-                        serverMessage6.AppendString(extraInfo);
-                        serverMessage6.AppendInteger(0);
-                        serverMessage6.AppendInteger(0);
-                        serverMessage6.AppendInteger(0);
-                        serverMessage6.AppendInteger(0);
-                        serverMessage6.AppendInteger(0);
-                        serverMessage6.AppendInteger(0);
+                        await serverMessage6.AppendIntegerAsync(0);
+                        await serverMessage6.AppendIntegerAsync(list.Count);
+                        foreach (var current6 in list) await serverMessage6.AppendIntegerAsync(current6.VirtualId);
+                        await serverMessage6.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage6.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage6.AppendStringAsync(extraInfo);
+                        await serverMessage6.AppendIntegerAsync(0);
+                        await serverMessage6.AppendIntegerAsync(0);
+                        await serverMessage6.AppendIntegerAsync(0);
+                        await serverMessage6.AppendIntegerAsync(0);
+                        await serverMessage6.AppendIntegerAsync(0);
+                        await serverMessage6.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage6);
                         return;
                     }
@@ -265,17 +265,17 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage7 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredTriggerMessageComposer"));
                         serverMessage7.AppendBool(false);
-                        serverMessage7.AppendInteger(5);
-                        serverMessage7.AppendInteger(0);
-                        serverMessage7.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage7.AppendInteger(item.VirtualId);
-                        serverMessage7.AppendString("");
-                        serverMessage7.AppendInteger(1);
-                        serverMessage7.AppendInteger((string.IsNullOrWhiteSpace(extraInfo)) ? 100 : int.Parse(extraInfo));
-                        serverMessage7.AppendInteger(0);
-                        serverMessage7.AppendInteger(10);
-                        serverMessage7.AppendInteger(0);
-                        serverMessage7.AppendInteger(0);
+                        await serverMessage7.AppendIntegerAsync(5);
+                        await serverMessage7.AppendIntegerAsync(0);
+                        await serverMessage7.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage7.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage7.AppendStringAsync("");
+                        await serverMessage7.AppendIntegerAsync(1);
+                        await serverMessage7.AppendIntegerAsync((string.IsNullOrWhiteSpace(extraInfo)) ? 100 : int.Parse(extraInfo));
+                        await serverMessage7.AppendIntegerAsync(0);
+                        await serverMessage7.AppendIntegerAsync(10);
+                        await serverMessage7.AppendIntegerAsync(0);
+                        await serverMessage7.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage7);
                         return;
                     }
@@ -284,18 +284,18 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage8 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredTriggerMessageComposer"));
                         serverMessage8.AppendBool(false);
-                        serverMessage8.AppendInteger(15);
-                        serverMessage8.AppendInteger(list.Count);
-                        foreach (var current8 in list) serverMessage8.AppendInteger(current8.VirtualId);
-                        serverMessage8.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage8.AppendInteger(item.VirtualId);
-                        serverMessage8.AppendString(extraInfo);
-                        serverMessage8.AppendInteger(0);
-                        serverMessage8.AppendInteger(0);
-                        serverMessage8.AppendInteger(1);
-                        serverMessage8.AppendInteger(delay);
-                        serverMessage8.AppendInteger(0);
-                        serverMessage8.AppendInteger(0);
+                        await serverMessage8.AppendIntegerAsync(15);
+                        await serverMessage8.AppendIntegerAsync(list.Count);
+                        foreach (var current8 in list) await serverMessage8.AppendIntegerAsync(current8.VirtualId);
+                        await serverMessage8.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage8.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage8.AppendStringAsync(extraInfo);
+                        await serverMessage8.AppendIntegerAsync(0);
+                        await serverMessage8.AppendIntegerAsync(0);
+                        await serverMessage8.AppendIntegerAsync(1);
+                        await serverMessage8.AppendIntegerAsync(delay);
+                        await serverMessage8.AppendIntegerAsync(0);
+                        await serverMessage8.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage8);
                         return;
                     }
@@ -304,18 +304,18 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage9 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredTriggerMessageComposer"));
                         serverMessage9.AppendBool(false);
-                        serverMessage9.AppendInteger(15);
-                        serverMessage9.AppendInteger(list.Count);
-                        foreach (var current9 in list) serverMessage9.AppendInteger(current9.VirtualId);
-                        serverMessage9.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage9.AppendInteger(item.VirtualId);
-                        serverMessage9.AppendString(extraInfo);
-                        serverMessage9.AppendInteger(0);
-                        serverMessage9.AppendInteger(0);
-                        serverMessage9.AppendInteger(1);
-                        serverMessage9.AppendInteger(0);
-                        serverMessage9.AppendInteger(0);
-                        serverMessage9.AppendInteger(0);
+                        await serverMessage9.AppendIntegerAsync(15);
+                        await serverMessage9.AppendIntegerAsync(list.Count);
+                        foreach (var current9 in list) await serverMessage9.AppendIntegerAsync(current9.VirtualId);
+                        await serverMessage9.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage9.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage9.AppendStringAsync(extraInfo);
+                        await serverMessage9.AppendIntegerAsync(0);
+                        await serverMessage9.AppendIntegerAsync(0);
+                        await serverMessage9.AppendIntegerAsync(1);
+                        await serverMessage9.AppendIntegerAsync(0);
+                        await serverMessage9.AppendIntegerAsync(0);
+                        await serverMessage9.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage9);
                         return;
                     }
@@ -324,17 +324,17 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage18 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage18.AppendBool(false);
-                        serverMessage18.AppendInteger(5);
-                        serverMessage18.AppendInteger(0);
-                        serverMessage18.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage18.AppendInteger(item.VirtualId);
-                        serverMessage18.AppendString(extraInfo);
-                        serverMessage18.AppendInteger(1);
-                        serverMessage18.AppendInteger(delay);
-                        serverMessage18.AppendInteger(0);
-                        serverMessage18.AppendInteger(20);
-                        serverMessage18.AppendInteger(0);
-                        serverMessage18.AppendInteger(0);
+                        await serverMessage18.AppendIntegerAsync(5);
+                        await serverMessage18.AppendIntegerAsync(0);
+                        await serverMessage18.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage18.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage18.AppendStringAsync(extraInfo);
+                        await serverMessage18.AppendIntegerAsync(1);
+                        await serverMessage18.AppendIntegerAsync(delay);
+                        await serverMessage18.AppendIntegerAsync(0);
+                        await serverMessage18.AppendIntegerAsync(20);
+                        await serverMessage18.AppendIntegerAsync(0);
+                        await serverMessage18.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage18);
                         return;
                     }
@@ -343,19 +343,19 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage10 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredTriggerMessageComposer"));
                         serverMessage10.AppendBool(false);
-                        serverMessage10.AppendInteger(15);
-                        serverMessage10.AppendInteger(list.Count);
-                        foreach (var current10 in list) serverMessage10.AppendInteger(current10.VirtualId);
-                        serverMessage10.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage10.AppendInteger(item.VirtualId);
-                        serverMessage10.AppendString(extraInfo);
-                        serverMessage10.AppendInteger(0);
-                        serverMessage10.AppendInteger(0);
-                        serverMessage10.AppendInteger(1);
-                        serverMessage10.AppendInteger(0);
-                        serverMessage10.AppendInteger(0);
-                        serverMessage10.AppendInteger(0);
-                        serverMessage10.AppendInteger(0);
+                        await serverMessage10.AppendIntegerAsync(15);
+                        await serverMessage10.AppendIntegerAsync(list.Count);
+                        foreach (var current10 in list) await serverMessage10.AppendIntegerAsync(current10.VirtualId);
+                        await serverMessage10.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage10.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage10.AppendStringAsync(extraInfo);
+                        await serverMessage10.AppendIntegerAsync(0);
+                        await serverMessage10.AppendIntegerAsync(0);
+                        await serverMessage10.AppendIntegerAsync(1);
+                        await serverMessage10.AppendIntegerAsync(0);
+                        await serverMessage10.AppendIntegerAsync(0);
+                        await serverMessage10.AppendIntegerAsync(0);
+                        await serverMessage10.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage10);
                         return;
                     }
@@ -364,15 +364,15 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     {
                         var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("WiredTriggerMessageComposer"));
                         serverMessage.AppendBool(false);
-                        serverMessage.AppendInteger(5);
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage.AppendInteger(item.VirtualId);
-                        serverMessage.AppendString(string.Empty);
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendInteger(11);
-                        serverMessage.AppendInteger(0);
+                        await serverMessage.AppendIntegerAsync(5);
+                        await serverMessage.AppendIntegerAsync(0);
+                        await serverMessage.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage.AppendStringAsync(string.Empty);
+                        await serverMessage.AppendIntegerAsync(0);
+                        await serverMessage.AppendIntegerAsync(0);
+                        await serverMessage.AppendIntegerAsync(11);
+                        await serverMessage.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage);
                         return;
                     }
@@ -383,28 +383,28 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage11 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage11.AppendBool(false);
-                        serverMessage11.AppendInteger(5);
-                        serverMessage11.AppendInteger(0);
-                        serverMessage11.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage11.AppendInteger(item.VirtualId);
-                        serverMessage11.AppendString("");
-                        serverMessage11.AppendInteger(2);
+                        await serverMessage11.AppendIntegerAsync(5);
+                        await serverMessage11.AppendIntegerAsync(0);
+                        await serverMessage11.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage11.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage11.AppendStringAsync("");
+                        await serverMessage11.AppendIntegerAsync(2);
                         if (string.IsNullOrWhiteSpace(extraInfo))
                         {
-                            serverMessage11.AppendInteger(10); // Puntos a dar
-                            serverMessage11.AppendInteger(1); // Numero de veces por equipo
+                            await serverMessage11.AppendIntegerAsync(10); // Puntos a dar
+                            await serverMessage11.AppendIntegerAsync(1); // Numero de veces por equipo
                         }
                         else
                         {
                             var integers = extraInfo.Split(',');
-                            serverMessage11.AppendInteger(int.Parse(integers[0])); // Puntos a dar
-                            serverMessage11.AppendInteger(int.Parse(integers[1])); // Numero de veces por equipo
+                            await serverMessage11.AppendIntegerAsync(int.Parse(integers[0])); // Puntos a dar
+                            await serverMessage11.AppendIntegerAsync(int.Parse(integers[1])); // Numero de veces por equipo
                         }
-                        serverMessage11.AppendInteger(0);
-                        serverMessage11.AppendInteger(6);
-                        serverMessage11.AppendInteger(0);
-                        serverMessage11.AppendInteger(0);
-                        serverMessage11.AppendInteger(0);
+                        await serverMessage11.AppendIntegerAsync(0);
+                        await serverMessage11.AppendIntegerAsync(6);
+                        await serverMessage11.AppendIntegerAsync(0);
+                        await serverMessage11.AppendIntegerAsync(0);
+                        await serverMessage11.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage11);
                         return;
                     }
@@ -414,14 +414,14 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     {
                         var message = new ServerMessage(LibraryParser.OutgoingRequest("WiredConditionMessageComposer"));
                         message.AppendBool(false);
-                        message.AppendInteger(5);
-                        message.AppendInteger(0);
-                        message.AppendInteger(item.GetBaseItem().SpriteId);
-                        message.AppendInteger(item.VirtualId);
-                        message.AppendString("");
-                        message.AppendInteger(0);
-                        message.AppendInteger(0);
-                        message.AppendInteger(10);
+                        await message.AppendIntegerAsync(5);
+                        await message.AppendIntegerAsync(0);
+                        await message.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await message.AppendIntegerAsync(item.VirtualId);
+                        await message.AppendStringAsync("");
+                        await message.AppendIntegerAsync(0);
+                        await message.AppendIntegerAsync(0);
+                        await message.AppendIntegerAsync(10);
                         await session.SendMessage(message);
                         return;
                     }
@@ -432,29 +432,29 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage21 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredConditionMessageComposer"));
                         serverMessage21.AppendBool(false);
-                        serverMessage21.AppendInteger(15);
-                        serverMessage21.AppendInteger(list.Count);
-                        foreach (var current20 in list) serverMessage21.AppendInteger(current20.VirtualId);
-                        serverMessage21.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage21.AppendInteger(item.VirtualId);
-                        serverMessage21.AppendString(extraString2);
-                        serverMessage21.AppendInteger(3);
+                        await serverMessage21.AppendIntegerAsync(15);
+                        await serverMessage21.AppendIntegerAsync(list.Count);
+                        foreach (var current20 in list) await serverMessage21.AppendIntegerAsync(current20.VirtualId);
+                        await serverMessage21.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage21.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage21.AppendStringAsync(extraString2);
+                        await serverMessage21.AppendIntegerAsync(3);
 
                         if (string.IsNullOrWhiteSpace(extraInfo) || !extraInfo.Contains(","))
                         {
-                            serverMessage21.AppendInteger(0);
-                            serverMessage21.AppendInteger(0);
-                            serverMessage21.AppendInteger(0);
+                            await serverMessage21.AppendIntegerAsync(0);
+                            await serverMessage21.AppendIntegerAsync(0);
+                            await serverMessage21.AppendIntegerAsync(0);
                         }
                         else
                         {
                             var boolz = extraInfo.Split(',');
 
                             foreach (var stringy in boolz)
-                                serverMessage21.AppendInteger(stringy.ToLower() == "true" ? 1 : 0);
+                                await serverMessage21.AppendIntegerAsync(stringy.ToLower() == "true" ? 1 : 0);
                         }
-                        serverMessage21.AppendInteger(0);
-                        serverMessage21.AppendInteger(0);
+                        await serverMessage21.AppendIntegerAsync(0);
+                        await serverMessage21.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage21);
                         return;
                     }
@@ -464,31 +464,31 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage12 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage12.AppendBool(false);
-                        serverMessage12.AppendInteger(5);
-                        serverMessage12.AppendInteger(list.Count);
-                        foreach (var current12 in list) serverMessage12.AppendInteger(current12.VirtualId);
-                        serverMessage12.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage12.AppendInteger(item.VirtualId);
-                        serverMessage12.AppendString(extraString2);
-                        serverMessage12.AppendInteger(3);
+                        await serverMessage12.AppendIntegerAsync(5);
+                        await serverMessage12.AppendIntegerAsync(list.Count);
+                        foreach (var current12 in list) await serverMessage12.AppendIntegerAsync(current12.VirtualId);
+                        await serverMessage12.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage12.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage12.AppendStringAsync(extraString2);
+                        await serverMessage12.AppendIntegerAsync(3);
 
                         if (string.IsNullOrWhiteSpace(extraInfo))
                         {
-                            serverMessage12.AppendInteger(0);
-                            serverMessage12.AppendInteger(0);
-                            serverMessage12.AppendInteger(0);
+                            await serverMessage12.AppendIntegerAsync(0);
+                            await serverMessage12.AppendIntegerAsync(0);
+                            await serverMessage12.AppendIntegerAsync(0);
                         }
                         else
                         {
                             var boolz = extraInfo.Split(',');
 
                             foreach (var stringy in boolz)
-                                serverMessage12.AppendInteger(stringy.ToLower() == "true" ? 1 : 0);
+                                await serverMessage12.AppendIntegerAsync(stringy.ToLower() == "true" ? 1 : 0);
                         }
-                        serverMessage12.AppendInteger(0);
-                        serverMessage12.AppendInteger(3);
-                        serverMessage12.AppendInteger(delay); // Delay
-                        serverMessage12.AppendInteger(0);
+                        await serverMessage12.AppendIntegerAsync(0);
+                        await serverMessage12.AppendIntegerAsync(3);
+                        await serverMessage12.AppendIntegerAsync(delay); // Delay
+                        await serverMessage12.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage12);
                         return;
                     }
@@ -496,22 +496,22 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     {
                         var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage.AppendBool(false);
-                        serverMessage.AppendInteger(15);
+                        await serverMessage.AppendIntegerAsync(15);
 
-                        serverMessage.AppendInteger(list.Count);
+                        await serverMessage.AppendIntegerAsync(list.Count);
                         foreach (var roomItem in list.Where(roomItem => roomItem != null))
-                            serverMessage.AppendInteger(roomItem.VirtualId);
+                            await serverMessage.AppendIntegerAsync(roomItem.VirtualId);
 
-                        serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage.AppendInteger(item.VirtualId);
-                        serverMessage.AppendString(string.Empty);
-                        serverMessage.AppendInteger(2);
+                        await serverMessage.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage.AppendStringAsync(string.Empty);
+                        await serverMessage.AppendIntegerAsync(2);
                         serverMessage.AppendIntegersArray(extraInfo, ';', 2);
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendInteger(4);
-                        serverMessage.AppendInteger(delay);
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendInteger(0);
+                        await serverMessage.AppendIntegerAsync(0);
+                        await serverMessage.AppendIntegerAsync(4);
+                        await serverMessage.AppendIntegerAsync(delay);
+                        await serverMessage.AppendIntegerAsync(0);
+                        await serverMessage.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage);
                     }
                     break;
@@ -520,22 +520,22 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     {
                         var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage.AppendBool(false);
-                        serverMessage.AppendInteger(15);
+                        await serverMessage.AppendIntegerAsync(15);
 
-                        serverMessage.AppendInteger(list.Count);
+                        await serverMessage.AppendIntegerAsync(list.Count);
                         foreach (var roomItem in list.Where(roomItem => roomItem != null))
-                            serverMessage.AppendInteger(roomItem.VirtualId);
+                            await serverMessage.AppendIntegerAsync(roomItem.VirtualId);
 
-                        serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage.AppendInteger(item.VirtualId);
-                        serverMessage.AppendString(string.Empty);
-                        serverMessage.AppendInteger(2);
+                        await serverMessage.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage.AppendStringAsync(string.Empty);
+                        await serverMessage.AppendIntegerAsync(2);
                         serverMessage.AppendIntegersArray(extraInfo, ';', 2);
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendInteger(13);
-                        serverMessage.AppendInteger(delay);
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendInteger(0);
+                        await serverMessage.AppendIntegerAsync(0);
+                        await serverMessage.AppendIntegerAsync(13);
+                        await serverMessage.AppendIntegerAsync(delay);
+                        await serverMessage.AppendIntegerAsync(0);
+                        await serverMessage.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage);
                     }
                     break;
@@ -545,17 +545,17 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage14 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage14.AppendBool(false);
-                        serverMessage14.AppendInteger(0);
-                        serverMessage14.AppendInteger(0);
-                        serverMessage14.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage14.AppendInteger(item.VirtualId);
-                        serverMessage14.AppendString(extraInfo);
-                        serverMessage14.AppendInteger(0);
-                        serverMessage14.AppendInteger(0);
-                        serverMessage14.AppendInteger(1);
-                        serverMessage14.AppendInteger(delay);
-                        serverMessage14.AppendInteger(0);
-                        serverMessage14.AppendInteger(0);
+                        await serverMessage14.AppendIntegerAsync(0);
+                        await serverMessage14.AppendIntegerAsync(0);
+                        await serverMessage14.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage14.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage14.AppendStringAsync(extraInfo);
+                        await serverMessage14.AppendIntegerAsync(0);
+                        await serverMessage14.AppendIntegerAsync(0);
+                        await serverMessage14.AppendIntegerAsync(1);
+                        await serverMessage14.AppendIntegerAsync(delay);
+                        await serverMessage14.AppendIntegerAsync(0);
+                        await serverMessage14.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage14);
                         return;
                     }
@@ -569,17 +569,17 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage15 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage15.AppendBool(false);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage15.AppendInteger(item.VirtualId);
-                        serverMessage15.AppendString(extraInfo);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(7);
-                        serverMessage15.AppendInteger(delay);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(0);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage15.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage15.AppendStringAsync(extraInfo);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(7);
+                        await serverMessage15.AppendIntegerAsync(delay);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage15);
                         return;
                     }
@@ -588,19 +588,19 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage16 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage16.AppendBool(false);
-                        serverMessage16.AppendInteger(15);
+                        await serverMessage16.AppendIntegerAsync(15);
 
-                        serverMessage16.AppendInteger(list.Count);
-                        foreach (var roomItem in list) serverMessage16.AppendInteger(roomItem.VirtualId);
+                        await serverMessage16.AppendIntegerAsync(list.Count);
+                        foreach (var roomItem in list) await serverMessage16.AppendIntegerAsync(roomItem.VirtualId);
 
-                        serverMessage16.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage16.AppendInteger(item.VirtualId);
-                        serverMessage16.AppendString(extraInfo);
-                        serverMessage16.AppendInteger(0);
-                        serverMessage16.AppendInteger(8);
-                        serverMessage16.AppendInteger(0);
-                        serverMessage16.AppendInteger(delay);
-                        serverMessage16.AppendInteger(0);
+                        await serverMessage16.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage16.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage16.AppendStringAsync(extraInfo);
+                        await serverMessage16.AppendIntegerAsync(0);
+                        await serverMessage16.AppendIntegerAsync(8);
+                        await serverMessage16.AppendIntegerAsync(0);
+                        await serverMessage16.AppendIntegerAsync(delay);
+                        await serverMessage16.AppendIntegerAsync(0);
                         serverMessage16.AppendByte(2);
                         await session.SendMessage(serverMessage16);
                         return;
@@ -610,18 +610,18 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage17 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage17.AppendBool(false);
-                        serverMessage17.AppendInteger(15);
-                        serverMessage17.AppendInteger(list.Count);
-                        foreach (var current17 in list) serverMessage17.AppendInteger(current17.VirtualId);
-                        serverMessage17.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage17.AppendInteger(item.VirtualId);
-                        serverMessage17.AppendString(extraInfo);
-                        serverMessage17.AppendInteger(0);
-                        serverMessage17.AppendInteger(8);
-                        serverMessage17.AppendInteger(0);
-                        serverMessage17.AppendInteger(delay);
-                        serverMessage17.AppendInteger(0);
-                        serverMessage17.AppendInteger(0);
+                        await serverMessage17.AppendIntegerAsync(15);
+                        await serverMessage17.AppendIntegerAsync(list.Count);
+                        foreach (var current17 in list) await serverMessage17.AppendIntegerAsync(current17.VirtualId);
+                        await serverMessage17.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage17.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage17.AppendStringAsync(extraInfo);
+                        await serverMessage17.AppendIntegerAsync(0);
+                        await serverMessage17.AppendIntegerAsync(8);
+                        await serverMessage17.AppendIntegerAsync(0);
+                        await serverMessage17.AppendIntegerAsync(delay);
+                        await serverMessage17.AppendIntegerAsync(0);
+                        await serverMessage17.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage17);
                         return;
                     }
@@ -631,19 +631,19 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage18 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage18.AppendBool(false);
-                        serverMessage18.AppendInteger(5);
-                        serverMessage18.AppendInteger(0);
-                        serverMessage18.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage18.AppendInteger(item.VirtualId);
-                        serverMessage18.AppendString(extraInfo);
-                        serverMessage18.AppendInteger(3);
-                        serverMessage18.AppendInteger(extraString == "" ? 0 : int.Parse(extraString));
-                        serverMessage18.AppendInteger(flag ? 1 : 0);
-                        serverMessage18.AppendInteger(extraString2 == "" ? 0 : int.Parse(extraString2));
-                        serverMessage18.AppendInteger(0);
-                        serverMessage18.AppendInteger(17);
-                        serverMessage18.AppendInteger(0);
-                        serverMessage18.AppendInteger(0);
+                        await serverMessage18.AppendIntegerAsync(5);
+                        await serverMessage18.AppendIntegerAsync(0);
+                        await serverMessage18.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage18.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage18.AppendStringAsync(extraInfo);
+                        await serverMessage18.AppendIntegerAsync(3);
+                        await serverMessage18.AppendIntegerAsync(extraString == "" ? 0 : int.Parse(extraString));
+                        await serverMessage18.AppendIntegerAsync(flag ? 1 : 0);
+                        await serverMessage18.AppendIntegerAsync(extraString2 == "" ? 0 : int.Parse(extraString2));
+                        await serverMessage18.AppendIntegerAsync(0);
+                        await serverMessage18.AppendIntegerAsync(17);
+                        await serverMessage18.AppendIntegerAsync(0);
+                        await serverMessage18.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage18);
                         return;
                     }
@@ -654,23 +654,23 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage19 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredConditionMessageComposer"));
                         serverMessage19.AppendBool(false);
-                        serverMessage19.AppendInteger(5);
-                        serverMessage19.AppendInteger(0);
-                        serverMessage19.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage19.AppendInteger(item.VirtualId);
-                        serverMessage19.AppendString("");
-                        serverMessage19.AppendInteger(2);
+                        await serverMessage19.AppendIntegerAsync(5);
+                        await serverMessage19.AppendIntegerAsync(0);
+                        await serverMessage19.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage19.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage19.AppendStringAsync("");
+                        await serverMessage19.AppendIntegerAsync(2);
                         if (string.IsNullOrWhiteSpace(extraInfo))
                         {
-                            serverMessage19.AppendInteger(1);
-                            serverMessage19.AppendInteger(50);
+                            await serverMessage19.AppendIntegerAsync(1);
+                            await serverMessage19.AppendIntegerAsync(50);
                         }
                         else
                             foreach (var integers in extraInfo.Split(','))
-                                serverMessage19.AppendInteger(int.Parse(integers));
+                                await serverMessage19.AppendIntegerAsync(int.Parse(integers));
                         serverMessage19.AppendBool(false);
-                        serverMessage19.AppendInteger(0);
-                        serverMessage19.AppendInteger(1290);
+                        await serverMessage19.AppendIntegerAsync(0);
+                        await serverMessage19.AppendIntegerAsync(1290);
                         await session.SendMessage(serverMessage19);
                         return;
                     }
@@ -684,14 +684,14 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage19 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredConditionMessageComposer"));
                         serverMessage19.AppendBool(false);
-                        serverMessage19.AppendInteger(15);
-                        serverMessage19.AppendInteger(list.Count);
-                        foreach (var current18 in list) serverMessage19.AppendInteger(current18.VirtualId);
-                        serverMessage19.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage19.AppendInteger(item.VirtualId);
-                        serverMessage19.AppendInteger(0);
-                        serverMessage19.AppendInteger(0);
-                        serverMessage19.AppendInteger(0);
+                        await serverMessage19.AppendIntegerAsync(15);
+                        await serverMessage19.AppendIntegerAsync(list.Count);
+                        foreach (var current18 in list) await serverMessage19.AppendIntegerAsync(current18.VirtualId);
+                        await serverMessage19.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage19.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage19.AppendIntegerAsync(0);
+                        await serverMessage19.AppendIntegerAsync(0);
+                        await serverMessage19.AppendIntegerAsync(0);
                         serverMessage19.AppendBool(false);
                         serverMessage19.AppendBool(true);
                         await session.SendMessage(serverMessage19);
@@ -705,16 +705,16 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredConditionMessageComposer"));
                         serverMessage.AppendBool(false);
-                        serverMessage.AppendInteger(15);
-                        serverMessage.AppendInteger(list.Count);
-                        foreach (var current18 in list) serverMessage.AppendInteger(current18.VirtualId);
-                        serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage.AppendInteger(item.VirtualId);
-                        serverMessage.AppendString(string.Empty);
-                        serverMessage.AppendInteger(1);
-                        serverMessage.AppendInteger(flag); //bool
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendInteger(item.GetBaseItem().InteractionType == Interaction.ConditionFurniHasFurni
+                        await serverMessage.AppendIntegerAsync(15);
+                        await serverMessage.AppendIntegerAsync(list.Count);
+                        foreach (var current18 in list) await serverMessage.AppendIntegerAsync(current18.VirtualId);
+                        await serverMessage.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage.AppendStringAsync(string.Empty);
+                        await serverMessage.AppendIntegerAsync(1);
+                        await serverMessage.AppendIntegerAsync(flag); //bool
+                        await serverMessage.AppendIntegerAsync(0);
+                        await serverMessage.AppendIntegerAsync(item.GetBaseItem().InteractionType == Interaction.ConditionFurniHasFurni
                             ? 7
                             : 18);
                         await session.SendMessage(serverMessage);
@@ -728,15 +728,15 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     var serverMessage =
                         new ServerMessage(LibraryParser.OutgoingRequest("WiredConditionMessageComposer"));
                     serverMessage.AppendBool(false);
-                    serverMessage.AppendInteger(15);
-                    serverMessage.AppendInteger(list.Count);
-                    foreach (var current18 in list) serverMessage.AppendInteger(current18.VirtualId);
-                    serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
-                    serverMessage.AppendInteger(item.VirtualId);
-                    serverMessage.AppendString(string.Empty);
-                    serverMessage.AppendInteger(0); //bool
-                    serverMessage.AppendInteger(0);
-                    serverMessage.AppendInteger(14);
+                    await serverMessage.AppendIntegerAsync(15);
+                    await serverMessage.AppendIntegerAsync(list.Count);
+                    foreach (var current18 in list) await serverMessage.AppendIntegerAsync(current18.VirtualId);
+                    await serverMessage.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                    await serverMessage.AppendIntegerAsync(item.VirtualId);
+                    await serverMessage.AppendStringAsync(string.Empty);
+                    await serverMessage.AppendIntegerAsync(0); //bool
+                    await serverMessage.AppendIntegerAsync(0);
+                    await serverMessage.AppendIntegerAsync(14);
                     await session.SendMessage(serverMessage);
                     return;
                 }
@@ -748,16 +748,16 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage21 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredConditionMessageComposer"));
                         serverMessage21.AppendBool(false);
-                        serverMessage21.AppendInteger(0);
-                        serverMessage21.AppendInteger(0);
-                        serverMessage21.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage21.AppendInteger(item.VirtualId);
-                        serverMessage21.AppendString("");
-                        serverMessage21.AppendInteger(1);
-                        serverMessage21.AppendInteger(delay); //delay
-                        serverMessage21.AppendInteger(0);
-                        serverMessage21.AppendInteger(item.GetBaseItem().InteractionType ==
-                                                      Interaction.ConditionTimeMoreThan
+                        await serverMessage21.AppendIntegerAsync(0);
+                        await serverMessage21.AppendIntegerAsync(0);
+                        await serverMessage21.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage21.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage21.AppendStringAsync("");
+                        await serverMessage21.AppendIntegerAsync(1);
+                        await serverMessage21.AppendIntegerAsync(delay); //delay
+                        await serverMessage21.AppendIntegerAsync(0);
+                        await serverMessage21.AppendIntegerAsync(item.GetBaseItem().InteractionType ==
+                                                                 Interaction.ConditionTimeMoreThan
                             ? 3
                             : 4);
                         await session.SendMessage(serverMessage21);
@@ -771,15 +771,15 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage21 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredConditionMessageComposer"));
                         serverMessage21.AppendBool(false);
-                        serverMessage21.AppendInteger(5);
-                        serverMessage21.AppendInteger(0);
-                        serverMessage21.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage21.AppendInteger(item.VirtualId);
-                        serverMessage21.AppendString("");
-                        serverMessage21.AppendInteger(1);
-                        serverMessage21.AppendInteger(effect);
-                        serverMessage21.AppendInteger(0);
-                        serverMessage21.AppendInteger(12);
+                        await serverMessage21.AppendIntegerAsync(5);
+                        await serverMessage21.AppendIntegerAsync(0);
+                        await serverMessage21.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage21.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage21.AppendStringAsync("");
+                        await serverMessage21.AppendIntegerAsync(1);
+                        await serverMessage21.AppendIntegerAsync(effect);
+                        await serverMessage21.AppendIntegerAsync(0);
+                        await serverMessage21.AppendIntegerAsync(12);
                         await session.SendMessage(serverMessage21);
                         return;
                     }
@@ -791,14 +791,14 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage21 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredConditionMessageComposer"));
                         serverMessage21.AppendBool(false);
-                        serverMessage21.AppendInteger(5);
-                        serverMessage21.AppendInteger(0);
-                        serverMessage21.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage21.AppendInteger(item.VirtualId);
-                        serverMessage21.AppendString(extraInfo);
-                        serverMessage21.AppendInteger(0);
-                        serverMessage21.AppendInteger(0);
-                        serverMessage21.AppendInteger(11);
+                        await serverMessage21.AppendIntegerAsync(5);
+                        await serverMessage21.AppendIntegerAsync(0);
+                        await serverMessage21.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage21.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage21.AppendStringAsync(extraInfo);
+                        await serverMessage21.AppendIntegerAsync(0);
+                        await serverMessage21.AppendIntegerAsync(0);
+                        await serverMessage21.AppendIntegerAsync(11);
                         await session.SendMessage(serverMessage21);
                         return;
                     }
@@ -821,16 +821,16 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage21 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredConditionMessageComposer"));
                         serverMessage21.AppendBool(false);
-                        serverMessage21.AppendInteger(5);
-                        serverMessage21.AppendInteger(0);
-                        serverMessage21.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage21.AppendInteger(item.VirtualId);
-                        serverMessage21.AppendString(extraInfo);
-                        serverMessage21.AppendInteger(2);
-                        serverMessage21.AppendInteger(date1);
-                        serverMessage21.AppendInteger(date2);
-                        serverMessage21.AppendInteger(0);
-                        serverMessage21.AppendInteger(24);
+                        await serverMessage21.AppendIntegerAsync(5);
+                        await serverMessage21.AppendIntegerAsync(0);
+                        await serverMessage21.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage21.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage21.AppendStringAsync(extraInfo);
+                        await serverMessage21.AppendIntegerAsync(2);
+                        await serverMessage21.AppendIntegerAsync(date1);
+                        await serverMessage21.AppendIntegerAsync(date2);
+                        await serverMessage21.AppendIntegerAsync(0);
+                        await serverMessage21.AppendIntegerAsync(24);
                         await session.SendMessage(serverMessage21);
                         return;
                     }
@@ -840,18 +840,18 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage2 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredTriggerMessageComposer"));
                         serverMessage2.AppendBool(false);
-                        serverMessage2.AppendInteger(0);
-                        serverMessage2.AppendInteger(list.Count);
-                        foreach (var current2 in list) serverMessage2.AppendInteger(current2.VirtualId);
-                        serverMessage2.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage2.AppendInteger(item.VirtualId);
-                        serverMessage2.AppendString(extraInfo);
-                        serverMessage2.AppendInteger(0);
-                        serverMessage2.AppendInteger(0);
-                        serverMessage2.AppendInteger(14);
-                        serverMessage2.AppendInteger(0);
-                        serverMessage2.AppendInteger(0);
-                        serverMessage2.AppendInteger(0);
+                        await serverMessage2.AppendIntegerAsync(0);
+                        await serverMessage2.AppendIntegerAsync(list.Count);
+                        foreach (var current2 in list) await serverMessage2.AppendIntegerAsync(current2.VirtualId);
+                        await serverMessage2.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage2.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage2.AppendStringAsync(extraInfo);
+                        await serverMessage2.AppendIntegerAsync(0);
+                        await serverMessage2.AppendIntegerAsync(0);
+                        await serverMessage2.AppendIntegerAsync(14);
+                        await serverMessage2.AppendIntegerAsync(0);
+                        await serverMessage2.AppendIntegerAsync(0);
+                        await serverMessage2.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage2);
                         return;
                     }
@@ -860,18 +860,18 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage2 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredTriggerMessageComposer"));
                         serverMessage2.AppendBool(false);
-                        serverMessage2.AppendInteger(15);
-                        serverMessage2.AppendInteger(list.Count);
-                        foreach (var current2 in list) serverMessage2.AppendInteger(current2.VirtualId);
-                        serverMessage2.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage2.AppendInteger(item.VirtualId);
-                        serverMessage2.AppendString(extraInfo);
-                        serverMessage2.AppendInteger(0);
-                        serverMessage2.AppendInteger(0);
-                        serverMessage2.AppendInteger(13);
-                        serverMessage2.AppendInteger(0);
-                        serverMessage2.AppendInteger(0);
-                        serverMessage2.AppendInteger(0);
+                        await serverMessage2.AppendIntegerAsync(15);
+                        await serverMessage2.AppendIntegerAsync(list.Count);
+                        foreach (var current2 in list) await serverMessage2.AppendIntegerAsync(current2.VirtualId);
+                        await serverMessage2.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage2.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage2.AppendStringAsync(extraInfo);
+                        await serverMessage2.AppendIntegerAsync(0);
+                        await serverMessage2.AppendIntegerAsync(0);
+                        await serverMessage2.AppendIntegerAsync(13);
+                        await serverMessage2.AppendIntegerAsync(0);
+                        await serverMessage2.AppendIntegerAsync(0);
+                        await serverMessage2.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage2);
                         return;
                     }
@@ -880,16 +880,16 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage15 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage15.AppendBool(false);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage15.AppendInteger(item.VirtualId);
-                        serverMessage15.AppendString(extraInfo + (char)9 + extraString);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(26);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(0);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage15.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage15.AppendStringAsync(extraInfo + (char)9 + extraString);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(26);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage15);
                         return;
                     }
@@ -898,16 +898,16 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage15 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage15.AppendBool(false);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage15.AppendInteger(item.VirtualId);
-                        serverMessage15.AppendString(extraInfo);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(25);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(0);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage15.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage15.AppendStringAsync(extraInfo);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(25);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage15);
                         return;
                     }
@@ -916,17 +916,17 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage15 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage15.AppendBool(false);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage15.AppendInteger(item.VirtualId);
-                        serverMessage15.AppendString(extraInfo);
-                        serverMessage15.AppendInteger(1);
-                        serverMessage15.AppendInteger(delay);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(24);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(0);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage15.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage15.AppendStringAsync(extraInfo);
+                        await serverMessage15.AppendIntegerAsync(1);
+                        await serverMessage15.AppendIntegerAsync(delay);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(24);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage15);
                         return;
                     }
@@ -935,17 +935,17 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage15 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage15.AppendBool(false);
-                        serverMessage15.AppendInteger(15);
-                        serverMessage15.AppendInteger(list.Count);
-                        foreach (var current2 in list) serverMessage15.AppendInteger(current2.VirtualId);
-                        serverMessage15.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage15.AppendInteger(item.VirtualId);
-                        serverMessage15.AppendString(extraInfo);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(22);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(0);
+                        await serverMessage15.AppendIntegerAsync(15);
+                        await serverMessage15.AppendIntegerAsync(list.Count);
+                        foreach (var current2 in list) await serverMessage15.AppendIntegerAsync(current2.VirtualId);
+                        await serverMessage15.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage15.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage15.AppendStringAsync(extraInfo);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(22);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage15);
                         return;
                     }
@@ -954,17 +954,17 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage15 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage15.AppendBool(false);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage15.AppendInteger(item.VirtualId);
-                        serverMessage15.AppendString(extraInfo + (char)9 + extraString);
-                        serverMessage15.AppendInteger(1);
-                        serverMessage15.AppendInteger(Oblivion.BoolToInteger(flag));
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(23);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(0);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage15.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage15.AppendStringAsync(extraInfo + (char)9 + extraString);
+                        await serverMessage15.AppendIntegerAsync(1);
+                        await serverMessage15.AppendIntegerAsync(Oblivion.BoolToInteger(flag));
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(23);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage15);
                         return;
                     }
@@ -973,17 +973,17 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage15 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage15.AppendBool(false);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage15.AppendInteger(item.VirtualId);
-                        serverMessage15.AppendString(extraInfo + (char)9 + extraString);
-                        serverMessage15.AppendInteger(1);
-                        serverMessage15.AppendInteger(Oblivion.BoolToInteger(flag));
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(27);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(0);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage15.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage15.AppendStringAsync(extraInfo + (char)9 + extraString);
+                        await serverMessage15.AppendIntegerAsync(1);
+                        await serverMessage15.AppendIntegerAsync(Oblivion.BoolToInteger(flag));
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(27);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage15);
                         return;
                     }
@@ -992,17 +992,17 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage15 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage15.AppendBool(false);
-                        serverMessage15.AppendInteger(15);
-                        serverMessage15.AppendInteger(list.Count);
-                        foreach (var current2 in list) serverMessage15.AppendInteger(current2.VirtualId);
-                        serverMessage15.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage15.AppendInteger(item.VirtualId);
-                        serverMessage15.AppendString(extraInfo);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(21);
-                        serverMessage15.AppendInteger(0);
-                        serverMessage15.AppendInteger(0);
+                        await serverMessage15.AppendIntegerAsync(15);
+                        await serverMessage15.AppendIntegerAsync(list.Count);
+                        foreach (var current2 in list) await serverMessage15.AppendIntegerAsync(current2.VirtualId);
+                        await serverMessage15.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage15.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage15.AppendStringAsync(extraInfo);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(21);
+                        await serverMessage15.AppendIntegerAsync(0);
+                        await serverMessage15.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage15);
                         return;
                     }
@@ -1011,20 +1011,20 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     {
                         var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage.AppendBool(false);
-                        serverMessage.AppendInteger(15);
+                        await serverMessage.AppendIntegerAsync(15);
 
-                        serverMessage.AppendInteger(list.Count);
-                        foreach (var roomItem in list) serverMessage.AppendInteger(roomItem.VirtualId);
+                        await serverMessage.AppendIntegerAsync(list.Count);
+                        foreach (var roomItem in list) await serverMessage.AppendIntegerAsync(roomItem.VirtualId);
 
-                        serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage.AppendInteger(item.VirtualId);
-                        serverMessage.AppendString(string.Empty);
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendInteger(11);
-                        serverMessage.AppendInteger(0);
+                        await serverMessage.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage.AppendStringAsync(string.Empty);
+                        await serverMessage.AppendIntegerAsync(0);
+                        await serverMessage.AppendIntegerAsync(0);
+                        await serverMessage.AppendIntegerAsync(11);
+                        await serverMessage.AppendIntegerAsync(0);
 
-                        serverMessage.AppendInteger(0);
+                        await serverMessage.AppendIntegerAsync(0);
 
                         await session.SendMessage(serverMessage);
                         return;
@@ -1034,14 +1034,14 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage21 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredConditionMessageComposer"));
                         serverMessage21.AppendBool(false);
-                        serverMessage21.AppendInteger(0);
-                        serverMessage21.AppendInteger(0);
-                        serverMessage21.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage21.AppendInteger(item.VirtualId);
-                        serverMessage21.AppendString(extraInfo);
-                        serverMessage21.AppendInteger(0);
-                        serverMessage21.AppendInteger(0);
-                        serverMessage21.AppendInteger(25);
+                        await serverMessage21.AppendIntegerAsync(0);
+                        await serverMessage21.AppendIntegerAsync(0);
+                        await serverMessage21.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage21.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage21.AppendStringAsync(extraInfo);
+                        await serverMessage21.AppendIntegerAsync(0);
+                        await serverMessage21.AppendIntegerAsync(0);
+                        await serverMessage21.AppendIntegerAsync(25);
                         await session.SendMessage(serverMessage21);
                         return;
                     }
@@ -1049,18 +1049,18 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                     {
                         var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage.AppendBool(false);
-                        serverMessage.AppendInteger(15);
-                        serverMessage.AppendInteger(list.Count);
-                        foreach (var current15 in list) serverMessage.AppendInteger(current15.VirtualId);
-                        serverMessage.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage.AppendInteger(item.VirtualId);
-                        serverMessage.AppendString(extraInfo);
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendInteger(18);
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendInteger(0);
-                        serverMessage.AppendInteger(0);
+                        await serverMessage.AppendIntegerAsync(15);
+                        await serverMessage.AppendIntegerAsync(list.Count);
+                        foreach (var current15 in list) await serverMessage.AppendIntegerAsync(current15.VirtualId);
+                        await serverMessage.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage.AppendStringAsync(extraInfo);
+                        await serverMessage.AppendIntegerAsync(0);
+                        await serverMessage.AppendIntegerAsync(0);
+                        await serverMessage.AppendIntegerAsync(18);
+                        await serverMessage.AppendIntegerAsync(0);
+                        await serverMessage.AppendIntegerAsync(0);
+                        await serverMessage.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage);
                         return;
                     }
@@ -1072,18 +1072,18 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                         var serverMessage25 =
                             new ServerMessage(LibraryParser.OutgoingRequest("WiredEffectMessageComposer"));
                         serverMessage25.AppendBool(false);
-                        serverMessage25.AppendInteger(15);
-                        serverMessage25.AppendInteger(list.Count);
-                        foreach (var current24 in list) serverMessage25.AppendInteger(current24.VirtualId);
-                        serverMessage25.AppendInteger(item.GetBaseItem().SpriteId);
-                        serverMessage25.AppendInteger(item.VirtualId);
-                        serverMessage25.AppendString(extraInfo);
-                        serverMessage25.AppendInteger(0);
-                        serverMessage25.AppendInteger(8);
-                        serverMessage25.AppendInteger(0);
-                        serverMessage25.AppendInteger(0);
-                        serverMessage25.AppendInteger(0);
-                        serverMessage25.AppendInteger(0);
+                        await serverMessage25.AppendIntegerAsync(15);
+                        await serverMessage25.AppendIntegerAsync(list.Count);
+                        foreach (var current24 in list) await serverMessage25.AppendIntegerAsync(current24.VirtualId);
+                        await serverMessage25.AppendIntegerAsync(item.GetBaseItem().SpriteId);
+                        await serverMessage25.AppendIntegerAsync(item.VirtualId);
+                        await serverMessage25.AppendStringAsync(extraInfo);
+                        await serverMessage25.AppendIntegerAsync(0);
+                        await serverMessage25.AppendIntegerAsync(8);
+                        await serverMessage25.AppendIntegerAsync(0);
+                        await serverMessage25.AppendIntegerAsync(0);
+                        await serverMessage25.AppendIntegerAsync(0);
+                        await serverMessage25.AppendIntegerAsync(0);
                         await session.SendMessage(serverMessage25);
                         return;
                     }

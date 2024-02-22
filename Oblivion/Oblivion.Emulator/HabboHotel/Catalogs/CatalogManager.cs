@@ -130,7 +130,7 @@ namespace Oblivion.HabboHotel.Catalogs
                 DbState = DatabaseUpdateState.NeedsUpdate
             };
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery(string.Concat("INSERT INTO bots (user_id,name, ai_type) VALUES (", pet.OwnerId,
                     ",@", pet.PetId, "name, 'pet')"));
@@ -140,7 +140,7 @@ namespace Oblivion.HabboHotel.Catalogs
                 pet.PetId = (uint)await queryReactor.InsertQueryAsync();
 
                 queryReactor.SetQuery($"SELECT count(id) FROM pets_data WHERE id = {pet.PetId}");
-                var count = queryReactor.GetInteger();
+                var count = await queryReactor.GetIntegerAsync();
                 if (count <= 0)
                 {
                     queryReactor.SetQuery(
@@ -565,7 +565,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
                 item.LimitedSelled++;
 
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     await queryReactor.RunFastQueryAsync(string.Concat("UPDATE catalog_items SET limited_sells = ",
                         item.LimitedSelled, " WHERE id = ", item.Id));
@@ -632,7 +632,7 @@ namespace Oblivion.HabboHotel.Catalogs
 
                     DataRow row;
 
-                    using (var queryreactor3 = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (var queryreactor3 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         queryreactor3.SetQuery("SELECT id FROM users WHERE username = @gift_user");
                         queryreactor3.AddParameter("gift_user", giftUser);
@@ -707,7 +707,7 @@ namespace Oblivion.HabboHotel.Catalogs
                         await session.SendMessage(update);
                     }
 
-                    using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         queryReactor.SetQuery("UPDATE users SET builders_items_max = @max WHERE id = @userId");
                         queryReactor.AddParameter("max", session.GetHabbo().BuildersItemsMax);
@@ -737,7 +737,7 @@ namespace Oblivion.HabboHotel.Catalogs
                     await update.AppendIntegerAsync(2);
                     await session.SendMessage(update);
 
-                    using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         queryReactor.SetQuery("UPDATE users SET builders_expire = @max WHERE id = @userId");
                         queryReactor.AddParameter("max", session.GetHabbo().BuildersExpire);
@@ -809,7 +809,7 @@ namespace Oblivion.HabboHotel.Catalogs
                     {
                         session.GetHabbo().Prefixes[0] = item.Badge;
                         var prefixStr = string.Join(",", session.GetHabbo().Prefixes);
-                        using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                         {
                             dbClient.SetQuery(
                                 $"UPDATE users SET prefixes = @prefixes WHERE id = '{session.GetHabbo().Id}'");
@@ -825,7 +825,7 @@ namespace Oblivion.HabboHotel.Catalogs
                     {
                         session.GetHabbo().Prefixes[1] = $"[{extraData}]";
                         var prefixStr = string.Join(",", session.GetHabbo().Prefixes);
-                        using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                         {
                             dbClient.SetQuery(
                                 $"UPDATE users SET prefixes = @prefixes WHERE id = '{session.GetHabbo().Id}'");
@@ -842,7 +842,7 @@ namespace Oblivion.HabboHotel.Catalogs
                     {
                         session.GetHabbo().Prefixes[2] = item.Badge;
                         var prefixStr = string.Join(",", session.GetHabbo().Prefixes);
-                        using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                         {
                             dbClient.SetQuery(
                                 $"UPDATE users SET prefixes = @prefixes WHERE id = '{session.GetHabbo().Id}'");
@@ -993,7 +993,7 @@ namespace Oblivion.HabboHotel.Catalogs
                     var guidId = Guid.NewGuid();
                     ShortGuid insertId = guidId;
 
-                    using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         queryReactor.SetNoLockQuery("INSERT INTO items_rooms (id, base_item,user_id) VALUES ('" +
                                                     insertId + "'," +
@@ -1266,7 +1266,7 @@ namespace Oblivion.HabboHotel.Catalogs
                     session.GetHabbo().GetInventoryComponent().AddNewItem(addedItem);
                 }
 
-                using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     dbClient.SetNoLockQuery(query.ToString());
                     dbClient.AddParameter("edata", extraData);

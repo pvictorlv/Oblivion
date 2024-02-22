@@ -78,7 +78,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var user = room.GetRoomUserManager()
                 .GetRoomUserByHabbo(session.GetHabbo().Id);
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 /* TODO CHECK */ foreach (
                     var item in
@@ -107,7 +107,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                  await session.SendWhisperAsync("First usage :developer copy");
                 return true;
             }
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
               foreach (
                     var item in

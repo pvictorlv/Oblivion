@@ -186,7 +186,7 @@ namespace Oblivion.Messages.Handlers
                 .ProgressUserAchievement(roomUserByHabbo.GetClient(), "ACH_RespectEarned", 1, true);
             Session.GetHabbo().DailyRespectPoints--;
             roomUserByHabbo.GetClient().GetHabbo().Respect++;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync("UPDATE users_stats SET respect = respect + 1 WHERE id = " +
                                                      roomUserByHabbo.GetClient().GetHabbo().Id +
                                                      " LIMIT 1;UPDATE users_stats SET daily_respect_points = daily_respect_points - 1 WHERE id= " +
@@ -382,7 +382,7 @@ namespace Oblivion.Messages.Handlers
         internal async Task UpdateBadges()
         {
             await Session.GetHabbo().GetBadgeComponent().ResetSlots();
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync(
                     $"UPDATE users_badges SET badge_slot = 0 WHERE user_id = {Session.GetHabbo().Id}");
             for (var i = 0; i < 5; i++)
@@ -392,7 +392,7 @@ namespace Oblivion.Messages.Handlers
                 if (code.Length == 0) continue;
                 if (!Session.GetHabbo().GetBadgeComponent().HasBadge(code) || slot < 1 || slot > 5) return;
                 Session.GetHabbo().GetBadgeComponent().GetBadge(code).Slot = slot;
-                using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryreactor2 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     queryreactor2.SetQuery("UPDATE users_badges SET badge_slot = " + slot +
                                            " WHERE badge_id = @badge AND user_id = " + Session.GetHabbo().Id);
@@ -572,7 +572,7 @@ namespace Oblivion.Messages.Handlers
             await Oblivion.GetGame().GetQuestManager().ProgressUserQuest(Session, QuestType.ProfileChangeLook);
             Session.GetHabbo().Look = text2;
             Session.GetHabbo().Gender = text.ToLower() == "f" ? "f" : "m";
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery(
                     $"UPDATE users SET look = @look, gender = @gender WHERE id = {Session.GetHabbo().Id}");
@@ -635,7 +635,7 @@ namespace Oblivion.Messages.Handlers
 
             Session.GetHabbo().Motto = text;
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery($"UPDATE users SET motto = @motto WHERE id = '{Session.GetHabbo().Id}'");
                 queryReactor.AddParameter("motto", text);
@@ -669,7 +669,7 @@ namespace Oblivion.Messages.Handlers
         {
             await GetResponse().InitAsync(LibraryParser.OutgoingRequest("LoadWardrobeMessageComposer"));
             await GetResponse().AppendIntegerAsync(0);
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery(
                     $"SELECT slot_id, look, gender FROM users_wardrobe WHERE user_id = {Session.GetHabbo().Id}");
@@ -703,7 +703,7 @@ namespace Oblivion.Messages.Handlers
 
             text = Oblivion.FilterFigure(text);
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery(string.Concat(
                     "REPLACE INTO users_wardrobe (user_id,slot_id,look,gender) VALUES (", Session.GetHabbo().Id, ",",
@@ -755,7 +755,7 @@ namespace Oblivion.Messages.Handlers
                 return;
             }
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery("SELECT username FROM users WHERE username=@name LIMIT 1");
                 queryReactor.AddParameter("name", text);
@@ -843,7 +843,7 @@ namespace Oblivion.Messages.Handlers
                 return;
             }
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery("SELECT username FROM users WHERE username=@name LIMIT 1");
                 queryReactor.AddParameter("name", text);
@@ -1001,7 +1001,7 @@ namespace Oblivion.Messages.Handlers
                         "SELECT id FROM users_relationships WHERE user_id=@id AND target=@target LIMIT 1;");
                     queryReactor.AddParameter("id", Session.GetHabbo().Id);
                     queryReactor.AddParameter("target", num);
-                    var integer = (uint)queryReactor.GetInteger();
+                    var integer = (uint)await queryReactor.GetIntegerAsync();
                     queryReactor.SetNoLockQuery(
                         "DELETE FROM users_relationships WHERE user_id=@id AND target=@target LIMIT 1;");
                     queryReactor.AddParameter("id", Session.GetHabbo().Id);
@@ -1128,7 +1128,7 @@ namespace Oblivion.Messages.Handlers
             if (item != null)
                 await Session.GetHabbo().GetInventoryComponent().SendNewItems(item.VirtualId);
 
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await dbClient.RunFastQueryAsync(
                     Session.GetHabbo().Vip
                         ? $"UPDATE users SET vip = '1', vip_expire = DATE_ADD(vip_expire, INTERVAL 1 DAY) WHERE id = {Session.GetHabbo().Id}"

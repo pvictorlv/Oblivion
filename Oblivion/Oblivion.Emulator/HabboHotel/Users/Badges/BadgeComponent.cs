@@ -90,7 +90,7 @@ namespace Oblivion.HabboHotel.Users.Badges
 
             if (inDatabase)
             {
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     queryReactor.SetQuery(
                         string.Concat("INSERT INTO users_badges (user_id,badge_id,badge_slot) VALUES (", _userId,
@@ -155,7 +155,7 @@ namespace Oblivion.HabboHotel.Users.Badges
                 return;
 
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery("DELETE FROM users_badges WHERE badge_id = @badge AND user_id = " + _userId);
                 queryReactor.AddParameter("badge", badge);

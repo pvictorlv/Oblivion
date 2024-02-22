@@ -29,11 +29,11 @@ namespace Oblivion.HabboHotel.Navigators
             if (flatCat == null)
                 return;
 
-            message.AppendString($"category__{flatCat.Caption}");
-            message.AppendString(flatCat.Caption);
-            message.AppendInteger(0);
+            await message.AppendStringAsync($"category__{flatCat.Caption}");
+            await message.AppendStringAsync(flatCat.Caption);
+            await message.AppendIntegerAsync(0);
             message.AppendBool(true);
-            message.AppendInteger(-1);
+            await message.AppendIntegerAsync(-1);
 
             try
             {
@@ -44,7 +44,7 @@ namespace Oblivion.HabboHotel.Navigators
             }
             catch
             {
-                message.AppendInteger(0);
+                await message.AppendIntegerAsync(0);
             }
         }
 
@@ -57,11 +57,11 @@ namespace Oblivion.HabboHotel.Navigators
         internal static async Task SerializePromotionsResultListFlatcats(int flatCatId, bool direct, ServerMessage message)
         {
             var flatCat = Oblivion.GetGame().GetNavigator().GetFlatCat(flatCatId);
-            message.AppendString("new_ads");
-            message.AppendString(flatCat.Caption);
-            message.AppendInteger(0);
+            await message.AppendStringAsync("new_ads");
+            await message.AppendStringAsync(flatCat.Caption);
+            await message.AppendIntegerAsync(0);
             message.AppendBool(true);
-            message.AppendInteger(-1);
+            await message.AppendIntegerAsync(-1);
             try
             {
                 var rooms = Oblivion.GetGame().GetRoomManager().GetEventRooms();
@@ -71,7 +71,7 @@ namespace Oblivion.HabboHotel.Navigators
             }
             catch
             {
-                message.AppendInteger(0);
+                await message.AppendIntegerAsync(0);
             }
         }
 
@@ -91,12 +91,12 @@ namespace Oblivion.HabboHotel.Navigators
             if (staticId != "hotel_view" && staticId != "roomads_view" && staticId != "myworld_view" &&
                 !staticId.StartsWith("category__") && staticId != "official_view")
             {
-                message.AppendString(staticId); // code
-                message.AppendString(""); // title
-                message.AppendInteger(1); // 0 : no button - 1 : Show More - 2 : Show Back button
+                await message.AppendStringAsync(staticId); // code
+                await message.AppendStringAsync(""); // title
+                await message.AppendIntegerAsync(1); // 0 : no button - 1 : Show More - 2 : Show Back button
                 message.AppendBool(staticId != "my" && staticId != "popular" && staticId != "official-root");
                 // collapsed
-                message.AppendInteger(staticId == "official-root" ? 1 : 0); // 0 : list - 1 : thumbnail
+                await message.AppendIntegerAsync(staticId == "official-root" ? 1 : 0); // 0 : list - 1 : thumbnail
             }
             KeyValuePair<RoomData, uint>[] rooms;
             switch (staticId)
@@ -147,7 +147,7 @@ namespace Oblivion.HabboHotel.Navigators
                         var i = 0;
                         if (session?.GetHabbo()?.Data?.Rooms?.Count <= 0)
                         {
-                            message.AppendInteger(0);
+                            await message.AppendIntegerAsync(0);
                             break;
                         }
                         message.StartArray();
@@ -170,12 +170,12 @@ namespace Oblivion.HabboHotel.Navigators
                     {
                         if (session.GetHabbo().Data.FavouritedRooms?.Count <= 0)
                         {
-                            message.AppendInteger(0);
+                            await message.AppendIntegerAsync(0);
                             break;
                         }
 
                         var i = 0;
-                        message.AppendInteger(session.GetHabbo().Data.FavouritedRooms.Count > (direct ? 40 : 8)
+                        await message.AppendIntegerAsync(session.GetHabbo().Data.FavouritedRooms.Count > (direct ? 40 : 8)
                             ? (direct ? 40 : 8)
                             : session.GetHabbo().Data.FavouritedRooms.Count);
                         /* TODO CHECK */
@@ -198,7 +198,7 @@ namespace Oblivion.HabboHotel.Navigators
                         var i = 0;
                         if (session?.GetHabbo() == null || session.GetHabbo().GetMessenger() == null || session.GetHabbo().GetMessenger().GetActiveFriendsRooms() == null)
                         {
-                            message.AppendInteger(0);
+                            await message.AppendIntegerAsync(0);
                             return false;
                         }
                         var roomsFriends =
@@ -208,7 +208,7 @@ namespace Oblivion.HabboHotel.Navigators
                                 .OrderByDescending(p => p.UsersNow)
                                 .Take((direct ? 40 : 8))
                                 .ToList();
-                        message.AppendInteger(roomsFriends.Count);
+                        await message.AppendIntegerAsync(roomsFriends.Count);
                         /* TODO CHECK */
                         foreach (var data in roomsFriends.Where(data => data != null))
                         {
@@ -230,17 +230,17 @@ namespace Oblivion.HabboHotel.Navigators
                             rooms = Oblivion.GetGame().GetRoomManager().GetActiveRooms();
                             if (rooms == null)
                             {
-                                message.AppendInteger(0);
+                                await message.AppendIntegerAsync(0);
                                 return false;
                             }
-                            message.AppendInteger(rooms.Length);
+                            await message.AppendIntegerAsync(rooms.Length);
                             /* TODO CHECK */
                             foreach (var room in rooms) await room.Key.Serialize(message);
                         }
                         catch (Exception e)
                         {
                             Writer.Writer.LogException(e.ToString());
-                            message.AppendInteger(0);
+                            await message.AppendIntegerAsync(0);
                             return false;
                         }
                         break;
@@ -309,7 +309,7 @@ namespace Oblivion.HabboHotel.Navigators
                                     .GetNavigator()
                                     .GetFlatCatIdByName(staticId.Replace("category__", "")), true, message);
                         }
-                        else message.AppendInteger(0);
+                        else await message.AppendIntegerAsync(0);
                         break;
                     }
             }
@@ -325,11 +325,11 @@ namespace Oblivion.HabboHotel.Navigators
         /// <param name="session">The session.</param>
         internal static async Task SerializeSearches(string searchQuery, ServerMessage message, GameClient session)
         {
-            message.AppendString("");
-            message.AppendString(searchQuery);
-            message.AppendInteger(2);
+            await message.AppendStringAsync("");
+            await message.AppendStringAsync(searchQuery);
+            await message.AppendIntegerAsync(2);
             message.AppendBool(false);
-            message.AppendInteger(0);
+            await message.AppendIntegerAsync(0);
             var containsOwner = false;
             var containsGroup = false;
             if (searchQuery.StartsWith("owner:"))
@@ -377,7 +377,7 @@ namespace Oblivion.HabboHotel.Navigators
             if (rooms.Count < 50 || containsOwner || containsGroup)
             {
                 DataTable dTable;
-                using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     if (containsOwner)
                     {
@@ -411,7 +411,7 @@ namespace Oblivion.HabboHotel.Navigators
                     }
                 }
             }
-            message.AppendInteger(rooms.Count);
+            await message.AppendIntegerAsync(rooms.Count);
             /* TODO CHECK */ foreach (var data in rooms.Where(data => data != null)) await data.Serialize(message);
         }
     }

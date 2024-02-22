@@ -1485,7 +1485,7 @@ namespace Oblivion.HabboHotel.Items.Interfaces
             var s = ExtraData;
             if (GetBaseItem().InteractionType == Interaction.MysteryBox)
             {
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     queryReactor.SetQuery($"SELECT extra_data FROM items_rooms WHERE id={Id} LIMIT 1");
                     ExtraData = queryReactor.GetString();

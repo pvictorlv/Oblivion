@@ -980,7 +980,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                 using (var message =
                     new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserStatusMessageComposer")))
                 {
-                    message.AppendInteger(1);
+                    await message.AppendIntegerAsync(1);
                     if (roomUserByVirtualId != null)
                     {
                         roomUserByVirtualId.IsWalking = false;

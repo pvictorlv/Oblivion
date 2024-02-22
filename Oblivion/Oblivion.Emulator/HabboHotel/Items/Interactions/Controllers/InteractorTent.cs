@@ -15,11 +15,11 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             if (!user.IsBot && user.OnCampingTent)
             {
                 var serverMessage = new ServerMessage();
-                serverMessage.Init(
+                await serverMessage.InitAsync(
                     LibraryParser.OutgoingRequest("UpdateFloorItemExtraDataMessageComposer"));
-                serverMessage.AppendString(item.Id.ToString());
-                serverMessage.AppendInteger(0);
-                serverMessage.AppendString("0");
+                await serverMessage.AppendStringAsync(item.Id.ToString());
+                await serverMessage.AppendIntegerAsync(0);
+                await serverMessage.AppendStringAsync("0");
                 await user.GetClient().SendMessageAsync(serverMessage);
                 user.OnCampingTent = false;
             }
@@ -36,11 +36,11 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             if (!user.IsBot && !user.OnCampingTent)
             {
                 var serverMessage22 = new ServerMessage();
-                serverMessage22.Init(
+                await serverMessage22.InitAsync(
                     LibraryParser.OutgoingRequest("UpdateFloorItemExtraDataMessageComposer"));
-                serverMessage22.AppendString(item.Id.ToString());
-                serverMessage22.AppendInteger(0);
-                serverMessage22.AppendString("1");
+                await serverMessage22.AppendStringAsync(item.Id.ToString());
+                await serverMessage22.AppendIntegerAsync(0);
+                await serverMessage22.AppendStringAsync("1");
                 await user.GetClient().SendMessageAsync(serverMessage22);
                 user.OnCampingTent = true;
                 user.LastItem = item.Id;

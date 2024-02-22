@@ -47,14 +47,14 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             if (poll == null || poll.Type != PollType.Matching)
                 return;
             var message = new ServerMessage(LibraryParser.OutgoingRequest("MatchingPollMessageComposer"));
-            message.AppendString("MATCHING_POLL");
-            message.AppendInteger(poll.Id);
-            message.AppendInteger(poll.Id);
-            message.AppendInteger(15580);
-            message.AppendInteger(poll.Id);
-            message.AppendInteger(29);
-            message.AppendInteger(5);
-            message.AppendString(poll.PollName);
+            await message.AppendStringAsync("MATCHING_POLL");
+            await message.AppendIntegerAsync(poll.Id);
+            await message.AppendIntegerAsync(poll.Id);
+            await message.AppendIntegerAsync(15580);
+            await message.AppendIntegerAsync(poll.Id);
+            await message.AppendIntegerAsync(29);
+            await message.AppendIntegerAsync(5);
+            await message.AppendStringAsync(poll.PollName);
             await client.GetHabbo().CurrentRoom.SendMessage(message);
         }
 
@@ -76,12 +76,12 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                     {
                         var result =
                             new ServerMessage(LibraryParser.OutgoingRequest("MatchingPollResultMessageComposer"));
-                        result.AppendInteger(poll.Id);
-                        result.AppendInteger(2);
-                        result.AppendString("0");
-                        result.AppendInteger(poll.AnswersNegative);
-                        result.AppendString("1");
-                        result.AppendInteger(poll.AnswersPositive);
+                        await result.AppendIntegerAsync(poll.Id);
+                        await result.AppendIntegerAsync(2);
+                        await result.AppendStringAsync("0");
+                        await result.AppendIntegerAsync(poll.AnswersNegative);
+                        await result.AppendStringAsync("1");
+                        await result.AppendIntegerAsync(poll.AnswersPositive);
                         await client.SendMessage(result);
                     }
                 }

@@ -154,12 +154,12 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
                 var serverMessage =
                     new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer"));
-                serverMessage.AppendString("room.kick.cannonball");
-                serverMessage.AppendInteger(2);
-                serverMessage.AppendString("link");
-                serverMessage.AppendString("event:");
-                serverMessage.AppendString("linkTitle");
-                serverMessage.AppendString("ok");
+                await serverMessage.AppendStringAsync("room.kick.cannonball");
+                await serverMessage.AppendIntegerAsync(2);
+                await serverMessage.AppendStringAsync("link");
+                await serverMessage.AppendStringAsync("event:");
+                await serverMessage.AppendStringAsync("linkTitle");
+                await serverMessage.AppendStringAsync("ok");
 
                 var room = _mItem.GetRoom();
 

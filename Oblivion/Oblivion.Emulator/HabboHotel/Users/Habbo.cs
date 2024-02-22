@@ -942,7 +942,7 @@ namespace Oblivion.HabboHotel.Users
                         : $"('{Id}', '{group}', '{level}', '{progress}'),");
                 }
 
-                using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     await dbClient.RunFastQueryAsync(queryBuilder.ToString());
                 }
@@ -1042,7 +1042,7 @@ namespace Oblivion.HabboHotel.Users
                 }
 
                 Oblivion.OfflineMessages.Remove(Id);
-                using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     OfflineMessage.RemoveAllMessages(dbClient, Id);
                 }
@@ -1228,7 +1228,7 @@ namespace Oblivion.HabboHotel.Users
         /// </summary>
         internal async Task RunDbUpdate()
         {
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await dbClient.RunFastQueryAsync(
                     $"UPDATE users SET last_online = '{Oblivion.GetUnixTimeStamp()}', activity_points = '{ActivityPoints}', credits = '{Credits}', diamonds = '{Diamonds}', {Oblivion.GetDbConfig().DbData["emerald.column"]} = '{Graffiti}' WHERE id = '{Id}' LIMIT 1; ");

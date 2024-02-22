@@ -378,7 +378,7 @@ namespace Oblivion.Messages.Handlers
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(roomId);
             await Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_Spr", 1, true);
             if (room == null) return;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 var pubItem = Oblivion.GetGame().GetNavigator().GetPublicItem(roomId);
                 if (pubItem == null) // not picked
@@ -388,7 +388,7 @@ namespace Oblivion.Messages.Handlers
                     queryReactor.AddParameter("roomId", room.RoomId);
                     await queryReactor.RunQueryAsync();
                     await queryReactor.RunFastQueryAsync("SELECT last_insert_id()");
-                    var publicItemId = (uint) queryReactor.GetInteger();
+                    var publicItemId = (uint) await queryReactor.GetIntegerAsync();
                     var publicItem = new PublicItem(publicItemId, 0, string.Empty, string.Empty, string.Empty,
                         PublicImageType.Internal, room.RoomId, 0, -2, false, 1);
                     Oblivion.GetGame().GetNavigator().AddPublicItem(publicItem);

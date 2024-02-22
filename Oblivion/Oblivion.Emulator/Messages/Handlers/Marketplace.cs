@@ -49,7 +49,7 @@ namespace Oblivion.Messages.Handlers
                     break;
             }
 
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 dbClient.SetQuery(
                     "SELECT `offer_id`, item_type, sprite_id, total_price, `limited_number`,`limited_stack` FROM catalog_marketplace_offers " +
@@ -109,26 +109,26 @@ namespace Oblivion.Messages.Handlers
                         dictionary2.Add(item.SpriteId, 1);
                 }
             var message = new ServerMessage(LibraryParser.OutgoingRequest("MarketPlaceOffersMessageComposer"));
-            message.AppendInteger(dictionary.Count);
+            await message.AppendIntegerAsync(dictionary.Count);
             /* TODO CHECK */
             if (dictionary.Count > 0)
                 foreach (var pair in dictionary.Values/*.Where(x => x.TotalPrice >= minCost && x.TotalPrice <= maxCost)*/)
                 {
-                    message.AppendInteger(pair.OfferId);
-                    message.AppendInteger(1);
-                    message.AppendInteger(1);
-                    message.AppendInteger(pair.SpriteId);
-                    message.AppendInteger(256);
-                    message.AppendString("");
-                    message.AppendInteger(pair.LimitedNumber);
-                    message.AppendInteger(pair.LimitedStack);
-                    message.AppendInteger(pair.TotalPrice);
-                    message.AppendInteger(0);
-                    message.AppendInteger(Oblivion.GetGame().GetCatalog().GetMarketplace()
+                    await message.AppendIntegerAsync(pair.OfferId);
+                    await message.AppendIntegerAsync(1);
+                    await message.AppendIntegerAsync(1);
+                    await message.AppendIntegerAsync(pair.SpriteId);
+                    await message.AppendIntegerAsync(256);
+                    await message.AppendStringAsync("");
+                    await message.AppendIntegerAsync(pair.LimitedNumber);
+                    await message.AppendIntegerAsync(pair.LimitedStack);
+                    await message.AppendIntegerAsync(pair.TotalPrice);
+                    await message.AppendIntegerAsync(0);
+                    await message.AppendIntegerAsync(Oblivion.GetGame().GetCatalog().GetMarketplace()
                         .AvgPriceForSprite(pair.SpriteId));
-                    message.AppendInteger(dictionary2[pair.SpriteId]);
+                    await message.AppendIntegerAsync(dictionary2[pair.SpriteId]);
                 }
-            message.AppendInteger(dictionary.Count);
+            await message.AppendIntegerAsync(dictionary.Count);
             await Session.SendMessageAsync(message);
         }
 
@@ -137,14 +137,14 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         public async Task CatalogueOfferConfig()
         {
-            Response.Init(LibraryParser.OutgoingRequest("CatalogueOfferConfigMessageComposer"));
-            Response.AppendInteger(100);
-            Response.AppendInteger(6);
-            Response.AppendInteger(1);
-            Response.AppendInteger(1);
-            Response.AppendInteger(2);
-            Response.AppendInteger(40);
-            Response.AppendInteger(99);
+            await Response.InitAsync(LibraryParser.OutgoingRequest("CatalogueOfferConfigMessageComposer"));
+            await Response.AppendIntegerAsync(100);
+            await Response.AppendIntegerAsync(6);
+            await Response.AppendIntegerAsync(1);
+            await Response.AppendIntegerAsync(1);
+            await Response.AppendIntegerAsync(2);
+            await Response.AppendIntegerAsync(40);
+            await Response.AppendIntegerAsync(99);
             await SendResponse();
         }
 
@@ -154,7 +154,7 @@ namespace Oblivion.Messages.Handlers
             var OfferId = Request.GetInteger();
 
             DataRow Row;
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 dbClient.SetQuery(
                     "SELECT `state`,`timestamp`,`total_price`,`extra_data`,`item_id`,`furni_id`,`user_id`,`limited_number`,`limited_stack` FROM `catalog_marketplace_offers` WHERE `offer_id` = @OfferId LIMIT 1");
@@ -215,7 +215,7 @@ namespace Oblivion.Messages.Handlers
                 (uint) price));
 
 
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 dbClient.RunQuery("UPDATE `catalog_marketplace_offers` SET `state` = '2' WHERE `offer_id` = '" +
                                   OfferId +
@@ -223,7 +223,7 @@ namespace Oblivion.Messages.Handlers
 
                 dbClient.SetQuery("SELECT `id` FROM catalog_marketplace_data WHERE sprite = " + Item.SpriteId +
                                   " LIMIT 1;");
-                var Id = dbClient.GetInteger();
+                var Id = await dbClient.GetIntegerAsync();
 
                 if (Id > 0)
                     dbClient.RunQuery(
@@ -274,7 +274,7 @@ namespace Oblivion.Messages.Handlers
                            Oblivion.GetGame().GetCatalog().GetMarketplace().FormatTimestampString());
             const string str = "ORDER BY asking_price DESC";
 
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 dbClient.SetQuery(
                     "SELECT `offer_id`,`item_type`,`sprite_id`,`total_price`,`limited_number`,`limited_stack` FROM `catalog_marketplace_offers` " +
@@ -327,27 +327,27 @@ namespace Oblivion.Messages.Handlers
                 }
 
             var msg = new ServerMessage(LibraryParser.OutgoingRequest("MarketPlaceOffersMessageComposer"));
-            msg.AppendInteger(dictionary.Count);
+            await msg.AppendIntegerAsync(dictionary.Count);
             if (dictionary.Count > 0)
                 foreach (var pair in dictionary)
                 {
-                    msg.AppendInteger(pair.Value.OfferId);
-                    msg.AppendInteger(1); //State
-                    msg.AppendInteger(1);
-                    msg.AppendInteger(pair.Value.SpriteId);
+                    await msg.AppendIntegerAsync(pair.Value.OfferId);
+                    await msg.AppendIntegerAsync(1); //State
+                    await msg.AppendIntegerAsync(1);
+                    await msg.AppendIntegerAsync(pair.Value.SpriteId);
 
-                    msg.AppendInteger(256);
-                    msg.AppendString("");
-                    msg.AppendInteger(pair.Value.LimitedNumber);
-                    msg.AppendInteger(pair.Value.LimitedStack);
+                    await msg.AppendIntegerAsync(256);
+                    await msg.AppendStringAsync("");
+                    await msg.AppendIntegerAsync(pair.Value.LimitedNumber);
+                    await msg.AppendIntegerAsync(pair.Value.LimitedStack);
 
-                    msg.AppendInteger(pair.Value.TotalPrice);
-                    msg.AppendInteger(0);
-                    msg.AppendInteger(
+                    await msg.AppendIntegerAsync(pair.Value.TotalPrice);
+                    await msg.AppendIntegerAsync(0);
+                    await msg.AppendIntegerAsync(
                         Oblivion.GetGame().GetCatalog().GetMarketplace().AvgPriceForSprite(pair.Value.SpriteId));
-                    msg.AppendInteger(dictionary2[pair.Value.SpriteId]);
+                    await msg.AppendIntegerAsync(dictionary2[pair.Value.SpriteId]);
                 }
-            msg.AppendInteger(dictionary.Count);
+            await msg.AppendIntegerAsync(dictionary.Count);
             await session.SendMessage(msg);
         }
 
@@ -359,7 +359,7 @@ namespace Oblivion.Messages.Handlers
             DataRow row;
             var offerId = Request.GetInteger();
 
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 dbClient.SetQuery(
                     "SELECT furni_id, item_id, user_id, extra_data, offer_id, state, timestamp, limited_number, limited_stack FROM catalog_marketplace_offers WHERE offer_id = @OfferId LIMIT 1");
@@ -371,7 +371,7 @@ namespace Oblivion.Messages.Handlers
             {
                 var msg = new ServerMessage(
                     LibraryParser.OutgoingRequest("MarketplaceCancelOfferResultMessageComposer"));
-                msg.AppendInteger(offerId);
+                await msg.AppendIntegerAsync(offerId);
                 msg.AppendBool(false);
                 await Session.SendMessageAsync(msg);
                 return;
@@ -381,7 +381,7 @@ namespace Oblivion.Messages.Handlers
             {
                 var msg = new ServerMessage(
                     LibraryParser.OutgoingRequest("MarketplaceCancelOfferResultMessageComposer"));
-                msg.AppendInteger(offerId);
+                await msg.AppendIntegerAsync(offerId);
                 msg.AppendBool(false);
                 await Session.SendMessageAsync(msg);
 
@@ -393,7 +393,7 @@ namespace Oblivion.Messages.Handlers
             {
                 var msg = new ServerMessage(
                     LibraryParser.OutgoingRequest("MarketplaceCancelOfferResultMessageComposer"));
-                msg.AppendInteger(offerId);
+                await msg.AppendIntegerAsync(offerId);
                 msg.AppendBool(false);
                 await Session.SendMessageAsync(msg);
                 return;
@@ -405,19 +405,19 @@ namespace Oblivion.Messages.Handlers
             await Session.GetHabbo().GetInventoryComponent().AddItemToItemInventory(userItem);
 //            Session.GetHabbo().GetInventoryComponent().UpdateItems(true);
 
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 dbClient.SetQuery(
                     "DELETE FROM `catalog_marketplace_offers` WHERE `offer_id` = @OfferId AND `user_id` = @UserId LIMIT 1");
                 dbClient.AddParameter("OfferId", offerId);
                 dbClient.AddParameter("UserId", Session.GetHabbo().Id);
-                dbClient.RunQuery();
+                await dbClient.RunQueryAsync();
             }
 
             await Session.GetHabbo().GetInventoryComponent().UpdateItems(true);
             var sucessMessage =
                 new ServerMessage(LibraryParser.OutgoingRequest("MarketplaceCancelOfferResultMessageComposer"));
-            sucessMessage.AppendInteger(offerId);
+            await sucessMessage.AppendIntegerAsync(offerId);
             sucessMessage.AppendBool(true);
             await Session.SendMessageAsync(sucessMessage);
         }
@@ -434,9 +434,9 @@ namespace Oblivion.Messages.Handlers
 
             var message =
                 new ServerMessage(LibraryParser.OutgoingRequest("MarketplaceCanMakeOfferResultMessageComposer"));
-            message.AppendInteger(errorCode);
-            message.AppendInteger(0);
-            message.AppendInteger(0);
+            await message.AppendIntegerAsync(errorCode);
+            await message.AppendIntegerAsync(0);
+            await message.AppendIntegerAsync(0);
             await Session.SendMessageAsync(message);
         }
 
@@ -450,13 +450,13 @@ namespace Oblivion.Messages.Handlers
                 return;
             var message = new ServerMessage(LibraryParser.OutgoingRequest("MarketplaceConfigurationMessageComposer"));
             message.AppendBool(true);
-            message.AppendInteger(1);
-            message.AppendInteger(0);
-            message.AppendInteger(0);
-            message.AppendInteger(1);
-            message.AppendInteger(99999999);
-            message.AppendInteger(48);
-            message.AppendInteger(7);
+            await message.AppendIntegerAsync(1);
+            await message.AppendIntegerAsync(0);
+            await message.AppendIntegerAsync(0);
+            await message.AppendIntegerAsync(1);
+            await message.AppendIntegerAsync(99999999);
+            await message.AppendIntegerAsync(48);
+            await message.AppendIntegerAsync(7);
             await Session.SendMessageAsync(message);
         }
 
@@ -467,7 +467,7 @@ namespace Oblivion.Messages.Handlers
             var SpriteId = Request.GetInteger();
 
             DataRow Row;
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 dbClient.SetQuery(
                     "SELECT `avgprice` FROM `catalog_marketplace_data` WHERE `sprite` = @SpriteId LIMIT 1");
@@ -476,12 +476,12 @@ namespace Oblivion.Messages.Handlers
             }
 
             var msg = new ServerMessage(LibraryParser.OutgoingRequest("MarketplaceItemStatsMessageComposer"));
-            msg.AppendInteger(Row != null ? Convert.ToInt32(Row["avgprice"]) : 0);
-            msg.AppendInteger(Oblivion.GetGame().GetCatalog().GetMarketplace().OfferCountForSprite(SpriteId));
-            msg.AppendInteger(0);
-            msg.AppendInteger(0);
-            msg.AppendInteger(ItemId);
-            msg.AppendInteger(SpriteId);
+            await msg.AppendIntegerAsync(Row != null ? Convert.ToInt32(Row["avgprice"]) : 0);
+            await msg.AppendIntegerAsync(Oblivion.GetGame().GetCatalog().GetMarketplace().OfferCountForSprite(SpriteId));
+            await msg.AppendIntegerAsync(0);
+            await msg.AppendIntegerAsync(0);
+            await msg.AppendIntegerAsync(ItemId);
+            await msg.AppendIntegerAsync(SpriteId);
             await Session.SendMessageAsync(msg);
         }
 
@@ -491,7 +491,7 @@ namespace Oblivion.Messages.Handlers
 
             var userId = Session.GetHabbo().Id;
 
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 dbClient.SetQuery(
                     "SELECT timestamp, state, offer_id, item_type, sprite_id, total_price, limited_number, limited_stack FROM catalog_marketplace_offers WHERE user_id = '" +
@@ -501,12 +501,12 @@ namespace Oblivion.Messages.Handlers
                 dbClient.SetQuery(
                     "SELECT SUM(asking_price) FROM catalog_marketplace_offers WHERE state = '2' AND user_id = '" +
                     userId + "'");
-                var i = dbClient.GetInteger();
+                var i = await dbClient.GetIntegerAsync();
                 var msg = new ServerMessage(LibraryParser.OutgoingRequest("MarketPlaceOwnOffersMessageComposer"));
-                msg.AppendInteger(i);
+                await msg.AppendIntegerAsync(i);
                 if (table != null)
                 {
-                    msg.AppendInteger(table.Rows.Count);
+                    await msg.AppendIntegerAsync(table.Rows.Count);
                     foreach (DataRow row in table.Rows)
                     {
                         var num2 =
@@ -519,24 +519,24 @@ namespace Oblivion.Messages.Handlers
                             num3 = 3;
                             num2 = 0;
                         }
-                        msg.AppendInteger(Convert.ToInt32(row["offer_id"]));
-                        msg.AppendInteger(num3);
-                        msg.AppendInteger(1);
-                        msg.AppendInteger(Convert.ToInt32(row["sprite_id"]));
+                        await msg.AppendIntegerAsync(Convert.ToInt32(row["offer_id"]));
+                        await msg.AppendIntegerAsync(num3);
+                        await msg.AppendIntegerAsync(1);
+                        await msg.AppendIntegerAsync(Convert.ToInt32(row["sprite_id"]));
 
-                        msg.AppendInteger(256);
-                        msg.AppendString("");
-                        msg.AppendInteger(Convert.ToInt32(row["limited_number"]));
-                        msg.AppendInteger(Convert.ToInt32(row["limited_stack"]));
+                        await msg.AppendIntegerAsync(256);
+                        await msg.AppendStringAsync("");
+                        await msg.AppendIntegerAsync(Convert.ToInt32(row["limited_number"]));
+                        await msg.AppendIntegerAsync(Convert.ToInt32(row["limited_stack"]));
 
-                        msg.AppendInteger(Convert.ToInt32(row["total_price"]));
-                        msg.AppendInteger(num2);
-                        msg.AppendInteger(Convert.ToInt32(row["sprite_id"]));
+                        await msg.AppendIntegerAsync(Convert.ToInt32(row["total_price"]));
+                        await msg.AppendIntegerAsync(num2);
+                        await msg.AppendIntegerAsync(Convert.ToInt32(row["sprite_id"]));
                     }
                 }
                 else
                 {
-                    msg.AppendInteger(0);
+                    await msg.AppendIntegerAsync(0);
                 }
                 await Session.SendMessageAsync(msg);
             }
@@ -553,14 +553,14 @@ namespace Oblivion.Messages.Handlers
 
             if (Item == null)
             {
-                msg.AppendInteger(0);
+                await msg.AppendIntegerAsync(0);
                 await Session.SendMessageAsync(msg);
                 return;
             }
 
             if (SellingPrice > 70000000 || SellingPrice <= 0)
             {
-                msg.AppendInteger(0);
+                await msg.AppendIntegerAsync(0);
                 await Session.SendMessageAsync(msg);
                 return;
             }
@@ -572,7 +572,7 @@ namespace Oblivion.Messages.Handlers
             if (Item.BaseItem.Type == 'i')
                 ItemType++;
 
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 dbClient.SetQuery(
                     "INSERT INTO `catalog_marketplace_offers` (`furni_id`,`item_id`,`user_id`,`asking_price`,total_price,public_name,sprite_id,item_type,timestamp,extra_data,limited_number,limited_stack) VALUES ('" +
@@ -583,7 +583,7 @@ namespace Oblivion.Messages.Handlers
                     "')");
                 dbClient.AddParameter("public_name", Item.BaseItem.PublicName);
                 dbClient.AddParameter("extra_data", Item.ExtraData);
-                dbClient.RunQuery();
+                await dbClient.RunQueryAsync();
 
                 dbClient.RunQuery("DELETE FROM `items_rooms` WHERE `id` = '" + ItemId + "' AND `user_id` = '" +
                                   Session.GetHabbo().Id + "' LIMIT 1");
@@ -591,7 +591,7 @@ namespace Oblivion.Messages.Handlers
 
             await Session.GetHabbo().GetInventoryComponent().RemoveItem(ItemId, false, 0);
 
-            msg.AppendInteger(1);
+            await msg.AppendIntegerAsync(1);
             await Session.SendMessageAsync(msg);
         }
 
@@ -600,7 +600,7 @@ namespace Oblivion.Messages.Handlers
             var CreditsOwed = 0;
 
             DataTable Table;
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 dbClient.SetQuery("SELECT `asking_price` FROM `catalog_marketplace_offers` WHERE `user_id` = '" +
                                   Session.GetHabbo().Id + "' AND state = '2'");
@@ -617,7 +617,7 @@ namespace Oblivion.Messages.Handlers
                     await Session.GetHabbo().UpdateSeasonalCurrencyBalance();
                 }
 
-                using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     dbClient.RunQuery("DELETE FROM `catalog_marketplace_offers` WHERE `user_id` = '" +
                                       Session.GetHabbo().Id + "' AND `state` = '2'");

@@ -22,7 +22,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
         public override async Task<bool> Execute(GameClient session, string[] pms)
         {
             var room = session.GetHabbo().CurrentRoom;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync($"UPDATE rooms_data SET roomtype = 'public' WHERE id = {room.RoomId}");
             var roomId = session.GetHabbo().CurrentRoom.RoomId;
             var users = new List<RoomUser>(session.GetHabbo().CurrentRoom.GetRoomUserManager().UserList.Values);

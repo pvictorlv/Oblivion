@@ -107,7 +107,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             {
                 await UpdateItems(true);
 
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     await queryReactor.RunNoLockFastQueryAsync(
                         $"DELETE FROM items_rooms WHERE (room_id IS NULL or room_id=0) AND user_id = {UserId};");
 
@@ -135,7 +135,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             if (currentRoom == null)
                 return;
 
-            using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryreactor2 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryreactor2.SetNoLockQuery(
                     $"SELECT id FROM items_rooms WHERE user_id={session.GetHabbo().Id} AND (room_id IS NULL or room_id=0) IS NULL;");
@@ -683,10 +683,10 @@ namespace Oblivion.HabboHotel.Users.Inventory
         internal async Task<ServerMessage> SerializePetInventory()
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("PetInventoryMessageComposer"));
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(1);
+            await serverMessage.AppendIntegerAsync(1);
+            await serverMessage.AppendIntegerAsync(1);
             var list = _inventoryPets.Values;
-            serverMessage.AppendInteger(list.Count);
+            await serverMessage.AppendIntegerAsync(list.Count);
             foreach (var current in list)
                 serverMessage = await current.SerializeInventory(serverMessage);
 
@@ -816,7 +816,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
                         current.DbState = DatabaseUpdateState.Updated;
                     }
 
-                    using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (var queryreactor2 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                         await queryChunk.Execute(queryreactor2);
                 }
             }

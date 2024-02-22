@@ -100,7 +100,7 @@ namespace Oblivion.Connection.Net
                     case "ha":
                         var hotelAlert =
                             new ServerMessage(LibraryParser.OutgoingRequest("BroadcastNotifMessageComposer"));
-                        hotelAlert.AppendString($"{param}\r\n- Hotel Management");
+                        await hotelAlert.AppendStringAsync($"{param}\r\n- Hotel Management");
                         await Oblivion.GetGame().GetClientManager().SendMessageAsync(hotelAlert);
                         break;
 
@@ -142,7 +142,7 @@ namespace Oblivion.Connection.Net
                         if (clientByUserId == null) return;
 
                         int diamonds;
-                        using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                         {
                             dbClient.SetQuery("SELECT diamonds FROM users WHERE id = " + UserId);
                             var row = dbClient.GetRow();
@@ -165,9 +165,9 @@ namespace Oblivion.Connection.Net
                         if (clientByUserId == null) return;
 
                         int emeralds;
-                        using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                         {
-                            dbClient.RunFastQuery($"UPDATE users SET vip_points = vip_points + {amount}");
+                            await dbClient.RunFastQueryAsync($"UPDATE users SET vip_points = vip_points + {amount}");
                             dbClient.SetQuery("SELECT vip_points FROM users WHERE id = " + dUserId);
                             var row = dbClient.GetRow();
                             if (row == null) return;
@@ -187,7 +187,7 @@ namespace Oblivion.Connection.Net
                         if (clientByUserId == null) return;
 
                         string motto;
-                        using (var conn = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        using (var conn = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                         {
                             conn.SetQuery("SELECT motto FROM users WHERE id = " + UserID);
                             motto = conn.GetString();
@@ -203,11 +203,11 @@ namespace Oblivion.Connection.Net
 
                             var message =
                                 new ServerMessage(LibraryParser.OutgoingRequest("UpdateUserDataMessageComposer"));
-                            message.AppendInteger(user.VirtualId);
-                            message.AppendString(clientByUserId.GetHabbo().Look);
-                            message.AppendString(clientByUserId.GetHabbo().Gender.ToLower());
-                            message.AppendString(motto);
-                            message.AppendInteger(clientByUserId.GetHabbo().AchievementPoints);
+                            await message.AppendIntegerAsync(user.VirtualId);
+                            await message.AppendStringAsync(clientByUserId.GetHabbo().Look);
+                            await message.AppendStringAsync(clientByUserId.GetHabbo().Gender.ToLower());
+                            await message.AppendStringAsync(motto);
+                            await message.AppendIntegerAsync(clientByUserId.GetHabbo().AchievementPoints);
                             await clientByUserId.SendMessage(message);
                         }
 
@@ -249,7 +249,7 @@ namespace Oblivion.Connection.Net
                         await clientByUserId.GetHabbo().SerializeClub();
                         break;
                     case "reload_bans":
-                        using (var adapter3 = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        using (var adapter3 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                         {
                             await Oblivion.GetGame().GetBanManager().LoadBans(adapter3);
                         }
@@ -285,7 +285,7 @@ namespace Oblivion.Connection.Net
                         {
                             var roomFwd =
                                 new ServerMessage(LibraryParser.OutgoingRequest("RoomForwardMessageComposer"));
-                            roomFwd.AppendInteger(clientByUserId.GetHabbo().CurrentRoom.RoomId);
+                            await roomFwd.AppendIntegerAsync(clientByUserId.GetHabbo().CurrentRoom.RoomId);
                             await clientByUserId.SendMessage(roomFwd);
                         }
                     }

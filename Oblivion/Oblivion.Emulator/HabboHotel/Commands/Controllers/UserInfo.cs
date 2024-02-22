@@ -28,7 +28,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             var clientByUserName = Oblivion.GetGame().GetClientManager().GetClientByUserName(userName);
             if (clientByUserName?.GetHabbo() == null)
             {
-                using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var adapter = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     adapter.SetQuery(
                         "SELECT username, rank, id, credits, activity_points, diamonds, mail FROM users WHERE username=@user LIMIT 1");
@@ -45,7 +45,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
                 }
                 return true;
             }
-            using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var adapter = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 adapter.SetQuery(
                     "SELECT mail FROM users WHERE username=@user LIMIT 1");

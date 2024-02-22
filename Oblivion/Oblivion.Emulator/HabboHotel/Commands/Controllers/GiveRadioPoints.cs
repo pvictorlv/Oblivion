@@ -30,7 +30,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
 
             var targetUser = room.GetRoomUserManager().GetRoomUserByHabbo(target);
 
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await dbClient.RunFastQueryAsync($"UPDATE users SET rpoints = rpoints + 1 WHERE id = '{targetUser.UserId}'");
             }

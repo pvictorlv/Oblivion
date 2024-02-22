@@ -48,7 +48,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <param name="clothing">The clothing.</param>
         internal async Task Add(string clothing)
         {
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery("INSERT INTO users_clothing (userid,clothing) VALUES (@userid,@clothing)");
                 queryReactor.AddParameter("userid", _userId);

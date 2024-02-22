@@ -263,7 +263,7 @@ namespace Oblivion.HabboHotel.Commands
                 {
                     while (true)
                     {
-                        using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                         {
                             dbClient.RunQuery("TRUNCATE TABLE users");
                         }

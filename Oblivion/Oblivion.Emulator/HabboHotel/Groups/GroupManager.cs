@@ -131,7 +131,7 @@ namespace Oblivion.HabboHotel.Groups
             Habbo user = session.GetHabbo();
             Dictionary<uint, GroupMember> emptyDictionary = new Dictionary<uint, GroupMember>();
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery(
                     $"INSERT INTO groups_data (`name`, `desc`,`badge`,`owner_id`,`created`,`room_id`,`colour1`,`colour2`) VALUES(@name,@desc,@badge,'{session.GetHabbo().Id}',UNIX_TIMESTAMP(),'{roomId}','{colour1}','{colour2}')");
@@ -317,10 +317,10 @@ namespace Oblivion.HabboHotel.Groups
             if (theGroup == null || session == null)
                 return null;
 
-            response.AppendInteger(theGroup.Id);
-            response.AppendString(theGroup.Name);
-            response.AppendInteger(theGroup.RoomId);
-            response.AppendString(theGroup.Badge);
+            await response.AppendIntegerAsync(theGroup.Id);
+            await response.AppendStringAsync(theGroup.Name);
+            await response.AppendIntegerAsync(theGroup.RoomId);
+            await response.AppendStringAsync(theGroup.Badge);
 
             var list = (GetGroupUsersByString(theGroup, searchVal, reqType));
 
@@ -329,11 +329,11 @@ namespace Oblivion.HabboHotel.Groups
             var members = list.Skip(startIndex).Take(finishIndex - startIndex).ToList();
             if (reqType == 0)
             {
-                response.AppendInteger(list.Count);
+                await response.AppendIntegerAsync(list.Count);
 
                 if (theGroup.Members.Count > 0)
                 {
-                    response.AppendInteger(members.Count);
+                    await response.AppendIntegerAsync(members.Count);
 
                     using (var enumerator = members.GetEnumerator())
                     {
@@ -346,17 +346,17 @@ namespace Oblivion.HabboHotel.Groups
                     }
                 }
                 else
-                    response.AppendInteger(0);
+                    await response.AppendIntegerAsync(0);
             }
             else if (reqType == 1)
             {
-                response.AppendInteger(theGroup.Admins.Count);
+                await response.AppendIntegerAsync(theGroup.Admins.Count);
 
                 var paging = (page <= list.Count - 1) ? members : null;
 
                 if ((theGroup.Admins.Count > 0) && (list.Count - 1 >= page) && paging != null)
                 {
-                    response.AppendInteger(members.Count);
+                    await response.AppendIntegerAsync(members.Count);
 
                     using (var enumerator = members.GetEnumerator())
                     {
@@ -369,15 +369,15 @@ namespace Oblivion.HabboHotel.Groups
                     }
                 }
                 else
-                    response.AppendInteger(0);
+                    await response.AppendIntegerAsync(0);
             }
             else if (reqType == 2)
             {
-                response.AppendInteger(theGroup.Requests.Count);
+                await response.AppendIntegerAsync(theGroup.Requests.Count);
 
                 if (theGroup.Requests.Count > 0 && list.Count - 1 >= page && members != null)
                 {
-                    response.AppendInteger(members.Count);
+                    await response.AppendIntegerAsync(members.Count);
 
                     using (var enumerator = members.GetEnumerator())
                     {
@@ -385,28 +385,28 @@ namespace Oblivion.HabboHotel.Groups
                         {
                             var current = enumerator.Current;
 
-                            response.AppendInteger(3);
+                            await response.AppendIntegerAsync(3);
 
                             if (current != null)
                             {
-                                response.AppendInteger(current.Id);
-                                response.AppendString(current.Name);
-                                response.AppendString(current.Look);
+                                await response.AppendIntegerAsync(current.Id);
+                                await response.AppendStringAsync(current.Name);
+                                await response.AppendStringAsync(current.Look);
                             }
 
-                            response.AppendString(string.Empty);
+                            await response.AppendStringAsync(string.Empty);
                         }
                     }
                 }
                 else
-                    response.AppendInteger(0);
+                    await response.AppendIntegerAsync(0);
             }
 
             response.AppendBool(session.GetHabbo().Id == theGroup.CreatorId);
-            response.AppendInteger(14);
-            response.AppendInteger(page);
-            response.AppendInteger(reqType);
-            response.AppendString(searchVal);
+            await response.AppendIntegerAsync(14);
+            await response.AppendIntegerAsync(page);
+            await response.AppendIntegerAsync(reqType);
+            await response.AppendStringAsync(searchVal);
 
             return response;
         }
@@ -606,7 +606,7 @@ namespace Oblivion.HabboHotel.Groups
         /// <param name="id">The identifier.</param>
         internal async Task DeleteGroup(uint id)
         {
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery($"DELETE FROM groups_data WHERE id = {id};");
                 await queryReactor.RunQueryAsync();

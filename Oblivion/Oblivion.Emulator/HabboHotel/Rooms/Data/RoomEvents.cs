@@ -63,7 +63,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                     {
                         roomEvent.Time += time;
                     }
-                    using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         queryReactor.SetQuery(
                             "REPLACE INTO rooms_events VALUES ('@id','@name','@desc','@time','@category')");
@@ -76,7 +76,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
                         goto IL_17C;
                     }
                 }
-                using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryreactor2 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     queryreactor2.SetQuery(string.Concat("REPLACE INTO rooms_events VALUES (", roomId,
                         ", @name, @desc, ", Oblivion.GetUnixTimeStamp() + 7200, ", @category)"));
@@ -182,7 +182,7 @@ namespace Oblivion.HabboHotel.Rooms.Data
         /// <param name="Event">The event.</param>
         internal async Task UpdateEvent(RoomEvent Event)
         {
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery(string.Concat("REPLACE INTO rooms_events VALUES (", Event.RoomId,
                     ", @name, @desc, ", Event.Time, ")"));

@@ -346,7 +346,7 @@ namespace Oblivion
                     , ConfigurationData.Data["db.password"], ConfigurationData.Data["db.name"],
                     uint.Parse(ConfigurationData.Data["db.pool.maxsize"]));
 
-                using (var queryReactor = GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await GetDatabaseManager().GetQueryReactorAsync())
                 {
                     ConfigData = new ConfigData(queryReactor);
                     PetCommandHandler.Init(queryReactor);
@@ -746,7 +746,7 @@ namespace Oblivion
                 /* TODO CHECK */
                 foreach (Guild group in _game.GetGroupManager().Groups.Values) group.UpdateForum();
 
-                using (var queryReactor = Manager.GetQueryReactor())
+                using (var queryReactor = await Manager.GetQueryReactorAsync())
                 {
                     await queryReactor.RunFastQueryAsync("UPDATE users SET online = '0'");
                 }

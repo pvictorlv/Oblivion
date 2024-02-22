@@ -70,10 +70,10 @@ namespace Oblivion.HabboHotel.Rooms.User.Trade
             }
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("TradeStartMessageComposer"));
-            serverMessage.AppendInteger(_oneId);
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(_twoId);
-            serverMessage.AppendInteger(1);
+            await serverMessage.AppendIntegerAsync(_oneId);
+            await serverMessage.AppendIntegerAsync(1);
+            await serverMessage.AppendIntegerAsync(_twoId);
+            await serverMessage.AppendIntegerAsync(1);
             await SendMessageToUsers(serverMessage);
         }
 

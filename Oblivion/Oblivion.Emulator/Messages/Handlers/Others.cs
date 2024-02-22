@@ -380,7 +380,7 @@ namespace Oblivion.Messages.Handlers
             data.OpenedGifts.Add(giftDay);
 
 
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 dbClient.SetQuery("UPDATE `user_stats` SET `calendar_gifts` = @giftData WHERE `id` = @habboId LIMIT 1");
                 dbClient.AddParameter("giftData", string.Join(",", data.OpenedGifts));
@@ -431,7 +431,7 @@ namespace Oblivion.Messages.Handlers
                 await Session.GetHabbo().UpdateActivityPointsBalance();
             }
 
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await dbClient.RunFastQueryAsync("UPDATE `camera_photos` SET `file_state` = 'purchased' WHERE `id` = '" +
                                                  preview.Id +
@@ -608,7 +608,7 @@ namespace Oblivion.Messages.Handlers
 
                 var preview = User.LastPhotoPreview;
 
-                using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     await dbClient.RunFastQueryAsync("UPDATE `camera_photos` SET `file_state` = 'purchased' WHERE `id` = '" +
                                                      preview.Id +

@@ -169,7 +169,7 @@ namespace Oblivion.HabboHotel.Support
             {
                 type = ModerationBanType.Ip;
 
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     queryReactor.SetQuery("SELECT ip_last FROM users WHERE username = @name LIMIT 1");
                     queryReactor.AddParameter("name", text);
@@ -206,7 +206,7 @@ namespace Oblivion.HabboHotel.Support
                     break;
             }
 
-            using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryreactor2 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryreactor2.SetQuery(
                     "INSERT INTO users_bans (bantype,value,reason,expire,added_by,added_date) VALUES (@rawvar,@var,@reason,@num,@mod,@time)");
@@ -223,7 +223,7 @@ namespace Oblivion.HabboHotel.Support
             {
                 DataTable dataTable;
 
-                using (var queryreactor3 = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryreactor3 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     queryreactor3.SetQuery("SELECT id FROM users WHERE ip_last = @var");
                     queryreactor3.AddParameter("var", text);
@@ -232,7 +232,7 @@ namespace Oblivion.HabboHotel.Support
 
                 if (dataTable != null)
                 {
-                    using (var queryreactor4 = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (var queryreactor4 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         /* TODO CHECK */
                         foreach (DataRow dataRow in dataTable.Rows)
@@ -245,7 +245,7 @@ namespace Oblivion.HabboHotel.Support
                 return;
             }
 
-            using (var queryreactor5 = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryreactor5 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryreactor5.RunFastQueryAsync(
                     $"UPDATE users_info SET bans = bans + 1 WHERE user_id = {client.GetHabbo().Id}");
 
@@ -261,7 +261,7 @@ namespace Oblivion.HabboHotel.Support
             _bannedUsernames.Remove(userNameOrIp);
             _bannedIPs.Remove(userNameOrIp);
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery("DELETE FROM users_bans WHERE value = @userorip");
                 queryReactor.AddParameter("userorip", userNameOrIp);

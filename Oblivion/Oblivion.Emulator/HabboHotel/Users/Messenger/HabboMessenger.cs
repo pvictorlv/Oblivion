@@ -207,7 +207,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="sender">The sender.</param>
         internal async Task HandleRequest(uint sender)
         {
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync(string.Concat("DELETE FROM messenger_requests WHERE (from_id = ",
                     _userId,
                     " AND to_id = ", sender, ") OR (to_id = ", _userId, " AND from_id = ", sender, ")"));
@@ -221,7 +221,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="friendId">The friend identifier.</param>
         internal async Task CreateFriendship(uint friendId)
         {
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync(
                     string.Concat("REPLACE INTO messenger_friendships (user_one_id,user_two_id) VALUES (", _userId, ",",
                         friendId, ")"));
@@ -250,7 +250,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
         {
             var habbo = GetClient().GetHabbo();
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await queryReactor.RunFastQueryAsync(string.Concat(
                     "DELETE FROM messenger_friendships WHERE (user_one_id = ",
@@ -260,7 +260,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 await queryReactor.RunFastQueryAsync(string.Concat("SELECT id FROM users_relationships WHERE user_id=",
                     habbo.Id,
                     " AND target = ", friendId, " LIMIT 1"));
-                var id = (uint)queryReactor.GetInteger();
+                var id = (uint)await queryReactor.GetIntegerAsync();
                 if (id > 0)
                 {
                     await queryReactor.RunFastQueryAsync(string.Concat(
@@ -305,7 +305,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 {
                     DataRow row;
 
-                    using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         queryReactor.SetQuery(
                             $"SELECT id,username,motto,look,last_online,hide_inroom,hide_online FROM users WHERE id = {friendId}");
@@ -433,7 +433,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
             {
                 DataRow dataRow;
 
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     queryReactor.SetQuery("SELECT id, block_newfriends FROM users WHERE username = @query");
                     queryReactor.AddParameter("query", userQuery.ToLower());
@@ -473,7 +473,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 return true;
             }
 
-            using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryreactor2 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryreactor2.RunFastQueryAsync(string.Concat(
                     "REPLACE INTO messenger_requests (from_id,to_id) VALUES (",
                     _userId, ",", userId, ")"));
@@ -609,7 +609,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
                     Oblivion.OfflineMessages.Add(toId, msgs);
                 }
 
-                OfflineMessage.SaveMessage(Oblivion.GetDatabaseManager().GetQueryReactor(), toId,
+                OfflineMessage.SaveMessage(await Oblivion.GetDatabaseManager().GetQueryReactorAsync(), toId,
                     GetClient().GetHabbo().Id, message);
 
                 return;
@@ -697,11 +697,11 @@ namespace Oblivion.HabboHotel.Users.Messenger
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("LoadFriendsCategories"));
             await serverMessage.AppendIntegerAsync(1100);
-            serverMessage.AppendInteger(600);
-            serverMessage.AppendInteger(800);
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendString("Grupos");
+            await serverMessage.AppendIntegerAsync(600);
+            await serverMessage.AppendIntegerAsync(800);
+            await serverMessage.AppendIntegerAsync(1);
+            await serverMessage.AppendIntegerAsync(1);
+            await serverMessage.AppendStringAsync("Grupos");
             return serverMessage;
         }
 
@@ -712,8 +712,8 @@ namespace Oblivion.HabboHotel.Users.Messenger
         internal async Task<ServerMessage> SerializeFriends()
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("LoadFriendsMessageComposer"));
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(0);
+            await serverMessage.AppendIntegerAsync(1);
+            await serverMessage.AppendIntegerAsync(0);
 
             var client = GetClient();
             if (client?.GetHabbo() == null) return null;
@@ -736,20 +736,20 @@ namespace Oblivion.HabboHotel.Users.Messenger
                 {
                     if (memb != null && memb.HasChat)
                     {
-                        serverMessage.AppendInteger(-Convert.ToInt32(gp.Id));
-                        serverMessage.AppendString(gp.Name);
-                        serverMessage.AppendInteger(0);
+                        await serverMessage.AppendIntegerAsync(-Convert.ToInt32(gp.Id));
+                        await serverMessage.AppendStringAsync(gp.Name);
+                        await serverMessage.AppendIntegerAsync(0);
                         serverMessage.AppendBool(gp.HasChat);
                         serverMessage.AppendBool(false);
-                        serverMessage.AppendString(gp.Badge);
-                        serverMessage.AppendInteger(1);
-                        serverMessage.AppendString(gp.Description);
-                        serverMessage.AppendString("");
-                        serverMessage.AppendString("");
+                        await serverMessage.AppendStringAsync(gp.Badge);
+                        await serverMessage.AppendIntegerAsync(1);
+                        await serverMessage.AppendStringAsync(gp.Description);
+                        await serverMessage.AppendStringAsync("");
+                        await serverMessage.AppendStringAsync("");
                         serverMessage.AppendBool(false);
                         serverMessage.AppendBool(false);
                         serverMessage.AppendBool(false);
-                        serverMessage.AppendShort(0);
+                        await serverMessage.AppendShortAsync(0);
                         serverMessage.SaveArray();
                     }
                 }
@@ -786,11 +786,11 @@ namespace Oblivion.HabboHotel.Users.Messenger
             if (client == null) return null;
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FriendUpdateMessageComposer"));
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendString("Grupos");
-            serverMessage.AppendInteger(1);
-            serverMessage.AppendInteger(0);
+            await serverMessage.AppendIntegerAsync(1);
+            await serverMessage.AppendIntegerAsync(1);
+            await serverMessage.AppendStringAsync("Grupos");
+            await serverMessage.AppendIntegerAsync(1);
+            await serverMessage.AppendIntegerAsync(0);
             await friend.Serialize(serverMessage, client);
 //            serverMessage.AppendBool(false);
             return serverMessage;
@@ -833,10 +833,10 @@ namespace Oblivion.HabboHotel.Users.Messenger
         internal async Task<ServerMessage> SerializeRequests()
         {
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("FriendRequestsMessageComposer"));
-            serverMessage.AppendInteger(Requests.Count > Oblivion.FriendRequestLimit
+            await serverMessage.AppendIntegerAsync(Requests.Count > Oblivion.FriendRequestLimit
                 ? (int)Oblivion.FriendRequestLimit
                 : Requests.Count);
-            serverMessage.AppendInteger(Requests.Count > Oblivion.FriendRequestLimit
+            await serverMessage.AppendIntegerAsync(Requests.Count > Oblivion.FriendRequestLimit
                 ? (int)Oblivion.FriendRequestLimit
                 : Requests.Count);
 
@@ -870,12 +870,12 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             var serverMessage = new ServerMessage(LibraryParser.OutgoingRequest("ConsoleSearchFriendMessageComposer"));
 
-            serverMessage.AppendInteger(list.Count);
+            await serverMessage.AppendIntegerAsync(list.Count);
 
             foreach (var current2 in list)
                 await current2.Searialize(serverMessage);
 
-            serverMessage.AppendInteger(list2.Count);
+            await serverMessage.AppendIntegerAsync(list2.Count);
 
             foreach (var current3 in list2)
                 await current3.Searialize(serverMessage);

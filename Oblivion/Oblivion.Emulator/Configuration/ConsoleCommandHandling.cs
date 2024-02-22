@@ -239,7 +239,7 @@ namespace Oblivion.Configuration
                     case "catalog":
                     case "shop":
                     case "catalogus":
-                        using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        using (var adapter = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                         {
                             GetGame().GetItemManager().LoadItems(adapter);
                             await GetGame().GetCatalog().Initialize(adapter);
@@ -263,7 +263,7 @@ namespace Oblivion.Configuration
                         break;
 
                     case "bans":
-                        using (var adapter3 = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        using (var adapter3 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                         {
                             await GetGame().GetBanManager().LoadBans(adapter3);
                         }

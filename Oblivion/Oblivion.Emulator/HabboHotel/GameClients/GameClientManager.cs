@@ -315,7 +315,7 @@ namespace Oblivion.HabboHotel.GameClients
             _userIdRegister.TryRemove(userid, out _);
             _userNameRegister.TryRemove(userName.ToLower(), out _);
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync($"UPDATE users SET online='0' WHERE id={userid} LIMIT 1");
         }
 
@@ -352,7 +352,7 @@ namespace Oblivion.HabboHotel.GameClients
             {
                 if (stringBuilder.Length > 0)
                 {
-                    using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                         await queryReactor.RunFastQueryAsync(stringBuilder.ToString());
                 }
             }

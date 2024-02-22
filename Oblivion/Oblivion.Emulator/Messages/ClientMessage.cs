@@ -183,7 +183,7 @@ namespace Oblivion.Messages
         {
             try
             {
-                if (this.buffer != null && this.buffer.ReadableBytes > 0)
+                if (this.buffer != null && this.buffer.ReadableBytes >= 2)
                 {
                     int length = buffer.ReadShort();
                     
@@ -193,7 +193,10 @@ namespace Oblivion.Messages
                     }
                     
                     var bytes = GetBytes(length);
-                    return encoding.GetString(bytes);
+                    if (bytes != null)
+                    {
+                        return encoding.GetString(bytes);
+                    }
                 }
 
                 return string.Empty;

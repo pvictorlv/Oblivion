@@ -543,7 +543,7 @@ namespace Oblivion.Messages.Handlers
 
             if (item.IsBuilder)
             {
-                using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var adapter = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     await room.GetRoomItemHandler().RemoveFurniture(Session, item.Id, false);
                     Session.GetHabbo().BuildersItemsUsed--;
@@ -569,7 +569,7 @@ namespace Oblivion.Messages.Handlers
                 }
                 else
                 {
-                    using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (var adapter = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         await adapter.RunFastQueryAsync(
                             $"UPDATE items_rooms SET room_id = NULL WHERE id = '{item.Id}'");
@@ -659,7 +659,7 @@ namespace Oblivion.Messages.Handlers
 
             if (!flag)
                 return;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await room.GetRoomItemHandler().SaveFurniture(queryReactor);
             }
@@ -726,7 +726,7 @@ namespace Oblivion.Messages.Handlers
                     item.Serialize(message);
                     await room.SendMessageAsync(message);
                     await item.UpdateState();
-                    using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         await queryReactor.RunFastQueryAsync(
                             $"UPDATE items_toners SET enabled = '{room.TonerData.Enabled}' LIMIT 1");
@@ -867,7 +867,7 @@ namespace Oblivion.Messages.Handlers
             await currentRoom.SendMessage(message);
 
             Session.GetHabbo().LastGiftOpenTime = DateTime.Now;
-            var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor();
+            var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync();
             queryReactor.SetQuery("SELECT item_id,extradata FROM users_gifts WHERE gift_id = '" + item.Id + "';");
             var row = queryReactor.GetRow();
             if (row == null)
@@ -1046,7 +1046,7 @@ namespace Oblivion.Messages.Handlers
             var num3 = Request.GetInteger();
             if (num > 255 || num2 > 255 || num3 > 255)
                 return;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await queryReactor.RunFastQueryAsync(string.Concat("UPDATE items_toners SET enabled = '1', data1=", num,
                     " ,data2=", num2, ",data3=", num3, " WHERE id='", item.Id, "' LIMIT 1"));
@@ -1273,7 +1273,7 @@ namespace Oblivion.Messages.Handlers
                 await Session.GetHabbo().GetInventoryComponent().RemoveItem(item.Id, false, 0);
                 using (
                     var queryReactor =
-                    Oblivion.GetDatabaseManager().GetQueryReactor())
+                    await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     await queryReactor.RunFastQueryAsync($"DELETE FROM items_rooms WHERE id='{item.Id}' LIMIT 1");
                 }
@@ -1283,7 +1283,7 @@ namespace Oblivion.Messages.Handlers
 
             var randomEcotronReward =
                 Oblivion.GetGame().GetCatalog().GetRandomEcotronReward();
-            using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryreactor2 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 var itemGuid = Guid.NewGuid();
                 ShortGuid itemId = itemGuid;
@@ -1331,7 +1331,7 @@ namespace Oblivion.Messages.Handlers
             if (!int.TryParse(array[1], out var amount)) return;
 
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await queryReactor.RunFastQueryAsync($"DELETE FROM items_rooms WHERE id='{item.Id}' LIMIT 1;");
             }
@@ -1463,7 +1463,7 @@ namespace Oblivion.Messages.Handlers
             var y = pet.Y;
             var z = pet.Z;
             await room.GetRoomUserManager().RemoveBot(pet.VirtualId, false);
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 var guidId = Guid.NewGuid();
                 ShortGuid itemId = guidId;
@@ -1568,7 +1568,7 @@ namespace Oblivion.Messages.Handlers
                 pet.PetData.DbState = DatabaseUpdateState.NeedsUpdate;
             pet.PetData.RoomId = 0u;
             Session.GetHabbo().GetInventoryComponent().AddPet(pet.PetData);
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await room.GetRoomUserManager().SavePets(queryReactor);
             }
@@ -1606,7 +1606,7 @@ namespace Oblivion.Messages.Handlers
 
                     await pet.Chat(null, message, false, 0);
                     using (
-                        var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         await queryReactor.RunFastQueryAsync(
                             $"UPDATE users_stats SET daily_pet_respect_points = daily_pet_respect_points - 1 WHERE id = {Session.GetHabbo().Id} LIMIT 1");
@@ -1623,7 +1623,7 @@ namespace Oblivion.Messages.Handlers
             var pet = room.GetRoomUserManager().GetPet(num);
             if (pet.PetData.AnyoneCanRide == 1)
             {
-                using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     await queryReactor.RunFastQueryAsync($"UPDATE pets_data SET anyone_ride=0 WHERE id={num} LIMIT 1");
                 }
@@ -1632,7 +1632,7 @@ namespace Oblivion.Messages.Handlers
             }
             else
             {
-                using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+                using (var queryreactor2 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     await queryreactor2.RunFastQueryAsync($"UPDATE pets_data SET anyone_ride=1 WHERE id={num} LIMIT 1");
                 }
@@ -1704,7 +1704,7 @@ namespace Oblivion.Messages.Handlers
                     num += int.Parse(s);
                     pet.PetData.HairDye = num;
                     using (
-                        var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         await queryReactor.RunFastQueryAsync(string.Concat("UPDATE pets_data SET hairdye = '",
                             pet.PetData.HairDye,
@@ -1739,7 +1739,7 @@ namespace Oblivion.Messages.Handlers
 
                     pet.PetData.Race = num3.ToString();
                     using (
-                        var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         await queryReactor.RunFastQueryAsync("UPDATE pets_data SET race = '" + pet.PetData.Race +
                                                              "' WHERE id = " +
@@ -1757,7 +1757,7 @@ namespace Oblivion.Messages.Handlers
                     num4 += int.Parse(s3);
                     pet.PetData.PetHair = num4;
                     using (
-                        var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         await queryReactor.RunFastQueryAsync("UPDATE pets_data SET pethair = '" + pet.PetData.PetHair +
                                                              "' WHERE id = " + pet.PetData.PetId);
@@ -1771,7 +1771,7 @@ namespace Oblivion.Messages.Handlers
                 {
                     pet.PetData.HaveSaddle = true;
                     using (
-                        var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                        var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         await queryReactor.RunFastQueryAsync(
                             $"UPDATE pets_data SET have_saddle = 1 WHERE id = {pet.PetData.PetId}");
@@ -1789,7 +1789,7 @@ namespace Oblivion.Messages.Handlers
                     pet.PetData.MoplaBreed.GrowingStatus = 7;
                     pet.PetData.MoplaBreed.LiveState = MoplaState.Grown;
                     await pet.PetData.MoplaBreed.UpdateInDb();
-                    using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                     {
                         await queryReactor.RunFastQueryAsync(
                             $"DELETE FROM items_rooms WHERE id='{item.Id}' LIMIT 1");
@@ -1855,7 +1855,7 @@ namespace Oblivion.Messages.Handlers
             if (pet?.PetData == null || pet.PetData.OwnerId != Session.GetHabbo().Id)
                 return;
             pet.PetData.HaveSaddle = false;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 var guidId = Guid.NewGuid();
                 ShortGuid id = guidId;
@@ -1944,7 +1944,7 @@ namespace Oblivion.Messages.Handlers
             var productDescription = string.Empty;
             var isValid = false;
             DataRow row;
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetQuery("SELECT value,extra_duckets FROM items_vouchers WHERE voucher = @vo LIMIT 1");
                 queryReactor.AddParameter("vo", query);
@@ -1955,7 +1955,7 @@ namespace Oblivion.Messages.Handlers
             {
                 isValid = true;
                 using (
-                    var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+                    var queryreactor2 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 {
                     queryreactor2.SetQuery("DELETE FROM items_vouchers WHERE voucher = @vou LIMIT 1");
                     queryreactor2.AddParameter("vou", query);
@@ -2217,7 +2217,7 @@ namespace Oblivion.Messages.Handlers
                 !room.CheckRights(Session, true))
                 return;
             Session.GetHabbo().GetInventoryComponent().AddBot(bot.BotData);
-            using (var queryreactor2 = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryreactor2 = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await queryreactor2.RunFastQueryAsync("UPDATE bots SET room_id = NULL WHERE id = " + id);
             }
@@ -2244,7 +2244,7 @@ namespace Oblivion.Messages.Handlers
             Session.GetHabbo().BuildersItemsUsed++;
             await BuildersClubUpdateFurniCount();
             var z = actualRoom.GetGameMap().SqAbsoluteHeight(x, y);
-            using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var adapter = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 var guidId = Guid.NewGuid();
                 ShortGuid insertId = guidId;
@@ -2290,7 +2290,7 @@ namespace Oblivion.Messages.Handlers
 
             Session.GetHabbo().BuildersItemsUsed++;
             await BuildersClubUpdateFurniCount();
-            using (var adapter = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var adapter = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 var guidId = Guid.NewGuid();
                 ShortGuid insertId = guidId;
@@ -2407,7 +2407,7 @@ namespace Oblivion.Messages.Handlers
             item.InteractingUser2 = 0;
 
             await item.UpdateState(true, false);
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetNoLockQuery("UPDATE items_rooms SET extra_data = @extraData WHERE id = '" + item.Id +
                                             "';");
@@ -2470,7 +2470,7 @@ namespace Oblivion.Messages.Handlers
                     break;
             }
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetNoLockQuery("UPDATE items_rooms SET extra_data = @extraData WHERE id = '" + item.Id +
                                             "';");
@@ -2500,7 +2500,7 @@ namespace Oblivion.Messages.Handlers
             item.ExtraData = string.Concat(array[0], Convert.ToChar(5), array[1], Convert.ToChar(5), array[2]);
             item.Serialize(Response);
             await item.UpdateState(true, true);
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetNoLockQuery("UPDATE items_rooms SET extra_data = @extraData WHERE id = '" + item.Id +
                                             "';");
@@ -2539,7 +2539,7 @@ namespace Oblivion.Messages.Handlers
             item.ExtraData = string.Concat(array[0], Convert.ToChar(5), array[1], Convert.ToChar(5), array[2]);
             item.UpdateNeeded = true;
             await item.UpdateState(true, true);
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 queryReactor.SetNoLockQuery("UPDATE items_rooms SET extra_data = @extraData WHERE id = '" + item.Id +
                                             "';");
@@ -2575,7 +2575,7 @@ namespace Oblivion.Messages.Handlers
             }
 
             await room.GetRoomItemHandler().RemoveFurniture(Session, item.Id);
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await queryReactor.RunFastQueryAsync(
                     $"UPDATE items_rooms SET room_id = NULL WHERE id='{item.Id}' LIMIT 1");
@@ -2599,23 +2599,23 @@ namespace Oblivion.Messages.Handlers
              
              await room.GetRoomItemHandler().RemoveFurniture(Session, item.Id, false);
 
-             using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+             using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 await queryReactor.RunNoLockFastQueryAsync("DELETE FROM items_rooms WHERE id = '" + item.Id + "';");
             }
 
              using (var message = new ServerMessage(LibraryParser.OutgoingRequest("SuperNotificationMessageComposer")))
              {
-                 message.AppendString(string.Empty);
-                 message.AppendInteger(4);
-                 message.AppendString("title");
-                 message.AppendString("${notification.figureset.redeemed.success.title}");
-                 message.AppendString("message");
-                 message.AppendString("${notification.figureset.redeemed.success.message}");
-                 message.AppendString("linkUrl");
-                 message.AppendString("event:avatareditor/open");
-                 message.AppendString("linkTitle");
-                 message.AppendString("${notification.figureset.redeemed.success.linkTitle}");
+                 await message.AppendStringAsync(string.Empty);
+                 await message.AppendIntegerAsync(4);
+                 await message.AppendStringAsync("title");
+                 await message.AppendStringAsync("${notification.figureset.redeemed.success.title}");
+                 await message.AppendStringAsync("message");
+                 await message.AppendStringAsync("${notification.figureset.redeemed.success.message}");
+                 await message.AppendStringAsync("linkUrl");
+                 await message.AppendStringAsync("event:avatareditor/open");
+                 await message.AppendStringAsync("linkTitle");
+                 await message.AppendStringAsync("${notification.figureset.redeemed.success.linkTitle}");
                  await Session.SendMessage(message);
              }
         }

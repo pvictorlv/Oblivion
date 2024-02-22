@@ -96,7 +96,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
         /// <param name="type">The type.</param>
         internal async Task AddNewEffect(int effectId, int duration, short type)
         {
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync(
                     string.Concat(
                         "INSERT INTO users_effects (user_id,effect_id,total_duration,is_activated,activated_stamp) VALUES (",
@@ -149,7 +149,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
 
             avatarEffect.Activate();
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync(
                     string.Concat("UPDATE users_effects SET is_activated = '1', activated_stamp = ",
                         Oblivion.GetUnixTimeStamp(), " WHERE user_id = ", _userId, " AND effect_id = ", effectId));
@@ -211,7 +211,7 @@ namespace Oblivion.HabboHotel.Users.Inventory
             if (effect == null || !effect.HasExpired)
                 return;
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync(string.Concat("DELETE FROM users_effects WHERE user_id = ", _userId,
                     " AND effect_id = ", effectId, " AND is_activated = 1"));
 

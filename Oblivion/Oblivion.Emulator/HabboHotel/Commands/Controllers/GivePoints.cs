@@ -36,7 +36,7 @@ namespace Oblivion.HabboHotel.Commands.Controllers
             await client.GetHabbo().UpdateCreditsBalance();
 
 
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 dbClient.SetQuery("UPDATE users SET epoints = epoints + 1 WHERE id = @id");
                 dbClient.AddParameter("id", client.GetHabbo().Id);

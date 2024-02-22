@@ -161,7 +161,7 @@ namespace Oblivion.HabboHotel.Support
             if (!updateInDb)
                 return;
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync(
                     string.Concat("UPDATE moderation_tickets SET status = 'picked', moderator_id = ", pModeratorId,
                         ", timestamp = '", Oblivion.GetUnixTimeStamp(), "' WHERE id = ", TicketId));
@@ -208,7 +208,7 @@ namespace Oblivion.HabboHotel.Support
                     throw new ArgumentOutOfRangeException(nameof(newStatus), newStatus, null);
             }
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync($"UPDATE moderation_tickets SET status = '{statusCode}' WHERE id = {TicketId}");
         }
 
@@ -223,7 +223,7 @@ namespace Oblivion.HabboHotel.Support
             if (!updateInDb)
                 return;
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync($"UPDATE moderation_tickets SET status = 'open' WHERE id = {TicketId}");
         }
 
@@ -238,7 +238,7 @@ namespace Oblivion.HabboHotel.Support
             if (!updateInDb)
                 return;
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
                 await queryReactor.RunFastQueryAsync($"UPDATE moderation_tickets SET status = 'deleted' WHERE id = {TicketId}");
         }
 

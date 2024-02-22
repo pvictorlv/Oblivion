@@ -124,28 +124,28 @@ Request.GetString()
         {
             if (Session?.GetHabbo() == null)
                 return;
-            Response.Init(LibraryParser.OutgoingRequest("GiftWrappingConfigurationMessageComposer"));
+            await Response.InitAsync(LibraryParser.OutgoingRequest("GiftWrappingConfigurationMessageComposer"));
             Response.AppendBool(true);
-            Response.AppendInteger(1);
-            Response.AppendInteger(GiftWrapper.GiftWrappersList.Count);
+            await Response.AppendIntegerAsync(1);
+            await Response.AppendIntegerAsync(GiftWrapper.GiftWrappersList.Count);
 
             foreach (var i in GiftWrapper.GiftWrappersList)
-                Response.AppendInteger(i);
+                await Response.AppendIntegerAsync(i);
 
-            Response.AppendInteger(8);
+            await Response.AppendIntegerAsync(8);
 
             for (var i = 0u; i != 8; i++)
-                Response.AppendInteger(i);
+                await Response.AppendIntegerAsync(i);
 
-            Response.AppendInteger(11);
+            await Response.AppendIntegerAsync(11);
 
             for (var i = 0u; i != 11; i++)
-                Response.AppendInteger(i);
+                await Response.AppendIntegerAsync(i);
 
-            Response.AppendInteger(GiftWrapper.OldGiftWrappers.Count);
+            await Response.AppendIntegerAsync(GiftWrapper.OldGiftWrappers.Count);
 
             foreach (var i in GiftWrapper.OldGiftWrappers)
-                Response.AppendInteger(i);
+                await Response.AppendIntegerAsync(i);
 
             await SendResponse();
         }
@@ -157,30 +157,30 @@ Request.GetString()
         {
             if (Session?.GetHabbo() == null)
                 return;
-            Response.Init(LibraryParser.OutgoingRequest("RecyclerRewardsMessageComposer"));
+            await Response.InitAsync(LibraryParser.OutgoingRequest("RecyclerRewardsMessageComposer"));
 
             var ecotronRewardsLevels = Oblivion.GetGame().GetCatalog().GetEcotronRewardsLevels();
 
-            Response.AppendInteger(ecotronRewardsLevels.Count);
+            await Response.AppendIntegerAsync(ecotronRewardsLevels.Count);
 
             /* TODO CHECK */
             foreach (var current in ecotronRewardsLevels)
             {
-                Response.AppendInteger(current);
-                Response.AppendInteger(current);
+                await Response.AppendIntegerAsync(current);
+                await Response.AppendIntegerAsync(current);
 
                 var ecotronRewardsForLevel = Oblivion.GetGame().GetCatalog()
                     .GetEcotronRewardsForLevel(uint.Parse(current.ToString()));
 
-                Response.AppendInteger(ecotronRewardsForLevel.Count);
+                await Response.AppendIntegerAsync(ecotronRewardsForLevel.Count);
 
                 /* TODO CHECK */
                 foreach (var current2 in ecotronRewardsForLevel)
                 {
-                    Response.AppendString(current2.GetBaseItem().PublicName);
-                    Response.AppendInteger(1);
-                    Response.AppendString(current2.GetBaseItem().Type.ToString());
-                    Response.AppendInteger(current2.GetBaseItem().SpriteId);
+                    await Response.AppendStringAsync(current2.GetBaseItem().PublicName);
+                    await Response.AppendIntegerAsync(1);
+                    await Response.AppendStringAsync(current2.GetBaseItem().Type.ToString());
+                    await Response.AppendIntegerAsync(current2.GetBaseItem().SpriteId);
                 }
             }
 
@@ -249,9 +249,9 @@ Request.GetString()
             else if (!Oblivion.IsValidAlphaNumeric(petName))
                 i = 3;
 
-            Response.Init(LibraryParser.OutgoingRequest("CheckPetNameMessageComposer"));
-            Response.AppendInteger(i);
-            Response.AppendString(petName);
+            await Response.InitAsync(LibraryParser.OutgoingRequest("CheckPetNameMessageComposer"));
+            await Response.AppendIntegerAsync(i);
+            await Response.AppendStringAsync(petName);
             await SendResponse();
         }
 
