@@ -568,7 +568,7 @@ namespace Oblivion.HabboHotel.Rooms
             if (GotWireds())
                 await GetWiredHandler().ExecuteWired(Interaction.TriggerRoomEnter, user);
 
-            foreach (var current in _roomUserManager.Bots.Values)
+            foreach (var current in _roomUserManager.Bots.Values.Concat(_roomUserManager._pets.Values))
             {
                 await current.BotAi.OnUserEnterRoom(user);
             }
@@ -582,7 +582,7 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="shout">if set to <c>true</c> [shout].</param>
         internal async Task OnUserSay(RoomUser user, string message, bool shout)
         {
-            foreach (var current in _roomUserManager.Bots.Values)
+            foreach (var current in _roomUserManager.Bots.Values.Concat(_roomUserManager._pets.Values))
             {
                 try
                 {

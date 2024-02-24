@@ -237,6 +237,9 @@ namespace Oblivion.Messages
                     return this.buffer.ReadBoolean();
                 }
 
+                if (_body == null)
+                    return false;
+
                 return (_body[_position++] == 1);
             }
             catch (Exception ex)

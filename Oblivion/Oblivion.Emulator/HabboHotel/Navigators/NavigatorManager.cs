@@ -542,7 +542,7 @@ namespace Oblivion.HabboHotel.Navigators
             await serverMessage.AppendStringAsync(string.Empty);
             await serverMessage.AppendIntegerAsync(session.GetHabbo().Data.FavouritedRooms.Count);
 
-            var array = session.GetHabbo().Data.FavouritedRooms.ToList();
+            var array = session.GetHabbo().Data.FavouritedRooms;
 
             /* TODO CHECK */
             foreach (var roomId in array)

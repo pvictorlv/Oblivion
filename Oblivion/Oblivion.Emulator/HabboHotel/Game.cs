@@ -173,7 +173,7 @@ namespace Oblivion.HabboHotel
 
         internal async Task Init()
         {
-            using var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync();
+            var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync();
             var status = AnsiConsole.Status(); // Changed from Progress to Status
             status.Spinner(Spinner.Known.CircleQuarters);
             // Define all tasks
@@ -195,6 +195,7 @@ namespace Oblivion.HabboHotel
                 ("Loading ModerationTool...", async () => { _moderationTool = new ModerationTool(); await _moderationTool.LoadMessagePresets(queryReactor); }),
                 ("Loading Quests...", () => { _questManager = new QuestManager(); _questManager.Initialize(queryReactor); return Task.CompletedTask; }),
                 ("Loading Events...", () => { _events = new RoomEvents(); return Task.CompletedTask; }),
+                ("Loading Camera Photo Manager...", async () => { _cameraManager = new CameraPhotoManager(); await _cameraManager.Init(_itemManager); }),
                 ("Loading Talents...", () => { _talentManager = new TalentManager(); _talentManager.Initialize(queryReactor); return Task.CompletedTask; }),
                 ("Loading Pinata...", async () => { _pinataHandler = new PinataHandler(); await _pinataHandler.Initialize(queryReactor); }),
                 ("Loading Random Rewards...", () => { _randomRewardHandler = new RandomRewardFurniHandler(); return Task.CompletedTask; }),
@@ -210,6 +211,8 @@ namespace Oblivion.HabboHotel
             {
                 await status.StartAsync(description, ctx => action());
             }
+
+            queryReactor.Dispose();
             
         }
 /// <summary>

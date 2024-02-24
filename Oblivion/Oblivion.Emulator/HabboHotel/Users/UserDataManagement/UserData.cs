@@ -23,7 +23,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         /// <summary>
         ///     The favourited rooms
         /// </summary>
-        internal List<uint> FavouritedRooms;
+        internal ConcurrentList<uint> FavouritedRooms;
         
         /// <summary>
         ///     The ignores
@@ -113,7 +113,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
         /// <param name="suggestedPolls">The suggested polls.</param>
         /// <param name="miniMailCount">The mini mail count.</param>
         public UserData(uint userId, Dictionary<string, UserAchievement> achievements,
-            Dictionary<int, UserTalent> talents, List<uint> favouritedRooms, List<uint> ignores, List<string> tags,
+            Dictionary<int, UserTalent> talents, ConcurrentList<uint> favouritedRooms, List<uint> ignores, List<string> tags,
             Subscription sub,
             ConcurrentList<uint> rooms, Dictionary<uint, int> quests, Habbo user,
             Dictionary<uint, Relationship> relations, HashSet<uint> suggestedPolls,

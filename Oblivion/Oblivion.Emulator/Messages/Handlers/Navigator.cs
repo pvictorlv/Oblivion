@@ -374,7 +374,7 @@ namespace Oblivion.Messages.Handlers
         internal async Task ToggleStaffPick()
         {
             var roomId = Request.GetUInteger();
-            Request.GetBool();
+     //       Request.GetBool();
             var room = Oblivion.GetGame().GetRoomManager().GetRoom(roomId);
             await Oblivion.GetGame().GetAchievementManager().ProgressUserAchievement(Session, "ACH_Spr", 1, true);
             if (room == null) return;

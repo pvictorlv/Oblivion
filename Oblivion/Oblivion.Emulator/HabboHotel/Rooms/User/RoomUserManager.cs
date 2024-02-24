@@ -44,7 +44,7 @@ namespace Oblivion.HabboHotel.Rooms.User
         /// <summary>
         ///     The _pets
         /// </summary>
-        private Dictionary<uint, RoomUser> _pets;
+        internal Dictionary<uint, RoomUser> _pets;
 
         /// <summary>
         ///     The _primary private user identifier
@@ -513,6 +513,7 @@ namespace Oblivion.HabboHotel.Rooms.User
             OnRemove(user);
 
             }
+
 
         /// <summary>
         ///     Gets the pet.

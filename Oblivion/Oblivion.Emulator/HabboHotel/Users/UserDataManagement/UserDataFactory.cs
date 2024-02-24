@@ -163,8 +163,10 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
                 talents.Add(num2, value2);
             }
 
-            var favorites = (from DataRow row in favoritesTable.Rows select (uint) row["room_id"]).ToList();
-            
+            var favorites = new ConcurrentList<uint>();
+            foreach (DataRow row in favoritesTable.Rows) 
+                favorites.Add((uint) row["room_id"]);
+
             var ignoreUsers = (from DataRow row in ignoresTable.Rows select (uint) row["ignore_id"]).ToList();
             
             var tags = (from DataRow row in tagsTable.Rows select row["tag"].ToString().Replace(" ", "")).ToList();
@@ -280,7 +282,7 @@ namespace Oblivion.HabboHotel.Users.UserDataManagement
 
             var achievements = new Dictionary<string, UserAchievement>();
             var talents = new Dictionary<int, UserTalent>();
-            var favouritedRooms = new List<uint>();
+            var favouritedRooms = new ConcurrentList<uint>();
             var ignores = new List<uint>();
             var tags = new List<string>();
             var rooms = new ConcurrentList<uint>();

@@ -4989,24 +4989,6 @@ namespace Oblivion.Messages.Parsers
             }
         }
 
-        /// <summary>
-        /// Removes the favourite room.
-        /// </summary>
-        /// <param name="handler">The try {  await handler.</param>
-        internal static async void RemoveFavouriteRoom(GameClientMessageHandler handler)
-        {
-            try
-            {
-                await handler.RemoveFavouriteRoom();
-            }
-            catch (InvalidOperationException ex)
-            {
-            }
-            catch (Exception ex)
-            {
-                Logging.HandleException(ex, "PacketLibrary.Parse");
-            }
-        }
 
         /// <summary>
         /// Rooms the user action.
