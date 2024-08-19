@@ -680,15 +680,18 @@ namespace Oblivion.HabboHotel.GameClients.Interfaces
         {
             try
             {
-                if (GetHabbo().Rank >= 4)
-                {
-                    var guideManager = Oblivion.GetGame().GetGuideManager();
-                    guideManager.RemoveGuide(this);
-                }
 
                 var habbo = _habbo;
                 if (habbo != null)
-                    await habbo.OnDisconnect(reason);
+                {
+                  await habbo.OnDisconnect(reason);
+
+                  if (habbo.Rank >= 4)
+                  {
+                    var guideManager = Oblivion.GetGame().GetGuideManager();
+                    guideManager.RemoveGuide(this);
+                  }
+}
 
                 if (_disconnected)
                     return;

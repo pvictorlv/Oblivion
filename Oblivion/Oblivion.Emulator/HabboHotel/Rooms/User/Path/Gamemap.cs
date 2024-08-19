@@ -1500,7 +1500,8 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             return serverMessage;
         }
 
-        internal MovementState GetChasingMovement(int X, int Y)
+
+internal MovementState GetChasingMovement(int X, int Y)
         {
             try
             {
@@ -1572,9 +1573,9 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
             }
         }
 
-        public Point GetChaseMovement(RoomItem Item)
+        public Point? GetChaseMovement(RoomItem Item)
         {
-            var Distance = 1000;
+            var Distance = 99;
             var Coord = new Point(0, 0);
             var iX = Item.X;
             var iY = Item.Y;
@@ -1599,9 +1600,18 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     Coord = User.Coordinate;
                     X = true;
                 }
+                else if (Math.Abs(User.X - Item.X) == Math.Abs(User.Y - Item.Y))
+                {
+                    var Difference = Math.Abs(User.X - Item.X);
+                    if (Difference >= Distance)
+                        continue;
+                    Distance = Difference;
+                    Coord = User.Coordinate;
+                    X = true;
+                }
 
-            if (Distance > 5)
-                return Item.GetSides().OrderBy(x => Guid.NewGuid()).FirstOrDefault();
+
+
             if (X && Distance < 99)
                 if (iX > Coord.X)
                 {
@@ -1626,7 +1636,7 @@ namespace Oblivion.HabboHotel.Rooms.User.Path
                     return new Point(iX, iY);
                 }
 
-            return Item.Coordinate;
+            return null;
         }
 
         public Point GetInverseChaseMovement(RoomItem Item)

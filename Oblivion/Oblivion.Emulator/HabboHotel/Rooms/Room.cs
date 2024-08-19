@@ -364,7 +364,7 @@ namespace Oblivion.HabboHotel.Rooms
 
             try
             {
-                new Task(async () =>
+                Task.Factory.StartNew(async () =>
                 {
                     while (_mainProcessSource is { IsCancellationRequested: false })
                     {
@@ -385,7 +385,7 @@ namespace Oblivion.HabboHotel.Rooms
                             Logging.HandleException(e, "RoomProcessing");
                         }
                     }
-                }, _mainProcessSource.Token, TaskCreationOptions.LongRunning).Start();
+                }, _mainProcessSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Start();
             }
             catch (Exception e)
             {
@@ -406,22 +406,22 @@ namespace Oblivion.HabboHotel.Rooms
             {
                 _processingWireds = true;
 
-                new Task(async () =>
+                Task.Factory.StartNew(async () =>
                 {
                     while (_wiredHandler != null && _mainProcessSource is { IsCancellationRequested: false })
                     {
                         try
                         {
-                            _wiredHandler.OnCycle();
+                            await _wiredHandler.OnCycle();
                         }
                         catch (Exception e)
                         {
                             Logging.HandleException(e, "WiredProcess");
                         }
 
-                        await Task.Delay(250);
+                        await Task.Delay(100);
                     }
-                }, _mainProcessSource.Token, TaskCreationOptions.LongRunning).Start();
+                }, _mainProcessSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
             }
             catch (Exception e)
             {
@@ -451,7 +451,7 @@ namespace Oblivion.HabboHotel.Rooms
 
             try
             {
-                new Task(async () =>
+                Task.Factory.StartNew(async () =>
                 {
                     while ((GotSoccer() && !Disposed) && _mainProcessSource is { IsCancellationRequested: false })
                     {
@@ -468,7 +468,7 @@ namespace Oblivion.HabboHotel.Rooms
                             Logging.LogCriticalException(e.ToString());
                         }
                     }
-                }, TaskCreationOptions.LongRunning).Start();
+                }, _mainProcessSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Start();
             }
             catch (Exception e)
             {
@@ -972,15 +972,12 @@ namespace Oblivion.HabboHotel.Rooms
         /// <param name="message">The message.</param>
         internal async Task SendMessage(ServerMessage message)
         {
-            if (message != null)
-                if (_roomUserManager?.UserList != null)
-                    foreach (var user in _roomUserManager.UserList.Values)
-                    {
-                        if (user?.GetClient()?.GetConnection() != null && !user.IsBot)
-                        {
-                            await user.GetClient().SendMessageAsync(message);
-                        }
-                    }
+            if (message != null && _roomUserManager?.UserList != null)
+            {
+              var userTasks = (from user in _roomUserManager.UserList.Values where user?.GetClient()?.GetConnection() != null && !user.IsBot select user.GetClient().SendMessageAsync(message)).ToList();
+
+              await Task.WhenAll(userTasks);
+            }
         }
 
         internal async Task SendMessageAsync(ServerMessage message)
@@ -1384,7 +1381,7 @@ namespace Oblivion.HabboHotel.Rooms
         {
             if (_roomKick == null) return;
 
-            while (_roomKick.Count > 0)
+            while (!_roomKick.IsEmpty)
             {
                 if (_roomKick.TryDequeue(out var roomKick))
                 {

@@ -227,7 +227,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         private int _sleepingTime = 0;
 
-        public async void OnCycle()
+        public async Task OnCycle()
         {
             try
             {
@@ -242,6 +242,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     return;
                 }
 
+                var taskList = new List<Task>();
                 foreach (var item in _wiredItems.Values)
                 {
                     try
@@ -260,7 +261,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                         if (cycle.TickCount <= 0)
                         {
                             cycle.TickCount = item.Delay / 1000;
-                            await cycle.OnCycle();
+                            taskList.Add(cycle.OnCycle());
                         }
                         else
                             cycle.TickCount--;
@@ -275,6 +276,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                         }
                     }
                 }
+                await Task.WhenAll(taskList);
 
                 _sleepingTime = 0;
             }
@@ -565,7 +567,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 case Interaction.ConditionFurnisHaveUsers:
                     return new FurniHasUsers(item, _room);
 
-                // Condições Novas
+                // CondiÃ§Ãµes Novas
 
 
                 case Interaction.ConditionUserIsInTeam:
@@ -611,7 +613,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 case Interaction.ConditionTimeLessThan:
                     return new TimeLessThan(item, _room);
 
-                // Condições Negativas
+                // CondiÃ§Ãµes Negativas
                 case Interaction.ConditionTriggererNotOnFurni:
                     return new TriggererNotOnFurni(item, _room);
 
