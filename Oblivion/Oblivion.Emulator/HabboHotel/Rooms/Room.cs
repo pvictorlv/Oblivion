@@ -364,7 +364,7 @@ namespace Oblivion.HabboHotel.Rooms
 
             try
             {
-                Task.Factory.StartNew(async () =>
+                return Task.Factory.StartNew(async () =>
                 {
                     while (_mainProcessSource is { IsCancellationRequested: false })
                     {
@@ -385,7 +385,7 @@ namespace Oblivion.HabboHotel.Rooms
                             Logging.HandleException(e, "RoomProcessing");
                         }
                     }
-                }, _mainProcessSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Start();
+                }, _mainProcessSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
             }
             catch (Exception e)
             {
