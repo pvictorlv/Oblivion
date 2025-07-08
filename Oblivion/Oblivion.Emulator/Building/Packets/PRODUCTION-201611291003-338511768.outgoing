@@ -293,9 +293,9 @@ FindMoreFriendsSuccessMessageComposer=1210/1173
 
 [Groups]
 ChangeFavouriteGroupMessageComposer=3403
-FavouriteGroupMessageComposer=2546
-GroupDataEditMessageComposer=3965/3625
-GroupDataMessageComposer=43/3862
+FavouriteGroupMessageComposer=3403
+GroupDataEditMessageComposer=3965
+GroupDataMessageComposer=1702
 GroupFurniturePageMessageComposer=420
 GroupMembersMessageComposer=1200/207
 GroupPurchasePageMessageComposer=2159
@@ -303,11 +303,11 @@ GroupPurchasePartsMessageComposer=2238
 GroupAreYouSureMessageComposer=1876
 GroupConfirmLeaveMessageComposer=132
 GroupRequestReloadMessageComposer=2582
-GroupForumListingsMessageComposer=3001/3976
+GroupForumListingsMessageComposer=3001/3001
 GroupForumDataMessageComposer=3011
 GroupForumThreadRootMessageComposer=1073
-GroupForumThreadUpdateMessageComposer=2257
-GroupForumNewThreadMessageComposer=1862/3346
+GroupForumThreadUpdateMessageComposer=2528
+GroupForumNewThreadMessageComposer=1862/1862
 GroupForumNewResponseMessageComposer=2049
 GroupForumReadThreadMessageComposer=509
 GroupDeletedMessageComposer=3129

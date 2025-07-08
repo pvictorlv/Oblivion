@@ -9,27 +9,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cdac920a-7602-4207-8fbf-feca8d8f9af2" name="Changes" comment="Fixed connection manager bug, removed backgroundcolor black.">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Oblivion/.idea/projectSettingsUpdater.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Oblivion/.idea/projectSettingsUpdater.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Oblivion/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Oblivion/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/AbstractBar.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/AbstractBar.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/AnimatedBar.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/AnimatedBar.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/Writer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Console/Writer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Oblivion.Console.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Console/Oblivion.Console.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Configuration/ConfigurationData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Configuration/ConfigurationData.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Configuration/ConsoleCommandHandling.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Configuration/ConsoleCommandHandling.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Configuration/Logging.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Configuration/Logging.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Connection/Connection/SocketConnectionCheck.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Connection/Connection/SocketConnectionCheck.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Connection/Netty/ConnectionManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Connection/Netty/ConnectionManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Achievements/Factorys/AchievementLevelFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Achievements/Factorys/AchievementLevelFactory.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/CommandsManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Commands/CommandsManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Game.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Game.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/GameClients/GameClientManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/GameClients/GameClientManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/ItemManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/ItemManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Misc/CoinsManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Misc/CoinsManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/RoomManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Rooms/RoomManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Messages/Handlers/Others.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Messages/Handlers/Others.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Oblivion.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Oblivion.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Util/Out.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Util/Out.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Building/Packets/PRODUCTION-201611291003-338511768.outgoing" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Building/Packets/PRODUCTION-201611291003-338511768.outgoing" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Groups/GroupManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Groups/GroupManager.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,6 +38,9 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 0
+}]]></component>
   <component name="ProjectId" id="2H5dvWItLPXSktrKXCvLTFIwstC" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -71,15 +57,9 @@
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "settings.codegpt.configuration",
     "vue.rearranger.settings.migration": "true"
-  },
-  "keyToStringList": {
-    "rider.external.source.directories": [
-      "/Users/lucca/Library/Application Support/JetBrains/Rider2023.1/resharper-host/DecompilerCache",
-      "/Users/lucca/Library/Application Support/JetBrains/Rider2023.1/resharper-host/SourcesCache",
-      "/Users/lucca/.local/share/Symbols/src"
-    ]
   }
 }]]></component>
   <component name="RunManager" selected="Publish to folder.Publish Oblivion.Emulator linux-x64 Self-Contained">
@@ -143,6 +123,7 @@
       <workItem from="1680541998141" duration="823000" />
       <workItem from="1701734949619" duration="11418000" />
       <workItem from="1702681012152" duration="17485000" />
+      <workItem from="1751917215072" duration="805000" />
     </task>
     <task id="LOCAL-00001" summary="Multi-platform compatibility (compilation and runtime).&#10;Changed Postbuild for cross platform compilation;&#10;Ignored DllImports for non-windows compilation.">
       <created>1701736517980</created>
@@ -172,6 +153,7 @@
     <option name="version" value="3" />
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
+  <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -185,6 +167,7 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="LOCAL_CHANGES_DETAILS_PREVIEW_SHOWN" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Multi-platform compatibility (compilation and runtime).&#10;Changed Postbuild for cross platform compilation;&#10;Ignored DllImports for non-windows compilation." />
     <MESSAGE value="Directory fix for folder Packets (multi-platform)" />
