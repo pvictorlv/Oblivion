@@ -468,7 +468,7 @@ namespace Oblivion.HabboHotel.Rooms
                             Logging.LogCriticalException(e.ToString());
                         }
                     }
-                }, _mainProcessSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Start();
+                }, _mainProcessSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
             }
             catch (Exception e)
             {
@@ -887,7 +887,7 @@ namespace Oblivion.HabboHotel.Rooms
             }
         }
 
-        
+
         /// <summary>
         ///     Sends the message.
         /// </summary>
@@ -1335,7 +1335,7 @@ namespace Oblivion.HabboHotel.Rooms
             RoomMuted = false;
             _gameMap = new Gamemap(this);
             await _gameMap.Init();
-            
+
             _roomItemHandler = new RoomItemHandler(this);
             _roomUserManager = new RoomUserManager(this);
 
