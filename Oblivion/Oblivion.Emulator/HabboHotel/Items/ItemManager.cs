@@ -42,7 +42,7 @@ namespace Oblivion.HabboHotel.Items
         internal ItemManager() => _items = new Dictionary<uint, Item>();
 
 
-        
+
         /// <summary>
         ///     Loads the items.
         /// </summary>
@@ -58,7 +58,7 @@ namespace Oblivion.HabboHotel.Items
             //            _virtualAddedItems = new ConcurrentList<uint>();
         }
 
-     
+
         public uint GetVirtualId(string realId)
         {
             if (_itemsByRealId.TryGetValue(realId, out var virtualId))
@@ -95,7 +95,7 @@ namespace Oblivion.HabboHotel.Items
             {
                 return realId;
             }
-            
+
 
             return "";
         }
@@ -117,7 +117,7 @@ namespace Oblivion.HabboHotel.Items
             var table = dbClient.GetTable();
             if (table == null) return;
 
-            List<double> heights = null;
+            double[] heights = null;
 
             /* TODO CHECK */
             foreach (DataRow dataRow in table.Rows)
@@ -137,9 +137,9 @@ namespace Oblivion.HabboHotel.Items
                     var effectM = (int) dataRow["effectM"];
                     var stackable = dataRow["can_stack"].ToString() == "1";
                     var allowRecycle = dataRow["allow_recycle"].ToString() == "1";
-                    var allowTrade = dataRow["allow_trade"] == "1";
-                    var allowMarketplaceSell = dataRow["allow_marketplace_sell"] == "1";
-                    var allowGift = dataRow["allow_gift"] == "1";
+                    var allowTrade = dataRow["allow_trade"].ToString() == "1";
+                    var allowMarketplaceSell = dataRow["allow_marketplace_sell"].ToString() == "1";
+                    var allowGift = dataRow["allow_gift"].ToString() == "1";
                     var allowInventoryStack = dataRow["allow_inventory_stack"].ToString() == "1";
                     var typeFromString = InteractionTypes.GetTypeFromString((string) dataRow["interaction_type"]);
 
@@ -163,8 +163,7 @@ namespace Oblivion.HabboHotel.Items
                     {
                         var heightsStr = heightAdjustable.Split(',');
 
-                        heights = heightsStr.Select(heightStr => double.Parse(heightStr, CultureInfo.InvariantCulture))
-                            .ToList();
+                        heights = heightsStr.Select(heightStr => double.Parse(heightStr, CultureInfo.InvariantCulture)).ToArray();
 
                         stackHeight = heights[0];
                         stackMultiple = true;
@@ -181,7 +180,7 @@ namespace Oblivion.HabboHotel.Items
                     var value = new Item(id, sprite, publicName, name, type, x, y, stackHeight, stackable, canWalk,
                         canSit, allowRecycle, allowTrade, allowMarketplaceSell, allowGift, allowInventoryStack,
                         typeFromString, modes, vendingIds, stackMultiple,
-                        heights?.ToArray(), flatId, isRare, effectF, effectM);
+                        heights, flatId, isRare, effectF, effectM);
 
                     _items.Add(id, value);
                 }
@@ -195,7 +194,7 @@ namespace Oblivion.HabboHotel.Items
             }
         }
 
-        internal Item GetItem(uint id) => _items.TryGetValue(id, out var it) ? it : null;
+        internal Item GetItem(uint id) => _items.GetValueOrDefault(id);
 
         internal bool GetItem(string itemName, out Item item)
         {

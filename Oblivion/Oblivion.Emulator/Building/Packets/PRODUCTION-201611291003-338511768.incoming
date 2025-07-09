@@ -265,7 +265,7 @@ DeleteHelpTicketMessageEvent=3124
 
 [Help]
 SubmitHelpTicketMessageEvent=1691
-OpenBullyReportingMessageEvent=3786
+OpenBullyReportingMessageEvent=2746
 SendBullyReportMessageEvent=3827
 OpenHelpToolMessageEvent=3267
 OnGuideSessionDetachedMessageEvent=1424

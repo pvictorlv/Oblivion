@@ -131,14 +131,14 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
             message.AppendString(mode);
             message.AppendString(page.Layout);
             message.AppendInteger(page.PageString1.Count);
-            
+
             foreach (var str in page.PageString1)
             {
                 message.AppendString(str);
             }
 
             message.AppendInteger(page.PageString2.Count);
-            
+
             foreach (var str in page.PageString2)
             {
                 message.AppendString(str);
@@ -185,7 +185,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
         /// <returns>ServerMessage.</returns>
         internal static ServerMessage ComposeClubPurchasePage(GameClient session, int windowId)
         {
-           
+
             var message = new ServerMessage(LibraryParser.OutgoingRequest("CatalogueClubPageMessageComposer"));
             var habboClubItems = Oblivion.GetGame().GetCatalog().HabboClubItems;
 
@@ -317,7 +317,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
             if (item?.GetFirstBaseItem() == null) return;
             message.AppendInteger(item.Id);
             message.AppendString(item.Name, true);
-            message.AppendBool(false);
+            message.AppendBool(false); // rent
             message.AppendInteger(item.CreditsCost);
 
             if (item.DiamondsCost > 0)
