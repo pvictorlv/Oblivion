@@ -206,7 +206,7 @@ LoadJukeboxDiscsMessageEvent=2304
 JukeboxAddPlaylistItemMessageEvent=753
 JukeboxRemoveSongMessageEvent=2280
 GetJukeboxPlaylistsMessageEvent=1435
-GetMusicDataMessageEvent=3365
+GetMusicDataMessageEvent=3082
 OpenGiftMessageEvent=3558
 ReedemExchangeItemMessageEvent=3115
 RemovePostItMessageEvent=1155
@@ -265,7 +265,7 @@ DeleteHelpTicketMessageEvent=3124
 
 [Help]
 SubmitHelpTicketMessageEvent=1691
-OpenBullyReportingMessageEvent=2746
+OpenBullyReportingMessageEvent=3786
 SendBullyReportMessageEvent=3827
 OpenHelpToolMessageEvent=3267
 OnGuideSessionDetachedMessageEvent=1424
@@ -282,7 +282,7 @@ OpenQuestsMessageEvent=537
 LoadNextQuestMessageEvent=2116
 QuestCancelMessageEvent=2397
 QuestSeasonalStartMessageEvent=3604
-QuestStartMessageEvent=1524
+QuestStartMessageEvent=793
 OpenAchievementsBoxMessageEvent=219
 CompleteSafetyQuizMessageEvent=2721
 

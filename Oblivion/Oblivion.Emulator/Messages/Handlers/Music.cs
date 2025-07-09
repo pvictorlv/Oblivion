@@ -42,21 +42,24 @@ namespace Oblivion.Messages.Handlers
         /// </summary>
         internal async Task GetMusicData()
         {
-            int num = Request.GetInteger();
+            // int num = Request.GetInteger();
+            //
+            // var list = new List<SongData>();
+            //
+            // for (int i = 0; i < num; i++)
+            // {
+            //     SongData song = SoundMachineSongManager.GetSong(Request.GetUInteger());
+            //
+            //     if (song != null)
+            //         list.Add(song);
+            // }
 
-            var list = new List<SongData>();
+            var list = SoundMachineSongManager.Songs.Values
 
-            for (int i = 0; i < num; i++)
-            {
-                SongData song = SoundMachineSongManager.GetSong(Request.GetUInteger());
-
-                if (song != null)
-                    list.Add(song);
-            }
+                .ToList();
 
             await Session.SendMessageAsync(SoundMachineComposer.Compose(list));
 
-            list.Clear();
         }
 
         /// <summary>
