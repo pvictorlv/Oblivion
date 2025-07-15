@@ -688,7 +688,7 @@ namespace Oblivion.HabboHotel.Users
 
             return true;
         }
-        
+
         internal UserClothing ClothingManager;
 
 
@@ -774,27 +774,27 @@ namespace Oblivion.HabboHotel.Users
                 {
                     double num = client.GetHabbo().GetSubscriptionManager().GetSubscription().ExpireTime;
                     var num2 = num - Oblivion.GetUnixTimeStamp();
-                    var num3 = (int)Math.Ceiling(num2 / 86400.0);
+                    var days = (int)Math.Ceiling(num2 / 86400.0);
                     var i =
                         (int)
                         Math.Ceiling((Oblivion.GetUnixTimeStamp() -
                                       (double)client.GetHabbo().GetSubscriptionManager().GetSubscription()
                                           .ActivateTime) /
                                      86400.0);
-                    var num4 = num3 / 31;
+                    var months = days / 31;
 
-                    if (num4 >= 1)
-                        num4--;
+                    if (months >= 1)
+                      months--;
 
-                    await serverMessage.AppendIntegerAsync(num3 - num4 * 31);
+                    await serverMessage.AppendIntegerAsync(days - (months * 31));
                     await serverMessage.AppendIntegerAsync(1);
-                    await serverMessage.AppendIntegerAsync(num4);
+                    await serverMessage.AppendIntegerAsync(months);
                     await serverMessage.AppendIntegerAsync(1);
                     serverMessage.AppendBool(true);
                     serverMessage.AppendBool(true);
                     await serverMessage.AppendIntegerAsync(i);
                     await serverMessage.AppendIntegerAsync(i);
-                    await serverMessage.AppendIntegerAsync(10);
+                    await serverMessage.AppendIntegerAsync((int)Math.Ceiling(num2 / 60));
                 }
                 else
                 {
