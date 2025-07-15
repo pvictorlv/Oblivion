@@ -163,7 +163,8 @@ namespace Oblivion.HabboHotel.RoomBots
 
                         RemovePetStatus();
                         await roomUser.PetData.AddExperience(10);
-                        roomUser.Statusses.TryAdd("sit", "");
+
+                        roomUser.Statusses.TryAdd("sit", TextHandling.GetString(roomUser.Z));
                         roomUser.Statusses.TryAdd("gst", "joy");
                         roomUser.UpdateNeeded = true;
                         _actionTimer = 25;
@@ -187,7 +188,7 @@ namespace Oblivion.HabboHotel.RoomBots
 
                         RemovePetStatus();
                         await roomUser.PetData.AddExperience(10);
-                        roomUser.Statusses.TryAdd("lay", "");
+                        roomUser.Statusses.TryAdd("lay", TextHandling.GetString(roomUser.Z));
                         roomUser.Statusses.TryAdd("gst", "sml");
                         roomUser.UpdateNeeded = true;
                         _actionTimer = 25;
@@ -241,7 +242,7 @@ namespace Oblivion.HabboHotel.RoomBots
 
                         RemovePetStatus();
                         await roomUser.PetData.AddExperience(25);
-                        roomUser.Statusses.TryAdd("std", "");
+                        roomUser.Statusses.TryAdd("std", TextHandling.GetString(roomUser.Z));
                         roomUser.UpdateNeeded = true;
 
                         _actionTimer = 25;
@@ -270,7 +271,7 @@ namespace Oblivion.HabboHotel.RoomBots
 
                         RemovePetStatus();
                         await roomUser.PetData.AddExperience(35);
-                        roomUser.Statusses.TryAdd("jmp", "");
+                        roomUser.Statusses.TryAdd("jmp", TextHandling.GetString(roomUser.Z));
                         roomUser.Statusses.TryAdd("gst", "joy");
                         roomUser.UpdateNeeded = true;
 
@@ -350,7 +351,7 @@ namespace Oblivion.HabboHotel.RoomBots
 
                         RemovePetStatus();
                         await roomUser.PetData.AddExperience(11);
-                        roomUser.Statusses.TryAdd("beg", "");
+                        roomUser.Statusses.TryAdd("beg", TextHandling.GetString(roomUser.Z));
                         roomUser.Statusses.TryAdd("gst", "sml");
                         roomUser.UpdateNeeded = true;
 
@@ -530,8 +531,6 @@ namespace Oblivion.HabboHotel.RoomBots
                     _actionTimer = Oblivion.GetRandomNumber(15, 40 + GetRoomUser().PetData.VirtualId);
                     if (GetRoomUser().RidingHorse != true)
                     {
-                        RemovePetStatus();
-
                         if (GetRoomUser().FollowingOwner != null)
                         {
                             await GetRoomUser().MoveTo(GetRoomUser().FollowingOwner.SquareBehind);

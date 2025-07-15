@@ -10,13 +10,15 @@
   <component name="ChangeListManager">
     <list default="true" id="cdac920a-7602-4207-8fbf-feca8d8f9af2" name="Changes" comment="Fixed connection manager bug, removed backgroundcolor black.">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Oblivion/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Oblivion/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Building/Packets/PRODUCTION-201611291003-338511768.incoming" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Building/Packets/PRODUCTION-201611291003-338511768.incoming" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Messages/Handlers/Music.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/Messages/Handlers/Music.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/RoomBots/PetBot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/RoomBots/PetBot.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DpaMonitoringSettings">
+    <option name="autoShow" value="false" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -46,22 +48,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Project.Oblivion.Emulator.executor": "Debug",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "master",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "settings.codegpt.configuration",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Project.Oblivion.Emulator.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;settings.codegpt.configuration&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Project.Oblivion.Emulator">
     <configuration name="Publish Oblivion.Emulator linux-x64 Self-Contained" type="DotNetFolderPublish" factoryName="Publish to folder">
       <riderPublish configuration="Release" platform="Any CPU" produce_single_file="true" runtime="linux-x64" self_contained="true" target_folder="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/bin/Release/net7.0/linux-x64/publish" target_framework="net7.0" uuid_high="5709274872951357641" uuid_low="-5486073174071861275" />
@@ -126,7 +128,9 @@
       <workItem from="1751917215072" duration="805000" />
       <workItem from="1752000087808" duration="1593000" />
       <workItem from="1752017588926" duration="823000" />
-      <workItem from="1752023966836" duration="7479000" />
+      <workItem from="1752023966836" duration="9388000" />
+      <workItem from="1752118820052" duration="1019000" />
+      <workItem from="1752546724003" duration="2854000" />
     </task>
     <task id="LOCAL-00001" summary="Multi-platform compatibility (compilation and runtime).&#10;Changed Postbuild for cross platform compilation;&#10;Ignored DllImports for non-windows compilation.">
       <created>1701736517980</created>
