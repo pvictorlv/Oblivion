@@ -6,6 +6,7 @@ using Oblivion.Configuration;
 using Oblivion.HabboHotel.GameClients.Interfaces;
 using Oblivion.HabboHotel.Rooms.User;
 using Oblivion.HabboHotel.Rooms.User.Path;
+using Oblivion.HabboHotel.RoomBots.AI;
 
 namespace Oblivion.HabboHotel.RoomBots
 {
@@ -41,6 +42,21 @@ namespace Oblivion.HabboHotel.RoomBots
         private int _speechInterval;
 
         /// <summary>
+        ///     Sistema de memória do bot
+        /// </summary>
+        private readonly BotMemory _memory;
+
+        /// <summary>
+        ///     Sistema de personalidade do bot
+        /// </summary>
+        private readonly BotPersonality _personality;
+
+        /// <summary>
+        ///     Sistema de tarefas do bot
+        /// </summary>
+        private readonly BotTaskSystem _taskSystem;
+
+        /// <summary>
         ///     Initializes a new instance of the <see cref="GenericBot" /> class.
         /// </summary>
         /// <param name="roomBot">The room bot.</param>
@@ -52,6 +68,11 @@ namespace Oblivion.HabboHotel.RoomBots
             _virtualId = virtualId;
             _isBartender = isBartender;
             _speechInterval = speechInterval < 2 ? 2000 : speechInterval * 1000;
+
+            // Inicializar sistemas de IA
+            _memory = new BotMemory();
+            _personality = new BotPersonality(_isBartender ? PersonalityType.Helpful : PersonalityType.Random);
+            _taskSystem = new BotTaskSystem();
 
             if (roomBot != null && roomBot.AutomaticChat && roomBot.RandomSpeech != null && roomBot.RandomSpeech.Any())
                 _chatTimer = new Timer(ChatTimerTick, null, _speechInterval, _speechInterval);
@@ -111,6 +132,19 @@ namespace Oblivion.HabboHotel.RoomBots
                 return;
             }
 
+            // Processar tarefas pendentes
+            await _taskSystem.ProcessNextTask(GetRoomUser(), GetRoom());
+
+            // Atualizar energia da personalidade
+            _personality.Energy = Math.Max(0, _personality.Energy - 1);
+
+            // Verificar se deve iniciar conversa baseado na personalidade
+            if (_personality.ShouldInitiateConversation())
+            {
+                var starter = _personality.GetConversationStarter();
+                await GetRoomUser().Chat(null, starter, false, 0);
+            }
+
             if (_actionCount > 0)
             {
                 _actionCount--;
@@ -159,9 +193,37 @@ namespace Oblivion.HabboHotel.RoomBots
         ///     Called when [user enter room].
         /// </summary>
         /// <param name="user">The user.</param>
-        internal override Task OnUserEnterRoom(RoomUser user)
+        internal override async Task OnUserEnterRoom(RoomUser user)
         {
-            return Task.CompletedTask;
+            if (user?.GetClient()?.GetHabbo() == null) return;
+
+            var userId = user.GetClient().GetHabbo().Id;
+            var userName = user.GetUsername();
+
+            // Registrar interação na memória
+            _memory.RecordUserInteraction(userId, userName, "entered_room", InteractionType.Chat);
+
+            // Atualizar humor baseado na entrada de usuário
+            _personality.UpdateMood(MoodEvent.PositiveInteraction);
+
+            // Verificar se deve cumprimentar o usuário
+            if (_personality.ShouldInitiateConversation())
+            {
+                var greeting = _memory.GetPersonalizedResponse(userId, "entered_room") ?? 
+                              _personality.GetPersonalityResponse("greeting", userName);
+                
+                if (!string.IsNullOrEmpty(greeting))
+                {
+                    await Task.Delay(1000); // Pequeno delay para parecer mais natural
+                    await GetRoomUser().Chat(null, greeting, false, 0);
+                }
+            }
+
+            // Adicionar tarefa de boas-vindas se apropriado
+            if (!_memory.KnowsUser(userId))
+            {
+                _taskSystem.AddTask(TaskType.WelcomeUsers, new Dictionary<string, object> { { "userId", userId } });
+            }
         }
 
         /// <summary>
@@ -179,15 +241,48 @@ namespace Oblivion.HabboHotel.RoomBots
         /// <param name="message">The message.</param>
         internal override async Task OnUserSay(RoomUser user, string message)
         {
-
-            if (Disposed)
-            {
-                return;
-            }
+            if (Disposed || user?.GetClient()?.GetHabbo() == null) return;
 
             if (Gamemap.TileDistance(GetRoomUser().X, GetRoomUser().Y, user.X, user.Y) > 16) return;
 
-            if (!_isBartender) return;
+            var userId = user.GetClient().GetHabbo().Id;
+            var userName = user.GetUsername();
+
+            // Registrar interação na memória
+            _memory.RecordUserInteraction(userId, userName, message, InteractionType.Chat);
+
+            // Atualizar humor baseado na interação
+            _personality.UpdateMood(IsPositiveMessage(message) ? MoodEvent.PositiveInteraction : MoodEvent.NegativeInteraction);
+
+            // Tentar resposta personalizada primeiro
+            var personalizedResponse = _memory.GetPersonalizedResponse(userId, message);
+            if (!string.IsNullOrEmpty(personalizedResponse))
+            {
+                await GetRoomUser().Chat(null, personalizedResponse, false, 0);
+                return;
+            }
+
+            // Resposta baseada na personalidade
+            var personalityResponse = _personality.GetPersonalityResponse("question", userName);
+            if (!string.IsNullOrEmpty(personalityResponse))
+            {
+                await GetRoomUser().Chat(null, personalityResponse, false, 0);
+                return;
+            }
+
+            // Sistema de bartender aprimorado (se aplicável)
+            if (_isBartender)
+            {
+                await HandleBartenderInteraction(user, message);
+                return;
+            }
+
+            // Resposta inteligente baseada no contexto
+            await HandleIntelligentResponse(user, message);
+        }
+
+        private async Task HandleBartenderInteraction(RoomUser user, string message)
+        {
 
             try
             {
@@ -388,6 +483,79 @@ namespace Oblivion.HabboHotel.RoomBots
                     return;
             }
             await GetRoomUser().Chat(null, "Precisa de Algo?", false, 0);
+        }
+
+        private async Task HandleIntelligentResponse(RoomUser user, string message)
+        {
+            var lowerMessage = message.ToLower();
+
+            // Detectar saudações
+            if (lowerMessage.Contains("oi") || lowerMessage.Contains("olá") || lowerMessage.Contains("hello"))
+            {
+                var response = _personality.GetPersonalityResponse("greeting", user.GetUsername());
+                await GetRoomUser().Chat(null, response, false, 0);
+                return;
+            }
+
+            // Detectar despedidas
+            if (lowerMessage.Contains("tchau") || lowerMessage.Contains("bye") || lowerMessage.Contains("adeus"))
+            {
+                var response = _personality.GetPersonalityResponse("goodbye", user.GetUsername());
+                await GetRoomUser().Chat(null, response, false, 0);
+                return;
+            }
+
+            // Detectar elogios
+            if (lowerMessage.Contains("legal") || lowerMessage.Contains("incrível") || lowerMessage.Contains("ótimo"))
+            {
+                var response = _personality.GetPersonalityResponse("compliment", user.GetUsername());
+                await GetRoomUser().Chat(null, response, false, 0);
+                _personality.UpdateMood(MoodEvent.Compliment);
+                return;
+            }
+
+            // Detectar perguntas
+            if (lowerMessage.Contains("?") || lowerMessage.StartsWith("como") || lowerMessage.StartsWith("o que"))
+            {
+                var response = _personality.GetPersonalityResponse("question", user.GetUsername());
+                await GetRoomUser().Chat(null, response, false, 0);
+                return;
+            }
+
+            // Adicionar tarefa de ajuda se o usuário parecer precisar
+            if (lowerMessage.Contains("ajuda") || lowerMessage.Contains("help"))
+            {
+                _taskSystem.AddTask(TaskType.HelpUser, new Dictionary<string, object> { { "userId", user.GetClient().GetHabbo().Id } });
+                await GetRoomUser().Chat(null, "Claro! Como posso ajudar você?", false, 0);
+                return;
+            }
+
+            // Resposta padrão baseada na personalidade
+            if (_personality.ShouldInitiateConversation())
+            {
+                var topics = _memory.GetTopInterests(3);
+                if (topics.Any())
+                {
+                    var topic = topics[new Random().Next(topics.Count)];
+                    await GetRoomUser().Chat(null, $"Interessante! Você gosta de {topic}?", false, 0);
+                }
+                else
+                {
+                    await GetRoomUser().Chat(null, "Hmm, interessante!", false, 0);
+                }
+            }
+        }
+
+        private bool IsPositiveMessage(string message)
+        {
+            var positiveWords = new[] { "obrigado", "legal", "ótimo", "incrível", "bom", "gosto", "adoro", "feliz", "alegre" };
+            var negativeWords = new[] { "ruim", "péssimo", "odeio", "chato", "irritante", "triste", "raiva" };
+
+            var lowerMessage = message.ToLower();
+            var positiveCount = positiveWords.Count(word => lowerMessage.Contains(word));
+            var negativeCount = negativeWords.Count(word => lowerMessage.Contains(word));
+
+            return positiveCount > negativeCount;
         }
 
         /// <summary>

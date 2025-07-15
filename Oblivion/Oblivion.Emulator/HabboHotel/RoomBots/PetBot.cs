@@ -8,6 +8,7 @@ using Oblivion.HabboHotel.Items.Interactions.Enums;
 using Oblivion.HabboHotel.Items.Interfaces;
 using Oblivion.HabboHotel.Pets;
 using Oblivion.HabboHotel.Pets.Enums;
+using Oblivion.HabboHotel.Pets.AI;
 using Oblivion.HabboHotel.Rooms.User;
 using Oblivion.Messages;
 using Oblivion.Messages.Parsers;
@@ -36,6 +37,11 @@ namespace Oblivion.HabboHotel.RoomBots
         private int _speechTimer;
 
         /// <summary>
+        ///     Sistema de inteligência do pet
+        /// </summary>
+        private PetIntelligence _intelligence;
+
+        /// <summary>
         ///     Initializes a new instance of the <see cref="PetBot" /> class.
         /// </summary>
         /// <param name="virtualId">The virtual identifier.</param>
@@ -46,6 +52,15 @@ namespace Oblivion.HabboHotel.RoomBots
                 _actionTimer = new Random((virtualId ^ 2) + DateTime.Now.Millisecond).Next(10, 30 + virtualId);
                 _energyTimer = new Random((virtualId ^ 2) + DateTime.Now.Millisecond).Next(10, 60);
             }
+        }
+
+        /// <summary>
+        /// Inicializa a inteligência do pet
+        /// </summary>
+        /// <param name="pet">Pet data</param>
+        internal void InitializeIntelligence(Pet pet)
+        {
+            _intelligence = new PetIntelligence(pet);
         }
 
         /// <summary>
@@ -97,19 +112,29 @@ namespace Oblivion.HabboHotel.RoomBots
         /// <param name="user">The user.</param>
         internal override async Task OnUserEnterRoom(RoomUser user)
         {
-            if (user.GetClient() == null || user.GetClient().GetHabbo() == null)
+            if (user.GetClient() == null || user.GetClient().GetHabbo() == null || _intelligence == null)
                 return;
 
             var roomUser = GetRoomUser();
-            if (roomUser == null || user.GetClient().GetHabbo().UserName != roomUser.PetData.OwnerName)
+            if (roomUser == null) return;
+
+            // Processar interação com IA
+            var response = await _intelligence.ProcessUserInteraction(user, "user_entered");
+            if (response != null && !string.IsNullOrEmpty(response.Message))
+            {
+                await roomUser.Chat(null, response.Message, false, 0);
                 return;
+            }
 
-            var random = new Random();
-            var value = PetLocale.GetValue("welcome.speech.pet");
-            var message = value[random.Next(0, (value.Length - 1))];
-
-            message += user.GetUserName();
-            await roomUser.Chat(null, message, false, 0);
+            // Comportamento padrão para o dono
+            if (user.GetClient().GetHabbo().UserName == roomUser.PetData.OwnerName)
+            {
+                var random = new Random();
+                var value = PetLocale.GetValue("welcome.speech.pet");
+                var message = value[random.Next(0, (value.Length - 1))];
+                message += user.GetUserName();
+                await roomUser.Chat(null, message, false, 0);
+            }
         }
 
         /// <summary>
@@ -128,19 +153,41 @@ namespace Oblivion.HabboHotel.RoomBots
         internal override async Task OnUserSay(RoomUser user, string msg)
         {
             var roomUser = GetRoomUser();
-
-            if (roomUser.PetData.OwnerId != user.GetClient().GetHabbo().Id)
-            {
-                return;
-            }
+            if (roomUser == null || _intelligence == null) return;
 
             if (string.IsNullOrEmpty(msg))
             {
                 msg = " ";
             }
 
-            msg = msg.Substring(1);
+            // Processar com IA primeiro
+            var response = await _intelligence.ProcessUserInteraction(user, "chat", msg);
+            if (response != null && !string.IsNullOrEmpty(response.Message))
+            {
+                await roomUser.Chat(null, response.Message, false, 0);
+            }
 
+            // Se não for o dono, apenas processar com IA
+            if (roomUser.PetData.OwnerId != user.GetClient().GetHabbo().Id)
+            {
+                return;
+            }
+
+            // Processar comandos para o dono
+            if (msg.StartsWith(":"))
+            {
+                msg = msg.Substring(1);
+                await ProcessPetCommand(user, roomUser, msg);
+            }
+        }
+
+        private async Task ProcessPetCommand(RoomUser user, RoomUser roomUser, string msg)
+        {
+            // Tentar executar comando com IA primeiro
+            var success = await _intelligence.ExecuteCommand(msg, roomUser, user);
+            if (success) return;
+
+            // Sistema de comandos tradicional como fallback
             var lazy = false;
             var unknown = false;
             var sleeping = false;
