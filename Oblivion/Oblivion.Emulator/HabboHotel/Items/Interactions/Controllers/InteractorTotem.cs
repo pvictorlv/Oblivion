@@ -48,7 +48,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
             foreach (var squareItem in items)
             {
                 if (squareItem.GetBaseItem().InteractionType != Interaction.Totem) continue;
-                
+
                 if (!int.TryParse(squareItem.ExtraData, out var currentState))
                 {
                     currentState = 0;
@@ -72,9 +72,9 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
 
             if (currentHead < 0 || currentLeg < 0 || currentPlanet < 0)
                 return;
-            if (Oblivion.GetUnixTimeStamp() - session.GetHabbo().LastTotem <= 1800)
+            if (Oblivion.GetUnixTimeStamp() - session.GetHabbo().LastTotem <= 900)
             {
-                 await session.SendWhisperAsync("Hey, você só pode receber um efeito a cada meia hora!");
+                 await session.SendWhisperAsync("Hey, você só pode receber um efeito a cada 15 minutos!");
                 return;
             }
             if (currentPlanet == 0 && (currentLeg == 3 || currentLeg == 7 || currentLeg == 11) &&
@@ -98,7 +98,7 @@ namespace Oblivion.HabboHotel.Items.Interactions.Controllers
                 return;
             }
              await session.SendWhisperAsync("Você recebeu 1 efeito!");
-            session.GetHabbo().SaveLastTotem();
+            await session.GetHabbo().SaveLastTotem();
         }
 
         public override async Task OnWiredTrigger(RoomItem item)

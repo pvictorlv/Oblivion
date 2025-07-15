@@ -825,13 +825,13 @@ namespace Oblivion.HabboHotel.Users
             }
         }
 
-        public void SaveLastTotem()
+        public async Task SaveLastTotem()
         {
-            using (var dbClient = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 var now = Oblivion.GetUnixTimeStamp();
                 LastTotem = now;
-                dbClient.RunFastQuery($"UPDATE users_stats SET last_totem = '{now}' WHERE id = {Id}");
+                await dbClient.RunFastQueryAsync($"UPDATE users_stats SET last_totem = '{now}' WHERE id = {Id}");
             }
         }
 

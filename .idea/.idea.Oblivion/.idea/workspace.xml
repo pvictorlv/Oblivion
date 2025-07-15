@@ -9,8 +9,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cdac920a-7602-4207-8fbf-feca8d8f9af2" name="Changes" comment="Fixed connection manager bug, removed backgroundcolor black.">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Oblivion/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Oblivion/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/RoomBots/PetBot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/RoomBots/PetBot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/Interactions/Controllers/InteractorTotem.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Items/Interactions/Controllers/InteractorTotem.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Users/Habbo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Users/Habbo.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -198,19 +197,6 @@
             </endOffsets>
           </properties>
           <option name="timeStamp" value="11" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Oblivion/Oblivion.Emulator/HabboHotel/Users/Habbo.cs</url>
-          <line>788</line>
-          <properties documentPath="E:\Users\Paulo\Documents\GitHub\Oblivion\Oblivion\Oblivion.Emulator\HabboHotel\Users\Habbo.cs" containingFunctionPresentation="Method 'SerializeClub'">
-            <startOffsets>
-              <option value="25994" />
-            </startOffsets>
-            <endOffsets>
-              <option value="26055" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="22" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
