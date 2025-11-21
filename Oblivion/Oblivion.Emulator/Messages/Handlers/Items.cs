@@ -435,7 +435,7 @@ namespace Oblivion.Messages.Handlers
                     {
                         var item5 = room.GetWiredHandler().GenerateNewItem(roomItem);
                         room.GetWiredHandler().AddWired(item5);
-                        WiredHandler.SaveWired(item5);
+                        await WiredHandler.SaveWired(item5);
                     }
 
                     switch (roomItem.GetBaseItem().Name)
@@ -2241,29 +2241,29 @@ namespace Oblivion.Messages.Handlers
             if (actualRoom == null || item == null)
                 return;
             if (!actualRoom.CheckRights(Session, true)) return;
+
             Session.GetHabbo().BuildersItemsUsed++;
             await BuildersClubUpdateFurniCount();
+
             var z = actualRoom.GetGameMap().SqAbsoluteHeight(x, y);
             using (var adapter = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 var guidId = Guid.NewGuid();
-                ShortGuid insertId = guidId;
 
-                adapter.SetNoLockQuery(
+                adapter.SetQuery(
                     "INSERT INTO items_rooms (id, user_id,room_id,base_item,x,y,z,rot,builders) VALUES (@insertId, @userId,@roomId,@baseItem,@x,@y,@z,@rot,'1')");
                 adapter.AddParameter("userId", Session.GetHabbo().Id);
-                adapter.AddParameter("insertId", insertId);
+                adapter.AddParameter("insertId", guidId.ToString());
                 adapter.AddParameter("roomId", actualRoom.RoomId);
                 adapter.AddParameter("baseItem", item.BaseId);
                 adapter.AddParameter("x", x);
                 adapter.AddParameter("y", y);
                 adapter.AddParameter("z", z);
                 adapter.AddParameter("rot", dir);
-
-                var newItem = new RoomItem(insertId, actualRoom.RoomId, item.BaseId, extradata, x, y, z, dir,
+                await adapter.RunQueryAsync();
+                var newItem = new RoomItem(guidId.ToString(), actualRoom.RoomId, item.BaseId, extradata, x, y, z, dir,
                     actualRoom,
                     Session.GetHabbo().Id, 0, "", true, 0, 0);
-                Session.GetHabbo().BuildersItemsUsed++;
 
                 //todo: here?
                 actualRoom.GetRoomItemHandler().FloorItems.TryAdd(newItem.Id, newItem);
@@ -2294,7 +2294,7 @@ namespace Oblivion.Messages.Handlers
             {
                 var guidId = Guid.NewGuid();
                 ShortGuid insertId = guidId;
-                adapter.SetNoLockQuery(
+                adapter.SetQuery(
                     "INSERT INTO items_rooms (id,user_id,room_id,base_item,wall_pos,builders) VALUES (@insertId, @userId,@roomId,@baseItem,@wallpos,'1')");
                 adapter.AddParameter("userId", Session.GetHabbo().Id);
                 adapter.AddParameter("insertId", insertId);
@@ -2302,7 +2302,7 @@ namespace Oblivion.Messages.Handlers
                 adapter.AddParameter("roomId", actualRoom.RoomId);
                 adapter.AddParameter("baseItem", item.BaseId);
                 adapter.AddParameter("wallpos", wallcoords);
-
+                await adapter.RunQueryAsync();
                 var newItem = new RoomItem(insertId, actualRoom.RoomId, item.BaseId, extradata,
                     new WallCoordinate(wallcoords), actualRoom, Session.GetHabbo().Id, 0,
                     true);
@@ -2590,13 +2590,13 @@ namespace Oblivion.Messages.Handlers
 
             var clothes = Oblivion.GetGame().GetClothingManager().GetClothesInFurni(item.GetBaseItem().Name);
             if (clothes == null) return;
-            
+
             if (Session.GetHabbo().ClothingManager.Clothing.Contains(clothes.ItemName)) return;
              await Session.GetHabbo().ClothingManager.Add(clothes.ItemName);
              await GetResponse().InitAsync(LibraryParser.OutgoingRequest("FigureSetIdsMessageComposer"));
              await Session.GetHabbo().ClothingManager.Serialize(GetResponse());
              await SendResponse();
-             
+
              await room.GetRoomItemHandler().RemoveFurniture(Session, item.Id, false);
 
              using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())

@@ -28,10 +28,10 @@ namespace Oblivion.Messages.Handlers
                 rank = 1;
             await Session.SendMessageAsync(CatalogPageComposer.ComposeIndex(rank, Request.GetString().ToUpper(), Session));
             await Session.SendStaticMessage(StaticMessage.CatalogOffersConfiguration);
-            
+
         }
 
-        
+
 
         /// <summary>
         ///     Catalogues the index.
@@ -48,7 +48,7 @@ Request.GetString()
 "default_3x3,default_3x3_extrainfo,vip_buy,pets2,pixeleffects,info_duckets,info_loyalty,info_rentables,spaces_new,club_gifts,empty_search,marketplace,sold_ltd_items,roomads,default_3x3_color_grouping,marketplace_own_items,petcustomization,guild_frontpage,guild_custom_furni,mobile_spinner_large,mobile_subscriptions,mobile_credits,mobile_bundles,frontpage4,builders_club_addons,pets,builders_club_addons,pets"
 */
 
-            string pageType = "NORMAL";
+            string pageType = "BUILDERS_CLUB";
             string[] allowedPages = null;
 
             if (Request.BytesAvailable)
@@ -208,7 +208,7 @@ Request.GetString()
             var priceAmount = Request.GetInteger();
             await Oblivion.GetGame().GetCatalog().HandlePurchase(Session, pageId, itemId, extraData, priceAmount, false,
                 string.Empty, string.Empty, 0, 0, 0, false, 0u);
-           
+
 
         }
 

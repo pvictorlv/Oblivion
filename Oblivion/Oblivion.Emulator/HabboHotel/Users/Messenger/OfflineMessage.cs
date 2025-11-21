@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
 using Oblivion.Database.Manager.Database.Session_Details.Interfaces;
 
 namespace Oblivion.HabboHotel.Users.Messenger
@@ -74,14 +75,14 @@ namespace Oblivion.HabboHotel.Users.Messenger
         /// <param name="toId">To identifier.</param>
         /// <param name="fromId">From identifier.</param>
         /// <param name="message">The message.</param>
-        internal static void SaveMessage(IQueryAdapter dbClient, uint toId, uint fromId, string message)
+        internal static async Task SaveMessage(IQueryAdapter dbClient, uint toId, uint fromId, string message)
         {
             dbClient.SetQuery(
                 "INSERT INTO messenger_offline_messages (to_id, from_id, Message, timestamp) VALUES (@tid, @fid, @msg, UNIX_TIMESTAMP())");
             dbClient.AddParameter("tid", toId);
             dbClient.AddParameter("fid", fromId);
             dbClient.AddParameter("msg", message);
-            dbClient.RunQuery();
+            await dbClient.RunQueryAsync();
         }
 
         /// <summary>

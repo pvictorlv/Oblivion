@@ -77,7 +77,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
         private List<IWiredItem> _executedEffects;
 
-        public IWiredItem LoadWired(IWiredItem fItem)
+        public async Task<IWiredItem> LoadWired(IWiredItem fItem)
         {
             if (fItem?.Item == null)
             {
@@ -96,7 +96,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                 {
                     var wiredItem = GenerateNewItem(fItem.Item);
                     AddWired(wiredItem);
-                    SaveWired(wiredItem);
+                    await SaveWired(wiredItem);
 
                     return wiredItem;
                 }
@@ -141,12 +141,12 @@ namespace Oblivion.HabboHotel.Items.Wired
             return false;
         }
 
-        public static void SaveWired(IWiredItem fItem)
+        public static async Task SaveWired(IWiredItem fItem)
         {
             if (fItem?.Items == null)
                 return;
 
-            using (var queryReactor = Oblivion.GetDatabaseManager().GetQueryReactor())
+            using (var queryReactor = await Oblivion.GetDatabaseManager().GetQueryReactorAsync())
             {
                 var text = string.Empty;
                 var num = 0;
@@ -178,13 +178,13 @@ namespace Oblivion.HabboHotel.Items.Wired
                     (fItem.OtherExtraString2.Length > 255)
                         ? fItem.OtherExtraString2.Substring(0, 255)
                         : fItem.OtherExtraString2);
-                queryReactor.RunQuery();
+                await queryReactor.RunQueryAsync();
             }
         }
 
-        public void ReloadWired(IWiredItem item)
+        public async Task ReloadWired(IWiredItem item)
         {
-            SaveWired(item);
+            await SaveWired(item);
             RemoveWired(item);
             AddWired(item);
         }

@@ -40,7 +40,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     request.GetInteger();
                     var delay = (request.GetInteger() * 500);
                     wired.Delay = delay;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.TriggerRoomEnter:
@@ -48,7 +48,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     request.GetInteger();
                     var otherString = request.GetString();
                     wired.OtherString = otherString;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
 
@@ -57,7 +57,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     request.GetInteger();
                     var delay = request.GetInteger() * 5000;
                     wired.Delay = delay;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
 
@@ -66,7 +66,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     request.GetInteger();
                     var delay = (request.GetInteger()) * 500;
                     wired.Delay = delay;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.TriggerOnUserSay:
@@ -79,7 +79,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     var otherString2 = request.GetString();
                     wired.OtherString = otherString2;
                     wired.OtherBool = (num == 1);
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.TriggerStateChanged:
@@ -90,7 +90,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     var num2 = request.GetInteger();
                     wired.Delay = num2 * 500;
                     wired.Items = furniItems;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.TriggerWalkOnFurni:
@@ -104,7 +104,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     var num3 = request.GetInteger() * 500;
                     wired.Delay = num3;
                     wired.Items = furniItems2;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
 
@@ -116,7 +116,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     var num4 = request.GetInteger();
                     wired.Delay = num4 * 500;
                     wired.Items = furniItems3;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.ActionMoveRotate:
@@ -131,7 +131,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     wired.Items = furniItems4;
                     wired.Delay = delay * 500;
                     wired.OtherString = $"{dir};{rot}";
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.ActionShowMessage:
@@ -144,7 +144,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     var delay = request.GetInteger();
                     wired.Delay = delay * 500;
                     wired.OtherString = otherString3;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.ActionHandItem:
@@ -153,7 +153,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     request.GetInteger();
                     var otherString3 = Regex.Match(request.GetString(), @"\d+").Value;
                     wired.OtherString = otherString3;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
 
@@ -174,7 +174,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                         otherString3 = "0";
                     }
                     wired.OtherString = otherString3;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.ActionTeleportTo:
@@ -185,7 +185,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     var num8 = request.GetInteger();
                     wired.Items = furniItems5;
                     wired.Delay = num8 * 500;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.ActionToggleState:
@@ -196,7 +196,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     var num9 = request.GetInteger();
                     wired.Items = furniItems6;
                     wired.Delay = num9 * 500;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
 
@@ -207,7 +207,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     wired.OtherString = request.GetString();
                     request.GetInteger();
                     wired.Delay = request.GetInteger() * 500;
-                   
+
                     break;
                 }
                 case Interaction.ActionGiveReward:
@@ -228,7 +228,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     wired.OtherString = extrainfo;
                     wired.OtherExtraString = often.ToString();
                     wired.OtherExtraString2 = limit.ToString();
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.ActionMuteUser:
@@ -241,7 +241,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     wired.Delay = minutes;
                     wired.OtherBool = false;
                     wired.OtherString = message;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.TriggerScoreAchieved:
@@ -251,7 +251,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
                     wired.Delay = 0;
                     wired.OtherString = pointsRequired.ToString();
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
 
@@ -302,7 +302,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     wired.OtherString = booleans;
                     wired.OtherExtraString = dataToSave;
                     wired.OtherExtraString2 = extraStringForWi;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
 
@@ -323,7 +323,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     var ei = $"{minimum},{maximum}";
                     wired.Items = new ConcurrentList<RoomItem>();
                     wired.OtherString = ei;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
 
@@ -334,7 +334,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     var effect = request.GetInteger();
                     wired.Items = new ConcurrentList<RoomItem>();
                     wired.OtherString = effect.ToString();
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
 
@@ -346,7 +346,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     var badge = request.GetString();
                     wired.Items = new ConcurrentList<RoomItem>();
                     wired.OtherString = badge;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
 
@@ -366,7 +366,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                         await session.SendNotif(Oblivion.GetLanguage().GetVar("user_wired_con_date_range"));
                     }
 
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
 
@@ -380,7 +380,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     var furniItems = GetFurniItems(request, room);
 
                     wired.Items = furniItems;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.ConditionFurnisHaveUsers:
@@ -393,7 +393,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
 
                     wired.Items = furniItems;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
 
@@ -410,7 +410,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
                     wired.OtherBool = allItems;
                     wired.Items = furniItems;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
 
@@ -426,7 +426,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     var furniItems8 = GetFurniItems(request, room);
                     wired.Items = furniItems8;
                     wired.OtherString = newExtraInfo;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.ActionBotTalk:
@@ -438,7 +438,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     wired.OtherBool = type;
                     wired.OtherString = data[0];
                     wired.OtherExtraString = data[1];
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.ActionBotClothes:
@@ -448,7 +448,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
                     wired.OtherString = data[0];
                     wired.OtherExtraString = data[1];
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.ActionBotTeleport:
@@ -459,7 +459,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
                     wired.Items = furniItems;
                     wired.OtherString = botName;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.ActionBotGiveHanditem:
@@ -470,7 +470,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
                     wired.OtherString = botName;
                     wired.Delay = handitem * 500;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.ActionBotMove:
@@ -481,7 +481,7 @@ namespace Oblivion.HabboHotel.Items.Wired
 
                     wired.Items = furniItems;
                     wired.OtherString = botName;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.ActionCallStacks:
@@ -493,7 +493,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     var num = request.GetInteger();
                     wired.Items = furniItems;
                     wired.Delay = num * 500;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.ActionBotTalkToAvatar:
@@ -505,7 +505,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     wired.OtherBool = type;
                     wired.OtherString = data[0];
                     wired.OtherExtraString = data[1];
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.ConditionTimeMoreThan:
@@ -514,7 +514,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     request.GetInteger();
                     var time = request.GetInteger();
                     wired.Delay = time * 500;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.ConditionUserHasHanditem:
@@ -522,7 +522,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     request.GetInteger();
                     var handItem = request.GetInteger();
                     wired.Delay = handItem * 500;
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
                 case Interaction.ConditionUserIsNotInTeam:
@@ -532,7 +532,7 @@ namespace Oblivion.HabboHotel.Items.Wired
                     request.GetInteger();
                     var team = request.GetInteger();
                     wired.OtherString = team.ToString();
-                    wiredHandler.ReloadWired(wired);
+                    await wiredHandler.ReloadWired(wired);
                     break;
                 }
             }

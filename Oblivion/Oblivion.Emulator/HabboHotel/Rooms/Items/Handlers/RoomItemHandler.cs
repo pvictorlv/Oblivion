@@ -539,7 +539,7 @@ namespace Oblivion.HabboHotel.Rooms.Items.Handlers
 
                 foreach (var wired in wireds)
                 {
-                    _room.GetWiredHandler().LoadWired(_room.GetWiredHandler().GenerateNewItem(wired));
+                    await _room.GetWiredHandler().LoadWired(_room.GetWiredHandler().GenerateNewItem(wired));
                 }
 
                 if (_room.GotMusicController())

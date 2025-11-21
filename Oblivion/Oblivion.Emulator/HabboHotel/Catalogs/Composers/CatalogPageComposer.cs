@@ -30,7 +30,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
             var pages =
                 Oblivion.GetGame().GetCatalog().Categories.Values.ToList();
 
-            int parentIdType = (type == "NORMAL" ? -1 : -2);
+            int parentIdType = (type == "NORMAL" ? -1 : -1); // todo revert -2
 
             var sortedPages = allowedPages != null
                 ? pages.Where(page =>
@@ -317,7 +317,7 @@ namespace Oblivion.HabboHotel.Catalogs.Composers
             if (item?.GetFirstBaseItem() == null) return;
             message.AppendInteger(item.Id);
             message.AppendString(item.Name, true);
-            message.AppendBool(false); // rent
+            message.AppendBool(true); // rent //todo: change this to false if item is not rent
             message.AppendInteger(item.CreditsCost);
 
             if (item.DiamondsCost > 0)

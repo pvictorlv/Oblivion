@@ -469,7 +469,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
 
             if (RequestExists(userId))
             {
-                await client.SendNotifyAsync("Ya le has enviado una petición anteriormente.");
+                await client.SendNotifyAsync("Ya le has enviado una peticiï¿½n anteriormente.");
                 return true;
             }
 
@@ -609,7 +609,7 @@ namespace Oblivion.HabboHotel.Users.Messenger
                     Oblivion.OfflineMessages.Add(toId, msgs);
                 }
 
-                OfflineMessage.SaveMessage(await Oblivion.GetDatabaseManager().GetQueryReactorAsync(), toId,
+               await OfflineMessage.SaveMessage(await Oblivion.GetDatabaseManager().GetQueryReactorAsync(), toId,
                     GetClient().GetHabbo().Id, message);
 
                 return;
